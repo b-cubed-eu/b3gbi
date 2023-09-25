@@ -146,24 +146,40 @@ cube_richness_adj_plot <-
 
 
 # Calculate number of records for each species by year
-species_records_1970 <-
-  merged_data %>%
-  filter(year == 1970) %>%
-  group_by(eea_cell_code, scientificName) %>%
-  summarise(spec_rec = sum(obs), .groups = "drop") %>%
-  pivot_wider(names_from = scientificName,
-              values_from = spec_rec) %>%
-  select(-eea_cell_code) %>%
-  replace(is.na(.), 0)
+species_records <- list()
+for (yr in unique(merged_data$year)) {
+  species_records <-
+    merged_data %>%
+    filter(year == yr) %>%
+    group_by(eea_cell_code, scientificName) %>%
+    summarise(spec_rec = sum(obs), .groups = "drop") %>%
+    pivot_wider(names_from = scientificName,
+                values_from = spec_rec) %>%
+    select(-eea_cell_code) %>%
+    replace(is.na(.), 0) %>%
+    list() %>%
+    append(species_records, .)
+  print(paste("Year", yr, "finished.", sep=" "))
+}
 
 # Calculate rarefied species richness for all data
-sp1_1970 <- species_records_1970 %>%
-  specaccum(method = "rarefaction")
+spec_rare <- list()
+for (i in 61:length(species_records)) {
+  spec_rare <-
+    species_records[i][[1]] %>%
+    specaccum(method = "rarefaction") %>%
+    list(.) %>%
+    append(spec_rare, .)
+  print(paste("Curve", i, "finished.", sep=" "))
+}
+saveRDS(spec_rare, "spec_rare.RData")
+
 sp2 <- species_records %>%
   specaccum(method = "random")
 
-plot(sp1, xlab = "Number of Occurrences", ylab = "Species Richness",
+plot(spec_rare[[1]], xlab = "Number of Occurrences", ylab = "Species Richness",
      main = "Rarefaction Curves by Year")
+
 
 # Create a dataframe with the richness data
 richness_df <- observed_richness %>%
