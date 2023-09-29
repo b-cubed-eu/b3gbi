@@ -2,10 +2,11 @@
 #'
 #' @param data A tibble created from a GBIF cube using the process_cube function.
 #' @param method A character vector, "raw", "total_records", or "rarefaction".
-#'   "raw" calculates an unadjusted richness trend from the cube data,
+#'   "raw" calculates the observed species richness trend from the cube data,
 #'   "total_records" uses the total number of occurrences for each year as a
 #'   proxy for sampling effort.
-#'   "rarefaction" calculates rarefaction curves to approximate sampling effort
+#'   "rarefaction" calculates rarefaction curves to approximate sampling effort,
+#'   "coverage" estimates relative richness trends by standardizing by coverage
 #'
 #' @return A tibble
 #' @export
@@ -14,26 +15,25 @@
 #' calc_srt(processed_cube, "rarefaction")
 calc_srt <- function(data, method) {
 
-  # Calculate species richness by year
+  # Calculate species richness and total records by year
   richness_by_year <-
     merged_data %>%
     dplyr::group_by(year) %>%
-    dplyr::summarise(species_richness = n_distinct(scientificName), .groups = "drop")
+    dplyr::summarise(obs_richness = n_distinct(scientificName),
+                     total_records = sum(obs),
+                     .groups = "drop")
 
-  if (method == "raw") {
+  if (method == "observed") {
 
     return(richness_by_year)
 
   } else if (method == "total_records") {
 
     # Adjust species richness using total records as proxy for sampling effort
-    richness_by_year <-
+    total_records_df <-
       richness_by_year %>%
-      dplyr::left_join(merged_data %>%
-                  dplyr::group_by(year) %>%
-                  dplyr::summarise(total_records = sum(obs), .groups = "drop"),
-                by = "year") %>%
-      dplyr::mutate(adjusted_richness = species_richness / total_records * 500)
+      dplyr::mutate(adj_relative_richness = (obs_richness / total_records * 500),
+                        .after = "obs_richness")
 
   } else if (method == "rarefaction") {
 
@@ -73,10 +73,12 @@ calc_srt <- function(data, method) {
       purrr::map(mean, na.rm=TRUE)
 
     # Calculate adjusted species richness by year
-    richness_by_year <-
+    rarefied_df <-
       richness_by_year %>%
-      tibble::add_column(mean_rarefied_richness = unlist(mean_rarefied_richness)) %>%
-      dplyr::mutate(adjusted_richness = species_richness - mean_rarefied_richness)
+      tibble::add_column(mean_rarefied_richness = unlist(mean_rarefied_richness),
+                         .after = "obs_richness") %>%
+      dplyr::mutate(adj_richness = (obs_richness - mean_rarefied_richness),
+                    .after = "mean_rarefied_richness")
 
   }
   # else if (method == "gam") {
@@ -133,39 +135,40 @@ calc_srt <- function(data, method) {
                    as.matrix() %>%
                    ifelse(. > 1, 1, .))
 
+    # name list elements
+    names(species_records_raw) <- richness_by_year$year
+
+    # set sample size for inext function call
+    inext_sampsize <- 150
+
     # Calculate diversity estimates
     coverage_rare <- species_records_raw %>%
-      iNEXT(endpoint=max_sampsize, datatype="incidence_raw")
+      iNEXT(endpoint=inext_sampsize, datatype="incidence_raw")
 
-    # Split observed richness values into a list
-    richness_by_year_list <- split(richness_by_year,
-                                   seq_len(nrow(richness_by_year)))
+    # Extract estimated relative species richness
+    est_richness <-
+      coverage_rare_temp$iNextEst$coverage_based %>%
+                         dplyr::filter(t == inext_sampsize) %>%
+                         dplyr::select(Assemblage, qD) %>%
+                         dplyr::rename(year = Assemblage,
+                                       est_relative_richness = qD)
 
-    # Extract species richness values standardized to equal coverage
-    inext_results_df <-
-      map(1:72, function(iteration_value) {
-        inext_rich_vals <-
-          coverage_rare$iNextEst$coverage_based %>%
-          filter(Assemblage == paste0("assemblage", iteration_value)) %>%
-          {. ->> test1 } %>%
-          add_column(diff = abs(.$t - (
-            richness_by_year_list[[iteration_value]]$"species_richness"
-            ))) %>%
-          slice_min(diff) %>%
-          slice_head(n = 1) %>%
-        {. ->> test2 }
-        if (nrow(inext_rich_vals) > 0 & !is.na(inext_rich_vals$qD)) {
-          qD_closest <- inext_rich_vals$qD
-        } else {
-          qD_closest <- NA
-        }
-        data.frame(Year = richness_by_year_list[[iteration_value]]$"year",
-                   qD_Closest = qD_closest)
-      }) %>%
-      bind_rows
+    # Calculate estimated relative richness as an index
+    est_richness <-
+      est_richness %>%
+      mutate(index = est_relative_richness/lag(est_relative_richness)) %>%
+      replace(is.na(.), 1) %>%
+      mutate(index = cumprod(index))
 
+    # Add observed richness and total records to df
+    coverage_df <-
+      richness_by_year[1:3,] %>%
+      add_column(est_relative_richness = est_richness$est_relative_richness,
+                 .after = "obs_richness") %>%
+      add_column(est_richness_index = est_richness$index,
+                 .after = "est_relative_richness")
 
-  }
+    }
 
 }
 
