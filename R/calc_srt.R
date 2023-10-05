@@ -162,7 +162,7 @@ calc_srt <- function(data, method) {
 
     # Add observed richness and total records to df
     coverage_df <-
-      richness_by_year[1:3,] %>%
+      richness_by_year %>%
       add_column(est_relative_richness = est_richness$est_relative_richness,
                  .after = "obs_richness") %>%
       add_column(est_richness_index = est_richness$index,
