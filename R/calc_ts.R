@@ -13,7 +13,7 @@
 #'
 #' @examples
 #' calc_srt(processed_cube, "rarefaction")
-calc_srt <- function(data, method) {
+calc_ts <- function(data, method, qval = 0, inext_sampsize = 150, coverage = 0.9) {
 
   # Calculate species richness and total records by year
   richness_by_year <-
@@ -138,20 +138,21 @@ calc_srt <- function(data, method) {
     # name list elements
     names(species_records_raw) <- richness_by_year$year
 
-    # set sample size for inext function call
-    inext_sampsize <- 150
-
     # Calculate diversity estimates
     coverage_rare <- species_records_raw %>%
-      iNEXT(endpoint=inext_sampsize, datatype="incidence_raw")
+      iNEXT(endpoint=inext_sampsize, datatype="incidence_raw", q=qval)
 
     # Extract estimated relative species richness
     est_richness <-
       coverage_rare_temp$iNextEst$coverage_based %>%
-                         dplyr::filter(t == inext_sampsize) %>%
-                         dplyr::select(Assemblage, qD) %>%
-                         dplyr::rename(year = Assemblage,
-                                       est_relative_richness = qD)
+      dplyr::filter(abs(SC-coverage) == min(abs(SC-coverage)),
+                    .by = Assemblage) %>%
+      dplyr::select(Assemblage, qD, t, SC, Order.q) %>%
+      dplyr::rename(year = Assemblage,
+                    est_relative_richness = qD,
+                    samp_size_est = t,
+                    coverage = SC,
+                    diversity_type = Order.q)
 
     # Calculate estimated relative richness as an index
     est_richness <-
