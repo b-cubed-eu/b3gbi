@@ -11,10 +11,23 @@
 # knots determines the number of different sample sizes to estimate at (between
 # 0 and inext_sampsize)
 # sub-sampling will be used for larger samples and extrapolation for smaller ones
+# type can be "hill" for hill diversity measure, "even" for evenness, or
+# "obs_rich" for observed species richness
 # qval determines which type of hill diversity measure to estimate,
 # 0 for species richness, 1 for shannon hill diversity, 2 for simpson hill diversity
 
-calc_map <- function(data, cs1 = 100, cs2 = 100, level = "country", region = "Denmark", coverage = 0.9, cutoff_length = 5, inext_sampsize = 100, qval = 0, knots = 10, ...) {
+calc_map <- function(data,
+                     cs1 = 100,
+                     cs2 = 100,
+                     level = "country",
+                     region = "Denmark",
+                     type = "hill",
+                     qval = 0,
+                     coverage = 0.9,
+                     cutoff_length = 5,
+                     inext_sampsize = 100,
+                     knots = 10,
+                     ...) {
 
   # Download and prepare Natural Earth map data for Europe
   if (level == "country") {
@@ -51,7 +64,7 @@ calc_map <- function(data, cs1 = 100, cs2 = 100, level = "country", region = "De
 
   # Scale coordinates of occurrences so the number of digits matches map
   merged_data_scaled <-
-    merged_data %>%
+    data %>%
     mutate(xcoord = xcoord * 1000,
            ycoord = ycoord * 1000)
 
@@ -63,25 +76,15 @@ calc_map <- function(data, cs1 = 100, cs2 = 100, level = "country", region = "De
   # Calculate intersection between occurrences and grid cells
   occ_grid_int <- st_intersection(occ_sf, grid, left = TRUE)
 
-  #  ----------------------------------------
-
-  # Calculate species richness over the grid
-  richness_grid <- grid %>%
-    st_join(occ_sf) %>%
-    # mutate(overlap = ifelse(obs >= 1, 1, 0)) %>%
-    group_by(cellid) %>%
-    summarize(num_species = sum(n_distinct(obs)))
-
-
-  #  ----------------------------------------
-
   # Add cell numbers to occurrence data
   merged_data_cells <-
     merged_data_scaled %>%
     dplyr::inner_join(occ_grid_int) %>%
     dplyr::group_by(cellid)
 
-  # Create list of occurrence matrices by year, with species as rows
+  if (type == "hill") {
+
+  # Create list of occurrence matrices by grid cell, with species as rows
   spec_rec_raw_cell <-
     merged_data_cells %>%
     dplyr::group_split() %>%
@@ -128,69 +131,79 @@ calc_map <- function(data, cs1 = 100, cs2 = 100, level = "country", region = "De
     iNEXT(endpoint=inext_sampsize, knots=knots, datatype="incidence_raw", q=qval)
 
   # Extract estimated relative species richness
-  est_richness_cell <-
+  est_diversity_cell <-
     coverage_rare_cell$iNextEst$coverage_based %>%
     dplyr::filter(abs(SC-coverage) == min(abs(SC-coverage)),
                   .by = Assemblage) %>%
     dplyr::select(Assemblage, qD, t, SC, Order.q) %>%
     dplyr::rename(cellid = Assemblage,
-                  est_relative_richness = qD,
+                  diversity_val = qD,
                   samp_size_est = t,
                   coverage = SC,
                   diversity_type = Order.q) %>%
     dplyr::mutate(cellid = as.integer(cellid), .keep = "unused")
 
-  # Calculate estimated relative richness as an index
-  est_richness_cell <-
-    est_richness_cell %>%
-    mutate(index = est_relative_richness/lag(est_relative_richness)) %>%
-    replace(is.na(.), 1) %>%
-    mutate(index = cumprod(index))
+  } else if (type == "obs_rich") {
 
-  # Add observed richness and total records to df
-  coverage_df_cell <-
-    richness_grid %>%
-    dplyr::left_join(est_richness_cell, by = "cellid") %>%
-    dplyr::rename(obs_richness = num_species) %>%
-    dplyr::relocate(geometry, .after = index) %>%
-    dplyr::arrange(cellid)
+    # Calculate species richness over the grid
+    richness_grid <- grid %>%
+      sf::st_join(occ_sf) %>%
+      # dplyr::mutate(overlap = ifelse(obs >= 1, 1, 0)) %>%
+      dplyr::group_by(cellid) %>%
+      dplyr::summarize(diversity_val = sum(n_distinct(obs))) %>%
+      tibble::add_column(diversity_type = c("obs_richness"),
+                         .before = "geometry")
 
+    # # Add observed richness and total records to df
+    # coverage_df_cell <-
+    #   richness_grid %>%
+    #   dplyr::left_join(est_diversity_cell, by = "cellid") %>%
+    #   dplyr::rename(obs_richness = num_species) %>%
+    #   dplyr::relocate(geometry, .after = index) %>%
+    #   dplyr::arrange(cellid)
 
-  #   # Calculate rarefaction curves for each year
-  # future::plan(multisession)
-  # spec_rare_cell <- spec_rec_raw_cell %>%
-  #   furrr::future_map(vegan::specaccum, method = "rarefaction")
-  #
-  # # Get the sampling effort level at which to interpolate
-  # sampling_effort <-
-  #   spec_rare %>%
-  #   purrr::map(~max(.$individuals)) %>%
-  #   unlist() %>%
-  #   min()
-  #
-  # # Interpolate richness at different sampling effort levels
-  # interpolated_richness <-
-  #   spec_rare %>%
-  #   purrr::map(~stats::approx(.$sites, .$richness, xout = sampling_effort)$y)
-  #
-  # # Calculate mean rarefied richness for each year
-  # mean_rarefied_richness <-
-  #   interpolated_richness %>%
-  #   purrr::map(mean, na.rm=TRUE)
-  #
-  # # Calculate adjusted species richness by year
-  # rarefied_df <-
-  #   richness_by_year %>%
-  #   tibble::add_column(mean_rarefied_richness = unlist(mean_rarefied_richness),
-  #                      .after = "obs_richness") %>%
-  #   dplyr::mutate(adj_richness = (obs_richness - mean_rarefied_richness),
-  #                 .after = "mean_rarefied_richness")
+  } else if (type == "even") {
 
+    # Calculate number of records for each species by grid cell
+    spec_rec_cell <-
+      merged_data_cells %>%
+      dplyr::group_split() %>%
+      purrr::map(. %>%
+                   dplyr::group_by(eea_cell_code,
+                                   scientificName) %>%
+                   dplyr::summarise(spec_rec = sum(obs),
+                                    .groups = "drop") %>%
+                   tidyr::pivot_wider(names_from = scientificName,
+                                      values_from = spec_rec) %>%
+                   dplyr::select(-eea_cell_code) %>%
+                   replace(is.na(.), 0)
+      )
 
+    # name list elements
+    names(spec_rec_cell) <- unique(occ_grid_int$cellid)
 
-  # -------------------------------------------
+    # Calculate adjusted evenness for each grid cell
+    evenness_cell <- spec_rec_cell %>%
+      purrr::map(~calc_evenness(.)) %>%
+      unlist() %>%
+      as.data.frame() %>%
+      tibble::rownames_to_column(var = "cellid") %>%
+      dplyr::rename(diversity_val = ".") %>%
+      dplyr::mutate(cellid = as.integer(cellid),
+                    .keep = "unused") %>%
+      tibble::add_column(diversity_type = c("evenness"),
+                         .before = geometry)
 
+    # Add evenness values to grid
+    evenness_grid <-
+      grid %>%
+      dplyr::left_join(evenness_cell, by = "cellid")
 
+  } else {
+
+    stop("Invalid type argument.")
+
+  }
 
 
 
