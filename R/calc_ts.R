@@ -43,11 +43,11 @@ calc_ts <- function(data, method, qval = 0, inext_sampsize = 150, coverage = 0.9
       dplyr::group_by(year) %>%
       dplyr::group_split() %>%
       purrr::map(. %>%
-            dplyr::group_by(eea_cell_code, scientificName) %>%
-            dplyr::summarise(spec_rec = sum(obs), .groups = "drop") %>%
-            tidyr::pivot_wider(names_from = scientificName, values_from = spec_rec) %>%
-            dplyr::select(-eea_cell_code) %>%
-            replace(is.na(.), 0)
+                   dplyr::group_by(eea_cell_code, scientificName) %>%
+                   dplyr::summarise(spec_rec = sum(obs), .groups = "drop") %>%
+                   tidyr::pivot_wider(names_from = scientificName, values_from = spec_rec) %>%
+                   dplyr::select(-eea_cell_code) %>%
+                   replace(is.na(.), 0)
       )
 
     # Calculate rarefaction curves for each year
@@ -63,24 +63,18 @@ calc_ts <- function(data, method, qval = 0, inext_sampsize = 150, coverage = 0.9
       min()
 
     # Interpolate richness at different sampling effort levels
-    interpolated_richness <-
+    rarefied_richness <-
       spec_rare %>%
       purrr::map(~stats::approx(.$sites, .$richness, xout = sampling_effort)$y)
-
-    # Calculate mean rarefied richness for each year
-    mean_rarefied_richness <-
-      interpolated_richness %>%
-      purrr::map(mean, na.rm=TRUE)
 
     # Calculate adjusted species richness by year
     rarefied_df <-
       richness_by_year %>%
-      tibble::add_column(mean_rarefied_richness = unlist(mean_rarefied_richness),
-                         .after = "obs_richness") %>%
-      dplyr::mutate(adj_richness = (obs_richness - mean_rarefied_richness),
-                    .after = "mean_rarefied_richness")
+      tibble::add_column(rarefied_richness = unlist(rarefied_richness),
+                         .after = "obs_richness")
 
   }
+
   # else if (method == "gam") {
   #
   #   df_richness_gam <- cube_species_richness %>%
