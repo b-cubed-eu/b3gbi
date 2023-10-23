@@ -36,9 +36,9 @@ merged_data <- process_cube(cube_name, tax_info, first_year, final_year)
 
 # Calculate species richness ----
 
-richness_raw <- calc_srt(merged_data, method="raw")
-richness_tr <- calc_srt(merged_data, method="total_records")
-richness_rf <- calc_srt(merged_data, method="rarefaction")
+richness_raw <- calc_ts(merged_data, method="raw")
+richness_tr <- calc_ts(merged_data, method="total_records")
+richness_rf <- calc_ts(merged_data, method="rarefaction")
 
 
 

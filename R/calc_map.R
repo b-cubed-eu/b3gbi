@@ -64,7 +64,7 @@ calc_map <- function(data,
 
   # Scale coordinates of occurrences so the number of digits matches map
   merged_data_scaled <-
-    data %>%
+    merged_data %>%
     mutate(xcoord = xcoord * 1000,
            ycoord = ycoord * 1000)
 
@@ -81,6 +81,23 @@ calc_map <- function(data,
     merged_data_scaled %>%
     dplyr::inner_join(occ_grid_int) %>%
     dplyr::group_by(cellid)
+
+  # # Add area column to grid
+  # grid$area_km2 <-
+  #   grid %>%
+  #   st_area %>%
+  #   units::set_units("km^2")
+  #
+  # # Remove grid cells with areas smaller than 20% of the largest one
+  # grid_filtered <-
+  #   grid %>%
+  #   filter(area_km2 > 0.2 * max(area_km2))
+  #
+  # # Remove same grid cells from data
+  # merged_data_cells_filtered <-
+  #   merged_data_cells %>%
+  #   filter(cellid %in% grid_filtered$cellid)
+
 
   if (type == "hill") {
 
@@ -120,21 +137,25 @@ calc_map <- function(data,
 
 
   # name list elements
-  names(spec_rec_raw_cell) <- unique(occ_grid_int$cellid)
+  names(spec_rec_raw_cell) <- unique(grid$cellid)
 
   # remove all cells with too little data to avoid errors from iNEXT
   spec_rec_raw_cell2 <- spec_rec_raw_cell %>%
     keep(., function(x) length(x) > cutoff_length)
 
   # Calculate diversity estimates
-  coverage_rare_cell <- spec_rec_raw_cell2 %>%
-    iNEXT(endpoint=inext_sampsize, knots=knots, datatype="incidence_raw", q=qval)
+  # coverage_rare_cell <- spec_rec_raw_cell2 %>%
+  #   iNEXT(endpoint=inext_sampsize, knots=knots, datatype="incidence_raw", q=qval)
 
-  # Extract estimated relative species richness
+  coverage_rare_cell <- spec_rec_raw_cell2 %>%
+    estimateD(base = "coverage", level = 0.985, datatype="incidence_raw", q=qval)
+
+  # Extract estimated relative diversity
   est_diversity_cell <-
-    coverage_rare_cell$iNextEst$coverage_based %>%
-    dplyr::filter(abs(SC-coverage) == min(abs(SC-coverage)),
-                  .by = Assemblage) %>%
+    coverage_rare_cell %>%
+    #coverage_rare_cell$iNextEst$coverage_based %>%
+    #dplyr::filter(abs(SC-coverage) == min(abs(SC-coverage)),
+    #              .by = Assemblage) %>%
     dplyr::select(Assemblage, qD, t, SC, Order.q) %>%
     dplyr::rename(cellid = Assemblage,
                   diversity_val = qD,
@@ -142,6 +163,11 @@ calc_map <- function(data,
                   coverage = SC,
                   diversity_type = Order.q) %>%
     dplyr::mutate(cellid = as.integer(cellid), .keep = "unused")
+
+  # Add diversity values to grid
+  est_diversity_grid <-
+    grid %>%
+    dplyr::left_join(est_diversity_cell, by = "cellid")
 
   } else if (type == "obs_rich") {
 
