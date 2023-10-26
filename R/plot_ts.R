@@ -1,39 +1,56 @@
-plot_ts <- function(coverage_df, type = "obs") {
+plot_ts <- function(coverage_df) {
 
-  if (type == "obs") {
+  # Get start and end years
+  first_year <- head(coverage_df$year, n=1)
+  final_year <- tail(coverage_df$year, n=1)
 
-    # Plot unadjusted cube richness trend
-    obs_richness_ts_plot <-
-      ggplot(coverage_df, aes(x = year, y = obs_richness)) +
-      geom_line(color = "lightblue", size = 0.5) +
-      geom_smooth(color = "red", linewidth = 1, linetype = "dashed") +
-      scale_x_continuous(breaks = seq(first_year,
-                                      final_year,
-                                      by = 5)) +
-      labs(x = "Year", y = "Species Richness",
-           title = paste("Time Series of Species Richness (",
-                         first_year,
-                         "-",
-                         final_year,
-                         ")",
-                         sep="")) +
-      theme_minimal() +
-      theme(plot.title = element_text(hjust = 0.5),
-            text = element_text(size = 14))
-    obs_richness_ts_plot
+  # Determine legend label
+  diversity_type <- c("total_records",
+                      "rarefied",
+                      "0",
+                      "1",
+                      "2",
+                      "obs_richness",
+                      "evenness")
 
-  } else if (type == "adj") {
+  names(diversity_type) <- c("Adjusted Species Richness",
+                             "Rarefied Species Richness",
+                             "Estimated Species Richness",
+                             "Shannon Diversity",
+                             "Simpson Diversity",
+                             "Observed Species Richness",
+                             "Evenness")
+
+  y_label <- names(diversity_type)[diversity_type %in%
+                                       coverage_df$diversity_type[1]]
+
+  suppress_y <- if (coverage_df$diversity_type[1]=="obs_richness" |
+                    coverage_df$diversity_type[1]=="evenness") {
+    "n"
+  } else {
+      "y"
+    }
+
+  # Suppress y axis values unless plotting evenness or observed richness
 
     # Plot adjusted cube richness trend
-    adj_richness_ts_plot <-
-      ggplot(coverage_df, aes(x = year, y = est_richness_index)) +
-      geom_line(color = "lightblue", size = 0.5) +
-      geom_smooth(color = "red", size = 1, linetype = "dashed") +
+  adj_richness_ts_plot <-
+      ggplot(coverage_df, aes(x = year,
+                              y = diversity_val)) +
+      geom_line(color = "lightblue",
+                size = 0.8) +
+      geom_smooth(color = "red",
+                  size = 1,
+                  linetype = "dashed",
+                  method = "loess",
+                  formula = "y ~ x") +
       scale_x_continuous(breaks = seq(first_year,
                                       final_year,
                                       by = 5)) +
-      labs(x = "Year", y = "Species Richness",
-           title = paste("Time Series of Species Richness (",
+      labs(x = "Year", y = y_label,
+           title = paste(y_label,
+                         " Trend",
+                         " (",
                          first_year,
                          "-",
                          final_year,
@@ -41,13 +58,10 @@ plot_ts <- function(coverage_df, type = "obs") {
                          sep="")) +
       theme_minimal() +
       theme(plot.title = element_text(hjust = 0.5),
-            text = element_text(size = 14))
+            text = element_text(size = 14),
+            axis.text.y = if (suppress_y=="y") {element_blank()} else {element_text()}
+            )
+
     adj_richness_ts_plot
-
-  } else {
-
-    print("Please use 'obs' or 'adj' for type.")
-
-  }
 
 }
