@@ -22,14 +22,14 @@ plot_ts <- function(coverage_df) {
                              "Evenness")
 
   y_label <- names(diversity_type)[diversity_type %in%
-                                       coverage_df$diversity_type[1]]
+                                     coverage_df$diversity_type[1]]
 
   suppress_y <- if (coverage_df$diversity_type[1]=="obs_richness" |
                     coverage_df$diversity_type[1]=="evenness") {
     "n"
   } else {
-      "y"
-    }
+    "y"
+  }
 
   # Suppress y axis values unless plotting evenness or observed richness
 
@@ -56,12 +56,16 @@ plot_ts <- function(coverage_df) {
                          final_year,
                          ")",
                          sep="")) +
-      theme_minimal() +
-      theme(plot.title = element_text(hjust = 0.5),
-            text = element_text(size = 14),
-            axis.text.y = if (suppress_y=="y") {element_blank()} else {element_text()}
-            )
+    theme_minimal() +
+    theme(plot.title = element_text(hjust = 0.5),
+          text = element_text(size = 14),
+          axis.text.y = if (suppress_y=="y") {
+            element_blank()
+          } else {
+            element_text()
+          }
+    )
 
-    adj_richness_ts_plot
+  adj_richness_ts_plot
 
 }
