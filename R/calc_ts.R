@@ -1,12 +1,13 @@
 #' Calculate species richness trend
 #'
 #' @param data A tibble created from a GBIF cube using the process_cube function.
-#' @param method A character vector, "raw", "total_records", or "rarefaction".
-#'   "raw" calculates the observed species richness trend from the cube data,
+#' @param method A character vector.
+#'   "observed" calculates the observed species richness trend from the cube data,
 #'   "total_records" uses the total number of occurrences for each year as a
 #'   proxy for sampling effort.
 #'   "rarefaction" calculates rarefaction curves to approximate sampling effort,
-#'   "coverage" estimates relative richness trends by standardizing by coverage
+#'   "coverage" estimates relative richness trends by standardizing by coverage,
+#'   "evenness" calculates evenness
 #'
 #' @return A tibble
 #' @export
@@ -15,15 +16,23 @@
 #' calc_srt(processed_cube, "rarefaction")
 calc_ts <- function(data, method, qval = 0, inext_sampsize = 150, coverage = 0.9) {
 
+  # Put year names into a vector
+  year_names <- unique(data$year)
+
   # Calculate species richness and total records by year
   richness_by_year <-
-    merged_data %>%
+    data %>%
     dplyr::group_by(year) %>%
-    dplyr::summarise(obs_richness = n_distinct(scientificName),
-                     total_records = sum(obs),
+    dplyr::summarise(total_records = sum(obs),
+                     obs_richness = n_distinct(scientificName),
                      .groups = "drop")
 
   if (method == "observed") {
+
+    richness_by_year <-
+      richness_by_year %>%
+      dplyr::rename(diversity_val = obs_richness) %>%
+      tibble::add_column(diversity_type = c("obs_richness"))
 
     return(richness_by_year)
 
@@ -32,14 +41,15 @@ calc_ts <- function(data, method, qval = 0, inext_sampsize = 150, coverage = 0.9
     # Adjust species richness using total records as proxy for sampling effort
     total_records_df <-
       richness_by_year %>%
-      dplyr::mutate(adj_relative_richness = (obs_richness / total_records * 500),
-                        .after = "obs_richness")
+      dplyr::mutate(diversity_val = (obs_richness / total_records * 500),
+                        .after = "obs_richness") %>%
+      tibble::add_column(diversity_type = c("total_records"))
 
   } else if (method == "rarefaction") {
 
     # Calculate number of records for each species by year
     species_records <-
-      merged_data %>%
+      data %>%
       dplyr::group_by(year) %>%
       dplyr::group_split() %>%
       purrr::map(. %>%
@@ -70,8 +80,9 @@ calc_ts <- function(data, method, qval = 0, inext_sampsize = 150, coverage = 0.9
     # Calculate adjusted species richness by year
     rarefied_df <-
       richness_by_year %>%
-      tibble::add_column(rarefied_richness = unlist(rarefied_richness),
-                         .after = "obs_richness")
+      tibble::add_column(diversity_val = unlist(rarefied_richness),
+                         .after = "obs_richness") %>%
+      tibble::add_column(diversity_type = c("rarefied"))
 
   }
 
@@ -99,7 +110,7 @@ calc_ts <- function(data, method, qval = 0, inext_sampsize = 150, coverage = 0.9
 
     # Create list of occurrence matrices by year, with species as rows
     species_records_raw <-
-      merged_data %>%
+      data %>%
       dplyr::group_by(year) %>%
       dplyr::group_split() %>%
       purrr::map(. %>%
@@ -138,7 +149,7 @@ calc_ts <- function(data, method, qval = 0, inext_sampsize = 150, coverage = 0.9
 
     # Extract estimated relative species richness
     est_richness <-
-      coverage_rare_temp$iNextEst$coverage_based %>%
+      coverage_rare$iNextEst$coverage_based %>%
       dplyr::filter(abs(SC-coverage) == min(abs(SC-coverage)),
                     .by = Assemblage) %>%
       dplyr::select(Assemblage, qD, t, SC, Order.q) %>%
@@ -160,8 +171,45 @@ calc_ts <- function(data, method, qval = 0, inext_sampsize = 150, coverage = 0.9
       richness_by_year %>%
       add_column(est_relative_richness = est_richness$est_relative_richness,
                  .after = "obs_richness") %>%
-      add_column(est_richness_index = est_richness$index,
-                 .after = "est_relative_richness")
+      add_column(diversity_val = est_richness$index,
+                 .after = "est_relative_richness") %>%
+      tibble::add_column(diversity_type = est_richness$diversity_type) %>%
+      as_tibble
+
+  } else if (method=="evenness") {
+
+
+    # Calculate number of records for each species by grid cell
+    species_records <-
+      data %>%
+      dplyr::group_by(year) %>%
+      dplyr::group_split() %>%
+      setNames(year_names) %>%
+      purrr::map(. %>%
+                   dplyr::group_by(eea_cell_code,
+                                   scientificName) %>%
+                   dplyr::summarise(spec_rec = sum(obs),
+                                    .groups = "drop") %>%
+                   tidyr::pivot_wider(names_from = scientificName,
+                                      values_from = spec_rec) %>%
+                   dplyr::select(-eea_cell_code) %>%
+                   replace(is.na(.), 0)
+      )
+
+    # # name list elements
+    # names(species_records) <- unique(occ_grid_int$cellid)
+
+    # Calculate adjusted evenness for each year
+    evenness <- species_records %>%
+      purrr::map(~calc_evenness(.)) %>%
+      unlist() %>%
+      as.data.frame() %>%
+      tibble::rownames_to_column(var = "year") %>%
+      dplyr::rename(diversity_val = ".") %>%
+      dplyr::mutate(year = as.integer(year),
+                    .keep = "unused") %>%
+      tibble::add_column(diversity_type = c("evenness")) %>%
+      as_tibble
 
     }
 
