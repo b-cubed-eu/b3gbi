@@ -8,20 +8,26 @@ plot_map <- function(coverage_df_cell) {
                       "1",
                       "2",
                       "obs_richness",
-                      "evenness")
+                      "evenness",
+                      "ab_rarity",
+                      "area_rarity",
+                      "total_obs",
+                      "newness",
+                      "density")
 
   names(diversity_type) <- c("Estimated \nSpecies \nRichness",
                              "Shannon \nDiversity",
                              "Simpson \nDiversity",
                              "Observed \nSpecies \nRichness",
-                             "Evenness")
+                             "Evenness",
+                             "Abundance-\nBased \nRarity",
+                             "Area-\nBased \nRarity",
+                             "Total \nOccurrences",
+                             "Mean Year of \nOccurrence",
+                             "Occurrences \n per km^2")
 
   leg_label <- names(diversity_type)[diversity_type %in%
                                        coverage_df_cell$diversity_type[1]]
-
-  # coverage_df_cell$diversity_val <- ifelse(coverage_df_cell$diversity_type=="obs_richness",
-  #                                          log(coverage_df_cell$diversity_val+1),
-  #                                          coverage_df_cell$diversity_val)
 
   # Plot estimated relative richness
   diversity_plot <- ggplot(coverage_df_cell) +
@@ -47,6 +53,27 @@ plot_map <- function(coverage_df_cell) {
       legend.text = element_blank()
     ) +
     labs(fill = leg_label)
+
+  if (coverage_df_cell$diversity_type[1]=="newness" |
+      coverage_df_cell$diversity_type[1]=="total_obs" |
+      coverage_df_cell$diversity_type[1]=="density" |
+      coverage_df_cell$diversity_type[1]=="evenness") {
+
+    diversity_plot <-
+      diversity_plot +
+      theme(legend.text = element_text())
+
+  }
+
+  if (coverage_df_cell$diversity_type[1]=="density") {
+
+    diversity_plot <-
+      diversity_plot +
+      labs(fill = bquote(atop(Occurrences,
+                              per~km^2)))
+
+  }
+
   diversity_plot
 
 }
