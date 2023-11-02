@@ -16,6 +16,8 @@ library(mgcv)
 library(devtools)
 library(iNEXT)
 library(ggplot2)
+library(ggtext)
+library(patchwork)
 
 # Set parameters ----
 region_level <- "continent" # country, continent, world
