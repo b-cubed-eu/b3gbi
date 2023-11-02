@@ -2,7 +2,7 @@
 # sites as rows.
 
 calc_evenness <- function(x) {
-  n <- colSums(x)
+  n <- x
   N <- sum(n)
   p <- n / N
   p_squared <- p^2
@@ -16,7 +16,7 @@ calc_evenness <- function(x) {
 }
 
 calc_e9_evenness <- function(x) {
-  n <- colSums(x)
+  n <- x
   N <- sum(n)
   S <- sum(n > 0)
   p <- n / N
