@@ -20,8 +20,8 @@ library(ggtext)
 library(patchwork)
 
 # Set parameters ----
-region_level <- "continent" # country, continent, world
-region <- "europe" # lower-case name of country or continent (or world)
+region_level <- "country" # country, continent, world
+region <- "Germany" # lower-case name of country or continent (or world)
 grid_size <- 10000 # in meters
 bias_corr_type <- "rarefaction" # type of bias correction (rarefaction, Hill)
 first_year <- 1950 # start year of data
@@ -35,10 +35,14 @@ cube_name <- "inst/extdata/eu_modellingtaxa_cube.csv"
 tax_info <- "inst/extdata/eu_modellingtaxa_info.csv"
 merged_data <- process_cube(cube_name, tax_info, first_year, final_year)
 
+cube_name <- "inst/extdata/global_amphibians_cube.csv"
+tax_info <- "inst/extdata/global_amphibians_info.csv"
+amphib_data <- process_cube(cube_name, tax_info, first_year, final_year)
+
 # Calculate species richness ----
 
-richness_raw <- calc_ts(merged_data, method="raw")
-richness_tr <- calc_ts(merged_data, method="total_records")
+richness_raw <- calc_ts(amphib_data, method="observed")
+richness_tr <- calc_ts(amphib_data, method="total_records")
 richness_rf <- calc_ts(merged_data, method="rarefaction")
-evenness_ts <- calc_ts(merged_data, method="evenness")
+evenness_ts <- calc_ts(amphib_data, method="evenness")
 
