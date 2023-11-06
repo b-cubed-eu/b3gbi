@@ -24,14 +24,15 @@ plot_ts <- function(coverage_df) {
   y_label <- names(diversity_type)[diversity_type %in%
                                      coverage_df$diversity_type[1]]
 
+  # Suppress y axis values except for certain diversity types
   suppress_y <- if (coverage_df$diversity_type[1]=="obs_richness" |
-                    coverage_df$diversity_type[1]=="evenness") {
+                    coverage_df$diversity_type[1]=="evenness" |
+                    coverage_df$diversity_type[1]=="total_records")
+    {
     "n"
   } else {
     "y"
   }
-
-  # Suppress y axis values unless plotting evenness or observed richness
 
     # Plot adjusted cube richness trend
   adj_richness_ts_plot <-
