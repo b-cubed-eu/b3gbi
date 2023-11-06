@@ -34,7 +34,6 @@ process_cube <- function(cube_name, tax_info, first_year = NA, final_year = NA) 
     col_types = cols(
       year = col_double(),
       eea_cell_code = col_character(),
-      taxonKey = col_double(),
       n = col_double(),
       min_coord_uncertainty = col_double()
     ),
@@ -45,7 +44,6 @@ process_cube <- function(cube_name, tax_info, first_year = NA, final_year = NA) 
   taxonomic_info <- readr::read_csv(
     file = tax_info,
     col_types = readr::cols(
-      taxonKey = readr::col_double(),
       scientificName = readr::col_character(),
       rank = readr::col_factor(),
       taxonomicStatus = readr::col_factor(),
@@ -54,6 +52,23 @@ process_cube <- function(cube_name, tax_info, first_year = NA, final_year = NA) 
     ),
     na = ""
   )
+
+  if("speciesKey" %in% colnames(occurrence_data)) {
+
+    occurrence_data <-
+      occurrence_data %>%
+      rename(taxonKey = "speciesKey")
+
+    occurrence_data <-
+      occurrence_data %>%
+      mutate(eea_cell_code = gsub("-", "", eea_cell_code))
+
+    taxonomic_info <-
+      taxonomic_info %>%
+      rename(taxonKey = "speciesKey")
+
+
+  }
 
   # Merge the two data frames together on 'taxonKey'
   merged_data <- dplyr::left_join(occurrence_data, taxonomic_info, by = "taxonKey")
