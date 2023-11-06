@@ -14,7 +14,7 @@
 #'
 #' @examples
 #' calc_srt(processed_cube, "rarefaction")
-calc_ts <- function(data, method, qval = 0, inext_sampsize = 150, coverage = 0.9) {
+calc_ts <- function(data, method = "observed", qval = 0, inext_sampsize = 150, coverage = 0.9) {
 
   # Put year names into a vector
   year_names <- unique(data$year)
@@ -180,36 +180,24 @@ calc_ts <- function(data, method, qval = 0, inext_sampsize = 150, coverage = 0.9
 
 
     # Calculate number of records for each species by grid cell
-    species_records <-
+    evenness <-
       data %>%
-      dplyr::group_by(year) %>%
-      dplyr::group_split() %>%
-      setNames(year_names) %>%
-      purrr::map(. %>%
-                   dplyr::group_by(eea_cell_code,
-                                   scientificName) %>%
-                   dplyr::summarise(spec_rec = sum(obs),
-                                    .groups = "drop") %>%
-                   tidyr::pivot_wider(names_from = scientificName,
-                                      values_from = spec_rec) %>%
-                   dplyr::select(-eea_cell_code) %>%
-                   replace(is.na(.), 0)
-      )
-
-    # # name list elements
-    # names(species_records) <- unique(occ_grid_int$cellid)
-
-    # Calculate adjusted evenness for each year
-    evenness <- species_records %>%
+      dplyr::summarize(num_occ = sum(obs),
+                       .by = c(year, taxonKey)) %>%
+      dplyr::arrange(year) %>%
+      tidyr::pivot_wider(names_from = year,
+                         values_from = num_occ) %>%
+      replace(is.na(.), 0) %>%
+      tibble::column_to_rownames("taxonKey") %>%
       purrr::map(~calc_evenness(.)) %>%
       unlist() %>%
       as.data.frame() %>%
-      tibble::rownames_to_column(var = "year") %>%
       dplyr::rename(diversity_val = ".") %>%
+      tibble::rownames_to_column(var = "year") %>%
       dplyr::mutate(year = as.integer(year),
                     .keep = "unused") %>%
-      tibble::add_column(diversity_type = c("evenness")) %>%
-      as_tibble
+      tibble::add_column(diversity_type = c("evenness"),
+                         .after = "year")
 
     }
 
