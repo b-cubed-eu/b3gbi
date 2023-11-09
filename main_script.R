@@ -339,7 +339,7 @@ gifski(c("mapobs_amph3_1930s.png",
          "mapobs_amph3_2000s.png",
          "mapobs_amph3_2010s.png",
          "mapobs_amph3_2020s.png"),
-       gif_file = "mapobs_amph3_1950s_to_2020s.gif",
+       gif_file = "mapobs_amph3_1930s_to_2020s.gif",
        delay = 1.5,
        width = 2500,
        height = 2000)
