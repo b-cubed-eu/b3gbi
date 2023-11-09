@@ -9,7 +9,13 @@
 #'
 #' @examples
 #' gridded_rarity <- calc_rarity(processed_cube, "grid", "area")
-calc_rarity <- function(data, method, type) {
+calc_rarity <- function(data,
+                        method = "grid",
+                        type = "area",
+                        cs1 = 100,
+                        cs2 = 100,
+                        level = "country",
+                        region = "Denmark") {
 
   # Put year names into a vector
   year_names <- unique(data$year)
