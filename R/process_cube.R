@@ -10,6 +10,7 @@
 #'
 #' @param cube_name The location and name of a data cube file to open.
 #' @param tax_info The location and name of an associated taxonomic info file.
+#' @param datasets_info The location and name of an associated dataset info file.
 #' @param first_year The first year of occurrences (if different from cube).
 #' @param final_year The final year of occurrences (if different from cube).
 #'
@@ -26,7 +27,7 @@
 #'
 #' process_cube(cube_name, tax_info)
 #'
-process_cube <- function(cube_name, tax_info, first_year = NA, final_year = NA) {
+process_cube <- function(cube_name, tax_info, datasets_info = NA, first_year = NA, final_year = NA) {
 
   # Read in data cube
   occurrence_data <- readr::read_csv(
@@ -53,6 +54,21 @@ process_cube <- function(cube_name, tax_info, first_year = NA, final_year = NA) 
     na = ""
   )
 
+  if(!is.na(datasets_info)) {
+
+    # Read in associated dataset info
+    datasets_info <- readr::read_csv(
+      file = dataset_info,
+      col_types = readr::cols(
+        # datasetKey = readr::col_double(),
+        datasetName = readr::col_factor(),
+        dataType = readr::col_factor()
+      ),
+      na = ""
+    )
+
+  }
+
   if("speciesKey" %in% colnames(occurrence_data)) {
 
     occurrence_data <-
@@ -70,8 +86,15 @@ process_cube <- function(cube_name, tax_info, first_year = NA, final_year = NA) 
 
   }
 
-  # Merge the two data frames together on 'taxonKey'
+  # Merged the three data frames together
   merged_data <- dplyr::left_join(occurrence_data, taxonomic_info, by = "taxonKey")
+
+  if(!is.na(datasets_info)) {
+
+  merged_data <- dplyr::left_join(datasets_info, by = "datasetKey")
+
+  }
+
 
   # Separate 'eea_cell_code' into resolution, coordinates
   merged_data <- merged_data %>%
@@ -81,10 +104,21 @@ process_cube <- function(cube_name, tax_info, first_year = NA, final_year = NA) 
       resolution = str_replace_all(eea_cell_code, "(E\\d+)|(N\\d+)", "")
     )
 
+  if(!is.na(datasets_info)) {
+
   # Remove columns that are not needed
   merged_data <-
     merged_data %>%
-    dplyr::select(-min_coord_uncertainty, -taxonomicStatus, -includes)
+    dplyr::select(-min_coord_uncertainty, -taxonomicStatus, -includes, -notes)
+
+  } else {
+
+    # Remove columns that are not needed
+    merged_data <-
+      merged_data %>%
+      dplyr::select(-min_coord_uncertainty, -taxonomicStatus, -includes)
+
+  }
 
   # Rename column n to obs
   merged_data <-
@@ -99,8 +133,8 @@ process_cube <- function(cube_name, tax_info, first_year = NA, final_year = NA) 
            .,
            ifelse(first_year > ., first_year, .))
   final_year <- merged_data %>%
-    dplyr::select(year) %>%
-    max() - 1 %>%
+    dplyr::summarize(max_year = max(year)-1) %>%
+    dplyr::pull(max_year) %>%
     ifelse(is.na(final_year),
            .,
            ifelse(final_year < ., final_year, .))
@@ -111,6 +145,9 @@ process_cube <- function(cube_name, tax_info, first_year = NA, final_year = NA) 
     dplyr::filter(year >= first_year) %>%
     dplyr::filter(year <= final_year)
 
-  merged_data
+  # Remove any duplicate rows
+  merged_data <-
+    merged_data %>%
+    dplyr::distinct()
 
 }
