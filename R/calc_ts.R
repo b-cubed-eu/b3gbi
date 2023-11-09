@@ -29,12 +29,26 @@ calc_ts <- function(data, method = "observed", qval = 0, inext_sampsize = 150, c
 
   if (method == "observed") {
 
-    richness_by_year <-
+    richness_by_year_obs <-
       richness_by_year %>%
       dplyr::rename(diversity_val = obs_richness) %>%
       tibble::add_column(diversity_type = c("obs_richness"))
 
-    return(richness_by_year)
+    return(richness_by_year_obs)
+
+   } else if (method == "cumulative") {
+
+      cumulative_richness <-
+        data %>%
+        dplyr::select(year, taxonKey) %>%
+        dplyr::distinct(taxonKey, .keep_all = TRUE) %>%
+        dplyr::summarize(unique_by_year = length(unique(taxonKey)),
+                         .by = year) %>%
+        dplyr::reframe(year = year,
+                       diversity_val = cumsum(unique_by_year)) %>%
+        tibble::add_column(diversity_type = c("cum_richness"))
+
+      return(cumulative_richness)
 
   } else if (method == "total_records") {
 
@@ -44,6 +58,35 @@ calc_ts <- function(data, method = "observed", qval = 0, inext_sampsize = 150, c
       dplyr::mutate(diversity_val = (obs_richness / total_records * 500),
                         .after = "obs_richness") %>%
       tibble::add_column(diversity_type = c("total_records"))
+
+  } else if (method == "total_obs") {
+
+    # Calculate total number of observations over the grid
+    obs_year <-
+      data %>%
+      dplyr::summarize(diversity_val = sum(obs),
+                       .by = "year") %>%
+      tibble::add_column(diversity_type = c("total_obs"))
+
+  } else if (method == "occ_by_type") {
+
+    # Calculate total number of observations over the grid
+    occ_by_type <-
+      data %>%
+      dplyr::summarize(diversity_val = sum(obs),
+                       .by = c("year", "dataType")) %>%
+      dplyr::rename(type = dataType) %>%
+      tibble::add_column(diversity_type = c("occ_by_type"))
+
+  } else if (method == "occ_by_dataset") {
+
+    # Calculate total number of observations over the grid
+    occ_by_dataset <-
+      data %>%
+      dplyr::summarize(diversity_val = sum(obs),
+                       .by = c("year", "datasetName")) %>%
+      dplyr::rename(type = datasetName) %>%
+      tibble::add_column(diversity_type = c("occ_by_dataset"))
 
   } else if (method == "rarefaction") {
 
@@ -144,14 +187,18 @@ calc_ts <- function(data, method = "observed", qval = 0, inext_sampsize = 150, c
     names(species_records_raw) <- richness_by_year$year
 
     # Calculate diversity estimates
+  #  coverage_rare <- species_records_raw %>%
+   #   iNEXT(endpoint=inext_sampsize, datatype="incidence_raw", q=qval)
+
     coverage_rare <- species_records_raw %>%
-      iNEXT(endpoint=inext_sampsize, datatype="incidence_raw", q=qval)
+      estimateD(base = "coverage", level = coverage, datatype="incidence_raw", q=qval)
 
     # Extract estimated relative species richness
     est_richness <-
-      coverage_rare$iNextEst$coverage_based %>%
-      dplyr::filter(abs(SC-coverage) == min(abs(SC-coverage)),
-                    .by = Assemblage) %>%
+      coverage_rare %>%
+    #  coverage_rare$iNextEst$coverage_based %>%
+    #  dplyr::filter(abs(SC-coverage) == min(abs(SC-coverage)),
+    #                .by = Assemblage) %>%
       dplyr::select(Assemblage, qD, t, SC, Order.q) %>%
       dplyr::rename(year = Assemblage,
                     est_relative_richness = qD,
