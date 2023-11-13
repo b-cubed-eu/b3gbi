@@ -343,3 +343,15 @@ gifski(c("mapobs_amph3_1930s.png",
        delay = 1.5,
        width = 2500,
        height = 2000)
+
+# Plot animation using a function
+plot_anim_map(amphib_data,
+              filename="amphib_europe_test_anim.gif",
+              start_year = 1970,
+              end_year = 2022,
+              num_years = 10,
+              div_type = "total_obs",
+              cust_limits = c(1, 50000),
+              xlims=c(2000000, 6200000),
+              ylims=c(1500000, 5500000),
+              title = "Amphibians Occurrences in Europe")
