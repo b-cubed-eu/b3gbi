@@ -2,27 +2,18 @@
 
 # Load required packages ----
 library(tidyverse)
-library(vegan)
-library(minpack.lm)
 library(rnaturalearth)
 library(rnaturalearthdata)
 library(sf)
-library(tmap)
-library(scico)
-library(gnlm)
 library(furrr)
-library(tictoc)
-library(mgcv)
+library(purrr)
+library(future)
+library(permute)
 library(devtools)
 library(iNEXT)
 library(ggplot2)
-library(ggtext)
-library(patchwork)
-library(scales)
-library(gganimate)
-library(transformr)
-library(gifski)
-library(ggallin)
+library(taxize)
+library(virtualspecies)
 
 # Set parameters ----
 region_level <- "country" # country, continent, world

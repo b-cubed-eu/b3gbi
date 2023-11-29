@@ -1,0 +1,18 @@
+RWINLIB = ../windows/libgifski
+PKG_CPPFLAGS = -I$(RWINLIB)/include
+
+ifneq ($(R_COMPILED_BY),gcc 8.3.0)
+NTDLL=-lntdll
+endif
+
+PKG_LIBS = -L$(RWINLIB)/lib \
+	-L$(RWINLIB)/lib$(R_ARCH) \
+	-lgifski -lws2_32 -ladvapi32 -luserenv -ldbghelp -lbcrypt $(NTDLL)
+
+all: clean winlibs
+
+winlibs:
+	"${R_HOME}/bin${R_ARCH_BIN}/Rscript.exe" "winlibs_gifski.R"
+
+clean:
+	rm -f $(SHLIB) $(OBJECTS)

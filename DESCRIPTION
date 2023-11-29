@@ -11,13 +11,21 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.2.3
+LinkingTo: gifski_int
 Imports: 
     dplyr,
     furrr,
     future,
+    ggplot2,
+    iNEXT,
     magrittr,
-    mgcv,
+    permute,
     purrr,
     readr,
+    rnaturalearth,
+    sf,
+    taxize,
+    tibble,
     tidyr,
+    units,
     vegan
