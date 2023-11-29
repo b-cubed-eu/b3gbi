@@ -1,14 +1,15 @@
-# Calculate evenness from occurrence data frame, with species as columns and
-# sites as rows.
+# Calculate evenness from a vector of summed species occurrences.
 
-calc_evenness <- function(x) {
+calc_pielou_evenness <- function(x) {
+  S <- length(x)
   n <- x
   N <- sum(n)
   p <- n / N
   p_squared <- p^2
   summed <- sum(p_squared)
-  complement <- 1 - summed
-  even <- complement * (N / (N - 1))
+  rooted <- sqrt(summed)
+  complement <- 1 - rooted
+  even <- complement / (1 - sqrt(1 / S))
   if (is.nan(even)) {
     even <- NA
   }
