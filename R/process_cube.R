@@ -17,16 +17,6 @@
 #' @return A tibble.
 #' @export
 #'
-#' @examples
-#' library("readr")
-#' library("dplyr")
-#'
-#' cube_name <- "eu_modellingtaxa_cube.csv"
-#' tax_info <- "eu_modellingtaxa_info.csv"
-#' process_cube(cube_name, tax_info, 1970, 2010)
-#'
-#' process_cube(cube_name, tax_info)
-#'
 process_cube <- function(cube_name, tax_info, datasets_info = NA, first_year = NA, final_year = NA) {
 
   # Read in data cube
@@ -91,7 +81,7 @@ process_cube <- function(cube_name, tax_info, datasets_info = NA, first_year = N
 
   if(!is.na(datasets_info)) {
 
-  merged_data <- dplyr::left_join(datasets_info, by = "datasetKey")
+    merged_data <- dplyr::left_join(datasets_info, by = "datasetKey")
 
   }
 
@@ -106,17 +96,39 @@ process_cube <- function(cube_name, tax_info, datasets_info = NA, first_year = N
 
   if(!is.na(datasets_info)) {
 
-  # Remove columns that are not needed
-  merged_data <-
-    merged_data %>%
-    dplyr::select(-min_coord_uncertainty, -taxonomicStatus, -includes, -notes)
+    # if (merge_taxonomy == TRUE) {
+    #
+    #   # Remove columns that are not needed
+    #   merged_data <-
+    #     merged_data %>%
+    #     dplyr::select(-min_coord_uncertainty, -taxonomicStatus, -datasetKey, -notes)
+    #
+    # } else {
+
+      # Remove columns that are not needed
+      merged_data <-
+        merged_data %>%
+        dplyr::select(-min_coord_uncertainty, -taxonomicStatus, -datasetKey, -includes, -notes)
+
+    # }
 
   } else {
 
-    # Remove columns that are not needed
-    merged_data <-
-      merged_data %>%
-      dplyr::select(-min_coord_uncertainty, -taxonomicStatus, -includes)
+    # if (merge_taxonomy == TRUE) {
+    #
+    #   # Remove columns that are not needed
+    #   merged_data <-
+    #     merged_data %>%
+    #     dplyr::select(-min_coord_uncertainty, -taxonomicStatus)
+    #
+    # } else {
+
+      # Remove columns that are not needed
+      merged_data <-
+        merged_data %>%
+        dplyr::select(-min_coord_uncertainty, -taxonomicStatus, -includes)
+
+    # }
 
   }
 
@@ -149,5 +161,15 @@ process_cube <- function(cube_name, tax_info, datasets_info = NA, first_year = N
   merged_data <-
     merged_data %>%
     dplyr::distinct()
+
+  # if (merge_taxonomy == TRUE) {
+  #
+  #   merged_data <-
+  #     merged_data %>%
+  #     dplyr::mutate(across(includes, function(x) sub("\\:.*", "", x))) %>%
+  #     dplyr::mutate(taxonKey = includes) %>%
+  #     dplyr::select(-includes)
+  #
+  # }
 
 }
