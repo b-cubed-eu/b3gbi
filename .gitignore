@@ -7,3 +7,7 @@
 /man
 /reports
 /inst
+/test_plots
+/test_data
+Env.RData
+
