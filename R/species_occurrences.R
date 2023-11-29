@@ -1,21 +1,19 @@
-#' Plot gridded occurrences for individual species
+#' Calculate occurrences for individual species over time or across a grid
 #'
 #' @param data A tibble created from a GBIF cube using the process_cube function.
 #' @param method A character vector.
 #'
-#' @return
+#' @return ?
 #' @export
 #'
-#' @examples
-#' species_occurrences(processed_cube, "5573439")
-species_occurrences <- function(data, species) {
+species_occurrences <- function(data, method = "grid", level = "continent", region = "Europe", cs1 = 100, cs2 = 100) {
 
   # Put year names into a vector
   year_names <- unique(data$year)
 
   if (method == "year") {
 
-    # Calculate rarity for each species by year
+    # Calculate total occurrences for each species by year
     occurrences_year_taxon <-
       data %>%
       dplyr::mutate(occurrences = sum(obs), .by = c(year, taxonKey)) %>%
@@ -76,19 +74,21 @@ species_occurrences <- function(data, species) {
     occ_grid_int <- sf::st_intersection(occ_sf, grid)
 
     # Add cell numbers to occurrence data
-    data_cells <-
+    data_cell <-
       data_scaled %>%
-      dplyr::inner_join(occ_grid_int, keep = FALSE)
+      dplyr::inner_join(occ_grid_int, keep = FALSE) %>%
+      dplyr::arrange(cellid)
 
-    # Calculate total summed rarity (in terms of abundance) for each grid cell
+    # Calculate total occurrences for each species by grid cell
     occurrence_cell <-
-      data_cells %>%
-      dplyr::mutate(num_records = sum(obs), .by = c(taxonKey, cellid))# %>%
+      data_cell %>%
+      dplyr::mutate(num_records = sum(obs), .by = c(taxonKey, cellid)) %>%
       dplyr::distinct(cellid, scientificName, .keep_all = TRUE) %>%
       dplyr::arrange(cellid) %>%
-      dplyr::select(cellid, taxonKey, scientificName, num_records)
+      dplyr::select(cellid, taxonKey, scientificName, num_records) %>%
+      tibble::add_column(diversity_type = c("spec_occ"))
 
-    # Add abundance-based rarity to grid
+    # Add total occurrences to grid
     occurrence_grid <-
       grid %>%
       dplyr::left_join(occurrence_cell, by = "cellid")
