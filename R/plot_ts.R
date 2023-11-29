@@ -1,74 +1,70 @@
-plot_ts <- function(coverage_df) {
+plot_ts <- function(data,
+                    suppress_y = "n",
+                    title = "auto",
+                    linecolour = NULL,
+                    trendlinecolour = NULL,
+                    envelopecolour = NULL,
+                    auccolour = NULL,
+                    gridoff = FALSE) {
 
   # Get start and end years
-  first_year <- head(coverage_df$year, n=1)
-  final_year <- tail(coverage_df$year, n=1)
+  first_year <- head(data$year, n=1)
+  final_year <- tail(data$year, n=1)
 
-  # Determine legend label
-  diversity_types <- c("total_records",
-                      "rarefied",
-                      "0",
-                      "1",
-                      "2",
-                      "obs_richness",
-                      "evenness",
-                      "total_obs",
-                      "cum_richness")
+  # Get indicator type
+  div_type <- dplyr::first(data$diversity_type, na_rm = TRUE)
 
-  names(diversity_types) <- c("Adjusted Species Richness",
-                             "Rarefied Species Richness",
-                             "Estimated Species Richness",
-                             "Shannon Diversity",
-                             "Simpson Diversity",
-                             "Observed Species Richness",
-                             "Evenness",
-                             "Total Observations",
-                             "Cumulative Species Richness")
+  # Get default parameters for indicator
+  div_types <- read.csv("inst/extdata/diversity_types.csv",
+                        na.strings = c(""))
+  default_params <- div_types[div_types$label %in% div_type,]
 
-  div_type <- dplyr::first(coverage_df$diversity_type, na_rm = TRUE)
+  # y-axis title
+  y_label <- default_params$legend
 
-  y_label <- names(diversity_type)[diversity_type %in%
-                                     div_type]
+  # Plot title
+  if (!is.null(title)) {
+    if (title == "auto") {
+      title <- paste(default_params$title,
+                     if (div_type != "cum_richness") " Trend",
+                     " (",
+                     first_year,
+                     "-",
+                     final_year,
+                     ")",
+                     sep="")
+    }
+  }
 
-  # # Suppress y axis values except for certain diversity types
-  # suppress_y <- if (div_type=="obs_richness" |
-  #                   div_type=="evenness" |
-  #                   div_type=="total_records")
-  #   {
-  #   "n"
-  # } else {
-  #   "y"
-  # }
-  suppress_y <- "n"
+  # Set colours
+  if (is.null(linecolour)) linecolour = "darkorange"
+  if (is.null(trendlinecolour)) trendlinecolour = "blue"
+  if (is.null(envelopecolour)) envelopecolour = "lightsteelblue1"
+  if (is.null(auccolour)) auccolour = "orange"
 
-  if ("type" %in% colnames(coverage_df)) {
 
-    # Plot trend
+  if ("type" %in% colnames(data)) {
+
+    # Plot line graph with separation by dataset or type
     trend_plot <-
-      ggplot(coverage_df, aes(x = year,
+      ggplot2::ggplot(data, aes(x = year,
                               y = diversity_val)) +
       geom_line(aes(color = type),
                 size = 0.8) +
-      # geom_smooth(aes(color = type),
-      #             size = 1,
-      #             linetype = "dashed",
-      #             method = "loess",
-      #             formula = "y ~ x") +
       scale_x_continuous(breaks = seq(first_year,
                                       final_year,
                                       by = 5)) +
       labs(x = "Year", y = y_label,
-           title = paste(y_label,
-                         " Trend",
-                         " (",
-                         first_year,
-                         "-",
-                         final_year,
-                         ")",
-                         sep="")) +
+           title = title) +
       theme_minimal() +
       theme(plot.title = element_text(hjust = 0.5),
             text = element_text(size = 14),
+            panel.grid.major = if (gridoff == TRUE) {
+              element_blank()
+            } else {
+              element_line()
+            },
+            panel.grid.minor = element_blank(),
             axis.text.y = if (suppress_y=="y") {
               element_blank()
             } else {
@@ -78,37 +74,59 @@ plot_ts <- function(coverage_df) {
 
   } else {
 
-    # Plot adjusted cube richness trend
-  trend_plot <-
-      ggplot(coverage_df, aes(x = year,
-                              y = diversity_val)) +
-      geom_line(color = "lightblue",
-                size = 0.8) +
-      geom_smooth(color = "red",
-                  size = 1,
-                  linetype = "dashed",
+    # Plot line graph
+    trend_plot <-
+      ggplot2::ggplot(data, aes(x = year,
+                                y = diversity_val)) +
+      geom_line(color = linecolour,
+                lwd = 1) +
+      scale_x_continuous(breaks = breaks_pretty_int(n=10)) +
+      scale_y_continuous(breaks = breaks_pretty_int(n = 6)) +
+      labs(x = "Year", y = y_label,
+           title = title) +
+      theme_minimal() +
+      theme(plot.title = element_text(hjust = 0.5),
+            text = element_text(size = 14),
+            panel.grid.major = if (gridoff == TRUE) {
+              element_blank()
+            } else {
+              element_line()
+            },
+            panel.grid.minor = element_blank(),
+            axis.text.y = if (suppress_y=="y") {
+              element_blank()
+            } else {
+              element_text()
+            }
+      )
+
+  }
+
+  if (div_type == "cum_richness") {
+
+    # Plot area under the curve
+    trend_plot <- trend_plot +
+      geom_ribbon(aes(ymin = 0,
+                      ymax = diversity_val),
+                  fill = auccolour, alpha = 0.4)
+
+
+  } else {
+
+    # Plot smoothed trend
+    trend_plot <- trend_plot +
+      geom_smooth(fill = envelopecolour,
+                  lwd = 1,
+                  linetype = 0,
                   method = "loess",
                   formula = "y ~ x") +
-      scale_x_continuous(breaks = pretty_breaks(n=10)) +
-      labs(x = "Year", y = y_label,
-           title = paste(y_label,
-                         " Trend",
-                         " (",
-                         first_year,
-                         "-",
-                         final_year,
-                         ")",
-                         sep="")) +
-    theme_minimal() +
-    theme(plot.title = element_text(hjust = 0.5),
-          text = element_text(size = 14),
-          axis.text.y = if (suppress_y=="y") {
-            element_blank()
-          } else {
-            element_text()
-          }
-    )
-
+      stat_smooth(geom = "line",
+                  method = "loess",
+                  formula = "y ~ x",
+                  linetype = "dashed",
+                  color = trendlinecolour,
+                  alpha = 0.3,
+                  lwd = 1)
   }
 
   trend_plot

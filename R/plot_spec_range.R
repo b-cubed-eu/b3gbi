@@ -1,10 +1,20 @@
-# Function to plot gridded occurrences for selected species
+# Function to plot gridded ranges for selected species
 # Input selected taxonKey values to "species"
 
-plot_spec_occurrences <- function(data, species) {
+plot_spec_range <- function(data, species, buffer = 20000, xlims = NA, ylims = NA) {
 
-  # get map limits
-  map_lims <- sf::st_bbox(data)
+  # check for custom map limits
+  if(any(!is.na(xlims)) & any(!is.na(ylims))) {
+
+    map_lims = c(xlims[1], ylims[1], xlims[2], ylims[2])
+    names(map_lims) = c("xmin", "ymin", "xmax", "ymax")
+
+  } else {
+
+    # get map limits
+    map_lims <- sf::st_bbox(data)
+
+  }
 
   # Get occurrences for selected species
   species_occurrences <-
@@ -24,15 +34,17 @@ plot_spec_occurrences <- function(data, species) {
     purrr::map2(split_so,
                 sci_names,
                 function(x, y) {
+                  x <- sf::st_buffer(x, dist = buffer) %>%
+                    sf::st_union() %>%
+                    sf::st_simplify(dTolerance = buffer / 10) %>%
+                    sf::st_intersection(data)
                   ggplot2::ggplot(x) +
                     geom_sf(data = data,
                             aes(geometry = geometry),
-                                fill = "grey90") +
-                    geom_sf(aes(fill = num_records,
-                                geometry = geometry)) +
-                    scale_fill_gradient(low = "gold",
-                                        high = "firebrick4",
-                                        na.value = "white") +
+                            fill = "grey90") +
+                    geom_sf(aes(geometry = geometry),
+                            fill = "red",
+                            alpha = 0.5) +
                     coord_sf(
                       xlim = c(map_lims["xmin"],
                                map_lims["xmax"]),
@@ -51,12 +63,14 @@ plot_spec_occurrences <- function(data, species) {
                       strip.text = element_text(face = "italic"),
                       plot.title = element_text(face = "italic")
                     ) +
-                    labs(title = y,
-                         fill = "Number of \nOccurrences")
+                    labs(title = y)
                 })
 
+
+
+
   wrap_plots_int(spec_occ_plots) +
-    plot_annotation_int(title = "Species Occurrences",
+    plot_annotation_int(title = "Species Range",
                         theme = theme(plot.title = element_text(size = 20)))
 
 }
