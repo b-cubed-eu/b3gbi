@@ -12,9 +12,13 @@
 #' @return A tibble
 #' @export
 #'
-#' @examples
-#' calc_srt(processed_cube, "rarefaction")
-calc_ts <- function(data, method = "observed", qval = 0, inext_sampsize = 150, coverage = 0.9) {
+calc_ts <- function(data, method = "obs_richness", qval = 0, inext_sampsize = 150, coverage = 0.9) {
+
+  if (method == "e9_evenness") {
+    calc_evenness <- calc_e9_evenness
+  } else if (method == "pielou_evenness") {
+    calc_evenness <- calc_pielou_evenness
+  }
 
   # Put year names into a vector
   year_names <- unique(data$year)
@@ -27,68 +31,59 @@ calc_ts <- function(data, method = "observed", qval = 0, inext_sampsize = 150, c
                      obs_richness = n_distinct(scientificName),
                      .groups = "drop")
 
-  if (method == "observed") {
+  if (method == "obs_richness") {
 
-    richness_by_year_obs <-
+    diversity_ts <-
       richness_by_year %>%
-      dplyr::rename(diversity_val = obs_richness) %>%
-      tibble::add_column(diversity_type = c("obs_richness"))
+      dplyr::rename(diversity_val = obs_richness)# %>%
+     # tibble::add_column(diversity_type = c("obs_richness"))
 
-    return(richness_by_year_obs)
+   # return(richness_by_year_obs)
 
-   } else if (method == "cumulative") {
+   } else if (method == "cum_richness") {
 
-      cumulative_richness <-
+      diversity_ts <-
         data %>%
         dplyr::select(year, taxonKey) %>%
         dplyr::distinct(taxonKey, .keep_all = TRUE) %>%
         dplyr::summarize(unique_by_year = length(unique(taxonKey)),
                          .by = year) %>%
         dplyr::reframe(year = year,
-                       diversity_val = cumsum(unique_by_year)) %>%
-        tibble::add_column(diversity_type = c("cum_richness"))
+                       diversity_val = cumsum(unique_by_year)) #%>%
+       # tibble::add_column(diversity_type = method)
 
-      return(cumulative_richness)
+     # return(diversity_ts)
 
-  } else if (method == "total_records") {
+  } else if (method == "total_occ") {
 
-    # Adjust species richness using total records as proxy for sampling effort
-    total_records_df <-
-      richness_by_year %>%
-      dplyr::mutate(diversity_val = (obs_richness / total_records * 500),
-                        .after = "obs_richness") %>%
-      tibble::add_column(diversity_type = c("total_records"))
-
-  } else if (method == "total_obs") {
-
-    # Calculate total number of observations over the grid
-    obs_year <-
+    # Calculate total number of occurrences over the grid
+    diversity_ts <-
       data %>%
       dplyr::summarize(diversity_val = sum(obs),
-                       .by = "year") %>%
-      tibble::add_column(diversity_type = c("total_obs"))
+                       .by = "year") #%>%
+     # tibble::add_column(diversity_type = c("total_occ"))
 
   } else if (method == "occ_by_type") {
 
     # Calculate total number of observations over the grid
-    occ_by_type <-
+    diversity_ts <-
       data %>%
       dplyr::summarize(diversity_val = sum(obs),
                        .by = c("year", "dataType")) %>%
-      dplyr::rename(type = dataType) %>%
-      tibble::add_column(diversity_type = c("occ_by_type"))
+      dplyr::rename(type = dataType) #%>%
+     # tibble::add_column(diversity_type = c("occ_by_type"))
 
   } else if (method == "occ_by_dataset") {
 
     # Calculate total number of observations over the grid
-    occ_by_dataset <-
+    diversity_ts <-
       data %>%
       dplyr::summarize(diversity_val = sum(obs),
                        .by = c("year", "datasetName")) %>%
-      dplyr::rename(type = datasetName) %>%
-      tibble::add_column(diversity_type = c("occ_by_dataset"))
+      dplyr::rename(type = datasetName)# %>%
+     # tibble::add_column(diversity_type = c("occ_by_dataset"))
 
-  } else if (method == "rarefaction") {
+  } else if (method == "rarefied") {
 
     # Calculate number of records for each species by year
     species_records <-
@@ -106,7 +101,7 @@ calc_ts <- function(data, method = "observed", qval = 0, inext_sampsize = 150, c
     # Calculate rarefaction curves for each year
     future::plan(multisession)
     spec_rare <- species_records %>%
-      furrr::future_map(vegan::specaccum, method = "rarefaction")
+      furrr::future_map(specaccum_int, method = "rarefaction")
 
     # Get the sampling effort level at which to interpolate
     sampling_effort <-
@@ -121,11 +116,11 @@ calc_ts <- function(data, method = "observed", qval = 0, inext_sampsize = 150, c
       purrr::map(~stats::approx(.$sites, .$richness, xout = sampling_effort)$y)
 
     # Calculate adjusted species richness by year
-    rarefied_df <-
+    diversity_ts <-
       richness_by_year %>%
       tibble::add_column(diversity_val = unlist(rarefied_richness),
-                         .after = "obs_richness") %>%
-      tibble::add_column(diversity_type = c("rarefied"))
+                         .after = "obs_richness")# %>%
+      #tibble::add_column(diversity_type = c("rarefied"))
 
   }
 
@@ -149,7 +144,10 @@ calc_ts <- function(data, method = "observed", qval = 0, inext_sampsize = 150, c
   #
   # }
 
-  else if (method == "coverage") {
+  else if (method %in% c("hill0", "hill1", "hill2")) {
+
+    # Extract qvalue from hill diversity type
+    qval <- as.numeric(gsub("hill", "", type))
 
     # Create list of occurrence matrices by year, with species as rows
     species_records_raw <-
@@ -168,7 +166,9 @@ calc_ts <- function(data, method = "observed", qval = 0, inext_sampsize = 150, c
                                  -rank,
                                  -xcoord,
                                  -ycoord,
-                                 -resolution) %>%
+                                 -resolution,
+                                 -basisofRecord,
+                                 -datasetKey) %>%
                    replace(is.na(.), 0) %>%
                    mutate_if(is.numeric,
                              as.integer) %>%
@@ -188,10 +188,10 @@ calc_ts <- function(data, method = "observed", qval = 0, inext_sampsize = 150, c
 
     # Calculate diversity estimates
   #  coverage_rare <- species_records_raw %>%
-   #   iNEXT(endpoint=inext_sampsize, datatype="incidence_raw", q=qval)
+   #   iNEXT::iNEXT(endpoint=inext_sampsize, datatype="incidence_raw", q=qval)
 
     coverage_rare <- species_records_raw %>%
-      estimateD(base = "coverage", level = coverage, datatype="incidence_raw", q=qval)
+      iNEXT::estimateD(base = "coverage", level = coverage, datatype="incidence_raw", q=qval)
 
     # Extract estimated relative species richness
     est_richness <-
@@ -214,20 +214,20 @@ calc_ts <- function(data, method = "observed", qval = 0, inext_sampsize = 150, c
       mutate(index = cumprod(index))
 
     # Add observed richness and total records to df
-    coverage_df <-
+    diversity_ts <-
       richness_by_year %>%
       add_column(est_relative_richness = est_richness$est_relative_richness,
                  .after = "obs_richness") %>%
       add_column(diversity_val = est_richness$index,
                  .after = "est_relative_richness") %>%
-      tibble::add_column(diversity_type = est_richness$diversity_type) %>%
+      #tibble::add_column(diversity_type = est_richness$diversity_type) %>%
       as_tibble
 
-  } else if (method=="evenness") {
+  } else if (method == "e9_evenness" | method == "pielou_evenness") {
 
 
     # Calculate number of records for each species by grid cell
-    evenness <-
+    diversity_ts <-
       data %>%
       dplyr::summarize(num_occ = sum(obs),
                        .by = c(year, taxonKey)) %>%
@@ -242,13 +242,16 @@ calc_ts <- function(data, method = "observed", qval = 0, inext_sampsize = 150, c
       dplyr::rename(diversity_val = ".") %>%
       tibble::rownames_to_column(var = "year") %>%
       dplyr::mutate(year = as.integer(year),
-                    .keep = "unused") %>%
-      tibble::add_column(diversity_type = c("evenness"),
-                         .after = "year")
+                    .keep = "unused") #%>%
+      #tibble::add_column(diversity_type = c("evenness"),
+      #                   .after = "year")
 
-    }
+  }
+
+  diversity_ts <-
+    diversity_ts %>%
+    tibble::add_column(diversity_type = method)
+
+  return(diversity_ts)
 
 }
-
-
-
