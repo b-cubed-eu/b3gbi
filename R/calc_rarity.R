@@ -7,8 +7,6 @@
 #' @return A tibble
 #' @export
 #'
-#' @examples
-#' gridded_rarity <- calc_rarity(processed_cube, "grid", "area")
 calc_rarity <- function(data,
                         method = "grid",
                         type = "area",
