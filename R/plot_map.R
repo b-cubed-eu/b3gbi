@@ -50,7 +50,7 @@ plot_map <- function(data,
   div_type <- dplyr::first(data$diversity_type, na_rm = TRUE)
 
   # Get default parameters for indicator
-  div_types <- read.csv("inst/extdata/diversity_types.csv",
+  div_types <- read.csv("diversity_types.csv",
                         na.strings = c(""))
   default_params <- div_types[div_types$label %in% div_type,]
 

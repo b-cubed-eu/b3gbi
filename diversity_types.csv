@@ -1,0 +1,26 @@
+﻿label,name,legend,title,transformation
+hill0,estimated species richness,"Species 
+Richness",Coverage-Based Species Richness Estimation,
+hill1,Hill-Shannon,"Hill-Shannon 
+Diversity",Coverage-Based Hill-Shannon Diversity Estimation,
+hill2,Hill-Simpson,"Hill-Simpson 
+Diversity",Coverage-Based Hill-Simpson Diversity Estimation,
+obs_richness,observed richness,"Species 
+Richness",Observed Species Richness,
+rarefied,rarefied richness,"Species 
+Richness",Sample-Size Based Species Richness Estimation,
+cum_richness,cumulative species richness,Cumulative Species Richness,Cumulative Species Richness,
+ab_rarity,abundance-based rarity,Summed Rarity,Abundance-Based Rarity,log10
+area_rarity,area-based rarity,Summed Rarity,Area-Based Rarity,log10
+total_occ,total occurrences,Occurrences,Total Occurrences,log10
+occ_by_type,occurrences by type,Occurrences,Occurrences by Data Type,
+occ_by_dataset,occurrences by dataset,Occurrences,Occurrences by Dataset,
+newness,mean year of occurrence,Mean Year,Mean Year of Occurrence,
+density,occurrences per km^2,"Occurrences 
+per km^2",Density of Occurrences,log10
+pielou_evenness,Pielou's evenness,Evenness,Pielou's Evenness,
+e9_evenness,e9 evenness,Evenness,E9 Evenness,
+tax_distinct,taxonomic distinctness,"Taxonomic 
+Distinctness",Taxonomic Distinctness,
+spec_range,species ranges,Range,Species Range,
+spec_occ,species occurrences,Occurrences,Species Occurrences,
