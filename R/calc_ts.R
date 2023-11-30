@@ -246,6 +246,17 @@ calc_ts <- function(data, method = "obs_richness", qval = 0, inext_sampsize = 15
       #tibble::add_column(diversity_type = c("evenness"),
       #                   .after = "year")
 
+  } else if (method == "species_rarity") {
+
+    # Calculate rarity for each species by year
+    diversity_ts <-
+      data %>%
+      dplyr::mutate(records_year = sum(obs), .by = year) %>%
+      dplyr::mutate(records_taxon = sum(obs), .by = c(year, taxonKey)) %>%
+      dplyr::mutate(diversity_val = 1 / (records_taxon / records_year)) %>%
+      dplyr::distinct(year, taxonKey, .keep_all = TRUE) %>%
+      dplyr::select(year, taxonKey, scientificName, diversity_val)
+
   }
 
   diversity_ts <-
