@@ -281,6 +281,16 @@ calc_map <- function(data,
         dplyr::arrange(cellid) %>%
         dplyr::select(cellid, taxonKey, scientificName, num_records)
 
+    } else if (type == "spec_range") {
+
+      # Flatten occurrences for each species by grid cell
+      diversity_cell <-
+        data_cell %>%
+        dplyr::mutate(obs = 1) %>%
+        dplyr::distinct(cellid, scientificName, .keep_all = TRUE) %>%
+        dplyr::arrange(cellid) %>%
+        dplyr::select(cellid, taxonKey, scientificName, obs)
+
     } else if (type == "tax_distinct") {
 
       # Retrieve taxonomic data from GBIF
@@ -293,33 +303,19 @@ calc_map <- function(data,
 
       # Define function to calculate taxonomic distinctness
       tax_distinct_fn <- function(x, y) {
-
         temp <- names(y) %in% x$scientificName
-
         tax_hier_temp <- y[c(temp)]
-
         print(length(tax_hier_temp))
-
         n_spec <- length(tax_hier_temp)
-
         if(length(tax_hier_temp) < 3) {
-
           tax_distinct <- NA
-
           return(tax_distinct)
-
         } else {
-
           tax_tree <- taxize::class2tree(tax_hier_temp, check=FALSE)
-
           tax_distance <- tax_tree$distmat
-
           tax_distinct <- sum(tax_distance) / ((n_spec * (n_spec - 1)) / 2)
-
           return(tax_distinct)
-
         }
-
       }
 
       # Calculate taxonomic distinctness
@@ -328,8 +324,9 @@ calc_map <- function(data,
         tibble::add_column(diversity_val = NA) %>%
         dplyr::group_split(cellid) %>%
         purrr::map(. %>%
-                     dplyr::mutate(diversity_val = tax_distinct_fn(.,
-                                                                   tax_hier))) %>%
+                     dplyr::mutate(diversity_val =
+                                     tax_distinct_fn(.,
+                                                     tax_hier))) %>%
         dplyr::bind_rows() %>%
         dplyr::distinct(cellid, diversity_val, .keep_all = TRUE) %>%
         dplyr::select(cellid, diversity_val)
