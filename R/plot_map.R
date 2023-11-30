@@ -1,3 +1,5 @@
+# Function to plot biodiversity indicators calculated over gridded space
+# Accepts tibbles output by plot_ts.R
 plot_map <- function(data,
                      species = NULL,
                      xlims = NULL,
@@ -16,7 +18,7 @@ plot_map <- function(data,
   # Get map limits
   map_lims <- sf::st_bbox(data)
 
-  # Crop map of Europe to leave out far-lying islands if flag set
+  # Crop map of Europe to leave out far-lying islands (if flag set)
   if (Europe_crop == TRUE &
       data$map_level[1] == "continent" &
       data$map_region[1] == "Europe")
@@ -31,7 +33,7 @@ plot_map <- function(data,
 
   }
 
-  # Specific instructions for country-level plots
+  # Set specific instructions for country-level plots
   if (data$map_level[1] == "country")
   {
 
@@ -40,6 +42,7 @@ plot_map <- function(data,
       map_surround <- rnaturalearth::ne_countries(scale = "medium") %>%
         sf::st_as_sf() %>%
         sf::st_transform(crs = "EPSG:3035")
+
       # Otherwise make the ocean area white (unless a colour is specified)
     } else {
       if (is.null(panel_bg)) { panel_bg = "white" }
@@ -54,17 +57,17 @@ plot_map <- function(data,
                         na.strings = c(""))
   default_params <- div_types[div_types$label %in% div_type,]
 
-  # Legend title
+  # Get legend title
   leg_label <- default_params$legend
 
-  # Plot title
+  # Get plot title (if set to "auto")
   if (!is.null(title)) {
     if (title == "auto") {
       title <- default_params$title
     }
   }
 
-  # Transformation (will not overwrite user input)
+  # Get legend transformations (will not overwrite user input)
   if (is.null(trans)) {
     if(!is.na(default_params$transformation)) {
       trans <- default_params$transformation
@@ -73,7 +76,7 @@ plot_map <- function(data,
     }
   }
 
-  # Legend breaks (will not overwrite user input)
+  # Get legend breaks (will not overwrite user input)
   if (!is.null(trans)) {
     if (trans=="log" | trans=="log10") {
       breaks = breaks_log_int(n=6)
@@ -91,6 +94,7 @@ plot_map <- function(data,
     )
   }
 
+  # Plot species occurrence maps
   if (div_type == "spec_occ") {
 
     if (is.null(species) | !is.numeric(species)) {
@@ -103,7 +107,8 @@ plot_map <- function(data,
     species_occurrences <-
       data %>%
       dplyr::filter(taxonKey %in% species) %>%
-      dplyr::mutate(taxonKey = factor(taxonKey, levels = unique(taxonKey)))
+      dplyr::mutate(taxonKey = factor(taxonKey,
+                                      levels = unique(taxonKey)))
 
     split_so <-
       species_occurrences %>%
@@ -148,21 +153,24 @@ plot_map <- function(data,
                            fill = "Number of \nOccurrences")
                   })
 
+    # If surround flag is set, add surrounding countries to the map
     if (surround == TRUE) {
       for (i in 1:length(diversity_plot)) {
       diversity_plot[[i]]$layers <- c(geom_sf(data = map_surround, fill = "grey85")[[1]], diversity_plot[[i]]$layers)
       }
     }
 
+    # Combine plots using internal copy of wrap_plots function from patchwork
     diversity_plot <- wrap_plots_int(diversity_plot) +
       plot_annotation_int(title = "Species Occurrences",
                           theme = theme(plot.title = element_text(size = 20)))
 
+    # Exit function
     return(diversity_plot)
 
   }
 
-  # Plot estimated relative richness
+  # Plot map
   diversity_plot <- ggplot2::ggplot(data) +
     geom_sf(aes(fill = diversity_val,
                 geometry = geometry),
@@ -199,6 +207,7 @@ plot_map <- function(data,
   #
   # }
 
+  # If surround flag set, add surrounding countries to map
   if (surround == TRUE) {
     diversity_plot$layers <- c(geom_sf(data = map_surround, fill = "grey85")[[1]], diversity_plot$layers)
   }
@@ -222,6 +231,7 @@ plot_map <- function(data,
       labs(title = wrapper(title, wrap_length))
   }
 
+  # Exit function
   return(diversity_plot)
 
 }
