@@ -1,3 +1,5 @@
+# Function to plot biodiversity indicators calculated over time
+# Accepts tibbles output by calc_ts.R
 plot_ts <- function(data,
                     species = NULL,
                     suppress_y = "n",
@@ -18,14 +20,12 @@ plot_ts <- function(data,
                         na.strings = c(""))
   default_params <- div_types[div_types$label %in% div_type,]
 
-  # y-axis title
+  # Set y-axis label
   y_label <- default_params$legend
 
-  # Check that species are selected if plotting species rarity
-  # and that the number of species does not exceed max
+  # If plotting species rarity, check that species are selected and filter data
   if (div_type == "species_rarity") {
     if (is.null(species)) stop("Please input taxonKeys to select species.")
-    if (length(species) > 10) stop("Cannot plot more than 10 species at once.")
 
     # Filter data on selected species
     data <-
@@ -38,7 +38,7 @@ plot_ts <- function(data,
   first_year <- head(data$year, n=1)
   final_year <- tail(data$year, n=1)
 
-  # Plot title
+  # Create plot title if title is set to "auto"
   if (!is.null(title)) {
     if (title == "auto") {
       title <- paste(default_params$title,
@@ -63,6 +63,7 @@ plot_ts <- function(data,
     multiline <- FALSE
   }
 
+  # Otherwise, set some defaults for plotting
   if (multiline == FALSE) {
 
     # Set type to NULL
@@ -76,7 +77,7 @@ plot_ts <- function(data,
 
   }
 
-  # Plot line graph
+  # Create plot with trend line
   trend_plot <-
     ggplot2::ggplot(data, aes(x = year,
                               y = diversity_val)) +
@@ -107,7 +108,7 @@ plot_ts <- function(data,
 
   if (div_type == "cum_richness") {
 
-    # Plot area under the curve
+    # If plotting cumulative richness, colour the area under the curve
     trend_plot <- trend_plot +
       geom_ribbon(aes(ymin = 0,
                       ymax = diversity_val),
@@ -115,7 +116,7 @@ plot_ts <- function(data,
 
   } else {
 
-    # Plot smoothed trend
+    # Otherwise, add a smoothed trend
     trend_plot <- trend_plot +
       geom_smooth(aes(fill = type),
                   fill = envelopecolour,
@@ -136,7 +137,7 @@ plot_ts <- function(data,
 
   if (div_type == "species_rarity") {
 
-    # Use facets to plot multiple species trends
+    # If plotting species rarity, use facets to separate multiple species trends
     trend_plot <- trend_plot +
       facet_wrap(vars(scientificName),
                  scales = facet_scales,
@@ -144,6 +145,7 @@ plot_ts <- function(data,
 
   }
 
+  # Show plot
   trend_plot
 
 }
