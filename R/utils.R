@@ -1,3 +1,21 @@
+# Copy of stopifnot_error from iregnet package
+#' @noRd
+#' @title stopifnot with custom error message
+#'
+#' @description
+#' Like \code{stopifnot}, but with a custom error message.
+#'
+#' @param err_message The error message to print.
+#' @param ... An error is raised if any these expressions is \code{FALSE}.
+stopifnot_error <- function(err_message, ...)
+{
+  n <- length(ll <- list(...))
+  for (i in 1:n)
+    if (!(is.logical(r <- ll[[i]]) && !anyNA(r) && all(r))) {
+      stop(err_message)
+    }
+}
+
 # Copy of breaks_log from scales package
 #' @noRd
 breaks_log_int <- function (n = 5, base = 10)
@@ -333,7 +351,7 @@ specaccum_int <- function (comm, method = "exact", permutations = 100, condition
     ind <- round(seq(tot/n, tot, length = n))
     result <- matrix(NA, nrow = 2, ncol = n)
     for (i in 1:n) {
-      result[, i] <- suppressWarnings(rarefy(t(freq),
+      result[, i] <- suppressWarnings(rarefy_int(t(freq),
                                              ind[i], se = TRUE))
     }
     specaccum <- result[1, ]
@@ -387,5 +405,64 @@ getPermuteMatrix <- function (perm, N, strata = NULL)
     attr(perm, "control") <- structure(list(within = list(type = "supplied matrix"),
                                             nperm = nrow(perm)), class = "how")
   perm
+}
+
+# Copy of function rarefy from vegan package
+#' @noRd
+rarefy_int <- function (x, sample, se = FALSE, MARGIN = 1)
+{
+  x <- as.matrix(x)
+  if (ncol(x) == 1 && MARGIN == 1)
+    x <- t(x)
+  if (!identical(all.equal(x, round(x)), TRUE))
+    stop("function accepts only integers (counts)")
+  minobs <- min(x[x > 0])
+  if (minobs > 1)
+    warning(gettextf("most observed count data have counts 1, but smallest count is %d",
+                     minobs))
+  minsample <- min(apply(x, MARGIN, sum))
+  if (missing(sample)) {
+    stop(gettextf("the size of 'sample' must be given --\nHint: Smallest site maximum %d",
+                  minsample))
+  }
+  if (any(sample > minsample))
+    warning(gettextf("requested 'sample' was larger than smallest site maximum (%d)",
+                     minsample))
+  rarefun <- function(x, sample) {
+    x <- x[x > 0]
+    J <- sum(x)
+    ldiv <- lchoose(J, sample)
+    p1 <- ifelse(J - x < sample, 0, exp(lchoose(J - x, sample) -
+                                          ldiv))
+    out <- sum(1 - p1)
+    if (se) {
+      V <- sum(p1 * (1 - p1))
+      Jxx <- J - outer(x, x, "+")
+      ind <- lower.tri(Jxx)
+      Jxx <- Jxx[ind]
+      V <- V + 2 * sum(ifelse(Jxx < sample, 0, exp(lchoose(Jxx,
+                                                           sample) - ldiv)) - outer(p1, p1)[ind])
+      out <- cbind(out, sqrt(max(V, 0)))
+    }
+    out
+  }
+  if (length(sample) > 1) {
+    S.rare <- sapply(sample, function(n) apply(x, MARGIN,
+                                               rarefun, sample = n))
+    S.rare <- matrix(S.rare, ncol = length(sample))
+    colnames(S.rare) <- paste("N", sample, sep = "")
+    if (se) {
+      dn <- unlist(dimnames(x)[MARGIN])
+      rownames(S.rare) <- paste(rep(dn, each = 2), c("S",
+                                                     "se"), sep = ".")
+    }
+  }
+  else {
+    S.rare <- apply(x, MARGIN, rarefun, sample = sample)
+    if (se)
+      rownames(S.rare) <- c("S", "se")
+  }
+  attr(S.rare, "Subsample") <- sample
+  S.rare
 }
 

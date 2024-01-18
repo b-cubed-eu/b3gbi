@@ -10,8 +10,8 @@ Richness",Observed Species Richness,
 rarefied,rarefied richness,"Species 
 Richness",Sample-Size Based Species Richness Estimation,
 cum_richness,cumulative species richness,Cumulative Species Richness,Cumulative Species Richness,
-ab_rarity,abundance-based rarity,Summed Rarity,Abundance-Based Rarity,log10
-area_rarity,area-based rarity,Summed Rarity,Area-Based Rarity,log10
+ab_rarity,abundance-based rarity,Summed Rarity,Abundance-Based Rarity,
+area_rarity,area-based rarity,Summed Rarity,Area-Based Rarity,
 species_rarity,rarity trend,Rarity,Species Rarity,
 total_occ,total occurrences,Occurrences,Total Occurrences,log10
 occ_by_type,occurrences by type,Occurrences,Occurrences by Data Type,

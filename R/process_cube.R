@@ -85,7 +85,6 @@ process_cube <- function(cube_name, tax_info, datasets_info = NA, first_year = N
 
   }
 
-
   # Separate 'eea_cell_code' into resolution, coordinates
   merged_data <- merged_data %>%
     dplyr::mutate(
@@ -96,39 +95,17 @@ process_cube <- function(cube_name, tax_info, datasets_info = NA, first_year = N
 
   if(!is.na(datasets_info)) {
 
-    # if (merge_taxonomy == TRUE) {
-    #
-    #   # Remove columns that are not needed
-    #   merged_data <-
-    #     merged_data %>%
-    #     dplyr::select(-min_coord_uncertainty, -taxonomicStatus, -datasetKey, -notes)
-    #
-    # } else {
-
       # Remove columns that are not needed
       merged_data <-
         merged_data %>%
         dplyr::select(-min_coord_uncertainty, -taxonomicStatus, -datasetKey, -includes, -notes)
 
-    # }
-
   } else {
-
-    # if (merge_taxonomy == TRUE) {
-    #
-    #   # Remove columns that are not needed
-    #   merged_data <-
-    #     merged_data %>%
-    #     dplyr::select(-min_coord_uncertainty, -taxonomicStatus)
-    #
-    # } else {
 
       # Remove columns that are not needed
       merged_data <-
         merged_data %>%
         dplyr::select(-min_coord_uncertainty, -taxonomicStatus, -includes)
-
-    # }
 
   }
 
@@ -162,14 +139,6 @@ process_cube <- function(cube_name, tax_info, datasets_info = NA, first_year = N
     merged_data %>%
     dplyr::distinct()
 
-  # if (merge_taxonomy == TRUE) {
-  #
-  #   merged_data <-
-  #     merged_data %>%
-  #     dplyr::mutate(across(includes, function(x) sub("\\:.*", "", x))) %>%
-  #     dplyr::mutate(taxonKey = includes) %>%
-  #     dplyr::select(-includes)
-  #
-  # }
+  cube <- processed_cube(merged_data)
 
 }

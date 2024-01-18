@@ -1,5 +1,5 @@
 # Calculate evenness from a vector of summed species occurrences.
-
+#' @noRd
 calc_pielou_evenness <- function(x) {
   S <- length(x)
   n <- x
@@ -16,6 +16,7 @@ calc_pielou_evenness <- function(x) {
   return(even)
 }
 
+#' @noRd
 calc_e9_evenness <- function(x) {
   n <- x
   N <- sum(n)

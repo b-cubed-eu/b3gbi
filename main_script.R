@@ -14,6 +14,7 @@ library(iNEXT)
 library(ggplot2)
 library(taxize)
 library(virtualspecies)
+library(vegan)
 
 # Set parameters ----
 region_level <- "country" # country, continent, world

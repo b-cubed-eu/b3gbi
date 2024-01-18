@@ -17,12 +17,12 @@
 # number of occurrences per square km
 # qval determines which type of hill diversity measure to estimate,
 # 0 for species richness, 1 for shannon hill diversity, 2 for simpson hill diversity
-
-calc_map <- function(data,
+#' @export
+calc_map.default <- function(x,
                      cs1 = 100,
                      cs2 = 100,
-                     level = "country",
-                     region = "Denmark",
+                     level = "continent",
+                     region = "Europe",
                      type = "hill0",
                      coverage = 0.95,
                      cutoff_length = 5,
@@ -31,6 +31,21 @@ calc_map <- function(data,
                      newness_min_year = NULL,
                      even_type = "pielou",
                      ...) {
+
+  stopifnot_error("Object class not recognized.",
+                  inherits(x, "processed_cube") |
+                    inherits(x, "processed_cube_dsinfo"))
+
+  data <- x$data
+
+  # Collect information to add to final object
+  kingdoms <- x$kingdoms
+  species_names <- unique(data$scientificName)
+  num_species <- x$num_species
+  first_year <- x$first_year
+  last_year <- x$last_year
+  num_years <- length(unique(data$year))
+  years_with_obs <- unique(data$year)
 
 
   if (type == "e9_evenness") {
@@ -141,14 +156,12 @@ calc_map <- function(data,
                                -xcoord,
                                -ycoord,
                                -year,
-                               -area_km2,
-                               -basisOfRecord,
-                               -datasetKey) %>%
+                               -area_km2) %>%
+                 dplyr::select(-any_of(c("basisOfRecord",
+                                         "datasetKey"))) %>%
                  replace(is.na(.), 0) %>%
                  dplyr::mutate_if(is.numeric,
                                   as.integer) %>%
-                 #dplyr::mutate_if(is.character,
-                 #                 as.integer) %>%
                  dplyr::select(-cellid) %>%
                  tibble::rownames_to_column() %>%
                  tidyr::gather(variable,
@@ -338,15 +351,32 @@ calc_map <- function(data,
     }
 
   # Add map information
-  diversity_cell <-
-    diversity_cell %>%
-    tibble::add_column(diversity_type = type) %>%
-    tibble::add_column(map_level = level) %>%
-    tibble::add_column(map_region = paste(region, collapse = ","))
+  # diversity_cell <-
+  #   diversity_cell %>%
+  #   tibble::add_column(diversity_type = type) %>%
+  #   tibble::add_column(map_level = level) %>%
+  #   tibble::add_column(map_region = paste(region, collapse = ","))
 
   # Add grid-based rarity to grid
   diversity_grid <-
     grid %>%
     dplyr::left_join(diversity_cell, by = "cellid")
+
+
+  diversity_obj <- indicator_map(diversity_grid,
+                                 div_type = type,
+                                 cs1 = cs1,
+                                 cs2 = cs2,
+                                 map_level = level,
+                                 map_region = region,
+                                 kingdoms = kingdoms,
+                                 num_species = num_species,
+                                 first_year = first_year,
+                                 last_year = last_year,
+                                 num_years = num_years,
+                                 species_names = species_names,
+                                 years_with_obs = years_with_obs)
+
+  return(diversity_obj)
 
 }
