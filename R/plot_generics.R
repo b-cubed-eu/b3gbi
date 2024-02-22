@@ -202,6 +202,7 @@ plot.area_rarity <- function(x, ...){
     plot_ts(x, y_label_default = y_label_default, auto_title = auto_title, ...)
 
   } else if (inherits(x, "indicator_map")) {
+
   # Set defaults
   leg_label_default <- "Rarity"
   auto_title <- "Area-Based Rarity"
