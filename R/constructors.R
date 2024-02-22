@@ -46,6 +46,29 @@ processed_cube <- function(x) {
 }
 
 #' @export
+virtual_cube <- function(x) {
+  # check that x is a tibble and all necessary columns are present
+  stopifnot(data.table::is.data.table(x),
+            all(c("year",
+                  "taxonKey",
+                  "obs",
+                  "scientificName",
+                  "xcoord",
+                  "ycoord") %in% names(x)))
+  structure(list(first_year = x[, min(year)],
+                 last_year = x[, max(year)],
+                 coord_range = list("xmin" = x[, min(xcoord)],
+                                    "xmax" = x[, max(xcoord)],
+                                    "ymin" = x[, min(ycoord)],
+                                    "ymax" = x[, max(ycoord)]),
+                 num_cells = nrow(x),
+                 num_species = x[, length(unique(taxonKey))],
+                 num_obs = x[, sum(obs)],
+                 data = x),
+            class = "virtual_cube")
+}
+
+#' @export
 indicator_ts <- function(x,
                          div_type,
                          kingdoms,
@@ -67,6 +90,7 @@ indicator_ts <- function(x,
     id = div_type
   }
   structure(list(div_name = get_divname(id),
+                 div_type = div_type,
                  first_year = min(x$year),
                  last_year = max(x$year),
                  num_years = num_years,
@@ -115,6 +139,7 @@ indicator_map <- function(x,
     id = div_type
   }
   structure(list(div_name = get_divname(id),
+                 div_type = div_type,
                  num_cells = length(x$cellid),
                  cell_size = cell_size,
                  map_level = map_level,
@@ -133,5 +158,52 @@ indicator_map <- function(x,
             indicator_id = id,
             type = "map")
 }
+
+#' @export
+v_indicator_map <- function(x,
+                          div_type,
+                          cs1,
+                          cs2,
+                          map_level,
+                          map_region,
+                          num_species,
+                          first_year,
+                          last_year,
+                          num_years) {
+  # check that x is both a data frame and sf object
+  # and all necessary columns are present
+  stopifnot(inherits(x, c("sf", "data.frame")),
+            all(c("cellid",
+                  "geometry") %in% names(x)))
+  coord_range = sf::st_bbox(x)
+  if (cs1 == cs2) {
+    cell_size = paste(cs1, "km^2")
+  } else {
+    cell_size = paste(cs1, "kmx", cs2, "km", sep = "")
+  }
+  if(div_type == "pielou_evenness" | div_type == "e9_evenness") {
+    id = div_type
+    div_type = "evenness"
+  } else {
+    id = div_type
+  }
+  structure(list(div_name = get_divname(id),
+                 div_type = div_type,
+                 num_cells = length(x$cellid),
+                 cell_size = cell_size,
+                 map_level = map_level,
+                 map_region = map_region,
+                 projection = sf:::crs_parameters(st_crs(x$geometry))$Name,
+                 coord_range = coord_range,
+                 first_year = first_year,
+                 last_year = last_year,
+                 num_years = num_years,
+                 num_species = num_species,
+                 data = x),
+            class = c("v_indicator_map", div_type),
+            indicator_id = id,
+            type = "map")
+}
+
 
 

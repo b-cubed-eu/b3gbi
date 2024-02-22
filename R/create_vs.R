@@ -1,16 +1,26 @@
 # Function to create virtual species
-createvs_custom <- function(clim_data, n, start_val=1) {
+createvs_custom <- function(clim_data,
+                            n,
+                            start_val=1,
+                            samp_scale = 5000000,
+                            samp_shape = 0.5,
+                            dir = "F:/VSDB_HR/",
+                            show_plot = TRUE,
+                            show_occ_plot = TRUE) {
 
   species_data <- list()
 
-  layernames <- vector()
-  min <- vector()
-  max <- vector()
-  for (i in 1:length(clim_data@layers)) {
-    layernames[i] <- clim_data@layers[[i]]@data@names
-    min[i] <- clim_data@layers[[i]]@data@min
-    max[i] <- clim_data@layers[[i]]@data@max
+  layernames <- names(clim_data)
+
+  if (inherits(clim_data, "RasterBrick")) {
+    min <- clim_data@data@min
+    max <- clim_data@data@max
+  } else if (inherits(clim_data, "SpatRaster")) {
+    min <- clim_data@pnt$range_min
+    max <- clim_data@pnt$range_max
+
   }
+
 
   # Create reasonable parameter distributions
   set.seed(NULL)
@@ -47,18 +57,12 @@ createvs_custom <- function(clim_data, n, start_val=1) {
   el_sd_dist <- rnorm(1000, mean = 1000, sd = 500)
   el_sd_dist <- el_sd_dist[el_sd_dist > 0]
 
-  # nsampdist <- round(rweibull(1000, 0.5, nsampmean))
-  # nsampdist <- nsampdist[nsampdist >= 1]
-
-  # function to sample from parameter distributions for individual species
-  psample <- function(pdist, n) {
-    param_pool <- sample(pdist, n, replace = TRUE)
-  }
-
   i <- start_val
   j <- 0
   counter <- 1
   while (counter <= n) {
+
+    tic("Species total")
 
     set.seed(NULL)
     amt <- sample(annual_mean_temp, 1)
@@ -78,9 +82,6 @@ createvs_custom <- function(clim_data, n, start_val=1) {
     ap_sd <- (sample(ap_sd_percent_dist, 1) * ap) / 100
     ps_sd <- sample(ps_sd_dist, 1)
     el_sd <- sample(el_sd_dist, 1)
-
-    # set.seed(NULL)
-    # nsamp = sample(nsampdist, 1)
 
     # Format parameter function
     spec_parameters <-
@@ -103,8 +104,6 @@ createvs_custom <- function(clim_data, n, start_val=1) {
                                mean = el,
                                sd = el_sd))
 
-    assign(paste0("spec_parameters_", i), spec_parameters)
-
     req_parameters <- c(spec_parameters[1], spec_parameters[4])
 
     opt_parameters <- spec_parameters[!(spec_parameters %in% req_parameters)]
@@ -126,21 +125,28 @@ createvs_custom <- function(clim_data, n, start_val=1) {
                    "el sd" = el_sd,
                    "parameters" = rand_parameters)
 
-    capture.output(params, file = paste("F:/VSDB2/Params_", i, ".txt", sep = ""))
+    capture.output(params, file = paste(dir,
+                                        "Params_",
+                                        i,
+                                        ".txt",
+                                        sep = ""))
 
+    tic("Habitat Suitability")
     # Generate virtual species distribution
     set.seed(NULL)
     spec_dist <-
-      generateSpFromFun(WorldclimS[[c(names(rand_parameters))]],
+      generateSpFromFun(clim_data[[c(names(rand_parameters))]],
                         parameters = rand_parameters,
-                        plot = TRUE)
+                        plot = show_plot)
 
-    assign(paste0("spec_dist_", i), spec_dist)
+    toc()
 
     # Set maximum species prevalence to avoid a bug where it occurs everywhere despite having a narrow suitability
     max_sp <- nrow(spec_dist$suitab.raster[spec_dist$suitab.raster >
                                              spec_dist$suitab.raster@pnt[["range_min"]]+0.05]) /
       nrow(spec_dist$suitab.raster[spec_dist$suitab.raster > 0])
+
+    print(paste0("Maximum species prevalence value: ", max_sp))
 
     # Create distribution for species prevalence
     sp_dist <- runif(1000, min = 0.0001, max = max_sp)
@@ -151,6 +157,8 @@ createvs_custom <- function(clim_data, n, start_val=1) {
       # Randomly select species prevalence value
       sp <- sample(sp_dist, 1)
 
+      print(paste0("Selected species prevalence value: ", sp))
+
       # Convert species distribution to presence-absence
       set.seed(NULL)
       pres_abs <-
@@ -158,7 +166,7 @@ createvs_custom <- function(clim_data, n, start_val=1) {
                     PA.method = "threshold",
                     prob.method = "linear",
                     species.prevalence = sp,
-                    plot = TRUE)
+                    plot = show_plot)
 
       if (nrow(pres_abs$pa.raster[pres_abs$pa.raster > 0]) >= 1) {sp_good <- 1}
 
@@ -178,20 +186,19 @@ createvs_custom <- function(clim_data, n, start_val=1) {
     #               PA.method = "threshold",
     #               prob.method = "linear",
     #               species.prevalence = sp,
-    #               plot = TRUE)
-
-    assign(paste0("pres_abs_", i), pres_abs)
-
+    #               plot = show_plot)
 
 
     # Check whether the species actually occurs anywhere
     set.seed(NULL)
-    possibleError <- tryCatch(presence_points <- sampleOccurrences(pres_abs,
-                                                                   n = 1000,
-                                                                   plot = TRUE,
-                                                                   sampling.area = "Europe",
-                                                                   replacement = TRUE),
-                              error = function(e) e)
+    possibleError <- tryCatch(
+      presence_points <- sampleOccurrences_custom(pres_abs,
+                                                  n = 1000,
+                                                  plot = show_plot,
+                                                  sampling.area = "Europe",
+                                                  replacement = TRUE,
+                                                  projection = "epsg:3035"),
+      error = function(e) e)
 
     if(inherits(possibleError, "error")) {
 
@@ -203,42 +210,44 @@ createvs_custom <- function(clim_data, n, start_val=1) {
     max_nsamp <- nrow(spec_dist$suitab.raster[spec_dist$suitab.raster >
                                                 spec_dist$suitab.raster@pnt[["range_min"]]+0.05])
 
-    nsamp_dist <- round(runif(100, min = 1, max = max_nsamp))
+    spec_prev <- as.numeric(pres_abs$PA.conversion[["species.prevalence"]])
+
+    nsamp_dist <- round(rweibull(100, shape = samp_shape, scale = spec_prev * samp_scale))
+
+    nsamp_dist <- nsamp_dist[(nsamp_dist < max_nsamp) & (nsamp_dist > 0)]
 
     set.seed(NULL)
     nsamp <- sample(nsamp_dist, 1)
 
     # Sample occurrences from the presence-absence distribution
     set.seed(NULL)
-    presence_points <- sampleOccurrences(pres_abs,
-                                         n = nsamp,
-                                         plot = TRUE,
-                                         sampling.area = "Europe",
-                                         replacement = TRUE,
-                                         type = "presence only")
+    presence_points <- sampleOccurrences_custom(pres_abs,
+                                                n = nsamp,
+                                                plot = show_occ_plot,
+                                                sampling.area = "Europe",
+                                                replacement = TRUE,
+                                                type = "presence only",
+                                                projection = "epsg:3035")
 
-    print(paste0("Completed species ", counter))
-
-    assign(paste0("presence_points_", i), presence_points)
+    print(paste0("Completed species ", counter, ". Sampled ", nrow(presence_points$sample.points), " points."))
 
     Presence <- presence_points$sample.points[, c( "x", "y",  "Observed")]
 
-    # Presence <- Presence[Presence$Observed == 1,]
-
-    #Presence <- slice_sample(Presence, n = nsamp)
-
-    assign(paste0("Presence_", i), Presence)
-
     species_data[[counter]] <- Presence
 
-    if(!file.exists(paste("F:/VSDB2/",
+    if(!file.exists(paste(dir,
                           "Virtual_species_my_",
                           i+j,
                           ".Rdata",
                           sep = ""))) {
 
-      saveRDS(pres_abs, file = paste("F:/VSDB2/",
-                                     "Virtual_species_my_",
+      saveRDS(pres_abs, file = paste(dir,
+                                     "Virtual_species_pa_",
+                                     i+j,
+                                     ".Rdata",
+                                     sep = ""))
+      saveRDS(Presence, file = paste(dir,
+                                     "Virtual_species_pp_",
                                      i+j,
                                      ".Rdata",
                                      sep = ""))
@@ -246,16 +255,21 @@ createvs_custom <- function(clim_data, n, start_val=1) {
     } else {
 
       overwrite <- readline(prompt=paste("File ",
-                                         "F:/VSDB2/",
-                                         "Virtual_species_my_",
+                                         dir,
+                                         "Virtual_species_pa_",
                                          i+j,
                                          ".Rdata",
                                          " exists. Overwrite? (y/n)",
                                          sep = ""))
 
       if (overwrite == "y") {
-        saveRDS(pres_abs, file = paste("F:/VSDB2/",
-                                       "Virtual_species_my_",
+        saveRDS(pres_abs, file = paste(dir,
+                                       "Virtual_species_pa_",
+                                       i+j,
+                                       ".Rdata",
+                                       sep = ""))
+        saveRDS(Presence, file = paste(dir,
+                                       "Virtual_species_pp_",
                                        i+j,
                                        ".Rdata",
                                        sep = ""))
@@ -283,8 +297,13 @@ createvs_custom <- function(clim_data, n, start_val=1) {
 
           j <- k - i
 
-          saveRDS(pres_abs, file = paste("F:/VSDB2/",
-                                         "Virtual_species_my_",
+          saveRDS(pres_abs, file = paste(dir,
+                                         "Virtual_species_pa_",
+                                         i+j,
+                                         ".Rdata",
+                                         sep = ""))
+          saveRDS(Presence, file = paste(dir,
+                                         "Virtual_species_pp_",
                                          i+j,
                                          ".Rdata",
                                          sep = ""))
@@ -303,9 +322,11 @@ createvs_custom <- function(clim_data, n, start_val=1) {
 
     counter <- counter + 1
 
+    toc()
+
   }
 
-  return(species_data)
+  return(1)
 
 }
 
@@ -341,50 +362,3 @@ createvirtualspecies <- function(clim_data, n) {
 
 }
 
-# Function to create cube ----
-createvirtualcube <- function(vslist) {
-
-  # create necessary columns
-  for (i in 1:length(vslist)) {
-    names(vslist[[i]]) <- c("x", "y", "obs")
-    vslist[[i]]$taxonKey <- rep(i, nrow(vslist[[i]]))
-    vslist[[i]]$scientificName <- rep(paste0("Species ", i), nrow(vslist[[i]]))
-    vslist[[i]]$rank <- rep("Species", nrow(vslist[[i]]))
-    vslist[[i]]$kingdom <- rep("Animalia", nrow(vslist[[i]]))
-    vslist[[i]]$year <- rep("2020", nrow(vslist[[i]]))
-    vslist[[i]]$eea_cell_code <- rep("NA", nrow(vslist[[i]]))
-    vslist[[i]]$resolution <- rep("1km", nrow(vslist[[i]]))
-  }
-
-  df <- do.call(rbind, vslist)
-
-  # Set projection and then transform to EPSG:3035
-  coordinates(df) <- ~x+y
-  proj4string(df) <- CRS("+init=epsg:4326")
-  df <- spTransform(df, CRS("+init=epsg:3035"))
-  colnames(df@coords) <- c("xcoord", "ycoord")
-  df@data <-
-    df@data %>%
-    dplyr::mutate(xcoord = df@coords[, "xcoord"]/1000,
-                  ycoord = df@coords[, "ycoord"]/1000)
-
-  # Create grid cells
-  df@data <-
-    df@data %>%
-    dplyr::mutate(eea_cell_code = paste0(
-      resolution,
-      "E", floor(xcoord),
-      "N", floor(ycoord))) %>%
-    dplyr::select(xcoord, ycoord, eea_cell_code, obs, taxonKey, scientificName, rank, kingdom, year, resolution)
-
-  # Aggregate occurrences in grid cells
-  df <-
-    df@data %>%
-    dplyr::mutate(n = sum(obs), .by = c(year, taxonKey, eea_cell_code), .keep = "all") %>%
-    dplyr::distinct(year, taxonKey, eea_cell_code, .keep_all = TRUE) %>%
-    dplyr::select(-obs) %>%
-    dplyr::rename(obs = n)
-
-  return(df)
-
-}
