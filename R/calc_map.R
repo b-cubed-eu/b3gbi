@@ -21,31 +21,53 @@
 calc_map.default <- function(x,
                      cs1 = 100,
                      cs2 = 100,
-                     level = "continent",
+                     level = c("continent", "country", "world"),
                      region = "Europe",
-                     type = "hill0",
+                     type = "obs_richness",
                      coverage = 0.95,
                      cutoff_length = 5,
                      inext_sampsize = 100,
                      knots = 10,
                      newness_min_year = NULL,
-                     even_type = "pielou",
                      ...) {
 
   stopifnot_error("Object class not recognized.",
                   inherits(x, "processed_cube") |
-                    inherits(x, "processed_cube_dsinfo"))
+                    inherits(x, "processed_cube_dsinfo") |
+                    inherits(x, "virtual_cube"))
+
+  level <- match.arg(level)
+  type <- match.arg(type,
+                    c("hill0",
+                      "hill1",
+                      "hill2",
+                      "obs_richness",
+                      "total_occ",
+                      "newness",
+                      "density",
+                      "e9_evenness",
+                      "pielou_evenness",
+                      "ab_rarity",
+                      "area_rarity",
+                      "spec_occ",
+                      "spec_range",
+                      "tax_distinct"))
 
   data <- x$data
 
   # Collect information to add to final object
-  kingdoms <- x$kingdoms
-  species_names <- unique(data$scientificName)
   num_species <- x$num_species
   first_year <- x$first_year
   last_year <- x$last_year
   num_years <- length(unique(data$year))
-  years_with_obs <- unique(data$year)
+
+  if (!inherits(x, "virtual_cube")) {
+
+    kingdoms <- x$kingdoms
+    species_names <- unique(data$scientificName)
+    years_with_obs <- unique(data$year)
+
+  }
 
 
   if (type == "e9_evenness") {
@@ -54,83 +76,14 @@ calc_map.default <- function(x,
     calc_evenness <- calc_pielou_evenness
   }
 
-  # Download and prepare Natural Earth map data
-  if (level == "country") {
+  # Download Natural Earth data
+  map_data <- get_NE_data(level, region)
 
-    map_data <- rnaturalearth::ne_countries(scale = "medium",
-                                            country = region) %>%
-      sf::st_as_sf() %>%
-      sf::st_transform(crs = "EPSG:3035")
+  # Create grid from Natural Earth data
+  grid <- create_grid(map_data, cs1, cs2)
 
-  } else if (level == "continent") {
-
-    map_data <- rnaturalearth::ne_countries(scale = "medium",
-                                            continent = region) %>%
-      sf::st_as_sf() %>%
-      sf::st_transform(crs = "EPSG:3035")
-
-  } else if (level == "world") {
-
-    map_data <- rnaturalearth::ne_countries(scale = "medium") %>%
-      sf::st_as_sf() %>%
-      sf::st_transform(crs = "EPSG:3035")
-
-  }
-
-  # Make a grid across the map area
-  grid <- map_data %>%
-    sf::st_make_grid(cellsize = c(cs1 * 1000, cs2 * 1000)) %>%
-    sf::st_intersection(map_data) %>%
-    sf::st_cast("MULTIPOLYGON") %>%
-    sf::st_sf() %>%
-    dplyr::mutate(cellid = row_number())
-
-  # Add area column to grid
-  grid$area_km2 <-
-    grid %>%
-    sf::st_area() %>%
-    units::set_units("km^2")
-
-  # Set map limits
-  map_lims <- sf::st_buffer(grid, dist = 1000) %>%
-    sf::st_bbox()
-
-  # Scale coordinates of occurrences so the number of digits matches map
-  data_scaled <-
-    data %>%
-    dplyr::mutate(xcoord = xcoord * 1000,
-                  ycoord = ycoord * 1000)
-
-  # Convert the x and y columns to the correct format for plotting with sf
-  occ_sf <- sf::st_as_sf(data_scaled,
-                         coords = c("xcoord", "ycoord"),
-                         crs = "EPSG:3035")
-
-  # Set attributes as spatially constant to avoid warnings
-  sf::st_agr(grid) <- "constant"
-  sf::st_agr(occ_sf) <- "constant"
-
-  # Calculate intersection between occurrences and grid cells
-  occ_grid_int <- sf::st_intersection(occ_sf, grid, left = TRUE)
-
-  # Add cell numbers to occurrence data
-  data_cell <-
-    data_scaled %>%
-    dplyr::inner_join(occ_grid_int) %>%
-    suppressMessages() %>%
-    dplyr::arrange(cellid)
-
-  #
-  # # Remove grid cells with areas smaller than 20% of the largest one
-  # grid_filtered <-
-  #   grid %>%
-  #   filter(area_km2 > 0.2 * max(area_km2))
-  #
-  # # Remove same grid cells from data
-  # merged_data_cells_filtered <-
-  #   merged_data_cells %>%
-  #   filter(cellid %in% grid_filtered$cellid)
-
+  # Format spatial data and merge with grid
+  data <- prepare_spatial_data(data, grid)
 
   if (type %in% c("hill0", "hill1", "hill2")) {
 
@@ -139,7 +92,7 @@ calc_map.default <- function(x,
 
   # Create list of occurrence matrices by grid cell, with species as rows
   spec_rec_raw_cell <-
-    data_cell %>%
+    data %>%
     dplyr::group_split(cellid) %>%
     purrr::map(. %>%
                  dplyr::group_by(eea_cell_code,
@@ -176,7 +129,7 @@ calc_map.default <- function(x,
 
 
   # name list elements
-  names(spec_rec_raw_cell) <- unique(data_cell$cellid)
+  names(spec_rec_raw_cell) <- unique(data$cellid)
 
   # remove all cells with too little data to avoid errors from iNEXT
   spec_rec_raw_cell2 <- spec_rec_raw_cell %>%
@@ -207,7 +160,7 @@ calc_map.default <- function(x,
 
     # Calculate species richness over the grid
     diversity_cell <-
-      data_cell %>%
+      data %>%
       dplyr::summarize(diversity_val = sum(n_distinct(taxonKey)),
                        .by = "cellid")
 
@@ -215,7 +168,7 @@ calc_map.default <- function(x,
 
     # Calculate total number of occurrences over the grid
     diversity_cell <-
-      data_cell %>%
+      data %>%
       dplyr::summarize(diversity_val = sum(obs),
                        .by = "cellid")
 
@@ -223,7 +176,7 @@ calc_map.default <- function(x,
 
     # Calculate mean year of occurrence over the grid
     diversity_cell <-
-      data_cell %>%
+      data %>%
       dplyr::summarize(diversity_val = round(mean(year)),
                        .by = "cellid")
 
@@ -237,7 +190,7 @@ calc_map.default <- function(x,
 
     # Calculate density of occurrences over the grid (per square km)
     diversity_cell <-
-      data_cell %>%
+      data %>%
       dplyr::reframe(diversity_val = sum(obs) / area_km2,
                      .by = "cellid") %>%
       dplyr::distinct(cellid, diversity_val) %>%
@@ -247,7 +200,7 @@ calc_map.default <- function(x,
 
     # Calculate adjusted evenness for each grid cell
     diversity_cell <-
-      data_cell %>%
+      data %>%
       dplyr::summarize(num_occ = sum(obs),
                        .by = c(cellid, taxonKey)) %>%
       dplyr::arrange(cellid) %>%
@@ -267,7 +220,7 @@ calc_map.default <- function(x,
 
       # Calculate total summed rarity (in terms of abundance) for each grid cell
       diversity_cell <-
-        data_cell %>%
+        data %>%
         dplyr::mutate(records_taxon = sum(obs), .by = taxonKey) %>%
         dplyr::mutate(rarity = 1 / (records_taxon / sum(obs))) %>%
         dplyr::summarise(diversity_val = sum(rarity), .by = "cellid") %>%
@@ -278,7 +231,7 @@ calc_map.default <- function(x,
       # Calculate rarity as the sum (per grid cell) of the inverse of occupancy
       # frequency for each species
       diversity_cell <-
-        data_cell %>%
+        data %>%
         dplyr::mutate(rec_tax_cell = sum(n_distinct(cellid)),
                       .by = c(taxonKey)) %>%
         dplyr::mutate(rarity = 1 / (rec_tax_cell / sum(n_distinct(cellid)))) %>%
@@ -288,7 +241,7 @@ calc_map.default <- function(x,
 
       # Calculate total occurrences for each species by grid cell
       diversity_cell <-
-        data_cell %>%
+        data %>%
         dplyr::mutate(num_records = sum(obs), .by = c(taxonKey, cellid)) %>%
         dplyr::distinct(cellid, scientificName, .keep_all = TRUE) %>%
         dplyr::arrange(cellid) %>%
@@ -298,7 +251,7 @@ calc_map.default <- function(x,
 
       # Flatten occurrences for each species by grid cell
       diversity_cell <-
-        data_cell %>%
+        data %>%
         dplyr::mutate(obs = 1) %>%
         dplyr::distinct(cellid, scientificName, .keep_all = TRUE) %>%
         dplyr::arrange(cellid) %>%
@@ -333,7 +286,7 @@ calc_map.default <- function(x,
 
       # Calculate taxonomic distinctness
       diversity_cell <-
-        data_cell %>%
+        data %>%
         tibble::add_column(diversity_val = NA) %>%
         dplyr::group_split(cellid) %>%
         purrr::map(. %>%
@@ -362,6 +315,7 @@ calc_map.default <- function(x,
     grid %>%
     dplyr::left_join(diversity_cell, by = "cellid")
 
+if (!inherits(x, "virtual_cube")) {
 
   diversity_obj <- indicator_map(diversity_grid,
                                  div_type = type,
@@ -376,6 +330,22 @@ calc_map.default <- function(x,
                                  num_years = num_years,
                                  species_names = species_names,
                                  years_with_obs = years_with_obs)
+
+
+} else {
+
+  diversity_obj <- v_indicator_map(diversity_grid,
+                                   div_type = type,
+                                   cs1 = cs1,
+                                   cs2 = cs2,
+                                   map_level = level,
+                                   map_region = region,
+                                   num_species = num_species,
+                                   first_year = first_year,
+                                   last_year = last_year,
+                                   num_years = num_years)
+
+}
 
   return(diversity_obj)
 

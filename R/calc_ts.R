@@ -22,13 +22,26 @@ calc_ts.default <- function(x,
 
   stopifnot_error("Object class not recognized.",
                   inherits(x, "processed_cube") |
-                    inherits(x, "processed_cube_dsinfo"))
+                    inherits(x, "processed_cube_dsinfo") |
+                    inherits(x, "virtual_cube"))
+
+  type <- match.arg(type,
+                    c("obs_richness",
+                      "cum_richness",
+                      "total_occ",
+                      "occ_by_type",
+                      "occ_by_dataset",
+                      "rarefied",
+                      "hill0",
+                      "hill1",
+                      "hill2",
+                      "e9_evenness",
+                      "pielou_evenness",
+                      "species_rarity"))
 
   data <- x$data
 
   # Collect information to add to final object
-  kingdoms <- x$kingdoms
-  species_names <- unique(data$scientificName)
   num_species <- x$num_species
   first_year <- x$first_year
   last_year <- x$last_year
@@ -39,6 +52,13 @@ calc_ts.default <- function(x,
                           "ymin" = min(data$ycoord),
                           "ymax" = max(data$ycoord)))
 
+  if(!inherits(x, "virtual_cube")) {
+
+    kingdoms <- x$kingdoms
+    species_names <- unique(data$scientificName)
+
+  }
+
   if (type == "e9_evenness") {
     calc_evenness <- calc_e9_evenness
   } else if (type == "pielou_evenness") {
@@ -47,74 +67,14 @@ calc_ts.default <- function(x,
 
   if (!is.null(level) & !is.null(region)) {
 
+    # Download Natural Earth data
+    map_data <- get_NE_data(level, region)
 
-  # Download and prepare Natural Earth map data
-  if (level == "country") {
+    # Create grid from Natural Earth data
+    grid <- create_grid(map_data, cs1, cs2)
 
-    map_data <- rnaturalearth::ne_countries(scale = "medium",
-                                            country = region) %>%
-      sf::st_as_sf() %>%
-      sf::st_transform(crs = "EPSG:3035")
-
-  } else if (level == "continent") {
-
-    map_data <- rnaturalearth::ne_countries(scale = "medium",
-                                            continent = region) %>%
-      sf::st_as_sf() %>%
-      sf::st_transform(crs = "EPSG:3035")
-
-  } else if (level == "world") {
-
-    map_data <- rnaturalearth::ne_countries(scale = "medium") %>%
-      sf::st_as_sf() %>%
-      sf::st_transform(crs = "EPSG:3035")
-
-  }
-
-  # Make a grid across the map area
-  grid <- map_data %>%
-    sf::st_make_grid(cellsize = c(cs1 * 1000, cs2 * 1000)) %>%
-    sf::st_intersection(map_data) %>%
-    sf::st_cast("MULTIPOLYGON") %>%
-    sf::st_sf() %>%
-    dplyr::mutate(cellid = row_number())
-
-  # Add area column to grid
-  grid$area_km2 <-
-    grid %>%
-    sf::st_area() %>%
-    units::set_units("km^2")
-
-  # Set map limits
-  map_lims <- sf::st_buffer(grid, dist = 1000) %>%
-    sf::st_bbox()
-
-  # Scale coordinates of occurrences so the number of digits matches map
-  data_scaled <-
-    data %>%
-    dplyr::mutate(xcoord = xcoord * 1000,
-                  ycoord = ycoord * 1000)
-
-  # Convert the x and y columns to the correct format for plotting with sf
-  occ_sf <- sf::st_as_sf(data_scaled,
-                         coords = c("xcoord", "ycoord"),
-                         crs = "EPSG:3035")
-
-  # Set attributes as spatially constant to avoid warnings
-  sf::st_agr(grid) <- "constant"
-  sf::st_agr(occ_sf) <- "constant"
-
-  # Calculate intersection between occurrences and grid cells
-  occ_grid_int <- sf::st_intersection(occ_sf, grid, left = TRUE)
-
-  # Add cell numbers to occurrence data
-  data_cell <-
-    data_scaled %>%
-    dplyr::inner_join(occ_grid_int) %>%
-    suppressMessages() %>%
-    dplyr::arrange(cellid)
-
-  data <- data_cell
+    # Format spatial data and merge with grid
+    data <- prepare_spatial_data(data, grid)
 
   } else {
     level <- "unknown"
