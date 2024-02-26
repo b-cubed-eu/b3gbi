@@ -267,23 +267,6 @@ calc_map.default <- function(x,
 
       #  tax_hier <- readRDS("taxonomic_hierarchy.RDS")
 
-      # Define function to calculate taxonomic distinctness
-      tax_distinct_fn <- function(x, y) {
-        temp <- names(y) %in% x$scientificName
-        tax_hier_temp <- y[c(temp)]
-        print(length(tax_hier_temp))
-        n_spec <- length(tax_hier_temp)
-        if(length(tax_hier_temp) < 3) {
-          tax_distinct <- NA
-          return(tax_distinct)
-        } else {
-          tax_tree <- taxize::class2tree(tax_hier_temp, check=FALSE)
-          tax_distance <- tax_tree$distmat
-          tax_distinct <- sum(tax_distance) / ((n_spec * (n_spec - 1)) / 2)
-          return(tax_distinct)
-        }
-      }
-
       # Calculate taxonomic distinctness
       diversity_cell <-
         data %>%
@@ -291,7 +274,7 @@ calc_map.default <- function(x,
         dplyr::group_split(cellid) %>%
         purrr::map(. %>%
                      dplyr::mutate(diversity_val =
-                                     tax_distinct_fn(.,
+                                     calc_tax_distinctness(.,
                                                      tax_hier))) %>%
         dplyr::bind_rows() %>%
         dplyr::distinct(cellid, diversity_val, .keep_all = TRUE) %>%
