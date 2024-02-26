@@ -1,4 +1,4 @@
-
+#' @noRd
 retrieve_samples <- function(files_list, parallel = FALSE, num_cores = 4) {
 
   if (parallel == TRUE) {

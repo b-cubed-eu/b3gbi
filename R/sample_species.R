@@ -1,3 +1,4 @@
+#' @noRd
 sample_species <- function(files_list, max_mean = 1000000, plot = FALSE) {
 
   species_data <- list()
