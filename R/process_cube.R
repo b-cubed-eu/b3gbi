@@ -22,11 +22,11 @@ process_cube <- function(cube_name, tax_info, datasets_info = NA, first_year = N
   # Read in data cube
   occurrence_data <- readr::read_csv(
     file = cube_name,
-    col_types = cols(
-      year = col_double(),
-      eea_cell_code = col_character(),
-      n = col_double(),
-      min_coord_uncertainty = col_double()
+    col_types = readr::cols(
+      year = readr::col_double(),
+      eea_cell_code = readr::col_character(),
+      n = readr::col_double(),
+      min_coord_uncertainty = readr::col_double()
     ),
     na = ""
   )
@@ -63,15 +63,15 @@ process_cube <- function(cube_name, tax_info, datasets_info = NA, first_year = N
 
     occurrence_data <-
       occurrence_data %>%
-      rename(taxonKey = "speciesKey")
+      dplyr::rename(taxonKey = "speciesKey")
 
     occurrence_data <-
       occurrence_data %>%
-      mutate(eea_cell_code = gsub("-", "", eea_cell_code))
+      dplyr::mutate(eea_cell_code = gsub("-", "", eea_cell_code))
 
     taxonomic_info <-
       taxonomic_info %>%
-      rename(taxonKey = "speciesKey")
+      dplyr::rename(taxonKey = "speciesKey")
 
 
   }
@@ -88,9 +88,9 @@ process_cube <- function(cube_name, tax_info, datasets_info = NA, first_year = N
   # Separate 'eea_cell_code' into resolution, coordinates
   merged_data <- merged_data %>%
     dplyr::mutate(
-      xcoord = as.numeric(str_extract(eea_cell_code, "(?<=E)\\d+")),
-      ycoord = as.numeric(str_extract(eea_cell_code, "(?<=N)\\d+")),
-      resolution = str_replace_all(eea_cell_code, "(E\\d+)|(N\\d+)", "")
+      xcoord = as.numeric(stringr::str_extract(eea_cell_code, "(?<=E)\\d+")),
+      ycoord = as.numeric(stringr::str_extract(eea_cell_code, "(?<=N)\\d+")),
+      resolution = stringr::str_replace_all(eea_cell_code, "(E\\d+)|(N\\d+)", "")
     )
 
   if(!is.na(datasets_info)) {
@@ -139,6 +139,6 @@ process_cube <- function(cube_name, tax_info, datasets_info = NA, first_year = N
     merged_data %>%
     dplyr::distinct()
 
-  cube <- processed_cube(merged_data)
+  cube <- new_processed_cube(merged_data)
 
 }
