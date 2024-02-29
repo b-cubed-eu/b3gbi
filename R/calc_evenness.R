@@ -1,4 +1,4 @@
-# Calculate evenness from a vector of summed species occurrences.
+# Calculate Pielou's evenness from a vector of summed species occurrences.
 #' @noRd
 calc_pielou_evenness <- function(x) {
   S <- length(x)
@@ -16,6 +16,7 @@ calc_pielou_evenness <- function(x) {
   return(even)
 }
 
+# Calculate E9 evenness from a vector of summed species occurrences.
 #' @noRd
 calc_e9_evenness <- function(x) {
   n <- x
