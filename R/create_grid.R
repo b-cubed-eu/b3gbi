@@ -1,3 +1,4 @@
+# Create a grid for map data retrieved from rnaturalearth
 #' @noRd
 create_grid <- function(map_data, cs1, cs2) {
 
