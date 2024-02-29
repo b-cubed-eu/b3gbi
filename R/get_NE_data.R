@@ -1,3 +1,4 @@
+# Retrieve map data from rnaturalearth
 #' @noRd
 get_NE_data <- function(level, region) {
 
