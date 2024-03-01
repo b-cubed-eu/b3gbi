@@ -59,9 +59,6 @@ amphibians in Europe:
 ``` r
 # Load necessary libraries
 library(b3gbi)
-#> Registered S3 method overwritten by 'b3gbi':
-#>   method       from 
-#>   plot.density stats
 library(data.table)
 library(ggplot2)
 
@@ -76,35 +73,9 @@ amphib_data <- process_cube(cube_name, tax_info)
 
 # Calculate diversity metric
 map_obs_rich_amphib <- calculate_indicator(amphib_data, type = "obs_rich")
-#> The legacy packages maptools, rgdal, and rgeos, underpinning the sp package,
-#> which was just loaded, will retire in October 2023.
-#> Please refer to R-spatial evolution reports for details, especially
-#> https://r-spatial.org/r/2023/05/15/evolution4.html.
-#> It may be desirable to make the sf package available;
-#> package maintainers should consider adding sf to Suggests:.
-#> The sp package is now running under evolution status 2
-#>      (status 2 uses the sf package in place of rgdal)
-#> Warning: The `returnclass` argument of `ne_download()` sp as of rnaturalearth 1.0.0.
-#> ℹ Please use `sf` objects with {rnaturalearth}, support for Spatial objects
-#>   (sp) will be removed in a future release of the package.
-#> ℹ The deprecated feature was likely used in the b3gbi package.
-#>   Please report the issue to the authors.
-#> This warning is displayed once every 8 hours.
-#> Call `lifecycle::last_lifecycle_warnings()` to see where this warning was
-#> generated.
 
 # Plot diversity metric
 plot(map_obs_rich_amphib, title = "Observed Species Richness: Amphibians in Europe") 
 ```
 
 <img src="man/figures/README-example-1.png" width="100%" />
-
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date. `devtools::build_readme()` is handy for this.
-
-You can also embed plots, for example:
-
-<img src="man/figures/README-pressure-1.png" width="100%" />
-
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub and CRAN.

@@ -53,7 +53,7 @@ You can install the development version of b3gbi from [GitHub](https://github.co
 
 This is a basic example which shows you how to calculate and plot a map of species richness for a data cube containing GBIF occurrence data on amphibians in Europe:
 
-```{r example}
+```{r example, warning = FALSE, message = FALSE}
 # Load necessary libraries
 library(b3gbi)
 library(data.table)
@@ -76,12 +76,3 @@ plot(map_obs_rich_amphib, title = "Observed Species Richness: Amphibians in Euro
 ```
 
 
-You'll still need to render `README.Rmd` regularly, to keep `README.md` up-to-date. `devtools::build_readme()` is handy for this.
-
-You can also embed plots, for example:
-
-```{r pressure, echo = FALSE}
-plot(pressure)
-```
-
-In that case, don't forget to commit and push the resulting figure files, so they display on GitHub and CRAN.
