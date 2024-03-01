@@ -15,6 +15,7 @@ library(ggplot2)
 library(taxize)
 library(virtualspecies)
 library(vegan)
+library(stringr)
 
 # Set parameters ----
 region_level <- "country" # country, continent, world
