@@ -1,3 +1,35 @@
+#' @title Calculate Gridded Biodiversity Indicators
+#'
+#' @description This function provides a flexible framework for calculating various biodiversity
+#' indicators on a spatial grid. It prepares the data, creates a grid, calculates indicators,
+#' and formats the output into an appropriate S3 object ('indicator_map' or 'virtual_indicator_map').
+#'
+#' @param x A data cube object ('processed_cube', 'processed_cube_dsinfo', or  'virtual_cube').
+#' @param type The indicator to calculate. Supported options include:
+#'   * 'hill0', 'hill1', 'hill2': Hill numbers (order 0, 1, and 2).
+#'   * 'obs_richness': Observed species richness.
+#'   * 'total_occ': Total number of occurrences.
+#'   * 'newness': Mean year of occurrence.
+#'   * 'density': Density of occurrences.
+#'   * 'e9_evenness', 'pielou_evenness': Evenness measures.
+#'   * 'ab_rarity', 'area_rarity':  Abundance-based and area-based rarity scores.
+#'   * 'spec_occ': Species occurrences.
+#'   * 'tax_distinct': Taxonomic distinctness.
+#' @param cs1 Length of the grid cell's sides, in kilometers, if square. (Default: 100)
+#' @param cs2 Width of the grid cell's sides, in kilometers. (Default: 100)
+#' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
+#' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
+#' @param ... Additional arguments passed to specific indicator calculation functions.
+#'
+#' @return An S3 object of the appropriate class containing the calculated indicator values and metadata:
+#'   * 'indicator_map' for real-world observational data.
+#'   * 'virtual_indicator_map' for virtual species data.
+#'
+#' @examples
+#' # Assuming 'my_data_cube' is a 'processed_cube' or 'virtual_cube' object
+#' diversity_map <- calculate_indicator(my_data_cube, type = "obs_richness", level = "continent", region = "Africa")
+#'
+#' @export
 calculate_indicator <- function(x,
                                 type,
                                 cs1 = 100,
@@ -54,16 +86,16 @@ grid <- create_grid(map_data, cs1, cs2)
 data <- prepare_spatial_data(data, grid)
 
 # Calculate indicator
-indicator <- calc_map(data, ...)
+indicator <- calc_map(data, type = type, ...)
 
 # Add grid-based rarity to grid
 diversity_grid <-
   grid %>%
-  dplyr::left_join(diversity_cell, by = "cellid")
+  dplyr::left_join(indicator, by = "cellid")
 
 if (!inherits(x, "virtual_cube")) {
 
-  diversity_obj <- indicator_map(diversity_grid,
+  diversity_obj <- new_indicator_map(diversity_grid,
                                  div_type = type,
                                  cs1 = cs1,
                                  cs2 = cs2,
@@ -79,7 +111,7 @@ if (!inherits(x, "virtual_cube")) {
 
 } else {
 
-  diversity_obj <- v_indicator_map(diversity_grid,
+  diversity_obj <- new_virtual_indicator_map(diversity_grid,
                                    div_type = type,
                                    cs1 = cs1,
                                    cs2 = cs2,
