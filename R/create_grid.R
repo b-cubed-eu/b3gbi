@@ -8,7 +8,7 @@ create_grid <- function(map_data, cs1, cs2) {
     sf::st_intersection(map_data) %>%
     sf::st_cast("MULTIPOLYGON") %>%
     sf::st_sf() %>%
-    dplyr::mutate(cellid = row_number())
+    dplyr::mutate(cellid = dplyr::row_number())
 
   # Add area column to grid
   grid$area_km2 <-
