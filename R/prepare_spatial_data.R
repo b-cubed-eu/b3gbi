@@ -6,12 +6,12 @@ prepare_spatial_data <- function(data, grid) {
   #   sf::st_bbox()
 
   # Scale coordinates of occurrences so the number of digits matches map
-  # data_scaled <-
-  #   data %>%
-  #   dplyr::mutate(xcoord = xcoord * 1000,
-  #                 ycoord = ycoord * 1000)
+   data <-
+     data %>%
+     dplyr::mutate(xcoord = xcoord * 1000,
+                   ycoord = ycoord * 1000)
 
-  data[, xcoord := xcoord * 1000][, ycoord := ycoord * 1000]
+ # data[, xcoord := xcoord * 1000][, ycoord := ycoord * 1000]
 
   # Convert the x and y columns to the correct format for plotting with sf
   # occ_sf <- sf::st_as_sf(data_scaled,
