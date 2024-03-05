@@ -1,5 +1,4 @@
 # Copy of stopifnot_error from iregnet package
-#' @noRd
 #' @title stopifnot with custom error message
 #'
 #' @description
@@ -7,6 +6,8 @@
 #'
 #' @param err_message The error message to print.
 #' @param ... An error is raised if any these expressions is \code{FALSE}.
+#'
+#' @noRd
 stopifnot_error <- function(err_message, ...)
 {
   n <- length(ll <- list(...))
@@ -237,30 +238,30 @@ plot_annotation_int <- function (title = NULL, subtitle = NULL, caption = NULL, 
                  tag_sep = tag_sep, theme = th), class = "plot_annotation")
 }
 
-# Copy of function gifski from gifski package
-# Gifski converts image frames to high quality GIF animations.
-#' @noRd
-#' @useDynLib b3gbi R_png_to_gif
-gifski_int <- function (png_files, gif_file = "animation.gif", width = 800,
-          height = 600, delay = 1, loop = TRUE, progress = TRUE)
-{
-  png_files <- normalizePath(png_files, mustWork = TRUE)
-  gif_file <- normalizePath(gif_file, mustWork = FALSE)
-  if (!file.exists(dirname(gif_file)))
-    stop("Target directory does not exist:", dirname(gif_file))
-  width <- as.integer(width)
-  height <- as.integer(height)
-  delay <- as.numeric(delay)
-  repeats <- if (is.logical(loop) || loop == 0) {
-    isTRUE(loop) - 1
-  }
-  else {
-    as.integer(loop)
-  }
-  progress <- as.logical(progress)
-  .Call(R_png_to_gif, enc2utf8(png_files), enc2utf8(gif_file),
-        width, height, delay, repeats, progress)
-}
+# # Copy of function gifski from gifski package
+# # Gifski converts image frames to high quality GIF animations.
+# #' @noRd
+# #' @useDynLib b3gbi R_png_to_gif
+# gifski_int <- function (png_files, gif_file = "animation.gif", width = 800,
+#           height = 600, delay = 1, loop = TRUE, progress = TRUE)
+# {
+#   png_files <- normalizePath(png_files, mustWork = TRUE)
+#   gif_file <- normalizePath(gif_file, mustWork = FALSE)
+#   if (!file.exists(dirname(gif_file)))
+#     stop("Target directory does not exist:", dirname(gif_file))
+#   width <- as.integer(width)
+#   height <- as.integer(height)
+#   delay <- as.numeric(delay)
+#   repeats <- if (is.logical(loop) || loop == 0) {
+#     isTRUE(loop) - 1
+#   }
+#   else {
+#     as.integer(loop)
+#   }
+#   progress <- as.logical(progress)
+#   .Call(R_png_to_gif, enc2utf8(png_files), enc2utf8(gif_file),
+#         width, height, delay, repeats, progress)
+#u }
 
 # Copy of function specaccum from vegan package
 #' @noRd
