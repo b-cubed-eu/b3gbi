@@ -9,6 +9,7 @@
 /test_plots
 /test_data
 /R_old
+/.local
 Env.RData
 
 docs
