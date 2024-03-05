@@ -397,8 +397,8 @@ plot.obs_richness <- function(x, ...){
   }
 }
 
-#' @export
 # Plot observed species richness
+#' @export
 plot_map <- function(x,
                      leg_label_default = NULL,
                      auto_title = NULL,

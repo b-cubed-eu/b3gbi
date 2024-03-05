@@ -1,9 +1,9 @@
-#' #' @export
-#' calc_map <- function(x, ...) {
-#'
-#'   useMethod(calc_map)
-#'
-#' }
+# #' @export
+# calc_map <- function(x, ...) {
+#
+#   useMethod(calc_map)
+#
+# }
 
 #' @export
 hill0 <- function(x,

@@ -1,4 +1,5 @@
 # Function to plot biodiversity indicators calculated over time
+#' @export
 plot_ts_seg <- function(x,
                         auto_title = NULL,
                         y_label_default = NULL,

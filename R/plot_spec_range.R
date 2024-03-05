@@ -1,6 +1,6 @@
 # Function to plot gridded ranges for selected species
 # Input selected taxonKey values to "species"
-
+#' @export
 plot_spec_range <- function(data, species, buffer = 20000, xlims = NA, ylims = NA) {
 
   # check for custom map limits

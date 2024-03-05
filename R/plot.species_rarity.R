@@ -1,3 +1,4 @@
+#' @export
 plot.species_rarity <- function(x,
                                 species = NULL,
                                 auto_title = NULL,
