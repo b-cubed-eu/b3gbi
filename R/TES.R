@@ -18,7 +18,7 @@
 
 # TES() returns a list, which contains a table of the summary of the estimated values and their standard deviations based on TESa, TESb, and TESab, and the model used in the estimation of TES, either 'logistic' or 'Weibull'
 
-
+#' @noRd
 ES <-  function (x,m=1,method=c("a","b"))
 {
   method <- match.arg(method, c("a", "b"))
@@ -48,7 +48,7 @@ ES <-  function (x,m=1,method=c("a","b"))
   return(ESSii)
 }
 
-
+#' @noRd
 TES <- function(x,knots=40){
   TESab <- function (x,knots=40,method=c("a","b"))
   {
@@ -127,6 +127,7 @@ TES <- function(x,knots=40){
               TESb = TESb))
 }
 
+#' @noRd
 plot.TES <- function(TES_output){
   TESa <- TES_output$TESa
   TESb <- TES_output$TESb
