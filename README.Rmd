@@ -13,9 +13,8 @@ knitr::opts_chunk$set(
 )
 ```
 
-# b3gbi: B-Cubed General Biodiversity Indicators
 
-Analyze biodiversity trends and spatial patterns from GBIF data cubes, using flexible indicators like richness, evenness, and more.
+# b3gbi <img src="man/figures/logo.png" align="right" height="139" alt="" />
 
 <!-- badges: start -->
 
@@ -23,7 +22,9 @@ Analyze biodiversity trends and spatial patterns from GBIF data cubes, using fle
 
 <!-- badges: end -->
 
-## Motivation
+Analyze biodiversity trends and spatial patterns from GBIF data cubes, using flexible indicators like richness, evenness, and more.
+
+## Overview
 
 Biodiversity researchers need robust and standardized tools to analyze the vast amounts of data available on platforms like GBIF. The b3gbi package leverages the power of data cubes to streamline biodiversity assessments. It helps researchers gain insights into:
 

@@ -1,10 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# b3gbi: B-Cubed General Biodiversity Indicators
-
-Analyze biodiversity trends and spatial patterns from GBIF data cubes,
-using flexible indicators like richness, evenness, and more.
+# b3gbi <img src="man/figures/logo.png" align="right" height="139" alt="" />
 
 <!-- badges: start -->
 
@@ -12,6 +9,9 @@ using flexible indicators like richness, evenness, and more.
 Development](https://img.shields.io/badge/Status-In%20Development-yellow.svg)](https://github.com/your_github_username/b3gbi)
 
 <!-- badges: end -->
+
+Analyze biodiversity trends and spatial patterns from GBIF data cubes,
+using flexible indicators like richness, evenness, and more.
 
 ## Motivation
 
