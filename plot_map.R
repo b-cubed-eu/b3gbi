@@ -1,5 +1,6 @@
 # Function to plot biodiversity indicators calculated over gridded space
 # Accepts tibbles output by plot_ts.R
+#' @noRd
 plot_map <- function(data,
                      species = NULL,
                      xlims = NULL,
