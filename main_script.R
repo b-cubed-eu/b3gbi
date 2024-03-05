@@ -16,6 +16,7 @@ library(taxize)
 library(virtualspecies)
 library(vegan)
 library(stringr)
+library(pkgdown)
 
 # Set parameters ----
 region_level <- "country" # country, continent, world
