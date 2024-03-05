@@ -3,3 +3,17 @@
 ^LICENSE\.md$
 ^README\.Rmd$
 ^\.github$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+^CITATION\.cff$
+^inext_output$
+^inst/extdata$
+^.*\.RDS$
+^.*\.jpg$
+^.*\.RData$
+^.*\.old$
+^test_plots$
+^test_data$
+^wc10$
+^R_old$
