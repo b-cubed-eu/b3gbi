@@ -1,17 +1,22 @@
 Package: b3gbi
+Date: 2024-03-05
 Type: Package
-Title: B-Cubed: General Biodiversity Indicators
+Title: General Biodiversity Indicators for Biodiversity Data Cubes
 Version: 0.1.0
-Authors@R: person("Shawn", "Dove", email = "s.dove@ucl.ac.uk", 
-  role = c("aut", "cre"))
+Authors@R: person(given = "Shawn", 
+                  family = "Dove",
+                  role = c("aut", "cre"),
+                  email = "Shawn.Dove@allzool.bio.uni-giessen.de", 
+                  comment = c(ORCID = "0000-0001-9465-5638"))
 Description: Calculate general biodiversity indicators from GBIF data cubes.
     Includes many common indicators such as species richness and evenness,
     which can be calculated over time (trends) or space (maps).
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
+Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
-LinkingTo: gifski_int
+LinkingTo:
 Imports: 
     dplyr,
     furrr,
@@ -32,3 +37,4 @@ Imports:
 Suggests: 
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+URL: https://github.com/ShawnDove/b3gbi
