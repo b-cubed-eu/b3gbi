@@ -6,7 +6,9 @@
 # To use the entire range of the cube, leave the arguments out of the function
 # call.
 
-#' Process a GBIF data cube
+#' @title Process GBIF data cubes
+#'
+#' @description Process a GBIF data cube
 #'
 #' @param cube_name The location and name of a data cube file to open.
 #' @param tax_info The location and name of an associated taxonomic info file.
@@ -15,8 +17,12 @@
 #' @param final_year The final year of occurrences (if different from cube).
 #'
 #' @return A tibble.
-#' @export
 #'
+#' @examples
+#' # example code
+#' amphibs <- process_cube(amphib, tax)
+#'
+#' @export
 process_cube <- function(cube_name, tax_info, datasets_info = NA, first_year = NA, final_year = NA) {
 
   # Read in data cube
