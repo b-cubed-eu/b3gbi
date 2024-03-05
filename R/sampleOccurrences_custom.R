@@ -1,3 +1,4 @@
+#' @noRd
 sampleOccurrences_custom <- function (x, n, type = "presence only", extract.probability = FALSE,
                                    sampling.area = NULL, detection.probability = 1, correct.by.suitability = FALSE,
                                    error.probability = 0, bias = "no.bias", bias.strength = 50,

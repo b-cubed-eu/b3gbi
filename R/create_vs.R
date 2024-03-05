@@ -1,4 +1,5 @@
 # Function to create virtual species
+#' @noRd
 createvs_custom <- function(clim_data,
                             n,
                             start_val=1,
@@ -330,7 +331,7 @@ createvs_custom <- function(clim_data,
 
 }
 
-
+#' @noRd
 createvirtualspecies <- function(clim_data, n) {
 
   mandatory_vars <- raster::stack(clim_data$bio1, clim_data$bio12)
