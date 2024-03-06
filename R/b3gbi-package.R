@@ -2,6 +2,7 @@
 "_PACKAGE"
 
 ## usethis namespace: start
+#' @import ggplot2
 #' @importFrom furrr future_map
 #' @importFrom future multisession
 #' @importFrom future plan
