@@ -18,8 +18,10 @@ new_indicator_ts(
 }
 \arguments{
 \item{x}{A tibble data frame containing at least two columns:
-* 'year'
-* 'diversity_val' (calculated indicator value)}
+\itemize{
+\item 'year'
+\item 'diversity_val' (calculated indicator value)
+}}
 
 \item{div_type}{The type of biodiversity indicator in short form (e.g., "obs_richness").}
 
@@ -40,11 +42,13 @@ new_indicator_ts(
 }
 \value{
 An 'indicator_ts' S3 object containing:
-  * **Indicator name and type:**  Descriptive name of indicator (e.g., "Observed Species Richness") and short-form (e.g., "obs_richness").
-  * **Data timeframe:** First year, last year, number of years.
-  * **Spatial details:** Level (country, continent, world), region name, and coordinate range.
-  * **Diversity information:**  Kingdoms, names of species, number of species.
-  * **Time Series:** The input tibble containing year and indicator values.
+\itemize{
+\item \strong{Indicator name and type:}  Descriptive name of indicator (e.g., "Observed Species Richness") and short-form (e.g., "obs_richness").
+\item \strong{Data timeframe:} First year, last year, number of years.
+\item \strong{Spatial details:} Level (country, continent, world), region name, and coordinate range.
+\item \strong{Diversity information:}  Kingdoms, names of species, number of species.
+\item \strong{Time Series:} The input tibble containing year and indicator values.
+}
 }
 \description{
 This function creates an 'indicator_ts' S3 object, a specialized structure

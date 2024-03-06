@@ -19,8 +19,10 @@ new_virtual_indicator_map(
 }
 \arguments{
 \item{x}{An sf data frame containing at least two columns:
-* 'cellid': Unique ID for each spatial cell.
-* 'diversity_val': The calculated indicator value for the cell.}
+\itemize{
+\item 'cellid': Unique ID for each spatial cell.
+\item 'diversity_val': The calculated indicator value for the cell.
+}}
 
 \item{div_type}{The type of biodiversity indicator (e.g., "obs_richness").}
 
@@ -42,12 +44,14 @@ new_virtual_indicator_map(
 }
 \value{
 A 'virtual_indicator_map' S3 object containing:
-  * **Indicator name and type:**  Descriptive name, calculated type.
-  * **Cell information:** Number of cells, cell size (area).
-  * **Spatial details:** Level (cell, country), region name, projection, and coordinate range.
-  * **Virtual data info:** Number of species.
-  * **Years analyzed:** First and last year, number of years.
-  * **Mapped Results:** The input sf object, now containing indicator scores.
+\itemize{
+\item \strong{Indicator name and type:}  Descriptive name, calculated type.
+\item \strong{Cell information:} Number of cells, cell size (area).
+\item \strong{Spatial details:} Level (cell, country), region name, projection, and coordinate range.
+\item \strong{Virtual data info:} Number of species.
+\item \strong{Years analyzed:} First and last year, number of years.
+\item \strong{Mapped Results:} The input sf object, now containing indicator scores.
+}
 }
 \description{
 This function creates a 'virtual_indicator_map' S3 object, a specialized

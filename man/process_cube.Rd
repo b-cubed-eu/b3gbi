@@ -2,7 +2,7 @@
 % Please edit documentation in R/process_cube.R
 \name{process_cube}
 \alias{process_cube}
-\title{Process a GBIF data cube}
+\title{Process GBIF Data Cubes}
 \usage{
 process_cube(
   cube_name,
@@ -13,19 +13,32 @@ process_cube(
 )
 }
 \arguments{
-\item{cube_name}{The location and name of a data cube file to open.}
+\item{cube_name}{The location and name of a data cube file
+(e.g., 'data/my_mammals_cube.csv').}
 
-\item{tax_info}{The location and name of an associated taxonomic info file.}
+\item{tax_info}{The location and name of an associated taxonomic info file
+(e.g.,  'data/my_mammals_info.csv').}
 
-\item{datasets_info}{The location and name of an associated dataset info file.}
+\item{datasets_info}{The location and name of an associated dataset info file
+(e.g., 'data/my_mammals_datasets.csv').}
 
-\item{first_year}{The first year of occurrences (if different from cube).}
+\item{first_year}{(Optional) The first year of occurrences to include. If not
+specified, uses the earliest year present in the cube.}
 
-\item{final_year}{The final year of occurrences (if different from cube).}
+\item{final_year}{(Optional) The final year of occurrences to include. If not
+specified, uses the latest year present in the cube.}
 }
 \value{
-A tibble.
+A tibble containing the processed GBIF occurrence data.
 }
 \description{
-Process a GBIF data cube
+Processes a GBIF data cube and associated taxonomic information
+file. All files must reside in the same directory and share a base file
+name (e.g., 'my_mammals_cube.csv', 'my_mammals_info.csv').
+}
+\examples{
+# Assuming files are located in the 'data' directory:
+processed_mammals_cube <- process_cube(cube_name = "data/mammals_cube.csv",
+                                       tax_info = "data/mammals_info.csv")
+
 }

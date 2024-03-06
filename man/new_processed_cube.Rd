@@ -11,11 +11,13 @@ new_processed_cube(x)
 }
 \value{
 A 'processed_cube' S3 object containing:
-  * **Summary statistics:** First and last year of data, coordinate range, number of
-    spatial cells, species, and observations.
-  * **Diversity information:** Kingdoms represented, resolutions, indication of multiple
-    resolutions and datasets, and types of occurrence records.
-  * **Original data:** The input data cube.
+\itemize{
+\item \strong{Summary statistics:} First and last year of data, coordinate range, number of
+spatial cells, species, and observations.
+\item \strong{Diversity information:} Kingdoms represented, resolutions, indication of multiple
+resolutions and datasets, and types of occurrence records.
+\item \strong{Original data:} The input data cube.
+}
 }
 \description{
 This function constructs a 'processed_cube' S3 object, a specialized data

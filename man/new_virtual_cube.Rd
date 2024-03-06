@@ -8,17 +8,21 @@ new_virtual_cube(x)
 }
 \arguments{
 \item{x}{A data.table containing virtual species occurrence data. Required columns include:
-* 'year'
-* 'taxonKey'
-* 'obs' (number of occurrences)
-* 'scientificName'
-* 'xcoord', 'ycoord' (spatial coordinates)}
+\itemize{
+\item 'year'
+\item 'taxonKey'
+\item 'obs' (number of occurrences)
+\item 'scientificName'
+\item 'xcoord', 'ycoord' (spatial coordinates)
+}}
 }
 \value{
 A 'virtual_cube' S3 object containing:
-  * **Summary statistics:** First and last year (if applicable), coordinate range,
-    number of spatial cells, species, and observations.
-  * **Original data:** The input data.table.
+\itemize{
+\item \strong{Summary statistics:} First and last year (if applicable), coordinate range,
+number of spatial cells, species, and observations.
+\item \strong{Original data:} The input data.table.
+}
 }
 \description{
 This function creates a 'virtual_cube' S3 object, a specialized structure

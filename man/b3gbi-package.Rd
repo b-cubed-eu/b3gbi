@@ -4,12 +4,21 @@
 \name{b3gbi-package}
 \alias{b3gbi}
 \alias{b3gbi-package}
-\title{b3gbi: B-Cubed: General Biodiversity Indicators}
+\title{b3gbi: General Biodiversity Indicators for Biodiversity Data Cubes}
 \description{
+\if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
+
 Calculate general biodiversity indicators from GBIF data cubes. Includes many common indicators such as species richness and evenness, which can be calculated over time (trends) or space (maps).
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/ShawnDove/b3gbi}
+}
+
+}
 \author{
-\strong{Maintainer}: Shawn Dove \email{s.dove@ucl.ac.uk}
+\strong{Maintainer}: Shawn Dove \email{Shawn.Dove@allzool.bio.uni-giessen.de} (\href{https://orcid.org/0000-0001-9465-5638}{ORCID})
 
 }
 \keyword{internal}

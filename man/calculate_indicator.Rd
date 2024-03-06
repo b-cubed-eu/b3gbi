@@ -18,15 +18,17 @@ calculate_indicator(
 \item{x}{A data cube object ('processed_cube', 'processed_cube_dsinfo', or  'virtual_cube').}
 
 \item{type}{The indicator to calculate. Supported options include:
-* 'hill0', 'hill1', 'hill2': Hill numbers (order 0, 1, and 2).
-* 'obs_richness': Observed species richness.
-* 'total_occ': Total number of occurrences.
-* 'newness': Mean year of occurrence.
-* 'density': Density of occurrences.
-* 'e9_evenness', 'pielou_evenness': Evenness measures.
-* 'ab_rarity', 'area_rarity':  Abundance-based and area-based rarity scores.
-* 'spec_occ': Species occurrences.
-* 'tax_distinct': Taxonomic distinctness.}
+\itemize{
+\item 'hill0', 'hill1', 'hill2': Hill numbers (order 0, 1, and 2).
+\item 'obs_richness': Observed species richness.
+\item 'total_occ': Total number of occurrences.
+\item 'newness': Mean year of occurrence.
+\item 'density': Density of occurrences.
+\item 'e9_evenness', 'pielou_evenness': Evenness measures.
+\item 'ab_rarity', 'area_rarity':  Abundance-based and area-based rarity scores.
+\item 'spec_occ': Species occurrences.
+\item 'tax_distinct': Taxonomic distinctness.
+}}
 
 \item{cs1}{Length of the grid cell's sides, in kilometers, if square. (Default: 100)}
 
@@ -40,8 +42,10 @@ calculate_indicator(
 }
 \value{
 An S3 object of the appropriate class containing the calculated indicator values and metadata:
-  * 'indicator_map' for real-world observational data.
-  * 'virtual_indicator_map' for virtual species data.
+\itemize{
+\item 'indicator_map' for real-world observational data.
+\item 'virtual_indicator_map' for virtual species data.
+}
 }
 \description{
 This function provides a flexible framework for calculating various biodiversity

@@ -22,8 +22,10 @@ new_indicator_map(
 }
 \arguments{
 \item{x}{An sf data frame containing at least two columns:
-* 'cellid': Unique ID for each spatial cell.
-* 'diversity_val': The calculated indicator value for the cell.}
+\itemize{
+\item 'cellid': Unique ID for each spatial cell.
+\item 'diversity_val': The calculated indicator value for the cell.
+}}
 
 \item{div_type}{The type of biodiversity indicator in short form (e.g., obs_richness").}
 
@@ -47,12 +49,14 @@ new_indicator_map(
 }
 \value{
 An 'indicator_map' S3 object containing:
-  * **Indicator name and type:**  Descriptive name of indicator (e.g. "Observed Species Richness") and short-form (e.g. "obs_richness").
-  * **Cell information:** Number of cells, cell size (length x width).
-  * **Spatial details:** Level (country, continent, world), region name, projection, and coordinate range.
-  * **Diversity information:** Kingdoms, number of species, and names of species.
-  * **Years analyzed:** First and last year, number of years.
-  * **Mapped Results:** The input sf object, now containing indicator scores.
+\itemize{
+\item \strong{Indicator name and type:}  Descriptive name of indicator (e.g. "Observed Species Richness") and short-form (e.g. "obs_richness").
+\item \strong{Cell information:} Number of cells, cell size (length x width).
+\item \strong{Spatial details:} Level (country, continent, world), region name, projection, and coordinate range.
+\item \strong{Diversity information:} Kingdoms, number of species, and names of species.
+\item \strong{Years analyzed:} First and last year, number of years.
+\item \strong{Mapped Results:} The input sf object, now containing indicator scores.
+}
 }
 \description{
 This function creates an 'indicator_map' S3 object, a specialized structure
