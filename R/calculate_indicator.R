@@ -30,7 +30,7 @@
 #' diversity_map <- calculate_indicator(my_data_cube, type = "obs_richness", level = "continent", region = "Africa")
 #'
 #' @export
-calculate_indicator <- function(x,
+calc_indicator.map <- function(x,
                                 type,
                                 cs1 = 100,
                                 cs2 = 100,
