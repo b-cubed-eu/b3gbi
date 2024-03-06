@@ -1,4 +1,16 @@
-# Calculate Pielou's evenness from a vector of summed species occurrences.
+#' Calculate Pielou's Evenness Index
+#'
+#' Calculates Pielou's evenness index, a measure of how evenly species
+#' are distributed in a community, from a vector of species abundances.
+#'
+#' @param x A numeric vector containing the total occurrences for each species.
+#' @return A numeric value representing Pielou's evenness index. Values range
+#'   between 0 (no evenness) and 1 (complete evenness). Returns `NA`
+#'   if the calculation results in a `NaN`.
+#' @examples
+#' species_counts <- c(20, 55, 12, 13)
+#' my_evenness <- calc_pielou_evenness(species_counts)
+#' my_evenness
 #' @noRd
 calc_pielou_evenness <- function(x) {
   S <- length(x)
@@ -16,7 +28,19 @@ calc_pielou_evenness <- function(x) {
   return(even)
 }
 
-# Calculate E9 evenness from a vector of summed species occurrences.
+#' Calculate Williams' Evenness Index
+#'
+#' Calculates Williams' evenness index, a measure of how evenly species are
+#' distributed within a community, from a vector of species abundances.
+#'
+#' @param x A numeric vector containing the total occurrences of each species.
+#' @return A numeric value representing E9 evenness.  The interpretation of
+#'   values is similar to Pielou's evenness: 0 indicates no evenness, and 1
+#'   indicates complete evenness. Returns `NA` if the calculation results in a `NaN`.
+#' @examples
+#' species_counts <- c(15, 48, 27)
+#' my_e9_evenness <- calc_e9_evenness(species_counts)
+#' my_e9_evenness
 #' @noRd
 calc_e9_evenness <- function(x) {
   n <- x

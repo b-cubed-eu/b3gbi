@@ -1,6 +1,24 @@
-# Retrieves the legend title for the biodiversity indicator associated with a diversity type
+#' Retrieve Legend Title for Biodiversity Indicator
+#'
+#' Provides an appropriate legend title for a biodiversity indicator,
+#' suitable for use with time series plots ("ts") or maps.
+#'
+#' @param x A character string representing the biodiversity indicator code
+#'   (e.g., "obs_richness", "hill1", "tax_distinct").
+#' @param type Specifies the visualization type: "ts" (time series) or "map".
+#' @return A character string containing the legend title. Throws an error if
+#'   the specified `div_type` is not found.
+#'
+#' @examples
+#' # Get legend title for "tax_distinct" on a map
+#' map_legend <- get_legend_title("tax_distinct", type = "map")
+#'
+#' # Get legend title for "hill2" on a time series plot
+#' ts_legend <- get_legend_title("hill2", type = "ts")
 #' @noRd
 get_legend_title <- function(x, type) {
+
+  type <- match.arg(type, c("ts", "map"))
 
   leg_df <- matrix(c("obs_richness", "Richness", "Richness",
                      "cum_richness", "Cumulative Richness", NA,
@@ -36,6 +54,8 @@ get_legend_title <- function(x, type) {
     leg_title <- leg_df$leg_title_map[leg_df$div_type %in% x]
 
   }
+
+  if (!length(leg_title) > 0) stop("Div_type not found")
 
   return(leg_title)
 

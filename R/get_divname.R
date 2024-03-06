@@ -1,4 +1,17 @@
-# Retrieves the name of the biodiversity indicator associated with a diversity type
+#' Retrieve Biodiversity Indicator Name
+#'
+#' Returns the full name (human-readable) of a biodiversity indicator, provided
+#' its corresponding code.
+#'
+#' @param x A character string representing the biodiversity indicator code
+#'   (e.g., "obs_richness", "hill1", "tax_distinct").
+#' @return A character string containing the full descriptive name of the
+#'   biodiversity indicator. If no match is found, returns an error.
+#'
+#' @examples
+#' # Get the name for the code "obs_richness"
+#' indicator_name <- get_divname("obs_richness")
+#' indicator_name  # Output: "Observed Species Richness"
 #' @noRd
 get_divname <- function(x) {
 
@@ -29,6 +42,8 @@ get_divname <- function(x) {
   names(div_df) <- c("div_type", "div_name")
 
   div_name <- div_df$div_name[div_df$div_type %in% x]
+
+  if(!length(div_name) > 0) stop("div_type not found")
 
   return(div_name)
 

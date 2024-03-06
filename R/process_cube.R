@@ -1,26 +1,26 @@
-# Function to load a GBIF data cube and its associated taxonomic information.
-# Both files must be in the same directory, and have the same basic name with
-# different endings (_cube.csv and _info.csv).
-# The arguments first_year and final_year can be used to limit the observation
-# years of your analysis dataset to a smaller range than the cube itself.
-# To use the entire range of the cube, leave the arguments out of the function
-# call.
-
-#' @title Process GBIF data cubes
+#' @title Process GBIF Data Cubes
 #'
-#' @description Process a GBIF data cube
+#' @description Processes a GBIF data cube and associated taxonomic information
+#'   file. All files must reside in the same directory and share a base file
+#'   name (e.g., 'my_mammals_cube.csv', 'my_mammals_info.csv').
 #'
-#' @param cube_name The location and name of a data cube file to open.
-#' @param tax_info The location and name of an associated taxonomic info file.
-#' @param datasets_info The location and name of an associated dataset info file.
-#' @param first_year The first year of occurrences (if different from cube).
-#' @param final_year The final year of occurrences (if different from cube).
+#' @param cube_name The location and name of a data cube file
+#'   (e.g., 'data/my_mammals_cube.csv').
+#' @param tax_info The location and name of an associated taxonomic info file
+#'   (e.g.,  'data/my_mammals_info.csv').
+#' @param datasets_info The location and name of an associated dataset info file
+#'   (e.g., 'data/my_mammals_datasets.csv').
+#' @param first_year (Optional) The first year of occurrences to include. If not
+#'   specified, uses the earliest year present in the cube.
+#' @param final_year (Optional) The final year of occurrences to include. If not
+#'   specified, uses the latest year present in the cube.
 #'
-#' @return A tibble.
+#' @return A tibble containing the processed GBIF occurrence data.
 #'
 #' @examples
-#' # example code
-#' amphibs <- process_cube(amphib, tax)
+#' # Assuming files are located in the 'data' directory:
+#' processed_mammals_cube <- process_cube(cube_name = "data/mammals_cube.csv",
+#'                                        tax_info = "data/mammals_info.csv")
 #'
 #' @export
 process_cube <- function(cube_name, tax_info, datasets_info = NA, first_year = NA, final_year = NA) {
