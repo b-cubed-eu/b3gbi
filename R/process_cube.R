@@ -23,7 +23,7 @@
 #'                                        tax_info = "data/mammals_info.csv")
 #'
 #' @export
-process_cube <- function(cube_name, tax_info, datasets_info = NA, first_year = NA, final_year = NA) {
+process_cube <- function(cube_name, tax_info, datasets_info = NULL, first_year = NA, final_year = NA) {
 
   # Read in data cube
   occurrence_data <- readr::read_csv(
@@ -50,11 +50,11 @@ process_cube <- function(cube_name, tax_info, datasets_info = NA, first_year = N
     na = ""
   )
 
-  if(!is.na(datasets_info)) {
+  if(!is.null(datasets_info)) {
 
     # Read in associated dataset info
     datasets_info <- readr::read_csv(
-      file = dataset_info,
+      file = datasets_info,
       col_types = readr::cols(
         # datasetKey = readr::col_double(),
         datasetName = readr::col_factor(),
@@ -85,9 +85,9 @@ process_cube <- function(cube_name, tax_info, datasets_info = NA, first_year = N
   # Merged the three data frames together
   merged_data <- dplyr::left_join(occurrence_data, taxonomic_info, by = "taxonKey")
 
-  if(!is.na(datasets_info)) {
+  if(!is.null(datasets_info)) {
 
-    merged_data <- dplyr::left_join(datasets_info, by = "datasetKey")
+    merged_data <- dplyr::left_join(merged_data, datasets_info, by = "datasetKey")
 
   }
 
@@ -99,12 +99,12 @@ process_cube <- function(cube_name, tax_info, datasets_info = NA, first_year = N
       resolution = stringr::str_replace_all(eea_cell_code, "(E\\d+)|(N\\d+)", "")
     )
 
-  if(!is.na(datasets_info)) {
+  if(!is.null(datasets_info)) {
 
       # Remove columns that are not needed
       merged_data <-
         merged_data %>%
-        dplyr::select(-min_coord_uncertainty, -taxonomicStatus, -datasetKey, -includes, -notes)
+        dplyr::select(-min_coord_uncertainty, -taxonomicStatus, -includes, -notes)
 
   } else {
 
