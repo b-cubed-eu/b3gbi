@@ -6,6 +6,19 @@
 #'
 #' @param x An object containing occurrence data segregated by dataset. Must
 #'   be of class 'occ_by_dataset' and an 'indicator_ts' object.
+#' @param x_breaks (Optional) Integer giving desired number of breaks for the x-axis.
+#'   (May not return exactly the number requested.)
+#' @param facet_scales Controls y-axis scaling across facets. Use "free_y" to
+#'   allow independent scaling, or "fixed" for a common scale.
+#' @param facet_rows (Optional) Number of rows of facets.
+#' @param facet_cols (Optional) Number of columns of facets.
+#' @param facet_label_width (Optional) Controls the maximum width of facet labels.
+#' @param max_datasets (Optional) Maximum number of datasets to include in the plot.
+#'   Datasets are selected based on having the highest number of occurrences.
+#'   *Note that increasing this too much could result in high memory usage and/or
+#'   make the plot very difficult to read.
+#' @param min_occurrences (Optional)  Minimum total number of occurrences for a
+#'   dataset to be included in the plot.
 #' @param ... Additional arguments passed to the internal plotting function
 #'   (`plot_ts_seg`). See its documentation for details.
 #'
@@ -16,48 +29,76 @@
 #' # Assuming you have an 'indicator_ts' object named 'occ_by_dataset_ts'
 #' plot.occ_by_dataset(occ_by_dataset_ts)
 #'
+#' # Only plot datasets with at least 100 occurrences:
+#' plot.occ_by_dataset(occ_by_dataset_ts, min_occurrences = 100)
+#'
 #' @export
 plot.occ_by_dataset <- function(x,
-                                facets = FALSE,
-                                facet_scales = "free",
+                                x_breaks = 6,
+                                facet_scales = "free_y",
                                 facet_rows = NULL,
                                 facet_cols = NULL,
                                 facet_label_width = 60,
+                                max_datasets = 20,
+                                min_occurrences = NULL,
                                 ...){
 
   stopifnot_error("Incorrect object class. Must be class 'occ_by_dataset'.", inherits(x, "occ_by_dataset"))
 
-  if (!inherits(x, "indicator_ts")) {stop("Incorrect object class. Must be class 'indicator_ts'.")}
+  if (!inherits(x, "indicator_ts")) stop("Incorrect object class. Must be class 'indicator_ts'.")
 
-    # Set defaults
-    y_label_default <- "Occurrences"
-    auto_title <- "Total Occurrences (Segregated by Dataset)"
+  # Set defaults
+  y_label_default <- "Occurrences"
+  auto_title <- "Total Occurrences (Segregated by Dataset)"
 
-    # Set type as a factor and remove any types with only 1 occurrence
-    x$data$type <- factor(x$data$type, levels = unique(x$data$type))
+  # Set type as a factor and remove any types with only 1 occurrence
+  x$data$type <- factor(x$data$type,
+                        levels = unique(x$data$type))
+
+  # Filter out datasets with no occurrences or too few to plot
+  x$data <-
+    x$data %>%
+    dplyr::mutate(numrows = ifelse(n() > 0, n(), 0), .by = type) %>%
+    dplyr::filter(numrows >= 2) %>%
+    dplyr::select(-numrows)
+
+  if (!is.null(min_occurrences)) {
+  # Filter out datasets with fewer than the minimum occurrences, if min_occurrences parameter set
     x$data <-
       x$data %>%
-      dplyr::filter(length(.) > 1, .by = type)
+      dplyr::mutate(totalocc = sum(diversity_val), .by = type) %>%
+      dplyr::filter(totalocc >= min_occurrences) %>%
+      dplyr::select(-totalocc)
+  }
 
-    # Call generalized plot_map function
-    trend_plot <- plot_ts(x, y_label_default = y_label_default, auto_title = auto_title, ...)
+  # Keep only n datasets with the most occurrences, where n is determined by the max_datasets parameter
+  datasets <-
+    x$data %>%
+    dplyr::summarize(totalocc = sum(diversity_val), .by = type) %>%
+    dplyr::slice_max(order_by = totalocc, n = max_datasets)
 
-    if (facets == TRUE) {
+  x$data <-
+    x$data %>%
+    dplyr::filter(type %in% datasets$type)
 
-      # Use facets to separate multiple species trends
-      trend_plot <- trend_plot +
-        facet_wrap(vars(type),
-                   scales = facet_scales,
-                   nrow = facet_rows,
-                   ncol = facet_cols,
-                   labeller = label_wrap_gen(width = facet_label_width)) +
-        theme(legend.position = "none")
+  # Call generalized plot_map function
+  trend_plot <- plot_ts(x,
+                        y_label_default = y_label_default,
+                        auto_title = auto_title,
+                        x_breaks = x_breaks,
+                        ...)
 
-    }
+    # Use facets to separate multiple species trends
+    trend_plot <- trend_plot +
+      facet_wrap(vars(type),
+                 scales = facet_scales,
+                 nrow = facet_rows,
+                 ncol = facet_cols,
+                 labeller = label_wrap_gen(width = facet_label_width)) +
+      theme(legend.position = "none")
 
-    # Show plot
-    trend_plot
-
+  # Show plot
+  trend_plot
 }
 
 #' @title Plot Occurrences Segregated by Type
@@ -68,6 +109,13 @@ plot.occ_by_dataset <- function(x,
 #'
 #' @param x An object containing  occurrence data segregated by type. Must
 #'   be of class 'occ_by_type' and an 'indicator_ts' object.
+#' @param x_breaks (Optional)  Integer giving desired number of breaks for the x-axis.
+#'   (May not return exactly the number requested.)
+#' @param facet_scales Controls y-axis scaling across facets.  Use "free_y" to
+#'   allow independent scaling, or "fixed" for a common scale.
+#' @param facet_rows (Optional) Number of rows of facets.
+#' @param facet_cols (Optional) Number of columns of facets.
+#' @param facet_label_width (Optional) Controls the maximum width of facet labels.
 #' @param ... Additional arguments passed to the internal plotting function
 #'   (`plot_ts_seg`). See its documentation for details.
 #'
@@ -80,8 +128,8 @@ plot.occ_by_dataset <- function(x,
 #'
 #' @export
 plot.occ_by_type <- function(x,
-                             facets = FALSE,
-                             facet_scales = "free",
+                             x_breaks = 6,
+                             facet_scales = "free_y",
                              facet_rows = NULL,
                              facet_cols = NULL,
                              facet_label_width = 60,
@@ -96,15 +144,22 @@ plot.occ_by_type <- function(x,
     auto_title <- "Total Occurrences (Segregated by Type)"
 
     # Set type as a factor and remove any types with only 1 occurrence
-    x$data$type <- factor(x$data$type, levels = unique(x$data$type))
+    x$data$type <- factor(x$data$type,
+                          levels = unique(x$data$type))
+
+    # Filter out types with too few or no occurrences
     x$data <-
       x$data %>%
-      dplyr::filter(length(.) > 1, .by = type)
+      dplyr::mutate(numrows = ifelse(n() > 0, n(), 0), .by = type) %>%
+      dplyr::filter(numrows >= 2) %>%
+      dplyr::select(-numrows)
 
     # Call generalized plot_map function
-    trend_plot <- plot_ts(x, y_label_default = y_label_default, auto_title = auto_title, ...)
-
-    if (facets == TRUE) {
+    trend_plot <- plot_ts(x,
+                          y_label_default = y_label_default,
+                          auto_title = auto_title,
+                          x_breaks = x_breaks,
+                          ...)
 
       # Use facets to separate multiple species trends
       trend_plot <- trend_plot +
@@ -115,12 +170,8 @@ plot.occ_by_type <- function(x,
                    labeller = label_wrap_gen(width = facet_label_width)) +
         theme(legend.position = "none")
 
-    }
-
     # Show plot
     trend_plot
-
-
 }
 
 #' @title Plot Cumulative Species Richness
@@ -130,6 +181,8 @@ plot.occ_by_type <- function(x,
 #'
 #' @param x An object containing cumulative species richness data. Must be of
 #'   class 'cum_richness' and an 'indicator_ts' object.
+#' @param auccolour (Optional). Colour for the area under the curve of a
+#'   cumulative richness plot. Default is orange.
 #' @param ... Additional arguments passed to the internal plotting function
 #'   (`plot_ts`). See its documentation for details.
 #'
@@ -141,7 +194,9 @@ plot.occ_by_type <- function(x,
 #' plot.cum_richness(cum_richness_ts)
 #'
 #' @export
-plot.cum_richness <- function(x, ...){
+plot.cum_richness <- function(x,
+                              auccolour = NULL,
+                              ...){
 
   stopifnot_error("Incorrect object class. Must be class 'cum_richness'.", inherits(x, "cum_richness"))
 
@@ -152,7 +207,22 @@ plot.cum_richness <- function(x, ...){
     auto_title <- "Cumulative Species Richness"
 
     # Call generalized plot_map function
-    plot_ts(x, y_label_default = y_label_default, auto_title = auto_title, ...)
+    trend_plot <- plot_ts(x,
+                          y_label_default = y_label_default,
+                          auto_title = auto_title,
+                          smoothed_trend = FALSE,
+                          ...)
+
+    if (is.null(auccolour)) auccolour = "orange"
+
+    # Colour the area under the curve
+    trend_plot <- trend_plot +
+      geom_ribbon(aes(ymin = 0,
+                      ymax = diversity_val),
+                  fill = auccolour, alpha = 0.4)
+
+    # Show plot
+    trend_plot
 
 }
 
@@ -929,19 +999,22 @@ plot_map <- function(x,
 #' @param y_label_default Default label for the y-axis, provided by an appropriate
 #'   S3 method (if calling the function manually, leave as NULL).
 #' @param suppress_y If TRUE, suppresses y-axis labels.
+#' @param smoothed_trend If TRUE, plot a smoothed trendline.
 #' @param linecolour (Optional) Colour for the indicator line.
 #'   Default is darkorange.
 #' @param trendlinecolour (Optional) Colour for the smoothed trendline.
 #'   Default is blue.
 #' @param envelopecolour (Optional) Colour for the uncertainty envelope.
 #'   Default is lightsteelblue.
-#' @param auccolour (Currently unused). Colour for the area under the curve of a
-#'   cumulative richness plot. Default is orange.
 #' @param gridoff  If TRUE, hides gridlines.
 #' @param x_label Label for the x-axis.
 #' @param y_label Label for the y-axis.
 #' @param min_year (Optional)  Earliest year to include in the plot.
 #' @param max_year (Optional)  Latest year to include in the plot.
+#' @param x_breaks Integer giving desired number of breaks for x axis.
+#'   (May not return exactly the number requested.)
+#' @param y_breaks Integer giving desired number of breaks for y axis.
+#'   (May not return exactly the number requested.)
 #' @param wrap_length  Maximum title length before wrapping to a new line.
 #'
 #' @return A ggplot object representing the biodiversity indicator time series plot.
@@ -964,15 +1037,17 @@ plot_ts <- function(x,
                     auto_title = NULL,
                     y_label_default = NULL,
                     suppress_y = FALSE,
+                    smoothed_trend = TRUE,
                     linecolour = NULL,
                     trendlinecolour = NULL,
                     envelopecolour = NULL,
-                    auccolour = NULL,
                     gridoff = FALSE,
                     x_label = NULL,
                     y_label = NULL,
                     min_year = NULL,
                     max_year = NULL,
+                    x_breaks = 10,
+                    y_breaks = 6,
                     wrap_length = 60) {
 
   # Filter by min and max year if set
@@ -983,6 +1058,9 @@ plot_ts <- function(x,
       x$data %>%
       dplyr::filter(year >= min_year) %>%
       dplyr::filter(year <= max_year)
+  } else {
+    min_year <- x$first_year
+    max_year <- x$last_year
   }
 
   # Create plot title if title is set to "auto"
@@ -1004,7 +1082,6 @@ plot_ts <- function(x,
   if (is.null(linecolour)) linecolour = "darkorange"
   if (is.null(trendlinecolour)) trendlinecolour = "blue"
   if (is.null(envelopecolour)) envelopecolour = "lightsteelblue1"
-  if (is.null(auccolour)) auccolour = "orange"
 
   # Set axis titles
   if (is.null(x_label)) x_label = "Year"
@@ -1016,8 +1093,8 @@ plot_ts <- function(x,
                                 y = diversity_val)) +
     geom_line(colour = linecolour,
               lwd = 1) +
-    scale_x_continuous(breaks = breaks_pretty_int(n=10)) +
-    scale_y_continuous(breaks = breaks_pretty_int(n = 6)) +
+    scale_x_continuous(breaks = breaks_pretty_int(n = x_breaks)) +
+    scale_y_continuous(breaks = breaks_pretty_int(n = y_breaks)) +
     labs(x = x_label, y = y_label,
          title = title) +
     theme_minimal() +
@@ -1037,20 +1114,23 @@ plot_ts <- function(x,
           strip.text = element_text(face = "italic")
     )
 
-  # Add a smoothed trend
-  trend_plot <- trend_plot +
-    geom_smooth(fill = envelopecolour,
-                lwd = 1,
-                linetype = 0,
-                method = "loess",
-                formula = "y ~ x") +
-    stat_smooth(colour = trendlinecolour,
-                geom = "line",
-                method = "loess",
-                formula = "y ~ x",
-                linetype = "dashed",
-                alpha = 0.3,
-                lwd = 1)
+  if (smoothed_trend == TRUE) {
+
+    # Add a smoothed trend
+    trend_plot <- trend_plot +
+      geom_smooth(fill = envelopecolour,
+                  lwd = 1,
+                  linetype = 0,
+                  method = "loess",
+                  formula = "y ~ x") +
+      stat_smooth(colour = trendlinecolour,
+                  geom = "line",
+                  method = "loess",
+                  formula = "y ~ x",
+                  linetype = "dashed",
+                  alpha = 0.3,
+                  lwd = 1)
+  }
 
   # Wrap title if longer than wrap_length
   if(!is.null(title)) {
