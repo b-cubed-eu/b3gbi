@@ -1,17 +1,38 @@
-#' Calculate species richness trend
+#' @title Calculate a Biodiversity Indicator Time Series
 #'
-#' @param data A tibble created from a GBIF cube using the process_cube function.
-#' @param type A character vector.
-#'   "observed" calculates the observed species richness trend from the cube data,
-#'   "total_records" uses the total number of occurrences for each year as a
-#'   proxy for sampling effort.
-#'   "rarefaction" calculates rarefaction curves to approximate sampling effort,
-#'   "coverage" estimates relative richness trends by standardizing by coverage,
-#'   "evenness" calculates evenness
+#' @description  Calculates various biodiversity indicators over time, based on
+#'   species occurrence data provided in a 'processed_cube', 'processed_cube_dsinfo',
+#'   or 'virtual_cube' object.
 #'
-#' @return A tibble
+#' @param x An object of class 'processed_cube', 'processed_cube_dsinfo', or
+#'   'virtual_cube' containing species occurrence data.
+#' @param type  The type of biodiversity indicator to calculate. Supported types:
+#'   * 'obs_richness': Observed species richness
+#'   * 'cum_richness': Cumulative species richness
+#'   * 'total_occ': Total number of occurrences
+#'   * 'occ_by_type': Occurrences segregated by observation type
+#'   * 'occ_by_dataset': Occurrences segregated by dataset
+#'   * 'rarefied': Rarefied species richness
+#'   * 'hill0', 'hill1', 'hill2': Hill numbers (order 0, 1, 2)
+#'   * 'e9_evenness', 'pielou_evenness': Evenness indices
+#' @param inext_sampsize (For 'hill0', 'hill1', 'hill2') Sample size
+#'   for rarefaction/extrapolation.
+#' @param coverage (For 'hill0', 'hill1', 'hill2') Coverage level for extrapolation.
+#' @param level (Optional) Geographic level for spatial calculations
+#'    ("country", "continent", or "world").
+#' @param region (Optional) Geographic region for spatial calculations
+#'    (e.g., "Germany" or "Europe").
+#' @param cutoff_length (For rarefaction and Hill number calculations) Minimum
+#'    number of records for a year to be included.
+#'
+#' @return An object of class 'indicator_ts' containing the calculated
+#'   time series data.
+#'
+#' @examples
+#' # Assuming you have a 'processed_cube' object named 'my_data'
+#' diversity_timeseries <- calc_ts(my_data, type = "obs_richness")
+#'
 #' @export
-#'
 calc_ts.default <- function(x,
                     type = "obs_richness",
                     inext_sampsize = 150,
@@ -307,7 +328,7 @@ calc_ts.default <- function(x,
 
   }
 
-  diversity_obj <- indicator_ts(as_tibble(diversity_ts),
+  diversity_obj <- new_indicator_ts(as_tibble(diversity_ts),
                                 div_type = type,
                                 kingdoms = kingdoms,
                                 num_species = num_species,

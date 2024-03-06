@@ -1,21 +1,98 @@
+#' @title Calculate a Biodiversity Indicator Time Series
+#'
+#' @description A generic function for calculating biodiversity indicator
+#'   time series data. Specific implementations for different indicator types
+#'   or calculation methods should be provided using S3 methods.
+#'
+#' @param x An object containing the necessary data and information for the
+#'   time series calculation.
+#' @param ... Additional arguments (potentially used by specific methods).
+#'
+#' @return An object representing the calculated biodiversity indicator time
+#'   series. The format of the output will depend on the specific S3 method used.
+#'
+#' @method calc_ts default
+#' @usage calc_ts(x)
+#'
 #' @export
 calc_ts <- function(x, ...) {
   UseMethod("calc_ts")
 }
 
+#' @title Calculate a Biodiversity Indicator Map
+#'
+#' @description A generic function for calculating spatial biodiversity
+#'   indicator maps. Specific implementations for different indicator types
+#'   or mapping approaches should be provided using S3 methods.
+#'
+#' @param x An object containing the geospatial data and other information
+#'   required for the map calculation.
+#' @param ... Additional arguments (potentially used by specific methods).
+#'
+#' @return An object representing the calculated biodiversity indicator map.
+#'   The format of the output will depend on the specific S3 method used.
+#'
+#' @method calc_map default
+#' @usage calc_map(x)
+#'
 #' @export
 calc_map <- function(x, ...) {
   UseMethod("calc_map")
 }
 
+#' @title Calculate a Biodiversity Indicator
+#'
+#' @description A generic function for calculating biodiversity indicators.
+#'   Specific implementations for different indicator types should be provided
+#'   using S3 methods.
+#'
+#' @param x An object containing the data required for the indicator calculation.
+#' @param ... Additional arguments (potentially used by specific methods).
+#'
+#' @return The calculated biodiversity indicator value(s). The format of the
+#'   output will depend on the specific S3 method used.
+#'
+# #' @method calc_indicator default
+#' @usage calc_indicator(x)
+#'
+#' @export
+calc_indicator <- function(x, ...) {
+  UseMethod("calc_indicator")
+}
+
+#' @title Extract Information from a Data Cube Object
+#'
+#' @description A generic function to extract essential information from data
+#'   cube objects. Specific implementations for different data cube classes
+#'   should be provided using S3 methods.
+#'
+#' @param x An object representing a data cube.
+#' @param ... Additional arguments (potentially used by specific methods).
+#'
+#' @return The type of information returned will depend on the specific S3
+#'    method that is dispatched based on the class of 'x'.
+#'
+# #' @method getcubeinfo default
+#' @usage getcubeinfo(x)
+#'
 #' @export
 getcubeinfo <- function(x) {
   UseMethod("getcubeinfo")
 }
 
+#' @title Print an Indicator Time Series Object
+#'
+#' @description Provides a summary representation of an indicator_ts object,
+#'   designed for user-friendly display in the console.
+#'
+#' @method print indicator_ts
+#' @param x An indicator_ts object.
+#' @param n Integer specifying the number of rows of data to display.
+#' @param ... Additional arguments.
+#'
 #' @export
 print.indicator_ts <- function(x, n = 10, ...) {
-  cat("Biodiversity indicator trend\n\n")
+  cat("Biodiversity indicator time series\n\n")
   cat("Name of indicator:", x$div_name, "\n\n")
   cat("Date Range:", x$first_year, "-", x$last_year, "\n\n")
   if (x$map_region!="unknown") cat("Region(s) represented:", x$map_region, "\n\n")
@@ -27,6 +104,16 @@ print.indicator_ts <- function(x, n = 10, ...) {
   print(x$data, n = n, ...)
 }
 
+#' @title Print an Indicator Map Object
+#'
+#' @description Provides a summary representation of an indicator_map object,
+#'   designed for user-friendly display in the console.
+#'
+#' @method print indicator_map
+#' @param x An indicator_map object.
+#' @param n Integer specifying the number of rows of data to display.
+#' @param ... Additional arguments.
+#'
 #' @export
 print.indicator_map <- function(x, n = 10, ...) {
   cat("Gridded biodiversity indicator map\n\n")
@@ -51,6 +138,16 @@ print.indicator_map <- function(x, n = 10, ...) {
     print(n = n, ...)
 }
 
+#' @title Print a Processed Data Cube Object
+#'
+#' @description Provides a summary representation of a processed_cube object,
+#'   designed for user-friendly display in the console.
+#'
+#' @method print processed_cube_dsinfo
+#' @param x A processed_cube_dsinfo object.
+#' @param n Integer specifying the number of rows of cube data to display.
+#' @param ... Additional arguments.
+#'
 #' @export
 print.processed_cube <- function(x, n = 10, ...) {
   cat("\nProcessed data cube for calculating biodiversity indicators\n\n")
@@ -67,6 +164,16 @@ print.processed_cube <- function(x, n = 10, ...) {
   print(x$data, n = n, ...)
 }
 
+#' @title Print a Processed Data Cube Object
+#'
+#' @description Provides a summary representation of a processed_cube_dsinfo object,
+#'   designed for user-friendly display in the console.
+#'
+#' @method print processed_cube_dsinfo
+#' @param x A processed_cube_dsinfo object.
+#' @param n Integer specifying the number of rows of data to display.
+#' @param ... Additional arguments.
+#'
 #' @export
 print.processed_cube_dsinfo <- function(x, n = 10, ...) {
   cat("\nProcessed data cube for calculating biodiversity indicators.\n\n")
@@ -85,6 +192,16 @@ print.processed_cube_dsinfo <- function(x, n = 10, ...) {
   print(x$data, n = n, ...)
 }
 
+#' @title Print a Virtual Cube Object
+#'
+#' @description Provides a summary representation of a virtual_cube object,
+#'   designed for user-friendly display in the console.
+#'
+#' @method print virtual_cube
+#' @param x A virtual_cube object.
+#' @param n Integer specifying the number of rows of data to display.
+#' @param ... Additional arguments.
+#'
 #' @export
 print.virtual_cube <- function(x, n = 5, ...) {
   cat("\nVirtual data cube for calculating biodiversity indicators\n\n")

@@ -1,3 +1,31 @@
+#' @title Calculate a Biodiversity Indicator Map
+#'
+#' @description Calculates various spatial biodiversity indicators based on the
+#' provided data. Supported spatial indicators include species diversity, evenness,
+#' rarity, and more.
+#'
+#' @param data  An 'sf' object containing gridded species occurrences.
+#' @param type  The type of biodiversity indicator to calculate. Supported types:
+#'   * 'hill0', 'hill1', 'hill2': Hill numbers (order 0, 1, 2)
+#'   * 'obs_richness': Observed species richness
+#'   * 'total_occ': Total number of occurrences
+#'   * 'newness': Mean year of occurrence
+#'   * 'density': Density of occurrences (occurrences per square kilometer)
+#'   * 'e9_evenness', 'pielou_evenness': Evenness indices
+#'   * 'ab_rarity': Abundance-based rarity
+#'   * 'area_rarity': Area-based rarity
+#'   * 'spec_occ': Total occurrences per species in each grid cell
+#'   * 'spec_range': Range size of each species (number of occupied grid cells)
+#'   * 'tax_distinct': Taxonomic distinctness
+#' @param ... Additional arguments (potentially used for specific indicator types).
+#'
+#' @return A data frame containing calculated indicator values for each grid cell,
+#'   along with cell identifiers.
+#'
+#' @examples
+#' # Assuming you have a data frame 'biodiversity_data' with spatial information
+#' richness_map <- calc_map(biodiversity_data, type = "obs_richness")
+#'
 #' @export
 calc_map.default <- function(data,
                      type,
