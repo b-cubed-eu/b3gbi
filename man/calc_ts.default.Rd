@@ -2,7 +2,7 @@
 % Please edit documentation in R/calc_ts.R
 \name{calc_ts.default}
 \alias{calc_ts.default}
-\title{Calculate species richness trend}
+\title{Calculate a Biodiversity Indicator Time Series}
 \usage{
 \method{calc_ts}{default}(
   x,
@@ -15,19 +15,46 @@
 )
 }
 \arguments{
-\item{type}{A character vector.
-"observed" calculates the observed species richness trend from the cube data,
-"total_records" uses the total number of occurrences for each year as a
-proxy for sampling effort.
-"rarefaction" calculates rarefaction curves to approximate sampling effort,
-"coverage" estimates relative richness trends by standardizing by coverage,
-"evenness" calculates evenness}
+\item{x}{An object of class 'processed_cube', 'processed_cube_dsinfo', or
+'virtual_cube' containing species occurrence data.}
 
-\item{data}{A tibble created from a GBIF cube using the process_cube function.}
+\item{type}{The type of biodiversity indicator to calculate. Supported types:
+\itemize{
+\item 'obs_richness': Observed species richness
+\item 'cum_richness': Cumulative species richness
+\item 'total_occ': Total number of occurrences
+\item 'occ_by_type': Occurrences segregated by observation type
+\item 'occ_by_dataset': Occurrences segregated by dataset
+\item 'rarefied': Rarefied species richness
+\item 'hill0', 'hill1', 'hill2': Hill numbers (order 0, 1, 2)
+\item 'e9_evenness', 'pielou_evenness': Evenness indices
+}}
+
+\item{inext_sampsize}{(For 'hill0', 'hill1', 'hill2') Sample size
+for rarefaction/extrapolation.}
+
+\item{coverage}{(For 'hill0', 'hill1', 'hill2') Coverage level for extrapolation.}
+
+\item{level}{(Optional) Geographic level for spatial calculations
+("country", "continent", or "world").}
+
+\item{region}{(Optional) Geographic region for spatial calculations
+(e.g., "Germany" or "Europe").}
+
+\item{cutoff_length}{(For rarefaction and Hill number calculations) Minimum
+number of records for a year to be included.}
 }
 \value{
-A tibble
+An object of class 'indicator_ts' containing the calculated
+time series data.
 }
 \description{
-Calculate species richness trend
+Calculates various biodiversity indicators over time, based on
+species occurrence data provided in a 'processed_cube', 'processed_cube_dsinfo',
+or 'virtual_cube' object.
+}
+\examples{
+# Assuming you have a 'processed_cube' object named 'my_data'
+diversity_timeseries <- calc_ts(my_data, type = "obs_richness")
+
 }

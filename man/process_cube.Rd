@@ -7,7 +7,7 @@
 process_cube(
   cube_name,
   tax_info,
-  datasets_info = NA,
+  datasets_info = NULL,
   first_year = NA,
   final_year = NA
 )

@@ -2,7 +2,7 @@
 % Please edit documentation in R/list_species.R
 \name{list_species}
 \alias{list_species}
-\title{Extract species names from a 'processed_cube', 'indicator_map', or 'indicator_ts' object.}
+\title{Extract Species Names.}
 \usage{
 list_species(object)
 }
@@ -19,7 +19,8 @@ or a data frame with columns:
 }
 }
 \description{
-Retrieves a list of species names from a biodiversity data object.
+Retrieves a list of species names from a biodiversity data object
+('processed_cube', 'indicator_map' or 'indicator_ts').
 }
 \examples{
 # Assuming you have a biodiversity data cube named 'mammals_cube'
