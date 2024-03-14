@@ -16,10 +16,10 @@ Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
-LinkingTo:
 Depends:
     dplyr,
-    ggplot2
+    ggplot2,
+    R (>= 2.10)
 Imports: 
     furrr,
     future,
