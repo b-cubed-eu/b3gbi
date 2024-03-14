@@ -167,6 +167,7 @@ new_indicator_ts <- function(x,
   } else {
     id = div_type
   }
+  class(x) <- c("indicator_data", class(x))
   structure(list(div_name = get_divname(id),
                  div_type = div_type,
                  first_year = min(x$year),
@@ -249,6 +250,7 @@ new_indicator_map <- function(x,
   } else {
     id = div_type
   }
+  class(x) <- c("indicator_data", class(x))
   structure(list(div_name = get_divname(id),
                  div_type = div_type,
                  num_cells = length(x$cellid),
