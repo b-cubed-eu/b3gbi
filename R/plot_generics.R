@@ -877,7 +877,8 @@ plot_map <- function(x,
                      panel_bg = NULL,
                      legend_title = NULL,
                      legend_limits = NULL,
-                     wrap_length = 60) {
+                     legend_title_wrap_length = 10,
+                     title_wrap_length = 60) {
 
   # Get map limits
   map_lims <- x$coord_range
@@ -911,6 +912,12 @@ plot_map <- function(x,
     } else {
       if (is.null(panel_bg)) { panel_bg = "white" }
     }
+  }
+
+  # Define function to wrap title and legend title if too long
+  wrapper <- function(x, ...)
+  {
+    paste(strwrap(x, ...), collapse = "\n")
   }
 
   # Get plot title (if set to "auto")
@@ -952,8 +959,11 @@ plot_map <- function(x,
         panel.grid.minor = element_blank()
       }
     ) +
-    labs(fill = if(!is.null(legend_title)) legend_title
-         else leg_label_default)
+    # Wrap legend title if longer than user-specified wrap length
+    labs(fill = if(!is.null(legend_title)) wrapper(legend_title,
+                                                   legend_title_wrap_length)
+         else wrapper(leg_label_default,
+                      legend_title_wrap_length))
 
 
   # If surround flag set, add surrounding countries to map
@@ -969,15 +979,11 @@ plot_map <- function(x,
 
   }
 
-  # Wrap title if longer than wrap_length
+  # Wrap title if longer than user-specified wrap length
   if(!is.null(title)) {
-    wrapper <- function(x, ...)
-    {
-      paste(strwrap(x, ...), collapse = "\n")
-    }
     diversity_plot <-
       diversity_plot +
-      labs(title = wrapper(title, wrap_length))
+      labs(title = wrapper(title, title_wrap_length))
   }
 
   # Exit function
