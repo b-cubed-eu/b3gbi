@@ -39,10 +39,10 @@ calc_pielou_evenness <- function(x) {
 #'   indicates complete evenness. Returns `NA` if the calculation results in a `NaN`.
 #' @examples
 #' species_counts <- c(15, 48, 27)
-#' my_e9_evenness <- calc_e9_evenness(species_counts)
-#' my_e9_evenness
+#' my_evenness <- calc_williams_evenness(species_counts)
+#' my_evenness
 #' @noRd
-calc_e9_evenness <- function(x) {
+calc_williams_evenness <- function(x) {
   n <- x
   N <- sum(n)
   S <- sum(n > 0)
