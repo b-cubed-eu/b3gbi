@@ -47,18 +47,7 @@ calc_ts.default <- function(x,
                     inherits(x, "virtual_cube"))
 
   type <- match.arg(type,
-                    c("obs_richness",
-                      "cum_richness",
-                      "total_occ",
-                      "occ_by_type",
-                      "occ_by_dataset",
-                      "rarefied",
-                      "hill0",
-                      "hill1",
-                      "hill2",
-                      "e9_evenness",
-                      "pielou_evenness",
-                      "species_rarity"))
+                    c(available_indicators$indicator_class))
 
   data <- x$data
 

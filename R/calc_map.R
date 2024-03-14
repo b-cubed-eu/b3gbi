@@ -32,24 +32,11 @@ calc_map.default <- function(data,
                      ...) {
 
   type <- match.arg(type,
-                    c("hill0",
-                      "hill1",
-                      "hill2",
-                      "obs_richness",
-                      "total_occ",
-                      "newness",
-                      "density",
-                      "e9_evenness",
-                      "pielou_evenness",
-                      "ab_rarity",
-                      "area_rarity",
-                      "spec_occ",
-                      "spec_range",
-                      "tax_distinct"))
+                    c(available_indicators$indicator_class))
 
 
-  if (type == "e9_evenness") {
-    calc_evenness <- calc_e9_evenness
+  if (type == "williams_evenness") {
+    calc_evenness <- calc_williams_evenness
   } else if (type == "pielou_evenness") {
     calc_evenness <- calc_pielou_evenness
   }
@@ -166,9 +153,9 @@ calc_map.default <- function(data,
       dplyr::distinct(cellid, diversity_val) %>%
       dplyr::mutate(diversity_val = as.numeric(diversity_val))
 
-  } else if (type == "e9_evenness" | type == "pielou_evenness") {
+  } else if (type == "williams_evenness" | type == "pielou_evenness") {
 
-    # Calculate adjusted evenness for each grid cell
+    # Calculate adjusted evenness fo r each grid cell
     diversity_cell <-
       data %>%
       dplyr::summarize(num_occ = sum(obs),
