@@ -36,9 +36,9 @@ calc_map.default <- function(data,
 
 
   if (type == "williams_evenness") {
-    calc_evenness <- calc_williams_evenness
+    compute_formula_evenness <- compute_formula_williams_evenness
   } else if (type == "pielou_evenness") {
-    calc_evenness <- calc_pielou_evenness
+    compute_formula_evenness <- compute_formula_pielou_evenness
   }
 
 
