@@ -72,8 +72,11 @@ grid <- create_grid(map_data, cs1, cs2)
 # Format spatial data and merge with grid
 data <- prepare_spatial_data(data, grid)
 
+# Assign class to send data to correct calculator function
+attr(data, "class") <- type
+
 # Calculate indicator
-indicator <- calc_map(data, type = type, ...)
+indicator <- calc_map(data, ...)
 
 # Add indicator values to grid
 diversity_grid <-
@@ -168,8 +171,11 @@ indicator.ts <- function(x,
     region <- "unknown"
   }
 
+  # Assign class to send data to correct calculator function
+  attr(data, "class") <- type
+
   # Calculate indicator
-  indicator <- calc_ts(data, type = type, ...)
+  indicator <- calc_ts(data, ...)
 
 
   # Create indicator object
