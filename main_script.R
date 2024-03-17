@@ -47,6 +47,14 @@ cube_name <- "inst/extdata/europe_amphibians_cube.csv"
 tax_info <- "inst/extdata/europe_amphibians_info.csv"
 amphib_data3 <- process_cube(cube_name, tax_info, first_year=first_year, final_year=final_year)
 
+cube_name <- "inst/extdata/europe_insect_cube.csv"
+tax_info <- "inst/extdata/europe_insect_info.csv"
+europe_insects <- process_cube(cube_name, tax_info, first_year=first_year, final_year=final_year)
+
+cube_name <- "inst/extdata/denmark_mammals_cube.csv"
+tax_info <- "inst/extdata/denmark_mammals_info.csv"
+denmark_mammals <- process_cube(cube_name, tax_info, first_year=first_year, final_year=final_year)
+
 amphib_data2_specimen <- amphib_data2 %>%
   dplyr::filter(dataType == "museum_specimens")
 
