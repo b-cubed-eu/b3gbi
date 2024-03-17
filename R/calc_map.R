@@ -1,8 +1,3 @@
-#' @export
-calc_map < function(data, ...) {
-  UseNext("calc_map")
-}
-
 #' @noRd
 calc_map.hill0 <- function(data, ...) {
 

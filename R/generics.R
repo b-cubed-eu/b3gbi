@@ -40,26 +40,6 @@ calc_map <- function(x, ...) {
   UseMethod("calc_map")
 }
 
-#' @title Calculate a Biodiversity Indicator
-#'
-#' @description A generic function for calculating biodiversity indicators.
-#'   Specific implementations for different indicator types should be provided
-#'   using S3 methods.
-#'
-#' @param x An object containing the data required for the indicator calculation.
-#' @param ... Additional arguments (potentially used by specific methods).
-#'
-#' @return The calculated biodiversity indicator value(s). The format of the
-#'   output will depend on the specific S3 method used.
-#'
-# #' @method calc_indicator default
-#' @usage calc_indicator(x)
-#'
-#' @export
-calc_indicator <- function(x, ...) {
-  UseMethod("calc_indicator")
-}
-
 #' @title Extract Information from a Data Cube Object
 #'
 #' @description A generic function to extract essential information from data
@@ -143,8 +123,8 @@ print.indicator_map <- function(x, n = 10, ...) {
 #' @description Provides a summary representation of a processed_cube object,
 #'   designed for user-friendly display in the console.
 #'
-#' @method print processed_cube_dsinfo
-#' @param x A processed_cube_dsinfo object.
+#' @method print processed_cube
+#' @param x A processed_cube object.
 #' @param n Integer specifying the number of rows of cube data to display.
 #' @param ... Additional arguments.
 #'
