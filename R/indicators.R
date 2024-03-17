@@ -1,37 +1,11 @@
-# Create data frame for registering indicators
-available_indicators <- data.frame(
-  indicator_class = NA,
-  indicator_name = NA,
-  plot_title = NA,
-  legend_label = NA,
-  legend_transformation = NA
-)
-
-# Save it as .rda file in data directory of the package
-usethis::use_data(available_indicators, overwrite = TRUE)
-
-# Register indicators
-register_indicator("obs_richness", "Observed Species Richness", "Observed Richness", "Observed Richness")
-register_indicator("obs_richness", "Observed Species Richness", "Observed Richness", "Observed Richness")
-register_indicator("obs_richness", "Observed Species Richness", "Observed Richness", "Observed Richness")
-register_indicator("obs_richness", "Observed Species Richness", "Observed Richness", "Observed Richness")
-register_indicator("obs_richness", "Observed Species Richness", "Observed Richness", "Observed Richness")
-register_indicator("obs_richness", "Observed Species Richness", "Observed Richness", "Observed Richness")
-register_indicator("obs_richness", "Observed Species Richness", "Observed Richness", "Observed Richness")
-register_indicator("obs_richness", "Observed Species Richness", "Observed Richness", "Observed Richness")
-register_indicator("obs_richness", "Observed Species Richness", "Observed Richness", "Observed Richness")
-register_indicator("obs_richness", "Observed Species Richness", "Observed Richness", "Observed Richness")
-register_indicator("obs_richness", "Observed Species Richness", "Observed Richness", "Observed Richness")
-register_indicator("obs_richness", "Observed Species Richness", "Observed Richness", "Observed Richness")
-
-
-
 # Function to load the .rda file into R
+#' @noRd
 load_indicators <- function() {
   data(available_indicators, package = "b3gbi")
 }
 
 # Function to register indicators
+#' @noRd
 register_indicator <- function(indicator_class,
                                indicator_name,
                                plot_title = NULL,
@@ -108,6 +82,7 @@ register_indicator <- function(indicator_class,
 }
 
 # Function to remove a registered indicator
+#' @noRd
 deregister_indicator <- function(indicator_class=NULL,
                                indicator_name=NULL) {
 
