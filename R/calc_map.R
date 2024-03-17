@@ -1,8 +1,9 @@
+#' @export
 calc_map < function(data, ...) {
   UseNext("calc_map")
 }
 
-
+#' @noRd
 calc_map.hill0 <- function(data, ...) {
 
   stopifnot.error("Wrong data class. This is an internal function and is not
@@ -17,6 +18,7 @@ calc_map.hill0 <- function(data, ...) {
 
 }
 
+#' @noRd
 calc_map.hill1 <- function(data, ...) {
 
   stopifnot.error("Wrong data class. This is an internal function and is not
@@ -31,6 +33,7 @@ calc_map.hill1 <- function(data, ...) {
 
 }
 
+#' @noRd
 calc_map.hill2 <- function(data, ...) {
 
   stopifnot.error("Wrong data class. This is an internal function and is not
@@ -44,6 +47,7 @@ calc_map.hill2 <- function(data, ...) {
   return(indicator)
 }
 
+#' @noRd
 calc_map.hill_core <- function(data,
                                type = c("hill0, hill1, hill2"),
                                cutoff_length = 100,
@@ -130,6 +134,7 @@ calc_map.hill_core <- function(data,
 
 }
 
+#' @noRd
 calc_map.obs_richness <- function(data, ...) {
 
   stopifnot.error("Wrong data class. This is an internal function and is not
@@ -146,6 +151,7 @@ calc_map.obs_richness <- function(data, ...) {
 
 }
 
+#' @noRd
 calc_map.total_occ <- function(data, ...) {
 
   stopifnot.error("Wrong data class. This is an internal function and is not
@@ -162,6 +168,7 @@ calc_map.total_occ <- function(data, ...) {
 
 }
 
+#' @noRd
 calc_map.newness <- function(data, ...) {
 
   stopifnot.error("Wrong data class. This is an internal function and is not
@@ -184,6 +191,7 @@ calc_map.newness <- function(data, ...) {
 
 }
 
+#' @noRd
 calc_map.occ_density <- function(data, ...) {
 
   stopifnot.error("Wrong data class. This is an internal function and is not
@@ -202,6 +210,7 @@ calc_map.occ_density <- function(data, ...) {
 
 }
 
+#' @noRd
 calc_map.williams_evenness <- function(data, ...) {
 
   stopifnot.error("Wrong data class. This is an internal function and is not
@@ -217,6 +226,7 @@ calc_map.williams_evenness <- function(data, ...) {
 
 }
 
+#' @noRd
 calc_map.pielou_evenness <- function(data, ...) {
 
   stopifnot.error("Wrong data class. This is an internal function and is not
@@ -232,7 +242,7 @@ calc_map.pielou_evenness <- function(data, ...) {
 
 }
 
-
+#' @noRd
 calc_map.evenness_core <- function(data,
                                    type,
                                    ...) {
@@ -268,6 +278,7 @@ calc_map.evenness_core <- function(data,
 
 }
 
+#' @noRd
 calc_map.ab_rarity <- function(data, ...) {
 
   stopifnot.error("Wrong data class. This is an internal function and is not
@@ -284,6 +295,7 @@ indicator <-
 
 }
 
+#' @noRd
 calc_map.area_rarity <- function(data, ...) {
 
   stopifnot.error("Wrong data class. This is an internal function and is not
@@ -303,6 +315,7 @@ calc_map.area_rarity <- function(data, ...) {
 
 }
 
+#' @noRd
 calc_map.spec_occ <- function(data, ...) {
 
   stopifnot.error("Wrong data class. This is an internal function and is not
@@ -321,7 +334,7 @@ calc_map.spec_occ <- function(data, ...) {
 
 }
 
-
+#' @noRd
 calc_map.spec_range <- function(data, ...) {
 
   stopifnot.error("Wrong data class. This is an internal function and is not
@@ -340,6 +353,7 @@ calc_map.spec_range <- function(data, ...) {
 
 }
 
+#' @noRd
 calc_map.tax_distinct <- function(data, ...) {
 
   stopifnot.error("Wrong data class. This is an internal function and is not
