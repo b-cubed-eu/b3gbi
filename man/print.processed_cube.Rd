@@ -4,10 +4,10 @@
 \alias{print.processed_cube}
 \title{Print a Processed Data Cube Object}
 \usage{
-\method{print}{processed_cube_dsinfo}(x, n = 10, ...)
+\method{print}{processed_cube}(x, n = 10, ...)
 }
 \arguments{
-\item{x}{A processed_cube_dsinfo object.}
+\item{x}{A processed_cube object.}
 
 \item{n}{Integer specifying the number of rows of cube data to display.}
 

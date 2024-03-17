@@ -19,7 +19,8 @@ plot_map(
   panel_bg = NULL,
   legend_title = NULL,
   legend_limits = NULL,
-  wrap_length = 60
+  legend_title_wrap_length = 10,
+  title_wrap_length = 60
 )
 }
 \arguments{
