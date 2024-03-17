@@ -58,10 +58,6 @@ final_year <- 2023 # final year of data
 
 load_all()
 
-cube_name <- "inst/extdata/eu_modellingtaxa_cube.csv"
-tax_info <- "inst/extdata/eu_modellingtaxa_info.csv"
-merged_data <- process_cube(cube_name, tax_info, first_year=first_year, final_year=final_year)
-
 cube_name <- "inst/extdata/global_amphibians_cube.csv"
 tax_info <- "inst/extdata/global_amphibians_info.csv"
 amphib_data <- process_cube(cube_name, tax_info, first_year=first_year, final_year=final_year)
@@ -81,7 +77,15 @@ example_cube_1 <- process_cube(cube_name, tax_info, first_year=first_year, final
 
 cube_name <- "inst/extdata/denmark_mammals_cube.csv"
 tax_info <- "inst/extdata/denmark_mammals_info.csv"
-example_cube_1 <- process_cube(cube_name, tax_info, first_year=first_year, final_year=final_year)
+example_cube_2 <- process_cube(cube_name, tax_info, first_year=first_year, final_year=final_year)
+
+cube_name <- "inst/extdata/eu_modellingtaxa_cube.csv"
+tax_info <- "inst/extdata/eu_modellingtaxa_info.csv"
+example_cube3 <- process_cube(cube_name, tax_info, first_year=first_year, final_year=final_year)
+
+cube_name <- "inst/extdata/europe_amphibians_cube.csv"
+tax_info <- "inst/extdata/europe_amphibians_info.csv"
+example_cube4 <- process_cube(cube_name, tax_info, first_year=first_year, final_year=final_year)
 
 amphib_data2_specimen <- amphib_data2 %>%
   dplyr::filter(dataType == "museum_specimens")
