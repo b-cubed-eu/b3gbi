@@ -71,13 +71,27 @@ register_indicator <- function(indicator_class,
             legend_transformation = legend_transformation)
 
   } else {
-    if (!overwrite = FALSE) {
+
+    if (overwrite == FALSE) {
+
       stop("Indicator class already registered. Use overwrite=TRUE to replace it.")
+
     } else {
-      # Remove any indicators without a class and/or name
+
+      # Remove the existing row
       e$available_indicators <-
         e$available_indicators %>%
-        replace()
+        filter(!(indicator_class == class))
+
+      # Add the new one
+      e$available_indicators <-
+        e$available_indicators %>%
+        add_row(indicator_class = indicator_class,
+                indicator_name = indicator_name,
+                plot_title = plot_title,
+                legend_label = legend_label,
+                legend_transformation = legend_transformation)
+
     }
   }
 
