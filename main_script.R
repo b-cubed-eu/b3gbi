@@ -18,6 +18,34 @@ library(vegan)
 library(stringr)
 library(pkgdown)
 
+# Create data frame for registering indicators
+available_indicators <- data.frame(
+  indicator_class = NA,
+  indicator_name = NA,
+  plot_title = NA,
+  legend_label = NA,
+  legend_transformation = NA
+)
+
+# Save it as .rda file in data directory of the package
+usethis::use_data(available_indicators, overwrite = TRUE)
+
+# Register indicators
+register_indicator("obs_richness", "Observed Species Richness", "Observed Richness", "Observed Richness")
+register_indicator("obs_richness", "Observed Species Richness", "Observed Richness", "Observed Richness")
+register_indicator("obs_richness", "Observed Species Richness", "Observed Richness", "Observed Richness")
+register_indicator("obs_richness", "Observed Species Richness", "Observed Richness", "Observed Richness")
+register_indicator("obs_richness", "Observed Species Richness", "Observed Richness", "Observed Richness")
+register_indicator("obs_richness", "Observed Species Richness", "Observed Richness", "Observed Richness")
+register_indicator("obs_richness", "Observed Species Richness", "Observed Richness", "Observed Richness")
+register_indicator("obs_richness", "Observed Species Richness", "Observed Richness", "Observed Richness")
+register_indicator("obs_richness", "Observed Species Richness", "Observed Richness", "Observed Richness")
+register_indicator("obs_richness", "Observed Species Richness", "Observed Richness", "Observed Richness")
+register_indicator("obs_richness", "Observed Species Richness", "Observed Richness", "Observed Richness")
+register_indicator("obs_richness", "Observed Species Richness", "Observed Richness", "Observed Richness")
+
+
+
 # Set parameters ----
 region_level <- "country" # country, continent, world
 region <- "Germany" # lower-case name of country or continent (or world)
@@ -49,11 +77,11 @@ amphib_data3 <- process_cube(cube_name, tax_info, first_year=first_year, final_y
 
 cube_name <- "inst/extdata/europe_insect_cube.csv"
 tax_info <- "inst/extdata/europe_insect_info.csv"
-europe_insects <- process_cube(cube_name, tax_info, first_year=first_year, final_year=final_year)
+example_cube_1 <- process_cube(cube_name, tax_info, first_year=first_year, final_year=final_year)
 
 cube_name <- "inst/extdata/denmark_mammals_cube.csv"
 tax_info <- "inst/extdata/denmark_mammals_info.csv"
-denmark_mammals <- process_cube(cube_name, tax_info, first_year=first_year, final_year=final_year)
+example_cube_1 <- process_cube(cube_name, tax_info, first_year=first_year, final_year=final_year)
 
 amphib_data2_specimen <- amphib_data2 %>%
   dplyr::filter(dataType == "museum_specimens")
