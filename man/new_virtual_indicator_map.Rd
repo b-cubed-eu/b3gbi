@@ -26,10 +26,6 @@ new_virtual_indicator_map(
 
 \item{div_type}{The type of biodiversity indicator (e.g., "obs_richness").}
 
-\item{cs1}{Length of the cell's sides, in kilometers, if square.}
-
-\item{cs2}{Width of the cells sides, in kilometers. Use only if the cell is non-square.}
-
 \item{map_level}{The spatial level of the map (e.g., "country", "continent", "world").}
 
 \item{map_region}{The name of the spatial region under analysis.}
@@ -41,6 +37,8 @@ new_virtual_indicator_map(
 \item{last_year}{The last year of the indicator calculation timeframe.}
 
 \item{num_years}{The number of years in the time series.}
+
+\item{cell_size}{Length of the grid cell sides, in kilometers.}
 }
 \value{
 A 'virtual_indicator_map' S3 object containing:

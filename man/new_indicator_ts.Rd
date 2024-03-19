@@ -7,12 +7,12 @@
 new_indicator_ts(
   x,
   div_type,
+  map_level,
+  map_region,
   kingdoms,
   num_species,
   num_years,
   species_names,
-  map_level,
-  map_region,
   coord_range
 )
 }
@@ -25,6 +25,10 @@ new_indicator_ts(
 
 \item{div_type}{The type of biodiversity indicator in short form (e.g., "obs_richness").}
 
+\item{map_level}{The spatial level of the data (e.g., "country", "continent", "world").}
+
+\item{map_region}{The name of the spatial region under analysis.}
+
 \item{kingdoms}{A character vector of kingdoms included in the analysis.}
 
 \item{num_species}{The total number of species in the dataset.}
@@ -32,10 +36,6 @@ new_indicator_ts(
 \item{num_years}{The number of years in the time series.}
 
 \item{species_names}{A character vector of species names, if a per-species indicator was calculated.}
-
-\item{map_level}{The spatial level of the data (e.g., "country", "continent", "world").}
-
-\item{map_region}{The name of the spatial region under analysis.}
 
 \item{coord_range}{A named list specifying the coordinate range of the analysis
 (elements: xmin, xmax, ymin, ymax).}

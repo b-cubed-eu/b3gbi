@@ -69,6 +69,7 @@ Default is lightsteelblue.}
 }
 \value{
 A ggplot object representing the biodiversity indicator time series plot.
+Can be customized using ggplot2 functions.
 }
 \description{
 Creates a time series plot of a calculated biodiversity

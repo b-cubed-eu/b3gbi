@@ -7,8 +7,7 @@
 new_indicator_map(
   x,
   div_type,
-  cs1,
-  cs2,
+  cell_size,
   map_level,
   map_region,
   kingdoms,
@@ -29,9 +28,7 @@ new_indicator_map(
 
 \item{div_type}{The type of biodiversity indicator in short form (e.g., obs_richness").}
 
-\item{cs1}{Length of the cell's sides, in kilometers, if square.}
-
-\item{cs2}{Width of the cells sides, in kilometers. Use only if the cell is non-square.}
+\item{cell_size}{Length of the grid cell sides, in kilometers.}
 
 \item{map_level}{The spatial level of the map (e.g., "country", "continent", "world").}
 

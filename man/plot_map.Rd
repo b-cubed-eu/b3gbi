@@ -62,6 +62,7 @@ at the country level.}
 }
 \value{
 A ggplot object representing the biodiversity indicator map.
+Can be customized using ggplot2 functions.
 }
 \description{
 Creates a map visualization of a calculated biodiversity indicator,
