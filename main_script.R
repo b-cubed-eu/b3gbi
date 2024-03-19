@@ -31,10 +31,10 @@ available_indicators <- data.frame(
 usethis::use_data(available_indicators, overwrite = TRUE)
 
 # Register indicators
-register_indicator("obs_richness", "Observed Species Richness", "Observed Richness", "Observed Richness")
-register_indicator("obs_richness", "Observed Species Richness", "Observed Richness", "Observed Richness")
-register_indicator("obs_richness", "Observed Species Richness", "Observed Richness", "Observed Richness")
-register_indicator("obs_richness", "Observed Species Richness", "Observed Richness", "Observed Richness")
+register_indicator("obs_richness", "Observed Species Richness", "Observed Richness", "Observed Richness", backup=FALSE, overwrite = TRUE)
+register_indicator("total_occ", "Total Occurrences", "Total Occurrences", "Occurrences", backup=FALSE, overwrite = TRUE)
+register_indicator("pielou_evenness", "Pielou's Evenness", "Pielou's Evenness", "Evenness", backup=FALSE, overwrite = TRUE)
+register_indicator("williams_evenness", "Williams' Evenness", "Williams' Evenness", "Evenness", backup=FALSE, overwrite = FALSE)
 register_indicator("obs_richness", "Observed Species Richness", "Observed Richness", "Observed Richness")
 register_indicator("obs_richness", "Observed Species Richness", "Observed Richness", "Observed Richness")
 register_indicator("obs_richness", "Observed Species Richness", "Observed Richness", "Observed Richness")
@@ -44,7 +44,8 @@ register_indicator("obs_richness", "Observed Species Richness", "Observed Richne
 register_indicator("obs_richness", "Observed Species Richness", "Observed Richness", "Observed Richness")
 register_indicator("obs_richness", "Observed Species Richness", "Observed Richness", "Observed Richness")
 
-
+stop("This is an error message.
+     \nSo is this.")
 
 # Set parameters ----
 region_level <- "country" # country, continent, world
