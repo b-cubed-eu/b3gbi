@@ -857,6 +857,7 @@ plot.obs_richness <- function(x, ...){
 #' @param wrap_length  Maximum title length before wrapping to a new line.
 #'
 #' @return A ggplot object representing the biodiversity indicator map.
+#' Can be customized using ggplot2 functions.
 #'
 #' @examples
 #' # Assuming you have an 'indicator_map' object named 'richness_map':
@@ -1024,6 +1025,7 @@ plot_map <- function(x,
 #' @param wrap_length  Maximum title length before wrapping to a new line.
 #'
 #' @return A ggplot object representing the biodiversity indicator time series plot.
+#' Can be customized using ggplot2 functions.
 #'
 #' @examples
 #' # Assuming you have an 'indicator_ts' object named 'richness_ts' and want
