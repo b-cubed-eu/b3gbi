@@ -149,12 +149,12 @@ new_virtual_cube <- function(x) {
 #' @export
 new_indicator_ts <- function(x,
                          div_type,
+                         map_level,
+                         map_region,
                          kingdoms,
                          num_species,
                          num_years,
                          species_names,
-                         map_level,
-                         map_region,
                          coord_range) {
   # check that x is a tibble and all necessary columns are present
   stopifnot(tibble::is_tibble(x),
@@ -196,8 +196,7 @@ new_indicator_ts <- function(x,
 #'   * 'cellid': Unique ID for each spatial cell.
 #'   * 'diversity_val': The calculated indicator value for the cell.
 #' @param div_type The type of biodiversity indicator in short form (e.g., obs_richness").
-#' @param cs1 Length of the cell's sides, in kilometers, if square.
-#' @param cs2 Width of the cells sides, in kilometers. Use only if the cell is non-square.
+#' @param cell_size Length of the grid cell sides, in kilometers.
 #' @param map_level The spatial level of the map (e.g., "country", "continent", "world").
 #' @param map_region The name of the spatial region under analysis.
 #' @param kingdoms A character vector of kingdoms included in the analysis.
@@ -221,8 +220,7 @@ new_indicator_ts <- function(x,
 #' @export
 new_indicator_map <- function(x,
                           div_type,
-                          cs1,
-                          cs2,
+                          cell_size,
                           map_level,
                           map_region,
                           kingdoms,
@@ -239,17 +237,8 @@ new_indicator_map <- function(x,
                   "geometry") %in% names(x)))
   coord_range = sf::st_bbox(x)
  # names(coord_range) = c("xmin", "ymin", "xmax", "ymax")
-  if (cs1 == cs2) {
-    cell_size = paste(cs1, "km^2")
-  } else {
-    cell_size = paste(cs1, "kmx", cs2, "km", sep = "")
-  }
-  if(div_type == "pielou_evenness" | div_type == "e9_evenness") {
-    id = div_type
-    div_type = "evenness"
-  } else {
-    id = div_type
-  }
+  cell_size = paste(cell_size, "km^2")
+  id = div_type
   class(x) <- c("indicator_data", class(x))
   structure(list(div_name = get_divname(id),
                  div_type = div_type,
@@ -283,8 +272,7 @@ new_indicator_map <- function(x,
 #'   * 'cellid': Unique ID for each spatial cell.
 #'   * 'diversity_val': The calculated indicator value for the cell.
 #' @param div_type The type of biodiversity indicator (e.g., "obs_richness").
-#' @param cs1 Length of the cell's sides, in kilometers, if square.
-#' @param cs2 Width of the cells sides, in kilometers. Use only if the cell is non-square.
+#' @param cell_size Length of the grid cell sides, in kilometers.
 #' @param map_level The spatial level of the map (e.g., "country", "continent", "world").
 #' @param map_region The name of the spatial region under analysis.
 #' @param num_species The total number of virtual species included in the analysis.
@@ -322,17 +310,8 @@ new_virtual_indicator_map <- function(x,
             all(c("cellid",
                   "geometry") %in% names(x)))
   coord_range = sf::st_bbox(x)
-  if (cs1 == cs2) {
-    cell_size = paste(cs1, "km^2")
-  } else {
-    cell_size = paste(cs1, "kmx", cs2, "km", sep = "")
-  }
-  if(div_type == "pielou_evenness" | div_type == "e9_evenness") {
-    id = div_type
-    div_type = "evenness"
-  } else {
-    id = div_type
-  }
+  cell_size = paste(cell_size, "km^2")
+  id = div_type
   structure(list(div_name = get_divname(id),
                  div_type = div_type,
                  num_cells = length(x$cellid),
