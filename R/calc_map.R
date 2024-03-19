@@ -6,8 +6,7 @@ calc_map.default <- function(data, ...) {
 #' @noRd
 calc_map.hill0 <- function(data, ...) {
 
-  stopifnot.error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
+  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
                   inherits(data, "hill0"))
 
   indicator <- calc_map.hill_core(data = data,
@@ -21,8 +20,7 @@ calc_map.hill0 <- function(data, ...) {
 #' @noRd
 calc_map.hill1 <- function(data, ...) {
 
-  stopifnot.error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
+  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
                   inherits(data, "hill1"))
 
   indicator <- calc_map.hill_core(data = data,
@@ -36,8 +34,7 @@ calc_map.hill1 <- function(data, ...) {
 #' @noRd
 calc_map.hill2 <- function(data, ...) {
 
-  stopifnot.error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
+  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
                   inherits(data, "hill2"))
 
   indicator <- calc_map.hill_core(data = data,
@@ -55,8 +52,7 @@ calc_map.hill_core <- function(data,
                                ...)
 {
 
-  stopifnot_error("Please check the class and structure of your data.
-                  This is an internal function, not meant to be called directly.",
+  stopifnot_error("Please check the class and structure of your data. This is an internal function, not meant to be called directly.",
                   inherits(data, c("data.frame", "sf", "hill0" | "hill1" | "hill2")))
 
   type <- match.arg(type)
@@ -137,8 +133,7 @@ calc_map.hill_core <- function(data,
 #' @noRd
 calc_map.obs_richness <- function(data, ...) {
 
-  stopifnot.error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
+  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
                   inherits(data, "obs_richness"))
 
   # Calculate observed species richness over the grid
@@ -154,8 +149,7 @@ calc_map.obs_richness <- function(data, ...) {
 #' @noRd
 calc_map.total_occ <- function(data, ...) {
 
-  stopifnot.error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
+  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
                   inherits(data, "total_occ"))
 
   # Calculate total number of occurrences over the grid
@@ -171,8 +165,7 @@ calc_map.total_occ <- function(data, ...) {
 #' @noRd
 calc_map.newness <- function(data, ...) {
 
-  stopifnot.error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
+  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
                   inherits(data, "newness"))
 
   # Calculate mean year of occurrence over the grid
@@ -194,8 +187,7 @@ calc_map.newness <- function(data, ...) {
 #' @noRd
 calc_map.occ_density <- function(data, ...) {
 
-  stopifnot.error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
+  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
                   inherits(data, "occ_density"))
 
   # Calculate density of occurrences over the grid (per square km)
@@ -213,8 +205,7 @@ calc_map.occ_density <- function(data, ...) {
 #' @noRd
 calc_map.williams_evenness <- function(data, ...) {
 
-  stopifnot.error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
+  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
                   inherits(data, "williams_evenness"))
 
   # Call function to calculate evenness over a grid
@@ -229,8 +220,7 @@ calc_map.williams_evenness <- function(data, ...) {
 #' @noRd
 calc_map.pielou_evenness <- function(data, ...) {
 
-  stopifnot.error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
+  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
                   inherits(data, "pielou_evenness"))
 
   # Call function to calculate evenness over a grid
@@ -247,8 +237,7 @@ calc_map.evenness_core <- function(data,
                                    type,
                                    ...) {
 
-  stopifnot_error("Please check the class and structure of your data.
-                  This is an internal function, not meant to be called directly.",
+  stopifnot_error("Please check the class and structure of your data. This is an internal function, not meant to be called directly.",
                   inherits(x, c("data.frame", "sf", "williams_evenness" | "pielou_evenness")))
 
 
@@ -281,8 +270,7 @@ calc_map.evenness_core <- function(data,
 #' @noRd
 calc_map.ab_rarity <- function(data, ...) {
 
-  stopifnot.error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
+  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
                   inherits(data, "ab_rarity"))
 
 # Calculate total summed rarity (in terms of abundance) for each grid cell
@@ -298,8 +286,7 @@ indicator <-
 #' @noRd
 calc_map.area_rarity <- function(data, ...) {
 
-  stopifnot.error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
+  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
                   inherits(data, "area_rarity"))
 
   # Calculate rarity as the sum (per grid cell) of the inverse of occupancy
@@ -318,8 +305,7 @@ calc_map.area_rarity <- function(data, ...) {
 #' @noRd
 calc_map.spec_occ <- function(data, ...) {
 
-  stopifnot.error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
+  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
                   inherits(data, "spec_occ"))
 
   # Calculate total occurrences for each species by grid cell
@@ -337,8 +323,7 @@ calc_map.spec_occ <- function(data, ...) {
 #' @noRd
 calc_map.spec_range <- function(data, ...) {
 
-  stopifnot.error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
+  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
                   inherits(data, "spec_range"))
 
   # Flatten occurrences for each species by grid cell
@@ -356,8 +341,7 @@ calc_map.spec_range <- function(data, ...) {
 #' @noRd
 calc_map.tax_distinct <- function(data, ...) {
 
-  stopifnot.error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
+  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
                   inherits(data, "tax_distinct"))
 
   # Retrieve taxonomic data from GBIF
