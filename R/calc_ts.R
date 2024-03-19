@@ -1,7 +1,7 @@
 #' @noRd
 calc_ts.hill0 <- function(data, ...) {
 
-  stopifnot.error("Wrong data class. This is an internal function and is not
+  stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
                   inherits(data, "hill0"))
 
@@ -16,7 +16,7 @@ calc_ts.hill0 <- function(data, ...) {
 #' @noRd
 calc_ts.hill1 <- function(data, ...) {
 
-  stopifnot.error("Wrong data class. This is an internal function and is not
+  stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
                   inherits(data, "hill1"))
 
@@ -31,7 +31,7 @@ calc_ts.hill1 <- function(data, ...) {
 #' @noRd
 calc_ts.hill2 <- function(data, ...) {
 
-  stopifnot.error("Wrong data class. This is an internal function and is not
+  stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
                   inherits(data, "hill2"))
 
@@ -150,7 +150,7 @@ calc_ts.hill_core <- function(data,
 #' @noRd
 calc_ts.obs_richness <- function(data, ...) {
 
-  stopifnot.error("Wrong data class. This is an internal function and is not
+  stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
                   inherits(data, "obs_richness"))
 
@@ -166,7 +166,7 @@ calc_ts.obs_richness <- function(data, ...) {
 #' @noRd
 calc_ts.cum_richness <- function(data, ...) {
 
-  stopifnot.error("Wrong data class. This is an internal function and is not
+  stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
                   inherits(data, "obs_richness"))
 
@@ -187,7 +187,7 @@ calc_ts.cum_richness <- function(data, ...) {
 #' @noRd
 calc_ts.total_occ <- function(data, ...) {
 
-  stopifnot.error("Wrong data class. This is an internal function and is not
+  stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
                   inherits(data, "total_occ"))
 
@@ -204,7 +204,7 @@ calc_ts.total_occ <- function(data, ...) {
 #' @noRd
 calc_ts.occ_density <- function(data, ...) {
 
-  stopifnot.error("Wrong data class. This is an internal function and is not
+  stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
                   inherits(data, "occ_density"))
 
@@ -223,7 +223,7 @@ calc_ts.occ_density <- function(data, ...) {
 #' @noRd
 calc_ts.williams_evenness <- function(data, ...) {
 
-  stopifnot.error("Wrong data class. This is an internal function and is not
+  stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
                   inherits(data, "williams_evenness"))
 
@@ -239,7 +239,7 @@ calc_ts.williams_evenness <- function(data, ...) {
 #' @noRd
 calc_ts.pielou_evenness <- function(data, ...) {
 
-  stopifnot.error("Wrong data class. This is an internal function and is not
+  stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
                   inherits(data, "pielou_evenness"))
 
@@ -291,7 +291,7 @@ calc_ts.evenness_core <- function(data,
 #' @noRd
 calc_ts.ab_rarity <- function(data, ...) {
 
-  stopifnot.error("Wrong data class. This is an internal function and is not
+  stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
                   inherits(data, "ab_rarity"))
 
@@ -308,7 +308,7 @@ calc_ts.ab_rarity <- function(data, ...) {
 #' @noRd
 calc_ts.area_rarity <- function(data, ...) {
 
-  stopifnot.error("Wrong data class. This is an internal function and is not
+  stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
                   inherits(data, "area_rarity"))
 
@@ -328,7 +328,7 @@ calc_ts.area_rarity <- function(data, ...) {
 #' @noRd
 calc_ts.spec_occ <- function(data, ...) {
 
-  stopifnot.error("Wrong data class. This is an internal function and is not
+  stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
                   inherits(data, "spec_occ"))
 
@@ -347,7 +347,7 @@ calc_ts.spec_occ <- function(data, ...) {
 #' @noRd
 calc_ts.spec_range <- function(data, ...) {
 
-  stopifnot.error("Wrong data class. This is an internal function and is not
+  stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
                   inherits(data, "spec_range"))
 
@@ -366,7 +366,7 @@ calc_ts.spec_range <- function(data, ...) {
 #' @noRd
 calc_ts.tax_distinct <- function(data, ...) {
 
-  stopifnot.error("Wrong data class. This is an internal function and is not
+  stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
                   inherits(data, "tax_distinct"))
 
