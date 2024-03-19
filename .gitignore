@@ -10,5 +10,5 @@
 /R_old
 /.local
 Env.RData
-
+/data/*.old
 docs
