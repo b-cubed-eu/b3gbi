@@ -1,3 +1,6 @@
+
+
+
 #' @title Calculate a Biodiversity Indicator Time Series
 #'
 #' @description  Calculates various biodiversity indicators over time, based on
@@ -189,6 +192,98 @@ calc_ts.default <- function(x,
                                 map_level = level,
                                 map_region = region,
                                 coord_range = map_lims)
+
+  return(diversity_obj)
+
+}
+
+
+
+
+#' @noRd
+compute_indicator_workflow.ts <- function(x,
+                                          type,
+                                          cell_size = NULL,
+                                          level = c("continent", "country", "world"),
+                                          region = "Europe",
+                                          ...) {
+
+  stopifnot_error("Object class not recognized.",
+                  inherits(x, "processed_cube") |
+                    inherits(x, "processed_cube_dsinfo") |
+                    inherits(x, "virtual_cube"))
+
+  level <- match.arg(level)
+  type <- match.arg(type,
+                    names(available_indicators))
+
+  data <- x$data
+
+  # Collect information to add to final object
+  num_species <- x$num_species
+  first_year <- x$first_year
+  last_year <- x$last_year
+  num_years <- length(unique(data$year))
+
+  if (!inherits(x, "virtual_cube")) {
+
+    kingdoms <- x$kingdoms
+    species_names <- unique(data$scientificName)
+    years_with_obs <- unique(data$year)
+
+  }
+
+  if (!is.null(level) & !is.null(region)) {
+
+    # Download Natural Earth data
+    map_data <- get_NE_data(level, region)
+
+    # Create grid from Natural Earth data
+    grid <- create_grid(map_data, level, cell_size)
+
+    # Format spatial data and merge with grid
+    data <- prepare_spatial_data(data, grid)
+
+  } else {
+    level <- "unknown"
+    region <- "unknown"
+  }
+
+  # Assign class to send data to correct calculator function
+  class(data) <- append(type, class(data))
+
+  # Calculate indicator
+  indicator <- calc_ts(data, ...)
+
+
+  # Create indicator object
+  if (!inherits(x, "virtual_cube")) {
+
+    diversity_obj <- new_indicator_ts(indicator,
+                                      div_type = type,
+                                      map_level = level,
+                                      map_region = region,
+                                      kingdoms = kingdoms,
+                                      num_species = num_species,
+                                      first_year = first_year,
+                                      last_year = last_year,
+                                      num_years = num_years,
+                                      species_names = species_names,
+                                      years_with_obs = years_with_obs)
+
+  } else {
+
+    diversity_obj <- new_virtual_indicator_ts(indicator,
+                                              div_type = type,
+                                              cell_size = cell_size,
+                                              map_level = level,
+                                              map_region = region,
+                                              num_species = num_species,
+                                              first_year = first_year,
+                                              last_year = last_year,
+                                              num_years = num_years)
+
+  }
 
   return(diversity_obj)
 
