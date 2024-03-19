@@ -20,11 +20,25 @@
 #' germany_grid <- create_grid(germany_map, cs1 = 100, cs2 = 100)
 #' plot(Germany_grid)
 #' @noRd
-create_grid <- function(map_data, cs1, cs2) {
+create_grid <- function(map_data,
+                        level,
+                        cell_size = NULL) {
+
+  if (!is.null(cell_size)) {
+
+    cell_size <- round(cell_size)
+
+  } else {
+
+    cell_size <- ifelse(level == "world", 100,
+                        ifelse(level == "continent", 100,
+                               ifelse(level == "country", 10)))
+
+  }
 
   # Make a grid across the map area
   grid <- map_data %>%
-    sf::st_make_grid(cellsize = c(cs1 * 1000, cs2 * 1000)) %>%
+    sf::st_make_grid(cellsize = c(cell_size * 1000, cell_size * 1000)) %>%
     sf::st_intersection(map_data) %>%
     sf::st_cast("MULTIPOLYGON") %>%
     sf::st_sf() %>%
