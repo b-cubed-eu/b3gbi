@@ -7,7 +7,7 @@
 compute_indicator_workflow(
   x,
   type,
-  dim_type = c("map", "cant ts"),
+  dim_type = c("map", "ts"),
   cell_size = NULL,
   level = c("continent", "country", "world"),
   region = "Europe",
