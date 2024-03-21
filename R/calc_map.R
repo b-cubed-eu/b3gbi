@@ -238,11 +238,10 @@ calc_map.evenness_core <- function(data,
                                    ...) {
 
   stopifnot_error("Please check the class and structure of your data. This is an internal function, not meant to be called directly.",
-                  inherits(x, c("data.frame", "sf", "williams_evenness" | "pielou_evenness")))
-
+                  inherits(data, c("data.frame", "sf")))
 
   type <- match.arg(type,
-                    c(available_indicators$indicator_class))
+                    names(available_indicators))
 
   # Calculate adjusted evenness fo r each grid cell
   indicator <-
@@ -254,16 +253,14 @@ calc_map.evenness_core <- function(data,
                        values_from = num_occ) %>%
     replace(is.na(.), 0) %>%
     tibble::column_to_rownames("taxonKey") %>%
-    attr("class") <- type %>%
-    purrr::map(~compute_formula(.)) %>%
+    as.list() %>%
+    purrr::map(~compute_evenness_formula(., type)) %>%
     unlist() %>%
     as.data.frame() %>%
     dplyr::rename(diversity_val = ".") %>%
     tibble::rownames_to_column(var = "cellid") %>%
     dplyr::mutate(cellid = as.integer(cellid),
                   .keep = "unused")
-
-  return(indicator)
 
 }
 
