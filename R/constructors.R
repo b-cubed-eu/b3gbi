@@ -160,13 +160,7 @@ new_indicator_ts <- function(x,
   stopifnot(tibble::is_tibble(x),
             all(c("year",
                   "diversity_val") %in% names(x)))
-  #names(coord_range) <- c("xmin", "ymin", "xmax", "ymax")
-  if(div_type == "pielou_evenness" | div_type == "e9_evenness") {
     id = div_type
-    div_type = "evenness"
-  } else {
-    id = div_type
-  }
   class(x) <- c("indicator_data", class(x))
   structure(list(div_name = get_divname(id),
                  div_type = div_type,
