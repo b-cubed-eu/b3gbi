@@ -5,7 +5,7 @@ calc_ts.hill0 <- function(data, ...) {
                   meant to be called directly.",
                   inherits(data, "hill0"))
 
-  indicator <- calc_map.hill_core(data = data,
+  indicator <- calc_ts.hill_core(data = data,
                                   type = "hill0",
                                   ...)
 
@@ -20,7 +20,7 @@ calc_ts.hill1 <- function(data, ...) {
                   meant to be called directly.",
                   inherits(data, "hill1"))
 
-  indicator <- calc_map.hill_core(data = data,
+  indicator <- calc_ts.hill_core(data = data,
                                   type = "hill1",
                                   ...)
 
@@ -35,7 +35,7 @@ calc_ts.hill2 <- function(data, ...) {
                   meant to be called directly.",
                   inherits(data, "hill2"))
 
-  indicator <- calc_map.hill_core(data = data,
+  indicator <- calc_ts.hill_core(data = data,
                                   type = "hill2",
                                   ...)
 
@@ -58,6 +58,11 @@ calc_ts.hill_core <- function(data,
 
   # Extract qvalue from hill diversity type
   qval <- as.numeric(gsub("hill", "", type))
+
+  richness_by_year <-
+    data %>%
+    dplyr::summarise(obs_richness = n_distinct(scientificName),
+                     .by = "year")
 
   # Create list of occurrence matrices by year, with species as rows
   species_records_raw <-
@@ -141,9 +146,8 @@ calc_ts.hill_core <- function(data,
                        .after = "obs_richness") %>%
     tibble::add_column(diversity_val = est_richness$index,
                        .after = "est_relative_richness") %>%
-    as_tibble
+    tibble::as_tibble()
 
-  return(indicator)
 
 }
 
@@ -155,11 +159,9 @@ calc_ts.obs_richness <- function(data, ...) {
                   inherits(data, "obs_richness"))
 
   # Calculate observed species richness by year
-  indicator <-
-    richness_by_year %>%
-    dplyr::rename(diversity_val = obs_richness)
-
-  return(indicator)
+  data <-
+    data %>% dplyr::summarise(diversity_val = n_distinct(scientificName),
+                              .by = "year")
 
 }
 
@@ -180,12 +182,10 @@ calc_ts.cum_richness <- function(data, ...) {
     dplyr::reframe(year = year,
                    diversity_val = cumsum(unique_by_year))
 
-  return(indicator)
-
 }
 
 #' @noRd
-calc_ts.total_occ <- function(data, ...) {
+calc_ts.total_occ <- function(data, subtype, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
@@ -196,8 +196,6 @@ calc_ts.total_occ <- function(data, ...) {
     data %>%
     dplyr::summarize(diversity_val = sum(obs),
                      .by = "year")
-
-  return(indicator)
 
 }
 
@@ -216,8 +214,6 @@ calc_ts.occ_density <- function(data, ...) {
     dplyr::distinct(cellid, diversity_val) %>%
     dplyr::mutate(diversity_val = as.numeric(diversity_val))
 
-  return(indicator)
-
 }
 
 #' @noRd
@@ -228,11 +224,9 @@ calc_ts.williams_evenness <- function(data, ...) {
                   inherits(data, "williams_evenness"))
 
   # Call function to calculate evenness over a grid
-  indicator <- calc_map.evenness_core(data = data,
+  indicator <- calc_ts.evenness_core(data = data,
                                       type = "williams_evenness",
                                       ...)
-
-  return(indicator)
 
 }
 
@@ -244,11 +238,9 @@ calc_ts.pielou_evenness <- function(data, ...) {
                   inherits(data, "pielou_evenness"))
 
   # Call function to calculate evenness over a grid
-  indicator <- calc_map.evenness_core(data = data,
+  indicator <- calc_ts.evenness_core(data = data,
                                       type = "pielou_evenness",
                                       ...)
-
-  return(indicator)
 
 }
 
@@ -259,11 +251,11 @@ calc_ts.evenness_core <- function(data,
 
   stopifnot_error("Please check the class and structure of your data.
                   This is an internal function, not meant to be called directly.",
-                  inherits(x, c("data.frame", "sf", "williams_evenness" | "pielou_evenness")))
+                  inherits(data, c("data.frame", "sf")))
 
 
   type <- match.arg(type,
-                    c(available_indicators$indicator_class))
+                    names(available_indicators))
 
   # Calculate number of records for each species by grid cell
   indicator <-
@@ -275,16 +267,14 @@ calc_ts.evenness_core <- function(data,
                        values_from = num_occ) %>%
     replace(is.na(.), 0) %>%
     tibble::column_to_rownames("taxonKey") %>%
-    attrib("class") <- type %>%
-    purrr::map(~compute_formula(.)) %>%
+    as.list() %>%
+    purrr::map(~compute_evenness_formula(. ,type)) %>%
     unlist() %>%
     as.data.frame() %>%
     dplyr::rename(diversity_val = ".") %>%
     tibble::rownames_to_column(var = "year") %>%
     dplyr::mutate(year = as.integer(year),
                   .keep = "unused")
-
-  return(indicator)
 
 }
 
@@ -321,8 +311,6 @@ calc_ts.area_rarity <- function(data, ...) {
     dplyr::mutate(rarity = 1 / (rec_tax_cell / sum(dplyr::n_distinct(cellid)))) %>%
     dplyr::summarise(diversity_val = sum(rarity), .by = cellid)
 
-  return(indicator)
-
 }
 
 #' @noRd
@@ -333,14 +321,12 @@ calc_ts.spec_occ <- function(data, ...) {
                   inherits(data, "spec_occ"))
 
   # Calculate total occurrences for each species by grid cell
-  diversity_cell <-
+  indicator <-
     data %>%
     dplyr::mutate(num_records = sum(obs), .by = c(taxonKey, cellid)) %>%
     dplyr::distinct(cellid, scientificName, .keep_all = TRUE) %>%
     dplyr::arrange(cellid) %>%
     dplyr::select(cellid, taxonKey, scientificName, num_records)
-
-  return(indicator)
 
 }
 
@@ -358,8 +344,6 @@ calc_ts.spec_range <- function(data, ...) {
     dplyr::distinct(cellid, scientificName, .keep_all = TRUE) %>%
     dplyr::arrange(cellid) %>%
     dplyr::select(cellid, taxonKey, scientificName, obs)
-
-  return(indicator)
 
 }
 
@@ -390,7 +374,5 @@ calc_ts.tax_distinct <- function(data, ...) {
     dplyr::bind_rows() %>%
     dplyr::distinct(cellid, diversity_val, .keep_all = TRUE) %>%
     dplyr::select(cellid, diversity_val)
-
-  return(indicator)
 
 }
