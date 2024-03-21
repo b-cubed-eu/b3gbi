@@ -92,8 +92,10 @@ if (dim_type == "map" | (!is.null(level) & !is.null(region))) {
 
 }
 
-# Assign class to send data to correct calculator function
+# Assign classess to send data to correct calculator function
+subtype <- paste0(type, "_", dim_type)
 class(data) <- append(type, class(data))
+class(data) <- append(subtype, class(data))
 
 if (dim_type == "map") {
 
