@@ -226,9 +226,61 @@ plot.cum_richness <- function(x,
 
 }
 
-#' @title Plot Evenness
+#' @title Plot Pielou's Evenness
 #'
-#' @description  Plots evenness data (either Pielou's Evenness or Williams' Evenness),
+#' @description  Plots evenness data,
+#'    either as a time series ('indicator_ts' object)  or as a spatial map
+#'    ('indicator_map' object).
+#'
+#' @param x An object containing evenness data. Must be of class 'pielou_evenness',
+#'   either an 'indicator_ts' or 'indicator_map' object.
+#' @param ... Additional arguments passed to the internal plotting functions
+#'   (`plot_ts` or `plot_map`). See their documentation for details.
+#'
+#' @return A ggplot object representing either a time series plot or a map,
+#'   depending on the class of the input object `x`.
+#'
+#' @examples
+#' # Assuming objects 'evenness_ts' (indicator_ts) and 'evenness_map' (indicator_map)
+#' # Time series plot:
+#' plot.evenness(evenness_ts)
+#'
+#' # Map visualization:
+#' plot.evenness(evenness_map)
+#'
+#' @export
+plot.pielou_evenness <- function(x, ...){
+
+  stopifnot_error("Incorrect object class. Must be class 'pielou_evenness'.", inherits(x, "pielou_evenness"))
+
+  if (inherits(x, "indicator_ts")) {
+
+    # Set defaults
+    y_label_default <- "Evenness"
+    auto_title <- paste("Pielou's Evenness Trend", sep = "")
+
+    # Call generalized plot_ts function
+    plot_ts(x, y_label_default = y_label_default, auto_title = auto_title, ...)
+
+  } else if (inherits(x, "indicator_map")) {
+
+  # Set defaults
+  leg_label_default <- "Evenness"
+  auto_title <- paste("Pielou's Evenness", sep = "")
+
+  # Call generalized plot_map function
+  plot_map(x, leg_label_default = leg_label_default, auto_title = auto_title, ...)
+
+  } else {
+
+    stop("Incorrect object class. Must be class 'indicator_ts' or 'indicator_map'.")
+
+  }
+}
+
+#' @title Plot Williams' Evenness
+#'
+#' @description  Plots evenness data,
 #'    either as a time series ('indicator_ts' object)  or as a spatial map
 #'    ('indicator_map' object).
 #'
@@ -249,27 +301,27 @@ plot.cum_richness <- function(x,
 #' plot.evenness(evenness_map)
 #'
 #' @export
-plot.evenness <- function(x, ...){
+plot.williams_evenness <- function(x, ...){
 
-  stopifnot_error("Incorrect object class. Must be class 'evenness'.", inherits(x, "evenness"))
+  stopifnot_error("Incorrect object class. Must be class 'williams_evenness'.", inherits(x, "williams_evenness"))
 
   if (inherits(x, "indicator_ts")) {
 
     # Set defaults
     y_label_default <- "Evenness"
-    auto_title <- paste(ifelse((attr(x, "indicator_id")=="pielou_evenness"), "Pielou's", "Williams'"), " Evenness Trend", sep = "")
+    auto_title <- paste("Williams' Evenness Trend", sep = "")
 
     # Call generalized plot_ts function
     plot_ts(x, y_label_default = y_label_default, auto_title = auto_title, ...)
 
   } else if (inherits(x, "indicator_map")) {
 
-  # Set defaults
-  leg_label_default <- "Evenness"
-  auto_title <- paste(ifelse((attr(x, "indicator_id")=="pielou_evenness"), "Pielou's", "Williams'"), " Evenness", sep = "")
+    # Set defaults
+    leg_label_default <- "Evenness"
+    auto_title <- paste("Williams' Evenness", sep = "")
 
-  # Call generalized plot_map function
-  plot_map(x, leg_label_default = leg_label_default, auto_title = auto_title, ...)
+    # Call generalized plot_map function
+    plot_map(x, leg_label_default = leg_label_default, auto_title = auto_title, ...)
 
   } else {
 
