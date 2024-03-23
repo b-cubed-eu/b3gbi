@@ -9,6 +9,8 @@
 /test_data
 /R_old
 /.local
+/windows
+/wc10
 Env.RData
 /data/*.old
 docs
