@@ -1,7 +1,3 @@
-#' @export
-calc_ts.default <- function(data, ...) {
-  NextMethod()
-}
 
 #' @noRd
 calc_ts.hill0 <- function(data, ...) {
