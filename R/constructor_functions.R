@@ -19,7 +19,7 @@
 #' # Example assuming your data is in a tibble named 'biodiversity_data'
 #' my_processed_cube <- new_processed_cube(biodiversity_data)
 #'
-#' @export
+#' @noRd
 new_processed_cube <- function(x) {
   # check that x is a tibble and all necessary columns are present
   stopifnot(tibble::is_tibble(x),
@@ -97,7 +97,7 @@ new_processed_cube <- function(x) {
 #' # Assuming results exist in 'indicator_results' and other parameters are defined
 #' my_indicator_ts <- new_indicator_ts(indicator_results, "obs_richness", ...)
 #'
-#' @export
+#' @noRd
 new_indicator_ts <- function(x,
                          div_type,
                          map_level,
@@ -113,7 +113,7 @@ new_indicator_ts <- function(x,
                   "diversity_val") %in% names(x)))
     id = div_type
   class(x) <- c("indicator_data", class(x))
-  structure(list(div_name = get_divname(id),
+  structure(list(div_name = get_indicator_name(id),
                  div_type = div_type,
                  first_year = min(x$year),
                  last_year = max(x$year),
@@ -162,7 +162,7 @@ new_indicator_ts <- function(x,
 #' # Assuming results exist in 'cell_indicator_results' and other parameters are defined
 #' my_indicator_map <- new_indicator_map(cell_indicator_results, "obs_richness", ...)
 #'
-#' @export
+#' @noRd
 new_indicator_map <- function(x,
                           div_type,
                           cell_size,
@@ -185,7 +185,7 @@ new_indicator_map <- function(x,
   cell_size = paste(cell_size, "km^2")
   id = div_type
   class(x) <- c("indicator_data", class(x))
-  structure(list(div_name = get_divname(id),
+  structure(list(div_name = get_indicator_name(id),
                  div_type = div_type,
                  num_cells = length(x$cellid),
                  cell_size = cell_size,
