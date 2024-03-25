@@ -32,7 +32,7 @@
 #' # Only plot datasets with at least 100 occurrences:
 #' plot.occ_by_dataset(occ_by_dataset_ts, min_occurrences = 100)
 #'
-#' @export
+#' @noRd
 plot.occ_by_dataset <- function(x,
                                 x_breaks = 6,
                                 facet_scales = "free_y",
@@ -126,7 +126,7 @@ plot.occ_by_dataset <- function(x,
 #' # Assuming you have an 'indicator_ts' object named 'occ_by_type_ts'
 #' plot.occ_by_type(occ_by_type_ts)
 #'
-#' @export
+#' @noRd
 plot.occ_by_type <- function(x,
                              x_breaks = 6,
                              facet_scales = "free_y",
@@ -193,7 +193,7 @@ plot.occ_by_type <- function(x,
 #' # Assuming you have an 'indicator_ts' object named 'cum_richness_ts'
 #' plot.cum_richness(cum_richness_ts)
 #'
-#' @export
+#' @noRd
 plot.cum_richness <- function(x,
                               auccolour = NULL,
                               ...){
@@ -248,7 +248,7 @@ plot.cum_richness <- function(x,
 #' # Map visualization:
 #' plot.evenness(evenness_map)
 #'
-#' @export
+#' @noRd
 plot.pielou_evenness <- function(x, ...){
 
   stopifnot_error("Incorrect object class. Must be class 'pielou_evenness'.", inherits(x, "pielou_evenness"))
@@ -300,7 +300,7 @@ plot.pielou_evenness <- function(x, ...){
 #' # Map visualization:
 #' plot.evenness(evenness_map)
 #'
-#' @export
+#' @noRd
 plot.williams_evenness <- function(x, ...){
 
   stopifnot_error("Incorrect object class. Must be class 'williams_evenness'.", inherits(x, "williams_evenness"))
@@ -351,7 +351,7 @@ plot.williams_evenness <- function(x, ...){
 #' # Map visualization:
 #' plot.tax_distinct(tax_distinct_map)
 #'
-#' @export
+#' @noRd
 plot.tax_distinct <- function(x, ...){
 
   stopifnot_error("Incorrect object class. Must be class 'tax_distinct'.", inherits(x, "tax_distinct"))
@@ -402,7 +402,7 @@ plot.tax_distinct <- function(x, ...){
 #' # Map visualization:
 #' plot.density(density_map)
 #'
-#' @export
+#' @noRd
 plot.density <- function(x, ...){
 
   stopifnot_error("Incorrect object class. Must be class 'density'.", inherits(x, "density"))
@@ -448,7 +448,7 @@ plot.density <- function(x, ...){
 #' # Assuming you have an 'indicator_map' object named 'newness_map'
 #' plot.newness(newness_map)
 #'
-#' @export
+#' @noRd
 plot.newness <- function(x, ...){
 
   stopifnot_error("Incorrect object class. Must be class 'newness'.", inherits(x, "newness"))
@@ -490,7 +490,7 @@ plot.newness <- function(x, ...){
 #' # Map visualization:
 #' plot.total_occ(total_occ_map)
 #'
-#' @export
+#' @noRd
 plot.total_occ <- function(x, ...){
 
   stopifnot_error("Incorrect object class. Must be class 'total_occ'.", inherits(x, "total_occ"))
@@ -541,7 +541,7 @@ plot.total_occ <- function(x, ...){
 #' # Map visualization:
 #' plot.area_rarity(area_rarity_map)
 #'
-#' @export
+#' @noRd
 plot.area_rarity <- function(x, ...){
 
   stopifnot_error("Incorrect object class. Must be class 'area_rarity'.", inherits(x, "area_rarity"))
@@ -592,7 +592,7 @@ plot.area_rarity <- function(x, ...){
 #' # Map visualization:
 #' plot.ab_rarity(ab_rarity_map)
 #'
-#' @export
+#' @noRd
 plot.ab_rarity <- function(x, ...){
 
   stopifnot_error("Incorrect object class. Must be class 'ab_rarity'.", inherits(x, "ab_rarity"))
@@ -644,7 +644,7 @@ plot.ab_rarity <- function(x, ...){
 #' # Map visualization:
 #' plot.rarefied(rarefied_map)
 #'
-#' @export
+#' @noRd
 plot.rarefied <- function(x, ...){
 
   stopifnot_error("Incorrect object class. Must be class 'rarefied'.", inherits(x, "rarefied"))
@@ -696,7 +696,7 @@ plot.rarefied <- function(x, ...){
 #' # Map visualization:
 #' plot.hill2(hill2_map)
 #'
-#' @export
+#' @noRd
 plot.hill2 <- function(x, ...){
 
   stopifnot_error("Incorrect object class. Must be class 'hill2'.", inherits(x, "hill2"))
@@ -748,7 +748,7 @@ plot.hill2 <- function(x, ...){
 #' # Map visualization:
 #' plot.hill1(hill1_map)
 #'
-#' @export
+#' @noRd
 plot.hill1 <- function(x, ...){
 
   stopifnot_error("Incorrect object class. Must be class 'hill1'.", inherits(x, "hill1"))
@@ -800,7 +800,7 @@ plot.hill1 <- function(x, ...){
 #' # Map visualization:
 #' plot.hill0(hill0_map)
 #'
-#' @export
+#' @noRd
 plot.hill0 <- function(x, ...){
 
   stopifnot_error("Incorrect object class. Must be class 'hill0'.", inherits(x, "hill0"))
@@ -851,7 +851,7 @@ plot.hill0 <- function(x, ...){
 #' # Map visualization:
 #' plot.obs_richness(richness_map)
 #'
-#' @export
+#' @noRd
 plot.obs_richness <- function(x, ...){
 
   stopifnot_error("Incorrect object class. Must be class 'obs_richness'.", inherits(x, "obs_richness"))
@@ -915,7 +915,7 @@ plot.obs_richness <- function(x, ...){
 #' # Assuming you have an 'indicator_map' object named 'richness_map':
 #' plot_map(x = richness_map, title = "Map of Species Richness")
 #'
-#' @export
+#' @noRd
 plot_map <- function(x,
                      title = "auto",
                      auto_title = NULL,
@@ -1091,7 +1091,7 @@ plot_map <- function(x,
 #'         trendlinecolour = "forestgreen",
 #'         envelopecolour = "lightgreen")
 #'
-#' @export
+#' @noRd
 plot_ts <- function(x,
                     title = "auto",
                     auto_title = NULL,
