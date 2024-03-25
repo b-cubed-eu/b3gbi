@@ -1,3 +1,11 @@
+#' @noRd
+calc_map.default <- function(data, ...){
+
+  warning(paste("calc_map does not know how to handle object of class ",
+                class(data),
+                ". Please ensure you are not calling calc_map directly on an object."))
+
+}
 
 #' @noRd
 calc_map.hill0 <- function(data, ...) {
@@ -126,7 +134,8 @@ calc_map.hill_core <- function(data,
 
 }
 
-#' @noRd
+#' @export
+#' @rdname calc_map
 calc_map.obs_richness <- function(data, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
@@ -142,7 +151,8 @@ calc_map.obs_richness <- function(data, ...) {
 
 }
 
-#' @noRd
+#' @export
+#' @rdname calc_map
 calc_map.total_occ <- function(data, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
@@ -198,7 +208,8 @@ calc_map.occ_density <- function(data, ...) {
 
 }
 
-#' @noRd
+#' @export
+#' @rdname calc_map
 calc_map.williams_evenness <- function(data, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
@@ -213,7 +224,8 @@ calc_map.williams_evenness <- function(data, ...) {
 
 }
 
-#' @noRd
+#' @export
+#' @rdname calc_map
 calc_map.pielou_evenness <- function(data, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",

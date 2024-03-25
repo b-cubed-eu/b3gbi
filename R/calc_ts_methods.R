@@ -1,3 +1,11 @@
+#' @noRd
+calc_ts.default <- function(data, ...){
+
+  warning(paste("calc_ts does not know how to handle object of class ",
+                class(data),
+                ". Please ensure you are not calling calc_ts directly on an object."))
+
+}
 
 #' @noRd
 calc_ts.hill0 <- function(data, ...) {
@@ -152,7 +160,8 @@ calc_ts.hill_core <- function(data,
 
 }
 
-#' @noRd
+#' @export
+#' @rdname calc_ts
 calc_ts.obs_richness <- function(data, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
@@ -185,8 +194,9 @@ calc_ts.cum_richness <- function(data, ...) {
 
 }
 
-#' @noRd
-calc_ts.total_occ <- function(data, subtype, ...) {
+#' @export
+#' @rdname calc_ts
+calc_ts.total_occ <- function(data, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
@@ -217,7 +227,8 @@ calc_ts.occ_density <- function(data, ...) {
 
 }
 
-#' @noRd
+#' @export
+#' @rdname calc_ts
 calc_ts.williams_evenness <- function(data, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
@@ -231,7 +242,8 @@ calc_ts.williams_evenness <- function(data, ...) {
 
 }
 
-#' @noRd
+#' @export
+#' @rdname calc_ts
 calc_ts.pielou_evenness <- function(data, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not

@@ -4,7 +4,7 @@
 #'   time series data. Specific implementations for different indicator types
 #'   or calculation methods should be provided using S3 methods.
 #'
-#' @param x An object containing the necessary data and information for the
+#' @param data An object containing the necessary data and information for the
 #'   time series calculation.
 #' @param ... Additional arguments (potentially used by specific methods).
 #'
@@ -12,10 +12,10 @@
 #'   series. The format of the output will depend on the specific S3 method used.
 #'
 #' @method calc_ts default
-#' @usage calc_ts(x)
+#' @usage calc_ts(data)
 #'
 #' @export
-calc_ts <- function(x, ...) {
+calc_ts <- function(data, ...) {
   UseMethod("calc_ts")
 }
 
@@ -25,7 +25,7 @@ calc_ts <- function(x, ...) {
 #'   indicator maps. Specific implementations for different indicator types
 #'   or mapping approaches should be provided using S3 methods.
 #'
-#' @param x An object containing the geospatial data and other information
+#' @param data An object containing the geospatial data and other information
 #'   required for the map calculation.
 #' @param ... Additional arguments (potentially used by specific methods).
 #'
@@ -33,9 +33,9 @@ calc_ts <- function(x, ...) {
 #'   The format of the output will depend on the specific S3 method used.
 #'
 #' @method calc_map default
-#' @usage calc_map(x)
+#' @usage calc_map(data)
 #'
 #' @export
-calc_map <- function(x, ...) {
+calc_map <- function(data, ...) {
   UseMethod("calc_map")
 }
