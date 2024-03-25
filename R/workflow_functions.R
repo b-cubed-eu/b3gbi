@@ -75,33 +75,32 @@ create_grid <- function(map_data,
 #' # Retrieve a map of the entire world
 #' world_map <- get_NE_data(level = "world")
 #' @noRd
-get_NE_data <- function(level, region) {
+get_NE_data <- function(level, region, cube_crs) {
 
   # Download and prepare Natural Earth map data
   if (level == "country") {
 
     map_data <- rnaturalearth::ne_countries(scale = "medium",
                                             country = region,
-                                            returnclass = "sf") %>%
-      sf::st_as_sf() %>%
-      sf::st_transform(crs = "EPSG:3035")
+                                            returnclass = "sf")
 
   } else if (level == "continent") {
 
     map_data <- rnaturalearth::ne_countries(scale = "medium",
                                             continent = region,
-                                            returnclass = "sf") %>%
-      sf::st_as_sf() %>%
-      sf::st_transform(crs = "EPSG:3035")
+                                            returnclass = "sf")
 
   } else if (level == "world") {
 
     map_data <- rnaturalearth::ne_countries(scale = "medium",
-                                            returnclass = "sf") %>%
-      sf::st_as_sf() %>%
-      sf::st_transform(crs = "EPSG:3035")
+                                            returnclass = "sf")
 
   }
+
+    map_data <- map_data %>%
+      sf::st_as_sf() %>%
+     # sf::st_transform(crs = "EPSG:3035")
+      sf::st_transform(crs = cube_crs)
 
   return(map_data)
 
@@ -109,7 +108,7 @@ get_NE_data <- function(level, region) {
 
 
 #' @noRd
-prepare_spatial_data <- function(data, grid) {
+prepare_spatial_data <- function(data, grid, cube_crs) {
 
   # Set map limits
   # map_lims <- sf::st_buffer(grid, dist = 1000) %>%
@@ -124,13 +123,10 @@ prepare_spatial_data <- function(data, grid) {
   # data[, xcoord := xcoord * 1000][, ycoord := ycoord * 1000]
 
   # Convert the x and y columns to the correct format for plotting with sf
-  # occ_sf <- sf::st_as_sf(data_scaled,
-  #                        coords = c("xcoord", "ycoord"),
-  #                        crs = "EPSG:3035")
-
   occ_sf <- sf::st_as_sf(data,
                          coords = c("xcoord", "ycoord"),
-                         crs = "EPSG:3035")
+                       #  crs = "EPSG:3035")
+                       crs = cube_crs)
 
   # Set attributes as spatially constant to avoid warnings
   sf::st_agr(grid) <- "constant"
@@ -205,6 +201,7 @@ compute_indicator_workflow <- function(x,
                                        cell_size = NULL,
                                        level = c("continent", "country", "world"),
                                        region = "Europe",
+                                       cube_crs = NULL,
                                        ...) {
 
   stopifnot_error("Object class not recognized.",
@@ -243,16 +240,22 @@ compute_indicator_workflow <- function(x,
 
   }
 
+  if (is.null(cube_crs)) {
+
+    cube_crs <- "EPSG:3035"
+
+  }
+
   if (dim_type == "map" | (!is.null(level) & !is.null(region))) {
 
     # Download Natural Earth data
-    map_data <- get_NE_data(level, region)
+    map_data <- get_NE_data(level, region, cube_crs)
 
     # Create grid from Natural Earth data
     grid <- create_grid(map_data, level, cell_size)
 
     # Format spatial data and merge with grid
-    data <- prepare_spatial_data(data, grid)
+    data <- prepare_spatial_data(data, grid, cube_crs)
 
   } else {
 

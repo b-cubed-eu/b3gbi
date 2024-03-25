@@ -11,6 +11,7 @@ compute_indicator_workflow(
   cell_size = NULL,
   level = c("continent", "country", "world"),
   region = "Europe",
+  cube_crs = NULL,
   ...
 )
 }
