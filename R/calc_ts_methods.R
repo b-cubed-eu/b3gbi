@@ -180,7 +180,7 @@ calc_ts.cum_richness <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
-                  inherits(x, "obs_richness"))
+                  inherits(x, "cum_richness"))
 
   # Calculate the cumulative number of unique species observed
   indicator <-
@@ -189,6 +189,7 @@ calc_ts.cum_richness <- function(x, ...) {
     dplyr::distinct(taxonKey, .keep_all = TRUE) %>%
     dplyr::summarize(unique_by_year = length(unique(taxonKey)),
                      .by = year) %>%
+    dplyr::arrange(year) %>%
     dplyr::reframe(year = year,
                    diversity_val = cumsum(unique_by_year))
 
