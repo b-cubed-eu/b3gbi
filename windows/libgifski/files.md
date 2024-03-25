@@ -1,1 +1,0 @@
- - mingw-w64-ucrt-x86_64-gifski-1.12.2-1-any.pkg.tar.xz
