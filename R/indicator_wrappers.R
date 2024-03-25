@@ -99,6 +99,9 @@ hill0_map <- function(data, ...) {
   compute_indicator_workflow(data,
                              type = "hill0",
                              dim_type = "map",
+                             cutoff_length = 5,
+                             inext_sampsize = 100,
+                             knots = 10,
                              ...)
 }
 
@@ -107,6 +110,9 @@ hil0_ts <- function(data, ...) {
   compute_indicator_workflow(data,
                              type = "hill0",
                              dim_type = "ts",
+                             cutoff_length = 5,
+                             inext_sampsize = 100,
+                             knots = 10,
                              ...)
 }
 
@@ -115,6 +121,9 @@ hill1_map <- function(data, ...) {
   compute_indicator_workflow(data,
                              type = "hill1",
                              dim_type = "map",
+                             cutoff_length = 5,
+                             inext_sampsize = 100,
+                             knots = 10,
                              ...)
 }
 
@@ -123,6 +132,9 @@ hill1_ts <- function(data, ...) {
   compute_indicator_workflow(data,
                              type = "hill1",
                              dim_type = "ts",
+                             cutoff_length = 5,
+                             inext_sampsize = 100,
+                             knots = 10,
                              ...)
 }
 
@@ -131,6 +143,9 @@ hill2_map <- function(data, ...) {
   compute_indicator_workflow(data,
                              type = "hill2",
                              dim_type = "map",
+                             cutoff_length = 5,
+                             inext_sampsize = 100,
+                             knots = 10,
                              ...)
 }
 
@@ -139,6 +154,9 @@ hill2_ts <- function(data, ...) {
   compute_indicator_workflow(data,
                              type = "hill2",
                              dim_type = "ts",
+                             cutoff_length = 5,
+                             inext_sampsize = 100,
+                             knots = 10,
                              ...)
 }
 
