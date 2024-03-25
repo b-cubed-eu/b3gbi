@@ -2,7 +2,7 @@
 calc_ts.default <- function(x, ...){
 
   warning(paste("calc_ts does not know how to handle object of class ",
-                class(data),
+                class(x),
                 ". Please ensure you are not calling calc_ts directly on an object."))
 
 }
@@ -12,9 +12,9 @@ calc_ts.hill0 <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
-                  inherits(data, "hill0"))
+                  inherits(x, "hill0"))
 
-  indicator <- calc_ts.hill_core(data = data,
+  indicator <- calc_ts.hill_core(x = x,
                                   type = "hill0",
                                   ...)
 
@@ -27,9 +27,9 @@ calc_ts.hill1 <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
-                  inherits(data, "hill1"))
+                  inherits(x, "hill1"))
 
-  indicator <- calc_ts.hill_core(data = data,
+  indicator <- calc_ts.hill_core(x = x,
                                   type = "hill1",
                                   ...)
 
@@ -42,9 +42,9 @@ calc_ts.hill2 <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
-                  inherits(data, "hill2"))
+                  inherits(x, "hill2"))
 
-  indicator <- calc_ts.hill_core(data = data,
+  indicator <- calc_ts.hill_core(x = x,
                                   type = "hill2",
                                   ...)
 
@@ -61,7 +61,7 @@ calc_ts.hill_core <- function(x,
 
   stopifnot_error("Please check the class and structure of your data.
                   This is an internal function, not meant to be called directly.",
-                  inherits(data, c("data.frame", "sf", "hill0" | "hill1" | "hill2")))
+                  inherits(x, c("data.frame", "sf", "hill0" | "hill1" | "hill2")))
 
   type <- match.arg(type)
 
@@ -69,13 +69,13 @@ calc_ts.hill_core <- function(x,
   qval <- as.numeric(gsub("hill", "", type))
 
   richness_by_year <-
-    data %>%
+    x %>%
     dplyr::summarise(obs_richness = n_distinct(scientificName),
                      .by = "year")
 
   # Create list of occurrence matrices by year, with species as rows
   species_records_raw <-
-    data %>%
+    x %>%
     dplyr::group_by(year) %>%
     dplyr::group_split() %>%
     purrr::map(. %>%
@@ -166,11 +166,11 @@ calc_ts.obs_richness <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
-                  inherits(data, "obs_richness"))
+                  inherits(x, "obs_richness"))
 
   # Calculate observed species richness by year
-  data <-
-    data %>% dplyr::summarise(diversity_val = n_distinct(scientificName),
+  x <-
+    x %>% dplyr::summarise(diversity_val = n_distinct(scientificName),
                               .by = "year")
 
 }
@@ -180,11 +180,11 @@ calc_ts.cum_richness <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
-                  inherits(data, "obs_richness"))
+                  inherits(x, "obs_richness"))
 
   # Calculate the cumulative number of unique species observed
   indicator <-
-    data %>%
+    x %>%
     dplyr::select(year, taxonKey) %>%
     dplyr::distinct(taxonKey, .keep_all = TRUE) %>%
     dplyr::summarize(unique_by_year = length(unique(taxonKey)),
@@ -200,11 +200,11 @@ calc_ts.total_occ <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
-                  inherits(data, "total_occ"))
+                  inherits(x, "total_occ"))
 
   # Calculate total number of occurrences over the grid
   indicator <-
-    data %>%
+    x %>%
     dplyr::summarize(diversity_val = sum(obs),
                      .by = "year")
 
@@ -215,11 +215,11 @@ calc_ts.occ_density <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
-                  inherits(data, "occ_density"))
+                  inherits(x, "occ_density"))
 
   # Calculate density of occurrences over the grid (per square km)
   indicator <-
-    data %>%
+    x %>%
     dplyr::reframe(diversity_val = sum(obs) / area_km2,
                    .by = "cellid") %>%
     dplyr::distinct(cellid, diversity_val) %>%
@@ -233,10 +233,10 @@ calc_ts.williams_evenness <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
-                  inherits(data, "williams_evenness"))
+                  inherits(x, "williams_evenness"))
 
   # Call function to calculate evenness over a grid
-  indicator <- calc_ts.evenness_core(data = data,
+  indicator <- calc_ts.evenness_core(x = x,
                                       type = "williams_evenness",
                                       ...)
 
@@ -248,10 +248,10 @@ calc_ts.pielou_evenness <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
-                  inherits(data, "pielou_evenness"))
+                  inherits(x, "pielou_evenness"))
 
   # Call function to calculate evenness over a grid
-  indicator <- calc_ts.evenness_core(data = data,
+  indicator <- calc_ts.evenness_core(x = x,
                                       type = "pielou_evenness",
                                       ...)
 
@@ -264,7 +264,7 @@ calc_ts.evenness_core <- function(x,
 
   stopifnot_error("Please check the class and structure of your data.
                   This is an internal function, not meant to be called directly.",
-                  inherits(data, c("data.frame", "sf")))
+                  inherits(x, c("data.frame", "sf")))
 
 
   type <- match.arg(type,
@@ -272,7 +272,7 @@ calc_ts.evenness_core <- function(x,
 
   # Calculate number of records for each species by grid cell
   indicator <-
-    data %>%
+    x %>%
     dplyr::summarize(num_occ = sum(obs),
                      .by = c(year, taxonKey)) %>%
     dplyr::arrange(year) %>%
@@ -296,11 +296,11 @@ calc_ts.ab_rarity <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
-                  inherits(data, "ab_rarity"))
+                  inherits(x, "ab_rarity"))
 
   # Calculate total summed rarity (in terms of abundance) for each grid cell
   indicator <-
-    data %>%
+    x %>%
     dplyr::mutate(records_taxon = sum(obs), .by = taxonKey) %>%
     dplyr::mutate(rarity = 1 / (records_taxon / sum(obs))) %>%
     dplyr::summarise(diversity_val = sum(rarity), .by = "cellid") %>%
@@ -313,12 +313,12 @@ calc_ts.area_rarity <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
-                  inherits(data, "area_rarity"))
+                  inherits(x, "area_rarity"))
 
   # Calculate rarity as the sum (per grid cell) of the inverse of occupancy
   # frequency for each species
   indicator <-
-    data %>%
+    x %>%
     dplyr::mutate(rec_tax_cell = sum(dplyr::n_distinct(cellid)),
                   .by = c(taxonKey)) %>%
     dplyr::mutate(rarity = 1 / (rec_tax_cell / sum(dplyr::n_distinct(cellid)))) %>%
@@ -331,11 +331,11 @@ calc_ts.spec_occ <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
-                  inherits(data, "spec_occ"))
+                  inherits(x, "spec_occ"))
 
   # Calculate total occurrences for each species by grid cell
   indicator <-
-    data %>%
+    x %>%
     dplyr::mutate(num_records = sum(obs), .by = c(taxonKey, cellid)) %>%
     dplyr::distinct(cellid, scientificName, .keep_all = TRUE) %>%
     dplyr::arrange(cellid) %>%
@@ -348,11 +348,11 @@ calc_ts.spec_range <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
-                  inherits(data, "spec_range"))
+                  inherits(x, "spec_range"))
 
   # Flatten occurrences for each species by grid cell
   indicator <-
-    data %>%
+    x %>%
     dplyr::mutate(obs = 1) %>%
     dplyr::distinct(cellid, scientificName, .keep_all = TRUE) %>%
     dplyr::arrange(cellid) %>%
@@ -365,10 +365,10 @@ calc_ts.tax_distinct <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
-                  inherits(data, "tax_distinct"))
+                  inherits(x, "tax_distinct"))
 
   # Retrieve taxonomic data from GBIF
-  tax_hier <- taxize::classification(unique(data$scientificName), db = "gbif", return_id = TRUE, accepted = TRUE)
+  tax_hier <- taxize::classification(unique(x$scientificName), db = "gbif", return_id = TRUE, accepted = TRUE)
 
   # Save data
   #  saveRDS(tax_hier, file = "taxonomic_hierarchy.RDS")
@@ -377,7 +377,7 @@ calc_ts.tax_distinct <- function(x, ...) {
 
   # Calculate taxonomic distinctness
   indicator <-
-    data %>%
+    x %>%
     tibble::add_column(diversity_val = NA) %>%
     dplyr::group_split(cellid) %>%
     purrr::map(. %>%
