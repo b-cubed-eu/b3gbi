@@ -448,12 +448,21 @@ plot.occ_density <- function(x, ...){
 #' # Assuming you have an 'indicator_map' object named 'newness_map'
 #' plot.newness(newness_map)
 #'
-#' @noRd
+#' @export
 plot.newness <- function(x, ...){
 
   stopifnot_error("Incorrect object class. Must be class 'newness'.", inherits(x, "newness"))
 
-  if (inherits(x, "indicator_map")) {
+  if (inherits(x, "indicator_ts")) {
+
+    # Set defaults
+    y_label_default <- "Mean Year of Occurrence"
+    auto_title <- "Trend of Mean Year of Occurrence"
+
+    # Call generalized plot_map function
+    plot_ts(x, y_label_default = y_label_default, auto_title = auto_title, ...)
+
+  } else if (inherits(x, "indicator_map")) {
 
     # Set defaults
     leg_label_default <- "Mean Year of \nOccurrence"
@@ -541,7 +550,7 @@ plot.total_occ <- function(x, ...){
 #' # Map visualization:
 #' plot.area_rarity(area_rarity_map)
 #'
-#' @noRd
+#' @export
 plot.area_rarity <- function(x, ...){
 
   stopifnot_error("Incorrect object class. Must be class 'area_rarity'.", inherits(x, "area_rarity"))
@@ -549,7 +558,7 @@ plot.area_rarity <- function(x, ...){
   if (inherits(x, "indicator_ts")) {
 
     # Set defaults
-    y_label_default <- "Rarity"
+    y_label_default <- "Mean of Rarity (Summed by Cell)"
     auto_title <- "Area-Based Rarity Trend"
 
     # Call generalized plot_ts function
@@ -558,7 +567,7 @@ plot.area_rarity <- function(x, ...){
   } else if (inherits(x, "indicator_map")) {
 
   # Set defaults
-  leg_label_default <- "Rarity"
+  leg_label_default <- "Summed Rarity"
   auto_title <- "Area-Based Rarity"
 
   # Call generalized plot_map function
@@ -592,7 +601,7 @@ plot.area_rarity <- function(x, ...){
 #' # Map visualization:
 #' plot.ab_rarity(ab_rarity_map)
 #'
-#' @noRd
+#' @export
 plot.ab_rarity <- function(x, ...){
 
   stopifnot_error("Incorrect object class. Must be class 'ab_rarity'.", inherits(x, "ab_rarity"))
@@ -600,7 +609,7 @@ plot.ab_rarity <- function(x, ...){
   if (inherits(x, "indicator_ts")) {
 
     # Set defaults
-    y_label_default <- "Rarity"
+    y_label_default <- "Mean of Rarity (Summed by Cell)"
     auto_title <- "Abundance-Based Rarity Trend"
 
     # Call generalized plot_ts function
@@ -609,7 +618,7 @@ plot.ab_rarity <- function(x, ...){
   } else if (inherits(x, "indicator_map")) {
 
   # Set defaults
-  leg_label_default <- "Rarity"
+  leg_label_default <- "Summed Rarity"
   auto_title <- "Abundance-Based Rarity"
 
   # Call generalized plot_map function
