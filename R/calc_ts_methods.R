@@ -175,7 +175,8 @@ calc_ts.obs_richness <- function(x, ...) {
 
 }
 
-#' @noRd
+#' @export
+#' @rdname calc_ts
 calc_ts.cum_richness <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
@@ -211,7 +212,8 @@ calc_ts.total_occ <- function(x, ...) {
 
 }
 
-#' @noRd
+#' @export
+#' @rdname calc_ts
 calc_ts.occ_density <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
@@ -222,8 +224,8 @@ calc_ts.occ_density <- function(x, ...) {
   indicator <-
     x %>%
     dplyr::reframe(diversity_val = sum(obs) / area_km2,
-                   .by = "cellid") %>%
-    dplyr::distinct(cellid, diversity_val) %>%
+                   .by = c("year", "cellid")) %>%
+    dplyr::reframe(diversity_val = mean(diversity_val), .by = "year") %>%
     dplyr::mutate(diversity_val = as.numeric(diversity_val))
 
 }

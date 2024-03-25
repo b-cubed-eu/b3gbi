@@ -190,7 +190,8 @@ calc_map.newness <- function(x, ...) {
 
 }
 
-#' @noRd
+#' @export
+#' @rdname calc_map
 calc_map.occ_density <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",

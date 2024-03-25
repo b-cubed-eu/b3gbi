@@ -193,7 +193,7 @@ plot.occ_by_type <- function(x,
 #' # Assuming you have an 'indicator_ts' object named 'cum_richness_ts'
 #' plot.cum_richness(cum_richness_ts)
 #'
-#' @noRd
+#' @export
 plot.cum_richness <- function(x,
                               auccolour = NULL,
                               ...){
@@ -248,7 +248,7 @@ plot.cum_richness <- function(x,
 #' # Map visualization:
 #' plot.evenness(evenness_map)
 #'
-#' @noRd
+#' @export
 plot.pielou_evenness <- function(x, ...){
 
   stopifnot_error("Incorrect object class. Must be class 'pielou_evenness'.", inherits(x, "pielou_evenness"))
@@ -300,7 +300,7 @@ plot.pielou_evenness <- function(x, ...){
 #' # Map visualization:
 #' plot.evenness(evenness_map)
 #'
-#' @noRd
+#' @export
 plot.williams_evenness <- function(x, ...){
 
   stopifnot_error("Incorrect object class. Must be class 'williams_evenness'.", inherits(x, "williams_evenness"))
@@ -402,16 +402,16 @@ plot.tax_distinct <- function(x, ...){
 #' # Map visualization:
 #' plot.density(density_map)
 #'
-#' @noRd
-plot.density <- function(x, ...){
+#' @export
+plot.occ_density <- function(x, ...){
 
-  stopifnot_error("Incorrect object class. Must be class 'density'.", inherits(x, "density"))
+  stopifnot_error("Incorrect object class. Must be class 'occ_density'.", inherits(x, "occ_density"))
 
   if (inherits(x, "indicator_ts")) {
 
     # Set defaults
-    y_label_default <- "Occurrences \nper km^2"
-    auto_title <- "Trend of Occurrence Density"
+    y_label_default <- "Mean Occurrences \nper km^2"
+    auto_title <- "Trend of Mean Occurrence Density"
 
     # Call generalized plot_ts function
     plot_ts(x, y_label_default = y_label_default, auto_title = auto_title, ...)
@@ -490,7 +490,7 @@ plot.newness <- function(x, ...){
 #' # Map visualization:
 #' plot.total_occ(total_occ_map)
 #'
-#' @noRd
+#' @export
 plot.total_occ <- function(x, ...){
 
   stopifnot_error("Incorrect object class. Must be class 'total_occ'.", inherits(x, "total_occ"))
