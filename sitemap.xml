@@ -49,6 +49,33 @@
     <loc>https://shawndove.github.io/b3gbi/reference/pipe.html</loc>
   </url>
   <url>
+    <loc>https://shawndove.github.io/b3gbi/reference/plot.cum_richness.html</loc>
+  </url>
+  <url>
+    <loc>https://shawndove.github.io/b3gbi/reference/plot.occ_density.html</loc>
+  </url>
+  <url>
+    <loc>https://shawndove.github.io/b3gbi/reference/plot.pielou_evenness.html</loc>
+  </url>
+  <url>
+    <loc>https://shawndove.github.io/b3gbi/reference/plot.total_occ.html</loc>
+  </url>
+  <url>
+    <loc>https://shawndove.github.io/b3gbi/reference/plot.williams_evenness.html</loc>
+  </url>
+  <url>
+    <loc>https://shawndove.github.io/b3gbi/reference/print.indicator_map.html</loc>
+  </url>
+  <url>
+    <loc>https://shawndove.github.io/b3gbi/reference/print.indicator_ts.html</loc>
+  </url>
+  <url>
+    <loc>https://shawndove.github.io/b3gbi/reference/print.processed_cube.html</loc>
+  </url>
+  <url>
+    <loc>https://shawndove.github.io/b3gbi/reference/print.processed_cube_dsinfo.html</loc>
+  </url>
+  <url>
     <loc>https://shawndove.github.io/b3gbi/reference/process_cube.html</loc>
   </url>
 </urlset>
