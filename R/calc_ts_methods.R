@@ -1,5 +1,5 @@
 #' @noRd
-calc_ts.default <- function(data, ...){
+calc_ts.default <- function(x, ...){
 
   warning(paste("calc_ts does not know how to handle object of class ",
                 class(data),
@@ -8,7 +8,7 @@ calc_ts.default <- function(data, ...){
 }
 
 #' @noRd
-calc_ts.hill0 <- function(data, ...) {
+calc_ts.hill0 <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
@@ -23,7 +23,7 @@ calc_ts.hill0 <- function(data, ...) {
 }
 
 #' @noRd
-calc_ts.hill1 <- function(data, ...) {
+calc_ts.hill1 <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
@@ -38,7 +38,7 @@ calc_ts.hill1 <- function(data, ...) {
 }
 
 #' @noRd
-calc_ts.hill2 <- function(data, ...) {
+calc_ts.hill2 <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
@@ -52,7 +52,7 @@ calc_ts.hill2 <- function(data, ...) {
 }
 
 #' @noRd
-calc_ts.hill_core <- function(data,
+calc_ts.hill_core <- function(x,
                                type = c("hill0, hill1, hill2"),
                                cutoff_length = 100,
                                coverage = 0.95,
@@ -162,7 +162,7 @@ calc_ts.hill_core <- function(data,
 
 #' @export
 #' @rdname calc_ts
-calc_ts.obs_richness <- function(data, ...) {
+calc_ts.obs_richness <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
@@ -176,7 +176,7 @@ calc_ts.obs_richness <- function(data, ...) {
 }
 
 #' @noRd
-calc_ts.cum_richness <- function(data, ...) {
+calc_ts.cum_richness <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
@@ -196,7 +196,7 @@ calc_ts.cum_richness <- function(data, ...) {
 
 #' @export
 #' @rdname calc_ts
-calc_ts.total_occ <- function(data, ...) {
+calc_ts.total_occ <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
@@ -211,7 +211,7 @@ calc_ts.total_occ <- function(data, ...) {
 }
 
 #' @noRd
-calc_ts.occ_density <- function(data, ...) {
+calc_ts.occ_density <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
@@ -229,7 +229,7 @@ calc_ts.occ_density <- function(data, ...) {
 
 #' @export
 #' @rdname calc_ts
-calc_ts.williams_evenness <- function(data, ...) {
+calc_ts.williams_evenness <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
@@ -244,7 +244,7 @@ calc_ts.williams_evenness <- function(data, ...) {
 
 #' @export
 #' @rdname calc_ts
-calc_ts.pielou_evenness <- function(data, ...) {
+calc_ts.pielou_evenness <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
@@ -258,7 +258,7 @@ calc_ts.pielou_evenness <- function(data, ...) {
 }
 
 #' @noRd
-calc_ts.evenness_core <- function(data,
+calc_ts.evenness_core <- function(x,
                                    type,
                                    ...) {
 
@@ -292,7 +292,7 @@ calc_ts.evenness_core <- function(data,
 }
 
 #' @noRd
-calc_ts.ab_rarity <- function(data, ...) {
+calc_ts.ab_rarity <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
@@ -309,7 +309,7 @@ calc_ts.ab_rarity <- function(data, ...) {
 }
 
 #' @noRd
-calc_ts.area_rarity <- function(data, ...) {
+calc_ts.area_rarity <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
@@ -327,7 +327,7 @@ calc_ts.area_rarity <- function(data, ...) {
 }
 
 #' @noRd
-calc_ts.spec_occ <- function(data, ...) {
+calc_ts.spec_occ <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
@@ -344,7 +344,7 @@ calc_ts.spec_occ <- function(data, ...) {
 }
 
 #' @noRd
-calc_ts.spec_range <- function(data, ...) {
+calc_ts.spec_range <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
@@ -361,7 +361,7 @@ calc_ts.spec_range <- function(data, ...) {
 }
 
 #' @noRd
-calc_ts.tax_distinct <- function(data, ...) {
+calc_ts.tax_distinct <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",

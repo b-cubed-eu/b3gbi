@@ -15,7 +15,7 @@
 #' @usage calc_ts(data)
 #'
 #' @export
-calc_ts <- function(data, ...) {
+calc_ts <- function(x, ...) {
   UseMethod("calc_ts")
 }
 
@@ -36,6 +36,6 @@ calc_ts <- function(data, ...) {
 #' @usage calc_map(data)
 #'
 #' @export
-calc_map <- function(data, ...) {
+calc_map <- function(x, ...) {
   UseMethod("calc_map")
 }
