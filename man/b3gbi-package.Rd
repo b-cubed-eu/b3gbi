@@ -14,6 +14,7 @@ Calculate general biodiversity indicators from GBIF data cubes. Includes many co
 Useful links:
 \itemize{
   \item \url{https://github.com/ShawnDove/b3gbi}
+  \item \url{https://shawndove.github.io/b3gbi/}
 }
 
 }
