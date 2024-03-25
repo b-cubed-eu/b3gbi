@@ -846,6 +846,7 @@ plot.hill0 <- function(x, ...){
 #'
 #' @param x An object containing observed species richness data. Must be of
 #'   class 'obs_richness', either an 'indicator_ts' or 'indicator_map' object.
+#'
 #' @param ... Additional arguments passed to the internal plotting functions
 #'   (`plot_ts` or `plot_map`). See their documentation for details.
 #'
@@ -860,7 +861,7 @@ plot.hill0 <- function(x, ...){
 #' # Map visualization:
 #' plot.obs_richness(richness_map)
 #'
-#' @noRd
+#' @export
 plot.obs_richness <- function(x, ...){
 
   stopifnot_error("Incorrect object class. Must be class 'obs_richness'.", inherits(x, "obs_richness"))
