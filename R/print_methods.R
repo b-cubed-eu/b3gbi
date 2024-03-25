@@ -8,7 +8,7 @@
 #' @param n Integer specifying the number of rows of data to display.
 #' @param ... Additional arguments.
 #'
-#' @noRd
+#' @export
 print.indicator_ts <- function(x, n = 10, ...) {
   cat("Biodiversity indicator time series\n\n")
   cat("Name of indicator:", x$div_name, "\n\n")
@@ -32,7 +32,7 @@ print.indicator_ts <- function(x, n = 10, ...) {
 #' @param n Integer specifying the number of rows of data to display.
 #' @param ... Additional arguments.
 #'
-#' @noRd
+#' @export
 print.indicator_map <- function(x, n = 10, ...) {
   cat("Gridded biodiversity indicator map\n\n")
   cat("Name of Indicator:", x$div_name, "\n\n")
@@ -66,7 +66,7 @@ print.indicator_map <- function(x, n = 10, ...) {
 #' @param n Integer specifying the number of rows of cube data to display.
 #' @param ... Additional arguments.
 #'
-#' @noRd
+#' @export
 print.processed_cube <- function(x, n = 10, ...) {
   cat("\nProcessed data cube for calculating biodiversity indicators\n\n")
   cat("Date Range:", x$first_year, "-", x$last_year, "\n")
@@ -92,7 +92,7 @@ print.processed_cube <- function(x, n = 10, ...) {
 #' @param n Integer specifying the number of rows of data to display.
 #' @param ... Additional arguments.
 #'
-#' @noRd
+#' @export
 print.processed_cube_dsinfo <- function(x, n = 10, ...) {
   cat("\nProcessed data cube for calculating biodiversity indicators.\n\n")
   cat("Date Range:", x$first_year, "-", x$last_year, "\n")
