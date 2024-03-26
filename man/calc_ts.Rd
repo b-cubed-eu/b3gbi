@@ -2,20 +2,44 @@
 % Please edit documentation in R/calc_ts_methods.R, R/generic_functions.R
 \name{calc_ts.obs_richness}
 \alias{calc_ts.obs_richness}
+\alias{calc_ts.cum_richness}
 \alias{calc_ts.total_occ}
+\alias{calc_ts.occ_density}
+\alias{calc_ts.newness}
 \alias{calc_ts.williams_evenness}
 \alias{calc_ts.pielou_evenness}
+\alias{calc_ts.ab_rarity}
+\alias{calc_ts.area_rarity}
 \alias{calc_ts}
 \title{Calculate a Biodiversity Indicator Time Series}
 \usage{
 \method{calc_ts}{obs_richness}(x, ...)
 
+<<<<<<< HEAD
 \method{calc_ts}{total_occ}(x, ...)
 
 \method{calc_ts}{williams_evenness}(x, ...)
 
 \method{calc_ts}{pielou_evenness}(x, ...)
 
+=======
+\method{calc_ts}{cum_richness}(x, ...)
+
+\method{calc_ts}{total_occ}(x, ...)
+
+\method{calc_ts}{occ_density}(x, ...)
+
+\method{calc_ts}{newness}(x, ...)
+
+\method{calc_ts}{williams_evenness}(x, ...)
+
+\method{calc_ts}{pielou_evenness}(x, ...)
+
+\method{calc_ts}{ab_rarity}(x, ...)
+
+\method{calc_ts}{area_rarity}(x, ...)
+
+>>>>>>> 372bc80df1f6ad1a9c39b2e418647fe945632aef
 calc_ts(x)
 }
 \arguments{

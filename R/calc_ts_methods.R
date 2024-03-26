@@ -175,12 +175,13 @@ calc_ts.obs_richness <- function(x, ...) {
 
 }
 
-#' @noRd
+#' @export
+#' @rdname calc_ts
 calc_ts.cum_richness <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
-                  inherits(x, "obs_richness"))
+                  inherits(x, "cum_richness"))
 
   # Calculate the cumulative number of unique species observed
   indicator <-
@@ -189,6 +190,7 @@ calc_ts.cum_richness <- function(x, ...) {
     dplyr::distinct(taxonKey, .keep_all = TRUE) %>%
     dplyr::summarize(unique_by_year = length(unique(taxonKey)),
                      .by = year) %>%
+    dplyr::arrange(year) %>%
     dplyr::reframe(year = year,
                    diversity_val = cumsum(unique_by_year))
 
@@ -210,7 +212,8 @@ calc_ts.total_occ <- function(x, ...) {
 
 }
 
-#' @noRd
+#' @export
+#' @rdname calc_ts
 calc_ts.occ_density <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
@@ -221,9 +224,41 @@ calc_ts.occ_density <- function(x, ...) {
   indicator <-
     x %>%
     dplyr::reframe(diversity_val = sum(obs) / area_km2,
-                   .by = "cellid") %>%
-    dplyr::distinct(cellid, diversity_val) %>%
-    dplyr::mutate(diversity_val = as.numeric(diversity_val))
+                   .by = c("year", "cellid")) %>%
+    dplyr::reframe(diversity_val = mean(diversity_val), .by = "year") %>%
+    dplyr::mutate(diversity_val = as.numeric(diversity_val)) %>%
+    dplyr::arrange(year)
+
+}
+
+#' @export
+#' @rdname calc_ts
+calc_ts.newness <- function(x,
+                             ...) {
+
+  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
+                  inherits(x, "newness"))
+
+  yearvals <- vector()
+  counter <- 1
+  for (i in unique(x$year)) {
+    yearvals[counter]  <- round(mean(x$year[x$year <= i]))
+    counter <- counter + 1
+  }
+
+  indicator <- data.frame("year" = unique(x$year),
+                          "diversity_val" = yearvals)
+
+  # # Calculate mean year of occurrence over the grid
+  # indicator <-
+  #   x %>%
+  #   dplyr::summarize(diversity_val = mean(year),
+  #                    .by = c("year", "cellid")) %>%
+  #   dplyr::summarize(diversity_val = round(mean(year)),
+  #                    .by = c("year")) %>%
+  #   dplyr::arrange(year)
+
+  return(indicator)
 
 }
 
@@ -291,7 +326,8 @@ calc_ts.evenness_core <- function(x,
 
 }
 
-#' @noRd
+#' @export
+#' @rdname calc_ts
 calc_ts.ab_rarity <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
@@ -303,12 +339,14 @@ calc_ts.ab_rarity <- function(x, ...) {
     x %>%
     dplyr::mutate(records_taxon = sum(obs), .by = taxonKey) %>%
     dplyr::mutate(rarity = 1 / (records_taxon / sum(obs))) %>%
-    dplyr::summarise(diversity_val = sum(rarity), .by = "cellid") %>%
-    dplyr::arrange(cellid)
+    dplyr::summarise(diversity_val = sum(rarity), .by = c("year", "cellid")) %>%
+    dplyr::summarise(diversity_val = sum(diversity_val), .by = "year") %>%
+    dplyr::arrange(year)
 
 }
 
-#' @noRd
+#' @export
+#' @rdname calc_ts
 calc_ts.area_rarity <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
@@ -322,7 +360,9 @@ calc_ts.area_rarity <- function(x, ...) {
     dplyr::mutate(rec_tax_cell = sum(dplyr::n_distinct(cellid)),
                   .by = c(taxonKey)) %>%
     dplyr::mutate(rarity = 1 / (rec_tax_cell / sum(dplyr::n_distinct(cellid)))) %>%
-    dplyr::summarise(diversity_val = sum(rarity), .by = cellid)
+    dplyr::summarise(diversity_val = sum(rarity), .by = c("year", "cellid")) %>%
+    dplyr::summarise(diversity_val = mean(diversity_val), .by = "year") %>%
+    dplyr::arrange(year)
 
 }
 

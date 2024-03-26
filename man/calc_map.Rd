@@ -3,8 +3,12 @@
 \name{calc_map.obs_richness}
 \alias{calc_map.obs_richness}
 \alias{calc_map.total_occ}
+\alias{calc_map.newness}
+\alias{calc_map.occ_density}
 \alias{calc_map.williams_evenness}
 \alias{calc_map.pielou_evenness}
+\alias{calc_map.ab_rarity}
+\alias{calc_map.area_rarity}
 \alias{calc_map}
 \title{Calculate a Biodiversity Indicator Map}
 \usage{
@@ -12,10 +16,25 @@
 
 \method{calc_map}{total_occ}(x, ...)
 
+<<<<<<< HEAD
 \method{calc_map}{williams_evenness}(x, ...)
 
 \method{calc_map}{pielou_evenness}(x, ...)
 
+=======
+\method{calc_map}{newness}(x, newness_min_year = NULL, ...)
+
+\method{calc_map}{occ_density}(x, ...)
+
+\method{calc_map}{williams_evenness}(x, ...)
+
+\method{calc_map}{pielou_evenness}(x, ...)
+
+\method{calc_map}{ab_rarity}(x, ...)
+
+\method{calc_map}{area_rarity}(x, ...)
+
+>>>>>>> 372bc80df1f6ad1a9c39b2e418647fe945632aef
 calc_map(x)
 }
 \arguments{

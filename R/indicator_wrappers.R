@@ -167,11 +167,20 @@ cum_richness_ts <- function(data, ...) {
                              dim_type = "ts",
                              ...)
 }
+
 #' @export
 newness_map <- function(data, ...) {
   compute_indicator_workflow(data,
                              type = "newness",
                              dim_type = "map",
+                             ...)
+}
+
+#' @export
+newness_ts <- function(data, ...) {
+  compute_indicator_workflow(data,
+                             type = "newness",
+                             dim_type = "ts",
                              ...)
 }
 

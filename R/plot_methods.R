@@ -193,7 +193,7 @@ plot.occ_by_type <- function(x,
 #' # Assuming you have an 'indicator_ts' object named 'cum_richness_ts'
 #' plot.cum_richness(cum_richness_ts)
 #'
-#' @noRd
+#' @export
 plot.cum_richness <- function(x,
                               auccolour = NULL,
                               ...){
@@ -248,7 +248,7 @@ plot.cum_richness <- function(x,
 #' # Map visualization:
 #' plot.evenness(evenness_map)
 #'
-#' @noRd
+#' @export
 plot.pielou_evenness <- function(x, ...){
 
   stopifnot_error("Incorrect object class. Must be class 'pielou_evenness'.", inherits(x, "pielou_evenness"))
@@ -300,7 +300,7 @@ plot.pielou_evenness <- function(x, ...){
 #' # Map visualization:
 #' plot.evenness(evenness_map)
 #'
-#' @noRd
+#' @export
 plot.williams_evenness <- function(x, ...){
 
   stopifnot_error("Incorrect object class. Must be class 'williams_evenness'.", inherits(x, "williams_evenness"))
@@ -402,16 +402,16 @@ plot.tax_distinct <- function(x, ...){
 #' # Map visualization:
 #' plot.density(density_map)
 #'
-#' @noRd
-plot.density <- function(x, ...){
+#' @export
+plot.occ_density <- function(x, ...){
 
-  stopifnot_error("Incorrect object class. Must be class 'density'.", inherits(x, "density"))
+  stopifnot_error("Incorrect object class. Must be class 'occ_density'.", inherits(x, "occ_density"))
 
   if (inherits(x, "indicator_ts")) {
 
     # Set defaults
-    y_label_default <- "Occurrences \nper km^2"
-    auto_title <- "Trend of Occurrence Density"
+    y_label_default <- "Mean Occurrences \nper km^2"
+    auto_title <- "Trend of Mean Occurrence Density"
 
     # Call generalized plot_ts function
     plot_ts(x, y_label_default = y_label_default, auto_title = auto_title, ...)
@@ -448,12 +448,21 @@ plot.density <- function(x, ...){
 #' # Assuming you have an 'indicator_map' object named 'newness_map'
 #' plot.newness(newness_map)
 #'
-#' @noRd
+#' @export
 plot.newness <- function(x, ...){
 
   stopifnot_error("Incorrect object class. Must be class 'newness'.", inherits(x, "newness"))
 
-  if (inherits(x, "indicator_map")) {
+  if (inherits(x, "indicator_ts")) {
+
+    # Set defaults
+    y_label_default <- "Mean Year of Occurrence"
+    auto_title <- "Trend of Mean Year of Occurrence"
+
+    # Call generalized plot_map function
+    plot_ts(x, y_label_default = y_label_default, auto_title = auto_title, ...)
+
+  } else if (inherits(x, "indicator_map")) {
 
     # Set defaults
     leg_label_default <- "Mean Year of \nOccurrence"
@@ -490,7 +499,7 @@ plot.newness <- function(x, ...){
 #' # Map visualization:
 #' plot.total_occ(total_occ_map)
 #'
-#' @noRd
+#' @export
 plot.total_occ <- function(x, ...){
 
   stopifnot_error("Incorrect object class. Must be class 'total_occ'.", inherits(x, "total_occ"))
@@ -541,7 +550,7 @@ plot.total_occ <- function(x, ...){
 #' # Map visualization:
 #' plot.area_rarity(area_rarity_map)
 #'
-#' @noRd
+#' @export
 plot.area_rarity <- function(x, ...){
 
   stopifnot_error("Incorrect object class. Must be class 'area_rarity'.", inherits(x, "area_rarity"))
@@ -549,7 +558,7 @@ plot.area_rarity <- function(x, ...){
   if (inherits(x, "indicator_ts")) {
 
     # Set defaults
-    y_label_default <- "Rarity"
+    y_label_default <- "Mean of Rarity (Summed by Cell)"
     auto_title <- "Area-Based Rarity Trend"
 
     # Call generalized plot_ts function
@@ -558,7 +567,7 @@ plot.area_rarity <- function(x, ...){
   } else if (inherits(x, "indicator_map")) {
 
   # Set defaults
-  leg_label_default <- "Rarity"
+  leg_label_default <- "Summed Rarity"
   auto_title <- "Area-Based Rarity"
 
   # Call generalized plot_map function
@@ -592,7 +601,7 @@ plot.area_rarity <- function(x, ...){
 #' # Map visualization:
 #' plot.ab_rarity(ab_rarity_map)
 #'
-#' @noRd
+#' @export
 plot.ab_rarity <- function(x, ...){
 
   stopifnot_error("Incorrect object class. Must be class 'ab_rarity'.", inherits(x, "ab_rarity"))
@@ -600,7 +609,7 @@ plot.ab_rarity <- function(x, ...){
   if (inherits(x, "indicator_ts")) {
 
     # Set defaults
-    y_label_default <- "Rarity"
+    y_label_default <- "Mean of Rarity (Summed by Cell)"
     auto_title <- "Abundance-Based Rarity Trend"
 
     # Call generalized plot_ts function
@@ -609,7 +618,7 @@ plot.ab_rarity <- function(x, ...){
   } else if (inherits(x, "indicator_map")) {
 
   # Set defaults
-  leg_label_default <- "Rarity"
+  leg_label_default <- "Summed Rarity"
   auto_title <- "Abundance-Based Rarity"
 
   # Call generalized plot_map function
@@ -837,6 +846,7 @@ plot.hill0 <- function(x, ...){
 #'
 #' @param x An object containing observed species richness data. Must be of
 #'   class 'obs_richness', either an 'indicator_ts' or 'indicator_map' object.
+#'
 #' @param ... Additional arguments passed to the internal plotting functions
 #'   (`plot_ts` or `plot_map`). See their documentation for details.
 #'
@@ -851,7 +861,7 @@ plot.hill0 <- function(x, ...){
 #' # Map visualization:
 #' plot.obs_richness(richness_map)
 #'
-#' @noRd
+#' @export
 plot.obs_richness <- function(x, ...){
 
   stopifnot_error("Incorrect object class. Must be class 'obs_richness'.", inherits(x, "obs_richness"))
@@ -915,7 +925,7 @@ plot.obs_richness <- function(x, ...){
 #' # Assuming you have an 'indicator_map' object named 'richness_map':
 #' plot_map(x = richness_map, title = "Map of Species Richness")
 #'
-#' @noRd
+#' @export
 plot_map <- function(x,
                      title = "auto",
                      auto_title = NULL,
@@ -1091,7 +1101,7 @@ plot_map <- function(x,
 #'         trendlinecolour = "forestgreen",
 #'         envelopecolour = "lightgreen")
 #'
-#' @noRd
+#' @export
 plot_ts <- function(x,
                     title = "auto",
                     auto_title = NULL,
