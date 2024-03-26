@@ -57,31 +57,40 @@ or mapping approaches should be provided using S3 methods.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="co"># S3 method for obs_richness</span></span>
-<span><span class="fu">calc_map</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S3 method for total_occ</span></span>
-<span><span class="fu">calc_map</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S3 method for newness</span></span>
-<span><span class="fu">calc_map</span><span class="op">(</span><span class="va">x</span>, newness_min_year <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S3 method for occ_density</span></span>
-<span><span class="fu">calc_map</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S3 method for williams_evenness</span></span>
-<span><span class="fu">calc_map</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S3 method for pielou_evenness</span></span>
-<span><span class="fu">calc_map</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S3 method for ab_rarity</span></span>
-<span><span class="fu">calc_map</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S3 method for area_rarity</span></span>
-<span><span class="fu">calc_map</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">calc_map</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre><code># S3 method for obs_richness
+calc_map(x, ...)
+
+# S3 method for total_occ
+calc_map(x, ...)
+
+&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
+# S3 method for williams_evenness
+calc_map(x, ...)
+
+# S3 method for pielou_evenness
+calc_map(x, ...)
+
+=======
+# S3 method for newness
+calc_map(x, newness_min_year = NULL, ...)
+
+# S3 method for occ_density
+calc_map(x, ...)
+
+# S3 method for williams_evenness
+calc_map(x, ...)
+
+# S3 method for pielou_evenness
+calc_map(x, ...)
+
+# S3 method for ab_rarity
+calc_map(x, ...)
+
+# S3 method for area_rarity
+calc_map(x, ...)
+
+&gt;&gt;&gt;&gt;&gt;&gt;&gt; 372bc80df1f6ad1a9c39b2e418647fe945632aef
+calc_map(x)</code></pre></div>
     </div>
 
     <div class="section level2">
