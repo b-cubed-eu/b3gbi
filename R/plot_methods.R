@@ -925,7 +925,7 @@ plot.obs_richness <- function(x, ...){
 #' # Assuming you have an 'indicator_map' object named 'richness_map':
 #' plot_map(x = richness_map, title = "Map of Species Richness")
 #'
-#' @noRd
+#' @export
 plot_map <- function(x,
                      title = "auto",
                      auto_title = NULL,
@@ -1101,7 +1101,7 @@ plot_map <- function(x,
 #'         trendlinecolour = "forestgreen",
 #'         envelopecolour = "lightgreen")
 #'
-#' @noRd
+#' @export
 plot_ts <- function(x,
                     title = "auto",
                     auto_title = NULL,
