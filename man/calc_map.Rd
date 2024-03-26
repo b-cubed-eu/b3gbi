@@ -8,18 +8,18 @@
 \alias{calc_map}
 \title{Calculate a Biodiversity Indicator Map}
 \usage{
-\method{calc_map}{obs_richness}(data, ...)
+\method{calc_map}{obs_richness}(x, ...)
 
-\method{calc_map}{total_occ}(data, ...)
+\method{calc_map}{total_occ}(x, ...)
 
-\method{calc_map}{williams_evenness}(data, ...)
+\method{calc_map}{williams_evenness}(x, ...)
 
-\method{calc_map}{pielou_evenness}(data, ...)
+\method{calc_map}{pielou_evenness}(x, ...)
 
-calc_map(data)
+calc_map(x)
 }
 \arguments{
-\item{data}{An object containing the geospatial data and other information
+\item{x}{An object containing the geospatial data and other information
 required for the map calculation.}
 
 \item{...}{Additional arguments (potentially used by specific methods).}

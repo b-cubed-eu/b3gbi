@@ -8,18 +8,18 @@
 \alias{calc_ts}
 \title{Calculate a Biodiversity Indicator Time Series}
 \usage{
-\method{calc_ts}{obs_richness}(data, ...)
+\method{calc_ts}{obs_richness}(x, ...)
 
-\method{calc_ts}{total_occ}(data, ...)
+\method{calc_ts}{total_occ}(x, ...)
 
-\method{calc_ts}{williams_evenness}(data, ...)
+\method{calc_ts}{williams_evenness}(x, ...)
 
-\method{calc_ts}{pielou_evenness}(data, ...)
+\method{calc_ts}{pielou_evenness}(x, ...)
 
-calc_ts(data)
+calc_ts(x)
 }
 \arguments{
-\item{data}{An object containing the necessary data and information for the
+\item{x}{An object containing the necessary data and information for the
 time series calculation.}
 
 \item{...}{Additional arguments (potentially used by specific methods).}

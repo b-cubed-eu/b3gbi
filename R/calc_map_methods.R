@@ -1,4 +1,4 @@
-#' @noRd
+#' @export
 calc_map.default <- function(x, ...){
 
   warning(paste("calc_map does not know how to handle object of class ",
