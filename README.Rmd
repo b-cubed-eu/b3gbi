@@ -61,19 +61,19 @@ library(data.table)
 library(ggplot2)
 
 # Load GBIF data cube
-cube_name <- "inst/extdata/europe_amphibians_cube.csv"
+cube_name <- "data/europe_species_cube.csv"
 
 # Load taxonomic info for cube
-tax_info <- "inst/extdata/europe_amphibians_info.csv"
+tax_info <- "data/extdata/europe_species_info.csv"
 
 # Prepare cube
-amphib_data <- process_cube(cube_name, tax_info)
+insect_data <- process_cube(cube_name, tax_info)
 
 # Calculate diversity metric
-map_obs_rich_amphib <- calculate_indicator(amphib_data, type = "obs_rich")
+map_obs_rich_insects <- obs_richness(insect_data)
 
 # Plot diversity metric
-plot(map_obs_rich_amphib, title = "Observed Species Richness: Amphibians in Europe") 
+plot(map_obs_rich_insects, title = "Observed Species Richness: Amphibians in Europe") 
 ```
 
 

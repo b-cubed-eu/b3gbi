@@ -70,6 +70,6 @@ appropriate wrappers.
 }
 \examples{
 occurrence_density_trend <- occ_density_ts(example_cube_1)
-plot(occurrence_density_trend)
+plot(occurrence_density_trend, min_year=1980)
 
 }
