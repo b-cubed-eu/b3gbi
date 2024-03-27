@@ -1,4 +1,4 @@
-#' @noRd
+#' @export
 calc_ts.default <- function(x, ...){
 
   warning(paste("calc_ts does not know how to handle object of class ",

@@ -41,7 +41,7 @@ calc_map(x, ...)
 \item 'obs_richness': Observed species richness.
 \item 'total_occ': Total number of occurrences.
 \item 'newness': Mean year of occurrence.
-\item 'density': Density of occurrences.
+\item 'occ_density': Density of occurrences.
 \item 'williams_evenness', 'pielou_evenness': Evenness measures.
 \item 'ab_rarity', 'area_rarity':  Abundance-based and area-based rarity scores.
 \item 'spec_occ': Species occurrences.

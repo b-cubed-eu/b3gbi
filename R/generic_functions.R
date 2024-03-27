@@ -48,7 +48,7 @@ calc_ts <- function(x, ...) {
 #'   * 'obs_richness': Observed species richness.
 #'   * 'total_occ': Total number of occurrences.
 #'   * 'newness': Mean year of occurrence.
-#'   * 'density': Density of occurrences.
+#'   * 'occ_density': Density of occurrences.
 #'   * 'williams_evenness', 'pielou_evenness': Evenness measures.
 #'   * 'ab_rarity', 'area_rarity':  Abundance-based and area-based rarity scores.
 #'   * 'spec_occ': Species occurrences.
