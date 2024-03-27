@@ -73,7 +73,7 @@ insect_data <- process_cube(cube_name, tax_info)
 map_obs_rich_insects <- obs_richness_map(insect_data)
 
 # Plot diversity metric
-plot(map_obs_rich_insects, title = "Observed Species Richness: Amphibians in Europe") 
+plot(map_obs_rich_insects, title = "Observed Species Richness: Insects in Europe") 
 ```
 
 
