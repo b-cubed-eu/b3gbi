@@ -81,7 +81,7 @@
 <!-- badges: end -->
 <p>Analyze biodiversity trends and spatial patterns from GBIF data cubes, using flexible indicators like richness, evenness, and more.</p>
 <div class="section level2">
-<h2 id="motivation">Motivation<a class="anchor" aria-label="anchor" href="#motivation"></a>
+<h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
 <p>Biodiversity researchers need robust and standardized tools to analyze the vast amounts of data available on platforms like GBIF. The b3gbi package leverages the power of data cubes to streamline biodiversity assessments. It helps researchers gain insights into:</p>
 <ul>
@@ -127,19 +127,19 @@
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Load GBIF data cube</span></span>
-<span><span class="va">cube_name</span> <span class="op">&lt;-</span> <span class="st">"inst/extdata/europe_amphibians_cube.csv"</span></span>
+<span><span class="va">cube_name</span> <span class="op">&lt;-</span> <span class="st">"data/europe_species_cube.csv"</span></span>
 <span></span>
 <span><span class="co"># Load taxonomic info for cube</span></span>
-<span><span class="va">tax_info</span> <span class="op">&lt;-</span> <span class="st">"inst/extdata/europe_amphibians_info.csv"</span></span>
+<span><span class="va">tax_info</span> <span class="op">&lt;-</span> <span class="st">"data/europe_species_info.csv"</span></span>
 <span></span>
 <span><span class="co"># Prepare cube</span></span>
-<span><span class="va">amphib_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/process_cube.html">process_cube</a></span><span class="op">(</span><span class="va">cube_name</span>, <span class="va">tax_info</span><span class="op">)</span></span>
+<span><span class="va">insect_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/process_cube.html">process_cube</a></span><span class="op">(</span><span class="va">cube_name</span>, <span class="va">tax_info</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Calculate diversity metric</span></span>
-<span><span class="va">map_obs_rich_amphib</span> <span class="op">&lt;-</span> <span class="fu">calculate_indicator</span><span class="op">(</span><span class="va">amphib_data</span>, type <span class="op">=</span> <span class="st">"obs_rich"</span><span class="op">)</span></span>
+<span><span class="va">map_obs_rich_insects</span> <span class="op">&lt;-</span> <span class="fu">obs_richness_map</span><span class="op">(</span><span class="va">insect_data</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Plot diversity metric</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">map_obs_rich_amphib</span>, title <span class="op">=</span> <span class="st">"Observed Species Richness: Amphibians in Europe"</span><span class="op">)</span> </span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">map_obs_rich_insects</span>, title <span class="op">=</span> <span class="st">"Observed Species Richness: Amphibians in Europe"</span><span class="op">)</span> </span></code></pre></div>
 <p><img src="reference/figures/README-example-1.png" width="100%"></p>
 </div>
 </div>
