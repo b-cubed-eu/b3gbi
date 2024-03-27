@@ -13,7 +13,7 @@ Development](https://img.shields.io/badge/Status-In%20Development-yellow.svg)](h
 Analyze biodiversity trends and spatial patterns from GBIF data cubes,
 using flexible indicators like richness, evenness, and more.
 
-## Motivation
+## Overview
 
 Biodiversity researchers need robust and standardized tools to analyze
 the vast amounts of data available on platforms like GBIF. The b3gbi
@@ -63,19 +63,19 @@ library(data.table)
 library(ggplot2)
 
 # Load GBIF data cube
-cube_name <- "inst/extdata/europe_amphibians_cube.csv"
+cube_name <- "data/europe_species_cube.csv"
 
 # Load taxonomic info for cube
-tax_info <- "inst/extdata/europe_amphibians_info.csv"
+tax_info <- "data/europe_species_info.csv"
 
 # Prepare cube
-amphib_data <- process_cube(cube_name, tax_info)
+insect_data <- process_cube(cube_name, tax_info)
 
 # Calculate diversity metric
-map_obs_rich_amphib <- calculate_indicator(amphib_data, type = "obs_rich")
+map_obs_rich_insects <- obs_richness_map(insect_data)
 
 # Plot diversity metric
-plot(map_obs_rich_amphib, title = "Observed Species Richness: Amphibians in Europe") 
+plot(map_obs_rich_insects, title = "Observed Species Richness: Amphibians in Europe") 
 ```
 
 <img src="man/figures/README-example-1.png" width="100%" />

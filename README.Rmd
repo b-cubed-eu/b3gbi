@@ -64,13 +64,13 @@ library(ggplot2)
 cube_name <- "data/europe_species_cube.csv"
 
 # Load taxonomic info for cube
-tax_info <- "data/extdata/europe_species_info.csv"
+tax_info <- "data/europe_species_info.csv"
 
 # Prepare cube
 insect_data <- process_cube(cube_name, tax_info)
 
 # Calculate diversity metric
-map_obs_rich_insects <- obs_richness(insect_data)
+map_obs_rich_insects <- obs_richness_map(insect_data)
 
 # Plot diversity metric
 plot(map_obs_rich_insects, title = "Observed Species Richness: Amphibians in Europe") 
