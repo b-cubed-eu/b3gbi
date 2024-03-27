@@ -69,7 +69,7 @@ Specific implementations for different indicator types aree provided using the
 appropriate wrappers.
 }
 \examples{
-# Assuming 'my_data_cube' is a 'processed_cube' object
-diversity_map <- occ_density_ts(my_data_cube)
+occurrence_density_trend <- occ_density_ts(example_cube_1)
+plot(occurrence_density_trend)
 
 }

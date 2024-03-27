@@ -64,7 +64,7 @@ and formats the output into an appropriate S3 object ('indicator_map'). Specific
 for different indicator types are provided using the appropriate wrappers.
 }
 \examples{
-# Assuming 'my_data_cube' is a 'processed_cube' object
-diversity_map <- obs_richness_map(my_data_cube, level = "continent", region = "Africa")
+observed_richness_map <- obs_richness_map(example_cube_2, level = "continent", region = "Europe")
+plot(observed_richness_map)
 
 }

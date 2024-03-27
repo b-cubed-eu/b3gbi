@@ -26,8 +26,8 @@
 #' @return An S3 object of the class 'indicator_ts' containing the calculated indicator values and metadata.
 #'
 #' @examples
-#' # Assuming 'my_data_cube' is a 'processed_cube' object
-#' diversity_map <- occ_density_ts(my_data_cube)
+#' occurrence_density_trend <- occ_density_ts(example_cube_1)
+#' plot(occurrence_density_trend, min_year=1980)
 #'
 #' @export
 calc_ts <- function(x, ...) {
@@ -61,8 +61,8 @@ calc_ts <- function(x, ...) {
 #' @return An S3 object of the class 'indicator_map' containing the calculated indicator values and metadata.
 #'
 #' @examples
-#' # Assuming 'my_data_cube' is a 'processed_cube' object
-#' diversity_map <- obs_richness_map(my_data_cube, level = "continent", region = "Africa")
+#' observed_richness_map <- obs_richness_map(example_cube_2, level = "continent", region = "Europe")
+#' plot(observed_richness_map)
 #'
 #' @export
 calc_map <- function(x, ...) {
