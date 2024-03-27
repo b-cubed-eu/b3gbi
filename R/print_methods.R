@@ -17,7 +17,8 @@ print.indicator_ts <- function(x, n = 10, ...) {
   cat("Coordinate range represented:\n")
   print(x$coord_range)
   cat("\nNumber of species represented:", x$num_species, "\n")
-  cat("Kingdoms represented:", x$kingdoms, "\n")
+  if (!is.null(x$kingdoms)) {cat("Kingdoms represented:", x$kingdoms, "\n")}
+  if (!is.null(x$families)) {cat("Families represented:", x$families, "\n")}
   cat("\nFirst", n, "rows of data (use n = to show more):\n\n")
   print(x$data, n = n, ...)
 }
@@ -49,6 +50,7 @@ print.indicator_map <- function(x, n = 10, ...) {
   cat("Observation years:", x$first_year, "-", x$last_year, "\n")
   cat("Total years with observations:", x$num_years, "\n\n")
   cat("Number of species represented:", x$num_species, "\n")
+  cat("Number of families represented:", paste(x$num_families, collapse = ", "), "\n\n")
   cat("Kingdoms represented:", paste(x$kingdoms, collapse = ", "), "\n\n")
   cat("First", n, "rows of data (use n = to show more):\n\n")
   tibble::as_tibble(x$data) %>%
@@ -77,6 +79,7 @@ print.processed_cube <- function(x, n = 10, ...) {
   print(unlist(x$coord_range))
   cat("\nTotal number of observations:", x$num_obs, "\n")
   cat("Number of species represented:", x$num_species, "\n")
+  cat("Number of families represented:", paste(x$num_families, collapse = ", "), "\n\n")
   cat("Kingdoms represented:", paste(x$kingdoms, collapse = ", "), "\n\n")
   cat("First", n, "rows of data (use n = to show more):\n\n")
   print(x$data, n = n, ...)
@@ -103,6 +106,7 @@ print.processed_cube_dsinfo <- function(x, n = 10, ...) {
   print(unlist(x$coord_range))
   cat("\nTotal number of observations:", x$num_obs, "\n")
   cat("Number of species represented:", x$num_species, "\n")
+  cat("Number of families represented:", paste(x$num_families, collapse = ", "), "\n\n")
   cat("Kingdoms represented:", paste(x$kingdoms, collapse = ", "), "\n\n")
   cat("Number of datasets represented:", x$num_datasets, "\n")
   cat("Record types represented:", paste(x$record_types, collapse = ", "), "\n\n")

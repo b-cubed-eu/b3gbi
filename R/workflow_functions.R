@@ -220,6 +220,7 @@ compute_indicator_workflow <- function(x,
   first_year <- x$first_year
   last_year <- x$last_year
   num_years <- length(unique(data$year))
+  num_families <- x$num_families
 
   if (dim_type == "ts") {
 
@@ -296,6 +297,7 @@ compute_indicator_workflow <- function(x,
                                          map_level = level,
                                          map_region = region,
                                          kingdoms = kingdoms,
+                                         num_families = num_families,
                                          num_species = num_species,
                                          first_year = first_year,
                                          last_year = last_year,
@@ -310,6 +312,7 @@ compute_indicator_workflow <- function(x,
                                         map_level = level,
                                         map_region = region,
                                         kingdoms = kingdoms,
+                                        num_families = num_families,
                                         num_species = num_species,
                                         num_years = num_years,
                                         species_names = species_names,
