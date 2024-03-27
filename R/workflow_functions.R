@@ -5,8 +5,7 @@
 #'
 #' @param map_data A spatial object (e.g., an sf object) representing the
 #'   geographic area of interest.  Obtained from rnaturalearth.
-#' @param cs1 Cell length in kilometers.
-#' @param cs2 Cell width in kilometers.
+#' @param cell_size Cell length in kilometers.
 #' @return An sf object containing the grid polygons, with attributes:
 #'   * `cellid`: A unique ID for each grid cell.
 #'   * `area_km2`: Area of each grid cell in square kilometers.
@@ -17,7 +16,7 @@
 #' # Change projection to EPSG:3035 (works well with metric grid size)
 #' germany_map <- sf::st_transform(germany_map, crs = "EPSG:3035")
 #' # Calculate a 100km x 100km grid and plot it
-#' germany_grid <- create_grid(germany_map, cs1 = 100, cs2 = 100)
+#' germany_grid <- create_grid(germany_map, cell_size = 10)
 #' plot(Germany_grid)
 #' @noRd
 create_grid <- function(map_data,
@@ -63,7 +62,7 @@ create_grid <- function(map_data,
 #' @param region  The specific region to retrieve data for (required when
 #'  `level = "country"` or `level = "continent"`).
 #' @return An sf object containing the map data, transformed to the
-#'   EPSG:3035 projection.
+#'   appropriate projection.
 #'
 #' @examples
 #' # Download country-level data for France
@@ -166,17 +165,17 @@ prepare_spatial_data <- function(data, grid, cube_crs) {
 #' @title Calculate Biodiversity Indicators Over Space or Time
 #'
 #' @description This function provides a flexible framework for calculating various biodiversity
-#' indicators on a spatial grid. It prepares the data, creates a grid, calculates indicators,
-#' and formats the output into an appropriate S3 object ('indicator_map' or 'virtual_indicator_map').
+#' indicators on a spatial grid or as a time series. It prepares the data, creates a grid, calculates indicators,
+#' and formats the output into an appropriate S3 object ('indicator_map' or 'indicator_ts').
 #'
-#' @param x A data cube object ('processed_cube', 'processed_cube_dsinfo', or  'virtual_cube').
+#' @param x A data cube object ('processed_cube').
 #' @param type The indicator to calculate. Supported options include:
 #'   * 'hill0', 'hill1', 'hill2': Hill numbers (order 0, 1, and 2).
 #'   * 'obs_richness': Observed species richness.
 #'   * 'total_occ': Total number of occurrences.
 #'   * 'newness': Mean year of occurrence.
 #'   * 'density': Density of occurrences.
-#'   * 'e9_evenness', 'pielou_evenness': Evenness measures.
+#'   * 'williams_evenness', 'pielou_evenness': Evenness measures.
 #'   * 'ab_rarity', 'area_rarity':  Abundance-based and area-based rarity scores.
 #'   * 'spec_occ': Species occurrences.
 #'   * 'tax_distinct': Taxonomic distinctness.
@@ -191,10 +190,10 @@ prepare_spatial_data <- function(data, grid, cube_crs) {
 #'   * 'virtual_indicator_map' for virtual species data calculated over a grid (map).
 #'
 #' @examples
-#' # Assuming 'my_data_cube' is a 'processed_cube' or 'virtual_cube' object
+#' # Assuming 'my_data_cube' is a 'processed_cube' object
 #' diversity_map <- calculate_indicator(my_data_cube, type = "obs_richness", level = "continent", region = "Africa")
 #'
-#' @export
+#' @noRd
 compute_indicator_workflow <- function(x,
                                        type,
                                        dim_type = c("map", "ts"),

@@ -1,39 +1,68 @@
-#' @title Calculate a Biodiversity Indicator Time Series
+#' @title Calculate Biodiversity Indicators Over Time
 #'
-#' @description A generic function for calculating biodiversity indicator
-#'   time series data. Specific implementations for different indicator types
-#'   or calculation methods should be provided using S3 methods.
+#' @description This function provides a flexible framework for calculating various biodiversity
+#' indicators over time. It prepares the data, creates a grid, calculates indicators,
+#' and formats the output into an appropriate S3 object ('indicator_ts').
+#' Specific implementations for different indicator types aree provided using the
+#' appropriate wrappers.
 #'
-#' @param x An object containing the necessary data and information for the
-#'   time series calculation.
-#' @param ... Additional arguments (potentially used by specific methods).
+#' @param x A data cube object ('processed_cube').
+#' @param type The indicator to calculate. Supported options include:
+#'   * 'hill0', 'hill1', 'hill2': Hill numbers (order 0, 1, and 2).
+#'   * 'obs_richness': Observed species richness.
+#'   * 'cum_richness': Cumulative species richness.
+#'   * 'total_occ': Total number of occurrences.
+#'   * 'newness': Mean year of occurrence.
+#'   * 'occ_density': Density of occurrences.
+#'   * 'williams_evenness', 'pielou_evenness': Evenness measures.
+#'   * 'ab_rarity', 'area_rarity':  Abundance-based and area-based rarity scores.
+#'   * 'spec_occ': Species occurrences.
+#'   * 'tax_distinct': Taxonomic distinctness.
+#' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
+#' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
+#' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
+#' @param ... Additional arguments passed to specific indicator calculation functions.
 #'
-#' @return An object representing the calculated biodiversity indicator time
-#'   series. The format of the output will depend on the specific S3 method used.
+#' @return An S3 object of the class 'indicator_ts' containing the calculated indicator values and metadata.
 #'
-#' @method calc_ts default
-#' @usage calc_ts(x)
+#' @examples
+#' # Assuming 'my_data_cube' is a 'processed_cube' object
+#' diversity_map <- occ_density_ts(my_data_cube)
 #'
 #' @export
 calc_ts <- function(x, ...) {
   UseMethod("calc_ts")
 }
 
-#' @title Calculate a Biodiversity Indicator Map
+
+#' @title Calculate Biodiversity Indicators Over Space
 #'
-#' @description A generic function for calculating spatial biodiversity
-#'   indicator maps. Specific implementations for different indicator types
-#'   or mapping approaches should be provided using S3 methods.
+#' @description This function provides a flexible framework for calculating various biodiversity
+#' indicators on a spatial grid or as a time series. It prepares the data, creates a grid, calculates indicators,
+#' and formats the output into an appropriate S3 object ('indicator_map'). Specific implementations
+#' for different indicator types are provided using the appropriate wrappers.
 #'
-#' @param x An object containing the geospatial data and other information
-#'   required for the map calculation.
-#' @param ... Additional arguments (potentially used by specific methods).
+#' @param x A data cube object ('processed_cube').
+#' @param type The indicator to calculate. Supported options include:
+#'   * 'hill0', 'hill1', 'hill2': Hill numbers (order 0, 1, and 2).
+#'   * 'obs_richness': Observed species richness.
+#'   * 'total_occ': Total number of occurrences.
+#'   * 'newness': Mean year of occurrence.
+#'   * 'density': Density of occurrences.
+#'   * 'williams_evenness', 'pielou_evenness': Evenness measures.
+#'   * 'ab_rarity', 'area_rarity':  Abundance-based and area-based rarity scores.
+#'   * 'spec_occ': Species occurrences.
+#'   * 'tax_distinct': Taxonomic distinctness.
+#' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
+#' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
+#' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
+#' @param ... Additional arguments passed to specific indicator calculation functions.
 #'
-#' @return An object representing the calculated biodiversity indicator map.
-#'   The format of the output will depend on the specific S3 method used.
+#' @return An S3 object of the class 'indicator_map' containing the calculated indicator values and metadata.
 #'
-#' @method calc_map default
-#' @usage calc_map(x)
+#' @examples
+#' # Assuming 'my_data_cube' is a 'processed_cube' object
+#' diversity_map <- obs_richness_map(my_data_cube, level = "continent", region = "Africa")
 #'
 #' @export
 calc_map <- function(x, ...) {

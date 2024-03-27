@@ -10,7 +10,7 @@
 \alias{calc_map.ab_rarity}
 \alias{calc_map.area_rarity}
 \alias{calc_map}
-\title{Calculate a Biodiversity Indicator Map}
+\title{Calculate Biodiversity Indicators Over Space}
 \usage{
 \method{calc_map}{obs_richness}(x, ...)
 
@@ -28,20 +28,43 @@
 
 \method{calc_map}{area_rarity}(x, ...)
 
-calc_map(x)
+calc_map(x, ...)
 }
 \arguments{
-\item{x}{An object containing the geospatial data and other information
-required for the map calculation.}
+\item{x}{A data cube object ('processed_cube').}
 
-\item{...}{Additional arguments (potentially used by specific methods).}
+\item{...}{Additional arguments passed to specific indicator calculation functions.}
+
+\item{type}{The indicator to calculate. Supported options include:
+\itemize{
+\item 'hill0', 'hill1', 'hill2': Hill numbers (order 0, 1, and 2).
+\item 'obs_richness': Observed species richness.
+\item 'total_occ': Total number of occurrences.
+\item 'newness': Mean year of occurrence.
+\item 'density': Density of occurrences.
+\item 'williams_evenness', 'pielou_evenness': Evenness measures.
+\item 'ab_rarity', 'area_rarity':  Abundance-based and area-based rarity scores.
+\item 'spec_occ': Species occurrences.
+\item 'tax_distinct': Taxonomic distinctness.
+}}
+
+\item{cell_size}{Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)}
+
+\item{level}{Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')}
+
+\item{region}{The region of interest (e.g., "Europe"). (Default: "Europe")}
 }
 \value{
-An object representing the calculated biodiversity indicator map.
-The format of the output will depend on the specific S3 method used.
+An S3 object of the class 'indicator_map' containing the calculated indicator values and metadata.
 }
 \description{
-A generic function for calculating spatial biodiversity
-indicator maps. Specific implementations for different indicator types
-or mapping approaches should be provided using S3 methods.
+This function provides a flexible framework for calculating various biodiversity
+indicators on a spatial grid or as a time series. It prepares the data, creates a grid, calculates indicators,
+and formats the output into an appropriate S3 object ('indicator_map'). Specific implementations
+for different indicator types are provided using the appropriate wrappers.
+}
+\examples{
+# Assuming 'my_data_cube' is a 'processed_cube' object
+diversity_map <- obs_richness_map(my_data_cube, level = "continent", region = "Africa")
+
 }

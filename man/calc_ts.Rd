@@ -11,7 +11,7 @@
 \alias{calc_ts.ab_rarity}
 \alias{calc_ts.area_rarity}
 \alias{calc_ts}
-\title{Calculate a Biodiversity Indicator Time Series}
+\title{Calculate Biodiversity Indicators Over Time}
 \usage{
 \method{calc_ts}{obs_richness}(x, ...)
 
@@ -31,20 +31,45 @@
 
 \method{calc_ts}{area_rarity}(x, ...)
 
-calc_ts(x)
+calc_ts(x, ...)
 }
 \arguments{
-\item{x}{An object containing the necessary data and information for the
-time series calculation.}
+\item{x}{A data cube object ('processed_cube').}
 
-\item{...}{Additional arguments (potentially used by specific methods).}
+\item{...}{Additional arguments passed to specific indicator calculation functions.}
+
+\item{type}{The indicator to calculate. Supported options include:
+\itemize{
+\item 'hill0', 'hill1', 'hill2': Hill numbers (order 0, 1, and 2).
+\item 'obs_richness': Observed species richness.
+\item 'cum_richness': Cumulative species richness.
+\item 'total_occ': Total number of occurrences.
+\item 'newness': Mean year of occurrence.
+\item 'occ_density': Density of occurrences.
+\item 'williams_evenness', 'pielou_evenness': Evenness measures.
+\item 'ab_rarity', 'area_rarity':  Abundance-based and area-based rarity scores.
+\item 'spec_occ': Species occurrences.
+\item 'tax_distinct': Taxonomic distinctness.
+}}
+
+\item{cell_size}{Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)}
+
+\item{level}{Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')}
+
+\item{region}{The region of interest (e.g., "Europe"). (Default: "Europe")}
 }
 \value{
-An object representing the calculated biodiversity indicator time
-series. The format of the output will depend on the specific S3 method used.
+An S3 object of the class 'indicator_ts' containing the calculated indicator values and metadata.
 }
 \description{
-A generic function for calculating biodiversity indicator
-time series data. Specific implementations for different indicator types
-or calculation methods should be provided using S3 methods.
+This function provides a flexible framework for calculating various biodiversity
+indicators over time. It prepares the data, creates a grid, calculates indicators,
+and formats the output into an appropriate S3 object ('indicator_ts').
+Specific implementations for different indicator types aree provided using the
+appropriate wrappers.
+}
+\examples{
+# Assuming 'my_data_cube' is a 'processed_cube' object
+diversity_map <- occ_density_ts(my_data_cube)
+
 }
