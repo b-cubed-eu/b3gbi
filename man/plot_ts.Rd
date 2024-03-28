@@ -80,7 +80,7 @@ indicator, with an optional smoothed trendline, and visualizes uncertainty.
 plot_ts(example_indicator_ts1, y_label = "Species Richness", title = "Observed Species Richness: Mammals in Denmark")
 
 # custom colours:
-plot_ts(example_indicator_ts2,
+plot_ts(example_indicator_ts1,
         y_label = "Species Richness",
         title = "Observed Species Richness: Mammals in Denmark",
         linecolour = "thistle",
