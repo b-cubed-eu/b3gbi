@@ -216,13 +216,13 @@ compute_indicator_workflow <- function(x,
     first_year <- x$first_year
    }
 
-  if (!is.null(final_year)) {
+  if (!is.null(last_year)) {
     last_year <- ifelse(last_year < x$last_year, last_year, x$last_year)
   } else {
     last_year <- x$last_year
   }
 
-  data <- x$data[(x$data$year >= first_year) & (x$data$year <= final_year),]
+  data <- x$data[(x$data$year >= first_year) & (x$data$year <= last_year),]
 
   # Collect information to add to final object
   num_species <- x$num_species
