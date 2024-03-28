@@ -48,8 +48,8 @@ get_legend_title <- function(x) {
 
 #' Extract Years With Observations from an Indicator Map
 #'
-#' Takes an "indicator_map" object and determines the years for which
-#' observation data exists.
+#' Takes an "indicator_map",  "indicator_ts", or "processed_cube" object and
+#' determines the years for which observation data exists.
 #'
 #' @param x An "indicator_map" object containing calculated indicator values
 #'   associated with grid cells.
@@ -59,13 +59,18 @@ get_legend_title <- function(x) {
 #'      for each year (`TRUE` if present, `FALSE` if absent).
 #'
 #' @examples
-#' get_observed_years(example_cube_1)
+#' get_observed_years(example_indicator_map1)
 #' @export
 get_observed_years <- function(x) {
-  stopifnot(inherits(x, "indicator_map"))
-  stopifnot("years_with_obs" %in% names(x))
-  obs <- x$years_with_obs
-  years <- min(x$years_with_obs):max(x$years_with_obs)
+
+  if (inherits(x, "indicator_map")) {
+    obs <- x$years_with_obs
+    years <- min(x$years_with_obs):max(x$years_with_obs)
+  } else if (inherits(x, "indicator_ts") | inherits(x, "processed_cube")) {
+    obs <- unique(x$data$year)
+    years <- min(obs):max(obs)
+  }
+
   observed <- ifelse(years %in% obs, TRUE, FALSE)
   data.frame("years" = years,
              "occurrences" = observed)
