@@ -23,7 +23,14 @@
 #'                                        tax_info = "data/mammals_info.csv")
 #'
 #' @export
-process_cube <- function(cube_name, tax_info, datasets_info = NULL, first_year = NA, final_year = NA) {
+process_cube <- function(cube_name, tax_info = NULL, datasets_info = NULL, first_year = NULL, final_year = NULL) {
+
+  # Check whethere there is a separate taxonomic information file
+  if (is.null(tax_info)) {
+    # if not, assume cube is in the new format and call process_cube_new function
+    proc_cube <- process_cube_new(cube_name, first_year, final_year)
+    return(proc_cube)
+  }
 
   # Read in data cube
   occurrence_data <- readr::read_csv(
@@ -124,13 +131,13 @@ process_cube <- function(cube_name, tax_info, datasets_info = NULL, first_year =
   first_year <- merged_data %>%
     dplyr::select(year) %>%
     min() %>%
-    ifelse(is.na(first_year),
+    ifelse(is.null(first_year),
            .,
            ifelse(first_year > ., first_year, .))
   final_year <- merged_data %>%
     dplyr::summarize(max_year = max(year)-1) %>%
     dplyr::pull(max_year) %>%
-    ifelse(is.na(final_year),
+    ifelse(is.null(final_year),
            .,
            ifelse(final_year < ., final_year, .))
 
@@ -143,7 +150,8 @@ process_cube <- function(cube_name, tax_info, datasets_info = NULL, first_year =
   # Remove any duplicate rows
   merged_data <-
     merged_data %>%
-    dplyr::distinct()
+    dplyr::distinct() %>%
+    dplyr::arrange(year)
 
   cube <- new_processed_cube(merged_data)
 

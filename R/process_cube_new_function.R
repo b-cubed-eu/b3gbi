@@ -1,4 +1,4 @@
-process_cube_new <- function(cube_name, first_year = NA, final_year = NA) {
+process_cube_new <- function(cube_name, first_year = NULL, final_year = NULL) {
 
   # Read in data cube
   occurrence_data <- readr::read_delim(
@@ -59,13 +59,13 @@ process_cube_new <- function(cube_name, first_year = NA, final_year = NA) {
   first_year <- occurrence_data %>%
     dplyr::select(year) %>%
     min() %>%
-    ifelse(is.na(first_year),
+    ifelse(is.null(first_year),
            .,
            ifelse(first_year > ., first_year, .))
   final_year <- occurrence_data %>%
     dplyr::summarize(max_year = max(year)-1) %>%
     dplyr::pull(max_year) %>%
-    ifelse(is.na(final_year),
+    ifelse(is.null(final_year),
            .,
            ifelse(final_year < ., final_year, .))
 
@@ -78,7 +78,8 @@ process_cube_new <- function(cube_name, first_year = NA, final_year = NA) {
   # Remove any duplicate rows
   occurrence_data <-
     occurrence_data %>%
-    dplyr::distinct()
+    dplyr::distinct() %>%
+    dplyr::arrange(year)
 
   cube <- new_processed_cube(occurrence_data)
 
