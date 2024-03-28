@@ -18,6 +18,7 @@ Provides a summary representation of an indicator_map object,
 designed for user-friendly display in the console.
 }
 \examples{
+library(sf)
 print(example_indicator_map1)
 
 }

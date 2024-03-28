@@ -37,6 +37,7 @@ print.indicator_ts <- function(x, n = 10, ...) {
 #' @param ... Additional arguments.
 #'
 #' @examples
+#' library(sf)
 #' print(example_indicator_map1)
 #'
 #' @export
