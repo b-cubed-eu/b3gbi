@@ -78,11 +78,11 @@ indicator, with an optional smoothed trendline, and visualizes uncertainty.
 \examples{
 # Assuming you have an 'indicator_ts' object named 'richness_ts' and want
 default colours:
-plot_ts(x = richness_ts, title = "Time Series of Species Richness")
+plot_ts(x = example_indicator_ts1, title = "Time Series of Observed Species Richness")
 
 # For custom colors:
-plot_ts(x = richness_ts,
-        title = "Time Series of Species Richness",
+plot_ts(x = example_indicator_ts1,
+        title = "Time Series of Observed Species Richness",
         linecolour = "thistle",
         trendlinecolour = "forestgreen",
         envelopecolour = "lightgreen")

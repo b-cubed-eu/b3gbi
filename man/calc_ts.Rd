@@ -65,7 +65,7 @@ An S3 object of the class 'indicator_ts' containing the calculated indicator val
 This function provides a flexible framework for calculating various biodiversity
 indicators over time. It prepares the data, creates a grid, calculates indicators,
 and formats the output into an appropriate S3 object ('indicator_ts').
-Specific implementations for different indicator types aree provided using the
+Specific implementations for different indicator types are provided using the
 appropriate wrappers.
 }
 \examples{
