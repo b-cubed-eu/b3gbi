@@ -170,24 +170,19 @@ prepare_spatial_data <- function(data, grid, cube_crs) {
 #'
 #' @param x A data cube object ('processed_cube').
 #' @param type The indicator to calculate. Supported options include:
-#'   * 'hill0', 'hill1', 'hill2': Hill numbers (order 0, 1, and 2).
 #'   * 'obs_richness': Observed species richness.
 #'   * 'total_occ': Total number of occurrences.
 #'   * 'newness': Mean year of occurrence.
 #'   * 'density': Density of occurrences.
 #'   * 'williams_evenness', 'pielou_evenness': Evenness measures.
 #'   * 'ab_rarity', 'area_rarity':  Abundance-based and area-based rarity scores.
-#'   * 'spec_occ': Species occurrences.
-#'   * 'tax_distinct': Taxonomic distinctness.
+#' @param dim_type Dimension to calculate indicator over (time: 'ts', or space: 'map')
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
 #' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
 #' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
 #' @param ... Additional arguments passed to specific indicator calculation functions.
 #'
-#' @return An S3 object of the appropriate class containing the calculated indicator values and metadata:
-#'   * 'indicator_map' for real-world observational data calculated over a grid (map)
-#'   * 'indicator_ts' for real-world observational data calculated over time (time series)
-#'   * 'virtual_indicator_map' for virtual species data calculated over a grid (map).
+#' @return An S3 object containing the calculated indicator values and metadata.
 #'
 #' @examples
 #' diversity_map <- compute_indicator_workflow(example_cube_2, type = "obs_richness_map", level = "continent", region = "Europe")

@@ -3,15 +3,12 @@
 #' Returns the full name (human-readable) of a biodiversity indicator, provided
 #' its corresponding code.
 #'
-#' @param x A character string representing the biodiversity indicator code
-#'   (e.g., "obs_richness", "hill1", "tax_distinct").
+#' @param x A character string representing the biodiversity indicator class
+#'   (e.g., "obs_richness", "hill1", "cum_richness").
 #' @return A character string containing the full descriptive name of the
-#'   biodiversity indicator. If no match is found, returns an error.
+#'   biodiversity indicator. Returns an error if the specified indicator class is
+#'   not found.
 #'
-#' @examples
-#' # Get the name for the code "obs_richness"
-#' indicator_name <- get_divname("obs_richness")
-#' indicator_name  # Output: "Observed Species Richness"
 #' @noRd
 get_indicator_name <- function(x) {
 
@@ -30,18 +27,12 @@ get_indicator_name <- function(x) {
 #' Provides an appropriate legend title for a biodiversity indicator,
 #' suitable for use with time series plots ("ts") or maps.
 #'
-#' @param x A character string representing the biodiversity indicator code
-#'   (e.g., "obs_richness", "hill1", "tax_distinct").
+#' @param x A character string representing the biodiversity indicator class
+#'   (e.g., "obs_richness", "hill1", "cum_richness").
 #' @param type Specifies the visualization type: "ts" (time series) or "map".
 #' @return A character string containing the legend title. Throws an error if
-#'   the specified `div_type` is not found.
+#'   the specified indicator class is not found.
 #'
-#' @examples
-#' # Get legend title for "tax_distinct" on a map
-#' map_legend <- get_legend_title("tax_distinct", type = "map")
-#'
-#' # Get legend title for "hill2" on a time series plot
-#' ts_legend <- get_legend_title("hill2", type = "ts")
 #' @noRd
 get_legend_title <- function(x) {
 
@@ -68,8 +59,7 @@ get_legend_title <- function(x) {
 #'      for each year (`TRUE` if present, `FALSE` if absent).
 #'
 #' @examples
-#' # Assuming you have an 'indicator_map' object named 'my_indicator'
-#' observed_data <- get_observed_years(my_indicator)
+#' get_observed_years(example_cube_1)
 #' @export
 get_observed_years <- function(x) {
   stopifnot(inherits(x, "indicator_map"))
@@ -96,8 +86,7 @@ get_observed_years <- function(x) {
 #'   * `scientificName`:  The scientific name of each species.
 #'
 #' @examples
-#' # Assuming you have a biodiversity data cube named 'mammals_cube'
-#' species_list <- list_species(mammals_cube)
+#' list_species(example_cube_1)
 #' @export
 list_species <- function(object) {
 

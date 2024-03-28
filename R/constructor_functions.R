@@ -15,10 +15,6 @@
 #'
 #' @note 'processed_cube' objects are used by various analysis functions within this package.
 #'
-#' @examples
-#' # Example assuming your data is in a tibble named 'biodiversity_data'
-#' my_processed_cube <- new_processed_cube(biodiversity_data)
-#'
 #' @noRd
 new_processed_cube <- function(x) {
   # check that x is a tibble and all necessary columns are present
@@ -95,10 +91,6 @@ new_processed_cube <- function(x) {
 #'   * **Diversity information:**  Kingdoms, names of species, number of species.
 #'   * **Time Series:** The input tibble containing year and indicator values.
 #'
-#' @examples
-#' # Assuming results exist in 'indicator_results' and other parameters are defined
-#' my_indicator_ts <- new_indicator_ts(indicator_results, "obs_richness", ...)
-#'
 #' @noRd
 new_indicator_ts <- function(x,
                          div_type,
@@ -161,10 +153,6 @@ new_indicator_ts <- function(x,
 #'   * **Diversity information:** Kingdoms, number of species, and names of species.
 #'   * **Years analyzed:** First and last year, number of years.
 #'   * **Mapped Results:** The input sf object, now containing indicator scores.
-#'
-#' @examples
-#' # Assuming results exist in 'cell_indicator_results' and other parameters are defined
-#' my_indicator_map <- new_indicator_map(cell_indicator_results, "obs_richness", ...)
 #'
 #' @noRd
 new_indicator_map <- function(x,
