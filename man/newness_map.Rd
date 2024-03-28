@@ -27,12 +27,10 @@ the calculated indicator values and metadata.
 }
 \description{
 This function estimates the relative newness of records in a data cube
-by calculating the mean year of occurrence over a gridded map. It prepares the data,
-creates a grid, calculates the indicator value for each grid cell, and formats the
-output into an S3 object.
+by calculating the mean year of occurrence over a gridded map.
 }
 \examples{
-n_map <- newness_map(example_cube_1)
+n_map <- newness_map(example_cube_1, level = "country", region = "Denmark")
 plot(n_map)
 
 }

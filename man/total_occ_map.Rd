@@ -27,11 +27,10 @@ the calculated indicator values and metadata.
 }
 \description{
 This function calculates the total number of species occurrence
-records over a gridded map. It prepares the data, creates a grid, calculates
-the number of records for each grid cell, and formats the output into an S3 object.
+records over a gridded map.
 }
 \examples{
-to_map <- total_occ_map(example_cube_1)
+to_map <- total_occ_map(example_cube_1, level = "country", region = "Denmark")
 plot(to_map)
 
 }

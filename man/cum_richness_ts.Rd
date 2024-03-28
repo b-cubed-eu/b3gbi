@@ -25,11 +25,9 @@ the calculated indicator values and metadata.
 }
 \description{
 This function calculates cumulative species richness as a time series.
-It prepares the data, creates a grid, calculates the indicator value for each grid cell,
-and formats the output into an S3 object.
 }
 \examples{
-cr_ts <- cum_richness_ts(example_cube_1)
+cr_ts <- cum_richness_ts(example_cube_1, first_year = 1985)
 plot(cr_ts)
 
 }

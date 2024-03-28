@@ -26,12 +26,10 @@ An S3 object with the classes 'indicator_map' and 'obs_richness' containing
 the calculated indicator values and metadata.
 }
 \description{
-This function calculates observed species richness over a gridded
-map. It prepares the data, creates a grid, calculates the indicator value for
-each grid cell, and formats the output into an S3 object.
+This function calculates observed species richness over a gridded map.
 }
 \examples{
-or_map <- obs_richness_map(example_cube_1)
+or_map <- obs_richness_map(example_cube_1, level = "country", region = "Denmark")
 plot(or_map)
 
 }

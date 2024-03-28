@@ -26,12 +26,10 @@ An S3 object with the classes 'indicator_map' and 'ab_rarity' containing
 the calculated indicator values and metadata.
 }
 \description{
-This function calculates abundance-based rarity over a gridded
-map. It prepares the data, creates a grid, calculates the indicator value for
-each grid cell, and formats the output into an S3 object.
+This function calculates abundance-based rarity over a gridded map.
 }
 \examples{
-abr_map <- ab_rarity_map(example_cube_1)
+abr_map <- ab_rarity_map(example_cube_1, level = "country", region = "Denmark")
 plot(abr_map)
 
 }

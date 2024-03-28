@@ -26,12 +26,10 @@ An S3 object with the classes 'indicator_map' and 'williams_evenness' containing
 the calculated indicator values and metadata.
 }
 \description{
-This function calculates Williams' evenness over a gridded
-map. It prepares the data, creates a grid, calculates the indicator value for
-each grid cell, and formats the output into an S3 object.
+This function calculates Williams' evenness over a gridded map.
 }
 \examples{
-we_map <- williams_evenness_map(example_cube_1)
+we_map <- williams_evenness_map(example_cube_1, level = "country", region = "Denmark")
 plot(we_map)
 
 }

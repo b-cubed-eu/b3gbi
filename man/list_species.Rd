@@ -23,6 +23,5 @@ Retrieves a list of species names from a biodiversity data object
 ('processed_cube', 'indicator_map' or 'indicator_ts').
 }
 \examples{
-# Assuming you have a biodiversity data cube named 'mammals_cube'
-species_list <- list_species(mammals_cube)
+list_species(example_cube_1)
 }

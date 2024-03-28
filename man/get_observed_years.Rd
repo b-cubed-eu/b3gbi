@@ -23,6 +23,5 @@ Takes an "indicator_map" object and determines the years for which
 observation data exists.
 }
 \examples{
-# Assuming you have an 'indicator_map' object named 'my_indicator'
-observed_data <- get_observed_years(my_indicator)
+get_observed_years(example_cube_1)
 }

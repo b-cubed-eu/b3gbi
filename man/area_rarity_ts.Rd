@@ -27,11 +27,9 @@ the calculated indicator values and metadata.
 }
 \description{
 This function calculates area-based rarity over time.
-It prepares the data, creates a grid, calculates the indicator value for
-each grid cell, and formats the output into an S3 object.
 }
 \examples{
-arr_ts <- area_rarity_ts(example_cube_1)
+arr_ts <- area_rarity_ts(example_cube_1, first_year = 1985)
 plot(arr_ts)
 
 }

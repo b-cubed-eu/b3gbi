@@ -27,11 +27,10 @@ the calculated indicator values and metadata.
 }
 \description{
 This function calculates the total number of species occurrence records
-as a time series. It prepares the data, creates a grid, calculates the indicator value for
-each grid cell, and formats the output into an S3 object.
+as a time series.
 }
 \examples{
-to_ts <- total_occ_ts(example_cube_1)
+to_ts <- total_occ_ts(example_cube_1, first_year = 1985)
 plot(to_ts)
 
 }

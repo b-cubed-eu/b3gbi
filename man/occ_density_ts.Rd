@@ -27,11 +27,9 @@ the calculated indicator values and metadata.
 }
 \description{
 This function calculates density of records as a time series.
-It prepares the data, creates a grid, calculates the indicator value for each
-grid cell, and formats the output into an S3 object.
 }
 \examples{
-od_ts <- occ_density_ts(example_cube_1)
+od_ts <- occ_density_ts(example_cube_1, first_year = 1985)
 plot(od_ts)
 
 }
