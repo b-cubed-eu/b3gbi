@@ -95,7 +95,13 @@ the calculated indicator values and metadata.</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">we_ts</span> <span class="op">&lt;-</span> <span class="fu">williams_evenness_ts</span><span class="op">(</span><span class="va">example_cube_1</span>, first_year <span class="op">=</span> <span class="fl">1985</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in compute_indicator_workflow(data, type = "williams_evenness",     dim_type = "ts", ...):</span> object 'final_year' not found</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> The rnaturalearthdata package needs to be installed.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Installing the rnaturalearthdata package.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Installing package into ‘/home/runner/work/_temp/Library’</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> (as ‘lib’ is unspecified)</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in value[[3L]](cond):</span> Failed to install the rnaturalearthdata package.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span>  Please try installing the package for yourself using the following command: </span>
+<span class="r-err co"><span class="r-pr">#&gt;</span>  install.packages("rnaturalearthdata")</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">we_ts</span><span class="op">)</span></span></span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'we_ts' not found</span>
 <span class="r-in"><span></span></span>
