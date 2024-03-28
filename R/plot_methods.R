@@ -802,12 +802,12 @@ plot_map <- function(x,
 #'
 #' @examples
 #' # default colours:
-#' plot_ts(example_indicator_ts2, y_label = "Species Richness", title = "Cumulative Species Richness: Insects in Europe")
+#' plot_ts(example_indicator_ts1, y_label = "Species Richness", title = "Observed Species Richness: Mammals in Denmark")
 #'
 #' # custom colours:
 #' plot_ts(example_indicator_ts2,
 #'         y_label = "Species Richness",
-#'         title = "Cumulative Species Richness: Insects in Europe",
+#'         title = "Observed Species Richness: Mammals in Denmark",
 #'         linecolour = "thistle",
 #'         trendlinecolour = "forestgreen",
 #'         envelopecolour = "lightgreen")
