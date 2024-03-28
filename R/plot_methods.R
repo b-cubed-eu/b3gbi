@@ -801,8 +801,16 @@ plot_map <- function(x,
 #' Can be customized using ggplot2 functions.
 #'
 #' @examples
-#' plot_ts(example_indicator_ts2, y_label = "test", title = "test")
+#' # default colours:
+#' plot_ts(example_indicator_ts2, y_label = "Species Richness", title = "Cumulative Species Richness: Insects in Europe")
 #'
+#' # custom colours:
+#' plot_ts(example_indicator_ts2,
+#'         y_label = "Species Richness",
+#'         title = "Cumulative Species Richness: Insects in Europe",
+#'         linecolour = "thistle",
+#'         trendlinecolour = "forestgreen",
+#'         envelopecolour = "lightgreen")
 #' @export
 plot_ts <- function(x,
                     title = "auto",

@@ -76,6 +76,14 @@ Creates a time series plot of a calculated biodiversity
 indicator, with an optional smoothed trendline, and visualizes uncertainty.
 }
 \examples{
-plot_ts(example_indicator_ts2, y_label = "test", title = "test")
+# default colours:
+plot_ts(example_indicator_ts2, y_label = "Species Richness", title = "Cumulative Species Richness: Insects in Europe")
 
+# custom colours:
+plot_ts(example_indicator_ts2,
+        y_label = "Species Richness",
+        title = "Cumulative Species Richness: Insects in Europe",
+        linecolour = "thistle",
+        trendlinecolour = "forestgreen",
+        envelopecolour = "lightgreen")
 }
