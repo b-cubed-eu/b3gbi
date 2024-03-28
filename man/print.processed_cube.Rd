@@ -17,3 +17,7 @@
 Provides a summary representation of a processed_cube object,
 designed for user-friendly display in the console.
 }
+\examples{
+print(example_cube_1)
+
+}
