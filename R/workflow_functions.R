@@ -17,7 +17,7 @@
 #' germany_map <- sf::st_transform(germany_map, crs = "EPSG:3035")
 #' # Calculate a 100km x 100km grid and plot it
 #' germany_grid <- create_grid(germany_map, cell_size = 10)
-#' plot(Germany_grid)
+#' plot(germany_grid)
 #' @noRd
 create_grid <- function(map_data,
                         level,
@@ -190,8 +190,8 @@ prepare_spatial_data <- function(data, grid, cube_crs) {
 #'   * 'virtual_indicator_map' for virtual species data calculated over a grid (map).
 #'
 #' @examples
-#' # Assuming 'my_data_cube' is a 'processed_cube' object
-#' diversity_map <- calculate_indicator(my_data_cube, type = "obs_richness", level = "continent", region = "Africa")
+#' diversity_map <- compute_indicator_workflow(example_cube_2, type = "obs_richness_map", level = "continent", region = "Europe")
+#' diversity_map
 #'
 #' @noRd
 compute_indicator_workflow <- function(x,
@@ -201,6 +201,8 @@ compute_indicator_workflow <- function(x,
                                        level = c("continent", "country", "world"),
                                        region = "Europe",
                                        cube_crs = NULL,
+                                       first_year = NULL,
+                                       last_year = NULL,
                                        ...) {
 
   stopifnot_error("Object class not recognized.",
@@ -213,12 +215,22 @@ compute_indicator_workflow <- function(x,
   dim_type <- match.arg(dim_type)
   level <- match.arg(level)
 
-  data <- x$data
+  if (!is.null(first_year)) {
+    first_year <- ifelse(first_year > x$first_year, first_year, x$first_year)
+  } else {
+    first_year <- x$first_year
+   }
+
+  if (!is.null(final_year)) {
+    last_year <- ifelse(last_year < x$last_year, last_year, x$last_year)
+  } else {
+    last_year <- x$last_year
+  }
+
+  data <- x$data[(x$data$year >= first_year) & (x$data$year <= final_year),]
 
   # Collect information to add to final object
   num_species <- x$num_species
-  first_year <- x$first_year
-  last_year <- x$last_year
   num_years <- length(unique(data$year))
   num_families <- x$num_families
 
@@ -245,6 +257,7 @@ compute_indicator_workflow <- function(x,
     cube_crs <- "EPSG:3035"
 
   }
+
 
   if (dim_type == "map" | (!is.null(level) & !is.null(region))) {
 
