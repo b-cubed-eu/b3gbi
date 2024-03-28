@@ -801,7 +801,7 @@ plot_map <- function(x,
 #' Can be customized using ggplot2 functions.
 #'
 #' @examples
-#' plot_ts(example_indicator_ts2, y_label_default = "test", auto_title = "test")
+#' plot_ts(example_indicator_ts2, y_label = "test", title = "test")
 #'
 #' @export
 plot_ts <- function(x,

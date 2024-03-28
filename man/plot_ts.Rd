@@ -76,6 +76,6 @@ Creates a time series plot of a calculated biodiversity
 indicator, with an optional smoothed trendline, and visualizes uncertainty.
 }
 \examples{
-plot_ts(example_indicator_ts2, y_label_default = "test", auto_title = "test")
+plot_ts(example_indicator_ts2, y_label = "test", title = "test")
 
 }
