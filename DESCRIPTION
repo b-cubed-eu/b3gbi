@@ -29,6 +29,7 @@ Imports:
     purrr,
     readr,
     rnaturalearth,
+    rnaturalearthdata,
     sf,
     taxize,
     tibble,
