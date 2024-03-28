@@ -75,9 +75,8 @@ for each year (<code>TRUE</code> if present, <code>FALSE</code> if absent).</p><
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Assuming you have an 'indicator_map' object named 'my_indicator'</span></span></span>
-<span class="r-in"><span><span class="va">observed_data</span> <span class="op">&lt;-</span> <span class="fu">get_observed_years</span><span class="op">(</span><span class="va">my_indicator</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'my_indicator' not found</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">get_observed_years</span><span class="op">(</span><span class="va">example_cube_1</span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in get_observed_years(example_cube_1):</span> inherits(x, "indicator_map") is not TRUE</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

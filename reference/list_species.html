@@ -75,9 +75,21 @@ or a data frame with columns:</p><ul><li><p><code>taxonKey</code>: A unique iden
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Assuming you have a biodiversity data cube named 'mammals_cube'</span></span></span>
-<span class="r-in"><span><span class="va">species_list</span> <span class="op">&lt;-</span> <span class="fu">list_species</span><span class="op">(</span><span class="va">mammals_cube</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'mammals_cube' not found</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">list_species</span><span class="op">(</span><span class="va">example_cube_1</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 110 × 2</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    taxonKey scientificName                       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>                                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>  5<span style="text-decoration: underline;">219</span>243 Vulpes vulpes (Linnaeus, 1758)       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>  2<span style="text-decoration: underline;">439</span>449 Sicista betulina (Pallas, 1779)      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>  5<span style="text-decoration: underline;">219</span>833 Micromys minutus (Pallas, 1771)      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>  2<span style="text-decoration: underline;">432</span>439 Myotis daubentonii (Kuhl, 1817)      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>  5<span style="text-decoration: underline;">220</span>126 Capreolus capreolus (Linnaeus, 1758) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>  5<span style="text-decoration: underline;">219</span>303 Vulpes lagopus (Linnaeus, 1758)      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>  2<span style="text-decoration: underline;">437</span>760 Apodemus sylvaticus (Linnaeus, 1758) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>  2<span style="text-decoration: underline;">437</span>756 Apodemus flavicollis (Melchior, 1834)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>  2<span style="text-decoration: underline;">437</span>761 Apodemus agrarius (Pallas, 1771)     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>  7<span style="text-decoration: underline;">429</span>082 Mus musculus Linnaeus, 1758          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 100 more rows</span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
