@@ -37,15 +37,12 @@ calc_map(x, ...)
 
 \item{type}{The indicator to calculate. Supported options include:
 \itemize{
-\item 'hill0', 'hill1', 'hill2': Hill numbers (order 0, 1, and 2).
 \item 'obs_richness': Observed species richness.
 \item 'total_occ': Total number of occurrences.
 \item 'newness': Mean year of occurrence.
 \item 'occ_density': Density of occurrences.
 \item 'williams_evenness', 'pielou_evenness': Evenness measures.
 \item 'ab_rarity', 'area_rarity':  Abundance-based and area-based rarity scores.
-\item 'spec_occ': Species occurrences.
-\item 'tax_distinct': Taxonomic distinctness.
 }}
 
 \item{cell_size}{Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)}
