@@ -801,9 +801,7 @@ plot_map <- function(x,
 #' Can be customized using ggplot2 functions.
 #'
 #' @examples
-#' # Assuming you have an 'indicator_ts' object named 'richness_ts' and want
-#' default colours:
-#' plot_ts(x = example_indicator_ts2, title = "Time Series of Observed Species Richness")
+#' plot_ts(example_indicator_ts2, y_label_default = "test", auto_title = "test")
 #'
 #' @export
 plot_ts <- function(x,
