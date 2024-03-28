@@ -1,8 +1,6 @@
 #' @title Calculate Observed Species Richness Over Space
 #'
-#' @description This function calculates observed species richness over a gridded
-#' map. It prepares the data, creates a grid, calculates the indicator value for
-#' each grid cell, and formats the output into an S3 object.
+#' @description This function calculates observed species richness over a gridded map.
 #'
 #' @param x A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
@@ -16,7 +14,7 @@
 #' the calculated indicator values and metadata.
 #'
 #' @examples
-#' or_map <- obs_richness_map(example_cube_1)
+#' or_map <- obs_richness_map(example_cube_1, level = "country", region = "Denmark")
 #' plot(or_map)
 #'
 #' @export
@@ -31,8 +29,6 @@ obs_richness_map <- function(data, ...) {
 #' @title Calculate Observed Species Richness Over Time
 #'
 #' @description This function calculates observed species richness as a time series.
-#' It prepares the data, creates a grid, calculates the indicator value for
-#' each grid cell, and formats the output into an S3 object.
 #'
 #' @param x A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
@@ -46,7 +42,7 @@ obs_richness_map <- function(data, ...) {
 #' the calculated indicator values and metadata.
 #'
 #' @examples
-#' or_ts <- obs_richness_ts(example_cube_1)
+#' or_ts <- obs_richness_ts(example_cube_1, first_year = 1985)
 #' plot(or_ts)
 #'
 #' @export
@@ -61,8 +57,7 @@ obs_richness_ts <- function(data, ...) {
 #' @title Calculate Total Occurrences Over Space
 #'
 #' @description This function calculates the total number of species occurrence
-#' records over a gridded map. It prepares the data, creates a grid, calculates
-#' the number of records for each grid cell, and formats the output into an S3 object.
+#' records over a gridded map.
 #'
 #' @param x A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
@@ -76,7 +71,7 @@ obs_richness_ts <- function(data, ...) {
 #' the calculated indicator values and metadata.
 #'
 #' @examples
-#' to_map <- total_occ_map(example_cube_1)
+#' to_map <- total_occ_map(example_cube_1, level = "country", region = "Denmark")
 #' plot(to_map)
 #'
 #' @export
@@ -91,8 +86,7 @@ total_occ_map <- function(data, ...) {
 #' @title Calculate Total Occurrences Over Time
 #'
 #' @description This function calculates the total number of species occurrence records
-#' as a time series. It prepares the data, creates a grid, calculates the indicator value for
-#' each grid cell, and formats the output into an S3 object.
+#' as a time series.
 #'
 #' @param x A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
@@ -106,7 +100,7 @@ total_occ_map <- function(data, ...) {
 #' the calculated indicator values and metadata.
 #'
 #' @examples
-#' to_ts <- total_occ_ts(example_cube_1)
+#' to_ts <- total_occ_ts(example_cube_1, first_year = 1985)
 #' plot(to_ts)
 #'
 #' @export
@@ -120,9 +114,7 @@ total_occ_ts <- function(data, ...) {
 
 #' @title Calculate Pielou's Evenness Over Space
 #'
-#' @description This function calculates Pielou's evenness over a gridded
-#' map. It prepares the data, creates a grid, calculates the indicator value for
-#' each grid cell, and formats the output into an S3 object.
+#' @description This function calculates Pielou's evenness over a gridded map.
 #'
 #' @param x A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
@@ -136,7 +128,7 @@ total_occ_ts <- function(data, ...) {
 #' the calculated indicator values and metadata.
 #'
 #' @examples
-#' pe_map <- pielou_evenness_map(example_cube_1)
+#' pe_map <- pielou_evenness_map(example_cube_1, level = "country", region = "Denmark")
 #' plot(pe_map)
 #'
 #' @export
@@ -151,8 +143,6 @@ pielou_evenness_map <- function(data, ...) {
 #' @title Calculate Pielou's Evenness Over Time
 #'
 #' @description This function calculates Pielou's evenness over time.
-#' It prepares the data, creates a grid, calculates the indicator value for
-#' each grid cell, and formats the output into an S3 object.
 #'
 #' @param x A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
@@ -166,7 +156,7 @@ pielou_evenness_map <- function(data, ...) {
 #' the calculated indicator values and metadata.
 #'
 #' @examples
-#' pe_ts <- pielou_evenness_ts(example_cube_1)
+#' pe_ts <- pielou_evenness_ts(example_cube_1, first_year = 1985)
 #' plot(pe_ts)
 #'
 #' @export
@@ -180,9 +170,7 @@ pielou_evenness_ts <- function(data, ...) {
 
 #' @title Calculate Williams' Evenness Over Space
 #'
-#' @description This function calculates Williams' evenness over a gridded
-#' map. It prepares the data, creates a grid, calculates the indicator value for
-#' each grid cell, and formats the output into an S3 object.
+#' @description This function calculates Williams' evenness over a gridded map.
 #'
 #' @param x A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
@@ -196,7 +184,7 @@ pielou_evenness_ts <- function(data, ...) {
 #' the calculated indicator values and metadata.
 #'
 #' @examples
-#' we_map <- williams_evenness_map(example_cube_1)
+#' we_map <- williams_evenness_map(example_cube_1, level = "country", region = "Denmark")
 #' plot(we_map)
 #'
 #' @export
@@ -210,8 +198,6 @@ williams_evenness_map <- function(data, ...) {
 #' @title Calculate Williams' Evenness Over Time
 #'
 #' @description This function calculates Williams' evenness over time.
-#' It prepares the data, creates a grid, calculates the indicator value for
-#' each grid cell, and formats the output into an S3 object.
 #'
 #' @param x A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
@@ -225,7 +211,7 @@ williams_evenness_map <- function(data, ...) {
 #' the calculated indicator values and metadata.
 #'
 #' @examples
-#' we_ts <- williams_evenness_ts(example_cube_1)
+#' we_ts <- williams_evenness_ts(example_cube_1, first_year = 1985)
 #' plot(we_ts)
 #'
 #' @export
@@ -239,9 +225,7 @@ williams_evenness_ts <- function(data, ...) {
 
 #' @title Calculate Area-Based Rarity Over Space
 #'
-#' @description This function calculates area-based rarity over a gridded
-#' map. It prepares the data, creates a grid, calculates the indicator value for
-#' each grid cell, and formats the output into an S3 object.
+#' @description This function calculates area-based rarity over a gridded map.
 #'
 #' @param x A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
@@ -255,7 +239,7 @@ williams_evenness_ts <- function(data, ...) {
 #' the calculated indicator values and metadata.
 #'
 #' @examples
-#' arr_map <- area_rarity_map(example_cube_1)
+#' arr_map <- area_rarity_map(example_cube_1, level = "country", region = "Denmark")
 #' plot(arr_map)
 #'
 #' @export
@@ -270,8 +254,6 @@ area_rarity_map <- function(data, ...) {
 #' @title Calculate Area-Based Rarity Over Time
 #'
 #' @description This function calculates area-based rarity over time.
-#' It prepares the data, creates a grid, calculates the indicator value for
-#' each grid cell, and formats the output into an S3 object.
 #'
 #' @param x A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
@@ -285,7 +267,7 @@ area_rarity_map <- function(data, ...) {
 #' the calculated indicator values and metadata.
 #'
 #' @examples
-#' arr_ts <- area_rarity_ts(example_cube_1)
+#' arr_ts <- area_rarity_ts(example_cube_1, first_year = 1985)
 #' plot(arr_ts)
 #'
 #' @export
@@ -299,9 +281,7 @@ area_rarity_ts <- function(data, ...) {
 
 #' @title Calculate Abundance-Based Rarity Over Space
 #'
-#' @description This function calculates abundance-based rarity over a gridded
-#' map. It prepares the data, creates a grid, calculates the indicator value for
-#' each grid cell, and formats the output into an S3 object.
+#' @description This function calculates abundance-based rarity over a gridded map.
 #'
 #' @param x A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
@@ -315,7 +295,7 @@ area_rarity_ts <- function(data, ...) {
 #' the calculated indicator values and metadata.
 #'
 #' @examples
-#' abr_map <- ab_rarity_map(example_cube_1)
+#' abr_map <- ab_rarity_map(example_cube_1, level = "country", region = "Denmark")
 #' plot(abr_map)
 #'
 #' @export
@@ -330,8 +310,6 @@ ab_rarity_map <- function(data, ...) {
 #' @title Calculate Abundance-Based Rarity Over Time
 #'
 #' @description This function calculates abundance-based rarity over time.
-#' It prepares the data, creates a grid, calculates the indicator value for
-#' each grid cell, and formats the output into an S3 object.
 #'
 #' @param x A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
@@ -345,7 +323,7 @@ ab_rarity_map <- function(data, ...) {
 #' the calculated indicator values and metadata.
 #'
 #' @examples
-#' abr_ts <- ab_rarity_ts(example_cube_1)
+#' abr_ts <- ab_rarity_ts(example_cube_1, first_year = 1985)
 #' plot(abr_ts)
 #'
 #' @export
@@ -360,8 +338,7 @@ ab_rarity_ts <- function(data, ...) {
 #' @title Calculate Estimated Species Richness Over Space
 #'
 #' @description This function uses coverage-based methods to estimate species
-#' richness over a gridded map. It prepares the data, creates a grid, calculates
-#' the indicator value for each grid cell, and formats the output into an S3 object.
+#' richness over a gridded map.
 #'
 #' @param x A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
@@ -375,7 +352,7 @@ ab_rarity_ts <- function(data, ...) {
 #' the calculated indicator values and metadata.
 #'
 #' @examples
-#' h0_map <- hill0_map(example_cube_1)
+#' h0_map <- hill0_map(example_cube_1, level = "country", region = "Denmark")
 #' plot(h0_map)
 #'
 #' @noRd
@@ -393,8 +370,7 @@ hill0_map <- function(data, ...) {
 #' @title Calculate Estimated Species Richness Over Time
 #'
 #' @description This function uses coverage-based methods to estimate species
-#' richness over time. It prepares the data, creates a grid, calculates
-#' the indicator value for each grid cell, and formats the output into an S3 object.
+#' richness over time.
 #'
 #' @param x A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
@@ -408,7 +384,7 @@ hill0_map <- function(data, ...) {
 #' the calculated indicator values and metadata.
 #'
 #' @examples
-#' h0_ts <- hill0_ts(example_cube_1)
+#' h0_ts <- hill0_ts(example_cube_1, first_year = 1985)
 #' plot(h0_ts)
 #'
 #' @noRd
@@ -426,8 +402,7 @@ hil0_ts <- function(data, ...) {
 #' @title Calculate Hill-Shannon Diversity Over Space
 #'
 #' @description This function uses coverage-based methods to estimate Hill-Shannon Diversity
-#' over a gridded map. It prepares the data, creates a grid, calculates the indicator value
-#' for each grid cell, and formats the output into an S3 object.
+#' over a gridded map.
 #'
 #' @param x A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
@@ -441,7 +416,7 @@ hil0_ts <- function(data, ...) {
 #' the calculated indicator values and metadata.
 #'
 #' @examples
-#' h1_map <- hill1_map(example_cube_1)
+#' h1_map <- hill1_map(example_cube_1, level = "country", region = "Denmark")
 #' plot(h1_map)
 #'
 #' @noRd
@@ -459,8 +434,7 @@ hill1_map <- function(data, ...) {
 #' @title Calculate Hill-Shannon Diversity Over Time
 #'
 #' @description This function uses coverage-based methods to estimate Hill-Shannon Diversity
-#' over time. It prepares the data, creates a grid, calculates the indicator value for each
-#' grid cell, and formats the output into an S3 object.
+#' over time.
 #'
 #' @param x A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
@@ -474,7 +448,7 @@ hill1_map <- function(data, ...) {
 #' the calculated indicator values and metadata.
 #'
 #' @examples
-#' h1_ts <- hill1_ts(example_cube_1)
+#' h1_ts <- hill1_ts(example_cube_1, first_year = 1985)
 #' plot(h1_ts)
 #'
 #' @noRd
@@ -492,8 +466,7 @@ hill1_ts <- function(data, ...) {
 #' @title Calculate Hill-Simpson Diversity Over Space
 #'
 #' @description This function uses coverage-based methods to estimate Hill-Simpson Diversity
-#' over a gridded map. It prepares the data, creates a grid, calculates the indicator value
-#' for each grid cell, and formats the output into an S3 object.
+#' over a gridded map.
 #'
 #' @param x A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
@@ -507,7 +480,7 @@ hill1_ts <- function(data, ...) {
 #' the calculated indicator values and metadata.
 #'
 #' @examples
-#' h2_map <- hill2_map(example_cube_1)
+#' h2_map <- hill2_map(example_cube_1, level = "country", region = "Denmark")
 #' plot(h2_map)
 #'
 #' @noRd
@@ -524,8 +497,7 @@ hill2_map <- function(data, ...) {
 #' @title Calculate Hill-Simpson Diversity Over Time
 #'
 #' @description This function uses coverage-based methods to estimate Hill-Simpson Diversity
-#' over time. It prepares the data, creates a grid, calculates the indicator value for each
-#' grid cell, and formats the output into an S3 object.
+#' over time.
 #'
 #' @param x A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
@@ -539,7 +511,7 @@ hill2_map <- function(data, ...) {
 #' the calculated indicator values and metadata.
 #'
 #' @examples
-#' h2_ts <- hill2_ts(example_cube_1)
+#' h2_ts <- hill2_ts(example_cube_1, first_year = 1985)
 #' plot(h2_ts)
 #'
 #' @noRd
@@ -557,8 +529,6 @@ hill2_ts <- function(data, ...) {
 #' @title Calculate Cumulative Species Richness
 #'
 #' @description This function calculates cumulative species richness as a time series.
-#' It prepares the data, creates a grid, calculates the indicator value for each grid cell,
-#' and formats the output into an S3 object.
 #'
 #' @param x A data cube object (class 'processed_cube').
 #' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
@@ -571,7 +541,7 @@ hill2_ts <- function(data, ...) {
 #' the calculated indicator values and metadata.
 #'
 #' @examples
-#' cr_ts <- cum_richness_ts(example_cube_1)
+#' cr_ts <- cum_richness_ts(example_cube_1, first_year = 1985)
 #' plot(cr_ts)
 #'
 #' @export
@@ -586,9 +556,7 @@ cum_richness_ts <- function(data, ...) {
 #' @title Calculate Mean Year of Occurrence Over Space
 #'
 #' @description This function estimates the relative newness of records in a data cube
-#' by calculating the mean year of occurrence over a gridded map. It prepares the data,
-#' creates a grid, calculates the indicator value for each grid cell, and formats the
-#' output into an S3 object.
+#' by calculating the mean year of occurrence over a gridded map.
 #'
 #' @param x A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
@@ -602,7 +570,7 @@ cum_richness_ts <- function(data, ...) {
 #' the calculated indicator values and metadata.
 #'
 #' @examples
-#' n_map <- newness_map(example_cube_1)
+#' n_map <- newness_map(example_cube_1, level = "country", region = "Denmark")
 #' plot(n_map)
 #'
 #' @export
@@ -618,8 +586,6 @@ newness_map <- function(data, ...) {
 #'
 #' @description This function estimates the change in relative newness of records
 #' in a data cube over time by calculating the mean year of occurrence as a time series.
-#' It prepares the data, creates a grid, calculates the indicator value for each
-#' grid cell, and formats the output into an S3 object.
 #'
 #' @param x A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
@@ -633,7 +599,7 @@ newness_map <- function(data, ...) {
 #' the calculated indicator values and metadata.
 #'
 #' @examples
-#' n_ts <- newness_ts(example_cube_1)
+#' n_ts <- newness_ts(example_cube_1, first_year = 1985)
 #' plot(n_ts)
 #'
 #' @export
@@ -648,8 +614,6 @@ newness_ts <- function(data, ...) {
 #' @title Calculate Occurrence Density Over Space
 #'
 #' @description This function calculates the density of records over a gridded map.
-#' It prepares the data, creates a grid, calculates the indicator value for each grid cell,
-#' and formats the output into an S3 object.
 #'
 #' @param x A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
@@ -663,7 +627,7 @@ newness_ts <- function(data, ...) {
 #' the calculated indicator values and metadata.
 #'
 #' @examples
-#' od_map <- occ_density_map(example_cube_1)
+#' od_map <- occ_density_map(example_cube_1, level = "country", region = "Denmark")
 #' plot(od_map)
 #'
 #' @export
@@ -678,8 +642,6 @@ occ_density_map <- function(data, ...) {
 #' @title Calculate Occurrence Density Over Time
 #'
 #' @description This function calculates density of records as a time series.
-#' It prepares the data, creates a grid, calculates the indicator value for each
-#' grid cell, and formats the output into an S3 object.
 #'
 #' @param x A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
@@ -693,7 +655,7 @@ occ_density_map <- function(data, ...) {
 #' the calculated indicator values and metadata.
 #'
 #' @examples
-#' od_ts <- occ_density_ts(example_cube_1)
+#' od_ts <- occ_density_ts(example_cube_1, first_year = 1985)
 #' plot(od_ts)
 #'
 #' @export
