@@ -174,25 +174,7 @@ plot.occ_by_type <- function(x,
     trend_plot
 }
 
-#' @title Plot Cumulative Species Richness
-#'
-#' @description  Plots cumulative species richness data as a time series
-#'   using an 'indicator_ts' object.
-#'
-#' @param x An object containing cumulative species richness data. Must be of
-#'   class 'cum_richness' and an 'indicator_ts' object.
-#' @param auccolour (Optional). Colour for the area under the curve of a
-#'   cumulative richness plot. Default is orange.
-#' @param ... Additional arguments passed to the internal plotting function
-#'   (`plot_ts`). See its documentation for details.
-#'
-#' @return A ggplot object representing a time series plot of cumulative
-#'    species richness.
-#'
-#' @examples
-#' # Assuming you have an 'indicator_ts' object named 'cum_richness_ts'
-#' plot.cum_richness(cum_richness_ts)
-#'
+
 #' @export
 plot.cum_richness <- function(x,
                               auccolour = NULL,
@@ -226,28 +208,7 @@ plot.cum_richness <- function(x,
 
 }
 
-#' @title Plot Pielou's Evenness
-#'
-#' @description  Plots evenness data,
-#'    either as a time series ('indicator_ts' object)  or as a spatial map
-#'    ('indicator_map' object).
-#'
-#' @param x An object containing evenness data. Must be of class 'pielou_evenness',
-#'   either an 'indicator_ts' or 'indicator_map' object.
-#' @param ... Additional arguments passed to the internal plotting functions
-#'   (`plot_ts` or `plot_map`). See their documentation for details.
-#'
-#' @return A ggplot object representing either a time series plot or a map,
-#'   depending on the class of the input object `x`.
-#'
-#' @examples
-#' # Assuming objects 'evenness_ts' (indicator_ts) and 'evenness_map' (indicator_map)
-#' # Time series plot:
-#' plot.evenness(evenness_ts)
-#'
-#' # Map visualization:
-#' plot.evenness(evenness_map)
-#'
+
 #' @export
 plot.pielou_evenness <- function(x, ...){
 
@@ -278,28 +239,7 @@ plot.pielou_evenness <- function(x, ...){
   }
 }
 
-#' @title Plot Williams' Evenness
-#'
-#' @description  Plots evenness data,
-#'    either as a time series ('indicator_ts' object)  or as a spatial map
-#'    ('indicator_map' object).
-#'
-#' @param x An object containing evenness data. Must be of class 'evenness',
-#'   either an 'indicator_ts' or 'indicator_map' object.
-#' @param ... Additional arguments passed to the internal plotting functions
-#'   (`plot_ts` or `plot_map`). See their documentation for details.
-#'
-#' @return A ggplot object representing either a time series plot or a map,
-#'   depending on the class of the input object `x`.
-#'
-#' @examples
-#' # Assuming objects 'evenness_ts' (indicator_ts) and 'evenness_map' (indicator_map)
-#' # Time series plot:
-#' plot.evenness(evenness_ts)
-#'
-#' # Map visualization:
-#' plot.evenness(evenness_map)
-#'
+
 #' @export
 plot.williams_evenness <- function(x, ...){
 
@@ -330,27 +270,7 @@ plot.williams_evenness <- function(x, ...){
   }
 }
 
-#' @title Plot Taxonomic Distinctness
-#'
-#' @description  Plots taxonomic distinctness data, either as a time series
-#'   ('indicator_ts' object)  or as a spatial map ('indicator_map' object).
-#'
-#' @param x An object containing taxonomic distinctness data. Must be of
-#'   class 'tax_distinct', either an 'indicator_ts' or 'indicator_map' object.
-#' @param ... Additional arguments passed to the internal plotting functions
-#'   (`plot_ts` or `plot_map`). See their documentation for details.
-#'
-#' @return A ggplot object representing either a time series plot or a map,
-#'   depending on the class of the input object `x`.
-#'
-#' @examples
-#' # Assuming objects 'tax_distinct_ts' (indicator_ts) and 'tax_distinct_map' (indicator_map)
-#' # Time series plot:
-#' plot.tax_distinct(tax_distinct_ts)
-#'
-#' # Map visualization:
-#' plot.tax_distinct(tax_distinct_map)
-#'
+
 #' @noRd
 plot.tax_distinct <- function(x, ...){
 
@@ -381,27 +301,7 @@ plot.tax_distinct <- function(x, ...){
   }
 }
 
-#' @title Plot Occurrence Density
-#'
-#' @description  Plots occurrence density data, either as a time series
-#'   ('indicator_ts' object)  or as a spatial map ('indicator_map' object).
-#'
-#' @param x An object containing occurrence density data. Must be of
-#'   class 'density', either an 'indicator_ts' or 'indicator_map' object.
-#' @param ... Additional arguments passed to the internal plotting functions
-#'   (`plot_ts` or `plot_map`). See their documentation for details.
-#'
-#' @return A ggplot object representing either a time series plot or a map,
-#'   depending on the class of the input object `x`.
-#'
-#' @examples
-#' # Assuming objects 'density_ts' (indicator_ts) and 'density_map' (indicator_map)
-#' # Time series plot:
-#' plot.density(density_ts)
-#'
-#' # Map visualization:
-#' plot.density(density_map)
-#'
+
 #' @export
 plot.occ_density <- function(x, ...){
 
@@ -432,22 +332,6 @@ plot.occ_density <- function(x, ...){
   }
 }
 
-#' @title Plot Mean Year of Occurrence
-#'
-#' @description  Creates a spatial map visualization of the mean year of
-#'    species occurrences.
-#'
-#' @param x An object containing mean year of occurrence associated with map
-#'   grid cells. Must be of class 'newness' and an 'indicator_map' object.
-#' @param ... Additional arguments passed to the internal plotting function
-#'   (`plot_map`). See its documentation for details.
-#'
-#' @return A ggplot object representing a map of the mean year of occurrences.
-#'
-#' @examples
-#' # Assuming you have an 'indicator_map' object named 'newness_map'
-#' plot.newness(newness_map)
-#'
 #' @export
 plot.newness <- function(x, ...){
 
@@ -478,27 +362,7 @@ plot.newness <- function(x, ...){
   }
 }
 
-#' @title Plot Total Occurrences
-#'
-#' @description  Plots summed occurrence data, either as a time series
-#'   ('indicator_ts' object)  or as a spatial map ('indicator_map' object).
-#'
-#' @param x An object containing summed occurrence data. Must be of
-#'   class 'total_occ', either an 'indicator_ts' or 'indicator_map' object.
-#' @param ... Additional arguments passed to the internal plotting functions
-#'   (`plot_ts` or `plot_map`). See their documentation for details.
-#'
-#' @return A ggplot object representing either a time series plot or a map,
-#'   depending on the class of the input object `x`.
-#'
-#' @examples
-#' # Assuming you have objects 'total_occ_ts' (indicator_ts) and 'total_occ_map' (indicator_map)
-#' # Time series plot:
-#' plot.total_occ(total_occ_ts)
-#'
-#' # Map visualization:
-#' plot.total_occ(total_occ_map)
-#'
+
 #' @export
 plot.total_occ <- function(x, ...){
 
@@ -529,27 +393,6 @@ plot.total_occ <- function(x, ...){
   }
 }
 
-#' @title Plot Area-Based Rarity
-#'
-#' @description  Plots area-based rarity data, either as a time series
-#'   ('indicator_ts' object)  or as a spatial map ('indicator_map' object).
-#'
-#' @param x An object containing area-based rarity data. Must be of
-#'   class 'area_rarity', either an 'indicator_ts' or 'indicator_map' object.
-#' @param ... Additional arguments passed to the internal plotting functions
-#'   (`plot_ts` or `plot_map`). See their documentation for details.
-#'
-#' @return A ggplot object representing either a time series plot or a map,
-#'   depending on the class of the input object `x`.
-#'
-#' @examples
-#' # Assuming you have objects 'area_rarity_ts' (indicator_ts) and 'area_rarity_map' (indicator_map)
-#' # Time series plot:
-#' plot.area_rarity(area_rarity_ts)
-#'
-#' # Map visualization:
-#' plot.area_rarity(area_rarity_map)
-#'
 #' @export
 plot.area_rarity <- function(x, ...){
 
@@ -580,27 +423,6 @@ plot.area_rarity <- function(x, ...){
   }
 }
 
-#' @title Plot Abundance-Based Rarity
-#'
-#' @description  Plots abundance-based rarity data, either as a time series
-#'   ('indicator_ts' object)  or as a spatial map ('indicator_map' object).
-#'
-#' @param x An object containing abundance-based rarity data. Must be of
-#'   class 'ab_rarity', either an 'indicator_ts' or 'indicator_map' object.
-#' @param ... Additional arguments passed to the internal plotting functions
-#'   (`plot_ts` or `plot_map`). See their documentation for details.
-#'
-#' @return A ggplot object representing either a time series plot or a map,
-#'   depending on the class of the input object `x`.
-#'
-#' @examples
-#' # Assuming you have objects 'ab_rarity_ts' (indicator_ts) and 'ab_rarity_map' (indicator_map)
-#' # Time series plot:
-#' plot.ab_rarity(ab_rarity_ts)
-#'
-#' # Map visualization:
-#' plot.ab_rarity(ab_rarity_map)
-#'
 #' @export
 plot.ab_rarity <- function(x, ...){
 
@@ -631,28 +453,6 @@ plot.ab_rarity <- function(x, ...){
   }
 }
 
-#' @title Plot Rarefied Species Richness
-#'
-#' @description  Plots rarefied species richness data (estimated by sample
-#'   size-based rarefaction), either as a time series ('indicator_ts' object)
-#'   or as a spatial map ('indicator_map' object).
-#'
-#' @param x An object containing rarefied species richness data. Must be of
-#'   class 'rarefied', either an 'indicator_ts' or 'indicator_map' object.
-#' @param ... Additional arguments passed to the internal plotting functions
-#'   (`plot_ts` or `plot_map`). See their documentation for details.
-#'
-#' @return A ggplot object representing either a time series plot or a map,
-#'   depending on the class of the input object `x`.
-#'
-#' @examples
-#' # Assuming you have objects 'rarefied_ts' (indicator_ts) and 'rarefied_map' (indicator_map)
-#' # Time series plot:
-#' plot.rarefied(rarefied_ts)
-#'
-#' # Map visualization:
-#' plot.rarefied(rarefied_map)
-#'
 #' @noRd
 plot.rarefied <- function(x, ...){
 
@@ -683,28 +483,6 @@ plot.rarefied <- function(x, ...){
   }
 }
 
-#' @title Plot Hill-Simpson Diversity Index (Hill Number 2)
-#'
-#' @description  Plots Hill-Simpson diversity index data (estimated by coverage-based
-#'   rarefaction), either as a time series ('indicator_ts' object)  or as a
-#'   spatial map ('indicator_map' object).
-#'
-#' @param x An object containing Hill-Simpson diversity index (Hill number 2) data.
-#'   Must be of class 'hill2', either an 'indicator_ts' or 'indicator_map' object.
-#' @param ... Additional arguments passed to the internal plotting functions
-#'   (`plot_ts` or `plot_map`). See their documentation for details.
-#'
-#' @return A ggplot object representing either a time series plot or a map,
-#'   depending on the class of the input object `x`.
-#'
-#' @examples
-#' # Assuming you have objects 'hill2_ts' (indicator_ts) and 'hill2_map' (indicator_map)
-#' # Time series plot:
-#' plot.hill2(hill2_ts)
-#'
-#' # Map visualization:
-#' plot.hill2(hill2_map)
-#'
 #' @noRd
 plot.hill2 <- function(x, ...){
 
@@ -735,28 +513,6 @@ plot.hill2 <- function(x, ...){
   }
 }
 
-#' @title Plot Hill-Shannon Diversity Index (Hill Number 1)
-#'
-#' @description  Plots Hill-Shannon diversity index data (estimated by coverage-based
-#'   rarefaction), either as a time series ('indicator_ts' object)  or as a
-#'   spatial map ('indicator_map' object).
-#'
-#' @param x An object containing Hill-Shannon diversity index (Hill number 1) data.
-#'   Must be of class 'hill1', either an 'indicator_ts' or 'indicator_map' object.
-#' @param ... Additional arguments passed to the internal plotting functions
-#'   (`plot_ts` or `plot_map`). See their documentation for details.
-#'
-#' @return A ggplot object representing either a time series plot or a map,
-#'   depending on the class of the input object `x`.
-#'
-#' @examples
-#' # Assuming you have objects 'hill1_ts' (indicator_ts) and 'hill1_map' (indicator_map)
-#' # Time series plot:
-#' plot.hill1(hill1_ts)
-#'
-#' # Map visualization:
-#' plot.hill1(hill1_map)
-#'
 #' @noRd
 plot.hill1 <- function(x, ...){
 
@@ -787,28 +543,6 @@ plot.hill1 <- function(x, ...){
   }
 }
 
-#' @title Plot Species Richness Index (Hill Number 0)
-#'
-#' @description  Plots species richness index data (estimated by coverage-based
-#'   rarefaction), either as a time series ('indicator_ts' object)  or as a
-#'   spatial map ('indicator_map' object).
-#'
-#' @param x An object containing species richness index (Hill number 0) data.
-#'   Must be of class 'hill0', either an 'indicator_ts' or 'indicator_map' object.
-#' @param ... Additional arguments passed to the internal plotting functions
-#'   (`plot_ts` or `plot_map`). See their documentation for details.
-#'
-#' @return A ggplot object representing either a time series plot or a map,
-#'   depending on the class of the input object `x`.
-#'
-#' @examples
-#' # Assuming you have objects 'hill0_ts' (indicator_ts) and 'hill0_map' (indicator_map)
-#' # Time series plot:
-#' plot.hill0(hill0_ts)
-#'
-#' # Map visualization:
-#' plot.hill0(hill0_map)
-#'
 #' @noRd
 plot.hill0 <- function(x, ...){
 
@@ -839,28 +573,6 @@ plot.hill0 <- function(x, ...){
   }
 }
 
-#' @title Plot Observed Species Richness
-#'
-#' @description  Plots observed species richness data, either as a time series
-#'    ('indicator_ts' object)  or as a spatial map ('indicator_map' object).
-#'
-#' @param x An object containing observed species richness data. Must be of
-#'   class 'obs_richness', either an 'indicator_ts' or 'indicator_map' object.
-#'
-#' @param ... Additional arguments passed to the internal plotting functions
-#'   (`plot_ts` or `plot_map`). See their documentation for details.
-#'
-#' @return A ggplot object representing either a time series plot or a map,
-#'   depending on the class of the input object `x`.
-#'
-#' @examples
-#' # Assuming you have objects 'richness_ts' (indicator_ts) and 'richness_map' (indicator_map)
-#' # Time series plot:
-#' plot.obs_richness(richness_ts)
-#'
-#' # Map visualization:
-#' plot.obs_richness(richness_map)
-#'
 #' @export
 plot.obs_richness <- function(x, ...){
 
@@ -922,8 +634,7 @@ plot.obs_richness <- function(x, ...){
 #' Can be customized using ggplot2 functions.
 #'
 #' @examples
-#' # Assuming you have an 'indicator_map' object named 'richness_map':
-#' plot_map(x = richness_map, title = "Map of Species Richness")
+#' plot_map(x = example_indicator_map1, title = "Map of Species Evenness in Denmark")
 #'
 #' @export
 plot_map <- function(x,
@@ -1092,11 +803,11 @@ plot_map <- function(x,
 #' @examples
 #' # Assuming you have an 'indicator_ts' object named 'richness_ts' and want
 #' default colours:
-#' plot_ts(x = richness_ts, title = "Time Series of Species Richness")
+#' plot_ts(x = example_indicator_ts1, title = "Time Series of Observed Species Richness")
 #'
 #' # For custom colors:
-#' plot_ts(x = richness_ts,
-#'         title = "Time Series of Species Richness",
+#' plot_ts(x = example_indicator_ts1,
+#'         title = "Time Series of Observed Species Richness",
 #'         linecolour = "thistle",
 #'         trendlinecolour = "forestgreen",
 #'         envelopecolour = "lightgreen")
