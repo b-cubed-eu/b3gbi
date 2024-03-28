@@ -6,10 +6,10 @@
 \usage{
 process_cube(
   cube_name,
-  tax_info,
+  tax_info = NULL,
   datasets_info = NULL,
-  first_year = NA,
-  final_year = NA
+  first_year = NULL,
+  final_year = NULL
 )
 }
 \arguments{
