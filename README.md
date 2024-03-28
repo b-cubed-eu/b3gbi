@@ -57,10 +57,8 @@ of species richness for a data cube containing GBIF occurrence data on
 amphibians in Europe:
 
 ``` r
-# Load necessary libraries
+# Load package
 library(b3gbi)
-library(data.table)
-library(ggplot2)
 
 # Load GBIF data cube
 cube_name <- "data/europe_species_cube.csv"
