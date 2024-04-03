@@ -11,7 +11,10 @@
 
 ui <- fluidPage(
   # input = text fields, action buttons
-  
+
+  # Application title
+  titlePanel("B-Cubed: Biodiversity Indicators"),
+
   sidebarLayout(
     sidebarPanel(
       # input$dataCube
@@ -21,16 +24,16 @@ ui <- fluidPage(
       # input$taxaFile
       fileInput(inputId = "taxaFile", label = "Upload the taxa information"),
       # shinyWidgetsGallery()
-      
+
     ),
-    # output = tables, plots, texts  
+    # output = tables, plots, texts
     mainPanel(
       tabsetPanel(
         tabPanel(title = "Metadata",
                  ## output$metadata
                  textOutput("metadata")
         ),
-        
+
         tabPanel(title = "Plot",
                  ## output$plot
                  plotOutput("plot"),
@@ -45,48 +48,50 @@ ui <- fluidPage(
         )
       ),
     )
-  )  
-  
+  )
+
   # shinyWidgetsGallery()
-  
-  
-  
+
+
+
 )
 
 server <-function(input, output){
-  
+
+  options(shiny.maxRequestSize=30*1024^2)
+
   dataCube <- reactive({
     # Load GBIF data cube
     # cube_name <- "data/europe_species_cube.csv"
     cube_name <- input$dataCube$datapath
-    
+
     # Load taxonomic info for cube
     # tax_info <- "data/europe_species_info.csv"
     tax_info <- input$taxaFile$datapath
-    
+
     # Prepare cube
     insect_data <- process_cube(cube_name, tax_info)
-    
+
     insect_data
   })
-  
+
   output$table <- renderDT({
     dataCube()$data
   })
-  
-  
+
+
   output$metadata <- renderText(
     paste("Hello,", input$metadata)
   )
-  
+
   output$plot <- renderPlot({
     # Calculate diversity metric
     map_obs_rich_insects <- obs_richness_map(dataCube())
-    
+
     # Plot diversity metric
-    plot(map_obs_rich_insects, title = "Observed Species Richness: Insects in Europe") 
+    plot(map_obs_rich_insects, title = "Observed Species Richness: Insects in Europe")
   })
-  
+
 }
 
 shinyApp(ui = ui, server = server)
