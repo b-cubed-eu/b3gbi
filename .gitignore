@@ -20,3 +20,6 @@ Virtual_species_SDM.R
 vs_script.R
 .gif
 .yml
+
+# Mac OS X
+.DS_Store

@@ -1,0 +1,31 @@
+body {
+  font-size: 16px;
+  letter-spacing: 0px;
+}
+
+a,
+a:hover {
+  color: #6cddb4;
+}
+
+/* Fix for https://github.com/r-lib/pkgdown/issues/2387 */
+.navbar-dark .navbar-brand {
+  color: #ffffff;
+}
+.navbar-dark .text-muted {
+  color: #6cddb4!important;
+}
+.navbar-dark input[type="search"] {
+  background-color: #ffffff;
+  color: #444444;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+  color: #ffffff;
+}
+.navbar-dark .navbar-nav .nav-link:hover,
+.navbar-dark .navbar-nav .active .nav-link,
+.navbar-dark .navbar-nav .active .nav-link:hover {
+  background-color: #ffffff!important;
+  color: #005856!important;
+}

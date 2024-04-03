@@ -1,13 +1,16 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# b3gbi <img src="man/figures/logo.png" align="right" height="139" alt="" />
+# b3gbi <a href="https://shawndove.github.io/b3gbi/"><img src="man/figures/logo.png" align="right" height="120" alt="b3gbi website"/></a>
 
 <!-- badges: start -->
 
-[![Development Status:: In
-Development](https://img.shields.io/badge/Status-In%20Development-yellow.svg)](https://github.com/your_github_username/b3gbi)
-
+[![CRAN
+status](https://www.r-pkg.org/badges/version/b3gbi)](https://CRAN.R-project.org/package=b3gbi)
+[![R-CMD-check](https://github.com/shawndove/b3gbi/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/shawndove/b3gbi/actions/workflows/R-CMD-check.yaml)
+[![codecov](https://codecov.io/gh/shawndove/b3gbi/branch/main/graph/badge.svg)](https://app.codecov.io/gh/shawndove/b3gbi/)
+[![repo
+status](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
 <!-- badges: end -->
 
 Analyze biodiversity trends and spatial patterns from GBIF data cubes,
