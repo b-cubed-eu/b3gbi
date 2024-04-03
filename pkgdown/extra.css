@@ -1,0 +1,27 @@
+body {
+  font-size: 16px;
+  letter-spacing: 0px;
+}
+
+a,
+a:hover {
+  color: #6cddb4;
+}
+
+/* Fix for https://github.com/r-lib/pkgdown/issues/2387 */
+.navbar-light .navbar-brand {
+  color: #ffffff;
+}
+.navbar-light .text-muted {
+  color: #6cddb4!important;
+}
+
+.navbar-light .navbar-nav .nav-link {
+  color: #ffffff;
+}
+.navbar-light .navbar-nav .nav-link:hover,
+.navbar-light .navbar-nav .active .nav-link,
+.navbar-light .navbar-nav .active .nav-link:hover {
+  background-color: #ffffff!important;
+  color: #005856!important;
+}
