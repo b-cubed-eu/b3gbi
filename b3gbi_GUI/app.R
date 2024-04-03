@@ -43,6 +43,12 @@ ui <- fluidPage(
                      br(),
                      DT::dataTableOutput("table"),
 
+            ),
+            tabPanel("Plot",
+                     br(),
+                     br(),
+                     plotOutput("plot"),
+
             )
           )
         )
@@ -53,7 +59,10 @@ ui <- fluidPage(
 server <- function(input, output) {
   options(shiny.maxRequestSize=30*1024^2)
 
- # cube_object = process_cube(input$cube_file$datapath, input$species_info$datapath)
+  cube_object = reactive({
+    process_cube(input$cube_file$datapath, input$species_info$datapath)
+    map_obs_rich_insects <- obs_richness_map(insect_data)
+  })
 
   input_file <- reactive({
     if (is.null(input$cube_file)) {
@@ -65,8 +74,7 @@ server <- function(input, output) {
     }
 
     # actually read the file
-    process_cube(input$cube_file$datapath, input$species_info$datapath)
-
+    insect_data = process_cube(input$cube_file$datapath, input$species_info$datapath)
   })
 
   output$metadata <- renderText({
@@ -93,6 +101,11 @@ server <- function(input, output) {
     data <- input_file()
 
     data$data
+  })
+
+  output$plot <- renderPlot({
+    map_obs_rich_insects <- obs_richness_map(input_file())
+    plot(map_obs_rich_insects, title = "Observed Species Richness: Insects in Europe")
   })
 }
 
