@@ -17,3 +17,7 @@
 Provides a summary representation of an indicator_ts object,
 designed for user-friendly display in the console.
 }
+\examples{
+print(example_indicator_ts1)
+
+}

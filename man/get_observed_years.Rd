@@ -19,10 +19,9 @@ for each year (\code{TRUE} if present, \code{FALSE} if absent).
 }
 }
 \description{
-Takes an "indicator_map" object and determines the years for which
-observation data exists.
+Takes an "indicator_map",  "indicator_ts", or "processed_cube" object and
+determines the years for which observation data exists.
 }
 \examples{
-# Assuming you have an 'indicator_map' object named 'my_indicator'
-observed_data <- get_observed_years(my_indicator)
+get_observed_years(example_indicator_map1)
 }

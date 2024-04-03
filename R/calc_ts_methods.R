@@ -170,8 +170,10 @@ calc_ts.obs_richness <- function(x, ...) {
 
   # Calculate observed species richness by year
   x <-
-    x %>% dplyr::summarise(diversity_val = n_distinct(scientificName),
-                              .by = "year")
+    x %>%
+    dplyr::summarise(diversity_val = n_distinct(scientificName),
+                              .by = "year") %>%
+    dplyr::arrange(year)
 
 }
 

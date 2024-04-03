@@ -69,7 +69,6 @@ Creates a map visualization of a calculated biodiversity indicator,
 providing customization options.
 }
 \examples{
-# Assuming you have an 'indicator_map' object named 'richness_map':
-plot_map(x = richness_map, title = "Map of Species Richness")
+plot_map(x = example_indicator_map1, title = "Map of Species Evenness in Denmark")
 
 }

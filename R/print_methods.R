@@ -8,6 +8,9 @@
 #' @param n Integer specifying the number of rows of data to display.
 #' @param ... Additional arguments.
 #'
+#' @examples
+#' print(example_indicator_ts1)
+#'
 #' @export
 print.indicator_ts <- function(x, n = 10, ...) {
   cat("Biodiversity indicator time series\n\n")
@@ -32,6 +35,10 @@ print.indicator_ts <- function(x, n = 10, ...) {
 #' @param x An indicator_map object.
 #' @param n Integer specifying the number of rows of data to display.
 #' @param ... Additional arguments.
+#'
+#' @examples
+#' library(sf)
+#' print(example_indicator_map1)
 #'
 #' @export
 print.indicator_map <- function(x, n = 10, ...) {
@@ -67,6 +74,9 @@ print.indicator_map <- function(x, n = 10, ...) {
 #' @param x A processed_cube object.
 #' @param n Integer specifying the number of rows of cube data to display.
 #' @param ... Additional arguments.
+#'
+#' @examples
+#' print(example_cube_1)
 #'
 #' @export
 print.processed_cube <- function(x, n = 10, ...) {

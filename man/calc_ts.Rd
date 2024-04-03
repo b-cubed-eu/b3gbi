@@ -40,7 +40,6 @@ calc_ts(x, ...)
 
 \item{type}{The indicator to calculate. Supported options include:
 \itemize{
-\item 'hill0', 'hill1', 'hill2': Hill numbers (order 0, 1, and 2).
 \item 'obs_richness': Observed species richness.
 \item 'cum_richness': Cumulative species richness.
 \item 'total_occ': Total number of occurrences.
@@ -48,8 +47,6 @@ calc_ts(x, ...)
 \item 'occ_density': Density of occurrences.
 \item 'williams_evenness', 'pielou_evenness': Evenness measures.
 \item 'ab_rarity', 'area_rarity':  Abundance-based and area-based rarity scores.
-\item 'spec_occ': Species occurrences.
-\item 'tax_distinct': Taxonomic distinctness.
 }}
 
 \item{cell_size}{Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)}
@@ -65,7 +62,7 @@ An S3 object of the class 'indicator_ts' containing the calculated indicator val
 This function provides a flexible framework for calculating various biodiversity
 indicators over time. It prepares the data, creates a grid, calculates indicators,
 and formats the output into an appropriate S3 object ('indicator_ts').
-Specific implementations for different indicator types aree provided using the
+Specific implementations for different indicator types are provided using the
 appropriate wrappers.
 }
 \examples{

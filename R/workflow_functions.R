@@ -17,7 +17,7 @@
 #' germany_map <- sf::st_transform(germany_map, crs = "EPSG:3035")
 #' # Calculate a 100km x 100km grid and plot it
 #' germany_grid <- create_grid(germany_map, cell_size = 10)
-#' plot(Germany_grid)
+#' plot(germany_grid)
 #' @noRd
 create_grid <- function(map_data,
                         level,
@@ -170,28 +170,23 @@ prepare_spatial_data <- function(data, grid, cube_crs) {
 #'
 #' @param x A data cube object ('processed_cube').
 #' @param type The indicator to calculate. Supported options include:
-#'   * 'hill0', 'hill1', 'hill2': Hill numbers (order 0, 1, and 2).
 #'   * 'obs_richness': Observed species richness.
 #'   * 'total_occ': Total number of occurrences.
 #'   * 'newness': Mean year of occurrence.
 #'   * 'density': Density of occurrences.
 #'   * 'williams_evenness', 'pielou_evenness': Evenness measures.
 #'   * 'ab_rarity', 'area_rarity':  Abundance-based and area-based rarity scores.
-#'   * 'spec_occ': Species occurrences.
-#'   * 'tax_distinct': Taxonomic distinctness.
+#' @param dim_type Dimension to calculate indicator over (time: 'ts', or space: 'map')
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
 #' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
 #' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
 #' @param ... Additional arguments passed to specific indicator calculation functions.
 #'
-#' @return An S3 object of the appropriate class containing the calculated indicator values and metadata:
-#'   * 'indicator_map' for real-world observational data calculated over a grid (map)
-#'   * 'indicator_ts' for real-world observational data calculated over time (time series)
-#'   * 'virtual_indicator_map' for virtual species data calculated over a grid (map).
+#' @return An S3 object containing the calculated indicator values and metadata.
 #'
 #' @examples
-#' # Assuming 'my_data_cube' is a 'processed_cube' object
-#' diversity_map <- calculate_indicator(my_data_cube, type = "obs_richness", level = "continent", region = "Africa")
+#' diversity_map <- compute_indicator_workflow(example_cube_2, type = "obs_richness_map", level = "continent", region = "Europe")
+#' diversity_map
 #'
 #' @noRd
 compute_indicator_workflow <- function(x,
@@ -201,6 +196,8 @@ compute_indicator_workflow <- function(x,
                                        level = c("continent", "country", "world"),
                                        region = "Europe",
                                        cube_crs = NULL,
+                                       first_year = NULL,
+                                       last_year = NULL,
                                        ...) {
 
   stopifnot_error("Object class not recognized.",
@@ -213,12 +210,22 @@ compute_indicator_workflow <- function(x,
   dim_type <- match.arg(dim_type)
   level <- match.arg(level)
 
-  data <- x$data
+  if (!is.null(first_year)) {
+    first_year <- ifelse(first_year > x$first_year, first_year, x$first_year)
+  } else {
+    first_year <- x$first_year
+   }
+
+  if (!is.null(last_year)) {
+    last_year <- ifelse(last_year < x$last_year, last_year, x$last_year)
+  } else {
+    last_year <- x$last_year
+  }
+
+  data <- x$data[(x$data$year >= first_year) & (x$data$year <= last_year),]
 
   # Collect information to add to final object
   num_species <- x$num_species
-  first_year <- x$first_year
-  last_year <- x$last_year
   num_years <- length(unique(data$year))
   num_families <- x$num_families
 
@@ -245,6 +252,7 @@ compute_indicator_workflow <- function(x,
     cube_crs <- "EPSG:3035"
 
   }
+
 
   if (dim_type == "map" | (!is.null(level) & !is.null(region))) {
 
