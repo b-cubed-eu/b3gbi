@@ -1,4 +1,20 @@
 url: https://shawndove.github.io/b3gbi/
+
 template:
   bootstrap: 5
+  bslib:
+    bg: "#ffffff"
+    fg: "#2f2f2f"
+    heading_font: {google: "PT Sans"}
+    primary: "#005856"
 
+navbar:
+  bg: primary
+  type: light
+  structure:
+    right: [search, mainsite, github]
+  components:
+    mainsite:
+      icon: fa-cube
+      href: https://b-cubed.eu/
+      aria-label: B-Cubed website
