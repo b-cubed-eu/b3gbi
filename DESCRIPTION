@@ -3,8 +3,9 @@ Package: b3gbi
 Title: General Biodiversity Indicators for Biodiversity Data Cubes
 Version: 0.1.0
 Authors@R: c(
- .
-    )
+    person("Shawn", "Dove", email = "Shawn.Dove@allzool.bio.uni-giessen.de",
+           role = c("aut", "cre"), comment = c(ORCID = "0000-0001-9465-5638"))
+  )
 Description: Calculate general biodiversity indicators from GBIF data
     cubes.  Includes many common indicators such as species richness and
     evenness, which can be calculated over time (trends) or space (maps).
