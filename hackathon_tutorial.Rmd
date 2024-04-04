@@ -13,7 +13,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Introduction
 
 The goal of project 11 is to use the R package Shiny to build a front end for an existing (under development) package called b3gbi, which contains a number of functions for calculating and plotting biodiversity indicators from GBIF occurrence cubes.
-The package b3gbi is not ready for official release yet, but it is publicly available at https://www.github.com/shawndove/b3gbi. 
+The package b3gbi is not ready for official release yet, but it is publicly available at https://www.github.com/b-cubed-eu/b3gbi. 
 
 The idea is that the Shiny app will act as an intermediate between the user and the package functions to reach a level of user-friendliness that does not require any coding knowledge.
 We will hopefully not need to modify the existing code base to do this, but we will need to interface with some of the functions.
@@ -27,7 +27,7 @@ Since b3gbi is only available on github, you will need the R package called devt
 ```{r, eval=FALSE}
 
 install.packages("devtools") # unnecessary if you already have devtools
-devtools::install_github("shawndove/b3gbi")
+devtools::install_github("b-cubed-eu/b3gbi")
 
 ```
 

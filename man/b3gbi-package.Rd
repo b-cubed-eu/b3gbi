@@ -13,13 +13,9 @@ Calculate general biodiversity indicators from GBIF data cubes. Includes many co
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/ShawnDove/b3gbi}
-  \item \url{https://shawndove.github.io/b3gbi/}
+  \item \url{https://github.com/b-cubed-eu/b3gbi}
+  \item \url{https://b-cubed-eu.github.io/b3gbi/}
 }
-
-}
-\author{
-\strong{Maintainer}: Shawn Dove \email{Shawn.Dove@allzool.bio.uni-giessen.de} (\href{https://orcid.org/0000-0001-9465-5638}{ORCID})
 
 }
 \keyword{internal}

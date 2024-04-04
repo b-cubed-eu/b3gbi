@@ -1,14 +1,14 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# b3gbi <a href="https://shawndove.github.io/b3gbi/"><img src="man/figures/logo.png" align="right" height="120" alt="b3gbi website"/></a>
+# b3gbi <a href="https://b-cubed-eu.github.io/b3gbi/"><img src="man/figures/logo.png" align="right" height="120" alt="b3gbi website"/></a>
 
 <!-- badges: start -->
 
 [![CRAN
 status](https://www.r-pkg.org/badges/version/b3gbi)](https://CRAN.R-project.org/package=b3gbi)
-[![R-CMD-check](https://github.com/shawndove/b3gbi/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/shawndove/b3gbi/actions/workflows/R-CMD-check.yaml)
-[![codecov](https://codecov.io/gh/shawndove/b3gbi/branch/main/graph/badge.svg)](https://app.codecov.io/gh/shawndove/b3gbi/)
+[![R-CMD-check](https://github.com/b-cubed-eu/b3gbi/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/b-cubed-eu/b3gbi/actions/workflows/R-CMD-check.yaml)
+[![codecov](https://codecov.io/gh/b-cubed-eu/b3gbi/branch/main/graph/badge.svg)](https://app.codecov.io/gh/b-cubed-eu/b3gbi/)
 [![repo
 status](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
 <!-- badges: end -->
@@ -50,7 +50,7 @@ You can install the development version of b3gbi from
 
 ``` r
 # install.packages("devtools")
-# devtools::install_github("shawndove/b3gbi")
+devtools::install_github("b-cubed-eu/b3gbi")
 ```
 
 ## Example

@@ -18,3 +18,4 @@
 ^wc10$
 ^R_old$
 ^\.local$
+^codemeta\.json$

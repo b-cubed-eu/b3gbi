@@ -1,7 +1,7 @@
 #install.packages("shiny")
 #install.packages("shinyWidgets")
 #install.packages("devtools")
-#devtools::install_github("shawndove/b3gbi")
+#devtools::install_github("b-cubed-eu/b3gbi")
 
 #library(shiny)
 #library(shinyWidgets)
