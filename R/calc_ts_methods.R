@@ -70,7 +70,7 @@ calc_ts.hill_core <- function(x,
 
   richness_by_year <-
     x %>%
-    dplyr::summarise(obs_richness = n_distinct(scientificName),
+    dplyr::summarise(obs_richness = dplyr::n_distinct(scientificName),
                      .by = "year")
 
   # Create list of occurrence matrices by year, with species as rows
@@ -171,7 +171,7 @@ calc_ts.obs_richness <- function(x, ...) {
   # Calculate observed species richness by year
   x <-
     x %>%
-    dplyr::summarise(diversity_val = n_distinct(scientificName),
+    dplyr::summarise(diversity_val = dplyr::n_distinct(scientificName),
                               .by = "year") %>%
     dplyr::arrange(year)
 

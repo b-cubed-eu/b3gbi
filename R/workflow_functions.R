@@ -315,7 +315,7 @@ compute_indicator_workflow <- function(x,
 
     } else {
 
-      diversity_obj <- new_indicator_ts(as_tibble(indicator),
+      diversity_obj <- new_indicator_ts(dplyr::as_tibble(indicator),
                                         div_type = type,
                                         map_level = level,
                                         map_region = region,
