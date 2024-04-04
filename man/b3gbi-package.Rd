@@ -18,4 +18,8 @@ Useful links:
 }
 
 }
+\author{
+\strong{Maintainer}: Shawn Dove \email{Shawn.Dove@allzool.bio.uni-giessen.de} (\href{https://orcid.org/0000-0001-9465-5638}{ORCID})
+
+}
 \keyword{internal}
