@@ -186,6 +186,11 @@ process_cube_new <- function(cube_name, first_year = NULL, last_year = NULL) {
     dplyr::rename(taxonKey = "specieskey",
                   scientificName = "species")
 
+  # Remove NA values in eea_cell_code
+  occurrence_data <-
+    occurrence_data %>%
+    dplyr::filter(!is.na(eeacellcode))
+
   occurrence_data <-
     occurrence_data %>%
     dplyr::mutate(eeacellcode = stringr::str_replace(eeacellcode, "W", "W-")) %>%
