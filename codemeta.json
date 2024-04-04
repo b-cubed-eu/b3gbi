@@ -3,7 +3,9 @@
   "@type": "SoftwareSourceCode",
   "identifier": "b3gbi",
   "description": "Calculate general biodiversity indicators from GBIF data cubes. Includes many common indicators such as species richness and evenness, which can be calculated over time (trends) or space (maps).",
-  "name": "b3gbi: B-Cubed: General Biodiversity Indicators",
+  "name": "b3gbi: General Biodiversity Indicators for Biodiversity Data Cubes",
+  "relatedLink": "https://b-cubed-eu.github.io/b3gbi/",
+  "codeRepository": "https://github.com/b-cubed-eu/b3gbi",
   "license": "https://spdx.org/licenses/MIT",
   "version": "0.1.0",
   "programmingLanguage": {
@@ -11,21 +13,20 @@
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.3.1 (2023-06-16 ucrt)",
-  "author": [
+  "runtimePlatform": "R version 4.2.3 (2023-03-15)",
+  "softwareSuggestions": [
     {
-      "@type": "Person",
-      "givenName": "Shawn",
-      "familyName": "Dove",
-      "email": "s.dove@ucl.ac.uk"
-    }
-  ],
-  "maintainer": [
-    {
-      "@type": "Person",
-      "givenName": "Shawn",
-      "familyName": "Dove",
-      "email": "s.dove@ucl.ac.uk"
+      "@type": "SoftwareApplication",
+      "identifier": "testthat",
+      "name": "testthat",
+      "version": ">= 3.0.0",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=testthat"
     }
   ],
   "softwareRequirements": {
@@ -43,6 +44,24 @@
     },
     "2": {
       "@type": "SoftwareApplication",
+      "identifier": "ggplot2",
+      "name": "ggplot2",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=ggplot2"
+    },
+    "3": {
+      "@type": "SoftwareApplication",
+      "identifier": "R",
+      "name": "R",
+      "version": ">= 2.10"
+    },
+    "4": {
+      "@type": "SoftwareApplication",
       "identifier": "furrr",
       "name": "furrr",
       "provider": {
@@ -53,7 +72,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=furrr"
     },
-    "3": {
+    "5": {
       "@type": "SoftwareApplication",
       "identifier": "future",
       "name": "future",
@@ -65,19 +84,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=future"
     },
-    "4": {
-      "@type": "SoftwareApplication",
-      "identifier": "ggplot2",
-      "name": "ggplot2",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=ggplot2"
-    },
-    "5": {
+    "6": {
       "@type": "SoftwareApplication",
       "identifier": "iNEXT",
       "name": "iNEXT",
@@ -89,7 +96,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=iNEXT"
     },
-    "6": {
+    "7": {
       "@type": "SoftwareApplication",
       "identifier": "magrittr",
       "name": "magrittr",
@@ -101,7 +108,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=magrittr"
     },
-    "7": {
+    "8": {
       "@type": "SoftwareApplication",
       "identifier": "permute",
       "name": "permute",
@@ -113,7 +120,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=permute"
     },
-    "8": {
+    "9": {
       "@type": "SoftwareApplication",
       "identifier": "purrr",
       "name": "purrr",
@@ -125,7 +132,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=purrr"
     },
-    "9": {
+    "10": {
       "@type": "SoftwareApplication",
       "identifier": "readr",
       "name": "readr",
@@ -137,7 +144,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=readr"
     },
-    "10": {
+    "11": {
       "@type": "SoftwareApplication",
       "identifier": "rnaturalearth",
       "name": "rnaturalearth",
@@ -149,7 +156,19 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=rnaturalearth"
     },
-    "11": {
+    "12": {
+      "@type": "SoftwareApplication",
+      "identifier": "rnaturalearthdata",
+      "name": "rnaturalearthdata",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=rnaturalearthdata"
+    },
+    "13": {
       "@type": "SoftwareApplication",
       "identifier": "sf",
       "name": "sf",
@@ -161,7 +180,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=sf"
     },
-    "12": {
+    "14": {
       "@type": "SoftwareApplication",
       "identifier": "taxize",
       "name": "taxize",
@@ -173,7 +192,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=taxize"
     },
-    "13": {
+    "15": {
       "@type": "SoftwareApplication",
       "identifier": "tibble",
       "name": "tibble",
@@ -185,7 +204,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=tibble"
     },
-    "14": {
+    "16": {
       "@type": "SoftwareApplication",
       "identifier": "tidyr",
       "name": "tidyr",
@@ -197,7 +216,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=tidyr"
     },
-    "15": {
+    "17": {
       "@type": "SoftwareApplication",
       "identifier": "units",
       "name": "units",
@@ -209,7 +228,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=units"
     },
-    "16": {
+    "18": {
       "@type": "SoftwareApplication",
       "identifier": "vegan",
       "name": "vegan",
@@ -223,7 +242,9 @@
     },
     "SystemRequirements": null
   },
-  "fileSize": "12718525.579KB",
-  "codeRepository": "https://github.com/shawndove/b3gbi",
-  "readme": "https://github.com/shawndove/b3gbi/blob/main/README.md"
+  "fileSize": "4539.715KB",
+  "releaseNotes": "https://github.com/b-cubed-eu/b3gbi/blob/master/NEWS.md",
+  "readme": "https://github.com/b-cubed-eu/b3gbi/blob/main/README.md",
+  "contIntegration": ["https://github.com/b-cubed-eu/b3gbi/actions/workflows/R-CMD-check.yaml", "https://app.codecov.io/gh/b-cubed-eu/b3gbi/"],
+  "developmentStatus": "https://www.repostatus.org/#wip"
 }
