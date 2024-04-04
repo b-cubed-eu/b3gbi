@@ -13,12 +13,12 @@ License: MIT + file LICENSE
 URL: https://github.com/b-cubed-eu/b3gbi,
     https://b-cubed-eu.github.io/b3gbi/
 Depends:
+    R (>= 3.5.0),
+Imports:
     dplyr,
-    ggplot2,
-    R (>= 2.10)
-Imports: 
     furrr,
     future,
+    ggplot2,
     iNEXT,
     magrittr,
     permute,
