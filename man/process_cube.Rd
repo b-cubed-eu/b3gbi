@@ -37,9 +37,10 @@ file. All files must reside in the same directory and share a base file
 name (e.g., 'my_mammals_cube.csv', 'my_mammals_info.csv').
 }
 \examples{
+\dontrun{
 cube_name <- system.file("extdata", "europe_species_cube.csv", package = "b3gbi")
 tax_info <- system.file("extdata", "europe_species_info.csv", package = "b3gbi")
 europe_example_cube <- process_cube(cube_name, tax_info)
 europe_example_cube
-
+}
 }

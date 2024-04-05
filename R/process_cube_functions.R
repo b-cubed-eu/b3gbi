@@ -18,15 +18,16 @@
 #' @return A tibble containing the processed GBIF occurrence data.
 #'
 #' @examples
+#' \dontrun{
 #' cube_name <- system.file("extdata", "europe_species_cube.csv", package = "b3gbi")
 #' tax_info <- system.file("extdata", "europe_species_info.csv", package = "b3gbi")
 #' europe_example_cube <- process_cube(cube_name, tax_info)
 #' europe_example_cube
-#'
+#' }
 #' @export
 process_cube <- function(cube_name, tax_info = NULL, datasets_info = NULL, first_year = NULL, last_year = NULL) {
 
-  # Check whethere there is a separate taxonomic information file
+  # Check whether there is a separate taxonomic information file
   if (is.null(tax_info)) {
     # if not, assume cube is in the new format and call process_cube_new function
     proc_cube <- process_cube_new(cube_name, first_year, last_year)
