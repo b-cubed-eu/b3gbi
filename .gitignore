@@ -44,3 +44,20 @@ docs
 
 # Mac OS
 .DS_Store
+
+# Extra
+/reports
+/test_plots
+/test_data
+/R_old
+/src
+/.local
+/windows
+/wc10
+Env.RData
+/data/*.old
+make_hexSticker.R
+Virtual_species_create.R
+Virtual_species_SDM.R
+vs_script.R
+.gif
