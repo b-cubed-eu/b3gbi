@@ -45,7 +45,7 @@ b3gbi empowers biodiversity analysis with:
 
 You can install the development version of b3gbi from [GitHub](https://github.com/) with:
 
-```{r}
+```R
 # install.packages("devtools")
 devtools::install_github("b-cubed-eu/b3gbi")
 ```
