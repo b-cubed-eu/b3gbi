@@ -76,17 +76,17 @@ name (e.g., 'my_mammals_cube.csv', 'my_mammals_info.csv').</p>
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>cube_name</dt>
 <dd><p>The location and name of a data cube file
-(e.g., 'data/europe_species_cube.csv').</p></dd>
+(e.g., 'inst/extdata/europe_species_cube.csv').</p></dd>
 
 
 <dt>tax_info</dt>
 <dd><p>The location and name of an associated taxonomic info file
-(e.g.,  'data/europe_species_info.csv').</p></dd>
+(e.g.,  'inst/extdata/europe_species_info.csv').</p></dd>
 
 
 <dt>datasets_info</dt>
 <dd><p>The location and name of an associated dataset info file
-(e.g., 'data/europe_species_datasets.csv').</p></dd>
+(e.g., 'inst/extdata/europe_species_datasets.csv').</p></dd>
 
 
 <dt>first_year</dt>
@@ -108,12 +108,12 @@ specified, uses the latest year present in the cube.</p></dd>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">europe_example_cube</span> <span class="op">&lt;-</span> <span class="fu">process_cube</span><span class="op">(</span>cube_name <span class="op">=</span> <span class="st">"data/europe_species_cube.csv"</span>,</span></span>
-<span class="r-in"><span>                                    tax_info <span class="op">=</span> <span class="st">"data/europe_species_info.csv"</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error:</span> 'data/europe_species_cube.csv' does not exist in current working directory ('/home/runner/work/b3gbi/b3gbi/docs/reference').</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="va">cube_name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"europe_species_cube.csv"</span>, package <span class="op">=</span> <span class="st">"b3gbi"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tax_info</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"europe_species_info.csv"</span>, package <span class="op">=</span> <span class="st">"b3gbi"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">europe_example_cube</span> <span class="op">&lt;-</span> <span class="fu">process_cube</span><span class="op">(</span><span class="va">cube_name</span>, <span class="va">tax_info</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">europe_example_cube</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'europe_example_cube' not found</span>
-<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
