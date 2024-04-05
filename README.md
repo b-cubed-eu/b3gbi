@@ -64,10 +64,10 @@ amphibians in Europe:
 library(b3gbi)
 
 # Load GBIF data cube
-cube_name <- "data/europe_species_cube.csv"
+cube_name <- "inst/extdata/europe_species_cube.csv"
 
 # Load taxonomic info for cube
-tax_info <- "data/europe_species_info.csv"
+tax_info <- "inst/extdata/europe_species_info.csv"
 
 # Prepare cube
 insect_data <- process_cube(cube_name, tax_info)

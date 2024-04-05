@@ -5,11 +5,11 @@
 #'   name (e.g., 'my_mammals_cube.csv', 'my_mammals_info.csv').
 #'
 #' @param cube_name The location and name of a data cube file
-#'   (e.g., 'data/europe_species_cube.csv').
+#'   (e.g., 'inst/extdata/europe_species_cube.csv').
 #' @param tax_info The location and name of an associated taxonomic info file
-#'   (e.g.,  'data/europe_species_info.csv').
+#'   (e.g.,  'inst/extdata/europe_species_info.csv').
 #' @param datasets_info The location and name of an associated dataset info file
-#'   (e.g., 'data/europe_species_datasets.csv').
+#'   (e.g., 'inst/extdata/europe_species_datasets.csv').
 #' @param first_year (Optional) The first year of occurrences to include. If not
 #'   specified, uses the earliest year present in the cube.
 #' @param last_year (Optional) The final year of occurrences to include. If not
@@ -18,8 +18,9 @@
 #' @return A tibble containing the processed GBIF occurrence data.
 #'
 #' @examples
-#' europe_example_cube <- process_cube(cube_name = "data/europe_species_cube.csv",
-#'                                     tax_info = "data/europe_species_info.csv")
+#' cube_name <- system.file("extdata", "europe_species_cube.csv", package = "b3gbi")
+#' tax_info <- system.file("extdata", "europe_species_info.csv", package = "b3gbi")
+#' europe_example_cube <- process_cube(cube_name, tax_info)
 #' europe_example_cube
 #'
 #' @export
