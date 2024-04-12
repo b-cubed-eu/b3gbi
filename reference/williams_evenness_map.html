@@ -60,25 +60,17 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">williams_evenness_map</span><span class="op">(</span></span>
-<span>  <span class="va">data</span>,</span>
-<span>  cell_size <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  level <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  region <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  cube_crs <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  first_year <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  last_year <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  <span class="va">...</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">williams_evenness_map</span><span class="op">(</span><span class="va">data</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
-    <dl><dt>...</dt>
-<dd><p>Arguments passed on to <code><a href="compute_indicator_workflow.html">compute_indicator_workflow</a></code></p><dl><dt><code>data</code></dt>
+    <dl><dt>data</dt>
 <dd><p>A data cube object (class 'processed_cube').</p></dd>
 
-    <dt><code>cell_size</code></dt>
+
+<dt>...</dt>
+<dd><p>Arguments passed on to <code><a href="compute_indicator_workflow.html">compute_indicator_workflow</a></code></p><dl><dt><code>cell_size</code></dt>
 <dd><p>Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)</p></dd>
 
     <dt><code>level</code></dt>
