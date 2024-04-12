@@ -1,3 +1,45 @@
+#' Cube of GBIF Mammal Occurrences in Denmark
+#'
+#' Small example cube containing the mammal occurrences in Denmark favailable on GBIF as of 16.03.2024.
+#'
+#' @format A 'processed_cube' object containing a tibble with 276,950 rows and 10 variables, as well as metadata
+#' \describe{
+#'   \item{year}{year occurrence was recorded}
+#'   \item{eea_cell_code}{code containing the cell resolution and coordinates on the EEA grid}
+#'   \item{taxonKey}{taxonomic key associated with the species on GBIF}
+#'   \item{obs}{number of individuals observed}
+#'   \item{scientificName}{scientific species name}
+#'   \item{rank}{taxonomic rank}
+#'   \item{kingdom}{kingdom}
+#'   \item{xcoord}{East-West coordinate on the EEA grid}
+#'   \item{ycoord}{North-South coordinate on the EEA grid}
+#'   \item{resolution}{grid cell size}
+#' }
+#' @source \url{https://doi.org/10.15468/dl.5mb887}
+"example_cube_1"
+
+#' Cube of GBIF Insect Occurrences in Europe
+#'
+#' Small example cube containing the insect occurrences in Europe available on GBIF as of 16.03.2024.
+#'
+#' @format A 'processed_cube' object containing a tibble with 23,025 rows and 10 variables, as well as metadata
+#' \describe{
+#'   \item{year}{year occurrence was recorded}
+#'   \item{eea_cell_code}{code containing the cell resolution and coordinates on the EEA grid}
+#'   \item{taxonKey}{taxonomic key associated with the species on GBIF}
+#'   \item{obs}{number of individuals observed}
+#'   \item{scientificName}{scientific species name}
+#'   \item{rank}{taxonomic rank}
+#'   \item{kingdom}{kingdom}
+#'   \item{xcoord}{East-West coordinate on the EEA grid}
+#'   \item{ycoord}{North-South coordinate on the EEA grid}
+#'   \item{resolution}{grid cell size}
+#' }
+#' @source \url{https://doi.org/10.15468/dl.qk4f2z}
+"example_cube_2"
+
+
+#'
 #' \name{example_cube_1}
 #' \alias{example_cube_1}
 #' \title{Cube of GBIF Mammal Occurrences in Denmark}
