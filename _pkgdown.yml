@@ -12,15 +12,9 @@ navbar:
   bg: primary
   type: dark
   structure:
-    left: [intro, tutorials, reference, news]
+    left: [intro, reference, news, articles]
     right: [search, mainsite, github]
   components:
-    articles:
-      text: Articles
-      menu:
-      - text: Tutorial
-      href: articles/tutorial.html
-
     mainsite:
       icon: fa-cube
       href: https://b-cubed.eu/
