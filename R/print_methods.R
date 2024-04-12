@@ -49,7 +49,7 @@ print.indicator_map <- function(x, n = 10, ...) {
   } else if (x$map_level == "world") {
     cat("World map\n\n")
   }
-  cat("Projection:", x$projection, "\n\n")
+  cat("Projected CRS:", x$projection, "\n\n")
   cat("Coordinate range:\n")
   print(x$coord_range)
   cat("\nGrid cell size:", x$cell_size, "\n")
