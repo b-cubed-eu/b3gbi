@@ -74,4 +74,4 @@ map_obs_rich_insects <- obs_richness_map(insect_data)
 plot(map_obs_rich_insects, title = "Observed Species Richness: Insects in Europe")
 ```
 
-For a more in-depth introduction, see the tutorial: https://b-cubed-eu.github.io/b3gbi/tutorials/t1.html.
+For a more in-depth introduction, see the tutorial: https://b-cubed-eu.github.io/b3gbi/articles/tutorial.html.

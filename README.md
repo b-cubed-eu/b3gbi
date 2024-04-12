@@ -82,4 +82,4 @@ plot(map_obs_rich_insects, title = "Observed Species Richness: Insects in Europe
 <img src="man/figures/README-example-1.png" width="100%" />
 
 For a more in-depth introduction, see the tutorial:
-<https://b-cubed-eu.github.io/b3gbi/tutorials/t1.html>.
+<https://b-cubed-eu.github.io/b3gbi/articles/tutorial.html>.
