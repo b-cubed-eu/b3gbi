@@ -16,12 +16,6 @@
     <loc>https://b-cubed-eu.github.io/b3gbi/LICENSE.html</loc>
   </url>
   <url>
-    <loc>https://b-cubed-eu.github.io/b3gbi/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://b-cubed-eu.github.io/b3gbi/articles/tutorial.html</loc>
-  </url>
-  <url>
     <loc>https://b-cubed-eu.github.io/b3gbi/authors.html</loc>
   </url>
   <url>
@@ -43,6 +37,9 @@
     <loc>https://b-cubed-eu.github.io/b3gbi/reference/area_rarity_ts.html</loc>
   </url>
   <url>
+    <loc>https://b-cubed-eu.github.io/b3gbi/reference/available_indicators.html</loc>
+  </url>
+  <url>
     <loc>https://b-cubed-eu.github.io/b3gbi/reference/b3gbi-package.html</loc>
   </url>
   <url>
@@ -56,6 +53,18 @@
   </url>
   <url>
     <loc>https://b-cubed-eu.github.io/b3gbi/reference/example_cube_2.html</loc>
+  </url>
+  <url>
+    <loc>https://b-cubed-eu.github.io/b3gbi/reference/example_indicator_map1.html</loc>
+  </url>
+  <url>
+    <loc>https://b-cubed-eu.github.io/b3gbi/reference/example_indicator_map2.html</loc>
+  </url>
+  <url>
+    <loc>https://b-cubed-eu.github.io/b3gbi/reference/example_indicator_ts1.html</loc>
+  </url>
+  <url>
+    <loc>https://b-cubed-eu.github.io/b3gbi/reference/example_indicator_ts2.html</loc>
   </url>
   <url>
     <loc>https://b-cubed-eu.github.io/b3gbi/reference/get_observed_years.html</loc>
