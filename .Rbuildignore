@@ -8,7 +8,6 @@
 ^pkgdown$
 ^CITATION\.cff$
 ^inext_output$
-^inst/extdata$
 ^.*\.RDS$
 ^.*\.jpg$
 ^.*\.RData$
