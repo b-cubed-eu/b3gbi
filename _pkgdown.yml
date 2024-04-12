@@ -15,9 +15,12 @@ navbar:
     left: [intro, tutorials, reference, news]
     right: [search, mainsite, github]
   components:
-    tutorials:
-      text: Tutorial
-      href: tutorials/t1.html
+    articles:
+      text: Articles
+      menu:
+      - text: Tutorial
+      href: articles/tutorial.html
+
     mainsite:
       icon: fa-cube
       href: https://b-cubed.eu/
