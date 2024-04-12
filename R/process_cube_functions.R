@@ -11,7 +11,7 @@
 #' @param datasets_info The location and name of an associated dataset info file
 #'   (e.g., 'inst/extdata/europe_species_datasets.csv').
 #' @param first_year (Optional) The first year of occurrences to include. If not
-#'   specified, uses the earliest year present in the cube.
+#'   specified, uses a default of 1600 to prevent false records (e.g. with year = 0).
 #' @param last_year (Optional) The final year of occurrences to include. If not
 #'   specified, uses the latest year present in the cube.
 #'
@@ -25,7 +25,7 @@
 #' europe_example_cube
 #' }
 #' @export
-process_cube <- function(cube_name, tax_info = NULL, datasets_info = NULL, first_year = NULL, last_year = NULL) {
+process_cube <- function(cube_name, tax_info = NULL, datasets_info = NULL, first_year = 1600, last_year = NULL) {
 
   # Check whether there is a separate taxonomic information file
   if (is.null(tax_info)) {
