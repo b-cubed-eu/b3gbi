@@ -24,6 +24,7 @@ Imports:
     permute,
     purrr,
     readr,
+    rlang,
     rnaturalearth,
     rnaturalearthdata,
     sf,
