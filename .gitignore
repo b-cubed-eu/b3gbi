@@ -61,3 +61,4 @@ Virtual_species_create.R
 Virtual_species_SDM.R
 vs_script.R
 .gif
+inst/doc
