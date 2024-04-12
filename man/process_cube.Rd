@@ -8,7 +8,7 @@ process_cube(
   cube_name,
   tax_info = NULL,
   datasets_info = NULL,
-  first_year = NULL,
+  first_year = 1600,
   last_year = NULL
 )
 }
@@ -23,7 +23,7 @@ process_cube(
 (e.g., 'inst/extdata/europe_species_datasets.csv').}
 
 \item{first_year}{(Optional) The first year of occurrences to include. If not
-specified, uses the earliest year present in the cube.}
+specified, uses a default of 1600 to prevent false records (e.g. with year = 0).}
 
 \item{last_year}{(Optional) The final year of occurrences to include. If not
 specified, uses the latest year present in the cube.}
