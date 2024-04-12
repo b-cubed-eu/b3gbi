@@ -271,7 +271,7 @@ plot.williams_evenness <- function(x, ...){
 }
 
 
-#' @noRd
+#' @export
 plot.tax_distinct <- function(x, ...){
 
   stopifnot_error("Incorrect object class. Must be class 'tax_distinct'.", inherits(x, "tax_distinct"))

@@ -403,14 +403,16 @@ calc_ts.spec_range <- function(x, ...) {
 }
 
 #' @noRd
-calc_ts.tax_distinct <- function(x, ...) {
+calc_ts.tax_distinct <- function(x, set_rows = 1, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
                   inherits(x, "tax_distinct"))
 
   # Retrieve taxonomic data from GBIF
-  tax_hier <- taxize::classification(unique(x$scientificName), db = "gbif", return_id = TRUE, accepted = TRUE)
+  tax_hier <- taxize::classification(unique(x$scientificName),
+                                     db = "gbif",
+                                     ...)
 
   # Save data
   #  saveRDS(tax_hier, file = "taxonomic_hierarchy.RDS")
@@ -421,13 +423,13 @@ calc_ts.tax_distinct <- function(x, ...) {
   indicator <-
     x %>%
     tibble::add_column(diversity_val = NA) %>%
-    dplyr::group_split(cellid) %>%
+    dplyr::group_split(year) %>%
     purrr::map(. %>%
                  dplyr::mutate(diversity_val =
-                                 calc_tax_distinctness(.,
-                                                       tax_hier))) %>%
+                                 compute_tax_distinct_formula(.,
+                                                              tax_hier))) %>%
     dplyr::bind_rows() %>%
-    dplyr::distinct(cellid, diversity_val, .keep_all = TRUE) %>%
-    dplyr::select(cellid, diversity_val)
+    dplyr::distinct(year, diversity_val, .keep_all = TRUE) %>%
+    dplyr::select(year, diversity_val)
 
 }

@@ -698,18 +698,60 @@ spec_range_ts <- function(data, ...) {
                              ...)
 }
 
-#' @noRd
-tax_distinct_map <- function(data, ...) {
+#' @title Calculate Taxonomic Distinctness Over Space
+#'
+#' @description This function calculates the taxonomic distinctness index over a gridded map.
+#'
+#' @param x A data cube object (class 'processed_cube').
+#' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
+#' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
+#' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
+#' @param cube_crs The projection of the cube. (Default: "EPSG:3035")
+#' @param first_year Exclude data before this year. (Uses all data in the cube by default.)
+#' @param last_year Exclude data after this year. (Uses all data in the cube by default.)
+#' @param rows Choose which row to select if there are multiple matches when retrieving taxonomic information from GBIF. (Default is 1. Use NA for interactive mode.)
+#'
+#' @return An S3 object with the classes 'indicator_map' and 'tax_distinct' containing
+#' the calculated indicator values and metadata.
+#'
+#' @examples
+#' td_map <- tax_distinct_map(example_cube_1, level = "country", region = "Denmark")
+#' plot(td_map)
+#'
+#' @export
+tax_distinct_map <- function(data, rows = 1, ...) {
   compute_indicator_workflow(data,
                              type = "tax_distinct",
                              dim_type = "map",
+                             rows = rows,
                              ...)
 }
 
-#' @noRd
-tax_distinct_ts <- function(data, ...) {
+#' @title Calculate Taxonomic Distinctness Over Time
+#'
+#' @description This function calculates the taxonomic distinctness index as a time series.
+#'
+#' @param x A data cube object (class 'processed_cube').
+#' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
+#' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
+#' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
+#' @param cube_crs The projection of the cube. (Default: "EPSG:3035")
+#' @param first_year Exclude data before this year. (Uses all data in the cube by default.)
+#' @param last_year Exclude data after this year. (Uses all data in the cube by default.)
+#' @param rows Choose which row to select if there are multiple matches when retrieving taxonomic information from GBIF. (Default is 1. Use NA for interactive mode.)
+#'
+#' @return An S3 object with the classes 'indicator_ts' and 'tax_distinct' containing
+#' the calculated indicator values and metadata.
+#'
+#' @examples
+#' td_ts <- tax_distinct_ts(example_cube_1, level = "country", region = "Denmark")
+#' plot(td_ts)
+#'
+#' @export
+tax_distinct_ts <- function(data, rows = 1, ...) {
   compute_indicator_workflow(data,
                              type = "tax_distinct",
                              dim_type = "ts",
+                             rows = rows,
                              ...)
 }

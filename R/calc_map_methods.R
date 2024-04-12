@@ -356,7 +356,9 @@ calc_map.tax_distinct <- function(x, ...) {
                   inherits(x, "tax_distinct"))
 
   # Retrieve taxonomic data from GBIF
-  tax_hier <- taxize::classification(unique(x$scientificName), db = "gbif", return_id = TRUE, accepted = TRUE)
+  tax_hier <- taxize::classification(unique(x$scientificName),
+                                     db = "gbif",
+                                     ...)
 
   # Save data
   #  saveRDS(tax_hier, file = "taxonomic_hierarchy.RDS")
@@ -370,8 +372,8 @@ calc_map.tax_distinct <- function(x, ...) {
     dplyr::group_split(cellid) %>%
     purrr::map(. %>%
                  dplyr::mutate(diversity_val =
-                                 calc_tax_distinctness(.,
-                                                       tax_hier))) %>%
+                                 compute_tax_distinct_formula(.,
+                                                              tax_hier))) %>%
     dplyr::bind_rows() %>%
     dplyr::distinct(cellid, diversity_val, .keep_all = TRUE) %>%
     dplyr::select(cellid, diversity_val)
