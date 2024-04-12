@@ -210,12 +210,59 @@ as_areas <- function (x)
   }))
 }
 
+# Copy of internal function is_area from patchwork package
+#' @noRd
+is_area <- function (x)
+{
+  inherits(x, "patch_area")
+}
 
 # Copy of internal function is_valid_plot from patchwork package
 #' @noRd
 is_valid_plot <- function (x)
 {
   is.ggplot(x) || is.grob(x)
+}
+
+# Copy of internal function area from patchwork package
+#' @noRd
+area <- function (t, l, b = t, r = l)
+{
+  if (missing(t) || missing(l)) {
+    one_area <- list(t = integer(0), l = integer(0), b = integer(0),
+                     r = integer(0))
+  }
+  else {
+    len <- max(length(t), length(l), length(b), length(r))
+    one_area <- list(t = rep_len(as.integer(t), len), l = rep_len(as.integer(l),
+                                                                  len), b = rep_len(as.integer(b), len), r = rep_len(as.integer(r),
+                                                                                                                     len))
+    if (any(t > b)) {
+      cli_abort("{.arg t} must be less than {.arg b}")
+    }
+    if (any(l > r)) {
+      cli_abort("{.arg l} must be less than {.arg r}")
+    }
+  }
+  class(one_area) <- "patch_area"
+  one_area
+}
+
+# Copy of internal function cli_abort from cli package
+#' @noRd
+cli_abort <- function (message, ..., call = .envir, .envir = parent.frame(),
+          .frame = .envir)
+{
+  message[] <- vcapply(message, format_inline, .envir = .envir)
+  rlang::abort(message, ..., call = call, use_cli_format = TRUE,
+               .frame = .frame)
+}
+
+# Copy of internal function exec from rlang package
+#' @noRd
+exec <- function (.fn, ..., .env = caller_env())
+{
+  .External2(ffi_exec, .fn, .env)
 }
 
 # Copy of internal function is.grob from grid package
