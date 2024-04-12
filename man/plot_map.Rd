@@ -58,7 +58,9 @@ at the country level.}
 
 \item{legend_limits}{(Optional) Limits for the legend scale.}
 
-\item{wrap_length}{Maximum title length before wrapping to a new line.}
+\item{legend_title_wrap_length}{Maximum legend title length before wrapping to a new line.}
+
+\item{title_wrap_length}{Maximum title length before wrapping to a new line.}
 }
 \value{
 A ggplot object representing the biodiversity indicator map.

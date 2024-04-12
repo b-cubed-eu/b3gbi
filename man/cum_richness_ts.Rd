@@ -7,17 +7,17 @@
 cum_richness_ts(data, ...)
 }
 \arguments{
-\item{x}{A data cube object (class 'processed_cube').}
-
-\item{level}{Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')}
-
-\item{region}{The region of interest (e.g., "Europe"). (Default: "Europe")}
-
-\item{cube_crs}{The projection of the cube. (Default: "EPSG:3035")}
-
-\item{first_year}{Exclude data before this year. (Uses all data in the cube by default.)}
-
-\item{last_year}{Exclude data after this year. (Uses all data in the cube by default.)}
+\item{...}{
+  Arguments passed on to \code{\link[=compute_indicator_workflow]{compute_indicator_workflow}}
+  \describe{
+    \item{\code{data}}{A data cube object (class 'processed_cube').}
+    \item{\code{cell_size}}{Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)}
+    \item{\code{level}}{Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')}
+    \item{\code{region}}{The region of interest (e.g., "Europe"). (Default: "Europe")}
+    \item{\code{cube_crs}}{The projection of the cube. (Default: "EPSG:3035")}
+    \item{\code{first_year}}{Exclude data before this year. (Uses all data in the cube by default.)}
+    \item{\code{last_year}}{Exclude data after this year. (Uses all data in the cube by default.)}
+  }}
 }
 \value{
 An S3 object with the classes 'indicator_ts' and 'cum_richness' containing
@@ -30,4 +30,7 @@ This function calculates cumulative species richness as a time series.
 cr_ts <- cum_richness_ts(example_cube_1, first_year = 1985)
 plot(cr_ts)
 
+}
+\seealso{
+compute_indicator_workflow
 }
