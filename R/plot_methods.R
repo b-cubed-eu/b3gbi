@@ -628,7 +628,8 @@ plot.obs_richness <- function(x, ...){
 #' @param panel_bg  (Optional) Background color for the map panel.
 #' @param legend_title (Optional) Title for the plot legend.
 #' @param legend_limits (Optional) Limits for the legend scale.
-#' @param wrap_length  Maximum title length before wrapping to a new line.
+#' @param legend_title_wrap_length Maximum legend title length before wrapping to a new line.
+#' @param title_wrap_length Maximum title length before wrapping to a new line.
 #'
 #' @return A ggplot object representing the biodiversity indicator map.
 #' Can be customized using ggplot2 functions.
@@ -802,7 +803,9 @@ plot_map <- function(x,
 #'
 #' @examples
 #' # default colours:
-#' plot_ts(example_indicator_ts1, y_label = "Species Richness", title = "Observed Species Richness: Mammals in Denmark")
+#' plot_ts(example_indicator_ts1,
+#'         y_label = "Species Richness",
+#'         title = "Observed Species Richness: Mammals in Denmark")
 #'
 #' # custom colours:
 #' plot_ts(example_indicator_ts1,
