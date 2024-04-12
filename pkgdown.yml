@@ -1,8 +1,9 @@
 pandoc: 3.1.11
 pkgdown: 2.0.8
 pkgdown_sha: ~
-articles: {}
-last_built: 2024-04-12T20:57Z
+articles:
+  tutorial: tutorial.html
+last_built: 2024-04-12T21:07Z
 urls:
   reference: https://b-cubed-eu.github.io/b3gbi/reference
   article: https://b-cubed-eu.github.io/b3gbi/articles
