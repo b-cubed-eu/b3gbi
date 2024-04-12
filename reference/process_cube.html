@@ -70,7 +70,7 @@ name (e.g., 'my_mammals_cube.csv', 'my_mammals_info.csv').</p>
 <span>  <span class="va">cube_name</span>,</span>
 <span>  tax_info <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  datasets_info <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  first_year <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  first_year <span class="op">=</span> <span class="fl">1600</span>,</span>
 <span>  last_year <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -94,7 +94,7 @@ name (e.g., 'my_mammals_cube.csv', 'my_mammals_info.csv').</p>
 
 <dt>first_year</dt>
 <dd><p>(Optional) The first year of occurrences to include. If not
-specified, uses the earliest year present in the cube.</p></dd>
+specified, uses a default of 1600 to prevent false records (e.g. with year = 0).</p></dd>
 
 
 <dt>last_year</dt>
