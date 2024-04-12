@@ -2,14 +2,8 @@
 #'
 #' @description This function calculates observed species richness over a gridded map.
 #'
-#' @param data A data cube object (class 'processed_cube').
-#' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
-#' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
-#' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
-#' @param cube_crs The projection of the cube. (Default: "EPSG:3035")
-#' @param first_year Exclude data before this year. (Uses all data in the cube by default.)
-#' @param last_year Exclude data after this year. (Uses all data in the cube by default.)
-#' @param ... Additional arguments passed to specific indicator calculation functions.
+#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#'
 #' @seealso compute_indicator_workflow
 #'
 #' @return An S3 object with the classes 'indicator_map' and 'obs_richness' containing
@@ -32,13 +26,9 @@ obs_richness_map <- function(data, ...) {
 #'
 #' @description This function calculates observed species richness as a time series.
 #'
-#' @param data A data cube object (class 'processed_cube').
-#' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
-#' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
-#' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
-#' @param cube_crs The projection of the cube. (Default: "EPSG:3035")
-#' @param first_year Exclude data before this year. (Uses all data in the cube by default.)
-#' @param last_year Exclude data after this year. (Uses all data in the cube by default.)
+#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#'
+#' @seealso compute_indicator_workflow
 #'
 #' @return An S3 object with the classes 'indicator_ts' and 'obs_richness' containing
 #' the calculated indicator values and metadata.
@@ -61,13 +51,9 @@ obs_richness_ts <- function(data, ...) {
 #' @description This function calculates the total number of species occurrence
 #' records over a gridded map.
 #'
-#' @param data A data cube object (class 'processed_cube').
-#' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
-#' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
-#' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
-#' @param cube_crs The projection of the cube. (Default: "EPSG:3035")
-#' @param first_year Exclude data before this year. (Uses all data in the cube by default.)
-#' @param last_year Exclude data after this year. (Uses all data in the cube by default.)
+#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#'
+#' @seealso compute_indicator_workflow
 #'
 #' @return An S3 object with the classes 'indicator_map' and 'total_occ' containing
 #' the calculated indicator values and metadata.
@@ -90,13 +76,9 @@ total_occ_map <- function(data, ...) {
 #' @description This function calculates the total number of species occurrence records
 #' as a time series.
 #'
-#' @param data A data cube object (class 'processed_cube').
-#' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
-#' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
-#' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
-#' @param cube_crs The projection of the cube. (Default: "EPSG:3035")
-#' @param first_year Exclude data before this year. (Uses all data in the cube by default.)
-#' @param last_year Exclude data after this year. (Uses all data in the cube by default.)
+#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#'
+#' @seealso compute_indicator_workflow
 #'
 #' @return An S3 object with the classes 'indicator_ts' and 'total_occ' containing
 #' the calculated indicator values and metadata.
@@ -118,13 +100,9 @@ total_occ_ts <- function(data, ...) {
 #'
 #' @description This function calculates Pielou's evenness over a gridded map.
 #'
-#' @param data A data cube object (class 'processed_cube').
-#' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
-#' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
-#' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
-#' @param cube_crs The projection of the cube. (Default: "EPSG:3035")
-#' @param first_year Exclude data before this year. (Uses all data in the cube by default.)
-#' @param last_year Exclude data after this year. (Uses all data in the cube by default.)
+#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#'
+#' @seealso compute_indicator_workflow
 #'
 #' @return An S3 object with the classes 'indicator_map' and 'pielou_evenness' containing
 #' the calculated indicator values and metadata.
@@ -146,13 +124,9 @@ pielou_evenness_map <- function(data, ...) {
 #'
 #' @description This function calculates Pielou's evenness over time.
 #'
-#' @param data A data cube object (class 'processed_cube').
-#' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
-#' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
-#' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
-#' @param cube_crs The projection of the cube. (Default: "EPSG:3035")
-#' @param first_year Exclude data before this year. (Uses all data in the cube by default.)
-#' @param last_year Exclude data after this year. (Uses all data in the cube by default.)
+#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#'
+#' @seealso compute_indicator_workflow
 #'
 #' @return An S3 object with the classes 'indicator_ts' and 'pielou_evenness' containing
 #' the calculated indicator values and metadata.
@@ -174,13 +148,9 @@ pielou_evenness_ts <- function(data, ...) {
 #'
 #' @description This function calculates Williams' evenness over a gridded map.
 #'
-#' @param data A data cube object (class 'processed_cube').
-#' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
-#' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
-#' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
-#' @param cube_crs The projection of the cube. (Default: "EPSG:3035")
-#' @param first_year Exclude data before this year. (Uses all data in the cube by default.)
-#' @param last_year Exclude data after this year. (Uses all data in the cube by default.)
+#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#'
+#' @seealso compute_indicator_workflow
 #'
 #' @return An S3 object with the classes 'indicator_map' and 'williams_evenness' containing
 #' the calculated indicator values and metadata.
@@ -190,7 +160,14 @@ pielou_evenness_ts <- function(data, ...) {
 #' plot(we_map)
 #'
 #' @export
-williams_evenness_map <- function(data, ...) {
+williams_evenness_map <- function(data,
+                                  cell_size = NULL,
+                                  level = NULL,
+                                  region = NULL,
+                                  cube_crs = NULL,
+                                  first_year = NULL,
+                                  last_year = NULL,
+                                  ...) {
   compute_indicator_workflow(data,
                              type = "williams_evenness",
                              dim_type = "map",
@@ -201,13 +178,9 @@ williams_evenness_map <- function(data, ...) {
 #'
 #' @description This function calculates Williams' evenness over time.
 #'
-#' @param data A data cube object (class 'processed_cube').
-#' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
-#' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
-#' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
-#' @param cube_crs The projection of the cube. (Default: "EPSG:3035")
-#' @param first_year Exclude data before this year. (Uses all data in the cube by default.)
-#' @param last_year Exclude data after this year. (Uses all data in the cube by default.)
+#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#'
+#' @seealso compute_indicator_workflow
 #'
 #' @return An S3 object with the classes 'indicator_ts' and 'williams_evenness' containing
 #' the calculated indicator values and metadata.
@@ -229,13 +202,9 @@ williams_evenness_ts <- function(data, ...) {
 #'
 #' @description This function calculates area-based rarity over a gridded map.
 #'
-#' @param data A data cube object (class 'processed_cube').
-#' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
-#' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
-#' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
-#' @param cube_crs The projection of the cube. (Default: "EPSG:3035")
-#' @param first_year Exclude data before this year. (Uses all data in the cube by default.)
-#' @param last_year Exclude data after this year. (Uses all data in the cube by default.)
+#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#'
+#' @seealso compute_indicator_workflow
 #'
 #' @return An S3 object with the classes 'indicator_map' and 'area_rarity' containing
 #' the calculated indicator values and metadata.
@@ -257,13 +226,9 @@ area_rarity_map <- function(data, ...) {
 #'
 #' @description This function calculates area-based rarity over time.
 #'
-#' @param data A data cube object (class 'processed_cube').
-#' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
-#' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
-#' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
-#' @param cube_crs The projection of the cube. (Default: "EPSG:3035")
-#' @param first_year Exclude data before this year. (Uses all data in the cube by default.)
-#' @param last_year Exclude data after this year. (Uses all data in the cube by default.)
+#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#'
+#' @seealso compute_indicator_workflow
 #'
 #' @return An S3 object with the classes 'indicator_ts' and 'area_rarity' containing
 #' the calculated indicator values and metadata.
@@ -285,13 +250,9 @@ area_rarity_ts <- function(data, ...) {
 #'
 #' @description This function calculates abundance-based rarity over a gridded map.
 #'
-#' @param data A data cube object (class 'processed_cube').
-#' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
-#' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
-#' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
-#' @param cube_crs The projection of the cube. (Default: "EPSG:3035")
-#' @param first_year Exclude data before this year. (Uses all data in the cube by default.)
-#' @param last_year Exclude data after this year. (Uses all data in the cube by default.)
+#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#'
+#' @seealso compute_indicator_workflow
 #'
 #' @return An S3 object with the classes 'indicator_map' and 'ab_rarity' containing
 #' the calculated indicator values and metadata.
@@ -313,13 +274,9 @@ ab_rarity_map <- function(data, ...) {
 #'
 #' @description This function calculates abundance-based rarity over time.
 #'
-#' @param data A data cube object (class 'processed_cube').
-#' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
-#' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
-#' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
-#' @param cube_crs The projection of the cube. (Default: "EPSG:3035")
-#' @param first_year Exclude data before this year. (Uses all data in the cube by default.)
-#' @param last_year Exclude data after this year. (Uses all data in the cube by default.)
+#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#'
+#' @seealso compute_indicator_workflow
 #'
 #' @return An S3 object with the classes 'indicator_ts' and 'ab_rarity' containing
 #' the calculated indicator values and metadata.
@@ -342,13 +299,9 @@ ab_rarity_ts <- function(data, ...) {
 #' @description This function uses coverage-based methods to estimate species
 #' richness over a gridded map.
 #'
-#' @param data A data cube object (class 'processed_cube').
-#' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
-#' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
-#' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
-#' @param cube_crs The projection of the cube. (Default: "EPSG:3035")
-#' @param first_year Exclude data before this year. (Uses all data in the cube by default.)
-#' @param last_year Exclude data after this year. (Uses all data in the cube by default.)
+#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#'
+#' @seealso compute_indicator_workflow
 #'
 #' @return An S3 object with the classes 'indicator_map' and 'hill0' containing
 #' the calculated indicator values and metadata.
@@ -374,13 +327,9 @@ hill0_map <- function(data, ...) {
 #' @description This function uses coverage-based methods to estimate species
 #' richness over time.
 #'
-#' @param data A data cube object (class 'processed_cube').
-#' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
-#' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
-#' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
-#' @param cube_crs The projection of the cube. (Default: "EPSG:3035")
-#' @param first_year Exclude data before this year. (Uses all data in the cube by default.)
-#' @param last_year Exclude data after this year. (Uses all data in the cube by default.)
+#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#'
+#' @seealso compute_indicator_workflow
 #'
 #' @return An S3 object with the classes 'indicator_ts' and 'hill0' containing
 #' the calculated indicator values and metadata.
@@ -406,13 +355,9 @@ hil0_ts <- function(data, ...) {
 #' @description This function uses coverage-based methods to estimate Hill-Shannon Diversity
 #' over a gridded map.
 #'
-#' @param data A data cube object (class 'processed_cube').
-#' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
-#' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
-#' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
-#' @param cube_crs The projection of the cube. (Default: "EPSG:3035")
-#' @param first_year Exclude data before this year. (Uses all data in the cube by default.)
-#' @param last_year Exclude data after this year. (Uses all data in the cube by default.)
+#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#'
+#' @seealso compute_indicator_workflow
 #'
 #' @return An S3 object with the classes 'indicator_map' and 'hill1' containing
 #' the calculated indicator values and metadata.
@@ -438,13 +383,9 @@ hill1_map <- function(data, ...) {
 #' @description This function uses coverage-based methods to estimate Hill-Shannon Diversity
 #' over time.
 #'
-#' @param data A data cube object (class 'processed_cube').
-#' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
-#' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
-#' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
-#' @param cube_crs The projection of the cube. (Default: "EPSG:3035")
-#' @param first_year Exclude data before this year. (Uses all data in the cube by default.)
-#' @param last_year Exclude data after this year. (Uses all data in the cube by default.)
+#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#'
+#' @seealso compute_indicator_workflow
 #'
 #' @return An S3 object with the classes 'indicator_ts' and 'hill1' containing
 #' the calculated indicator values and metadata.
@@ -470,13 +411,9 @@ hill1_ts <- function(data, ...) {
 #' @description This function uses coverage-based methods to estimate Hill-Simpson Diversity
 #' over a gridded map.
 #'
-#' @param data A data cube object (class 'processed_cube').
-#' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
-#' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
-#' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
-#' @param cube_crs The projection of the cube. (Default: "EPSG:3035")
-#' @param first_year Exclude data before this year. (Uses all data in the cube by default.)
-#' @param last_year Exclude data after this year. (Uses all data in the cube by default.)
+#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#'
+#' @seealso compute_indicator_workflow
 #'
 #' @return An S3 object with the classes 'indicator_map' and 'hill2' containing
 #' the calculated indicator values and metadata.
@@ -501,13 +438,9 @@ hill2_map <- function(data, ...) {
 #' @description This function uses coverage-based methods to estimate Hill-Simpson Diversity
 #' over time.
 #'
-#' @param data A data cube object (class 'processed_cube').
-#' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
-#' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
-#' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
-#' @param cube_crs The projection of the cube. (Default: "EPSG:3035")
-#' @param first_year Exclude data before this year. (Uses all data in the cube by default.)
-#' @param last_year Exclude data after this year. (Uses all data in the cube by default.)
+#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#'
+#' @seealso compute_indicator_workflow
 #'
 #' @return An S3 object with the classes 'indicator_ts' and 'hill2' containing
 #' the calculated indicator values and metadata.
@@ -532,12 +465,9 @@ hill2_ts <- function(data, ...) {
 #'
 #' @description This function calculates cumulative species richness as a time series.
 #'
-#' @param data A data cube object (class 'processed_cube').
-#' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
-#' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
-#' @param cube_crs The projection of the cube. (Default: "EPSG:3035")
-#' @param first_year Exclude data before this year. (Uses all data in the cube by default.)
-#' @param last_year Exclude data after this year. (Uses all data in the cube by default.)
+#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#'
+#' @seealso compute_indicator_workflow
 #'
 #' @return An S3 object with the classes 'indicator_ts' and 'cum_richness' containing
 #' the calculated indicator values and metadata.
@@ -560,13 +490,9 @@ cum_richness_ts <- function(data, ...) {
 #' @description This function estimates the relative newness of records in a data cube
 #' by calculating the mean year of occurrence over a gridded map.
 #'
-#' @param data A data cube object (class 'processed_cube').
-#' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
-#' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
-#' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
-#' @param cube_crs The projection of the cube. (Default: "EPSG:3035")
-#' @param first_year Exclude data before this year. (Uses all data in the cube by default.)
-#' @param last_year Exclude data after this year. (Uses all data in the cube by default.)
+#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#'
+#' @seealso compute_indicator_workflow
 #'
 #' @return An S3 object with the classes 'indicator_map' and 'newness' containing
 #' the calculated indicator values and metadata.
@@ -589,13 +515,9 @@ newness_map <- function(data, ...) {
 #' @description This function estimates the change in relative newness of records
 #' in a data cube over time by calculating the mean year of occurrence as a time series.
 #'
-#' @param data A data cube object (class 'processed_cube').
-#' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
-#' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
-#' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
-#' @param cube_crs The projection of the cube. (Default: "EPSG:3035")
-#' @param first_year Exclude data before this year. (Uses all data in the cube by default.)
-#' @param last_year Exclude data after this year. (Uses all data in the cube by default.)
+#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#'
+#' @seealso compute_indicator_workflow
 #'
 #' @return An S3 object with the classes 'indicator_ts' and 'newness' containing
 #' the calculated indicator values and metadata.
@@ -617,13 +539,9 @@ newness_ts <- function(data, ...) {
 #'
 #' @description This function calculates the density of records over a gridded map.
 #'
-#' @param data A data cube object (class 'processed_cube').
-#' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
-#' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
-#' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
-#' @param cube_crs The projection of the cube. (Default: "EPSG:3035")
-#' @param first_year Exclude data before this year. (Uses all data in the cube by default.)
-#' @param last_year Exclude data after this year. (Uses all data in the cube by default.)
+#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#'
+#' @seealso compute_indicator_workflow
 #'
 #' @return An S3 object with the classes 'indicator_map' and 'occ_density' containing
 #' the calculated indicator values and metadata.
@@ -645,13 +563,9 @@ occ_density_map <- function(data, ...) {
 #'
 #' @description This function calculates density of records as a time series.
 #'
-#' @param data A data cube object (class 'processed_cube').
-#' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
-#' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
-#' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
-#' @param cube_crs The projection of the cube. (Default: "EPSG:3035")
-#' @param first_year Exclude data before this year. (Uses all data in the cube by default.)
-#' @param last_year Exclude data after this year. (Uses all data in the cube by default.)
+#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#'
+#' @seealso compute_indicator_workflow
 #'
 #' @return An S3 object with the classes 'indicator_ts' and 'occ_density' containing
 #' the calculated indicator values and metadata.
@@ -704,14 +618,11 @@ spec_range_ts <- function(data, ...) {
 #'
 #' @description This function calculates the taxonomic distinctness index over a gridded map.
 #'
-#' @param data A data cube object (class 'processed_cube').
-#' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
-#' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
-#' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
-#' @param cube_crs The projection of the cube. (Default: "EPSG:3035")
-#' @param first_year Exclude data before this year. (Uses all data in the cube by default.)
-#' @param last_year Exclude data after this year. (Uses all data in the cube by default.)
+#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#'
 #' @param rows Choose which row to select if there are multiple matches when retrieving taxonomic information from GBIF. (Default is 1. Use NA for interactive mode.)
+
+#' @seealso compute_indicator_workflow
 #'
 #' @return An S3 object with the classes 'indicator_map' and 'tax_distinct' containing
 #' the calculated indicator values and metadata.
@@ -733,14 +644,11 @@ tax_distinct_map <- function(data, rows = 1, ...) {
 #'
 #' @description This function calculates the taxonomic distinctness index as a time series.
 #'
-#' @param data A data cube object (class 'processed_cube').
-#' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
-#' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
-#' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
-#' @param cube_crs The projection of the cube. (Default: "EPSG:3035")
-#' @param first_year Exclude data before this year. (Uses all data in the cube by default.)
-#' @param last_year Exclude data after this year. (Uses all data in the cube by default.)
+#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#'
 #' @param rows Choose which row to select if there are multiple matches when retrieving taxonomic information from GBIF. (Default is 1. Use NA for interactive mode.)
+
+#' @seealso compute_indicator_workflow
 #'
 #' @return An S3 object with the classes 'indicator_ts' and 'tax_distinct' containing
 #' the calculated indicator values and metadata.
