@@ -211,9 +211,9 @@ compute_indicator_workflow <- function(data,
                                        ...) {
 
   stopifnot_error("Object class not recognized.",
-                  inherits(x, "processed_cube") |
-                    inherits(x, "processed_cube_dsinfo") |
-                    inherits(x, "virtual_cube"))
+                  inherits(data, "processed_cube") |
+                    inherits(data, "processed_cube_dsinfo") |
+                    inherits(data, "virtual_cube"))
 
   type <- match.arg(type,
                     names(available_indicators))
@@ -221,23 +221,23 @@ compute_indicator_workflow <- function(data,
   level <- match.arg(level)
 
   if (!is.null(first_year)) {
-    first_year <- ifelse(first_year > x$first_year, first_year, x$first_year)
+    first_year <- ifelse(first_year > data$first_year, first_year, data$first_year)
   } else {
-    first_year <- x$first_year
+    first_year <- data$first_year
    }
 
   if (!is.null(last_year)) {
-    last_year <- ifelse(last_year < x$last_year, last_year, x$last_year)
+    last_year <- ifelse(last_year < data$last_year, last_year, data$last_year)
   } else {
-    last_year <- x$last_year
+    last_year <- data$last_year
   }
 
-  data <- x$data[(x$data$year >= first_year) & (x$data$year <= last_year),]
+  data <- data$data[(data$data$year >= first_year) & (data$data$year <= last_year),]
 
   # Collect information to add to final object
-  num_species <- x$num_species
+  num_species <- data$num_species
   num_years <- length(unique(data$year))
-  num_families <- x$num_families
+  num_families <- data$num_families
 
   if (dim_type == "ts") {
 
@@ -249,9 +249,9 @@ compute_indicator_workflow <- function(data,
 
   }
 
-  if (!inherits(x, "virtual_cube")) {
+  if (!inherits(data, "virtual_cube")) {
 
-    kingdoms <- x$kingdoms
+    kingdoms <- data$kingdoms
     species_names <- unique(data$scientificName)
     years_with_obs <- unique(data$year)
 
@@ -305,7 +305,7 @@ compute_indicator_workflow <- function(data,
   }
 
   # Create indicator object
-  if (!inherits(x, "virtual_cube")) {
+  if (!inherits(data, "virtual_cube")) {
 
     if (dim_type == "map") {
 
