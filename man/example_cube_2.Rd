@@ -28,4 +28,13 @@ example_cube_2
 \description{
 Small example cube containing the insect occurrences in Europe available on GBIF as of 16.03.2024.
 }
+\examples{
+{
+    \dontrun{
+      # Basic example of how to use the dataset
+      europe_insects_or_map <- obs_richness_map(example_cube_2, level = "continent", region = "Europe")
+      plot(europe_insects_or_map, title = "Insects in Europe (1751-2023): Observed Species Richness")
+    }
+  }
+}
 \keyword{datasets}

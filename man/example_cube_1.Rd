@@ -26,6 +26,15 @@ A 'processed_cube' object containing a tibble with 276,950 rows and 10 variables
 example_cube_1
 }
 \description{
-Small example cube containing the mammal occurrences in Denmark favailable on GBIF as of 16.03.2024.
+Small example cube containing the mammal occurrences in Denmark available on GBIF as of 16.03.2024.
+}
+\examples{
+{
+  \dontrun{
+    # Basic example of how to use the dataset
+    denmark_mammals_or_map <- obs_richness_map(example_cube_1, level = "country", region = "Denmark")
+    plot(denmark_mammals_or_map, title = "Mammals in Denmark (1751-2023): Observed Species Richness")
+  }
+}
 }
 \keyword{datasets}
