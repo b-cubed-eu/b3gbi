@@ -64,10 +64,10 @@ amphibians in Europe:
 library(b3gbi)
 
 # Load GBIF data cube
-cube_name <- system.file("extdata", "europe_species_cube.csv", package = "b3gbi")
+cube_name <- ("inst/extdata/europe_species_cube.csv")
 
 # Load taxonomic info for cube
-tax_info <- system.file("extdata", "europe_species_info.csv", package = "b3gbi")
+tax_info <- ("inst/extdata/europe_species_info.csv")
 
 # Prepare cube
 insect_data <- process_cube(cube_name, tax_info)
@@ -80,3 +80,6 @@ plot(map_obs_rich_insects, title = "Observed Species Richness: Insects in Europe
 ```
 
 <img src="man/figures/README-example-1.png" width="100%" />
+
+For a more in-depth introduction, see the tutorial:
+<https://b-cubed-eu.github.io/b3gbi/tutorials/t1.html>.
