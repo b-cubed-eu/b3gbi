@@ -2,13 +2,15 @@
 #'
 #' @description This function calculates observed species richness over a gridded map.
 #'
-#' @param x A data cube object (class 'processed_cube').
+#' @param data A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
 #' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
 #' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
 #' @param cube_crs The projection of the cube. (Default: "EPSG:3035")
 #' @param first_year Exclude data before this year. (Uses all data in the cube by default.)
 #' @param last_year Exclude data after this year. (Uses all data in the cube by default.)
+#' @param ... Additional arguments passed to specific indicator calculation functions.
+#' @seealso compute_indicator_workflow
 #'
 #' @return An S3 object with the classes 'indicator_map' and 'obs_richness' containing
 #' the calculated indicator values and metadata.
@@ -30,7 +32,7 @@ obs_richness_map <- function(data, ...) {
 #'
 #' @description This function calculates observed species richness as a time series.
 #'
-#' @param x A data cube object (class 'processed_cube').
+#' @param data A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
 #' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
 #' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
@@ -59,7 +61,7 @@ obs_richness_ts <- function(data, ...) {
 #' @description This function calculates the total number of species occurrence
 #' records over a gridded map.
 #'
-#' @param x A data cube object (class 'processed_cube').
+#' @param data A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
 #' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
 #' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
@@ -88,7 +90,7 @@ total_occ_map <- function(data, ...) {
 #' @description This function calculates the total number of species occurrence records
 #' as a time series.
 #'
-#' @param x A data cube object (class 'processed_cube').
+#' @param data A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
 #' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
 #' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
@@ -116,7 +118,7 @@ total_occ_ts <- function(data, ...) {
 #'
 #' @description This function calculates Pielou's evenness over a gridded map.
 #'
-#' @param x A data cube object (class 'processed_cube').
+#' @param data A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
 #' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
 #' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
@@ -144,7 +146,7 @@ pielou_evenness_map <- function(data, ...) {
 #'
 #' @description This function calculates Pielou's evenness over time.
 #'
-#' @param x A data cube object (class 'processed_cube').
+#' @param data A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
 #' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
 #' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
@@ -172,7 +174,7 @@ pielou_evenness_ts <- function(data, ...) {
 #'
 #' @description This function calculates Williams' evenness over a gridded map.
 #'
-#' @param x A data cube object (class 'processed_cube').
+#' @param data A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
 #' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
 #' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
@@ -199,7 +201,7 @@ williams_evenness_map <- function(data, ...) {
 #'
 #' @description This function calculates Williams' evenness over time.
 #'
-#' @param x A data cube object (class 'processed_cube').
+#' @param data A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
 #' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
 #' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
@@ -227,7 +229,7 @@ williams_evenness_ts <- function(data, ...) {
 #'
 #' @description This function calculates area-based rarity over a gridded map.
 #'
-#' @param x A data cube object (class 'processed_cube').
+#' @param data A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
 #' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
 #' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
@@ -255,7 +257,7 @@ area_rarity_map <- function(data, ...) {
 #'
 #' @description This function calculates area-based rarity over time.
 #'
-#' @param x A data cube object (class 'processed_cube').
+#' @param data A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
 #' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
 #' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
@@ -283,7 +285,7 @@ area_rarity_ts <- function(data, ...) {
 #'
 #' @description This function calculates abundance-based rarity over a gridded map.
 #'
-#' @param x A data cube object (class 'processed_cube').
+#' @param data A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
 #' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
 #' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
@@ -311,7 +313,7 @@ ab_rarity_map <- function(data, ...) {
 #'
 #' @description This function calculates abundance-based rarity over time.
 #'
-#' @param x A data cube object (class 'processed_cube').
+#' @param data A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
 #' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
 #' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
@@ -340,7 +342,7 @@ ab_rarity_ts <- function(data, ...) {
 #' @description This function uses coverage-based methods to estimate species
 #' richness over a gridded map.
 #'
-#' @param x A data cube object (class 'processed_cube').
+#' @param data A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
 #' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
 #' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
@@ -372,7 +374,7 @@ hill0_map <- function(data, ...) {
 #' @description This function uses coverage-based methods to estimate species
 #' richness over time.
 #'
-#' @param x A data cube object (class 'processed_cube').
+#' @param data A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
 #' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
 #' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
@@ -404,7 +406,7 @@ hil0_ts <- function(data, ...) {
 #' @description This function uses coverage-based methods to estimate Hill-Shannon Diversity
 #' over a gridded map.
 #'
-#' @param x A data cube object (class 'processed_cube').
+#' @param data A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
 #' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
 #' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
@@ -436,7 +438,7 @@ hill1_map <- function(data, ...) {
 #' @description This function uses coverage-based methods to estimate Hill-Shannon Diversity
 #' over time.
 #'
-#' @param x A data cube object (class 'processed_cube').
+#' @param data A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
 #' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
 #' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
@@ -468,7 +470,7 @@ hill1_ts <- function(data, ...) {
 #' @description This function uses coverage-based methods to estimate Hill-Simpson Diversity
 #' over a gridded map.
 #'
-#' @param x A data cube object (class 'processed_cube').
+#' @param data A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
 #' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
 #' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
@@ -499,7 +501,7 @@ hill2_map <- function(data, ...) {
 #' @description This function uses coverage-based methods to estimate Hill-Simpson Diversity
 #' over time.
 #'
-#' @param x A data cube object (class 'processed_cube').
+#' @param data A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
 #' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
 #' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
@@ -530,7 +532,7 @@ hill2_ts <- function(data, ...) {
 #'
 #' @description This function calculates cumulative species richness as a time series.
 #'
-#' @param x A data cube object (class 'processed_cube').
+#' @param data A data cube object (class 'processed_cube').
 #' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
 #' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
 #' @param cube_crs The projection of the cube. (Default: "EPSG:3035")
@@ -558,7 +560,7 @@ cum_richness_ts <- function(data, ...) {
 #' @description This function estimates the relative newness of records in a data cube
 #' by calculating the mean year of occurrence over a gridded map.
 #'
-#' @param x A data cube object (class 'processed_cube').
+#' @param data A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
 #' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
 #' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
@@ -587,7 +589,7 @@ newness_map <- function(data, ...) {
 #' @description This function estimates the change in relative newness of records
 #' in a data cube over time by calculating the mean year of occurrence as a time series.
 #'
-#' @param x A data cube object (class 'processed_cube').
+#' @param data A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
 #' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
 #' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
@@ -615,7 +617,7 @@ newness_ts <- function(data, ...) {
 #'
 #' @description This function calculates the density of records over a gridded map.
 #'
-#' @param x A data cube object (class 'processed_cube').
+#' @param data A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
 #' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
 #' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
@@ -643,7 +645,7 @@ occ_density_map <- function(data, ...) {
 #'
 #' @description This function calculates density of records as a time series.
 #'
-#' @param x A data cube object (class 'processed_cube').
+#' @param data A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
 #' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
 #' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
@@ -702,7 +704,7 @@ spec_range_ts <- function(data, ...) {
 #'
 #' @description This function calculates the taxonomic distinctness index over a gridded map.
 #'
-#' @param x A data cube object (class 'processed_cube').
+#' @param data A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
 #' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
 #' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
@@ -731,7 +733,7 @@ tax_distinct_map <- function(data, rows = 1, ...) {
 #'
 #' @description This function calculates the taxonomic distinctness index as a time series.
 #'
-#' @param x A data cube object (class 'processed_cube').
+#' @param data A data cube object (class 'processed_cube').
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
 #' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
 #' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
