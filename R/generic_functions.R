@@ -26,7 +26,7 @@
 #' occurrence_density_trend <- occ_density_ts(example_cube_1)
 #' plot(occurrence_density_trend, min_year=1980)
 #'
-#' @export
+#' @noRd
 calc_ts <- function(x, ...) {
   UseMethod("calc_ts")
 }
@@ -58,7 +58,7 @@ calc_ts <- function(x, ...) {
 #' observed_richness_map <- obs_richness_map(example_cube_2, level = "continent", region = "Europe")
 #' plot(observed_richness_map)
 #'
-#' @export
+#' @noRd
 calc_map <- function(x, ...) {
   UseMethod("calc_map")
 }

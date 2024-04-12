@@ -4,22 +4,14 @@
 \alias{williams_evenness_map}
 \title{Calculate Williams' Evenness Over Space}
 \usage{
-williams_evenness_map(
-  data,
-  cell_size = NULL,
-  level = NULL,
-  region = NULL,
-  cube_crs = NULL,
-  first_year = NULL,
-  last_year = NULL,
-  ...
-)
+williams_evenness_map(data, ...)
 }
 \arguments{
+\item{data}{A data cube object (class 'processed_cube').}
+
 \item{...}{
   Arguments passed on to \code{\link[=compute_indicator_workflow]{compute_indicator_workflow}}
   \describe{
-    \item{\code{data}}{A data cube object (class 'processed_cube').}
     \item{\code{cell_size}}{Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)}
     \item{\code{level}}{Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')}
     \item{\code{region}}{The region of interest (e.g., "Europe"). (Default: "Europe")}

@@ -2,7 +2,9 @@
 #'
 #' @description This function calculates observed species richness over a gridded map.
 #'
-#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#' @param data A data cube object (class 'processed_cube').
+#'
+#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
 #' @seealso compute_indicator_workflow
 #'
@@ -26,7 +28,9 @@ obs_richness_map <- function(data, ...) {
 #'
 #' @description This function calculates observed species richness as a time series.
 #'
-#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#' @param data A data cube object (class 'processed_cube').
+#'
+#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
 #' @seealso compute_indicator_workflow
 #'
@@ -51,7 +55,9 @@ obs_richness_ts <- function(data, ...) {
 #' @description This function calculates the total number of species occurrence
 #' records over a gridded map.
 #'
-#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#' @param data A data cube object (class 'processed_cube').
+#'
+#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
 #' @seealso compute_indicator_workflow
 #'
@@ -76,7 +82,9 @@ total_occ_map <- function(data, ...) {
 #' @description This function calculates the total number of species occurrence records
 #' as a time series.
 #'
-#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#' @param data A data cube object (class 'processed_cube').
+#'
+#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
 #' @seealso compute_indicator_workflow
 #'
@@ -100,7 +108,9 @@ total_occ_ts <- function(data, ...) {
 #'
 #' @description This function calculates Pielou's evenness over a gridded map.
 #'
-#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#' @param data A data cube object (class 'processed_cube').
+#'
+#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
 #' @seealso compute_indicator_workflow
 #'
@@ -124,7 +134,9 @@ pielou_evenness_map <- function(data, ...) {
 #'
 #' @description This function calculates Pielou's evenness over time.
 #'
-#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#' @param data A data cube object (class 'processed_cube').
+#'
+#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
 #' @seealso compute_indicator_workflow
 #'
@@ -148,7 +160,9 @@ pielou_evenness_ts <- function(data, ...) {
 #'
 #' @description This function calculates Williams' evenness over a gridded map.
 #'
-#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#' @param data A data cube object (class 'processed_cube').
+#'
+#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
 #' @seealso compute_indicator_workflow
 #'
@@ -160,14 +174,7 @@ pielou_evenness_ts <- function(data, ...) {
 #' plot(we_map)
 #'
 #' @export
-williams_evenness_map <- function(data,
-                                  cell_size = NULL,
-                                  level = NULL,
-                                  region = NULL,
-                                  cube_crs = NULL,
-                                  first_year = NULL,
-                                  last_year = NULL,
-                                  ...) {
+williams_evenness_map <- function(data, ...) {
   compute_indicator_workflow(data,
                              type = "williams_evenness",
                              dim_type = "map",
@@ -178,7 +185,9 @@ williams_evenness_map <- function(data,
 #'
 #' @description This function calculates Williams' evenness over time.
 #'
-#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#' @param data A data cube object (class 'processed_cube').
+#'
+#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
 #' @seealso compute_indicator_workflow
 #'
@@ -202,7 +211,9 @@ williams_evenness_ts <- function(data, ...) {
 #'
 #' @description This function calculates area-based rarity over a gridded map.
 #'
-#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#' @param data A data cube object (class 'processed_cube').
+#'
+#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
 #' @seealso compute_indicator_workflow
 #'
@@ -226,7 +237,9 @@ area_rarity_map <- function(data, ...) {
 #'
 #' @description This function calculates area-based rarity over time.
 #'
-#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#' @param data A data cube object (class 'processed_cube').
+#'
+#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
 #' @seealso compute_indicator_workflow
 #'
@@ -250,7 +263,9 @@ area_rarity_ts <- function(data, ...) {
 #'
 #' @description This function calculates abundance-based rarity over a gridded map.
 #'
-#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#' @param data A data cube object (class 'processed_cube').
+#'
+#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
 #' @seealso compute_indicator_workflow
 #'
@@ -274,7 +289,9 @@ ab_rarity_map <- function(data, ...) {
 #'
 #' @description This function calculates abundance-based rarity over time.
 #'
-#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#' @param data A data cube object (class 'processed_cube').
+#'
+#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
 #' @seealso compute_indicator_workflow
 #'
@@ -299,7 +316,9 @@ ab_rarity_ts <- function(data, ...) {
 #' @description This function uses coverage-based methods to estimate species
 #' richness over a gridded map.
 #'
-#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#' @param data A data cube object (class 'processed_cube').
+#'
+#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
 #' @seealso compute_indicator_workflow
 #'
@@ -327,7 +346,9 @@ hill0_map <- function(data, ...) {
 #' @description This function uses coverage-based methods to estimate species
 #' richness over time.
 #'
-#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#' @param data A data cube object (class 'processed_cube').
+#'
+#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
 #' @seealso compute_indicator_workflow
 #'
@@ -355,7 +376,9 @@ hil0_ts <- function(data, ...) {
 #' @description This function uses coverage-based methods to estimate Hill-Shannon Diversity
 #' over a gridded map.
 #'
-#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#' @param data A data cube object (class 'processed_cube').
+#'
+#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
 #' @seealso compute_indicator_workflow
 #'
@@ -383,7 +406,9 @@ hill1_map <- function(data, ...) {
 #' @description This function uses coverage-based methods to estimate Hill-Shannon Diversity
 #' over time.
 #'
-#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#' @param data A data cube object (class 'processed_cube').
+#'
+#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
 #' @seealso compute_indicator_workflow
 #'
@@ -411,7 +436,9 @@ hill1_ts <- function(data, ...) {
 #' @description This function uses coverage-based methods to estimate Hill-Simpson Diversity
 #' over a gridded map.
 #'
-#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#' @param data A data cube object (class 'processed_cube').
+#'
+#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
 #' @seealso compute_indicator_workflow
 #'
@@ -438,7 +465,9 @@ hill2_map <- function(data, ...) {
 #' @description This function uses coverage-based methods to estimate Hill-Simpson Diversity
 #' over time.
 #'
-#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#' @param data A data cube object (class 'processed_cube').
+#'
+#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
 #' @seealso compute_indicator_workflow
 #'
@@ -465,7 +494,9 @@ hill2_ts <- function(data, ...) {
 #'
 #' @description This function calculates cumulative species richness as a time series.
 #'
-#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#' @param data A data cube object (class 'processed_cube').
+#'
+#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
 #' @seealso compute_indicator_workflow
 #'
@@ -490,7 +521,9 @@ cum_richness_ts <- function(data, ...) {
 #' @description This function estimates the relative newness of records in a data cube
 #' by calculating the mean year of occurrence over a gridded map.
 #'
-#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#' @param data A data cube object (class 'processed_cube').
+#'
+#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
 #' @seealso compute_indicator_workflow
 #'
@@ -515,7 +548,9 @@ newness_map <- function(data, ...) {
 #' @description This function estimates the change in relative newness of records
 #' in a data cube over time by calculating the mean year of occurrence as a time series.
 #'
-#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#' @param data A data cube object (class 'processed_cube').
+#'
+#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
 #' @seealso compute_indicator_workflow
 #'
@@ -539,7 +574,9 @@ newness_ts <- function(data, ...) {
 #'
 #' @description This function calculates the density of records over a gridded map.
 #'
-#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#' @param data A data cube object (class 'processed_cube').
+#'
+#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
 #' @seealso compute_indicator_workflow
 #'
@@ -563,7 +600,9 @@ occ_density_map <- function(data, ...) {
 #'
 #' @description This function calculates density of records as a time series.
 #'
-#' @inheritDotParams compute_indicator_workflow -type -dim_type
+#' @param data A data cube object (class 'processed_cube').
+#'
+#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
 #' @seealso compute_indicator_workflow
 #'
@@ -618,10 +657,11 @@ spec_range_ts <- function(data, ...) {
 #'
 #' @description This function calculates the taxonomic distinctness index over a gridded map.
 #'
-#' @inheritDotParams compute_indicator_workflow -type -dim_type
-#'
+#' @param data A data cube object (class 'processed_cube').
 #' @param rows Choose which row to select if there are multiple matches when retrieving taxonomic information from GBIF. (Default is 1. Use NA for interactive mode.)
-
+#'
+#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
+#'
 #' @seealso compute_indicator_workflow
 #'
 #' @return An S3 object with the classes 'indicator_map' and 'tax_distinct' containing
@@ -644,10 +684,11 @@ tax_distinct_map <- function(data, rows = 1, ...) {
 #'
 #' @description This function calculates the taxonomic distinctness index as a time series.
 #'
-#' @inheritDotParams compute_indicator_workflow -type -dim_type
-#'
+#' @param data A data cube object (class 'processed_cube').
 #' @param rows Choose which row to select if there are multiple matches when retrieving taxonomic information from GBIF. (Default is 1. Use NA for interactive mode.)
-
+#'
+#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
+#'
 #' @seealso compute_indicator_workflow
 #'
 #' @return An S3 object with the classes 'indicator_ts' and 'tax_distinct' containing

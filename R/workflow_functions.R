@@ -193,7 +193,8 @@ prepare_spatial_data <- function(data, grid, cube_crs) {
 #'
 #' @examples
 #' diversity_map <- compute_indicator_workflow(example_cube_2,
-#'                                             type = "obs_richness_map",
+#'                                             type = "obs_richness",
+#'                                             dim_type = "map",
 #'                                             level = "continent",
 #'                                             region = "Europe")
 #' diversity_map

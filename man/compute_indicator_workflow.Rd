@@ -56,7 +56,8 @@ and formats the output into an appropriate S3 object ('indicator_map' or 'indica
 }
 \examples{
 diversity_map <- compute_indicator_workflow(example_cube_2,
-                                            type = "obs_richness_map",
+                                            type = "obs_richness",
+                                            dim_type = "map",
                                             level = "continent",
                                             region = "Europe")
 diversity_map
