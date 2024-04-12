@@ -12,11 +12,15 @@
 #'
 #' @examples
 #' # Get some map data
-#' germany_map <- rnaturalearth::ne_countries(country = "Germany", scale = "medium", returnclass = "sf")
+#' germany_map <- rnaturalearth::ne_countries(country = "Germany",
+#'                                            scale = "medium",
+#'                                            returnclass = "sf")
 #' # Change projection to EPSG:3035 (works well with metric grid size)
-#' germany_map <- sf::st_transform(germany_map, crs = "EPSG:3035")
+#' germany_map <- sf::st_transform(germany_map,
+#'                                 crs = "EPSG:3035")
 #' # Calculate a 100km x 100km grid and plot it
-#' germany_grid <- create_grid(germany_map, cell_size = 10)
+#' germany_grid <- create_grid(germany_map,
+#'                             cell_size = 10)
 #' plot(germany_grid)
 #' @noRd
 create_grid <- function(map_data,
@@ -168,7 +172,7 @@ prepare_spatial_data <- function(data, grid, cube_crs) {
 #' indicators on a spatial grid or as a time series. It prepares the data, creates a grid, calculates indicators,
 #' and formats the output into an appropriate S3 object ('indicator_map' or 'indicator_ts').
 #'
-#' @param x A data cube object ('processed_cube').
+#' @param data A data cube object (class 'processed_cube').
 #' @param type The indicator to calculate. Supported options include:
 #'   * 'obs_richness': Observed species richness.
 #'   * 'total_occ': Total number of occurrences.
@@ -180,16 +184,22 @@ prepare_spatial_data <- function(data, grid, cube_crs) {
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
 #' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
 #' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
+#' @param cube_crs The projection of the cube. (Default: "EPSG:3035")
+#' @param first_year Exclude data before this year. (Uses all data in the cube by default.)
+#' @param last_year Exclude data after this year. (Uses all data in the cube by default.)
 #' @param ... Additional arguments passed to specific indicator calculation functions.
 #'
 #' @return An S3 object containing the calculated indicator values and metadata.
 #'
 #' @examples
-#' diversity_map <- compute_indicator_workflow(example_cube_2, type = "obs_richness_map", level = "continent", region = "Europe")
+#' diversity_map <- compute_indicator_workflow(example_cube_2,
+#'                                             type = "obs_richness_map",
+#'                                             level = "continent",
+#'                                             region = "Europe")
 #' diversity_map
 #'
-#' @noRd
-compute_indicator_workflow <- function(x,
+#' @export
+compute_indicator_workflow <- function(data,
                                        type,
                                        dim_type = c("map", "ts"),
                                        cell_size = NULL,
