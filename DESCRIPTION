@@ -27,6 +27,7 @@ Imports:
     rnaturalearth,
     rnaturalearthdata,
     sf,
+    stringr,
     taxize,
     tibble,
     tidyr,
