@@ -18,8 +18,11 @@
 #' @examples{
 #'   \dontrun{
 #'     # Basic example of how to use the dataset
-#'     denmark_mammals_or_map <- obs_richness_map(example_cube_1, level = "country", region = "Denmark")
-#'     plot(denmark_mammals_or_map, title = "Mammals in Denmark (1751-2023): Observed Species Richness")
+#'     denmark_mammals_or_map <- obs_richness_map(example_cube_1,
+#'                                                level = "country",
+#'                                                region = "Denmark")
+#'     plot(denmark_mammals_or_map,
+#'          title = "Mammals in Denmark (1751-2023): Observed Species Richness")
 #'   }
 #' }
 #' @source \url{https://doi.org/10.15468/dl.5mb887}
@@ -45,8 +48,11 @@
 #' @examples{
 #'     \dontrun{
 #'       # Basic example of how to use the dataset
-#'       europe_insects_or_map <- obs_richness_map(example_cube_2, level = "continent", region = "Europe")
-#'       plot(europe_insects_or_map, title = "Insects in Europe (1751-2023): Observed Species Richness")
+#'       europe_insects_or_map <- obs_richness_map(example_cube_2,
+#'                                                 level = "continent",
+#'                                                 region = "Europe")
+#'       plot(europe_insects_or_map,
+#'            title = "Insects in Europe (1751-2023): Observed Species Richness")
 #'     }
 #'   }
 #' @source \url{https://doi.org/10.15468/dl.qk4f2z}
