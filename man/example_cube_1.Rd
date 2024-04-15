@@ -32,8 +32,11 @@ Small example cube containing the mammal occurrences in Denmark available on GBI
 {
   \dontrun{
     # Basic example of how to use the dataset
-    denmark_mammals_or_map <- obs_richness_map(example_cube_1, level = "country", region = "Denmark")
-    plot(denmark_mammals_or_map, title = "Mammals in Denmark (1751-2023): Observed Species Richness")
+    denmark_mammals_or_map <- obs_richness_map(example_cube_1,
+                                               level = "country",
+                                               region = "Denmark")
+    plot(denmark_mammals_or_map,
+         title = "Mammals in Denmark (1751-2023): Observed Species Richness")
   }
 }
 }

@@ -71,6 +71,11 @@ Creates a map visualization of a calculated biodiversity indicator,
 providing customization options.
 }
 \examples{
-plot_map(x = example_indicator_map1, title = "Map of Species Evenness in Denmark")
+evenness_map <- pielou_evenness_map(example_cube_1,
+                                    level = "country",
+                                    region = "Denmark")
+plot_map(x = evenness_map,
+         title = "Map of Species Evenness in Denmark",
+         legend_title = "Evenness")
 
 }
