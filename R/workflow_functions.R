@@ -233,28 +233,28 @@ compute_indicator_workflow <- function(data,
     last_year <- data$last_year
   }
 
-  data <- data$data[(data$data$year >= first_year) & (data$data$year <= last_year),]
+  df <- data$data[(data$data$year >= first_year) & (data$data$year <= last_year),]
 
   # Collect information to add to final object
   num_species <- data$num_species
-  num_years <- length(unique(data$year))
+  num_years <- length(unique(df$year))
   num_families <- data$num_families
 
   if (dim_type == "ts") {
 
-    year_names <- unique(data$year)
-    map_lims <- unlist(list("xmin" = min(data$xcoord),
-                            "xmax" = max(data$xcoord),
-                            "ymin" = min(data$ycoord),
-                            "ymax" = max(data$ycoord)))
+    year_names <- unique(df$year)
+    map_lims <- unlist(list("xmin" = min(df$xcoord),
+                            "xmax" = max(df$xcoord),
+                            "ymin" = min(df$ycoord),
+                            "ymax" = max(df$ycoord)))
 
   }
 
   if (!inherits(data, "virtual_cube")) {
 
     kingdoms <- data$kingdoms
-    species_names <- unique(data$scientificName)
-    years_with_obs <- unique(data$year)
+    species_names <- unique(df$scientificName)
+    years_with_obs <- unique(df$year)
 
   }
 
@@ -274,7 +274,7 @@ compute_indicator_workflow <- function(data,
     grid <- create_grid(map_data, level, cell_size)
 
     # Format spatial data and merge with grid
-    data <- prepare_spatial_data(data, grid, cube_crs)
+    df <- prepare_spatial_data(df, grid, cube_crs)
 
   } else {
 
@@ -285,13 +285,13 @@ compute_indicator_workflow <- function(data,
 
   # Assign classess to send data to correct calculator function
   subtype <- paste0(type, "_", dim_type)
-  class(data) <- append(type, class(data))
-  class(data) <- append(subtype, class(data))
+  class(df) <- append(type, class(df))
+  class(df) <- append(subtype, class(df))
 
   if (dim_type == "map") {
 
     # Calculate indicator
-    indicator <- calc_map(data, ...)
+    indicator <- calc_map(df, ...)
 
     # Add indicator values to grid
     diversity_grid <-
@@ -301,7 +301,7 @@ compute_indicator_workflow <- function(data,
   } else {
 
     # Calculate indicator
-    indicator <- calc_ts(data, ...)
+    indicator <- calc_ts(df, ...)
 
   }
 
