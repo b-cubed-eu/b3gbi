@@ -59,33 +59,7 @@
 "example_cube_2"
 
 
-#' Map of Pielou's Evenness for Mammals in Denmark
-#'
-#' Example indicator containing a map of pielou's evenness for mammal occurrences in Denmark (occurrences from GBIF: 16.03.2024).
-#'
-#' @format An 'indicator_map' object containing a tibble with 576 rows and 4 variables, as well as metadata
-#' \describe{
-#'   \item{cellid}{ID number identifying a particular grid cell}
-#'   \item{area_km2}{area of the grid cell in square kms}
-#'   \item{diversity_val}{calculated evenness value for the grid cell}
-#'   \item{geometry}{grid cell polygon (this column is not visible by default when you print the object)}
-#' }
-#' @source \url{https://doi.org/10.15468/dl.qk4f2z}
-"example_indicator_map1"
 
-#' Map of Abundance-Based Rarity for Insects in Europe
-#'
-#' Example indicator containing a map of abundance-based rarity for insect occurrences in Europe (occurrences from GBIF: 16.03.2024).
-#'
-#' @format An 'indicator_map' object containing a tibble with 3,225 rows and 4 variables, as well as metadata
-#' \describe{
-#'   \item{cellid}{ID number identifying a particular grid cell}
-#'   \item{area_km2}{area of the grid cell in square kms}
-#'   \item{diversity_val}{calculated rarity value for the grid cell}
-#'   \item{geometry}{grid cell polygon (this column is not visible by default when you print the object)}
-#' }
-#' @source \url{https://doi.org/10.15468/dl.qk4f2z}
-"example_indicator_map2"
 
 #' Time Series of Observed Species Richness for Mammals in Denmark
 #'
