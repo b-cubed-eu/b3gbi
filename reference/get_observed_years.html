@@ -85,61 +85,7 @@ for each year (<code>TRUE</code> if present, <code>FALSE</code> if absent).</p><
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">get_observed_years</span><span class="op">(</span><span class="va">example_indicator_map1</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    years occurrences</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   1970        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   1971        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   1972        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   1973        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   1974        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   1975        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7   1976        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8   1977        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9   1978        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10  1979        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11  1980        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12  1981        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13  1982        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14  1983        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15  1984        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16  1985        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17  1986        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18  1987        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19  1988        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20  1989        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21  1990        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22  1991        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23  1992        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24  1993        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 25  1994        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 26  1995        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 27  1996        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 28  1997        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 29  1998        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 30  1999        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 31  2000        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 32  2001        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 33  2002        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 34  2003        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 35  2004        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 36  2005        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 37  2006        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 38  2007        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 39  2008        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 40  2009        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 41  2010        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 42  2011        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 43  2012        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 44  2013        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 45  2014        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 46  2015        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 47  2016        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 48  2017        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 49  2018        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 50  2019        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 51  2020        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 52  2021        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 53  2022        TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 54  2023        TRUE</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in eval(expr, envir, enclos):</span> object 'example_indicator_map1' not found</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
