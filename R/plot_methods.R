@@ -500,7 +500,7 @@ plot.hill2 <- function(x, ...){
   } else if (inherits(x, "indicator_map")) {
 
     # Set defaults
-    leg_label_default <- "Hill-Simpson \nDiversity"
+    leg_label_default <- "Hill-Simpson Diversity"
     auto_title <- "Hill-Simpson Diversity (Estimated by Coverage-Based Rarefaction)"
 
     # Call generalized plot_map function
@@ -530,7 +530,7 @@ plot.hill1 <- function(x, ...){
   } else if (inherits(x, "indicator_map")) {
 
     # Set defaults
-    leg_label_default <- "Hill-Shannon \nDiversity"
+    leg_label_default <- "Hill-Shannon Diversity"
     auto_title <- "Hill-Shannon Diversity (Estimated by Coverage-Based Rarefaction)"
 
     # Call generalized plot_map function
