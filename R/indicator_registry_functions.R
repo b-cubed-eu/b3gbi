@@ -115,17 +115,17 @@ register_indicator <- function(indicator_class,
     }
 
     if (is.null(legend_transformation)) {
-      legend_transformation <- NA
+      legend_transformation <- NULL
     }
 
     if(is.null(map_function_arguments)) {
-      map_function_arguments <- NA
+      map_function_arguments <- NULL
     } else {
       stopifnot_error("map_function_arguments must be a list", inherits(map_function_arguments, "list"))
     }
 
     if(is.null(ts_function_arguments)) {
-      ts_function_arguments <- NA
+      ts_function_arguments <- NULL
     } else {
       stopifnot_error("ts_function_arguments must be a list", inherits(ts_function_arguments, "list"))
     }
@@ -210,16 +210,24 @@ register_indicator <- function(indicator_class,
 
 # Function to remove a registered indicator
 #' @noRd
-deregister_indicator <- function(indicator_class=NULL,
-                                 indicator_name=NULL,
+deregister_indicator <- function(indicator_number,
+                                 #indicator_class=NULL,
+                                 #indicator_name=NULL,
                                  backup = TRUE) {
 
-  if (is.null(indicator_class) & is.null(indicator_name)) {
-    stop("Please provide either the indicator_class or indicator_name.")
-  }
+  # Path to the data file
+  fname <- system.file("data", "available_indicators.rda", package = "b3gbi")
+  stopifnot(file.exists(fname))
+
+  # Load data into new environment
+  e <- new.env()
+  load(fname, envir = e)
+
+  # Get class of indicator
+  i_class <- e$available_indicators[[indicator_number]]$indicator_class
 
   check_if_certain <- readline(prompt = paste("Are you sure you want to deregister class ",
-                                              indicator_class,
+                                              i_class,
                                               "? (yes/no) "))
 
   check_if_certain <- match.arg(check_if_certain, choices = c("yes", "no"))
@@ -228,15 +236,7 @@ deregister_indicator <- function(indicator_class=NULL,
 
     stop("Registration cancelled.")
 
-    }
-
-  #Path to the data file
-  fname <- system.file("data", "available_indicators.rda", package = "b3gbi")
-  stopifnot(file.exists(fname))
-
-  #Load data into new environment
-  e <- new.env()
-  load(fname, envir = e)
+  }
 
   if (backup==TRUE) {
 
@@ -245,23 +245,17 @@ deregister_indicator <- function(indicator_class=NULL,
 
   }
 
-  if(!is.null(indicator_class)) {
-    # Remove any indicators without a class and/or name
-    e$available_indicators <-
-      e$available_indicators %>%
-      filter(!(indicator_class == indicator_class))
-    message(paste("Indicator class '", indicator_class, "' deregistered."))
-  } else {
-    name <- indicator_name
-    # Remove any indicators without a class and/or name
-    e$available_indicators <-
-      e$available_indicators %>%
-      filter(!(indicator_name == name))
-    message(paste("Indicator ", indicator_name, "deregistered."))
+  # Remove indicator from registry
+  e$available_indicators <- e$available_indicators[-indicator_number]
+  message(paste("Indicator class '", i_class, "' deregistered."))
+
+  # Ensure object has the proper class
+  if (!inherits(e$available_indicators, "available_indicators")) {
+    class(e$available_indicators) <- append("available_indicators", class(e$available_indicators))
   }
 
   #Write back to file
-  save(available_indicators, file = fname)
+  save(available_indicators, file = fname, envir = e)
 
   #Load into global environment if desired
   check_if_apply_now <- readline(prompt = paste0("Load changes into global environment immediately? (yes/no) "))
@@ -278,42 +272,4 @@ deregister_indicator <- function(indicator_class=NULL,
   message(paste("Registered indicators backed up to ", fname, ".old", sep=""))
 }
 
-#'
-#' @method print available_indicators
-#'
-#' @export
-print.available_indicators <- function(x, n = 30, ...) {
-  if (n > length(names(x))) n <- length(names(x))
-  cat("\n\nAvailable Indicators\n")
-  for (i in 1:n) {
-    cat(paste0("\n\n", i, ". \033[0;31m", x[[i]]$indicator_name, "\033[0m"), sep="")
-    cat("\n     Class: ", x[[i]]$indicator_class, sep="")
-    if (!is.null(x[[i]]$map_wrapper)) {
-      cat("\n     Calculate map: yes, e.g. ", x[[i]]$map_wrapper, "(my_data_cube)", sep="")
-    } else {
-      cat("\n     Calculate map: no", sep="")
-    }
-    if (!is.null(x[[i]]$ts_wrapper)) {
-      cat("\n     Calculate time series: yes, e.g. ", x[[i]]$ts_wrapper, "(my_data_cube)", sep="")
-    } else {
-      cat("\n     Calculate time series: no", sep="")
-    }
-    if (!is.na(x[[i]]$map_function_arguments)){
-      cat("\n     Additional map function arguments: (", x[[i]]$map_function_arguments, ")", sep="")
-    } else {
-      cat("\n     Additional map function arguments: none", sep="")
-    }
-    if (!is.na(x[[i]]$ts_function_arguments)){
-      cat("\n     Additional time series function arguments: (", x[[i]]$ts_function_arguments, ")", sep="")
-    } else {
-      cat("\n     Additional time series function arguments: none", sep="")
-    }
-  }
-  if (n < length(names(x))) {
-    cat("\n*Note: There are ", length(names(x)) - n,
-                                " additional indicator(s). To see more, increase n (e.g. n = ",
-                                length(names(x)), ").", sep = "")
-  } else {
-      cat("\n")
-    }
-}
+

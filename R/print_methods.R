@@ -4,6 +4,7 @@
 #'   designed for user-friendly display in the console.
 #'
 #' @method print indicator_ts
+#'
 #' @param x An indicator_ts object.
 #' @param n Integer specifying the number of rows of data to display.
 #' @param ... Additional arguments.
@@ -32,13 +33,15 @@ print.indicator_ts <- function(x, n = 10, ...) {
 #'   designed for user-friendly display in the console.
 #'
 #' @method print indicator_map
+#'
 #' @param x An indicator_map object.
 #' @param n Integer specifying the number of rows of data to display.
 #' @param ... Additional arguments.
 #'
 #' @examples
 #' library(sf)
-#' print(example_indicator_map1)
+#' obs_rich_map <- obs_richness_map(example_cube_2)
+#' print(obs_rich_map)
 #'
 #' @export
 print.indicator_map <- function(x, n = 10, ...) {
@@ -71,6 +74,7 @@ print.indicator_map <- function(x, n = 10, ...) {
 #'   designed for user-friendly display in the console.
 #'
 #' @method print processed_cube
+#'
 #' @param x A processed_cube object.
 #' @param n Integer specifying the number of rows of cube data to display.
 #' @param ... Additional arguments.
@@ -101,6 +105,7 @@ print.processed_cube <- function(x, n = 10, ...) {
 #'   designed for user-friendly display in the console.
 #'
 #' @method print processed_cube_dsinfo
+#'
 #' @param x A processed_cube_dsinfo object.
 #' @param n Integer specifying the number of rows of data to display.
 #' @param ... Additional arguments.
@@ -122,4 +127,50 @@ print.processed_cube_dsinfo <- function(x, n = 10, ...) {
   cat("Record types represented:", paste(x$record_types, collapse = ", "), "\n\n")
   cat("First", n, "rows of data (use n = to show more):\n\n")
   print(x$data, n = n, ...)
+}
+
+#' @title Print Available Indicators
+#' @description Provide a summary of indicators registered in the package.
+#'
+#' @method print available_indicators
+#'
+#' @param x Object of class available_indicators
+#' @param n Integer specifying the number of rows of data to display.
+#' @param ... Additional arguments.
+#'
+#' @export
+print.available_indicators <- function(x, n = 30, ...) {
+  if (n > length(names(x))) n <- length(names(x))
+  cat("\n\nAvailable Indicators\n")
+  for (i in 1:n) {
+    cat(paste0("\n\n", i, ". \033[0;31m", x[[i]]$indicator_name, "\033[0m"), sep="")
+    cat("\n     Class: ", x[[i]]$indicator_class, sep="")
+    if (!is.null(x[[i]]$map_wrapper)) {
+      cat("\n     Calculate map: yes, e.g. ", x[[i]]$map_wrapper, "(my_data_cube)", sep="")
+    } else {
+      cat("\n     Calculate map: no", sep="")
+    }
+    if (!is.null(x[[i]]$ts_wrapper)) {
+      cat("\n     Calculate time series: yes, e.g. ", x[[i]]$ts_wrapper, "(my_data_cube)", sep="")
+    } else {
+      cat("\n     Calculate time series: no", sep="")
+    }
+    if (!is.null(x[[i]]$map_function_arguments)){
+      cat("\n     Additional map function arguments: ", paste(x[[i]]$map_function_arguments, collapse= ", "), sep="")
+    } else {
+      cat("\n     Additional map function arguments: none", sep="")
+    }
+    if (!is.null(x[[i]]$ts_function_arguments)){
+      cat("\n     Additional time series function arguments: ", paste(x[[i]]$ts_function_arguments, collapse = ", "), sep="")
+    } else {
+      cat("\n     Additional time series function arguments: none", sep="")
+    }
+  }
+  if (n < length(names(x))) {
+    cat("\n*Note: There are ", length(names(x)) - n,
+        " additional indicator(s). To see more, increase n (e.g. n = ",
+        length(names(x)), ").", sep = "")
+  } else {
+    cat("\n")
+  }
 }
