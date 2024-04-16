@@ -18,3 +18,4 @@
 ^R_old$
 ^\.local$
 ^codemeta\.json$
+^codecov\.yml$
