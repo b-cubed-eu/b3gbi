@@ -53,15 +53,13 @@ calc_ts.hill2 <- function(x, ...) {
 
 #' @noRd
 calc_ts.hill_core <- function(x,
-                               type = c("hill0, hill1, hill2"),
-                               cutoff_length = 100,
-                               coverage = 0.95,
-                               ...)
+                              type = c("hill0", "hill1", "hill2"),
+                              ...)
 {
 
   stopifnot_error("Please check the class and structure of your data.
                   This is an internal function, not meant to be called directly.",
-                  inherits(x, c("data.frame", "sf", "hill0" | "hill1" | "hill2")))
+                  inherits(x, c("data.frame", "sf")) & rlang::inherits_any(x, c("hill0", "hill1", "hill2")))
 
   type <- match.arg(type)
 
@@ -112,6 +110,13 @@ calc_ts.hill_core <- function(x,
 
   # name list elements
   names(species_records_raw) <- richness_by_year$year
+
+
+  temp_opts <- list(...)
+
+  cutoff_length <- temp_opts$cutoff_length
+
+  coverage <- temp_opts$coverage
 
   # remove all years with too little data to avoid errors from iNEXT
   species_records_raw2 <- species_records_raw %>%
