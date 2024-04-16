@@ -330,13 +330,15 @@ ab_rarity_ts <- function(data, ...) {
 #' plot(h0_map)
 #'
 #' @noRd
-hill0_map <- function(data, ...) {
+hill0_map <- function(data,
+                      coverage = 0.95,
+                      cutoff_length = 5,
+                      ...) {
   compute_indicator_workflow(data,
                              type = "hill0",
                              dim_type = "map",
-                             cutoff_length = 5,
-                             inext_sampsize = 100,
-                             knots = 10,
+                             cutoff_length = cutoff_length,
+                             coverage = coverage,
                              ...)
 }
 
@@ -360,13 +362,15 @@ hill0_map <- function(data, ...) {
 #' plot(h0_ts)
 #'
 #' @noRd
-hill0_ts <- function(data, ...) {
+hill0_ts <- function(data,
+                     coverage = 0.95,
+                     cutoff_length = 5,
+                     ...) {
   compute_indicator_workflow(data,
                              type = "hill0",
                              dim_type = "ts",
-                             cutoff_length = 5,
-                             inext_sampsize = 100,
-                             knots = 10,
+                             cutoff_length = cutoff_length,
+                             coverage = coverage,
                              ...)
 }
 
@@ -390,13 +394,15 @@ hill0_ts <- function(data, ...) {
 #' plot(h1_map)
 #'
 #' @noRd
-hill1_map <- function(data, ...) {
+hill1_map <- function(data,
+                      cutoff_length = 5,
+                      coverage = 0.95,
+                      ...) {
   compute_indicator_workflow(data,
                              type = "hill1",
                              dim_type = "map",
-                             cutoff_length = 5,
-                             inext_sampsize = 100,
-                             knots = 10,
+                             cutoff_length = cutoff_length,
+                             coverage = coverage,
                              ...)
 }
 
@@ -420,13 +426,15 @@ hill1_map <- function(data, ...) {
 #' plot(h1_ts)
 #'
 #' @noRd
-hill1_ts <- function(data, ...) {
+hill1_ts <- function(data,
+                     cutoff_length = 5,
+                     coverage = 0.95,
+                     ...) {
   compute_indicator_workflow(data,
                              type = "hill1",
                              dim_type = "ts",
-                             cutoff_length = 5,
-                             inext_sampsize = 100,
-                             knots = 10,
+                             cutoff_length = cutoff_length,
+                             coverage = coverage,
                              ...)
 }
 
@@ -450,13 +458,15 @@ hill1_ts <- function(data, ...) {
 #' plot(h2_map)
 #'
 #' @noRd
-hill2_map <- function(data, ...) {
+hill2_map <- function(data,
+                      cutoff_length = 5,
+                      coverage = 0.95,
+                      ...) {
   compute_indicator_workflow(data,
                              type = "hill2",
                              dim_type = "map",
-                             cutoff_length = 5,
-                             inext_sampsize = 100,
-                             knots = 10,
+                             cutoff_length = cutoff_length,
+                             coverage = coverage,
                              ...)
 }
 
@@ -479,13 +489,15 @@ hill2_map <- function(data, ...) {
 #' plot(h2_ts)
 #'
 #' @noRd
-hill2_ts <- function(data, ...) {
+hill2_ts <- function(data,
+                     cutoff_length = 5,
+                     coverage = 0.95,
+                     ...) {
   compute_indicator_workflow(data,
                              type = "hill2",
                              dim_type = "ts",
-                             cutoff_length = 5,
-                             inext_sampsize = 100,
-                             knots = 10,
+                             cutoff_length = cutoff_length,
+                             coverage = coverage,
                              ...)
 }
 
