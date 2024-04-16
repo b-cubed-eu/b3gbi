@@ -59,7 +59,8 @@ get_legend_title <- function(x) {
 #'      for each year (`TRUE` if present, `FALSE` if absent).
 #'
 #' @examples
-#' get_observed_years(example_indicator_map1)
+#' total_occ_insects_portugal <- total_occ_map(example_cube_2, level = "country", region = "Portugal")
+#' get_observed_years(total_occ_insects_portugal)
 #' @export
 get_observed_years <- function(x) {
 
