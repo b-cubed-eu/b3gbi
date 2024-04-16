@@ -120,7 +120,7 @@ calc_ts.hill_core <- function(x,
 
   # remove all years with too little data to avoid errors from iNEXT
   species_records_raw2 <- species_records_raw %>%
-    keep(., function(x) length(x) > cutoff_length)
+    purrr::keep(., function(x) length(x) > cutoff_length)
 
   # Calculate diversity estimates
   #  coverage_rare <- species_records_raw %>%
