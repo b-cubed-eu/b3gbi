@@ -483,7 +483,7 @@ plot.rarefied <- function(x, ...){
   }
 }
 
-#' @noRd
+#' @export
 plot.hill2 <- function(x, ...){
 
   stopifnot_error("Incorrect object class. Must be class 'hill2'.", inherits(x, "hill2"))
@@ -513,7 +513,7 @@ plot.hill2 <- function(x, ...){
   }
 }
 
-#' @noRd
+#' @export
 plot.hill1 <- function(x, ...){
 
   stopifnot_error("Incorrect object class. Must be class 'hill1'.", inherits(x, "hill1"))
@@ -543,7 +543,7 @@ plot.hill1 <- function(x, ...){
   }
 }
 
-#' @noRd
+#' @export
 plot.hill0 <- function(x, ...){
 
   stopifnot_error("Incorrect object class. Must be class 'hill0'.", inherits(x, "hill0"))
