@@ -157,10 +157,10 @@ register_indicator <- function(indicator_class,
 
   if (!indicator_class %in% names(e$available_indicators)) {
 
-  #Add new list item to register the indicator
-  e$available_indicators <- c(e$available_indicators, list(new_class))
+    #Add new list item to register the indicator
+    e$available_indicators <- c(e$available_indicators, list(new_class))
 
-  names(e$available_indicators)[[length(e$available_indicators)]] <- indicator_class
+    names(e$available_indicators)[[length(e$available_indicators)]] <- indicator_class
 
   } else {
 
@@ -170,11 +170,11 @@ register_indicator <- function(indicator_class,
 
     } else {
 
-      # Remove the existing list item
-      e$available_indicators[[indicator_class]] <- NULL
+      # Get the number for the existing indicator list item
+      indicator_number <- which(names(e$available_indicators) %in% indicator_class)
 
-      #Add new list item to register the indicator
-      e$available_indicators <- c(e$available_indicators, list(new_class))
+      # Replace it with the new list item
+      e$available_indicators[indicator_number] <- list(new_class)
 
     }
   }
