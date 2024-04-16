@@ -360,7 +360,7 @@ hill0_map <- function(data, ...) {
 #' plot(h0_ts)
 #'
 #' @noRd
-hil0_ts <- function(data, ...) {
+hill0_ts <- function(data, ...) {
   compute_indicator_workflow(data,
                              type = "hill0",
                              dim_type = "ts",
