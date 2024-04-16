@@ -50,14 +50,12 @@ calc_map.hill2 <- function(x, ...) {
 
 #' @noRd
 calc_map.hill_core <- function(x,
-                               type = c("hill0, hill1, hill2"),
-                               cutoff_length = 100,
-                               coverage = 0.95,
+                               type = c("hill0", "hill1", "hill2"),
                                ...)
 {
 
   stopifnot_error("Please check the class and structure of your data. This is an internal function, not meant to be called directly.",
-                  inherits(x, c("data.frame", "sf", "hill0" | "hill1" | "hill2")))
+                  inherits(x, c("data.frame", "sf")) & rlang::inherits_any(x, c("hill0", "hill1", "hill2")))
 
   type <- match.arg(type)
 
@@ -104,30 +102,33 @@ calc_map.hill_core <- function(x,
   # name list elements
   names(spec_rec_raw_cell) <- unique(x$cellid)
 
+  temp_opts <- list(...)
+
+  cutoff_length <- temp_opts$cutoff_length
+
+  coverage <- temp_opts$coverage
+
   # remove all cells with too little data to avoid errors from iNEXT
   spec_rec_raw_cell2 <- spec_rec_raw_cell %>%
-    keep(., function(x) length(x) > cutoff_length)
+    purrr::keep(., function(x) length(x) > cutoff_length)
 
   # Compute hill diversity
   coverage_rare_cell <- spec_rec_raw_cell2 %>%
     iNEXT::estimateD(datatype="incidence_raw",
                      base = "coverage",
                      level = coverage,
-                     q=qval,
-                     ...)
+                     q=qval)
 
   # Extract estimated relative diversity
   indicator <-
-?    coverage_rare_cell %>%
+    coverage_rare_cell %>%
     #coverage_rare_cell$iNextEst$coverage_based %>%
     #dplyr::filter(abs(SC-coverage) == min(abs(SC-coverage)),
     #              .by = Assemblage) %>%
-    dplyr::select(Assemblage, qD, t, SC, Order.q) %>%
+    dplyr::select(Assemblage, qD, t) %>%
     dplyr::rename(cellid = Assemblage,
                   diversity_val = qD,
-                  samp_size_est = t,
-                  coverage = SC,
-                  diversity_type = Order.q) %>%
+                  samp_size_est = t) %>%
     dplyr::mutate(cellid = as.integer(cellid), .keep = "unused")
 
   return(indicator)
