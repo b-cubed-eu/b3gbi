@@ -174,6 +174,322 @@ plot.occ_by_type <- function(x,
     trend_plot
 }
 
+#' @export
+plot.spec_occ <- function(x,
+                          species = NULL,
+                          title = "auto",
+                          xlims = NULL,
+                          ylims = NULL,
+                          trans = NULL,
+                          breaks = NULL,
+                          labels = NULL,
+                          min_year = NULL,
+                          max_year = NULL,
+                          smoothed_trend = TRUE,
+                          linecolour = NULL,
+                          trendlinecolour = NULL,
+                          envelopecolour = NULL,
+                          Europe_crop = TRUE,
+                          surround = TRUE,
+                          single_plot = TRUE,
+                          panel_bg = NULL,
+                          x_label = NULL,
+                          y_label = NULL,
+                          x_breaks = 10,
+                          y_breaks = 6,
+                          suppress_y = FALSE,
+                          gridoff = FALSE,
+                          legend_title = NULL,
+                          legend_limits = NULL,
+                          legend_title_wrap_length = 10,
+                          title_wrap_length = 60,
+                          ...) {
+
+  stopifnot_error("Incorrect object class. Must be class 'spec_occ'.", inherits(x, "spec_occ"))
+
+  if (inherits(x, "indicator_ts")) {
+    # Filter by min and max year if set
+    if (!is.null(min_year) | !is.null(max_year)) {
+      min_year <- ifelse(is.null(min_year), x$first_year, min_year)
+      max_year <- ifelse(is.null(max_year), x$last_year, max_year)
+      x$data <-
+        x$data %>%
+        dplyr::filter(year >= min_year) %>%
+        dplyr::filter(year <= max_year)
+    } else {
+      min_year <- x$first_year
+      max_year <- x$last_year
+    }
+  }
+
+
+  if (is.null(species)) {
+
+    stop("Please enter either the species names or the numeric taxonKeys for the species you want to plot.")
+
+  } else if (is.numeric(species)) {
+
+    # Get occurrences for selected species
+    species_occurrences <-
+      x$data %>%
+      dplyr::filter(taxonKey %in% species) %>%
+      {if(nrow(.) < 1)
+        stop("No matching taxonKeys. Please check that you have entered them correctly.")
+        else (.)
+      } %>%
+      dplyr::mutate(taxonKey = factor(taxonKey,
+                                      levels = unique(taxonKey)))
+
+    split_so <-
+      species_occurrences %>%
+      dplyr::group_split(taxonKey)
+
+  } else {
+
+    # Get occurrences for selected species
+    species_occurrences <-
+      x$data %>%
+      dplyr::filter(grepl(paste("^", species, collapse="|",sep=""), scientificName)) %>%
+      { if(nrow(.) < 1)
+        stop("No matching species. Please check that you have entered the names correctly.")
+        else (.) } %>%
+      dplyr::arrange(scientificName, grepl(paste("^", species, collapse="|",sep=""), scientificName))
+
+    split_so <-
+      species_occurrences %>%
+      dplyr::group_split(scientificName)
+
+  }
+
+  sci_names <-
+    split_so %>%
+    purrr::map(~unique(.$scientificName))
+
+  if (inherits(x, "indicator_ts")) {
+
+    # Set defaults
+    y_label_default <- "Occurrences"
+    auto_title <- paste("Species Occurrences", sep = "")
+
+    # Create plot title if title is set to "auto"
+    if (!is.null(title)) {
+      if (title == "auto") {
+        title <- paste(auto_title,
+                       " (",
+                       min_year,
+                       "-",
+                       max_year,
+                       ")",
+                       sep="")
+      }
+    }
+
+    # Set some defaults for plotting
+
+    # Set colours
+    if (is.null(linecolour)) linecolour = "darkorange"
+    if (is.null(trendlinecolour)) trendlinecolour = "blue"
+    if (is.null(envelopecolour)) envelopecolour = "lightsteelblue1"
+
+    # Set axis titles
+    if (is.null(x_label)) x_label = "Year"
+    if (is.null(y_label)) y_label = y_label_default
+
+    # Create smoothed trend if desired
+    if (smoothed_trend == TRUE) {
+      smoothing <- list(
+        geom_smooth(fill = envelopecolour,
+                    lwd = 1,
+                    linetype = 0,
+                    method = "loess",
+                    formula = "y ~ x"),
+        stat_smooth(colour = trendlinecolour,
+                    geom = "line",
+                    method = "loess",
+                    formula = "y ~ x",
+                    linetype = "dashed",
+                    alpha = 0.3,
+                    lwd = 1)
+      )
+    } else {
+      smoothing <- list()
+    }
+
+    # Create plot with trend line
+    trend_plot <-
+      purrr::map2(split_so,
+                  sci_names,
+                  function(x., y) {
+                    ggplot2::ggplot(x., aes(x = year,
+                                            y = diversity_val)) +
+                      geom_line(colour = linecolour,
+                                lwd = 1) +
+                      scale_x_continuous(breaks = breaks_pretty_int(n = x_breaks)) +
+                      scale_y_continuous(breaks = breaks_pretty_int(n = y_breaks)) +
+                      labs(x = x_label, y = y_label,
+                           title = title) +
+                      theme_minimal() +
+                      theme(plot.title = element_text(hjust = 0.5, face = "italic"),
+                            text = element_text(size = 14),
+                            if (gridoff == TRUE) { panel.grid.major = element_blank() },
+                            panel.grid.minor = element_blank(),
+                            if (suppress_y==TRUE) { axis.text.y = element_blank() },
+                            strip.text = element_text(face = "italic")
+                      ) +
+                      labs(title = y) +
+                      smoothing
+                  })
+
+    names(trend_plot) <- sci_names
+
+    # Combine plots using wrap_plots function from patchwork
+    if (length(trend_plot) > 1 & single_plot == TRUE) {
+      trend_plot <- patchwork::wrap_plots(trend_plot) +
+        plot_annotation_int(title = title,
+                            theme = theme(plot.title = element_text(size = 20)))
+    } else if (length(trend_plot) > 1 & single_plot == FALSE) {
+      cat("Option single_plot set to false. Creating separate plot for each species.\n\n")
+    }
+
+    return(trend_plot)
+
+
+  } else if (inherits(x, "indicator_map")) {
+
+    # Set defaults
+    if (is.null(legend_title)) {leg_label_default <- "Occurrences"}
+    auto_title <- paste("Species Occurrences", sep = "")
+
+    # Get map limits
+    map_lims <- x$coord_range
+
+    # Crop map of Europe to leave out far-lying islands (if flag set)
+    if (Europe_crop == TRUE &
+        x$map_level == "continent" &
+        x$map_region == "Europe")
+    {
+
+      # Set attributes as spatially constant to avoid warnings
+      sf::st_agr(x$data) <- "constant"
+
+      # Manually set cropped limits
+      map_lims <- c(2600000, 1600000, 7000000, 6000000)
+      names(map_lims) <- c("xmin", "ymin", "xmax", "ymax")
+
+    }
+
+    # Set specific instructions for country-level plots
+    if (x$map_level == "country")
+    {
+
+      # Get world data to plot surrounding land if surround flag is set
+      if (surround == TRUE) {
+        map_surround <- rnaturalearth::ne_countries(scale = "medium") %>%
+          sf::st_as_sf() %>%
+          sf::st_transform(crs = "EPSG:3035")
+
+        # Otherwise make the ocean area white (unless a colour is specified)
+      } else {
+        if (is.null(panel_bg)) { panel_bg = "white" }
+      }
+    }
+
+    # If the ocean area is still undefined, make it light blue
+    if (is.null(panel_bg)) { panel_bg = "#92c5f0" }
+
+    # Define function to wrap title and legend title if too long
+    wrapper <- function(x, ...)
+    {
+      paste(strwrap(x, ...), collapse = "\n")
+    }
+
+    # Get plot title (if set to "auto")
+    if (!is.null(title)) {
+      if (title == "auto") {
+        title <- auto_title
+      }
+    }
+
+    # Define function to modify legend
+    cust_leg <- function(scale.params = list()) {
+      do.call("scale_fill_gradient", modifyList(
+        list(low = "gold", high = "firebrick4", na.value = "grey95"),
+        scale.params)
+      )
+    }
+
+    # Plot on map
+    diversity_plot <-
+      purrr::map2(split_so,
+                  sci_names,
+                  function(x., y) {
+                    ggplot2::ggplot(x.) +
+                      geom_sf(data = x$data,
+                              aes(geometry = geometry),
+                              fill = "grey95") +
+                      geom_sf(aes(fill = diversity_val,
+                                  geometry = geometry)) +
+                      cust_leg(list(trans = trans,
+                                    breaks = breaks,
+                                    labels = labels,
+                                    limits = legend_limits)) +
+                      coord_sf(
+                        xlim = c(map_lims["xmin"],
+                                 map_lims["xmax"]),
+                        ylim = c(map_lims["ymin"],
+                                 map_lims["ymax"])
+                      ) +
+                      #scale_x_continuous() +
+                      theme_bw()+
+                      theme(
+                        panel.background = element_rect(fill = panel_bg),
+                        if(x$map_level == "country") {
+                          panel.grid.major = element_blank()
+                          panel.grid.minor = element_blank()
+                        },
+                        legend.text = element_text(),
+                        strip.text = element_text(face = "italic"),
+                        plot.title = element_text(face = "italic")
+                      ) +
+                      labs(title = y,
+                           fill = if(!is.null(legend_title)) wrapper(legend_title,
+                                                                     legend_title_wrap_length)
+                           else wrapper(leg_label_default,
+                                        legend_title_wrap_length))
+                  })
+
+    # If surround flag is set, add surrounding countries to the map
+    if (surround == TRUE & x$map_level == "country") {
+      for (i in 1:length(diversity_plot)) {
+        diversity_plot[[i]]$layers <- c(geom_sf(data = map_surround,
+                                                fill = "grey85")[[1]],
+                                        diversity_plot[[i]]$layers)
+      }
+    }
+
+    names(diversity_plot) <- sci_names
+
+    # Combine plots using wrap_plots function from patchwork
+    if (length(diversity_plot) > 1 & single_plot == TRUE) {
+      diversity_plot <- patchwork::wrap_plots(diversity_plot) +
+        plot_annotation_int(title = title,
+                            theme = theme(plot.title = element_text(size = 20)))
+    } else if (length(diversity_plot) > 1 & single_plot == FALSE) {
+      cat("Option single_plot set to false. Creating separate plot for each species.\n\n")
+    }
+
+
+    # Exit function
+    return(diversity_plot)
+
+  } else {
+
+    stop("Incorrect object class. Must be class 'indicator_ts' or 'indicator_map'.")
+
+  }
+
+}
+
 
 #' @export
 plot.cum_richness <- function(x,

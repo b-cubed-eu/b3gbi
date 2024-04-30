@@ -373,7 +373,7 @@ calc_ts.area_rarity <- function(x, ...) {
 
 }
 
-#' @noRd
+#' @export
 calc_ts.spec_occ <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
@@ -383,10 +383,10 @@ calc_ts.spec_occ <- function(x, ...) {
   # Calculate total occurrences for each species by grid cell
   indicator <-
     x %>%
-    dplyr::mutate(num_records = sum(obs), .by = c(taxonKey, cellid)) %>%
-    dplyr::distinct(cellid, scientificName, .keep_all = TRUE) %>%
-    dplyr::arrange(cellid) %>%
-    dplyr::select(cellid, taxonKey, scientificName, num_records)
+    dplyr::mutate(diversity_val = sum(obs), .by = c(taxonKey, year)) %>%
+    dplyr::distinct(year, scientificName, .keep_all = TRUE) %>%
+    dplyr::arrange(year) %>%
+    dplyr::select(year, taxonKey, scientificName, diversity_val)
 
 }
 

@@ -21,6 +21,7 @@ Imports:
     ggplot2,
     iNEXT,
     magrittr,
+    patchwork,
     permute,
     purrr,
     readr,

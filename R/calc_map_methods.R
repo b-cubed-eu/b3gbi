@@ -321,12 +321,12 @@ calc_map.spec_occ <- function(x, ...) {
                   inherits(x, "spec_occ"))
 
   # Calculate total occurrences for each species by grid cell
-  diversity_cell <-
+  indicator <-
     x %>%
-    dplyr::mutate(num_records = sum(obs), .by = c(taxonKey, cellid)) %>%
+    dplyr::mutate(diversity_val = sum(obs), .by = c(taxonKey, cellid)) %>%
     dplyr::distinct(cellid, scientificName, .keep_all = TRUE) %>%
     dplyr::arrange(cellid) %>%
-    dplyr::select(cellid, taxonKey, scientificName, num_records)
+    dplyr::select(cellid, taxonKey, scientificName, diversity_val)
 
   return(indicator)
 
