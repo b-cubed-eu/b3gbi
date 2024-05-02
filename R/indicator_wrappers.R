@@ -633,7 +633,25 @@ occ_density_ts <- function(data, ...) {
                              ...)
 }
 
-#' @noRd
+#' @title Calculate Species Occurrences Over Space
+#'
+#' @description This function calculates the number of occurrences for individual
+#' species over a gridded map.
+#'
+#' @param data A data cube object (class 'processed_cube').
+#'
+#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
+#'
+#' @seealso compute_indicator_workflow
+#'
+#' @return An S3 object with the classes 'indicator_map' and 'spec_occ' containing
+#' the calculated indicator values and metadata.
+#'
+#' @examples
+#' so_map <- spec_occ_map(example_cube_1, level = "country", region = "Denmark")
+#' plot(so_map, c(2440728, 4265185))
+#'
+#' @export
 spec_occ_map <- function(data, ...) {
   compute_indicator_workflow(data,
                              type = "spec_occ",
@@ -641,7 +659,25 @@ spec_occ_map <- function(data, ...) {
                              ...)
 }
 
-#' @noRd
+#' @title Calculate Number of Occurrences for One or More Species Over Time
+#'
+#' @description This function calculates number of occurrences for individual
+#' species as time series.
+#'
+#' @param data A data cube object (class 'processed_cube').
+#'
+#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
+#'
+#' @seealso compute_indicator_workflow
+#'
+#' @return An S3 object with the classes 'indicator_ts' and 'spec_occ' containing
+#' the calculated indicator values and metadata.
+#'
+#' @examples
+#' so_ts <- spec_occ_ts(example_cube_1, first_year = 1985)
+#' plot(so_ts, c(2440728, 4265185))
+#'
+#' @export
 spec_occ_ts <- function(data, ...) {
   compute_indicator_workflow(data,
                              type = "spec_occ",
@@ -649,7 +685,25 @@ spec_occ_ts <- function(data, ...) {
                              ...)
 }
 
-#' @noRd
+#' @title Plot Species Ranges Over Space
+#'
+#' @description This function plots the cells occupied for individual
+#' species over a gridded map.
+#'
+#' @param data A data cube object (class 'processed_cube').
+#'
+#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
+#'
+#' @seealso compute_indicator_workflow
+#'
+#' @return An S3 object with the classes 'indicator_map' and 'spec_range' containing
+#' the calculated indicator values and metadata.
+#'
+#' @examples
+#' sr_map <- spec_range_map(example_cube_1, level = "country", region = "Denmark")
+#' plot(sr_map, c(2440728, 4265185))
+#'
+#' @export
 spec_range_map <- function(data, ...) {
   compute_indicator_workflow(data,
                              type = "spec_range",
@@ -657,11 +711,29 @@ spec_range_map <- function(data, ...) {
                              ...)
 }
 
-#' @noRd
+#' @title Calculate Range Size (Number of Cells Occupied) for One or More Species Over Time
+#'
+#' @description This function calculates number of cells occupied for individual
+#' species as time series.
+#'
+#' @param data A data cube object (class 'processed_cube').
+#'
+#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
+#'
+#' @seealso compute_indicator_workflow
+#'
+#' @return An S3 object with the classes 'indicator_ts' and 'spec_range' containing
+#' the calculated indicator values and metadata.
+#'
+#' @examples
+#' sr_ts <- spec_range_ts(example_cube_1, first_year = 1985)
+#' plot(sr_ts, c(2440728, 4265185))
+#'
+#' @export
 spec_range_ts <- function(data, ...) {
   compute_indicator_workflow(data,
                              type = "spec_range",
-                             dim_type = "map",
+                             dim_type = "ts",
                              ...)
 }
 

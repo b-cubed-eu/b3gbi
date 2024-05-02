@@ -374,6 +374,7 @@ calc_ts.area_rarity <- function(x, ...) {
 }
 
 #' @export
+#' @rdname calc_ts
 calc_ts.spec_occ <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
@@ -390,7 +391,8 @@ calc_ts.spec_occ <- function(x, ...) {
 
 }
 
-#' @noRd
+#' @export
+#' @rdname calc_ts
 calc_ts.spec_range <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
@@ -400,14 +402,15 @@ calc_ts.spec_range <- function(x, ...) {
   # Flatten occurrences for each species by grid cell
   indicator <-
     x %>%
-    dplyr::mutate(obs = 1) %>%
-    dplyr::distinct(cellid, scientificName, .keep_all = TRUE) %>%
-    dplyr::arrange(cellid) %>%
-    dplyr::select(cellid, taxonKey, scientificName, obs)
+    dplyr::mutate(diversity_val = sum(obs >= 1), .by = c(taxonKey, cellid)) %>%
+    dplyr::distinct(year, scientificName, .keep_all = TRUE) %>%
+    dplyr::arrange(year) %>%
+    dplyr::select(year, taxonKey, scientificName, diversity_val)
 
 }
 
-#' @noRd
+#' @export
+#' @rdname calc_ts
 calc_ts.tax_distinct <- function(x, set_rows = 1, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not

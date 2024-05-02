@@ -314,7 +314,8 @@ calc_map.area_rarity <- function(x, ...) {
 
 }
 
-#' @noRd
+#' @export
+#' @rdname calc_map
 calc_map.spec_occ <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
@@ -332,7 +333,8 @@ calc_map.spec_occ <- function(x, ...) {
 
 }
 
-#' @noRd
+#' @export
+#' @rdname calc_map
 calc_map.spec_range <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
@@ -341,16 +343,17 @@ calc_map.spec_range <- function(x, ...) {
   # Flatten occurrences for each species by grid cell
   indicator <-
     x %>%
-    dplyr::mutate(obs = 1) %>%
+    dplyr::mutate(diversity_val = 1) %>%
     dplyr::distinct(cellid, scientificName, .keep_all = TRUE) %>%
     dplyr::arrange(cellid) %>%
-    dplyr::select(cellid, taxonKey, scientificName, obs)
+    dplyr::select(cellid, taxonKey, scientificName, diversity_val)
 
   return(indicator)
 
 }
 
-#' @noRd
+#' @export
+#' @rdname calc_map
 calc_map.tax_distinct <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
