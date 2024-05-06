@@ -196,8 +196,8 @@ calc_ts.cum_richness <- function(x, ...) {
     dplyr::select(year, taxonKey) %>%
     dplyr::arrange(year) %>%
     dplyr::distinct(taxonKey, .keep_all = TRUE) %>%
-    dplyr::summarize(unique_by_year = length(unique(taxonKey)),
-                           +                      .by = year) %>%
+    dplyr::summarize(unique_by_year = length(taxonKey),
+                     .by = year) %>%
     dplyr::reframe(year = year,
                    diversity_val = cumsum(unique_by_year))
 
@@ -441,5 +441,4 @@ calc_ts.tax_distinct <- function(x, set_rows = 1, ...) {
     dplyr::select(year, diversity_val)
 
 }
-
 
