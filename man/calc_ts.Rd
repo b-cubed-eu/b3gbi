@@ -13,6 +13,7 @@
 \alias{calc_ts.spec_occ}
 \alias{calc_ts.spec_range}
 \alias{calc_ts.tax_distinct}
+\alias{calc_ts.occ_turnover}
 \alias{calc_ts}
 \title{Calculate Biodiversity Indicators Over Time}
 \usage{
@@ -39,6 +40,8 @@
 \method{calc_ts}{spec_range}(x, ...)
 
 \method{calc_ts}{tax_distinct}(x, set_rows = 1, ...)
+
+\method{calc_ts}{occ_turnover}(x, ...)
 
 calc_ts(x, ...)
 }

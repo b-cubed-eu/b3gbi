@@ -442,3 +442,54 @@ calc_ts.tax_distinct <- function(x, set_rows = 1, ...) {
 
 }
 
+
+#' @export
+#' @rdname calc_ts
+calc_ts.occ_turnover <- function(x, ...) {
+
+  stopifnot_error("Wrong data class. This is an internal function and is not
+                  meant to be called directly.",
+                  inherits(x, "occ_turnover"))
+
+  x <- x %>%
+    dplyr::arrange(year)
+
+  # Determine the species present each year
+  unique_species_l <- list()
+  counter <- 1
+  for (i in unique(x$year)) {
+    unique_species_l[[counter]] <- unique(x$taxonKey[x$year==i])
+    counter <- counter + 1
+  }
+
+  # Determine the new species added each year
+  species_added <- list()
+  species_added[[1]] <- unique_species_l[[1]]
+  for (i in 2:length(unique(x$year))) {
+    species_added[[i]] <- setdiff(unique_species_l[[i]], unique_species_l[[i-1]])
+  }
+
+  # Determine the species lost each year
+  species_lost <- list()
+  species_lost[[1]] <- 0
+  for (i in 2:length(unique(x$year))) {
+    species_lost[[i]] <- setdiff(unique_species_l[[i-1]], unique_species_l[[i]])
+  }
+
+  # Combine the species present in the current with those present in the previous year
+  species_present <- list()
+  species_present[[1]] <- unique_species_l[[1]]
+  for (i in 2:length(unique(x$year))) {
+    species_present[[i]] <- union(unique_species_l[[i-1]], unique_species_l[[i]])
+  }
+
+  # Calculate occupancy turnover as the sum of the number of species added and the
+  # number of species lost divided by the total number of species present in the current
+  # and previous year combined
+  occ_turnover <- vector()
+  for (i in 1:length(unique(x$year))) {
+    occ_turnover[i] <- (length(species_added[[i]]) + length(species_lost[[i]])) / length(species_present[[i]])
+  }
+  indicator <- tibble::tibble(year = unique(x$year), diversity_val = occ_turnover)
+
+}

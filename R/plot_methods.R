@@ -665,6 +665,39 @@ plot.obs_richness <- function(x, ...){
   }
 }
 
+#' @export
+plot.occ_turnover <- function(x,
+                              auccolour = NULL,
+                              ...){
+
+  stopifnot_error("Incorrect object class. Must be class 'occ_turnover'.", inherits(x, "occ_turnover"))
+
+  if (!inherits(x, "indicator_ts")) {stop("Incorrect object class. Must be class 'indicator_ts'.")}
+
+  # Set defaults
+  y_label_default <- "Occupancy Turnover"
+  auto_title <- "Occupancy Turnover"
+
+  # Call generalized plot_map function
+  trend_plot <- plot_ts(x,
+                        y_label_default = y_label_default,
+                        auto_title = auto_title,
+                        smoothed_trend = FALSE,
+                        ...)
+
+  if (is.null(auccolour)) auccolour = "orange"
+
+  # Colour the area under the curve
+  trend_plot <- trend_plot +
+    geom_ribbon(aes(ymin = 0,
+                    ymax = diversity_val),
+                fill = auccolour, alpha = 0.4)
+
+  # Show plot
+  trend_plot
+
+}
+
 #' @title Plot Biodiversity Indicator Map
 #'
 #' @description Creates a map visualization of a calculated biodiversity indicator,

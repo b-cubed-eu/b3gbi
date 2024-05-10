@@ -311,6 +311,8 @@ ab_rarity_ts <- function(data, ...) {
 }
 
 
+
+
 #' @title Calculate Estimated Species Richness Over Space
 #'
 #' @description This function uses coverage-based methods to estimate species
@@ -788,5 +790,31 @@ tax_distinct_ts <- function(data, rows = 1, ...) {
                              type = "tax_distinct",
                              dim_type = "ts",
                              rows = rows,
+                             ...)
+}
+
+#' @title Calculate Occupancy Turnover Over Time
+#'
+#' @description This function calculates occupancy turnover
+#' as a time series.
+#'
+#' @param data A data cube object (class 'processed_cube').
+#'
+#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
+#'
+#' @seealso compute_indicator_workflow
+#'
+#' @return An S3 object with the classes 'indicator_ts' and 'occ_turnover' containing
+#' the calculated indicator values and metadata.
+#'
+#' @examples
+#' ot_ts <- occ_turnover_ts(example_cube_1, first_year = 1985)
+#' plot(ot_ts)
+#'
+#' @export
+occ_turnover_ts <- function(data, ...) {
+  compute_indicator_workflow(data,
+                             type = "occ_turnover",
+                             dim_type = "ts",
                              ...)
 }
