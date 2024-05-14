@@ -26,6 +26,7 @@ Imports:
     purrr,
     readr,
     rlang,
+    rnaturalearth,
     sf,
     stringr,
     taxize,
@@ -35,7 +36,7 @@ Imports:
 Suggests: 
     knitr,
     rmarkdown,
-    rnaturalearth,
+    rnaturalearthdata,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Encoding: UTF-8
