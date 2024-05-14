@@ -1067,11 +1067,14 @@ plot_ts <- function(x,
 #' Can be customized using ggplot2 functions.
 #'
 #' @examples
+#' spec_occ_ts_mammals_denmark <- spec_occ_ts(example_cube_1,
+#'                                         level = "country",
+#'                                         region = "Denmark")
 #' # default colours:
-#' plot_species_ts(example_indicator_ts1, c(2440728, 4265185))
+#' plot_species_ts(spec_occ_ts_mammals_denmark, c(2440728, 4265185))
 #'
 #' # custom colours:
-#' plot_species_ts(example_indicator_ts1, c(2440728, 4265185),
+#' plot_species_ts(spec_occ_ts_mammals_denmark, c(2440728, 4265185),
 #'         linecolour = "thistle",
 #'         trendlinecolour = "forestgreen",
 #'         envelopecolour = "lightgreen")
