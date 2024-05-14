@@ -409,6 +409,9 @@ calc_ts.spec_range <- function(x, ...) {
 
 }
 
+#' @param set_rows Automatically select which taxonomic information to keep when
+#'    there are multiple options. Default value of 1 keeps the first option, which
+#'    is usually the best.
 #' @export
 #' @rdname calc_ts
 calc_ts.tax_distinct <- function(x, set_rows = 1, ...) {

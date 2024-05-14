@@ -7,17 +7,6 @@
 #' appropriate wrappers.
 #'
 #' @param x A data cube object ('processed_cube').
-#' @param type The indicator to calculate. Supported options include:
-#'   * 'obs_richness': Observed species richness.
-#'   * 'cum_richness': Cumulative species richness.
-#'   * 'total_occ': Total number of occurrences.
-#'   * 'newness': Mean year of occurrence.
-#'   * 'occ_density': Density of occurrences.
-#'   * 'williams_evenness', 'pielou_evenness': Evenness measures.
-#'   * 'ab_rarity', 'area_rarity':  Abundance-based and area-based rarity scores.
-#' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
-#' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
-#' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
 #' @param ... Additional arguments passed to specific indicator calculation functions.
 #'
 #' @return An S3 object of the class 'indicator_ts' containing the calculated indicator values and metadata.
@@ -40,16 +29,6 @@ calc_ts <- function(x, ...) {
 #' for different indicator types are provided using the appropriate wrappers.
 #'
 #' @param x A data cube object ('processed_cube').
-#' @param type The indicator to calculate. Supported options include:
-#'   * 'obs_richness': Observed species richness.
-#'   * 'total_occ': Total number of occurrences.
-#'   * 'newness': Mean year of occurrence.
-#'   * 'occ_density': Density of occurrences.
-#'   * 'williams_evenness', 'pielou_evenness': Evenness measures.
-#'   * 'ab_rarity', 'area_rarity':  Abundance-based and area-based rarity scores.
-#' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
-#' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
-#' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
 #' @param ... Additional arguments passed to specific indicator calculation functions.
 #'
 #' @return An S3 object of the class 'indicator_map' containing the calculated indicator values and metadata.

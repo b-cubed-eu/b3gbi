@@ -18,25 +18,14 @@ plot_species_map(
   labels = NULL,
   min_year = NULL,
   max_year = NULL,
-  smoothed_trend = TRUE,
-  linecolour = NULL,
-  trendlinecolour = NULL,
-  envelopecolour = NULL,
   Europe_crop = TRUE,
   surround = TRUE,
   single_plot = TRUE,
   panel_bg = NULL,
-  x_label = NULL,
-  y_label = NULL,
-  x_breaks = 10,
-  y_breaks = 6,
-  suppress_y = FALSE,
-  gridoff = FALSE,
   legend_title = NULL,
   legend_limits = NULL,
   legend_title_wrap_length = 10,
-  title_wrap_length = 60,
-  ...
+  title_wrap_length = 60
 )
 }
 \arguments{
@@ -70,6 +59,9 @@ custom title or if calling the function manually.}
 
 \item{surround}{If TRUE, includes surrounding countries in gray when plotting
 at the country level.}
+
+\item{single_plot}{By default all species occurrence time series will be combined
+into a single multi-panel plot. Set this to FALSE to plot each species separately.}
 
 \item{panel_bg}{(Optional) Background color for the map panel.}
 

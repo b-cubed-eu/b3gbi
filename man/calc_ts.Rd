@@ -50,22 +50,9 @@ calc_ts(x, ...)
 
 \item{...}{Additional arguments passed to specific indicator calculation functions.}
 
-\item{type}{The indicator to calculate. Supported options include:
-\itemize{
-\item 'obs_richness': Observed species richness.
-\item 'cum_richness': Cumulative species richness.
-\item 'total_occ': Total number of occurrences.
-\item 'newness': Mean year of occurrence.
-\item 'occ_density': Density of occurrences.
-\item 'williams_evenness', 'pielou_evenness': Evenness measures.
-\item 'ab_rarity', 'area_rarity':  Abundance-based and area-based rarity scores.
-}}
-
-\item{cell_size}{Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)}
-
-\item{level}{Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')}
-
-\item{region}{The region of interest (e.g., "Europe"). (Default: "Europe")}
+\item{set_rows}{Automatically select which taxonomic information to keep when
+there are multiple options. Default value of 1 keeps the first option, which
+is usually the best.}
 }
 \value{
 An S3 object of the class 'indicator_ts' containing the calculated indicator values and metadata.

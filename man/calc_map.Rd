@@ -44,21 +44,10 @@ calc_map(x, ...)
 
 \item{...}{Additional arguments passed to specific indicator calculation functions.}
 
-\item{type}{The indicator to calculate. Supported options include:
-\itemize{
-\item 'obs_richness': Observed species richness.
-\item 'total_occ': Total number of occurrences.
-\item 'newness': Mean year of occurrence.
-\item 'occ_density': Density of occurrences.
-\item 'williams_evenness', 'pielou_evenness': Evenness measures.
-\item 'ab_rarity', 'area_rarity':  Abundance-based and area-based rarity scores.
-}}
-
-\item{cell_size}{Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)}
-
-\item{level}{Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')}
-
-\item{region}{The region of interest (e.g., "Europe"). (Default: "Europe")}
+\item{newness_min_year}{If set, only shows values above this (e.g. 1970). Values
+below the minimum will be replaced with NA. This can be useful e.g. if you have
+outlier cells where the data is very old causing the legend gradient to stretch
+in a way that makes other cell values difficult to discern.}
 }
 \value{
 An S3 object of the class 'indicator_map' containing the calculated indicator values and metadata.

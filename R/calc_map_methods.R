@@ -169,6 +169,10 @@ calc_map.total_occ <- function(x, ...) {
 
 }
 
+#' @param newness_min_year If set, only shows values above this (e.g. 1970). Values
+#'    below the minimum will be replaced with NA. This can be useful e.g. if you have
+#'    outlier cells where the data is very old causing the legend gradient to stretch
+#'    in a way that makes other cell values difficult to discern.
 #' @export
 #' @rdname calc_map
 calc_map.newness <- function(x,

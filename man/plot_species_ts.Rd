@@ -10,10 +10,6 @@ plot_species_ts(
   y_label_default = NULL,
   auto_title = NULL,
   title = "auto",
-  xlims = NULL,
-  ylims = NULL,
-  trans = NULL,
-  breaks = NULL,
   labels = NULL,
   min_year = NULL,
   max_year = NULL,
@@ -21,26 +17,23 @@ plot_species_ts(
   linecolour = NULL,
   trendlinecolour = NULL,
   envelopecolour = NULL,
-  Europe_crop = TRUE,
-  surround = TRUE,
   single_plot = TRUE,
-  panel_bg = NULL,
   x_label = NULL,
   y_label = NULL,
   x_breaks = 10,
   y_breaks = 6,
   suppress_y = FALSE,
   gridoff = FALSE,
-  legend_title = NULL,
-  legend_limits = NULL,
-  legend_title_wrap_length = 10,
-  title_wrap_length = 60,
-  ...
+  title_wrap_length = 60
 )
 }
 \arguments{
 \item{x}{An 'indicator_ts' object containing time series of indicator values
 matched to species names and/or taxon keys.}
+
+\item{species}{Species you want to map occurrences for. Can be either numerical
+taxonKeys or species names. Partial species names can be used (the function
+will try to match them).}
 
 \item{y_label_default}{Default label for the y-axis, provided by an appropriate
 S3 method (if calling the function manually, leave as NULL).}
@@ -66,6 +59,9 @@ Default is blue.}
 \item{envelopecolour}{(Optional) Colour for the uncertainty envelope.
 Default is lightsteelblue.}
 
+\item{single_plot}{By default all species occurrence time series will be combined
+into a single multi-panel plot. Set this to FALSE to plot each species separately.}
+
 \item{x_label}{Label for the x-axis.}
 
 \item{y_label}{Label for the y-axis.}
@@ -80,7 +76,7 @@ Default is lightsteelblue.}
 
 \item{gridoff}{If TRUE, hides gridlines.}
 
-\item{wrap_length}{Maximum title length before wrapping to a new line.}
+\item{title_wrap_length}{Maximum title length before wrapping to a new line.}
 }
 \value{
 A ggplot object representing species range or occurrence time series plot(s).

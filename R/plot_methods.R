@@ -753,7 +753,8 @@ plot_map <- function(x,
                      legend_title = NULL,
                      legend_limits = NULL,
                      legend_title_wrap_length = 10,
-                     title_wrap_length = 60) {
+                     title_wrap_length = 60
+                     ) {
 
   # Get map limits
   map_lims <- x$coord_range
@@ -873,6 +874,9 @@ plot_map <- function(x,
 #'   indicator, with an optional smoothed trendline, and visualizes uncertainty.
 #'
 #' @param x An 'indicator_ts' object containing a time series of indicator values.
+#' @param species Species you want to map occurrences for. Can be either numerical
+#'   taxonKeys or species names. Partial species names can be used (the function
+#'   will try to match them).
 #' @param title Plot title. Replace "auto" with your own title if you want a
 #'   custom title or if calling the function manually.
 #' @param auto_title Text for automatic title generation, provided by an
@@ -931,7 +935,8 @@ plot_ts <- function(x,
                     max_year = NULL,
                     x_breaks = 10,
                     y_breaks = 6,
-                    wrap_length = 60) {
+                    wrap_length = 60
+                    ) {
 
   # Filter by min and max year if set
   if (!is.null(min_year) | !is.null(max_year)) {
@@ -1038,6 +1043,9 @@ plot_ts <- function(x,
 #'
 #' @param x An 'indicator_ts' object containing time series of indicator values
 #'   matched to species names and/or taxon keys.
+#' @param species Species you want to map occurrences for. Can be either numerical
+#'   taxonKeys or species names. Partial species names can be used (the function
+#'   will try to match them).
 #' @param title Plot title. Replace "auto" with your own title if you want a
 #'   custom title or if calling the function manually.
 #' @param auto_title Text for automatic title generation, provided by an
@@ -1061,7 +1069,9 @@ plot_ts <- function(x,
 #'   (May not return exactly the number requested.)
 #' @param y_breaks Integer giving desired number of breaks for y axis.
 #'   (May not return exactly the number requested.)
-#' @param wrap_length  Maximum title length before wrapping to a new line.
+#' @param title_wrap_length  Maximum title length before wrapping to a new line.
+#' @param single_plot By default all species occurrence time series will be combined
+#'   into a single multi-panel plot. Set this to FALSE to plot each species separately.
 #'
 #' @return A ggplot object representing species range or occurrence time series plot(s).
 #' Can be customized using ggplot2 functions.
@@ -1084,10 +1094,6 @@ plot_species_ts <- function(x,
                             y_label_default = NULL,
                             auto_title = NULL,
                             title = "auto",
-                            xlims = NULL,
-                            ylims = NULL,
-                            trans = NULL,
-                            breaks = NULL,
                             labels = NULL,
                             min_year = NULL,
                             max_year = NULL,
@@ -1095,21 +1101,15 @@ plot_species_ts <- function(x,
                             linecolour = NULL,
                             trendlinecolour = NULL,
                             envelopecolour = NULL,
-                            Europe_crop = TRUE,
-                            surround = TRUE,
                             single_plot = TRUE,
-                            panel_bg = NULL,
                             x_label = NULL,
                             y_label = NULL,
                             x_breaks = 10,
                             y_breaks = 6,
                             suppress_y = FALSE,
                             gridoff = FALSE,
-                            legend_title = NULL,
-                            legend_limits = NULL,
-                            legend_title_wrap_length = 10,
-                            title_wrap_length = 60,
-                            ...) {
+                            title_wrap_length = 60
+                            ) {
 
   # Filter by min and max year if set
   if (!is.null(min_year) | !is.null(max_year)) {
@@ -1281,6 +1281,8 @@ plot_species_ts <- function(x,
 #' @param legend_limits (Optional) Limits for the legend scale.
 #' @param legend_title_wrap_length Maximum legend title length before wrapping to a new line.
 #' @param title_wrap_length Maximum title length before wrapping to a new line.
+#' @param single_plot By default all species occurrence time series will be combined
+#'    into a single multi-panel plot. Set this to FALSE to plot each species separately.
 #'
 #' @return A ggplot object representing the map of species range or occurrences.
 #' Can be customized using ggplot2 functions.
@@ -1305,25 +1307,15 @@ plot_species_map <- function(x,
                              labels = NULL,
                              min_year = NULL,
                              max_year = NULL,
-                             smoothed_trend = TRUE,
-                             linecolour = NULL,
-                             trendlinecolour = NULL,
-                             envelopecolour = NULL,
                              Europe_crop = TRUE,
                              surround = TRUE,
                              single_plot = TRUE,
                              panel_bg = NULL,
-                             x_label = NULL,
-                             y_label = NULL,
-                             x_breaks = 10,
-                             y_breaks = 6,
-                             suppress_y = FALSE,
-                             gridoff = FALSE,
                              legend_title = NULL,
                              legend_limits = NULL,
                              legend_title_wrap_length = 10,
-                             title_wrap_length = 60,
-                             ...) {
+                             title_wrap_length = 60
+                             ) {
 
   if (is.null(species)) {
 
