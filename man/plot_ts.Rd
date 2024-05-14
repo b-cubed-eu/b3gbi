@@ -66,10 +66,6 @@ Default is lightsteelblue.}
 (May not return exactly the number requested.)}
 
 \item{wrap_length}{Maximum title length before wrapping to a new line.}
-
-\item{species}{Species you want to map occurrences for. Can be either numerical
-taxonKeys or species names. Partial species names can be used (the function
-will try to match them).}
 }
 \value{
 A ggplot object representing the biodiversity indicator time series plot.

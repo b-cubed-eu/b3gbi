@@ -874,9 +874,6 @@ plot_map <- function(x,
 #'   indicator, with an optional smoothed trendline, and visualizes uncertainty.
 #'
 #' @param x An 'indicator_ts' object containing a time series of indicator values.
-#' @param species Species you want to map occurrences for. Can be either numerical
-#'   taxonKeys or species names. Partial species names can be used (the function
-#'   will try to match them).
 #' @param title Plot title. Replace "auto" with your own title if you want a
 #'   custom title or if calling the function manually.
 #' @param auto_title Text for automatic title generation, provided by an
@@ -1094,7 +1091,6 @@ plot_species_ts <- function(x,
                             y_label_default = NULL,
                             auto_title = NULL,
                             title = "auto",
-                            labels = NULL,
                             min_year = NULL,
                             max_year = NULL,
                             smoothed_trend = TRUE,
@@ -1259,6 +1255,9 @@ plot_species_ts <- function(x,
 #'
 #' @param x An 'indicator_map' object containing indicator values associated with
 #'   map grid cells.
+#' @param species Species you want to map occurrences for. Can be either numerical
+#'   taxonKeys or species names. Partial species names can be used (the function
+#'   will try to match them).
 #' @param title Plot title. Replace "auto" with your own title if you want a
 #'   custom title or if calling the function manually.
 #' @param auto_title Text for automatic title generation, provided by an
@@ -1305,8 +1304,6 @@ plot_species_map <- function(x,
                              trans = NULL,
                              breaks = NULL,
                              labels = NULL,
-                             min_year = NULL,
-                             max_year = NULL,
                              Europe_crop = TRUE,
                              surround = TRUE,
                              single_plot = TRUE,

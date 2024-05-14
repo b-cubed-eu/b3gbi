@@ -10,7 +10,6 @@ plot_species_ts(
   y_label_default = NULL,
   auto_title = NULL,
   title = "auto",
-  labels = NULL,
   min_year = NULL,
   max_year = NULL,
   smoothed_trend = TRUE,

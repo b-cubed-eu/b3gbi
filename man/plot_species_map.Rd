@@ -16,8 +16,6 @@ plot_species_map(
   trans = NULL,
   breaks = NULL,
   labels = NULL,
-  min_year = NULL,
-  max_year = NULL,
   Europe_crop = TRUE,
   surround = TRUE,
   single_plot = TRUE,
@@ -31,6 +29,10 @@ plot_species_map(
 \arguments{
 \item{x}{An 'indicator_map' object containing indicator values associated with
 map grid cells.}
+
+\item{species}{Species you want to map occurrences for. Can be either numerical
+taxonKeys or species names. Partial species names can be used (the function
+will try to match them).}
 
 \item{leg_label_default}{Default label for the legend, provided by an
 appropriate S3 method (if calling the function manually, leave as NULL).}
