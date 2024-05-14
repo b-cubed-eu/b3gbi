@@ -75,8 +75,6 @@ providing customization options.</p>
 <span>  trans <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  breaks <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  min_year <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  max_year <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  Europe_crop <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  surround <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  single_plot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -93,6 +91,12 @@ providing customization options.</p>
     <dl><dt>x</dt>
 <dd><p>An 'indicator_map' object containing indicator values associated with
 map grid cells.</p></dd>
+
+
+<dt>species</dt>
+<dd><p>Species you want to map occurrences for. Can be either numerical
+taxonKeys or species names. Partial species names can be used (the function
+will try to match them).</p></dd>
 
 
 <dt>leg_label_default</dt>
