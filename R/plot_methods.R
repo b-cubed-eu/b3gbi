@@ -1283,10 +1283,10 @@ plot_species_ts <- function(x,
 #' Can be customized using ggplot2 functions.
 #'
 #' @examples
-#' spec_occ_map <- pielou_evenness_map(example_cube_1,
+#' spec_occ_mammals_denmark <- spec_occ_map(example_cube_1,
 #'                                     level = "country",
 #'                                     region = "Denmark")
-#' plot_map(x = spec_occ_map, c(2440728, 4265185))
+#' plot_species_map(x = spec_occ_mammals_denmark, c(2440728, 4265185))
 #'
 #' @export
 plot_species_map <- function(x,
