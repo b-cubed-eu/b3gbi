@@ -27,14 +27,12 @@ Imports:
     readr,
     rlang,
     rnaturalearth,
-    rnaturalearthdata,
     sf,
     stringr,
     taxize,
     tibble,
     tidyr,
-    units,
-    vegan
+    units
 Suggests: 
     knitr,
     rmarkdown,
