@@ -77,25 +77,14 @@ providing customization options.</p>
 <span>  labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  min_year <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  max_year <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  smoothed_trend <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  linecolour <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  trendlinecolour <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  envelopecolour <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  Europe_crop <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  surround <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  single_plot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  panel_bg <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  x_label <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  y_label <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  x_breaks <span class="op">=</span> <span class="fl">10</span>,</span>
-<span>  y_breaks <span class="op">=</span> <span class="fl">6</span>,</span>
-<span>  suppress_y <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  gridoff <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  legend_title <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  legend_limits <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  legend_title_wrap_length <span class="op">=</span> <span class="fl">10</span>,</span>
-<span>  title_wrap_length <span class="op">=</span> <span class="fl">60</span>,</span>
-<span>  <span class="va">...</span></span>
+<span>  title_wrap_length <span class="op">=</span> <span class="fl">60</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -154,6 +143,11 @@ custom title or if calling the function manually.</p></dd>
 <dt>surround</dt>
 <dd><p>If TRUE, includes surrounding countries in gray when plotting
 at the country level.</p></dd>
+
+
+<dt>single_plot</dt>
+<dd><p>By default all species occurrence time series will be combined
+into a single multi-panel plot. Set this to FALSE to plot each species separately.</p></dd>
 
 
 <dt>panel_bg</dt>

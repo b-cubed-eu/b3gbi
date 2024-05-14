@@ -124,27 +124,10 @@ appropriate wrappers.</p>
 <dd><p>Additional arguments passed to specific indicator calculation functions.</p></dd>
 
 
-<dt>type</dt>
-<dd><p>The indicator to calculate. Supported options include:</p><ul><li><p>'obs_richness': Observed species richness.</p></li>
-<li><p>'cum_richness': Cumulative species richness.</p></li>
-<li><p>'total_occ': Total number of occurrences.</p></li>
-<li><p>'newness': Mean year of occurrence.</p></li>
-<li><p>'occ_density': Density of occurrences.</p></li>
-<li><p>'williams_evenness', 'pielou_evenness': Evenness measures.</p></li>
-<li><p>'ab_rarity', 'area_rarity':  Abundance-based and area-based rarity scores.</p></li>
-</ul></dd>
-
-
-<dt>cell_size</dt>
-<dd><p>Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)</p></dd>
-
-
-<dt>level</dt>
-<dd><p>Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')</p></dd>
-
-
-<dt>region</dt>
-<dd><p>The region of interest (e.g., "Europe"). (Default: "Europe")</p></dd>
+<dt>set_rows</dt>
+<dd><p>Automatically select which taxonomic information to keep when
+there are multiple options. Default value of 1 keeps the first option, which
+is usually the best.</p></dd>
 
 </dl></div>
     <div class="section level2">

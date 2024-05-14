@@ -69,10 +69,6 @@ sizes, with an optional smoothed trendline, and visualizes uncertainty.</p>
 <span>  y_label_default <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  auto_title <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  title <span class="op">=</span> <span class="st">"auto"</span>,</span>
-<span>  xlims <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  ylims <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  trans <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  breaks <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  min_year <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  max_year <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -80,21 +76,14 @@ sizes, with an optional smoothed trendline, and visualizes uncertainty.</p>
 <span>  linecolour <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  trendlinecolour <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  envelopecolour <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  Europe_crop <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  surround <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  single_plot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  panel_bg <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  x_label <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  y_label <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  x_breaks <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  y_breaks <span class="op">=</span> <span class="fl">6</span>,</span>
 <span>  suppress_y <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  gridoff <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  legend_title <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  legend_limits <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  legend_title_wrap_length <span class="op">=</span> <span class="fl">10</span>,</span>
-<span>  title_wrap_length <span class="op">=</span> <span class="fl">60</span>,</span>
-<span>  <span class="va">...</span></span>
+<span>  title_wrap_length <span class="op">=</span> <span class="fl">60</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -103,6 +92,12 @@ sizes, with an optional smoothed trendline, and visualizes uncertainty.</p>
     <dl><dt>x</dt>
 <dd><p>An 'indicator_ts' object containing time series of indicator values
 matched to species names and/or taxon keys.</p></dd>
+
+
+<dt>species</dt>
+<dd><p>Species you want to map occurrences for. Can be either numerical
+taxonKeys or species names. Partial species names can be used (the function
+will try to match them).</p></dd>
 
 
 <dt>y_label_default</dt>
@@ -147,6 +142,11 @@ Default is blue.</p></dd>
 Default is lightsteelblue.</p></dd>
 
 
+<dt>single_plot</dt>
+<dd><p>By default all species occurrence time series will be combined
+into a single multi-panel plot. Set this to FALSE to plot each species separately.</p></dd>
+
+
 <dt>x_label</dt>
 <dd><p>Label for the x-axis.</p></dd>
 
@@ -173,7 +173,7 @@ Default is lightsteelblue.</p></dd>
 <dd><p>If TRUE, hides gridlines.</p></dd>
 
 
-<dt>wrap_length</dt>
+<dt>title_wrap_length</dt>
 <dd><p>Maximum title length before wrapping to a new line.</p></dd>
 
 </dl></div>
