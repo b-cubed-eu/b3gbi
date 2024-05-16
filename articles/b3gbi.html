@@ -171,7 +171,7 @@ with both the old and new cubes. The old ones come with an additional
 <span><span class="co">#&gt; First 10 rows of data (use n = to show more):</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 23,025 × 10</span></span></span>
-<span><span class="co">#&gt;     year eea_cell_code taxonKey   obs scientificName rank  kingdom xcoord ycoord</span></span>
+<span><span class="co">#&gt;     year cell_code     taxonKey   obs scientificName rank  kingdom xcoord ycoord</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>            <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>  <span style="text-decoration: underline;">1</span>809 1kmE7022N2801  4<span style="text-decoration: underline;">431</span>691     1 Anthaxia nigr… SPEC… Animal…   <span style="text-decoration: underline;">7</span>022   <span style="text-decoration: underline;">2</span>801</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>  <span style="text-decoration: underline;">1</span>849 1kmE5216N3202  4<span style="text-decoration: underline;">458</span>870     1 Alosterna tab… SPEC… Animal…   <span style="text-decoration: underline;">5</span>216   <span style="text-decoration: underline;">3</span>202</span></span>
@@ -207,7 +207,7 @@ structure using str().</p>
 <span><span class="co">#&gt;  $ multi_res   : logi FALSE</span></span>
 <span><span class="co">#&gt;  $ data        : tibble [23,025 × 10] (S3: tbl_df/tbl/data.frame)</span></span>
 <span><span class="co">#&gt;   ..$ year          : num [1:23025] 1809 1849 1850 1870 1873 ...</span></span>
-<span><span class="co">#&gt;   ..$ eea_cell_code : chr [1:23025] "1kmE7022N2801" "1kmE5216N3202" "1kmE5997N3236" "1kmE4974N3583" ...</span></span>
+<span><span class="co">#&gt;   ..$ cell_code     : chr [1:23025] "1kmE7022N2801" "1kmE5216N3202" "1kmE5997N3236" "1kmE4974N3583" ...</span></span>
 <span><span class="co">#&gt;   ..$ taxonKey      : num [1:23025] 4431691 4458870 8062927 1347914 8707896 ...</span></span>
 <span><span class="co">#&gt;   ..$ obs           : num [1:23025] 1 1 1 1 1 1 1 1 1 1 ...</span></span>
 <span><span class="co">#&gt;   ..$ scientificName: chr [1:23025] "Anthaxia nigrojubata Roubal, 1913" "Alosterna tabacicolor (Degeer, 1775)" "Mesosa curculionoides (Linnaeus, 1761)" "Podalonia hirsuta (Scopoli, 1763)" ...</span></span>
