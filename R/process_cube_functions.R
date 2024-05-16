@@ -127,17 +127,17 @@ process_cube <- function(cube_name, tax_info = NULL, datasets_info = NULL, first
   # Rename column n to obs
   merged_data <-
     merged_data %>%
-    dplyr::rename(obs = n)
+    dplyr::rename(obs = n, cell_code = eea_cell_code)
 
   # Check whether start and end years are within dataset
   first_year <- merged_data %>%
     dplyr::select(year) %>%
-    min() %>%
+    min(na.rm = TRUE) %>%
     ifelse(is.null(first_year),
            .,
            ifelse(first_year > ., first_year, .))
   last_year <- merged_data %>%
-    dplyr::summarize(max_year = max(year)-1) %>%
+    dplyr::summarize(max_year = max(year, na.rm = TRUE)-1) %>%
     dplyr::pull(max_year) %>%
     ifelse(is.null(last_year),
            .,
@@ -168,71 +168,137 @@ process_cube_new <- function(cube_name, first_year = NULL, last_year = NULL) {
   occurrence_data <- readr::read_delim(
     file = cube_name,
     col_types = readr::cols(
-      yearmonth = readr::col_character(),
-      eeacellcode = readr::col_character(),
-      occurrences = readr::col_double(),
-      mincoordinateuncertaintyinmeters = readr::col_double(),
-      mintemporaluncertainty = readr::col_double(),
-      familykey = readr::col_double(),
-      specieskey = readr::col_double(),
-      family = readr::col_character(),
-      species = readr::col_character(),
-      familycount = readr::col_double(),
+      # yearmonth = readr::col_character(),
+      # eeacellcode = readr::col_character(),
+      # occurrences = readr::col_double(),
+      # mincoordinateuncertaintyinmeters = readr::col_double(),
+      # mintemporaluncertainty = readr::col_double(),
+      # familykey = readr::col_double(),
+      # specieskey = readr::col_double(),
+      # family = readr::col_character(),
+      # species = readr::col_character(),
+      # familycount = readr::col_double(),
     ),
     delim = "\t",
     na = ""
   )
 
+  grid_type <- ifelse("eeacellcode" %in% colnames(occurrence_data), "eea",
+                      ifelse("mgrscellcode" %in% colnames(occurrence_data), "mgrs",
+                             ifelse("eaqdgc" %in% colnames(occurrence_data), "eaqdgc", NULL)))
+
+  if (is.null(grid_type)) {error("Grid type not recognized.")}
+
+  # occurrence_data <-
+  #   occurrence_data %>%
+  #   dplyr::rename(taxonKey = "specieskey",
+  #                 scientificName = "species")
+
+  if (grid_type == "eea") {
+
+    # Remove NA values in cell code
+    occurrence_data <-
+      occurrence_data %>%
+      dplyr::filter(!is.na(eeacellcode))
+
+    occurrence_data <-
+      occurrence_data %>%
+      dplyr::mutate(eeacellcode = stringr::str_replace(eeacellcode, "W", "W-")) %>%
+      dplyr::mutate(eeacellcode = stringr::str_replace(eeacellcode, "S", "S-"))
+
+    # Separate cell code into resolution, coordinates
+    occurrence_data <- occurrence_data %>%
+      dplyr::mutate(
+        xcoord = as.numeric(stringr::str_extract(eeacellcode, "(?<=[EW])-?\\d+")),
+        ycoord = as.numeric(stringr::str_extract(eeacellcode, "(?<=[NS])-?\\d+")),
+        resolution = stringr::str_replace_all(eeacellcode, "(E\\d+)|(N\\d+)|(W-\\d+)|(S-\\d+)", "")
+      ) %>%
+      dplyr::rename(cell_code = eeacellcode)
+
+  } else if (grid_type == "mgrs") {
+
+    # Remove NA values in cell code
+    occurrence_data <-
+      occurrence_data %>%
+      dplyr::filter(!is.na(mgrscellcode))
+
+    # Need to skip 32UNC and divide the digits after the final letter into two halves. The first is north-south, second half is east-west.
+    occurrence_data <-
+      occurrence_data %>%
+      dplyr::mutate(mgrscellcode = stringr::str_replace(mgrscellcode, "W", "W-")) %>%
+      dplyr::mutate(mgrscellcode = stringr::str_replace(mgrscellcode, "S", "S-"))
+
+    # Separate cell code into resolution, coordinates
+    occurrence_data <- occurrence_data %>%
+      dplyr::mutate(
+        xcoord = as.numeric(stringr::str_extract(mgrscellcode, "(?<=[EW])-?\\d+")),
+        ycoord = as.numeric(stringr::str_extract(mgrscellcode, "(?<=[NS])-?\\d+")),
+        resolution = stringr::str_replace_all(mgrscellcode, "(E\\d+)|(N\\d+)|(W-\\d+)|(S-\\d+)", "")
+      ) %>%
+      dplyr::rename(cell_code = mgrscellcode)
+
+  } else if (grid_type == "eaqdgc") {
+
+    # Remove NA values in cell code
+    occurrence_data <-
+      occurrence_data %>%
+      dplyr::filter(!is.na(eaqdgccellcode))
+
+    # Need to find W or E and take the 3 digits after it as eastwest (longitude), and find N or S and take the 2 digits after it as northsouth (latitude)
+    occurrence_data <-
+      occurrence_data %>%
+      dplyr::mutate(eaqdgccellcode = stringr::str_replace(eaqdgccellcode, "W", "W-")) %>%
+      dplyr::mutate(eaqdgccellcode = stringr::str_replace(eaqdgccellcode, "S", "S-"))
+
+    # Separate cell code into resolution, coordinates
+    occurrence_data <- occurrence_data %>%
+      dplyr::mutate(
+        xcoord = as.numeric(stringr::str_extract(eaqdgccellcode, "(?<=[EW])-?\\d+")),
+        ycoord = as.numeric(stringr::str_extract(eaqdgccellcode, "(?<=[NS])-?\\d+")),
+        resolution = stringr::str_replace_all(eaqdgccellcode, "(E\\d+)|(N\\d+)|(W-\\d+)|(S-\\d+)", "")
+      ) %>%
+      dplyr::rename(cell_code = eaqdgccellcode)
+
+  }
+
+
+  # Keep only columns that are not needed
+  # occurrence_data <-
+  #   occurrence_data %>%
+  #   dplyr::select(any_of(c("year",
+  #                          "eeaCellCode",
+  #                          "mgrsCellCode",
+  #                          "eaqdgcCellCode",
+  #                          "occurrences",
+  #                          "minCoordinateUncertaintyInMeters",
+  #                          "minTemporalUncertainty",
+  #                          "kingdomKey",
+  #                          "familyKey",
+  #                          "speciesKey",
+  #                          "kingdom",
+  #                          "family",
+  #                          "species")))
+
+  # Rename columns
   occurrence_data <-
     occurrence_data %>%
-    dplyr::rename(taxonKey = "specieskey",
-                  scientificName = "species")
-
-  # Remove NA values in eea_cell_code
-  occurrence_data <-
-    occurrence_data %>%
-    dplyr::filter(!is.na(eeacellcode))
-
-  occurrence_data <-
-    occurrence_data %>%
-    dplyr::mutate(eeacellcode = stringr::str_replace(eeacellcode, "W", "W-")) %>%
-    dplyr::mutate(eeacellcode = stringr::str_replace(eeacellcode, "S", "S-"))
-
-  # Separate 'eeacellcode' into resolution, coordinates
-  occurrence_data <- occurrence_data %>%
-    dplyr::mutate(
-      xcoord = as.numeric(stringr::str_extract(eeacellcode, "(?<=[EW])-?\\d+")),
-      ycoord = as.numeric(stringr::str_extract(eeacellcode, "(?<=[NS])-?\\d+")),
-      resolution = stringr::str_replace_all(eeacellcode, "(E\\d+)|(N\\d+)|(W-\\d+)|(S-\\d+)", "")
-    ) %>%
-    dplyr::rename(eea_cell_code = eeacellcode)
-
-  # Remove columns that are not needed
-  occurrence_data <-
-    occurrence_data %>%
-    dplyr::select(-mincoordinateuncertaintyinmeters, -mintemporaluncertainty, -sex, -lifestage)
-
-
-  # Rename column occurrences to obs
-  occurrence_data <-
-    occurrence_data %>%
-    dplyr::rename(obs = occurrences)
+    dplyr::rename(obs = occurrences, taxonKey = specieskey)
 
   # Convert yearmonth to just year
-  occurrence_data <-
-    occurrence_data %>%
-    dplyr::rename(year = yearmonth) %>%
-    dplyr::mutate(year = as.numeric(stringr::str_extract(year, "(\\d{4})")))
+  # occurrence_data <-
+  #   occurrence_data %>%
+  #   dplyr::rename(year = yearmonth) %>%
+  #   dplyr::mutate(year = as.numeric(stringr::str_extract(year, "(\\d{4})")))
 
   # Check whether start and end years are within dataset
   first_year <- occurrence_data %>%
     dplyr::select(year) %>%
-    min() %>%
+    min(na.rm = TRUE) %>%
     ifelse(is.null(first_year),
            .,
            ifelse(first_year > ., first_year, .))
   last_year <- occurrence_data %>%
-    dplyr::summarize(max_year = max(year)-1) %>%
+    dplyr::summarize(max_year = max(year, na.rm = TRUE)-1) %>%
     dplyr::pull(max_year) %>%
     ifelse(is.null(last_year),
            .,
@@ -249,6 +315,12 @@ process_cube_new <- function(cube_name, first_year = NULL, last_year = NULL) {
     occurrence_data %>%
     dplyr::distinct() %>%
     dplyr::arrange(year)
+
+  if ("species" %in% colnames(occurrence_data) & !("scientificName" %in% colnames(occurrence_data))) {
+    occurrence_data <-
+       occurrence_data %>%
+       dplyr::rename(scientificName = "species")
+  }
 
   cube <- new_processed_cube(occurrence_data)
 
