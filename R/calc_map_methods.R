@@ -67,13 +67,11 @@ calc_map.hill_core <- function(x,
     x %>%
     dplyr::group_split(cellid) %>%
     purrr::map(. %>%
-                 dplyr::group_by(eea_cell_code,
-                                 taxonKey) %>%
+                 dplyr::group_by(taxonKey) %>%
                  tidyr::pivot_wider(names_from = taxonKey,
                                     values_from = obs) %>%
                  dplyr::ungroup() %>%
-                 dplyr::select(-eea_cell_code,
-                               -scientificName,
+                 dplyr::select(-scientificName,
                                -kingdom,
                                -rank,
                                -geometry,

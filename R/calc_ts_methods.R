@@ -77,13 +77,11 @@ calc_ts.hill_core <- function(x,
     dplyr::group_by(year) %>%
     dplyr::group_split() %>%
     purrr::map(. %>%
-                 dplyr::group_by(eea_cell_code,
-                                 scientificName) %>% {. ->> temp1 } %>%
+                 dplyr::group_by(scientificName) %>%
                  tidyr::pivot_wider(names_from = "scientificName",
                                     values_from = "obs") %>%
                  dplyr::ungroup() %>%
-                 dplyr::select(-eea_cell_code,
-                               -taxonKey,
+                 dplyr::select(-taxonKey,
                                -kingdom,
                                -rank,
                                -resolution,
@@ -92,7 +90,7 @@ calc_ts.hill_core <- function(x,
                                          "xcoord",
                                          "ycoord",
                                          "basisOfRecord",
-                                         "datasetKey"))) %>%{. ->> temp2 } %>%
+                                         "datasetKey"))) %>%
                  replace(is.na(.), 0) %>%
                  dplyr::mutate_if(is.numeric,
                                   as.integer) %>%
@@ -102,7 +100,7 @@ calc_ts.hill_core <- function(x,
                  tidyr::gather(variable,
                                value,
                                -rowname) %>%
-                 tidyr::spread(rowname, value) %>%{. ->> temp4 } %>%
+                 tidyr::spread(rowname, value) %>%
                  'row.names<-'(., NULL) %>%
                  tibble::column_to_rownames(var = "variable") %>%
                  as.matrix() %>%
