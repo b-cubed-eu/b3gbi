@@ -185,9 +185,9 @@ process_cube_new <- function(cube_name, first_year = NULL, last_year = NULL) {
 
   grid_type <- ifelse("eeacellcode" %in% colnames(occurrence_data), "eea",
                       ifelse("mgrscellcode" %in% colnames(occurrence_data), "mgrs",
-                             ifelse("eaqdgc" %in% colnames(occurrence_data), "eaqdgc", NULL)))
+                             ifelse("eqdgccellcode" %in% colnames(occurrence_data), "eqdgc", NA)))
 
-  if (is.null(grid_type)) {error("Grid type not recognized.")}
+  if (is.na(grid_type)) {error("Grid type not recognized.")}
 
   # occurrence_data <-
   #   occurrence_data %>%
@@ -237,27 +237,27 @@ process_cube_new <- function(cube_name, first_year = NULL, last_year = NULL) {
       ) %>%
       dplyr::rename(cell_code = mgrscellcode)
 
-  } else if (grid_type == "eaqdgc") {
+  } else if (grid_type == "eqdgc") {
 
     # Remove NA values in cell code
     occurrence_data <-
       occurrence_data %>%
-      dplyr::filter(!is.na(eaqdgccellcode))
+      dplyr::filter(!is.na(eqdgccellcode))
 
     # Need to find W or E and take the 3 digits after it as eastwest (longitude), and find N or S and take the 2 digits after it as northsouth (latitude)
     occurrence_data <-
       occurrence_data %>%
-      dplyr::mutate(eaqdgccellcode = stringr::str_replace(eaqdgccellcode, "W", "W-")) %>%
-      dplyr::mutate(eaqdgccellcode = stringr::str_replace(eaqdgccellcode, "S", "S-"))
+      dplyr::mutate(eqdgccellcode = stringr::str_replace(eqdgccellcode, "W", "W-")) %>%
+      dplyr::mutate(eqdgccellcode = stringr::str_replace(eqdgccellcode, "S", "S-"))
 
     # Separate cell code into resolution, coordinates
     occurrence_data <- occurrence_data %>%
       dplyr::mutate(
-        xcoord = as.numeric(stringr::str_extract(eaqdgccellcode, "(?<=[EW])-?\\d+")),
-        ycoord = as.numeric(stringr::str_extract(eaqdgccellcode, "(?<=[NS])-?\\d+")),
-        resolution = stringr::str_replace_all(eaqdgccellcode, "(E\\d+)|(N\\d+)|(W-\\d+)|(S-\\d+)", "")
+        xcoord = as.numeric(stringr::str_extract(eqdgccellcode, "(?<=[EW])-?\\d+")),
+        ycoord = as.numeric(stringr::str_extract(eqdgccellcode, "(?<=[NS])-?\\d+")),
+        resolution = stringr::str_replace_all(eqdgccellcode, "(E\\d+)|(N\\d+)|(W-\\d+)|(S-\\d+)", "")
       ) %>%
-      dplyr::rename(cell_code = eaqdgccellcode)
+      dplyr::rename(cell_code = eqdgccellcode)
 
   }
 
@@ -268,7 +268,7 @@ process_cube_new <- function(cube_name, first_year = NULL, last_year = NULL) {
   #   dplyr::select(any_of(c("year",
   #                          "eeaCellCode",
   #                          "mgrsCellCode",
-  #                          "eaqdgcCellCode",
+  #                          "eqdgcCellCode",
   #                          "occurrences",
   #                          "minCoordinateUncertaintyInMeters",
   #                          "minTemporalUncertainty",
