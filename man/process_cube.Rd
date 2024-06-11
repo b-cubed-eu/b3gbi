@@ -9,7 +9,8 @@ process_cube(
   tax_info = NULL,
   datasets_info = NULL,
   first_year = 1600,
-  last_year = NULL
+  last_year = NULL,
+  ...
 )
 }
 \arguments{
