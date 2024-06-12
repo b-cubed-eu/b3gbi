@@ -405,19 +405,6 @@ process_cube_new <- function(cube_name,
     # this will not work properly if there is a - symbol in the code
     occurrence_data$resolution <- paste0(10^((9 - nchar(occurrence_data$cellCode[1])) / 2), "km")
 
-    # # Need to skip 32UNC and divide the digits after the final letter into two halves. The first is north-south, second half is east-west.
-    # occurrence_data <-
-    #   occurrence_data %>%
-    #   dplyr::mutate(cellCode = stringr::str_replace(cellCode, "W", "W-")) %>%
-    #   dplyr::mutate(cellCode = stringr::str_replace(cellCode, "S", "S-"))
-    #
-    # # Separate cell code into resolution, coordinates
-    # occurrence_data <- occurrence_data %>%
-    #   dplyr::mutate(
-    #     xcoord = as.numeric(stringr::str_extract(cellCode, "(?<=[EW])-?\\d+")),
-    #     ycoord = as.numeric(stringr::str_extract(cellCode, "(?<=[NS])-?\\d+")),
-    #     resolution = stringr::str_replace_all(cellCode, "(E\\d+)|(N\\d+)|(W-\\d+)|(S-\\d+)", ""))
-
     } else if (grid_type == "eqdgc") {
 
     # Remove NA values in cell code
@@ -439,12 +426,6 @@ process_cube_new <- function(cube_name,
     occurrence_data$ycoord <- lat
     occurrence_data$resolution <- rep(paste0((1/(2^(nchar(occurrence_data$cellCode[1])-7))), "degrees"), nrow(occurrence_data))
 
-    # # Separate cell code into resolution, coordinates
-    # occurrence_data <- occurrence_data %>%
-    #   dplyr::mutate(
-    #     xcoord = as.numeric(stringr::str_extract(cellCode, "(?<=[EW])-?\\d+")),
-    #     ycoord = as.numeric(stringr::str_extract(cellCode, "(?<=[NS])-?\\d+")),
-    #     resolution = stringr::str_replace_all(cellCode, "(E\\d+)|(N\\d+)|(W-\\d+)|(S-\\d+)", ""))
   }
 
 
