@@ -246,55 +246,73 @@ process_cube_new <- function(cube_name,
 
   grid_type = match.arg(grid_type)
 
-
   if (grid_type == "automatic") {
 
+    # check if the user has provided a name for the column containing grid cell codes
     if (!is.null(cols_cellcode)) {
 
-      grid_type <- ifelse(tolower("eea") %in% tolower(cols_cellcode), "eea",
-                          ifelse(tolower("mgrs") %in% tolower(cols_cellcode), "mgrs",
-                                 ifelse(tolower("eqdgc") %in% tolower(cols_cellcode), "eqdgc", NA)))
+      # try to identify the reference grid and return an error if it fails
+      grid_code_sample <- occurrence_data[[cols_cellcode]][!is.na(occurrence_data[[cols_cellcode]])][1]
+      grid_type <- detect_grid(grid_code_sample, stop_on_fail = TRUE)
 
-      if (is.na(grid_type)) {
-        stop("Could not detect grid type. Please specify manually.")
-      } else {
-        occurrence_data <-
-          occurrence_data %>%
-          dplyr::rename(cellCode = cols_cellcode)
-      }
-
+      # if successful rename the user-specified column to the default
+      occurrence_data <-
+        occurrence_data %>%
+        dplyr::rename(cellCode = cols_cellcode)
 
     } else {
 
-      grid_type <- ifelse(tolower("eeaCellCode") %in% tolower(colnames(occurrence_data)), "eea",
-                          ifelse(tolower("mgrsCellCode") %in% tolower(colnames(occurrence_data)), "mgrs",
-                                 ifelse(tolower("eqdgcCellCode") %in% tolower(colnames(occurrence_data)), "eqdgc", NA)))
+      # if no name was provided loop through columns to find grid codes and identify reference grid
+      for (col in colnames(occurrence_data)) {
+
+        grid_code_sample <- occurrence_data[[col]][!is.na(occurrence_data[[col]])][1]
+        grid_type <- detect_grid(grid_code_sample, stop_on_fail = FALSE)
+
+        # check whether grid_type was successfully identified
+        if (!is.na(grid_type)) {
+
+          # if successful rename the found column to the default for grid cell codes
+          occurrence_data <-
+            occurrence_data %>%
+            dplyr::rename(cellCode = col)
+
+          # then end the loop
+          break
+
+        }
+
+      }
 
       if (is.na(grid_type)) {
-        stop("Could not detect grid type. Please specify manually.")
-      } else {
 
-        old_cc_name <- colnames(occurrence_data)[grepl(paste0(grid_type, "CellCode"), colnames(occurrence_data), ignore.case=TRUE)]
-        occurrence_data <-
-          occurrence_data %>%
-          dplyr::rename(cellCode = old_cc_name)
+        # if grid cell codes could not be identified in any column, return an error
+        stop("Could not detect grid type. Please specify manually.")
+
       }
 
     }
 
+    # if the user has specified a grid type...
   } else {
-    stopifnot("Could not find column containing grid cell codes. Please supply column name as an argument to the function." =
-                tolower(paste0(grid_type, "CellCode")) %in% tolower(colnames(occurrence_data)))
 
-    old_cc_name <- colnames(occurrence_data)[grepl(paste0(grid_type, "CellCode"), colnames(occurrence_data), ignore.case=TRUE)]
+    # check if the user has provided a name for the column containing grid cell codes
+    if (is.null(cols_cellcode)) {
+
+      # if not, try to identify it automatically (returns an error if unsuccessful)
+      cols_cellcode <- detect_grid_column(occurrence_data, grid_type)
+
+    }
+
+    # rename it to the default
     occurrence_data <-
       occurrence_data %>%
-      dplyr::rename(cellCode = old_cc_name)
+      dplyr::rename(cellCode = cols_cellcode)
+
   }
 
+  # make a list of other user provided column names
   col_names_userlist <- list(cols_year,
                              cols_yearmonth,
-                             cols_cellcode,
                              cols_occurrences,
                              cols_scientificname,
                              cols_mincoordinateuncertaintyinmeters,
@@ -307,9 +325,9 @@ process_cube_new <- function(cube_name,
                              cols_specieskey,
                              cols_familycount)
 
+  # list default column names to replace them with
   col_names_defaultlist <- list("year",
                                 "yearMonth",
-                                "cellCode",
                                 "occurrences",
                                 "scientificName",
                                 "minCoordinateUncertaintyInMeters",
@@ -324,45 +342,60 @@ process_cube_new <- function(cube_name,
 
   # rename user-supplied column names to defaults expected by package functions
   for (i in 1:length(col_names_userlist)) {
+
     if (!is.null(col_names_userlist[[i]])) {
+
       new_name <- col_names_defaultlist[[i]]
       old_name <- col_names_userlist[[i]]
       occurrence_data <-
         occurrence_data %>%
         dplyr::rename(!!new_name := old_name)
+
     }
+
   }
 
-  # check for any default column names which do not match the default capitalization pattern and fix them
+  # check for any non-user-supplied column names which match the default names but not the capitalization pattern and fix them
   for (i in 1:length(col_names_defaultlist)) {
+
     if (!col_names_defaultlist[[i]] %in% colnames(occurrence_data) & tolower(col_names_defaultlist[[i]]) %in% tolower(colnames(occurrence_data))) {
+
       new_name <- col_names_defaultlist[[i]]
       old_name <- colnames(occurrence_data)[grepl(new_name, colnames(occurrence_data), ignore.case=TRUE)]
       occurrence_data <-
         occurrence_data %>%
         dplyr::rename(!!new_name := old_name)
+
     }
+
   }
 
   # If year column missing but yearMonth column present, convert yearMonth to year
-  if (!tolower("year") %in% tolower(colnames(occurrence_data)) & tolower("yearMonth") %in% tolower(colnames(occurrence_data))) {
+  if (!"year" %in% colnames(occurrence_data) & "yearMonth" %in% colnames(occurrence_data)) {
+
     occurrence_data <-
       occurrence_data %>%
       dplyr::mutate(year = as.numeric(stringr::str_extract(yearMonth, "(\\d{4})")))
+
   }
 
   # If scientificName column missing but species column present, copy species to scientificName
   if ("species" %in% colnames(occurrence_data) & !("scientificName" %in% colnames(occurrence_data))) {
+
     occurrence_data <-
       occurrence_data %>%
       dplyr::rename(scientificName = species)
+
   }
 
   # check if any essential columns (required by package functions) are missing
   required_colnames <- c("year", "occurrences", "scientificName", "speciesKey")
   missing_colnames <- required_colnames[which(!required_colnames %in% colnames(occurrence_data))]
+
   if(length(missing_colnames) >= 1) {
+
     stop(paste0("\nThe following columns could not be detected in cube:", missing_colnames, "\nPlease supply the missing column names as arguments to the function.\n"))
+
   }
 
   # rename occurrences and speciesKey columns to be consistent with the other package functions (should maybe change this throughout package?)
@@ -371,13 +404,24 @@ process_cube_new <- function(cube_name,
     dplyr::rename(obs = occurrences) %>%
     dplyr::rename(taxonKey = speciesKey)
 
+  # Remove NA values in cell code column
+  occurrence_data <-
+    occurrence_data %>%
+    dplyr::filter(!is.na(cellCode))
 
   if (grid_type == "eea") {
 
-    # Remove NA values in cell code
-    occurrence_data <-
-      occurrence_data %>%
-      dplyr::filter(!is.na(cellCode))
+    if (force_gridcode == FALSE) {
+
+      if(ifelse(grid_type == "mgrs", stringr::str_detect(temp_col, "^[0-9]{2}[A-Z]{3}[0-9]{0,10}$"), TRUE, FALSE)){
+
+        stop("Cell codes do not match the expected format. Are you sure you have specified the correct grid system?
+             It is recommended to leave grid_type on 'automatic'. If you are certain, you can use force_gridecode = TRUE
+             to attempt to translate them anyway, but this could lead to unexpected downstream errors.")
+
+      }
+
+    }
 
     occurrence_data <-
       occurrence_data %>%
@@ -393,10 +437,17 @@ process_cube_new <- function(cube_name,
 
   } else if (grid_type == "mgrs") {
 
-    # Remove NA values in cell code
-    occurrence_data <-
-      occurrence_data %>%
-      dplyr::filter(!is.na(cellCode))
+    if (force_gridcode == FALSE) {
+
+      if(ifelse(stringr::str_detect(occurrence_data$cellCode[1], "^[0-9]{1,3}[km]{1,2}[EW]{1}[0-9]{2,7}[NS]{1}[0-9]{2,7}$"), TRUE, FALSE)){
+
+        stop("Cell codes do not match the expected format. Are you sure you have specified the correct grid system?
+             It is recommended to leave grid_type on 'automatic'. If you are certain, you can use force_gridecode = TRUE
+             to attempt to translate them anyway, but this could lead to unexpected downstream errors.")
+
+      }
+
+    }
 
     latlong <- mgrs::mgrs_to_latlng(occurrence_data$cellCode)
     occurrence_data$xcoord <- latlong$lng
@@ -405,12 +456,19 @@ process_cube_new <- function(cube_name,
     # this will not work properly if there is a - symbol in the code
     occurrence_data$resolution <- paste0(10^((9 - nchar(occurrence_data$cellCode[1])) / 2), "km")
 
-    } else if (grid_type == "eqdgc") {
+  } else if (grid_type == "eqdgc") {
 
-    # Remove NA values in cell code
-    occurrence_data <-
-      occurrence_data %>%
-      dplyr::filter(!is.na(cellCode))
+    if (force_gridcode == FALSE) {
+
+      if(ifelse(grid_type == "eqdgc", stringr::str_detect(temp_col, "^[EW]{1}[0-9]{3}[NS]{1}[0-9]{2}[A-D]{0,6}$"), TRUE, FALSE)){
+
+        stop("Cell codes do not match the expected format. Are you sure you have specified the correct grid system?
+             It is recommended to leave grid_type on 'automatic'. If you are certain, you can use force_gridecode = TRUE
+             to attempt to translate them anyway, but this could lead to unexpected downstream errors.")
+
+      }
+
+    }
 
     # Need to find W or E and take the 3 digits after it as eastwest (longitude), and find N or S and take the 2 digits after it as northsouth (latitude)
     occurrence_data <-
