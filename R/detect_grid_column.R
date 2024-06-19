@@ -10,7 +10,9 @@ detect_grid_column <- function(df, grid_type){
                                       NA)))
 
     if (grid_type_test==TRUE) {
+
       return(temp_col)
+
     }
 
   }
