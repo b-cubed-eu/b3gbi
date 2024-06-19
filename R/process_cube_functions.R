@@ -159,6 +159,30 @@ process_cube <- function(cube_name,
       # if not, try to identify it automatically (returns an error if unsuccessful)
       cols_cellCode <- detect_grid_column(occurrence_data, grid_type)
 
+    } else {
+
+      # check that the column name they provided exists
+      col_name_test <- ifelse(!cols_cellCode %in% names(occurrence_data),
+                              stop("The column name you provided for grid cell codes does not exist. Please double check that you spelled it correctly."),
+                              TRUE)
+
+    }
+
+    if (force_gridcode == FALSE) {
+
+      grid_type_test <- ifelse(grid_type == "eea", stringr::str_detect(occurrence_data[[cols_cellCode]], "^[0-9]{1,3}[km]{1,2}[EW]{1}[0-9]{2,7}[NS]{1}[0-9]{2,7}$"),
+                               ifelse(grid_type == "mgrs", stringr::str_detect(occurrence_data[[cols_cellCode]], "^[0-9]{2}[A-Z]{3}[0-9]{0,10}$"),
+                                      ifelse(grid_type == "eqdgc", stringr::str_detect(occurrence_data[[cols_cellCode]], "^[EW]{1}[0-9]{3}[NS]{1}[0-9]{2}[A-D]{0,6}$"),
+                                             NA)))
+
+      if(!grid_type_test==TRUE) {
+
+        stop("Cell codes do not match the expected format. Are you sure you have specified the correct grid system?
+             It is recommended to leave grid_type on 'automatic'. If you are certain, you can use force_gridecode = TRUE
+             to attempt to translate them anyway, but this could lead to unexpected downstream errors.")
+
+      }
+
     }
 
     # rename it to the default
@@ -284,7 +308,7 @@ process_cube <- function(cube_name,
 
     if (force_gridcode == FALSE) {
 
-      if(!ifelse(stringr::str_detect(temp_col, "^[0-9]{1,3}[km]{1,2}[EW]{1}[0-9]{2,7}[NS]{1}[0-9]{2,7}$"), TRUE, FALSE)){
+      if(!ifelse(stringr::str_detect(occurrence_data$cellCode[1], "^[0-9]{1,3}[km]{1,2}[EW]{1}[0-9]{2,7}[NS]{1}[0-9]{2,7}$"), TRUE, FALSE)){
 
         stop("Cell codes do not match the expected format. Are you sure you have specified the correct grid system?
              It is recommended to leave grid_type on 'automatic'. If you are certain, you can use force_gridecode = TRUE
