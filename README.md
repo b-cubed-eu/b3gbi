@@ -64,19 +64,16 @@ amphibians in Europe:
 library(b3gbi)
 
 # Load GBIF data cube
-cube_name <- system.file("extdata", "europe_insect_cube.csv", package = "b3gbi")
-
-# Load taxonomic info for cube
-tax_info <- system.file("extdata", "europe_insect_info.csv", package = "b3gbi")
+cube_name <- system.file("extdata", "denmark_mammals_cube_eqdgc.csv", package = "b3gbi")
 
 # Prepare cube
-insect_data <- process_cube(cube_name, tax_info)
+dk_mammal_data <- process_cube(cube_name)
 
 # Calculate diversity metric
-map_obs_rich_insects <- obs_richness_map(insect_data)
+map_obs_rich_mammals <- obs_richness_map(dk_mammal_data)
 
 # Plot diversity metric
-plot(map_obs_rich_insects, title = "Observed Species Richness: Insects in Europe")
+plot(map_obs_rich_mammals, title = "Observed Species Richness: Mammals in Denmark")
 ```
 
 <img src="man/figures/README-example-1.png" width="100%" />
