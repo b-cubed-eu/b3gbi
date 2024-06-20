@@ -25,7 +25,8 @@
 #' @noRd
 create_grid <- function(map_data,
                         level,
-                        cell_size = NULL) {
+                        cell_size = NULL,
+                        make_valid) {
 
   if (!is.null(cell_size)) {
 
@@ -41,11 +42,17 @@ create_grid <- function(map_data,
 
   # Make a grid across the map area
   grid <- map_data %>%
-    sf::st_make_grid(cellsize = c(cell_size * 1000, cell_size * 1000)) %>%
+    sf::st_make_grid(cellsize = c(cell_size*1000, cell_size*1000)) %>%
     sf::st_intersection(map_data) %>%
     sf::st_cast("MULTIPOLYGON") %>%
     sf::st_sf() %>%
     dplyr::mutate(cellid = dplyr::row_number())
+
+  if (make_valid==TRUE) {
+
+    grid <- sf::st_make_valid(grid)
+
+  }
 
   # Add area column to grid
   grid$area_km2 <-
@@ -78,7 +85,7 @@ create_grid <- function(map_data,
 #' # Retrieve a map of the entire world
 #' world_map <- get_NE_data(level = "world")
 #' @noRd
-get_NE_data <- function(level, region, cube_crs) {
+get_NE_data <- function(level, region, new_crs) {
 
   # Download and prepare Natural Earth map data
   if (level == "country") {
@@ -103,7 +110,7 @@ get_NE_data <- function(level, region, cube_crs) {
     map_data <- map_data %>%
       sf::st_as_sf() %>%
      # sf::st_transform(crs = "EPSG:3035")
-      sf::st_transform(crs = cube_crs)
+      sf::st_transform(crs = new_crs)
 
   return(map_data)
 
@@ -111,40 +118,34 @@ get_NE_data <- function(level, region, cube_crs) {
 
 
 #' @noRd
-prepare_spatial_data <- function(data, grid, cube_crs) {
+prepare_spatial_data <- function(data, grid, cube_crs, new_crs) {
 
   # Set map limits
   # map_lims <- sf::st_buffer(grid, dist = 1000) %>%
   #   sf::st_bbox()
 
   # Scale coordinates of occurrences so the number of digits matches map
-  data <-
-    data %>%
-    dplyr::mutate(xcoord = xcoord * 1000,
-                  ycoord = ycoord * 1000)
+  # data <-
+  #   data %>%
+  #   dplyr::mutate(xcoord = xcoord * 1000,
+  #                 ycoord = ycoord * 1000)
 
   # data[, xcoord := xcoord * 1000][, ycoord := ycoord * 1000]
 
   # Convert the x and y columns to the correct format for plotting with sf
   occ_sf <- sf::st_as_sf(data,
                          coords = c("xcoord", "ycoord"),
-                       #  crs = "EPSG:3035")
-                       crs = cube_crs)
+                         crs = cube_crs) %>%
+    sf::st_transform(crs = new_crs)
 
   # Set attributes as spatially constant to avoid warnings
   sf::st_agr(grid) <- "constant"
   sf::st_agr(occ_sf) <- "constant"
 
   # Calculate intersection between occurrences and grid cells
-  occ_grid_int <- sf::st_intersection(occ_sf, grid, left = TRUE)
+  occ_grid_int <- sf::st_intersection(occ_sf, grid)
 
   # Add cell numbers to occurrence data
-  # data <-
-  #   data_scaled %>%
-  #   dplyr::inner_join(occ_grid_int) %>%
-  #   suppressMessages() %>%
-  #   dplyr::arrange(cellid)
-
   data <-
     data %>%
     dplyr::inner_join(occ_grid_int) %>%
@@ -207,8 +208,11 @@ compute_indicator_workflow <- function(data,
                                        level = c("continent", "country", "world"),
                                        region = "Europe",
                                        cube_crs = NULL,
+                                       new_crs = NULL,
                                        first_year = NULL,
                                        last_year = NULL,
+                                       spherical_geometry = TRUE,
+                                       make_valid = FALSE,
                                        ...) {
 
   stopifnot_error("Object class not recognized.",
@@ -240,6 +244,16 @@ compute_indicator_workflow <- function(data,
   num_years <- length(unique(df$year))
   num_families <- data$num_families
 
+  if (spherical_geometry==FALSE){
+
+    # if spherical geometry is on, turn it off
+    if (sf::sf_use_s2()) {
+      sf::sf_use_s2(FALSE)
+      turned_off <- TRUE
+    }
+
+  }
+
   if (dim_type == "ts") {
 
     year_names <- unique(df$year)
@@ -260,7 +274,19 @@ compute_indicator_workflow <- function(data,
 
   if (is.null(cube_crs)) {
 
-    cube_crs <- "EPSG:3035"
+    if (data$grid_type == "eea") {
+
+      cube_crs <- "EPSG:3035"
+
+    } else if (data$grid_type == "mgrs" | data$grid_type == "eqdgc") {
+
+      cube_crs <- "EPSG:4326"
+
+    } else {
+
+      stop("Grid reference system not found.")
+
+    }
 
   }
 
@@ -268,13 +294,13 @@ compute_indicator_workflow <- function(data,
   if (dim_type == "map" | (!is.null(level) & !is.null(region))) {
 
     # Download Natural Earth data
-    map_data <- get_NE_data(level, region, cube_crs)
+    map_data <- get_NE_data(level, region, new_crs)
 
     # Create grid from Natural Earth data
-    grid <- create_grid(map_data, level, cell_size)
+    grid <- create_grid(map_data, level, cell_size, make_valid = make_valid)
 
     # Format spatial data and merge with grid
-    df <- prepare_spatial_data(df, grid, cube_crs)
+    df <- prepare_spatial_data(df, grid, cube_crs, new_crs)
 
   } else {
 
@@ -302,6 +328,15 @@ compute_indicator_workflow <- function(data,
 
     # Calculate indicator
     indicator <- calc_ts(df, ...)
+
+  }
+
+  if (spherical_geometry==FALSE) {
+
+    # if spherical geometry had to be turned off, now turn it back on
+    if(turned_off == TRUE) {
+      sf::sf_use_s2(TRUE)
+    }
 
   }
 
