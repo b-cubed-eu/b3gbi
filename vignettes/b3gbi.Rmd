@@ -62,15 +62,15 @@ The old ones come with an additional .csv file containing taxonomic information 
 
 # Example:
 library(b3gbi)
-europe_cube <- process_cube(system.file("extdata", "europe_insect_cube.csv", package="b3gbi"), system.file("extdata", "europe_insect_info.csv", package="b3gbi"))
-europe_cube
+denmark_cube <- process_cube(system.file("extdata", "denmark_mammals_cube_eqdgc.csv", package="b3gbi"))
+denmark_cube
 
 ```
 
 When you type the name of the cube object, the contents are displayed by a custom print function within the package. You can see the object structure using str().
 
 ```{r}
-str(europe_cube)
+str(denmark_cube)
 ```
 
 The cube itself is contained in a tibble (tidyverse version of data frame) called data, while other variables contain metadata.
