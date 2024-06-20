@@ -42,7 +42,7 @@ backup_registered_indicators <- function(suppress_prompt="FALSE") {
   #Backup .rda file
   save(available_indicators, file = paste(backup_fname, sep=""))
 
-  message(paste("Registered indicators backed up to ", backup_fname, sep=""))
+  message(paste("Registered indicators backed up to ", backup_fname, ".old", sep=""))
 
   }
 }
