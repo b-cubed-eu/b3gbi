@@ -109,6 +109,13 @@ process_cube <- function(cube_name,
     # check if the user has provided a name for the column containing grid cell codes
     if (!is.null(cols_cellCode)) {
 
+      # check that the column name they provided exists
+      if (!cols_cellCode %in% names(occurrence_data)) {
+
+        stop("The column name you provided for grid cell codes does not exist. Please double check that you spelled it correctly.")
+
+      }
+
       # try to identify the reference grid and return an error if it fails
       grid_code_sample <- occurrence_data[[cols_cellCode]][!is.na(occurrence_data[[cols_cellCode]])][1]
       grid_type <- detect_grid(grid_code_sample, stop_on_fail = TRUE)
@@ -162,9 +169,11 @@ process_cube <- function(cube_name,
     } else {
 
       # check that the column name they provided exists
-      col_name_test <- ifelse(!cols_cellCode %in% names(occurrence_data),
-                              stop("The column name you provided for grid cell codes does not exist. Please double check that you spelled it correctly."),
-                              TRUE)
+      if (!cols_cellCode %in% names(occurrence_data)) {
+
+        stop("The column name you provided for grid cell codes does not exist. Please double check that you spelled it correctly.")
+
+      }
 
     }
 
