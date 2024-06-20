@@ -335,8 +335,8 @@ process_cube <- function(cube_name,
     # Separate cell code into resolution, coordinates
     occurrence_data <- occurrence_data %>%
       dplyr::mutate(
-        xcoord = as.numeric(stringr::str_extract(cellCode, "(?<=[EW])-?\\d+")),
-        ycoord = as.numeric(stringr::str_extract(cellCode, "(?<=[NS])-?\\d+")),
+        xcoord = as.numeric(stringr::str_extract(cellCode, "(?<=[EW])-?\\d+"))*1000,
+        ycoord = as.numeric(stringr::str_extract(cellCode, "(?<=[NS])-?\\d+"))*1000,
         resolution = stringr::str_replace_all(cellCode, "(E\\d+)|(N\\d+)|(W-\\d+)|(S-\\d+)", ""))
 
   } else if (grid_type == "mgrs") {
@@ -353,6 +353,9 @@ process_cube <- function(cube_name,
 
     }
 
+    #utm <- mgrs::mgrs_to_utm(occurrence_data$cellCode)
+    #occurrence_data$xcoord <- utm$easting
+    #occurrence_data$ycoord <- utm$northing
     latlong <- mgrs::mgrs_to_latlng(occurrence_data$cellCode)
     occurrence_data$xcoord <- latlong$lng
     occurrence_data$ycoord <- latlong$lat
@@ -417,7 +420,7 @@ process_cube <- function(cube_name,
     dplyr::distinct() %>%
     dplyr::arrange(year)
 
-  cube <- new_processed_cube(occurrence_data)
+  cube <- new_processed_cube(occurrence_data, grid_type)
 
 }
 
