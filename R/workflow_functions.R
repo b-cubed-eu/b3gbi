@@ -30,12 +30,12 @@ create_grid <- function(data,
                         cell_size_units,
                         make_valid,
                         cube_crs,
-                        new_crs) {
+                        output_crs) {
 
   occ_sf <- sf::st_as_sf(data,
                          coords = c("xcoord", "ycoord"),
                          crs = cube_crs) %>%
-    sf::st_transform(crs = new_crs)
+    sf::st_transform(crs = output_crs)
 
   # Make a grid across the map area
   grid <- occ_sf %>%
@@ -83,7 +83,7 @@ create_grid <- function(data,
 #' # Retrieve a map of the entire world
 #' world_map <- get_NE_data(level = "world")
 #' @noRd
-get_NE_data <- function(level, region, new_crs) {
+get_NE_data <- function(level, region, output_crs) {
 
   # Download and prepare Natural Earth map data
   if (level == "country") {
@@ -107,7 +107,7 @@ get_NE_data <- function(level, region, new_crs) {
 
     map_data <- map_data %>%
       sf::st_as_sf() %>%
-      sf::st_transform(crs = new_crs)
+      sf::st_transform(crs = output_crs)
 
   return(map_data)
 
@@ -115,7 +115,7 @@ get_NE_data <- function(level, region, new_crs) {
 
 
 #' @noRd
-prepare_spatial_data <- function(data, grid, map_data, cube_crs, new_crs) {
+prepare_spatial_data <- function(data, grid, map_data, cube_crs, output_crs) {
 
   # Set map limits
   # map_lims <- sf::st_buffer(grid, dist = 1000) %>%
@@ -133,7 +133,7 @@ prepare_spatial_data <- function(data, grid, map_data, cube_crs, new_crs) {
   occ_sf <- sf::st_as_sf(data,
                          coords = c("xcoord", "ycoord"),
                          crs = cube_crs) %>%
-    sf::st_transform(crs = new_crs)
+    sf::st_transform(crs = output_crs)
 
   # Set attributes as spatially constant to avoid warnings
   sf::st_agr(grid) <- "constant"
@@ -184,9 +184,14 @@ prepare_spatial_data <- function(data, grid, map_data, cube_crs, new_crs) {
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
 #' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
 #' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
-#' @param cube_crs The projection of the cube. (Default: "EPSG:3035")
+#' @param output_crs The CRS you want for your calculated indicator. (Leave blank
+#'  to let the function choose a default based on grid reference system)
 #' @param first_year Exclude data before this year. (Uses all data in the cube by default.)
 #' @param last_year Exclude data after this year. (Uses all data in the cube by default.)
+#' @param spherical_geometry If set to FALSE, will temporarily disable spherical geometry
+#' while the function runs. Should only be used to solve specific issues. (Default is TRUE)
+#' @param make_valid Calls st_make_valid() from the sf package. Increases processing
+#' time but may help if you are getting polygon errors. (Default is FALSE).
 #' @param ... Additional arguments passed to specific indicator calculation functions.
 #'
 #' @return An S3 object containing the calculated indicator values and metadata.
@@ -207,7 +212,7 @@ compute_indicator_workflow <- function(data,
                                        level = c("continent", "country", "world"),
                                        region = "Europe",
                                        #cube_crs = NULL,
-                                       new_crs = NULL,
+                                       output_crs = NULL,
                                        first_year = NULL,
                                        last_year = NULL,
                                        spherical_geometry = TRUE,
@@ -294,20 +299,20 @@ compute_indicator_workflow <- function(data,
 
   }
 
-  if (is.null(new_crs)) {
+  if (is.null(output_crs)) {
 
     if (data$grid_type == "eea") {
 
-      new_crs <- "EPSG:3035"
+      output_crs <- "EPSG:3035"
 
     } else if (data$grid_type == "eqdgc") {
 
-      new_crs <- "EPSG:4326"
+      output_crs <- "EPSG:4326"
 
     } else if (data$grid_type == "mgrs") {
 
-      #new_crs <- get_crs_for_mgrs(df$cellCode)
-      new_crs <- "EPSG:9822"
+      #output_crs <- get_crs_for_mgrs(df$cellCode)
+      output_crs <- "EPSG:9822"
 
     } else {
 
@@ -324,13 +329,13 @@ compute_indicator_workflow <- function(data,
   if (dim_type == "map" | (!is.null(level) & !is.null(region))) {
 
     # Download Natural Earth data
-    map_data <- get_NE_data(level, region, new_crs)
+    map_data <- get_NE_data(level, region, output_crs)
 
     # Create grid from Natural Earth data
-    grid <- create_grid(df, map_data, level, cell_size, cell_size_units, make_valid, cube_crs, new_crs)
+    grid <- create_grid(df, map_data, level, cell_size, cell_size_units, make_valid, cube_crs, output_crs)
 
     # Format spatial data and merge with grid
-    df <- prepare_spatial_data(df, grid, map_data, cube_crs, new_crs)
+    df <- prepare_spatial_data(df, grid, map_data, cube_crs, output_crs)
 
   } else {
 
