@@ -34,7 +34,7 @@ calc_ts <- function(x, ...) {
 #' @return An S3 object of the class 'indicator_map' containing the calculated indicator values and metadata.
 #'
 #' @examples
-#' observed_richness_map <- obs_richness_map(example_cube_1, level = "country", region = "Dennmark")
+#' observed_richness_map <- obs_richness_map(example_cube_1, level = "country", region = "Denmark")
 #' plot(observed_richness_map)
 #'
 #' @export
