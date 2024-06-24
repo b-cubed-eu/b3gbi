@@ -23,6 +23,6 @@ Takes an "indicator_map",  "indicator_ts", or "processed_cube" object and
 determines the years for which observation data exists.
 }
 \examples{
-total_occ_insects_portugal <- total_occ_map(example_cube_2, level = "country", region = "Portugal")
-get_observed_years(total_occ_insects_portugal)
+total_occ_mammals_denmark <- total_occ_map(example_cube_1, level = "country", region = "Denmark")
+get_observed_years(total_occ_mammals_denmark)
 }
