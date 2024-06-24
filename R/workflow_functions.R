@@ -52,11 +52,11 @@ create_grid <- function(data,
 
   }
 
-  # # Add area column to grid
-  # grid$area <-
-  #   grid %>%
-  #   sf::st_area() %>%
-  #   units::set_units(area_units)
+  # Add area column to grid
+  grid$area_km2 <-
+    grid %>%
+    sf::st_area() %>%
+    units::set_units("km^2")
 
   return(grid)
 
