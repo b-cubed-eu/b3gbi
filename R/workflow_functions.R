@@ -277,7 +277,7 @@ compute_indicator_workflow <- function(data,
 
   }
 
-  if (is.null(cube_crs)) {
+#  if (is.null(cube_crs)) {
 
     if (data$grid_type == "eea") {
 
@@ -297,7 +297,7 @@ compute_indicator_workflow <- function(data,
 
     }
 
-  }
+#  }
 
   if (is.null(output_crs)) {
 
