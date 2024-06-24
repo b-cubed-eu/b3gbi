@@ -25,6 +25,9 @@
 #'   specified, uses the latest year present in the cube.
 #' @param grid_type Specify which grid reference system your cube uses. By default
 #'  the function will attempt to determine this automatically and return an error if it fails.
+#' @param force_gridecode Force the function to assume a specific grid reference system.
+#'  This may cause unexpected downstream issues, so it is not recommended. If you are
+#'  getting errors related to grid cell codes, check to make sure they are valid.
 #' @param cols_year The name of the column containing the year of occurrence (if
 #'  something other than 'year'). This column is required unless you have a yearMonth
 #'  column.
@@ -76,6 +79,7 @@ process_cube <- function(cube_name,
                          grid_type = c("automatic", "eea", "mgrs", "eqdgc"),
                          first_year = NULL,
                          last_year = NULL,
+                         force_gridcode = FALSE,
                          cols_year = NULL,
                          cols_yearMonth = NULL,
                          cols_cellCode = NULL,
@@ -91,8 +95,7 @@ process_cube <- function(cube_name,
                          cols_speciesKey = NULL,
                          cols_familyCount = NULL,
                          cols_sex = NULL,
-                         cols_lifeStage = NULL,
-                         force_gridcode = FALSE) {
+                         cols_lifeStage = NULL) {
 
   # Read in data cube
   occurrence_data <- readr::read_delim(
