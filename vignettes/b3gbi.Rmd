@@ -137,7 +137,7 @@ Each indicator comes with its own wrapper functions, and these should be used ra
 					
 # Example:
 library(b3gbi)
-Denmark_observed_richness_map <- obs_richness_map(example_cube_1, first_year = 1980) 
+Denmark_observed_richness_map <- obs_richness_map(example_cube_1, first_year = 1980, level = "country", region = "Denmark") 
 Denmark_observed_richness_map
 
 ```
@@ -185,7 +185,7 @@ The plot functions offer quite a few arguments to customize the output, but the 
 
 # Example:
 library(b3gbi)
-Denmark_observed_richness_ts <- obs_richness_ts(example_cube_1, first_year = 1980) 
+Denmark_observed_richness_ts <- obs_richness_ts(example_cube_1, first_year = 1980, level = "country", region = "Denmark") 
 plot(Denmark_observed_richness_ts)
 
 ```
@@ -217,7 +217,7 @@ plot(Denmark_observed_richness_ts)
 
 # Example:
 library(b3gbi)
-Denmark_observed_richness_map <- obs_richness_map(example_cube_1) 
+Denmark_observed_richness_map <- obs_richness_map(example_cube_1, level = "country", region = "Denmark") 
 plot(Denmark_observed_richness_map)
 
 ```
