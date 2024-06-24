@@ -50,6 +50,10 @@ specified, uses a default of 1600 to prevent false records (e.g. with year = 0).
 \item{last_year}{(Optional) The final year of occurrences to include. If not
 specified, uses the latest year present in the cube.}
 
+\item{force_gridcode}{Force the function to assume a specific grid reference system.
+This may cause unexpected downstream issues, so it is not recommended. If you are
+getting errors related to grid cell codes, check to make sure they are valid.}
+
 \item{cols_year}{The name of the column containing the year of occurrence (if
 something other than 'year'). This column is required unless you have a yearMonth
 column.}
@@ -69,6 +73,10 @@ function will convert your yearMonth column to a year column.}
 of the species (if other than 'scientificName'). Note that it is not necessary
 to have both a species column and a scientificName column. One or the other is
 sufficient.}
+
+\item{cols_minCoordinateUncertaintyInMeters}{The name of the column containing
+the minimum coordinate uncertainty of the occurrences (if other than
+'minCoordinateUncertaintyinMeters').}
 
 \item{cols_minTemporalUncertainty}{The name of the column containing the minimum
 temporal uncertainty of the occurrences (if other than 'minTemporalUncertainty').}
@@ -96,19 +104,17 @@ note that if you have a 'taxonKey' column you can provide it as the speciesKey.}
 \item{cols_familyCount}{The name of the column containing the occurrence count
 by family. This column is optional.}
 
+\item{cols_sex}{The name of the column containing the sex of the observed
+individuals. This column is optional.}
+
+\item{cols_lifeStage}{the name of the column containing the life stage of the
+observed individuals. This column is optional.}
+
 \item{tax_info}{The location and name of an associated taxonomic info file
 (e.g.,  'inst/extdata/europe_species_info.csv').}
 
 \item{datasets_info}{The location and name of an associated dataset info file
 (e.g., 'inst/extdata/europe_species_datasets.csv').}
-
-\item{force_gridecode}{Force the function to assume a specific grid reference system.
-This may cause unexpected downstream issues, so it is not recommended. If you are
-getting errors related to grid cell codes, check to make sure they are valid.}
-
-\item{cols_mincoordinateuncertaintyinmeters}{The name of the column containing
-the minimum coordinate uncertainty of the occurrences (if other than
-'minCoordinateUncertaintyinMeters').}
 }
 \value{
 A tibble containing the processed GBIF occurrence data.

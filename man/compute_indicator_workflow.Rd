@@ -64,11 +64,11 @@ indicators on a spatial grid or as a time series. It prepares the data, creates 
 and formats the output into an appropriate S3 object ('indicator_map' or 'indicator_ts').
 }
 \examples{
-diversity_map <- compute_indicator_workflow(example_cube_2,
+diversity_map <- compute_indicator_workflow(example_cube_1,
                                             type = "obs_richness",
                                             dim_type = "map",
-                                            level = "continent",
-                                            region = "Europe")
+                                            level = "country",
+                                            region = "Denmark")
 diversity_map
 
 }

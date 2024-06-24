@@ -25,7 +25,7 @@
 #'   specified, uses the latest year present in the cube.
 #' @param grid_type Specify which grid reference system your cube uses. By default
 #'  the function will attempt to determine this automatically and return an error if it fails.
-#' @param force_gridecode Force the function to assume a specific grid reference system.
+#' @param force_gridcode Force the function to assume a specific grid reference system.
 #'  This may cause unexpected downstream issues, so it is not recommended. If you are
 #'  getting errors related to grid cell codes, check to make sure they are valid.
 #' @param cols_year The name of the column containing the year of occurrence (if
@@ -43,7 +43,7 @@
 #'  of the species (if other than 'scientificName'). Note that it is not necessary
 #'  to have both a species column and a scientificName column. One or the other is
 #'  sufficient.
-#' @param cols_mincoordinateuncertaintyinmeters The name of the column containing
+#' @param cols_minCoordinateUncertaintyInMeters The name of the column containing
 #'  the minimum coordinate uncertainty of the occurrences (if other than
 #'  'minCoordinateUncertaintyinMeters').
 #' @param cols_minTemporalUncertainty The name of the column containing the minimum
@@ -64,6 +64,10 @@
 #'  note that if you have a 'taxonKey' column you can provide it as the speciesKey.
 #' @param cols_familyCount The name of the column containing the occurrence count
 #'  by family. This column is optional.
+#' @param cols_sex The name of the column containing the sex of the observed
+#'  individuals. This column is optional.
+#' @param cols_lifeStage the name of the column containing the life stage of the
+#'  observed individuals. This column is optional.
 #'
 #' @return A tibble containing the processed GBIF occurrence data.
 #'

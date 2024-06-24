@@ -197,11 +197,11 @@ prepare_spatial_data <- function(data, grid, map_data, cube_crs, output_crs) {
 #' @return An S3 object containing the calculated indicator values and metadata.
 #'
 #' @examples
-#' diversity_map <- compute_indicator_workflow(example_cube_2,
+#' diversity_map <- compute_indicator_workflow(example_cube_1,
 #'                                             type = "obs_richness",
 #'                                             dim_type = "map",
-#'                                             level = "continent",
-#'                                             region = "Europe")
+#'                                             level = "country",
+#'                                             region = "Denmark")
 #' diversity_map
 #'
 #' @export
