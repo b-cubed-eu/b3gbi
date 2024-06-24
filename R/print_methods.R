@@ -40,7 +40,7 @@ print.indicator_ts <- function(x, n = 10, ...) {
 #'
 #' @examples
 #' library(sf)
-#' obs_rich_map <- obs_richness_map(example_cube_2)
+#' obs_rich_map <- obs_richness_map(example_cube_1)
 #' print(obs_rich_map)
 #'
 #' @export
