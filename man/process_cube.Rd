@@ -10,6 +10,7 @@ process_cube(
   grid_type = c("automatic", "eea", "mgrs", "eqdgc"),
   first_year = NULL,
   last_year = NULL,
+  force_gridcode = FALSE,
   cols_year = NULL,
   cols_yearMonth = NULL,
   cols_cellCode = NULL,
@@ -25,8 +26,7 @@ process_cube(
   cols_speciesKey = NULL,
   cols_familyCount = NULL,
   cols_sex = NULL,
-  cols_lifeStage = NULL,
-  force_gridcode = FALSE
+  cols_lifeStage = NULL
 )
 
 process_cube_old(
@@ -101,6 +101,10 @@ by family. This column is optional.}
 
 \item{datasets_info}{The location and name of an associated dataset info file
 (e.g., 'inst/extdata/europe_species_datasets.csv').}
+
+\item{force_gridecode}{Force the function to assume a specific grid reference system.
+This may cause unexpected downstream issues, so it is not recommended. If you are
+getting errors related to grid cell codes, check to make sure they are valid.}
 
 \item{cols_mincoordinateuncertaintyinmeters}{The name of the column containing
 the minimum coordinate uncertainty of the occurrences (if other than
