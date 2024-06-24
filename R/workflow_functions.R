@@ -23,27 +23,25 @@
 #'                             cell_size = 10)
 #' plot(germany_grid)
 #' @noRd
-create_grid <- function(map_data,
+create_grid <- function(data,
+                        map_data,
                         level,
-                        cell_size = NULL,
-                        make_valid) {
+                        cell_size,
+                        cell_size_units,
+                        make_valid,
+                        cube_crs,
+                        new_crs) {
 
-  if (!is.null(cell_size)) {
-
-    cell_size <- round(cell_size)
-
-  } else {
-
-    cell_size <- ifelse(level == "world", 100,
-                        ifelse(level == "continent", 100,
-                               ifelse(level == "country", 10)))
-
-  }
+  occ_sf <- sf::st_as_sf(data,
+                         coords = c("xcoord", "ycoord"),
+                         crs = cube_crs) %>%
+    sf::st_transform(crs = new_crs)
 
   # Make a grid across the map area
-  grid <- map_data %>%
-    sf::st_make_grid(cellsize = c(cell_size*1000, cell_size*1000)) %>%
-    sf::st_intersection(map_data) %>%
+  grid <- occ_sf %>%
+    sf::st_make_grid(cellsize = c(cell_size, cell_size),
+                     offset = c(sf::st_bbox(occ_sf)$xmin,
+                                sf::st_bbox(occ_sf)$ymin)) %>%
     sf::st_cast("MULTIPOLYGON") %>%
     sf::st_sf() %>%
     dplyr::mutate(cellid = dplyr::row_number())
@@ -54,11 +52,11 @@ create_grid <- function(map_data,
 
   }
 
-  # Add area column to grid
-  grid$area_km2 <-
-    grid %>%
-    sf::st_area() %>%
-    units::set_units("km^2")
+  # # Add area column to grid
+  # grid$area <-
+  #   grid %>%
+  #   sf::st_area() %>%
+  #   units::set_units(area_units)
 
   return(grid)
 
@@ -109,7 +107,6 @@ get_NE_data <- function(level, region, new_crs) {
 
     map_data <- map_data %>%
       sf::st_as_sf() %>%
-     # sf::st_transform(crs = "EPSG:3035")
       sf::st_transform(crs = new_crs)
 
   return(map_data)
@@ -118,7 +115,7 @@ get_NE_data <- function(level, region, new_crs) {
 
 
 #' @noRd
-prepare_spatial_data <- function(data, grid, cube_crs, new_crs) {
+prepare_spatial_data <- function(data, grid, map_data, cube_crs, new_crs) {
 
   # Set map limits
   # map_lims <- sf::st_buffer(grid, dist = 1000) %>%
@@ -143,7 +140,9 @@ prepare_spatial_data <- function(data, grid, cube_crs, new_crs) {
   sf::st_agr(occ_sf) <- "constant"
 
   # Calculate intersection between occurrences and grid cells
-  occ_grid_int <- sf::st_intersection(occ_sf, grid)
+   occ_grid_int <- occ_sf[sf::st_intersects(occ_sf, grid) %>%
+                            lengths > 0,] %>%
+     sf::st_join(grid)
 
   # Add cell numbers to occurrence data
   data <-
@@ -207,7 +206,7 @@ compute_indicator_workflow <- function(data,
                                        cell_size = NULL,
                                        level = c("continent", "country", "world"),
                                        region = "Europe",
-                                       cube_crs = NULL,
+                                       #cube_crs = NULL,
                                        new_crs = NULL,
                                        first_year = NULL,
                                        last_year = NULL,
@@ -224,6 +223,7 @@ compute_indicator_workflow <- function(data,
                     names(available_indicators))
   dim_type <- match.arg(dim_type)
   level <- match.arg(level)
+  cell_size_units <- stringr::str_extract(data$resolution, "(?<=[0-9,.]{1,6})[a-z]*$")
 
   if (!is.null(first_year)) {
     first_year <- ifelse(first_year > data$first_year, first_year, data$first_year)
@@ -278,7 +278,11 @@ compute_indicator_workflow <- function(data,
 
       cube_crs <- "EPSG:3035"
 
-    } else if (data$grid_type == "mgrs" | data$grid_type == "eqdgc") {
+    } else if (data$grid_type == "eqdgc") {
+
+      cube_crs <- "EPSG:4326"
+
+    } else if (data$grid_type == "mgrs") {
 
       cube_crs <- "EPSG:4326"
 
@@ -290,6 +294,32 @@ compute_indicator_workflow <- function(data,
 
   }
 
+  if (is.null(new_crs)) {
+
+    if (data$grid_type == "eea") {
+
+      new_crs <- "EPSG:3035"
+
+    } else if (data$grid_type == "eqdgc") {
+
+      new_crs <- "EPSG:4326"
+
+    } else if (data$grid_type == "mgrs") {
+
+      #new_crs <- get_crs_for_mgrs(df$cellCode)
+      new_crs <- "EPSG:9822"
+
+    } else {
+
+      stop("Grid reference system not found.")
+
+    }
+
+  }
+
+  # Check that the grid cell size (if provided) is sensible.
+  # Determine a default size if nothing is provided.
+  cell_size <- check_cell_size(cell_size, cell_size_units, data$resolution, level)
 
   if (dim_type == "map" | (!is.null(level) & !is.null(region))) {
 
@@ -297,10 +327,10 @@ compute_indicator_workflow <- function(data,
     map_data <- get_NE_data(level, region, new_crs)
 
     # Create grid from Natural Earth data
-    grid <- create_grid(map_data, level, cell_size, make_valid = make_valid)
+    grid <- create_grid(df, map_data, level, cell_size, cell_size_units, make_valid, cube_crs, new_crs)
 
     # Format spatial data and merge with grid
-    df <- prepare_spatial_data(df, grid, cube_crs, new_crs)
+    df <- prepare_spatial_data(df, grid, map_data, cube_crs, new_crs)
 
   } else {
 
@@ -318,6 +348,14 @@ compute_indicator_workflow <- function(data,
 
     # Calculate indicator
     indicator <- calc_map(df, ...)
+
+    # Set attributes as spatially constant to avoid warnings when clipping
+    sf::st_agr(grid) <- "constant"
+    sf::st_agr(map_data) <- "constant"
+
+    # Clip grid to map
+    grid <- grid %>%
+      sf::st_intersection(map_data)
 
     # Add indicator values to grid
     diversity_grid <-
