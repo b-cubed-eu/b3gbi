@@ -28,38 +28,6 @@
 #' @source \url{https://doi.org/10.15468/dl.5mb887}
 "example_cube_1"
 
-#' Cube of GBIF Insect Occurrences in Europe
-#'
-#' Small example cube containing the insect occurrences in Europe available on GBIF as of 16.03.2024.
-#'
-#' @format A 'processed_cube' object containing a tibble with 23,025 rows and 10 variables, as well as metadata
-#' \describe{
-#'   \item{year}{year occurrence was recorded}
-#'   \item{eea_cell_code}{code containing the cell resolution and coordinates on the EEA grid}
-#'   \item{taxonKey}{taxonomic key associated with the species on GBIF}
-#'   \item{obs}{number of individuals observed}
-#'   \item{scientificName}{scientific species name}
-#'   \item{rank}{taxonomic rank}
-#'   \item{kingdom}{kingdom}
-#'   \item{xcoord}{East-West coordinate on the EEA grid}
-#'   \item{ycoord}{North-South coordinate on the EEA grid}
-#'   \item{resolution}{grid cell size}
-#' }
-#' @examples{
-#'     \dontrun{
-#'       # Basic example of how to use the dataset
-#'       europe_insects_or_map <- obs_richness_map(example_cube_2,
-#'                                                 level = "continent",
-#'                                                 region = "Europe")
-#'       plot(europe_insects_or_map,
-#'            title = "Insects in Europe (1751-2023): Observed Species Richness")
-#'     }
-#'   }
-#' @source \url{https://doi.org/10.15468/dl.qk4f2z}
-"example_cube_2"
-
-
-
 
 #' Time Series of Observed Species Richness for Mammals in Denmark
 #'
