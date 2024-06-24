@@ -377,7 +377,6 @@ process_cube <- function(cube_name,
 
     }
 
-    # Need to find W or E and take the 3 digits after it as eastwest (longitude), and find N or S and take the 2 digits after it as northsouth (latitude)
     occurrence_data <-
       occurrence_data %>%
       dplyr::mutate(cellCode = stringr::str_replace(cellCode, "W", "W-")) %>%
