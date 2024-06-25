@@ -40,7 +40,7 @@ print.indicator_ts <- function(x, n = 10, ...) {
 #'
 #' @examples
 #' library(sf)
-#' obs_rich_map <- obs_richness_map(example_cube_2)
+#' obs_rich_map <- obs_richness_map(example_cube_1)
 #' print(obs_rich_map)
 #'
 #' @export
@@ -86,9 +86,9 @@ print.indicator_map <- function(x, n = 10, ...) {
 print.processed_cube <- function(x, n = 10, ...) {
   cat("\nProcessed data cube for calculating biodiversity indicators\n\n")
   cat("Date Range:", x$first_year, "-", x$last_year, "\n")
-  if (x$multi_res==TRUE) {cat("Multi-resolution cube with cell sizes:", paste(x$resolutions, collapse = "^2, "), "^2\n")}
-  else {cat("Single-resolution cube with cell size", x$resolutions, "^2\n")}
+  cat("Single-resolution cube with cell size", x$resolutions, "^2\n")
   cat("Number of cells:", x$num_cells, "\n")
+  cat("Grid reference system:", x$grid_type, "\n")
   cat("Coordinate range:\n")
   print(unlist(x$coord_range))
   cat("\nTotal number of observations:", x$num_obs, "\n")
@@ -114,9 +114,9 @@ print.processed_cube <- function(x, n = 10, ...) {
 print.processed_cube_dsinfo <- function(x, n = 10, ...) {
   cat("\nProcessed data cube for calculating biodiversity indicators.\n\n")
   cat("Date Range:", x$first_year, "-", x$last_year, "\n")
-  if (x$multi_res==TRUE) {cat("Multi-resolution cube with cell sizes:", paste(x$resolutions, collapse = "^2, ", sep = ""), "^2\n")}
-  else {cat("Single-resolution cube with cell size", paste(x$resolutions, "^2\n", sep = ""))}
+  cat("Single-resolution cube with cell size", paste(x$resolutions, "^2\n", sep = ""))
   cat("Number of cells:", x$num_cells, "\n")
+  cat("Grid reference system:", x$grid_type, "\n")
   cat("Coordinate range:\n")
   print(unlist(x$coord_range))
   cat("\nTotal number of observations:", x$num_obs, "\n")

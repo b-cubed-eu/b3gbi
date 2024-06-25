@@ -62,15 +62,15 @@ The old ones come with an additional .csv file containing taxonomic information 
 
 # Example:
 library(b3gbi)
-europe_cube <- process_cube(system.file("extdata", "europe_insect_cube.csv", package="b3gbi"), system.file("extdata", "europe_insect_info.csv", package="b3gbi"))
-europe_cube
+denmark_cube <- process_cube(system.file("extdata", "denmark_mammals_cube_eqdgc.csv", package="b3gbi"))
+denmark_cube
 
 ```
 
 When you type the name of the cube object, the contents are displayed by a custom print function within the package. You can see the object structure using str().
 
 ```{r}
-str(europe_cube)
+str(denmark_cube)
 ```
 
 The cube itself is contained in a tibble (tidyverse version of data frame) called data, while other variables contain metadata.
@@ -98,7 +98,11 @@ Each indicator comes with its own wrapper functions, and these should be used ra
 #   * Argument 4: cell_size (optional), the length (in km) of grid cells to use
 #   * Argument 5: level (optional), the scale of region to calculate over (country, continent, world). Uses the whole cube by default.
 #   * Argument 6: region (optional), the name of the region to calculate over (e.g. Germany, Europe). Uses the whole cube by default.
-#   * Argument 7: cube_crs (optional), the projection the cube uses if not LAEA
+#   * Argument 7: output_crs (optional), the projection to use for your calculated indicator if you don't want the default.
+#   * Argument 8: first_year (optional), use to limit the data used to calculate the indicator to a narrower range than the cube
+#   * Argument 9: last_year (optional), see first_year
+#   * Argument 10: spherical_geometry (optional), if FALSE, temporarily turn off spherical geometry when calculating indicator
+#   * Argument 11: make_valid (optional), call st_make_valid from the sf package to fix geometry issues if you are getting errors
 # Outputs:
 #   * indicator_ts or indicator_map object containing a data frame of indicator values mapped to years or grid cells, along with various metadata.
 #     metadata include: range of years (as first_year and last_year), 
@@ -133,8 +137,8 @@ Each indicator comes with its own wrapper functions, and these should be used ra
 					
 # Example:
 library(b3gbi)
-Europe_observed_richness_map <- obs_richness_map(example_cube_2, first_year = 1980) 
-Europe_observed_richness_map
+Denmark_observed_richness_map <- obs_richness_map(example_cube_1, first_year = 1980, level = "country", region = "Denmark") 
+Denmark_observed_richness_map
 
 ```
 
@@ -146,7 +150,7 @@ First, it has either the class 'indicator_ts' or 'indicator_map'. Second, it has
 You can see this using the class() command.
 
 ```{r}
-class(Europe_observed_richness_map)
+class(Denmark_observed_richness_map)
 ```
 
 These are S3 classes (S3 being one of several objected oriented programming systems contained within R).
@@ -181,8 +185,8 @@ The plot functions offer quite a few arguments to customize the output, but the 
 
 # Example:
 library(b3gbi)
-Europe_observed_richness_ts <- obs_richness_ts(example_cube_2, first_year = 1980) 
-plot(Europe_observed_richness_ts)
+Denmark_observed_richness_ts <- obs_richness_ts(example_cube_1, first_year = 1980, level = "country", region = "Denmark") 
+plot(Denmark_observed_richness_ts)
 
 ```
 
@@ -213,8 +217,8 @@ plot(Europe_observed_richness_ts)
 
 # Example:
 library(b3gbi)
-Europe_observed_richness_map <- obs_richness_map(example_cube_2) 
-plot(Europe_observed_richness_map)
+Denmark_observed_richness_map <- obs_richness_map(example_cube_1, level = "country", region = "Denmark") 
+plot(Denmark_observed_richness_map)
 
 ```
 

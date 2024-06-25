@@ -16,7 +16,7 @@
 #' @note 'processed_cube' objects are used by various analysis functions within this package.
 #'
 #' @noRd
-new_processed_cube <- function(x) {
+new_processed_cube <- function(x, grid_type) {
   # check that x is a tibble and all necessary columns are present
   stopifnot(tibble::is_tibble(x),
             all(c("year",
@@ -39,8 +39,9 @@ new_processed_cube <- function(x) {
                    num_obs = sum(x$obs),
                    kingdoms = ifelse("kingdom" %in% colnames(x), c(unique(x$kingdom)), "Data not present"),
                    num_families = ifelse("family" %in% colnames(x), length(unique(x$family)), "Data not present"),
+                   grid_type = grid_type,
                    resolutions = unique(x$resolution),
-                   multi_res = ifelse(length(unique(x$resolution)) > 1, TRUE, FALSE),
+                 #  multi_res = ifelse(length(unique(x$resolution)) > 1, TRUE, FALSE),
                    num_datasets = length(unique(x$datasetKey)),
                    record_types = unique(x$basisOfRecord),
                    data = x),
@@ -57,8 +58,9 @@ new_processed_cube <- function(x) {
                    num_obs = sum(x$obs),
                    kingdoms = ifelse("kingdom" %in% colnames(x), c(unique(x$kingdom)), "Data not present"),
                    num_families = ifelse("family" %in% colnames(x), length(unique(x$family)), "Data not present"),
+                   grid_type = grid_type,
                    resolutions = unique(x$resolution),
-                   multi_res = ifelse(length(unique(x$resolution)) > 1, TRUE, FALSE),
+                  # multi_res = ifelse(length(unique(x$resolution)) > 1, TRUE, FALSE),
                    data = x),
               class = "processed_cube")
   }

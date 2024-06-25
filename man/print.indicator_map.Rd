@@ -19,7 +19,7 @@ designed for user-friendly display in the console.
 }
 \examples{
 library(sf)
-obs_rich_map <- obs_richness_map(example_cube_2)
+obs_rich_map <- obs_richness_map(example_cube_1)
 print(obs_rich_map)
 
 }

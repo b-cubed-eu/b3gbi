@@ -15,9 +15,14 @@ pielou_evenness_ts(data, ...)
     \item{\code{cell_size}}{Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)}
     \item{\code{level}}{Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')}
     \item{\code{region}}{The region of interest (e.g., "Europe"). (Default: "Europe")}
-    \item{\code{cube_crs}}{The projection of the cube. (Default: "EPSG:3035")}
+    \item{\code{output_crs}}{The CRS you want for your calculated indicator. (Leave blank
+to let the function choose a default based on grid reference system)}
     \item{\code{first_year}}{Exclude data before this year. (Uses all data in the cube by default.)}
     \item{\code{last_year}}{Exclude data after this year. (Uses all data in the cube by default.)}
+    \item{\code{spherical_geometry}}{If set to FALSE, will temporarily disable spherical geometry
+while the function runs. Should only be used to solve specific issues. (Default is TRUE)}
+    \item{\code{make_valid}}{Calls st_make_valid() from the sf package. Increases processing
+time but may help if you are getting polygon errors. (Default is FALSE).}
   }}
 }
 \value{

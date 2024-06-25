@@ -782,7 +782,7 @@ plot_map <- function(x,
     if (surround == TRUE) {
       map_surround <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf") %>%
         sf::st_as_sf() %>%
-        sf::st_transform(crs = "EPSG:3035")
+        sf::st_transform(crs = x$projection)
 
       # Otherwise make the ocean area white (unless a colour is specified)
     } else {

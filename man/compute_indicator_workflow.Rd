@@ -11,9 +11,11 @@ compute_indicator_workflow(
   cell_size = NULL,
   level = c("continent", "country", "world"),
   region = "Europe",
-  cube_crs = NULL,
+  output_crs = NULL,
   first_year = NULL,
   last_year = NULL,
+  spherical_geometry = TRUE,
+  make_valid = FALSE,
   ...
 )
 }
@@ -38,11 +40,18 @@ compute_indicator_workflow(
 
 \item{region}{The region of interest (e.g., "Europe"). (Default: "Europe")}
 
-\item{cube_crs}{The projection of the cube. (Default: "EPSG:3035")}
+\item{output_crs}{The CRS you want for your calculated indicator. (Leave blank
+to let the function choose a default based on grid reference system)}
 
 \item{first_year}{Exclude data before this year. (Uses all data in the cube by default.)}
 
 \item{last_year}{Exclude data after this year. (Uses all data in the cube by default.)}
+
+\item{spherical_geometry}{If set to FALSE, will temporarily disable spherical geometry
+while the function runs. Should only be used to solve specific issues. (Default is TRUE)}
+
+\item{make_valid}{Calls st_make_valid() from the sf package. Increases processing
+time but may help if you are getting polygon errors. (Default is FALSE).}
 
 \item{...}{Additional arguments passed to specific indicator calculation functions.}
 }
@@ -55,11 +64,11 @@ indicators on a spatial grid or as a time series. It prepares the data, creates 
 and formats the output into an appropriate S3 object ('indicator_map' or 'indicator_ts').
 }
 \examples{
-diversity_map <- compute_indicator_workflow(example_cube_2,
+diversity_map <- compute_indicator_workflow(example_cube_1,
                                             type = "obs_richness",
                                             dim_type = "map",
-                                            level = "continent",
-                                            region = "Europe")
+                                            level = "country",
+                                            region = "Denmark")
 diversity_map
 
 }
