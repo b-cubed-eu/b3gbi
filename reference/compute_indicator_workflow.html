@@ -14,7 +14,7 @@ and formats the output into an appropriate S3 object ('indicator_map' or 'indica
     
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,9 +73,11 @@ and formats the output into an appropriate S3 object ('indicator_map' or 'indica
 <span>  cell_size <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"continent"</span>, <span class="st">"country"</span>, <span class="st">"world"</span><span class="op">)</span>,</span>
 <span>  region <span class="op">=</span> <span class="st">"Europe"</span>,</span>
-<span>  cube_crs <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  output_crs <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  first_year <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  last_year <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  spherical_geometry <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  make_valid <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -112,8 +114,9 @@ and formats the output into an appropriate S3 object ('indicator_map' or 'indica
 <dd><p>The region of interest (e.g., "Europe"). (Default: "Europe")</p></dd>
 
 
-<dt>cube_crs</dt>
-<dd><p>The projection of the cube. (Default: "EPSG:3035")</p></dd>
+<dt>output_crs</dt>
+<dd><p>The CRS you want for your calculated indicator. (Leave blank
+to let the function choose a default based on grid reference system)</p></dd>
 
 
 <dt>first_year</dt>
@@ -122,6 +125,16 @@ and formats the output into an appropriate S3 object ('indicator_map' or 'indica
 
 <dt>last_year</dt>
 <dd><p>Exclude data after this year. (Uses all data in the cube by default.)</p></dd>
+
+
+<dt>spherical_geometry</dt>
+<dd><p>If set to FALSE, will temporarily disable spherical geometry
+while the function runs. Should only be used to solve specific issues. (Default is TRUE)</p></dd>
+
+
+<dt>make_valid</dt>
+<dd><p>Calls st_make_valid() from the sf package. Increases processing
+time but may help if you are getting polygon errors. (Default is FALSE).</p></dd>
 
 
 <dt>...</dt>
@@ -137,51 +150,57 @@ and formats the output into an appropriate S3 object ('indicator_map' or 'indica
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">diversity_map</span> <span class="op">&lt;-</span> <span class="fu">compute_indicator_workflow</span><span class="op">(</span><span class="va">example_cube_2</span>,</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">diversity_map</span> <span class="op">&lt;-</span> <span class="fu">compute_indicator_workflow</span><span class="op">(</span><span class="va">example_cube_1</span>,</span></span>
 <span class="r-in"><span>                                            type <span class="op">=</span> <span class="st">"obs_richness"</span>,</span></span>
 <span class="r-in"><span>                                            dim_type <span class="op">=</span> <span class="st">"map"</span>,</span></span>
-<span class="r-in"><span>                                            level <span class="op">=</span> <span class="st">"continent"</span>,</span></span>
-<span class="r-in"><span>                                            region <span class="op">=</span> <span class="st">"Europe"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                                            level <span class="op">=</span> <span class="st">"country"</span>,</span></span>
+<span class="r-in"><span>                                            region <span class="op">=</span> <span class="st">"Denmark"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">diversity_map</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Gridded biodiversity indicator map</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Name of Indicator: Observed Species Richness </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Map of Europe </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Map of Denmark </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Projected CRS: EPSG:3035 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Projected CRS: EPSG:4326 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Coordinate range:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     xmin     ymin     xmax     ymax </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> -3290942 -3074174 10026336 10514061 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      xmin      ymin      xmax      ymax </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8.121484 54.628857 15.137109 57.736914 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Grid cell size:  km^2 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Number of cells: 3226 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Grid cell size: 0.25 km^2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Number of cells: 168 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Observation years: 1809 - 2020 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Total years with observations: 134 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Observation years: 1862 - 2023 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Total years with observations: 125 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Number of species represented: 1960 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Number of families represented: Data not present </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Number of species represented: 106 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Number of families represented: 31 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Kingdoms represented: 1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Kingdoms represented: Animalia </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> First 10 rows of data (use n = to show more):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 3,226 × 3</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    cellid area_km2 diversity_val</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494;">[km^2]</span>         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>      1    0.708            <span style="color: #BB0000;">NA</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>      2  127.               <span style="color: #BB0000;">NA</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>      3   48.2              <span style="color: #BB0000;">NA</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>      4  560.               <span style="color: #BB0000;">NA</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>      5  837.               <span style="color: #BB0000;">NA</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>      6  569.               <span style="color: #BB0000;">NA</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>      7    7.26             <span style="color: #BB0000;">NA</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>      8  222.               <span style="color: #BB0000;">NA</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>      9  180.               <span style="color: #BB0000;">NA</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>     10 <span style="text-decoration: underline;">2</span>248.               <span style="color: #BB0000;">NA</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 3,216 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 168 × 171</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    cellid area_km2 featurecla     scalerank labelrank sovereignt sov_a3 adm0_dif</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494;">[km^2]</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>              <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>     72     446. Admin-0 count…         1         4 Denmark    DN1           1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>     73     446. Admin-0 count…         1         4 Denmark    DN1           1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>     74     446. Admin-0 count…         1         4 Denmark    DN1           1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>     75     446. Admin-0 count…         1         4 Denmark    DN1           1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>     76     446. Admin-0 count…         1         4 Denmark    DN1           1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>     77     446. Admin-0 count…         1         4 Denmark    DN1           1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>     78     446. Admin-0 count…         1         4 Denmark    DN1           1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>     79     446. Admin-0 count…         1         4 Denmark    DN1           1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>     80     446. Admin-0 count…         1         4 Denmark    DN1           1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>     81     446. Admin-0 count…         1         4 Denmark    DN1           1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 158 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 163 more variables: level &lt;int&gt;, type &lt;chr&gt;, tlc &lt;chr&gt;, admin &lt;chr&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   adm0_a3 &lt;chr&gt;, geou_dif &lt;int&gt;, geounit &lt;chr&gt;, gu_a3 &lt;chr&gt;, su_dif &lt;int&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   subunit &lt;chr&gt;, su_a3 &lt;chr&gt;, brk_diff &lt;int&gt;, name &lt;chr&gt;, name_long &lt;chr&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   brk_a3 &lt;chr&gt;, brk_name &lt;chr&gt;, brk_group &lt;chr&gt;, abbrev &lt;chr&gt;, postal &lt;chr&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   formal_en &lt;chr&gt;, formal_fr &lt;chr&gt;, name_ciawf &lt;chr&gt;, note_adm0 &lt;chr&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   note_brk &lt;chr&gt;, name_sort &lt;chr&gt;, name_alt &lt;chr&gt;, mapcolor7 &lt;int&gt;, …</span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

@@ -12,7 +12,7 @@ as a time series."><meta property="og:image" content="https://b-cubed-eu.github.
     
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -82,14 +82,23 @@ as a time series.</p>
     <dt><code>region</code></dt>
 <dd><p>The region of interest (e.g., "Europe"). (Default: "Europe")</p></dd>
 
-    <dt><code>cube_crs</code></dt>
-<dd><p>The projection of the cube. (Default: "EPSG:3035")</p></dd>
+    <dt><code>output_crs</code></dt>
+<dd><p>The CRS you want for your calculated indicator. (Leave blank
+to let the function choose a default based on grid reference system)</p></dd>
 
     <dt><code>first_year</code></dt>
 <dd><p>Exclude data before this year. (Uses all data in the cube by default.)</p></dd>
 
     <dt><code>last_year</code></dt>
 <dd><p>Exclude data after this year. (Uses all data in the cube by default.)</p></dd>
+
+    <dt><code>spherical_geometry</code></dt>
+<dd><p>If set to FALSE, will temporarily disable spherical geometry
+while the function runs. Should only be used to solve specific issues. (Default is TRUE)</p></dd>
+
+    <dt><code>make_valid</code></dt>
+<dd><p>Calls st_make_valid() from the sf package. Increases processing
+time but may help if you are getting polygon errors. (Default is FALSE).</p></dd>
 
   
 </dl></dd>
