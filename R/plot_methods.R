@@ -1288,11 +1288,13 @@ plot_species_ts <- function(x,
 #' @param Europe_crop_EEA If TRUE, crops maps of Europe using the EPSG:3035 CRS
 #'    to exclude far-lying islands (default is TRUE, but does not affect other maps
 #'    or projections).
+#' @param crop_to_grid If TRUE, the grid will determine the edges of the map.Overrides
+#'    Europe_crop_EEA. Default is FALSE.
 #' @param surround  If TRUE, includes surrounding land area in gray when plotting
 #'    at the country or continent level. If FALSE, all surrounding area will be coloured
 #'    ocean blue (or whatever colour you set manually using panel_bg). Default is TRUE.
 #' @param panel_bg  (Optional) Background colour for the map panel.
-#' #' @param land_fill_colour (Optional) Colour for the land area outside of the grid
+#' @param land_fill_colour (Optional) Colour for the land area outside of the grid
 #'    (if surround = TRUE). Default is "grey85".
 #' @param legend_title (Optional) Title for the plot legend.
 #' @param legend_limits (Optional) Limits for the legend scale.
@@ -1323,6 +1325,7 @@ plot_species_map <- function(x,
                              breaks = NULL,
                              labels = NULL,
                              Europe_crop_EEA = TRUE,
+                             crop_to_grid = FALSE,
                              surround = TRUE,
                              single_plot = TRUE,
                              panel_bg = NULL,
@@ -1382,7 +1385,8 @@ plot_species_map <- function(x,
   if (Europe_crop_EEA == TRUE &
       x$map_level == "continent" &
       x$map_region == "Europe" &
-      x$projection == "EPSG:3035")
+      x$projection == "EPSG:3035" &
+      crop_to_grid == TRUE)
   {
 
     # Set attributes as spatially constant to avoid warnings
@@ -1446,7 +1450,12 @@ plot_species_map <- function(x,
                       xlim = c(map_lims["xmin"],
                                map_lims["xmax"]),
                       ylim = c(map_lims["ymin"],
-                               map_lims["ymax"])
+                               map_lims["ymax"]),
+                      if (crop_to_grid == TRUE) {
+                        expand = FALSE
+                      } else {
+                        expand = TRUE
+                      }
                     ) +
                     #scale_x_continuous() +
                     theme_bw()+
