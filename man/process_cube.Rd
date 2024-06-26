@@ -31,7 +31,7 @@ process_cube(
 
 process_cube_old(
   cube_name,
-  tax_info,
+  tax_info = NULL,
   datasets_info = NULL,
   first_year = 1600,
   last_year = NULL
