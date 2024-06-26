@@ -365,7 +365,13 @@ compute_indicator_workflow <- function(data,
     # Add indicator values to grid
     diversity_grid <-
       grid %>%
-      dplyr::left_join(indicator, by = "cellid")
+      dplyr::left_join(indicator, by = "cellid") %>%
+      dplyr::select(cellid,
+                    area_km2,
+                    diversity_val,
+                    geometry)
+
+   # diversity_grid <- diversity_grid[!is.na(diversity_grid$diversity_val),]
 
   } else {
 
