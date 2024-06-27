@@ -12,7 +12,7 @@ providing customization options."><meta property="og:image" content="https://b-c
     
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -75,10 +75,11 @@ providing customization options.</p>
 <span>  trans <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  breaks <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  Europe_crop <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  Europe_crop_EEA <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  surround <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  single_plot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  panel_bg <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  land_fill_colour <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  legend_title <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  legend_limits <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  legend_title_wrap_length <span class="op">=</span> <span class="fl">10</span>,</span>
@@ -140,13 +141,16 @@ custom title or if calling the function manually.</p></dd>
 <dd><p>(Optional) Labels for legend scale break points.</p></dd>
 
 
-<dt>Europe_crop</dt>
-<dd><p>If TRUE, crops maps of Europe to exclude far-lying islands.</p></dd>
+<dt>Europe_crop_EEA</dt>
+<dd><p>If TRUE, crops maps of Europe using the EPSG:3035 CRS
+to exclude far-lying islands (default is TRUE, but does not affect other maps
+or projections).</p></dd>
 
 
 <dt>surround</dt>
-<dd><p>If TRUE, includes surrounding countries in gray when plotting
-at the country level.</p></dd>
+<dd><p>If TRUE, includes surrounding land area in gray when plotting
+at the country or continent level. If FALSE, all surrounding area will be coloured
+ocean blue (or whatever colour you set manually using panel_bg). Default is TRUE.</p></dd>
 
 
 <dt>single_plot</dt>
@@ -155,7 +159,9 @@ into a single multi-panel plot. Set this to FALSE to plot each species separatel
 
 
 <dt>panel_bg</dt>
-<dd><p>(Optional) Background color for the map panel.</p></dd>
+<dd><p>(Optional) Background colour for the map panel.
+#' @param land_fill_colour (Optional) Colour for the land area outside of the grid
+(if surround = TRUE). Default is "grey85".</p></dd>
 
 
 <dt>legend_title</dt>
@@ -188,7 +194,9 @@ Can be customized using ggplot2 functions.</p>
 <span class="r-in"><span>                                    level <span class="op">=</span> <span class="st">"country"</span>,</span></span>
 <span class="r-in"><span>                                    region <span class="op">=</span> <span class="st">"Denmark"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">plot_species_map</span><span class="op">(</span>x <span class="op">=</span> <span class="va">spec_occ_mammals_denmark</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2440728</span>, <span class="fl">4265185</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plot_species_map-1.png" alt="" width="700" height="433"></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in stopifnot(!inherits(x, "sf"), !missing(sf_column_name), !missing(agr)):</span> <span style="color: #00BBBB;">ℹ</span> In argument: `taxonKey %in% species`.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Caused by error:</span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> object 'taxonKey' not found</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

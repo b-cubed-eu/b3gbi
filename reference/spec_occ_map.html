@@ -12,7 +12,7 @@ species over a gridded map."><meta property="og:image" content="https://b-cubed-
     
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -120,7 +120,9 @@ the calculated indicator values and metadata.</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">so_map</span> <span class="op">&lt;-</span> <span class="fu">spec_occ_map</span><span class="op">(</span><span class="va">example_cube_1</span>, level <span class="op">=</span> <span class="st">"country"</span>, region <span class="op">=</span> <span class="st">"Denmark"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">so_map</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2440728</span>, <span class="fl">4265185</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="spec_occ_map-1.png" alt="" width="700" height="433"></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in stopifnot(!inherits(x, "sf"), !missing(sf_column_name), !missing(agr)):</span> <span style="color: #00BBBB;">ℹ</span> In argument: `taxonKey %in% species`.</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="font-weight: bold;">Caused by error:</span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> object 'taxonKey' not found</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
