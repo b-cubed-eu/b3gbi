@@ -76,6 +76,7 @@ providing customization options.</p>
 <span>  breaks <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  Europe_crop_EEA <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  crop_to_grid <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  surround <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  single_plot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  panel_bg <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -147,6 +148,11 @@ to exclude far-lying islands (default is TRUE, but does not affect other maps
 or projections).</p></dd>
 
 
+<dt>crop_to_grid</dt>
+<dd><p>If TRUE, the grid will determine the edges of the map.Overrides
+Europe_crop_EEA. Default is FALSE.</p></dd>
+
+
 <dt>surround</dt>
 <dd><p>If TRUE, includes surrounding land area in gray when plotting
 at the country or continent level. If FALSE, all surrounding area will be coloured
@@ -159,8 +165,11 @@ into a single multi-panel plot. Set this to FALSE to plot each species separatel
 
 
 <dt>panel_bg</dt>
-<dd><p>(Optional) Background colour for the map panel.
-#' @param land_fill_colour (Optional) Colour for the land area outside of the grid
+<dd><p>(Optional) Background colour for the map panel.</p></dd>
+
+
+<dt>land_fill_colour</dt>
+<dd><p>(Optional) Colour for the land area outside of the grid
 (if surround = TRUE). Default is "grey85".</p></dd>
 
 
