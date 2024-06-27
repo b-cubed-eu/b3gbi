@@ -433,10 +433,19 @@ process_cube <- function(cube_name,
 #' @rdname process_cube
 #' @export
 process_cube_old <- function(cube_name,
-                             tax_info,
+                             tax_info = NULL,
                              datasets_info = NULL,
                              first_year = 1600,
                              last_year = NULL) {
+
+  if (is.null(tax_info)) {
+
+    stop("Please provide a taxonomic information file using the argument tax_info.
+    This function is only intended for processing older generation cubes made using
+    the TriAS code. Current generation cubes built using the GBIF API should be
+    processed using process_cube().")
+
+  }
 
   # Read in data cube
   occurrence_data <- readr::read_csv(
@@ -507,8 +516,8 @@ process_cube_old <- function(cube_name,
   # Separate 'eea_cell_code' into resolution, coordinates
   merged_data <- merged_data %>%
     dplyr::mutate(
-      xcoord = as.numeric(stringr::str_extract(eea_cell_code, "(?<=E)\\d+")),
-      ycoord = as.numeric(stringr::str_extract(eea_cell_code, "(?<=N)\\d+")),
+      xcoord = as.numeric(stringr::str_extract(eea_cell_code, "(?<=E)\\d+"))*1000,
+      ycoord = as.numeric(stringr::str_extract(eea_cell_code, "(?<=N)\\d+"))*1000,
       resolution = stringr::str_replace_all(eea_cell_code, "(E\\d+)|(N\\d+)", "")
     )
 
@@ -559,6 +568,6 @@ process_cube_old <- function(cube_name,
     dplyr::distinct() %>%
     dplyr::arrange(year)
 
-  cube <- new_processed_cube(merged_data)
+  cube <- new_processed_cube(merged_data, grid_type = "eea")
 
 }

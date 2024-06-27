@@ -1,3 +1,11 @@
+# b3gbi 0.2.1
+
+27.06.2024 - Minor update:
+
+* Added options to improve control of plot output. The argument land_fill_colour allows you to change the colour of the land area outside of the grid.The argument crop_to_grid will snap the plot edges to the gridded area. This will improve the way the plot looks if e.g. your data is sparse and does not extend to the edges of a country or continent. 
+* Fixed a bug in process_cube_old that caused it to fail.
+* Fixed a bug that caused calculated indicator objects to retain too many data columns.
+
 # b3gbi 0.2.0
 
 24.06.2024 - Major update:

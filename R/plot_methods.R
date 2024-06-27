@@ -717,10 +717,17 @@ plot.occ_turnover <- function(x,
 #'   (e.g., 'log').
 #' @param breaks (Optional) Break points for the legend scale.
 #' @param labels (Optional) Labels for legend scale break points.
-#' @param Europe_crop  If TRUE, crops maps of Europe to exclude far-lying islands.
-#' @param surround  If TRUE, includes surrounding countries in gray when plotting
-#'    at the country level.
-#' @param panel_bg  (Optional) Background color for the map panel.
+#' @param Europe_crop_EEA If TRUE, crops maps of Europe using the EPSG:3035 CRS
+#'    to exclude far-lying islands (default is TRUE, but does not affect other maps
+#'    or projections). Will not work if crop_to_grid is set to TRUE.
+#' @param crop_to_grid If TRUE, the grid will determine the edges of the map.Overrides
+#'    Europe_crop_EEA.
+#' @param surround If TRUE, includes surrounding land area in gray when plotting
+#'    at the country or continent level. If FALSE, all surrounding area will be colored
+#'    ocean blue (or whatever colour you set manually using panel_bg). Default is TRUE.
+#' @param panel_bg (Optional) Background colour for the map panel.
+#' @param land_fill_colour (Optional) Colour for the land area outside of the grid
+#'    (if surround = TRUE). Default is "grey85".
 #' @param legend_title (Optional) Title for the plot legend.
 #' @param legend_limits (Optional) Limits for the legend scale.
 #' @param legend_title_wrap_length Maximum legend title length before wrapping to a new line.
@@ -747,9 +754,11 @@ plot_map <- function(x,
                      trans = NULL,
                      breaks = NULL,
                      labels = NULL,
-                     Europe_crop = TRUE,
+                     Europe_crop_EEA = TRUE,
+                     crop_to_grid = FALSE,
                      surround = TRUE,
                      panel_bg = NULL,
+                     land_fill_colour = NULL,
                      legend_title = NULL,
                      legend_limits = NULL,
                      legend_title_wrap_length = 10,
@@ -760,9 +769,11 @@ plot_map <- function(x,
   map_lims <- x$coord_range
 
   # Crop map of Europe to leave out far-lying islands (if flag set)
-  if (Europe_crop == TRUE &
+  if (Europe_crop_EEA == TRUE &
       x$map_level == "continent" &
-      x$map_region == "Europe")
+      x$map_region == "Europe" &
+      x$projection == "EPSG:3035" &
+      crop_to_grid == FALSE)
   {
 
     # Set attributes as spatially constant to avoid warnings
@@ -774,20 +785,15 @@ plot_map <- function(x,
 
   }
 
-  # Set specific instructions for country-level plots
-  if (x$map_level == "country")
-  {
+  # Get world data to plot surrounding land if surround flag is set
+  if (surround == TRUE) {
+    map_surround <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf") %>%
+      sf::st_as_sf() %>%
+      sf::st_transform(crs = x$projection)
 
-    # Get world data to plot surrounding land if surround flag is set
-    if (surround == TRUE) {
-      map_surround <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf") %>%
-        sf::st_as_sf() %>%
-        sf::st_transform(crs = x$projection)
-
-      # Otherwise make the ocean area white (unless a colour is specified)
-    } else {
-      if (is.null(panel_bg)) { panel_bg = "white" }
-    }
+  # Otherwise make all the surroundings ocean blue (unless a different colour is specified)
+  } else {
+    if (is.null(panel_bg)) { panel_bg = "#92c5f0" }
   }
 
   # Define function to wrap title and legend title if too long
@@ -824,7 +830,12 @@ plot_map <- function(x,
       xlim = c(map_lims["xmin"],
                map_lims["xmax"]),
       ylim = c(map_lims["ymin"],
-               map_lims["ymax"])
+               map_lims["ymax"]),
+      if(crop_to_grid == TRUE) {
+        expand = FALSE
+      } else {
+        expand = TRUE
+      }
     ) +
     theme_bw() +
     theme(
@@ -842,9 +853,11 @@ plot_map <- function(x,
                       legend_title_wrap_length))
 
 
+  land_fill_colour <- ifelse(is.null(land_fill_colour), "grey85", land_fill_colour)
+
   # If surround flag set, add surrounding countries to map
-  if (surround == TRUE & x$map_level == "country") {
-    diversity_plot$layers <- c(geom_sf(data = map_surround, fill = "grey85")[[1]], diversity_plot$layers)
+  if (surround == TRUE) {
+    diversity_plot$layers <- c(geom_sf(data = map_surround, fill = land_fill_colour)[[1]], diversity_plot$layers)
   }
 
   # Check for custom x and y limits and adjust map if found
@@ -1272,10 +1285,17 @@ plot_species_ts <- function(x,
 #'   (e.g., 'log').
 #' @param breaks (Optional) Break points for the legend scale.
 #' @param labels (Optional) Labels for legend scale break points.
-#' @param Europe_crop  If TRUE, crops maps of Europe to exclude far-lying islands.
-#' @param surround  If TRUE, includes surrounding countries in gray when plotting
-#'    at the country level.
-#' @param panel_bg  (Optional) Background color for the map panel.
+#' @param Europe_crop_EEA If TRUE, crops maps of Europe using the EPSG:3035 CRS
+#'    to exclude far-lying islands (default is TRUE, but does not affect other maps
+#'    or projections).
+#' @param crop_to_grid If TRUE, the grid will determine the edges of the map.Overrides
+#'    Europe_crop_EEA. Default is FALSE.
+#' @param surround  If TRUE, includes surrounding land area in gray when plotting
+#'    at the country or continent level. If FALSE, all surrounding area will be coloured
+#'    ocean blue (or whatever colour you set manually using panel_bg). Default is TRUE.
+#' @param panel_bg  (Optional) Background colour for the map panel.
+#' @param land_fill_colour (Optional) Colour for the land area outside of the grid
+#'    (if surround = TRUE). Default is "grey85".
 #' @param legend_title (Optional) Title for the plot legend.
 #' @param legend_limits (Optional) Limits for the legend scale.
 #' @param legend_title_wrap_length Maximum legend title length before wrapping to a new line.
@@ -1304,10 +1324,12 @@ plot_species_map <- function(x,
                              trans = NULL,
                              breaks = NULL,
                              labels = NULL,
-                             Europe_crop = TRUE,
+                             Europe_crop_EEA = TRUE,
+                             crop_to_grid = FALSE,
                              surround = TRUE,
                              single_plot = TRUE,
                              panel_bg = NULL,
+                             land_fill_colour = NULL,
                              legend_title = NULL,
                              legend_limits = NULL,
                              legend_title_wrap_length = 10,
@@ -1360,9 +1382,11 @@ plot_species_map <- function(x,
   map_lims <- x$coord_range
 
   # Crop map of Europe to leave out far-lying islands (if flag set)
-  if (Europe_crop == TRUE &
+  if (Europe_crop_EEA == TRUE &
       x$map_level == "continent" &
-      x$map_region == "Europe")
+      x$map_region == "Europe" &
+      x$projection == "EPSG:3035" &
+      crop_to_grid == TRUE)
   {
 
     # Set attributes as spatially constant to avoid warnings
@@ -1374,25 +1398,17 @@ plot_species_map <- function(x,
 
   }
 
-  # Set specific instructions for country-level plots
-  if (x$map_level == "country")
-  {
+  # Get world data to plot surrounding land if surround flag is set
+  if (surround == TRUE) {
+    map_surround <- rnaturalearth::ne_countries(scale = "medium",
+                                                returnclass = "sf") %>%
+      sf::st_as_sf() %>%
+      sf::st_transform(crs = "EPSG:3035")
 
-    # Get world data to plot surrounding land if surround flag is set
-    if (surround == TRUE) {
-      map_surround <- rnaturalearth::ne_countries(scale = "medium",
-                                                  returnclass = "sf") %>%
-        sf::st_as_sf() %>%
-        sf::st_transform(crs = "EPSG:3035")
-
-      # Otherwise make the ocean area white (unless a colour is specified)
-    } else {
-      if (is.null(panel_bg)) { panel_bg = "white" }
-    }
+  # Otherwise make the surroundings ocean blue (unless another colour is specified)
+  } else {
+    if (is.null(panel_bg)) { panel_bg = "#92c5f0" }
   }
-
-  # If the ocean area is still undefined, make it light blue
-  if (is.null(panel_bg)) { panel_bg = "#92c5f0" }
 
   # Define function to wrap title and legend title if too long
   wrapper <- function(x, ...)
@@ -1434,7 +1450,12 @@ plot_species_map <- function(x,
                       xlim = c(map_lims["xmin"],
                                map_lims["xmax"]),
                       ylim = c(map_lims["ymin"],
-                               map_lims["ymax"])
+                               map_lims["ymax"]),
+                      if (crop_to_grid == TRUE) {
+                        expand = FALSE
+                      } else {
+                        expand = TRUE
+                      }
                     ) +
                     #scale_x_continuous() +
                     theme_bw()+
@@ -1458,11 +1479,13 @@ plot_species_map <- function(x,
                     }
                 })
 
+  land_fill_colour <- ifelse(is.null(land_fill_colour), "grey85", land_fill_colour)
+
   # If surround flag is set, add surrounding countries to the map
-  if (surround == TRUE & x$map_level == "country") {
+  if (surround == TRUE) {
     for (i in 1:length(diversity_plot)) {
       diversity_plot[[i]]$layers <- c(geom_sf(data = map_surround,
-                                              fill = "grey85")[[1]],
+                                              fill = land_fill_colour)[[1]],
                                       diversity_plot[[i]]$layers)
     }
   }
