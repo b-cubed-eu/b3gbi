@@ -360,16 +360,15 @@ compute_indicator_workflow <- function(data,
 
     # Clip grid to map
     grid <- grid %>%
-      sf::st_intersection(map_data)
+      sf::st_intersection(map_data) %>%
+      dplyr::select(cellid,
+                    area_km2,
+                    geometry)
 
     # Add indicator values to grid
     diversity_grid <-
       grid %>%
-      dplyr::left_join(indicator, by = "cellid") %>%
-      dplyr::select(cellid,
-                    area_km2,
-                    diversity_val,
-                    geometry)
+      dplyr::left_join(indicator, by = "cellid")
 
    # diversity_grid <- diversity_grid[!is.na(diversity_grid$diversity_val),]
 
