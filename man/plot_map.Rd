@@ -54,7 +54,7 @@ to exclude far-lying islands (default is TRUE, but does not affect other maps
 or projections). Will not work if crop_to_grid is set to TRUE.}
 
 \item{crop_to_grid}{If TRUE, the grid will determine the edges of the map.Overrides
-Europe_crop_EEA.}
+Europe_crop_EEA. Default is FALSE.}
 
 \item{surround}{If TRUE, includes surrounding land area in gray when plotting
 at the country or continent level. If FALSE, all surrounding area will be colored
