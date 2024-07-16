@@ -526,21 +526,23 @@ process_cube_old <- function(cube_name,
     # Remove columns that are not needed
     merged_data <-
       merged_data %>%
-      dplyr::select(-min_coord_uncertainty, -taxonomicStatus, -includes, -notes)
+      dplyr::select(-taxonomicStatus, -includes, -notes)
 
   } else {
 
     # Remove columns that are not needed
     merged_data <-
       merged_data %>%
-      dplyr::select(-min_coord_uncertainty, -taxonomicStatus, -includes)
+      dplyr::select(-taxonomicStatus, -includes)
 
   }
 
   # Rename column n to obs
   merged_data <-
     merged_data %>%
-    dplyr::rename(obs = n, cellCode = eea_cell_code)
+    dplyr::rename(obs = n,
+                  cellCode = eea_cell_code,
+                  minCoordUncertaintyInMeters = min_coord_uncertainty)
 
   # Check whether start and end years are within dataset
   first_year <- merged_data %>%
