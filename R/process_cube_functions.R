@@ -438,7 +438,7 @@ process_cube <- function(cube_name,
 
   }
 
-  if(min(occurrence_data$year)==max(occurrence_data$year)) {
+  if(min(occurrence_data$year, na.rm = TRUE)==max(occurrence_data$year, na.rm = TRUE)) {
 
     first_year <- min(occurrence_data$year)
     last_year <- first_year
