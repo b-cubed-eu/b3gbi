@@ -23,8 +23,12 @@
 #'   specified, uses a default of 1600 to prevent false records (e.g. with year = 0).
 #' @param last_year (Optional) The final year of occurrences to include. If not
 #'   specified, uses the latest year present in the cube.
+#' @param data_type Specify the format of your input data (e.g. .csv file or data frame).
 #' @param grid_type Specify which grid reference system your cube uses. By default
 #'  the function will attempt to determine this automatically and return an error if it fails.
+#'  If you want to perform analysis on a custom cube without grid codes (e.g. output
+#'  from the gcube package), select 'none'. The function will then create a dummy column and
+#'  fill it with zeros to avoid errors downstream when calculating indicators.
 #' @param force_gridcode Force the function to assume a specific grid reference system.
 #'  This may cause unexpected downstream issues, so it is not recommended. If you are
 #'  getting errors related to grid cell codes, check to make sure they are valid.
@@ -80,7 +84,8 @@
 #' }
 #' @export
 process_cube <- function(cube_name,
-                         grid_type = c("automatic", "eea", "mgrs", "eqdgc"),
+                         data_type = c("csv", "df"),
+                         grid_type = c("automatic", "eea", "mgrs", "eqdgc", "none"),
                          first_year = NULL,
                          last_year = NULL,
                          force_gridcode = FALSE,
@@ -101,13 +106,27 @@ process_cube <- function(cube_name,
                          cols_sex = NULL,
                          cols_lifeStage = NULL) {
 
-  # Read in data cube
-  occurrence_data <- readr::read_delim(
-    file = cube_name,
-    delim = "\t",
-    na = "",
-    show_col_types = FALSE
-  )
+  data_type = match.arg(data_type)
+
+  if (data_type == "csv") {
+
+    # Read in data cube
+    occurrence_data <- readr::read_delim(
+      file = cube_name,
+      delim = "\t",
+      na = "",
+      show_col_types = FALSE
+    )
+
+  } else {
+
+    # Check that input is a data frame
+    stopifnot(is.data.frame(cube_name))
+
+    # Read in data cube
+    occurrence_data <- tibble::as_tibble(cube_name)
+
+  }
 
   grid_type = match.arg(grid_type)
 
@@ -164,6 +183,12 @@ process_cube <- function(cube_name,
 
     }
 
+    # if the user has chosen 'none' as a grid type...
+  } else if (grid_type == "none") {
+
+      # create dummy column full of zeros
+      occurrence_data$cellCode <- 0
+
     # if the user has specified a grid type...
   } else {
 
@@ -184,7 +209,7 @@ process_cube <- function(cube_name,
 
     }
 
-    if (force_gridcode == FALSE) {
+    if (force_gridcode == FALSE & grid_type!="none") {
 
       grid_type_test <- ifelse(grid_type == "eea", stringr::str_detect(occurrence_data[[cols_cellCode]], "^[0-9]{1,3}[km]{1,2}[EW]{1}[0-9]{2,7}[NS]{1}[0-9]{2,7}$"),
                                ifelse(grid_type == "mgrs", stringr::str_detect(occurrence_data[[cols_cellCode]], "^[0-9]{2}[A-Z]{3}[0-9]{0,10}$"),
@@ -309,6 +334,20 @@ process_cube <- function(cube_name,
 
   }
 
+  essential_cols <- c("year",
+                      "occurrences",
+                      "minCoordinateUncertaintyInMeters",
+                      "minTemporalUncertainty",
+                      "kingdomKey",
+                      "familyKey",
+                      "speciesKey",
+                      "familyCount")
+  # make sure that essential columns are the correct type
+  occurrence_data <-
+    occurrence_data %>%
+    dplyr::mutate(across(any_of(essential_cols), as.numeric))
+
+
   # rename occurrences and speciesKey columns to be consistent with the other package functions (should maybe change this throughout package?)
   occurrence_data <-
     occurrence_data %>%
@@ -399,26 +438,36 @@ process_cube <- function(cube_name,
 
   }
 
+  if(min(occurrence_data$year)==max(occurrence_data$year)) {
 
-  # Check whether start and end years are within dataset
-  first_year <- occurrence_data %>%
-    dplyr::select(year) %>%
-    min(na.rm = TRUE) %>%
-    ifelse(is.null(first_year),
-           .,
-           ifelse(first_year > ., first_year, .))
-  last_year <- occurrence_data %>%
-    dplyr::summarize(max_year = max(year, na.rm = TRUE)-1) %>%
-    dplyr::pull(max_year) %>%
-    ifelse(is.null(last_year),
-           .,
-           ifelse(last_year < ., last_year, .))
+    first_year <- min(occurrence_data$year)
+    last_year <- first_year
 
-  # Limit data set
-  occurrence_data <-
-    occurrence_data %>%
-    dplyr::filter(year >= first_year) %>%
-    dplyr::filter(year <= last_year)
+    warning("Cannot create trends with this dataset, as occurrences are all from the same year.")
+
+  } else {
+
+    # Check whether start and end years are within dataset
+    first_year <- occurrence_data %>%
+      dplyr::select(year) %>%
+      min(na.rm = TRUE) %>%
+      ifelse(is.null(first_year),
+             .,
+             ifelse(first_year > ., first_year, .))
+    last_year <- occurrence_data %>%
+      dplyr::summarize(max_year = max(year, na.rm = TRUE)-1) %>%
+      dplyr::pull(max_year) %>%
+      ifelse(is.null(last_year),
+             .,
+             ifelse(last_year < ., last_year, .))
+
+    # Limit data set
+    occurrence_data <-
+      occurrence_data %>%
+      dplyr::filter(year >= first_year) %>%
+      dplyr::filter(year <= last_year)
+
+  }
 
   # Remove any duplicate rows
   occurrence_data <-
@@ -426,7 +475,11 @@ process_cube <- function(cube_name,
     dplyr::distinct() %>%
     dplyr::arrange(year)
 
-  cube <- new_processed_cube(occurrence_data, grid_type)
+  if (grid_type == "none") {
+    cube <- new_sim_cube(occurrence_data, grid_type)
+  } else {
+    cube <- new_processed_cube(occurrence_data, grid_type)
+  }
 
 }
 
