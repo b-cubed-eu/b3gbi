@@ -392,7 +392,7 @@ compute_indicator_workflow <- function(data,
         grid %>%
         dplyr::left_join(indicator, by = "cellid")
 
-      diversity_grid <- dplyr::left_join(diversity_grid, df[,c("cellid", "uncertainty_cells")], by = "cellid", multiple = "first")
+      # diversity_grid <- dplyr::left_join(diversity_grid, df[,c("cellid", "uncertainty_cells")], by = "cellid", multiple = "first")
 
       # diversity_grid <- diversity_grid[!is.na(diversity_grid$diversity_val),]
 
