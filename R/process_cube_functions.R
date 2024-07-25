@@ -84,7 +84,6 @@
 #' }
 #' @export
 process_cube <- function(cube_name,
-                         data_type = c("csv", "df"),
                          grid_type = c("automatic", "eea", "mgrs", "eqdgc", "none"),
                          first_year = NULL,
                          last_year = NULL,
@@ -106,9 +105,9 @@ process_cube <- function(cube_name,
                          cols_sex = NULL,
                          cols_lifeStage = NULL) {
 
-  data_type = match.arg(data_type)
+ # data_type = match.arg(data_type)
 
-  if (data_type == "csv") {
+  if (is.character(cube_name) & length(cube_name == 1)) {
 
     # Read in data cube
     occurrence_data <- readr::read_delim(
@@ -118,13 +117,14 @@ process_cube <- function(cube_name,
       show_col_types = FALSE
     )
 
-  } else {
-
-    # Check that input is a data frame
-    stopifnot(is.data.frame(cube_name))
+  } else if (inherits(cube_name, "data.frame")) {
 
     # Read in data cube
     occurrence_data <- tibble::as_tibble(cube_name)
+
+  } else {
+
+    stop("`cube_name` should be a file path or dataframe.")
 
   }
 
@@ -187,7 +187,7 @@ process_cube <- function(cube_name,
   } else if (grid_type == "none") {
 
       # create dummy column full of zeros
-      occurrence_data$cellCode <- 0
+    #  occurrence_data$cellCode <- 0
 
     # if the user has specified a grid type...
   } else {
@@ -274,8 +274,9 @@ process_cube <- function(cube_name,
   col_names <- data.frame("default" = unlist(col_names_defaultlist), "user" = unlist(col_names_userlist))
 
   # rename user-supplied column names to defaults expected by package functions
-  names(occurrence_data)[names(occurrence_data) %in% col_names[,2]] <-
-    col_names[,1][col_names[,2] %in% (names(occurrence_data))]
+  for (i in (which(names(occurrence_data) %in% col_names[,2]))) {
+    names(occurrence_data)[i] <- col_names[,1][which(col_names[,2] %in% names(occurrence_data)[i])]
+  }
 
   # for (i in 1:length(col_names_userlist)) {
   #
@@ -354,10 +355,14 @@ process_cube <- function(cube_name,
     dplyr::rename(obs = occurrences) %>%
     dplyr::rename(taxonKey = speciesKey)
 
-  # Remove NA values in cell code column
-  occurrence_data <-
-    occurrence_data %>%
-    dplyr::filter(!is.na(cellCode))
+  if (grid_type != "none") {
+
+    # Remove NA values in cell code column
+    occurrence_data <-
+      occurrence_data %>%
+      dplyr::filter(!is.na(cellCode))
+
+  }
 
   if (grid_type == "eea") {
 
@@ -476,8 +481,11 @@ process_cube <- function(cube_name,
     dplyr::arrange(year)
 
   if (grid_type == "none") {
+
     cube <- new_sim_cube(occurrence_data, grid_type)
+
   } else {
+
     cube <- new_processed_cube(occurrence_data, grid_type)
   }
 
@@ -626,3 +634,4 @@ process_cube_old <- function(cube_name,
   cube <- new_processed_cube(merged_data, grid_type = "eea")
 
 }
+
