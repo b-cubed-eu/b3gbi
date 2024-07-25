@@ -403,6 +403,9 @@ compute_indicator_workflow <- function(data,
 
       # indicator <- dplyr::left_join(indicator, df[,c("year", "minTemporalUncertainty")], by = "year", multiple = "first")
 
+      # Calculate confidence intervals
+    #  conf_int <- calc_ci(df, ...)
+
     }
 
     if (spherical_geometry==FALSE) {
