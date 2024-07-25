@@ -118,8 +118,6 @@ observed individuals. This column is optional.}
 
 \item{datasets_info}{The location and name of an associated dataset info file
 (e.g., 'inst/extdata/europe_species_datasets.csv').}
-
-\item{data_type}{Specify the format of your input data (e.g. .csv file or data frame).}
 }
 \value{
 A tibble containing the processed GBIF occurrence data.

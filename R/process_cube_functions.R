@@ -23,7 +23,6 @@
 #'   specified, uses a default of 1600 to prevent false records (e.g. with year = 0).
 #' @param last_year (Optional) The final year of occurrences to include. If not
 #'   specified, uses the latest year present in the cube.
-#' @param data_type Specify the format of your input data (e.g. .csv file or data frame).
 #' @param grid_type Specify which grid reference system your cube uses. By default
 #'  the function will attempt to determine this automatically and return an error if it fails.
 #'  If you want to perform analysis on a custom cube without grid codes (e.g. output
