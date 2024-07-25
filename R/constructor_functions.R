@@ -91,6 +91,9 @@ new_sim_cube <- function(x, grid_type) {
                    num_species = length(unique(x$taxonKey)),
                    num_obs = sum(x$obs),
                    grid_type = grid_type,
+                   if ("resolution" %in% colnames(x)) {
+                     resolutions = unique(x$resolution)
+                   },
                    data = x),
               class = "sim_cube")
 }
