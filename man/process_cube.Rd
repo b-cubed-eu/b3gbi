@@ -7,7 +7,6 @@
 \usage{
 process_cube(
   cube_name,
-  data_type = c("csv", "df"),
   grid_type = c("automatic", "eea", "mgrs", "eqdgc", "none"),
   first_year = NULL,
   last_year = NULL,
@@ -41,8 +40,6 @@ process_cube_old(
 \arguments{
 \item{cube_name}{The location and name of a data cube file
 (e.g., 'inst/extdata/europe_species_cube.csv').}
-
-\item{data_type}{Specify the format of your input data (e.g. .csv file or data frame).}
 
 \item{grid_type}{Specify which grid reference system your cube uses. By default
 the function will attempt to determine this automatically and return an error if it fails.
@@ -121,6 +118,8 @@ observed individuals. This column is optional.}
 
 \item{datasets_info}{The location and name of an associated dataset info file
 (e.g., 'inst/extdata/europe_species_datasets.csv').}
+
+\item{data_type}{Specify the format of your input data (e.g. .csv file or data frame).}
 }
 \value{
 A tibble containing the processed GBIF occurrence data.
