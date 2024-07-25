@@ -129,6 +129,37 @@ print.processed_cube_dsinfo <- function(x, n = 10, ...) {
   print(x$data, n = n, ...)
 }
 
+#' @title Print a Simulated Data Cube Object
+#'
+#' @description Provides a summary representation of a sim_cube object,
+#'   designed for user-friendly display in the console.
+#'
+#' @method print sim_cube
+#'
+#' @param x A sim_cube object.
+#' @param n Integer specifying the number of rows of cube data to display.
+#' @param ... Additional arguments.
+#'
+#'
+#' @export
+print.sim_cube <- function(x, n = 10, ...) {
+  cat("\nSimulated data cube for calculating biodiversity indicators\n\n")
+  cat("Date Range:", x$first_year, "-", x$last_year, "\n")
+  if (!is.null(x$resolutions)) {
+    cat("Single-resolution cube with cell size", x$resolutions, "^2\n")
+  }
+  cat("Number of cells:", x$num_cells, "\n")
+  cat("Grid reference system:", x$grid_type, "\n")
+  cat("Coordinate range:\n")
+  print(unlist(x$coord_range))
+  cat("\nTotal number of observations:", x$num_obs, "\n")
+  cat("Number of species represented:", x$num_species, "\n")
+  cat("Number of families represented:", paste(x$num_families, collapse = ", "), "\n\n")
+  cat("Kingdoms represented:", paste(x$kingdoms, collapse = ", "), "\n\n")
+  cat("First", n, "rows of data (use n = to show more):\n\n")
+  print(x$data, n = n, ...)
+}
+
 #' @title Print Available Indicators
 #' @description Provide a summary of indicators registered in the package.
 #'
