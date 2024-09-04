@@ -88,8 +88,17 @@ new_sim_cube <- function(x, grid_type) {
                   "obs") %in% names(x)))
     structure(list(first_year = min(x$year),
                    last_year = max(x$year),
+                   coord_range = ifelse(("xcoord" %in% colnames(x) & "ycoord" %in% colnames(x)),
+                                        list("xmin" = min(x$xcoord),
+                                             "xmax" = max(x$xcoord),
+                                             "ymin" = min(x$ycoord),
+                                             "ymax" = max(x$ycoord)),
+                                        "Coordinates not provided"),
+                   num_cells = ifelse("cellCode" %in% colnames(x), length(unique(x$cellCode)), "No cell codes provided"),
                    num_species = length(unique(x$taxonKey)),
                    num_obs = sum(x$obs),
+                   kingdoms = ifelse("kingdom" %in% colnames(x), c(unique(x$kingdom)), "Data not present"),
+                   num_families = ifelse("family" %in% colnames(x), length(unique(x$family)), "Data not present"),
                    grid_type = grid_type,
                    if ("resolution" %in% colnames(x)) {
                      resolutions = unique(x$resolution)
