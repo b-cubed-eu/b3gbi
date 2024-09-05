@@ -430,12 +430,13 @@ compute_indicator_workflow <- function(data,
     year_names <- unique(df$year)
     level <- "unknown"
     region <- "unknown"
-    num_families <- "NA"
-    kingdoms <- "NA"
-    map_lims <- unlist(list("xmin" = "NA",
-                            "xmax" = "NA",
-                            "ymin" = "NA",
-                            "ymax" = "NA"))
+    num_families <- data$num_families
+    kingdoms <- data$kingdoms
+    if (is.numeric(data$coord_range)) {
+      map_lims <- coord_range
+    } else {
+      map_lims <- "Coordinates not provided"
+    }
 
     # Assign classes to send data to correct calculator function
     subtype <- paste0(type, "_", dim_type)
