@@ -21,8 +21,10 @@ print.indicator_ts <- function(x, n = 10, ...) {
   cat("Coordinate range represented:\n")
   print(x$coord_range)
   cat("\nNumber of species represented:", x$num_species, "\n")
+  if (!is.null(x$num_families)) {cat("Number of families represented:",
+                                     paste(x$num_families, collapse = ", "), "\n\n")}
   if (!is.null(x$kingdoms)) {cat("Kingdoms represented:", x$kingdoms, "\n")}
-  if (!is.null(x$families)) {cat("Families represented:", x$families, "\n")}
+ # if (!is.null(x$families)) {cat("Families represented:", x$families, "\n")}
   cat("\nFirst", n, "rows of data (use n = to show more):\n\n")
   print(x$data, n = n, ...)
 }
