@@ -299,8 +299,10 @@ calc_ts.pielou_evenness <- function(x, ...) {
 
 #' @noRd
 calc_ts.evenness_core <- function(x,
-                                   type,
-                                   ...) {
+                                  type,
+                                  bootstrap = FALSE,
+                                  num_bootstraps = 1000,
+                                  ...) {
 
   stopifnot_error("Please check the class and structure of your data.
                   This is an internal function, not meant to be called directly.",
@@ -311,7 +313,7 @@ calc_ts.evenness_core <- function(x,
                     names(available_indicators))
 
   # Calculate number of records for each species by grid cell
-  indicator <-
+  x <-
     x %>%
     dplyr::summarize(num_occ = sum(obs),
                      .by = c(year, taxonKey)) %>%
@@ -320,24 +322,81 @@ calc_ts.evenness_core <- function(x,
                        values_from = num_occ) %>%
     replace(is.na(.), 0) %>%
     tibble::column_to_rownames("taxonKey") %>%
-    as.list() %>%
-    purrr::map(~compute_evenness_formula(. ,type)) %>%
-    unlist() %>%
-    as.data.frame() %>%
-    dplyr::rename(diversity_val = ".") %>%
-    tibble::rownames_to_column(var = "year") %>%
-    dplyr::mutate(year = as.integer(year),
-                  .keep = "unused")
+    as.list()
+
+  if (bootstrap==TRUE) {
+
+     boot_statistic <- function(data, indices, type) {
+       d <- data[indices]
+       return(compute_evenness_formula(d, type))
+     }
+
+    bootstraps <-
+      x %>%
+      purrr::map(~boot::boot(
+        data = .,
+        statistic = boot_statistic,
+        R = num_bootstraps,
+        type = type))
+
+  } else {
+
+    indicator <-
+      x %>%
+      purrr::map(~compute_evenness_formula(. ,type)) %>%
+      unlist() %>%
+      as.data.frame() %>%
+      dplyr::rename(diversity_val = ".") %>%
+      tibble::rownames_to_column(var = "year") %>%
+      dplyr::mutate(year = as.integer(year),
+                    .keep = "unused")
+
+  }
 
 }
 
 #' @export
 #' @rdname calc_ts
-calc_ts.ab_rarity <- function(x, ...) {
+calc_ts.ab_rarity <- function(x,
+                              bootstrap = FALSE,
+                              num_bootstraps = 1000,
+                              ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
                   inherits(x, "ab_rarity"))
+
+  if (bootstrap==TRUE) {
+
+    # Function for boot statistic
+    boot_statistic <- function(data, indices, obs) {
+      d <- data[indices]
+      return(calc_thingy(d, obs))
+    }
+
+    calc_thingy <- function(bs_data, obs) {
+      1 / (bs_data / sum(obs))
+    }
+
+    indicator <-
+      x %>%
+      dplyr::mutate(records_taxon = sum(obs), .by = taxonKey) %>%
+      dplyr::arrange(year)
+
+    indicator_2 <-
+      boot::boot(
+        data = indicator$records_taxon,
+        statistic = boot_statistic,
+        R = num_bootstraps,
+        obs = indicator$obs)
+
+    ci_df <- get_bootstrap_ci(indicator_2, h = logit, hinv = inv_logit, type = ci_type)
+
+    indicator <-
+      ci_df %>%
+      dplyr::full_join(indicator, by = join_by())
+
+  }
 
   # Calculate total summed rarity (in terms of abundance) for each grid cell
   indicator <-

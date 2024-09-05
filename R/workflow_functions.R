@@ -181,6 +181,8 @@ prepare_spatial_data <- function(data, grid, map_data, cube_crs, output_crs) {
 #'   * 'williams_evenness', 'pielou_evenness': Evenness measures.
 #'   * 'ab_rarity', 'area_rarity':  Abundance-based and area-based rarity scores.
 #' @param dim_type Dimension to calculate indicator over (time: 'ts', or space: 'map')
+#' @param ci_type Type of bootstrap confidence intervals to calculate. (Default: "norm".
+#'   Select "none" to avoid calculating bootstrap CIs.)
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
 #' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
 #' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
@@ -208,6 +210,7 @@ prepare_spatial_data <- function(data, grid, map_data, cube_crs, output_crs) {
 compute_indicator_workflow <- function(data,
                                        type,
                                        dim_type = c("map", "ts"),
+                                       ci_type = c("norm", "basic", "perc", "bca", "none"),
                                        cell_size = NULL,
                                        level = c("continent", "country", "world"),
                                        region = "Europe",
@@ -226,6 +229,8 @@ compute_indicator_workflow <- function(data,
 
   type <- match.arg(type,
                     names(available_indicators))
+
+  ci_type <- match.arg(ci_type)
 
   if (!is.null(first_year)) {
     first_year <- ifelse(first_year > data$first_year, first_year, data$first_year)
@@ -256,6 +261,8 @@ compute_indicator_workflow <- function(data,
     cell_size_units <- stringr::str_extract(data$resolutions, "(?<=[0-9,.]{1,6})[a-z]*$")
 
     num_families <- data$num_families
+
+    coord_range <- data$coord_range
 
     if (spherical_geometry==FALSE){
 
@@ -353,26 +360,6 @@ compute_indicator_workflow <- function(data,
 
     if (dim_type == "map") {
 
-      # # Deal with uncertainty
-      # if (cell_size_units == "km") {
-      #
-      #   df$uncertainty_cells <- df$minCoordinateUncertaintyInMeters / cell_size
-      #
-      # } else if (cell_size_units == "degrees") {
-      #
-      #   df$uncertainty_cells <- meters_to_decdeg(
-      #     df,
-      #     lat_col = "ycoord",
-      #     lon_col = "xcoord",
-      #     distance = "minCoordinateUncertaintyInMeters",
-      #     na_action = "NA as NA") / cell_size
-      #
-      # } else {
-      #
-      #   stop("Resolution not recognized. Must be in km or degrees.")
-      #
-      # }
-
       # Calculate indicator
       indicator <- calc_map(df, ...)
 
@@ -392,19 +379,38 @@ compute_indicator_workflow <- function(data,
         grid %>%
         dplyr::left_join(indicator, by = "cellid")
 
-      # diversity_grid <- dplyr::left_join(diversity_grid, df[,c("cellid", "uncertainty_cells")], by = "cellid", multiple = "first")
-
-      # diversity_grid <- diversity_grid[!is.na(diversity_grid$diversity_val),]
-
     } else {
 
       # Calculate indicator
       indicator <- calc_ts(df, ...)
 
-      # indicator <- dplyr::left_join(indicator, df[,c("year", "minTemporalUncertainty")], by = "year", multiple = "first")
+      if (ci_type!="none") {
 
-      # Calculate confidence intervals
-    #  conf_int <- calc_ci(df, ...)
+        if (type == "pielou_evenness" | type == "ab_rarity"){
+
+          bootstraps <- calc_ts(df, bootstrap=TRUE, num_bootstraps=1000)
+
+        } else {
+
+          boot_statistic <- function(data, indices, type) {
+            d <- data[indices,]
+            return(calc_ts(d, type))
+          }
+
+          boot::boot(
+            data = df,
+            statistic = boot_statistic,
+            R = 1000,
+            type = type)
+
+        }
+
+        ci_df <- get_bootstrap_ci(bootstraps, h = logit, hinv = inv_logit, type = ci_type)
+
+        indicator <- indicator %>%
+          full_join(ci_df, by = join_by(year), relationship = "many-to-many")
+
+      }
 
     }
 
@@ -422,28 +428,38 @@ compute_indicator_workflow <- function(data,
   } else {
 
     if (dim_type=="map") {
+
       stop("You have provided an object of class 'sim_cube' as input. As these objects
            do not contain grid information they can only be used to calculate
            indicators of dim_type 'ts'.")
+
+    } else {
+
+      year_names <- unique(df$year)
+      level <- "unknown"
+      region <- "unknown"
+      if (is.numeric(data$coord_range)) {
+        map_lims <- data$coord_range
+      } else {
+        # map_lims <- unlist(list("xmin" = "NA",
+        #                         "xmax" = "NA",
+        #                         "ymin" = "NA",
+        #                         "ymax" = "NA"))
+          map_lims <- "Coordinates not provided"
+      }
+
+      kingdoms <- data$kingdoms
+      num_families <- data$num_families
+
+      # Assign classes to send data to correct calculator function
+      subtype <- paste0(type, "_", dim_type)
+      class(df) <- append(type, class(df))
+      class(df) <- append(subtype, class(df))
+
+      # Calculate indicator
+      indicator <- calc_ts(df, ...)
+
     }
-
-    year_names <- unique(df$year)
-    level <- "unknown"
-    region <- "unknown"
-    num_families <- "NA"
-    kingdoms <- "NA"
-    map_lims <- unlist(list("xmin" = "NA",
-                            "xmax" = "NA",
-                            "ymin" = "NA",
-                            "ymax" = "NA"))
-
-    # Assign classes to send data to correct calculator function
-    subtype <- paste0(type, "_", dim_type)
-    class(df) <- append(type, class(df))
-    class(df) <- append(subtype, class(df))
-
-    # Calculate indicator
-    indicator <- calc_ts(df, ...)
 
   }
 

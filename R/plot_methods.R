@@ -896,11 +896,14 @@ plot_map <- function(x,
 #' @param suppress_y If TRUE, suppresses y-axis labels.
 #' @param smoothed_trend If TRUE, plot a smoothed trendline.
 #' @param linecolour (Optional) Colour for the indicator line.
-#'   Default is darkorange.
+#'   Default is darkorange. Set to "NA" if you don't want to plot the indicator line.
+#' @param ribboncolour (Optional) Colour for the bootstrapped confidence intervals.
+#'   Default is goldenrod1. Set to "NA" if you don't want to plot the CIs.
 #' @param trendlinecolour (Optional) Colour for the smoothed trendline.
-#'   Default is blue.
+#'   Default is blue. Set to "NA" if you don't want to plot the trend.
 #' @param envelopecolour (Optional) Colour for the uncertainty envelope.
-#'   Default is lightsteelblue.
+#'   Default is lightsteelblue. Set to "NA" if you don't want to plot the trend
+#'   uncertainty.
 #' @param gridoff  If TRUE, hides gridlines.
 #' @param x_label Label for the x-axis.
 #' @param y_label Label for the y-axis.
@@ -936,6 +939,7 @@ plot_ts <- function(x,
                     suppress_y = FALSE,
                     smoothed_trend = TRUE,
                     linecolour = NULL,
+                    ribboncolour = NULL,
                     trendlinecolour = NULL,
                     envelopecolour = NULL,
                     gridoff = FALSE,
@@ -978,6 +982,7 @@ plot_ts <- function(x,
 
   # Set colours
   if (is.null(linecolour)) linecolour = "darkorange"
+  if (is.null(ribboncolour)) ribboncolour = "goldenrod1"
   if (is.null(trendlinecolour)) trendlinecolour = "blue"
   if (is.null(envelopecolour)) envelopecolour = "lightsteelblue1"
 
@@ -1011,6 +1016,16 @@ plot_ts <- function(x,
           },
           strip.text = element_text(face = "italic")
     )
+
+  if ("ll" %in% colnames(x$data) & "ul" %in% colnames(x$data)) {
+
+    trend_plot <- trend_plot +
+      geom_ribbon(aes(ymin = ll,
+                    ymax = ul),
+                alpha = 0.3,
+                fill = ribboncolour)
+
+  }
 
   if (smoothed_trend == TRUE) {
 
@@ -1066,6 +1081,8 @@ plot_ts <- function(x,
 #' @param smoothed_trend If TRUE, plot a smoothed trendline.
 #' @param linecolour (Optional) Colour for the indicator line.
 #'   Default is darkorange.
+#' @param ribboncolour (Optional) Colour for the bootstrapped confidence intervals.
+#'   Default is goldenrod1. Set to "NA" if you don't want to plot the CIs.
 #' @param trendlinecolour (Optional) Colour for the smoothed trendline.
 #'   Default is blue.
 #' @param envelopecolour (Optional) Colour for the uncertainty envelope.
@@ -1108,6 +1125,7 @@ plot_species_ts <- function(x,
                             max_year = NULL,
                             smoothed_trend = TRUE,
                             linecolour = NULL,
+                            ribboncolour = NULL,
                             trendlinecolour = NULL,
                             envelopecolour = NULL,
                             single_plot = TRUE,
@@ -1193,12 +1211,27 @@ plot_species_ts <- function(x,
 
   # Set colours
   if (is.null(linecolour)) linecolour = "darkorange"
+  if (is.null(ribboncolour)) ribboncolour = "goldenrod1"
   if (is.null(trendlinecolour)) trendlinecolour = "blue"
   if (is.null(envelopecolour)) envelopecolour = "lightsteelblue1"
 
   # Set axis titles
   if (is.null(x_label)) x_label = "Year"
   if (is.null(y_label)) y_label = y_label_default
+
+  # Create bootstrapped confidence intervals if columns present
+  if ("ll" %in% colnames(x$data) & "ul" %in% colnames(x$data)) {
+
+    ci_ribbon <- list(
+    trend_plot <- trend_plot +
+      geom_ribbon(aes(ymin = ll,
+                      ymax = ul),
+                  alpha = 0.3,
+                  fill = ribboncolour)
+    )
+  } else {
+    ci_ribbon <- list()
+  }
 
   # Create smoothed trend if desired
   if (smoothed_trend == TRUE) {
@@ -1242,6 +1275,7 @@ plot_species_ts <- function(x,
                           strip.text = element_text(face = "italic")
                     ) +
                     labs(title = y) +
+                    ci_ribbon +
                     smoothing
                 })
 
