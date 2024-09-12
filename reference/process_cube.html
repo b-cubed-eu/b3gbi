@@ -52,7 +52,7 @@ an error if it cannot find all required columns."><meta property="og:image" cont
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Process GBIF Data Cubes</h1>
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.2.2/R/process_cube_functions.R" class="external-link"><code>R/process_cube_functions.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/R/process_cube_functions.R" class="external-link"><code>R/process_cube_functions.R</code></a></small>
       <div class="d-none name"><code>process_cube.Rd</code></div>
     </div>
 
@@ -75,7 +75,7 @@ an error if it cannot find all required columns.</p>
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">process_cube</span><span class="op">(</span></span>
 <span>  <span class="va">cube_name</span>,</span>
-<span>  grid_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"automatic"</span>, <span class="st">"eea"</span>, <span class="st">"mgrs"</span>, <span class="st">"eqdgc"</span><span class="op">)</span>,</span>
+<span>  grid_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"automatic"</span>, <span class="st">"eea"</span>, <span class="st">"mgrs"</span>, <span class="st">"eqdgc"</span>, <span class="st">"custom"</span>, <span class="st">"none"</span><span class="op">)</span>,</span>
 <span>  first_year <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  last_year <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  force_gridcode <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -117,7 +117,10 @@ an error if it cannot find all required columns.</p>
 
 <dt id="arg-grid-type">grid_type<a class="anchor" aria-label="anchor" href="#arg-grid-type"></a></dt>
 <dd><p>Specify which grid reference system your cube uses. By default
-the function will attempt to determine this automatically and return an error if it fails.</p></dd>
+the function will attempt to determine this automatically and return an error if it fails.
+If you want to perform analysis on a cube with custom grid codes (e.g. output
+from the gcube package) or a cube without grid codes, select 'custom' or 'none',
+respectively.</p></dd>
 
 
 <dt id="arg-first-year">first_year<a class="anchor" aria-label="anchor" href="#arg-first-year"></a></dt>
