@@ -25,6 +25,9 @@
 #'   specified, uses the latest year present in the cube.
 #' @param grid_type Specify which grid reference system your cube uses. By default
 #'  the function will attempt to determine this automatically and return an error if it fails.
+#'  If you want to perform analysis on a cube with custom grid codes (e.g. output
+#'  from the gcube package) or a cube without grid codes, select 'custom' or 'none',
+#'  respectively.
 #' @param force_gridcode Force the function to assume a specific grid reference system.
 #'  This may cause unexpected downstream issues, so it is not recommended. If you are
 #'  getting errors related to grid cell codes, check to make sure they are valid.
@@ -80,7 +83,7 @@
 #' }
 #' @export
 process_cube <- function(cube_name,
-                         grid_type = c("automatic", "eea", "mgrs", "eqdgc"),
+                         grid_type = c("automatic", "eea", "mgrs", "eqdgc", "custom", "none"),
                          first_year = NULL,
                          last_year = NULL,
                          force_gridcode = FALSE,
@@ -101,13 +104,28 @@ process_cube <- function(cube_name,
                          cols_sex = NULL,
                          cols_lifeStage = NULL) {
 
-  # Read in data cube
-  occurrence_data <- readr::read_delim(
-    file = cube_name,
-    delim = "\t",
-    na = "",
-    show_col_types = FALSE
-  )
+ # data_type = match.arg(data_type)
+
+  if (is.character(cube_name) & length(cube_name == 1)) {
+
+    # Read in data cube
+    occurrence_data <- readr::read_delim(
+      file = cube_name,
+      delim = "\t",
+      na = "",
+      show_col_types = FALSE
+    )
+
+  } else if (inherits(cube_name, "data.frame")) {
+
+    # Read in data cube
+    occurrence_data <- tibble::as_tibble(cube_name)
+
+  } else {
+
+    stop("`cube_name` should be a file path or dataframe.")
+
+  }
 
   grid_type = match.arg(grid_type)
 
@@ -164,6 +182,35 @@ process_cube <- function(cube_name,
 
     }
 
+    # if the user has chosen 'custom' as a grid type...
+  } else if (grid_type == "custom") {
+
+    # check if the user has provided a name for the column containing grid cell codes
+    if (is.null(cols_cellCode)) {
+
+      stop("You have chosen custom grid type. Please provide the name of the column containing grid cell codes.")
+
+    }
+
+
+    # check that the column name they provided exists
+    if (!cols_cellCode %in% names(occurrence_data)) {
+
+      stop("The column name you provided for grid cell codes does not exist. Please double check that you spelled it correctly.")
+
+    }
+
+    # rename it to the default
+    occurrence_data <-
+      occurrence_data %>%
+      dplyr::rename(cellCode = cols_cellCode)
+
+    # if the user has chosen 'none' as a grid type...
+  } else if (grid_type == "none") {
+
+    # create dummy column full of zeros
+    #  occurrence_data$cellCode <- 0
+
     # if the user has specified a grid type...
   } else {
 
@@ -184,7 +231,7 @@ process_cube <- function(cube_name,
 
     }
 
-    if (force_gridcode == FALSE) {
+    if (force_gridcode == FALSE & grid_type!="none") {
 
       grid_type_test <- ifelse(grid_type == "eea", stringr::str_detect(occurrence_data[[cols_cellCode]], "^[0-9]{1,3}[km]{1,2}[EW]{1}[0-9]{2,7}[NS]{1}[0-9]{2,7}$"),
                                ifelse(grid_type == "mgrs", stringr::str_detect(occurrence_data[[cols_cellCode]], "^[0-9]{2}[A-Z]{3}[0-9]{0,10}$"),
@@ -249,8 +296,9 @@ process_cube <- function(cube_name,
   col_names <- data.frame("default" = unlist(col_names_defaultlist), "user" = unlist(col_names_userlist))
 
   # rename user-supplied column names to defaults expected by package functions
-  names(occurrence_data)[names(occurrence_data) %in% col_names[,2]] <-
-    col_names[,1][col_names[,2] %in% (names(occurrence_data))]
+  for (i in (which(names(occurrence_data) %in% col_names[,2]))) {
+    names(occurrence_data)[i] <- col_names[,1][which(col_names[,2] %in% names(occurrence_data)[i])]
+  }
 
   # for (i in 1:length(col_names_userlist)) {
   #
@@ -309,16 +357,34 @@ process_cube <- function(cube_name,
 
   }
 
+  essential_cols <- c("year",
+                      "occurrences",
+                      "minCoordinateUncertaintyInMeters",
+                      "minTemporalUncertainty",
+                      "kingdomKey",
+                      "familyKey",
+                      "speciesKey",
+                      "familyCount")
+  # make sure that essential columns are the correct type
+  occurrence_data <-
+    occurrence_data %>%
+    dplyr::mutate(across(any_of(essential_cols), as.numeric))
+
+
   # rename occurrences and speciesKey columns to be consistent with the other package functions (should maybe change this throughout package?)
   occurrence_data <-
     occurrence_data %>%
     dplyr::rename(obs = occurrences) %>%
     dplyr::rename(taxonKey = speciesKey)
 
-  # Remove NA values in cell code column
-  occurrence_data <-
-    occurrence_data %>%
-    dplyr::filter(!is.na(cellCode))
+  if (grid_type != "none") {
+
+    # Remove NA values in cell code column
+    occurrence_data <-
+      occurrence_data %>%
+      dplyr::filter(!is.na(cellCode))
+
+  }
 
   if (grid_type == "eea") {
 
@@ -399,26 +465,37 @@ process_cube <- function(cube_name,
 
   }
 
+  if(min(occurrence_data$year, na.rm = TRUE)==max(occurrence_data$year, na.rm = TRUE)) {
 
-  # Check whether start and end years are within dataset
-  first_year <- occurrence_data %>%
-    dplyr::select(year) %>%
-    min(na.rm = TRUE) %>%
-    ifelse(is.null(first_year),
-           .,
-           ifelse(first_year > ., first_year, .))
-  last_year <- occurrence_data %>%
-    dplyr::summarize(max_year = max(year, na.rm = TRUE)-1) %>%
-    dplyr::pull(max_year) %>%
-    ifelse(is.null(last_year),
-           .,
-           ifelse(last_year < ., last_year, .))
+    first_year <- min(occurrence_data$year)
+    last_year <- first_year
 
-  # Limit data set
-  occurrence_data <-
-    occurrence_data %>%
-    dplyr::filter(year >= first_year) %>%
-    dplyr::filter(year <= last_year)
+    warning("Cannot create trends with this dataset, as occurrences are all from the same year.")
+
+  } else {
+
+    # Check whether start and end years are within dataset
+    first_year <- occurrence_data %>%
+      dplyr::select(year) %>%
+      min(na.rm = TRUE) %>%
+      ifelse(is.null(first_year),
+             .,
+             ifelse(first_year > ., first_year, .))
+    last_year <- occurrence_data %>%
+     # dplyr::summarize(max_year = max(year, na.rm = TRUE)-1) %>%
+      dplyr::summarize(max_year = max(year, na.rm = TRUE)) %>%
+      dplyr::pull(max_year) %>%
+      ifelse(is.null(last_year),
+             .,
+             ifelse(last_year < ., last_year, .))
+
+    # Limit data set
+    occurrence_data <-
+      occurrence_data %>%
+      dplyr::filter(year >= first_year) %>%
+      dplyr::filter(year <= last_year)
+
+  }
 
   # Remove any duplicate rows
   occurrence_data <-
@@ -426,7 +503,14 @@ process_cube <- function(cube_name,
     dplyr::distinct() %>%
     dplyr::arrange(year)
 
-  cube <- new_processed_cube(occurrence_data, grid_type)
+  if (grid_type == "none" | grid_type == "custom") {
+
+    cube <- new_sim_cube(occurrence_data, grid_type)
+
+  } else {
+
+    cube <- new_processed_cube(occurrence_data, grid_type)
+  }
 
 }
 
@@ -573,3 +657,4 @@ process_cube_old <- function(cube_name,
   cube <- new_processed_cube(merged_data, grid_type = "eea")
 
 }
+

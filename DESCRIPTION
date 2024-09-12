@@ -31,7 +31,6 @@ Imports:
     rnaturalearth,
     sf,
     stringr,
-    taxize,
     tibble,
     tidyr,
     units
@@ -39,6 +38,7 @@ Suggests:
     knitr,
     rmarkdown,
     rnaturalearthdata,
+    taxize,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Encoding: UTF-8

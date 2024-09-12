@@ -7,7 +7,7 @@
 \usage{
 process_cube(
   cube_name,
-  grid_type = c("automatic", "eea", "mgrs", "eqdgc"),
+  grid_type = c("automatic", "eea", "mgrs", "eqdgc", "custom", "none"),
   first_year = NULL,
   last_year = NULL,
   force_gridcode = FALSE,
@@ -42,7 +42,10 @@ process_cube_old(
 (e.g., 'inst/extdata/europe_species_cube.csv').}
 
 \item{grid_type}{Specify which grid reference system your cube uses. By default
-the function will attempt to determine this automatically and return an error if it fails.}
+the function will attempt to determine this automatically and return an error if it fails.
+If you want to perform analysis on a cube with custom grid codes (e.g. output
+from the gcube package) or a cube without grid codes, select 'custom' or 'none',
+respectively.}
 
 \item{first_year}{(Optional) The first year of occurrences to include. If not
 specified, uses a default of 1600 to prevent false records (e.g. with year = 0).}

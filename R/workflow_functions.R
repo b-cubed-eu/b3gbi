@@ -222,19 +222,16 @@ compute_indicator_workflow <- function(data,
   stopifnot_error("Object class not recognized.",
                   inherits(data, "processed_cube") |
                     inherits(data, "processed_cube_dsinfo") |
-                    inherits(data, "virtual_cube"))
+                    inherits(data, "sim_cube"))
 
   type <- match.arg(type,
                     names(available_indicators))
-  dim_type <- match.arg(dim_type)
-  level <- match.arg(level)
-  cell_size_units <- stringr::str_extract(data$resolution, "(?<=[0-9,.]{1,6})[a-z]*$")
 
   if (!is.null(first_year)) {
     first_year <- ifelse(first_year > data$first_year, first_year, data$first_year)
   } else {
     first_year <- data$first_year
-   }
+  }
 
   if (!is.null(last_year)) {
     last_year <- ifelse(last_year < data$last_year, last_year, data$last_year)
@@ -247,37 +244,42 @@ compute_indicator_workflow <- function(data,
   # Collect information to add to final object
   num_species <- data$num_species
   num_years <- length(unique(df$year))
-  num_families <- data$num_families
+  species_names <- unique(df$scientificName)
+  years_with_obs <- unique(df$year)
 
-  if (spherical_geometry==FALSE){
+  if (!inherits(data, "sim_cube")) {
 
-    # if spherical geometry is on, turn it off
-    if (sf::sf_use_s2()) {
-      sf::sf_use_s2(FALSE)
-      turned_off <- TRUE
+    dim_type <- match.arg(dim_type)
+
+    level <- match.arg(level)
+
+    cell_size_units <- stringr::str_extract(data$resolutions, "(?<=[0-9,.]{1,6})[a-z]*$")
+
+    num_families <- data$num_families
+
+    if (spherical_geometry==FALSE){
+
+      # if spherical geometry is on, turn it off
+      if (sf::sf_use_s2()) {
+        sf::sf_use_s2(FALSE)
+        turned_off <- TRUE
+      }
+
     }
 
-  }
+    if (dim_type == "ts") {
 
-  if (dim_type == "ts") {
+      year_names <- unique(df$year)
+      map_lims <- unlist(list("xmin" = min(df$xcoord),
+                              "xmax" = max(df$xcoord),
+                              "ymin" = min(df$ycoord),
+                              "ymax" = max(df$ycoord)))
 
-    year_names <- unique(df$year)
-    map_lims <- unlist(list("xmin" = min(df$xcoord),
-                            "xmax" = max(df$xcoord),
-                            "ymin" = min(df$ycoord),
-                            "ymax" = max(df$ycoord)))
-
-  }
-
-  if (!inherits(data, "virtual_cube")) {
+    }
 
     kingdoms <- data$kingdoms
-    species_names <- unique(df$scientificName)
-    years_with_obs <- unique(df$year)
 
-  }
-
-#  if (is.null(cube_crs)) {
+    #  if (is.null(cube_crs)) {
 
     if (data$grid_type == "eea") {
 
@@ -297,142 +299,185 @@ compute_indicator_workflow <- function(data,
 
     }
 
-#  }
+    #  }
 
-  if (is.null(output_crs)) {
+    if (is.null(output_crs)) {
 
-    if (data$grid_type == "eea") {
+      if (data$grid_type == "eea") {
 
-      output_crs <- "EPSG:3035"
+        output_crs <- "EPSG:3035"
 
-    } else if (data$grid_type == "eqdgc") {
+      } else if (data$grid_type == "eqdgc") {
 
-      output_crs <- "EPSG:4326"
+        output_crs <- "EPSG:4326"
 
-    } else if (data$grid_type == "mgrs") {
+      } else if (data$grid_type == "mgrs") {
 
-      #output_crs <- get_crs_for_mgrs(df$cellCode)
-      output_crs <- "EPSG:9822"
+        #output_crs <- get_crs_for_mgrs(df$cellCode)
+        output_crs <- "EPSG:9822"
 
-    } else {
+      } else {
 
-      stop("Grid reference system not found.")
+        stop("Grid reference system not found.")
+
+      }
 
     }
 
-  }
+    # Check that the grid cell size (if provided) is sensible.
+    # Determine a default size if nothing is provided.
+    cell_size <- check_cell_size(cell_size, cell_size_units, data$resolution, level)
 
-  # Check that the grid cell size (if provided) is sensible.
-  # Determine a default size if nothing is provided.
-  cell_size <- check_cell_size(cell_size, cell_size_units, data$resolution, level)
+    if (dim_type == "map" | (!is.null(level) & !is.null(region))) {
 
-  if (dim_type == "map" | (!is.null(level) & !is.null(region))) {
+      # Download Natural Earth data
+      map_data <- get_NE_data(level, region, output_crs)
 
-    # Download Natural Earth data
-    map_data <- get_NE_data(level, region, output_crs)
+      # Create grid from Natural Earth data
+      grid <- create_grid(df, map_data, level, cell_size, cell_size_units, make_valid, cube_crs, output_crs)
 
-    # Create grid from Natural Earth data
-    grid <- create_grid(df, map_data, level, cell_size, cell_size_units, make_valid, cube_crs, output_crs)
+      # Format spatial data and merge with grid
+      df <- prepare_spatial_data(df, grid, map_data, cube_crs, output_crs)
 
-    # Format spatial data and merge with grid
-    df <- prepare_spatial_data(df, grid, map_data, cube_crs, output_crs)
+    } else {
 
+      level <- "unknown"
+      region <- "unknown"
+
+    }
+
+    # Assign classes to send data to correct calculator function
+    subtype <- paste0(type, "_", dim_type)
+    class(df) <- append(type, class(df))
+    class(df) <- append(subtype, class(df))
+
+    if (dim_type == "map") {
+
+      # # Deal with uncertainty
+      # if (cell_size_units == "km") {
+      #
+      #   df$uncertainty_cells <- df$minCoordinateUncertaintyInMeters / cell_size
+      #
+      # } else if (cell_size_units == "degrees") {
+      #
+      #   df$uncertainty_cells <- meters_to_decdeg(
+      #     df,
+      #     lat_col = "ycoord",
+      #     lon_col = "xcoord",
+      #     distance = "minCoordinateUncertaintyInMeters",
+      #     na_action = "NA as NA") / cell_size
+      #
+      # } else {
+      #
+      #   stop("Resolution not recognized. Must be in km or degrees.")
+      #
+      # }
+
+      # Calculate indicator
+      indicator <- calc_map(df, ...)
+
+      # Set attributes as spatially constant to avoid warnings when clipping
+      sf::st_agr(grid) <- "constant"
+      sf::st_agr(map_data) <- "constant"
+
+      # Clip grid to map
+      grid <- grid %>%
+        sf::st_intersection(map_data) %>%
+        dplyr::select(cellid,
+                      area_km2,
+                      geometry)
+
+      # Add indicator values to grid
+      diversity_grid <-
+        grid %>%
+        dplyr::left_join(indicator, by = "cellid")
+
+      # diversity_grid <- dplyr::left_join(diversity_grid, df[,c("cellid", "uncertainty_cells")], by = "cellid", multiple = "first")
+
+      # diversity_grid <- diversity_grid[!is.na(diversity_grid$diversity_val),]
+
+    } else {
+
+      # Calculate indicator
+      indicator <- calc_ts(df, ...)
+
+      # indicator <- dplyr::left_join(indicator, df[,c("year", "minTemporalUncertainty")], by = "year", multiple = "first")
+
+      # Calculate confidence intervals
+    #  conf_int <- calc_ci(df, ...)
+
+    }
+
+    if (spherical_geometry==FALSE) {
+
+      # if spherical geometry had to be turned off, now turn it back on
+      if(turned_off == TRUE) {
+        sf::sf_use_s2(TRUE)
+      }
+
+    }
+
+    # if the object is of the class sim_cube it contains no grid information, so
+    # bypass the usual workflow and deal with it here
   } else {
 
+    if (dim_type=="map") {
+      stop("You have provided an object of class 'sim_cube' as input. As these objects
+           do not contain grid information they can only be used to calculate
+           indicators of dim_type 'ts'.")
+    }
+
+    year_names <- unique(df$year)
     level <- "unknown"
     region <- "unknown"
+    num_families <- data$num_families
+    kingdoms <- data$kingdoms
+    if (is.numeric(data$coord_range)) {
+      map_lims <- coord_range
+    } else {
+      map_lims <- "Coordinates not provided"
+    }
 
-  }
-
-  # Assign classess to send data to correct calculator function
-  subtype <- paste0(type, "_", dim_type)
-  class(df) <- append(type, class(df))
-  class(df) <- append(subtype, class(df))
-
-  if (dim_type == "map") {
-
-    # Calculate indicator
-    indicator <- calc_map(df, ...)
-
-    # Set attributes as spatially constant to avoid warnings when clipping
-    sf::st_agr(grid) <- "constant"
-    sf::st_agr(map_data) <- "constant"
-
-    # Clip grid to map
-    grid <- grid %>%
-      sf::st_intersection(map_data) %>%
-      dplyr::select(cellid,
-                    area_km2,
-                    geometry)
-
-    # Add indicator values to grid
-    diversity_grid <-
-      grid %>%
-      dplyr::left_join(indicator, by = "cellid")
-
-   # diversity_grid <- diversity_grid[!is.na(diversity_grid$diversity_val),]
-
-  } else {
+    # Assign classes to send data to correct calculator function
+    subtype <- paste0(type, "_", dim_type)
+    class(df) <- append(type, class(df))
+    class(df) <- append(subtype, class(df))
 
     # Calculate indicator
     indicator <- calc_ts(df, ...)
 
   }
 
-  if (spherical_geometry==FALSE) {
-
-    # if spherical geometry had to be turned off, now turn it back on
-    if(turned_off == TRUE) {
-      sf::sf_use_s2(TRUE)
-    }
-
-  }
-
   # Create indicator object
-  if (!inherits(data, "virtual_cube")) {
 
-    if (dim_type == "map") {
+  if (dim_type == "map") {
 
-      diversity_obj <- new_indicator_map(diversity_grid,
-                                         div_type = type,
-                                         cell_size = cell_size,
-                                         map_level = level,
-                                         map_region = region,
-                                         kingdoms = kingdoms,
-                                         num_families = num_families,
-                                         num_species = num_species,
-                                         first_year = first_year,
-                                         last_year = last_year,
-                                         num_years = num_years,
-                                         species_names = species_names,
-                                         years_with_obs = years_with_obs)
-
-    } else {
-
-      diversity_obj <- new_indicator_ts(dplyr::as_tibble(indicator),
-                                        div_type = type,
-                                        map_level = level,
-                                        map_region = region,
-                                        kingdoms = kingdoms,
-                                        num_families = num_families,
-                                        num_species = num_species,
-                                        num_years = num_years,
-                                        species_names = species_names,
-                                        coord_range = map_lims)
-
-    }
+    diversity_obj <- new_indicator_map(diversity_grid,
+                                       div_type = type,
+                                       cell_size = cell_size,
+                                       map_level = level,
+                                       map_region = region,
+                                       kingdoms = kingdoms,
+                                       num_families = num_families,
+                                       num_species = num_species,
+                                       first_year = first_year,
+                                       last_year = last_year,
+                                       num_years = num_years,
+                                       species_names = species_names,
+                                       years_with_obs = years_with_obs)
 
   } else {
 
-    diversity_obj <- new_virtual_indicator_map(diversity_grid,
-                                               div_type = type,
-                                               cell_size = cell_size,
-                                               map_level = level,
-                                               map_region = region,
-                                               num_species = num_species,
-                                               first_year = first_year,
-                                               last_year = last_year,
-                                               num_years = num_years)
+    diversity_obj <- new_indicator_ts(dplyr::as_tibble(indicator),
+                                      div_type = type,
+                                      map_level = level,
+                                      map_region = region,
+                                      kingdoms = kingdoms,
+                                      num_families = num_families,
+                                      num_species = num_species,
+                                      num_years = num_years,
+                                      species_names = species_names,
+                                      coord_range = map_lims)
 
   }
 
