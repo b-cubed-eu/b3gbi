@@ -220,6 +220,7 @@ compute_indicator_workflow <- function(data,
                                        last_year = NULL,
                                        spherical_geometry = TRUE,
                                        make_valid = FALSE,
+                                       num_bootstrap = 1000,
                                        ...) {
 
   stopifnot_error("Object class not recognized.",
@@ -386,9 +387,14 @@ compute_indicator_workflow <- function(data,
 
       if (ci_type!="none") {
 
-        if (type == "pielou_evenness" | type == "ab_rarity"){
+        if (type == "pielou_evenness" | type == "ab_rarity" | type == "spec_occ"){
 
-          bootstraps <- calc_ts(df, bootstrap=TRUE, num_bootstraps=1000)
+          indicator <- calc_ts(df,
+                               indicator = indicator,
+                               bootstrap=TRUE,
+                               num_bootstraps=num_bootstrap,
+                               ci_type = ci_type,
+                               ...)
 
         } else {
 
@@ -400,15 +406,12 @@ compute_indicator_workflow <- function(data,
           boot::boot(
             data = df,
             statistic = boot_statistic,
-            R = 1000,
+            R = num_bootstrap,
             type = type)
 
+          ci_df <- get_bootstrap_ci(bootstraps, type = ci_type, ...)
+
         }
-
-        ci_df <- get_bootstrap_ci(bootstraps, h = logit, hinv = inv_logit, type = ci_type)
-
-        indicator <- indicator %>%
-          full_join(ci_df, by = join_by(year), relationship = "many-to-many")
 
       }
 
@@ -458,6 +461,34 @@ compute_indicator_workflow <- function(data,
 
       # Calculate indicator
       indicator <- calc_ts(df, ...)
+
+      if (ci_type!="none") {
+
+        if (type == "pielou_evenness" | type == "ab_rarity" | type == "spec_occ"){
+
+          indicator <- calc_ts(df,
+                               indicator = indicator,
+                               bootstrap = TRUE,
+                               num_bootstraps = 1000,
+                               ci_type = ci_type,
+                               ...)
+
+        } else {
+
+          boot_statistic <- function(data, indices, type) {
+            d <- data[indices,]
+            return(calc_ts(d, type))
+          }
+
+          boot::boot(
+            data = df,
+            statistic = boot_statistic,
+            R = 1000,
+            type = type)
+
+        }
+
+      }
 
     }
 
