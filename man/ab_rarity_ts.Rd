@@ -12,6 +12,8 @@ ab_rarity_ts(data, ...)
 \item{...}{
   Arguments passed on to \code{\link[=compute_indicator_workflow]{compute_indicator_workflow}}
   \describe{
+    \item{\code{ci_type}}{Type of bootstrap confidence intervals to calculate. (Default: "norm".
+Select "none" to avoid calculating bootstrap CIs.)}
     \item{\code{cell_size}}{Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)}
     \item{\code{level}}{Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')}
     \item{\code{region}}{The region of interest (e.g., "Europe"). (Default: "Europe")}

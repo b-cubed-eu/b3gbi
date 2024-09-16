@@ -14,6 +14,7 @@ plot_species_ts(
   max_year = NULL,
   smoothed_trend = TRUE,
   linecolour = NULL,
+  ribboncolour = NULL,
   trendlinecolour = NULL,
   envelopecolour = NULL,
   single_plot = TRUE,
@@ -51,6 +52,9 @@ custom title or if calling the function manually.}
 
 \item{linecolour}{(Optional) Colour for the indicator line.
 Default is darkorange.}
+
+\item{ribboncolour}{(Optional) Colour for the bootstrapped confidence intervals.
+Default is goldenrod1. Set to "NA" if you don't want to plot the CIs.}
 
 \item{trendlinecolour}{(Optional) Colour for the smoothed trendline.
 Default is blue.}

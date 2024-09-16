@@ -12,6 +12,7 @@ plot_ts(
   suppress_y = FALSE,
   smoothed_trend = TRUE,
   linecolour = NULL,
+  ribboncolour = NULL,
   trendlinecolour = NULL,
   envelopecolour = NULL,
   gridoff = FALSE,
@@ -41,13 +42,17 @@ S3 method (if calling the function manually, leave as NULL).}
 \item{smoothed_trend}{If TRUE, plot a smoothed trendline.}
 
 \item{linecolour}{(Optional) Colour for the indicator line.
-Default is darkorange.}
+Default is darkorange. Set to "NA" if you don't want to plot the indicator line.}
+
+\item{ribboncolour}{(Optional) Colour for the bootstrapped confidence intervals.
+Default is goldenrod1. Set to "NA" if you don't want to plot the CIs.}
 
 \item{trendlinecolour}{(Optional) Colour for the smoothed trendline.
-Default is blue.}
+Default is blue. Set to "NA" if you don't want to plot the trend.}
 
 \item{envelopecolour}{(Optional) Colour for the uncertainty envelope.
-Default is lightsteelblue.}
+Default is lightsteelblue. Set to "NA" if you don't want to plot the trend
+uncertainty.}
 
 \item{gridoff}{If TRUE, hides gridlines.}
 

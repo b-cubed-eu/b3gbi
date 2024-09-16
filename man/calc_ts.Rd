@@ -31,7 +31,7 @@
 
 \method{calc_ts}{pielou_evenness}(x, ...)
 
-\method{calc_ts}{ab_rarity}(x, ...)
+\method{calc_ts}{ab_rarity}(x, bootstrap = FALSE, num_bootstraps = 1000, ...)
 
 \method{calc_ts}{area_rarity}(x, ...)
 

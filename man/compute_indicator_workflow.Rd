@@ -8,6 +8,7 @@ compute_indicator_workflow(
   data,
   type,
   dim_type = c("map", "ts"),
+  ci_type = c("norm", "basic", "perc", "bca", "none"),
   cell_size = NULL,
   level = c("continent", "country", "world"),
   region = "Europe",
@@ -33,6 +34,9 @@ compute_indicator_workflow(
 }}
 
 \item{dim_type}{Dimension to calculate indicator over (time: 'ts', or space: 'map')}
+
+\item{ci_type}{Type of bootstrap confidence intervals to calculate. (Default: "norm".
+Select "none" to avoid calculating bootstrap CIs.)}
 
 \item{cell_size}{Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)}
 
