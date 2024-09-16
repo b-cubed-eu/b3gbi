@@ -1223,7 +1223,7 @@ plot_species_ts <- function(x,
   if ("ll" %in% colnames(x$data) & "ul" %in% colnames(x$data)) {
 
     ci_ribbon <- list(
-    trend_plot <- trend_plot +
+
       geom_ribbon(aes(ymin = ll,
                       ymax = ul),
                   alpha = 0.3,
