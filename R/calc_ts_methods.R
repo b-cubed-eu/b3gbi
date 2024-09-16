@@ -269,7 +269,8 @@ calc_ts.newness <- function(x,
 
 #' @export
 #' @rdname calc_ts
-calc_ts.williams_evenness <- function(x, ...) {
+calc_ts.williams_evenness <- function(x,
+                                      ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
@@ -284,7 +285,8 @@ calc_ts.williams_evenness <- function(x, ...) {
 
 #' @export
 #' @rdname calc_ts
-calc_ts.pielou_evenness <- function(x, ...) {
+calc_ts.pielou_evenness <- function(x,
+                                    ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
@@ -302,6 +304,7 @@ calc_ts.evenness_core <- function(x,
                                   type,
                                   bootstrap = FALSE,
                                   num_bootstraps = 1000,
+                                  ci_type = ci_type,
                                   ...) {
 
   stopifnot_error("Please check the class and structure of your data.
@@ -339,6 +342,13 @@ calc_ts.evenness_core <- function(x,
         R = num_bootstraps,
         type = type))
 
+    ci_df <- get_bootstrap_ci(bootstraps, type = ci_type, ...)
+
+    indicator <- indicator %>%
+      full_join(ci_df,
+                by = join_by(year),
+                relationship = "many-to-many")
+
   } else {
 
     indicator <-
@@ -353,6 +363,8 @@ calc_ts.evenness_core <- function(x,
 
   }
 
+  return(indicator)
+
 }
 
 #' @export
@@ -360,6 +372,7 @@ calc_ts.evenness_core <- function(x,
 calc_ts.ab_rarity <- function(x,
                               bootstrap = FALSE,
                               num_bootstraps = 1000,
+                              ci_type = ci_type,
                               ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
@@ -369,43 +382,71 @@ calc_ts.ab_rarity <- function(x,
   if (bootstrap==TRUE) {
 
     # Function for boot statistic
-    boot_statistic <- function(data, indices, obs) {
+    boot_statistic <- function(data, indices) {
       d <- data[indices]
-      return(calc_thingy(d, obs))
+      return(sum(d))
     }
 
-    calc_thingy <- function(bs_data, obs) {
-      1 / (bs_data / sum(obs))
-    }
+    # calc_thingy <- function(bs_data) {
+    #   #sum_data <- sum(bs_data)
+    #   1 / (bs_data / sumobs)
+    # }
 
     indicator <-
       x %>%
-      dplyr::mutate(records_taxon = sum(obs), .by = taxonKey) %>%
+      dplyr::mutate(records_taxon = sum(obs), .by = c(taxonKey)) %>%
+      dplyr::mutate(rarity = 1 / (records_taxon / sum(obs))) %>%
+     # dplyr::summarise(diversity_val = sum(rarity), .by = c("year", "cellid")) %>%
       dplyr::arrange(year)
 
-    indicator_2 <-
-      boot::boot(
-        data = indicator$records_taxon,
+    ind_list <- lapply(unique(indicator$year), function(x){
+      a <- indicator$rarity[indicator$year==x]
+      return(a)
+    })
+
+    names(ind_list) <- unique(indicator$year)
+
+    # ind_list <- list()
+    # counter <- 1
+    # for (i in unique(indicator$year)){
+    #   ind_list[[counter]] <- indicator$diversity_val[indicator$year==i]
+    #   counter <- counter + 1
+    # }
+
+    bootstraps <-
+    ind_list %>%
+      purrr::map(~boot::boot(
+        data = .,
         statistic = boot_statistic,
-        R = num_bootstraps,
-        obs = indicator$obs)
+        R = num_bootstraps))
 
-    ci_df <- get_bootstrap_ci(indicator_2, h = logit, hinv = inv_logit, type = ci_type)
+    ci_df <- get_bootstrap_ci(bootstraps, type = ci_type, ...)
 
+    indicator <- indicator %>%
+      full_join(ci_df,
+                by = join_by(year),
+                relationship = "many-to-many")
+
+    return(indicator)
+
+  #  ci_df <- get_bootstrap_ci(indicator_2, h = logit, hinv = inv_logit, type = ci_type)
+
+  #  indicator <-
+  #    ci_df %>%
+  #    dplyr::full_join(indicator, by = join_by())
+
+  } else {
+
+    # Calculate total summed rarity (in terms of abundance) for each grid cell
     indicator <-
-      ci_df %>%
-      dplyr::full_join(indicator, by = join_by())
+      x %>%
+      dplyr::mutate(records_taxon = sum(obs), .by = taxonKey) %>%
+      dplyr::mutate(rarity = 1 / (records_taxon / sum(obs))) %>%
+      dplyr::summarise(diversity_val = sum(rarity), .by = c("year", "cellid")) %>%
+      dplyr::summarise(diversity_val = sum(diversity_val), .by = "year") %>%
+      dplyr::arrange(year)
 
   }
-
-  # Calculate total summed rarity (in terms of abundance) for each grid cell
-  indicator <-
-    x %>%
-    dplyr::mutate(records_taxon = sum(obs), .by = taxonKey) %>%
-    dplyr::mutate(rarity = 1 / (records_taxon / sum(obs))) %>%
-    dplyr::summarise(diversity_val = sum(rarity), .by = c("year", "cellid")) %>%
-    dplyr::summarise(diversity_val = sum(diversity_val), .by = "year") %>%
-    dplyr::arrange(year)
 
 }
 
@@ -432,19 +473,85 @@ calc_ts.area_rarity <- function(x, ...) {
 
 #' @export
 #' @rdname calc_ts
-calc_ts.spec_occ <- function(x, ...) {
+calc_ts.spec_occ <- function(x,
+                             indicator=indicator,
+                             bootstrap=FALSE,
+                             num_bootstraps=1000,
+                             ci_type = ci_type,
+                             ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
                   inherits(x, "spec_occ"))
 
-  # Calculate total occurrences for each species by grid cell
-  indicator <-
+  if (bootstrap==TRUE) {
+
+  # Function for boot statistic
+  boot_statistic <- function(data, indices) {
+    d <- data[indices]
+    return(sum(d))
+  }
+
+  x <-
     x %>%
-    dplyr::mutate(diversity_val = sum(obs), .by = c(taxonKey, year)) %>%
-    dplyr::distinct(year, scientificName, .keep_all = TRUE) %>%
-    dplyr::arrange(year) %>%
-    dplyr::select(year, taxonKey, scientificName, diversity_val)
+    dplyr::arrange(taxonKey)
+
+  bootstraps <-
+    x %>%
+    dplyr::summarize(totobs = sum(obs), .by = c(year,cellCode,taxonKey)) %>%
+    dplyr::group_by(taxonKey) %>%
+    dplyr::group_split() %>%
+    purrr::map(. %>%
+                 dplyr::select(year,totobs,cellCode) %>%
+                 dplyr::arrange(year) %>%
+                 tidyr::pivot_wider(names_from = year, values_from = totobs) %>%
+                 replace(is.na(.),0) %>%
+                 tibble::column_to_rownames("cellCode") %>%
+                 as.list() %>%
+                 purrr::map(. %>%
+                              boot::boot(
+                                data = .,
+                                statistic = boot_statistic,
+                                R = num_bootstraps
+                              )
+                 )
+               )
+
+  taxkeys <- unique(x$taxonKey)
+  scinames <- unique(x$scientificName)
+
+  ci_df_list <- list()
+  for (i in 1:length(bootstraps)) {
+
+    ci_df_list[[i]] <- get_bootstrap_ci(bootstraps[[i]], type = ci_type, ...)
+    if (length(ci_df_list[[i]]) > 0) {
+      ci_df_list[[i]]$taxonKey <- taxkeys[i]
+      ci_df_list[[i]]$scientificName <- scinames[i]
+
+    }
+  }
+
+  ci_df <- do.call(rbind, ci_df_list)
+
+
+  indicator <- indicator %>%
+    full_join(ci_df,
+              by = join_by(year, taxonKey, scientificName),
+              relationship = "many-to-many")
+
+  return(indicator)
+
+  } else {
+
+    # Calculate total occurrences for each species by grid cell
+    indicator <-
+      x %>%
+      dplyr::mutate(diversity_val = sum(obs), .by = c(taxonKey, year)) %>%
+      dplyr::distinct(year, scientificName, .keep_all = TRUE) %>%
+      dplyr::arrange(year) %>%
+      dplyr::select(year, taxonKey, scientificName, diversity_val)
+
+  }
 
 }
 
