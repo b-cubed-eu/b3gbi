@@ -557,19 +557,85 @@ calc_ts.spec_occ <- function(x,
 
 #' @export
 #' @rdname calc_ts
-calc_ts.spec_range <- function(x, ...) {
+calc_ts.spec_range <- function(x,
+                               indicator=indicator,
+                               bootstrap=FALSE,
+                               num_bootstraps=1000,
+                               ci_type = ci_type,
+                               ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
                   inherits(x, "spec_range"))
 
+  x <-
+    x %>%
+    dplyr::arrange(taxonKey, year, cellCode)
+
+  if (bootstrap==TRUE) {
+
+    # Function for boot statistic
+    boot_statistic <- function(data, indices) {
+      d <- data[indices]
+      return(sum(d))
+    }
+
+    bootstraps <-
+      x %>%
+      dplyr::summarize(observed = sum(obs >= 1), .by = c(taxonKey, year, cellCode)) %>%
+      dplyr::group_by(taxonKey) %>%
+      dplyr::group_split() %>%
+      purrr::map(. %>%
+                   dplyr::select(year,observed,cellCode) %>%
+                   dplyr::arrange(year) %>%
+                   tidyr::pivot_wider(names_from = year, values_from = observed) %>%
+                   replace(is.na(.),0) %>%
+                   tibble::column_to_rownames("cellCode") %>%
+                   as.list() %>%
+                   purrr::map(. %>%
+                                boot::boot(
+                                  data = .,
+                                  statistic = boot_statistic,
+                                  R = num_bootstraps
+                                )
+                   )
+      )
+
+    taxkeys <- unique(x$taxonKey)
+    scinames <- unique(x$scientificName)
+
+    ci_df_list <- list()
+    for (i in 1:length(bootstraps)) {
+
+      ci_df_list[[i]] <- get_bootstrap_ci(bootstraps[[i]], type = ci_type, ...)
+      if (length(ci_df_list[[i]]) > 0) {
+        ci_df_list[[i]]$taxonKey <- taxkeys[i]
+        ci_df_list[[i]]$scientificName <- scinames[i]
+
+      }
+    }
+
+    ci_df <- do.call(rbind, ci_df_list)
+
+
+    indicator <- indicator %>%
+      full_join(ci_df,
+                by = join_by(year, taxonKey, scientificName),
+                relationship = "many-to-many")
+
+    return(indicator)
+
+  } else {
+
   # Flatten occurrences for each species by grid cell
   indicator <-
     x %>%
-    dplyr::mutate(diversity_val = sum(obs >= 1), .by = c(taxonKey, cellid)) %>%
+    dplyr::mutate(diversity_val = sum(obs >= 1), .by = c(taxonKey, year)) %>%
     dplyr::distinct(year, scientificName, .keep_all = TRUE) %>%
-    dplyr::arrange(year) %>%
+    dplyr::arrange(taxonKey) %>%
     dplyr::select(year, taxonKey, scientificName, diversity_val)
+
+  }
 
 }
 
