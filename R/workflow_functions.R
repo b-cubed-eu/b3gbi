@@ -387,7 +387,10 @@ compute_indicator_workflow <- function(data,
 
       if (ci_type!="none") {
 
-        if (type == "pielou_evenness" | type == "ab_rarity" | type == "spec_occ"){
+        if (type == "pielou_evenness" |
+            type == "ab_rarity" |
+            type == "spec_occ" |
+            type == "spec_range"){
 
           indicator <- calc_ts(df,
                                indicator = indicator,
