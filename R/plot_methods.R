@@ -239,7 +239,7 @@ plot.spec_occ <- function(x, ...) {
 
 #' @export
 plot.cum_richness <- function(x,
-                              auccolour = NULL,
+                              envelopecolour = NULL,
                               ...){
 
   stopifnot_error("Incorrect object class. Must be class 'cum_richness'.", inherits(x, "cum_richness"))
@@ -257,14 +257,14 @@ plot.cum_richness <- function(x,
                           smoothed_trend = FALSE,
                           ...)
 
-    if (is.null(auccolour)) auccolour = "orange"
+    if (is.null(envelopecolour)) envelopecolour = "lightsteelblue"
+
 
     # Colour the area under the curve
-    trend_plot <- trend_plot +
-      geom_ribbon(aes(ymin = 0,
-                      ymax = diversity_val),
-                  fill = auccolour, alpha = 0.4)
-
+     trend_plot <- trend_plot +
+       geom_ribbon(aes(ymin = 0,
+                       ymax = diversity_val),
+                   fill = envelopecolour, alpha = 0.3)
     # Show plot
     trend_plot
 
@@ -682,16 +682,15 @@ plot.occ_turnover <- function(x,
   trend_plot <- plot_ts(x,
                         y_label_default = y_label_default,
                         auto_title = auto_title,
-                        smoothed_trend = FALSE,
                         ...)
 
-  if (is.null(auccolour)) auccolour = "orange"
-
-  # Colour the area under the curve
-  trend_plot <- trend_plot +
-    geom_ribbon(aes(ymin = 0,
-                    ymax = diversity_val),
-                fill = auccolour, alpha = 0.4)
+  # if (is.null(auccolour)) auccolour = "orange"
+  #
+  # # Colour the area under the curve
+  # trend_plot <- trend_plot +
+  #   geom_ribbon(aes(ymin = 0,
+  #                   ymax = diversity_val),
+  #               fill = auccolour, alpha = 0.4)
 
   # Show plot
   trend_plot
