@@ -165,11 +165,47 @@ calc_ts.hill_core <- function(x,
 
 #' @export
 #' @rdname calc_ts
-calc_ts.obs_richness <- function(x, ...) {
+calc_ts.obs_richness <- function(x,
+                                 indicator = NULL,
+                                 bootstrap = FALSE,
+                                 num_bootstrap = 1000,
+                                 ci_type = ci_type,
+                                 ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
                   inherits(x, "obs_richness"))
+
+  if (bootstrap==TRUE) {
+
+    x <-
+      x %>%
+      dplyr::arrange(year)
+
+    # Put individual observations into a list organized by year
+    ind_list <- list_org_by_year(x)
+
+    # Bootstrap indicator value
+    bootstraps <-
+      ind_list %>%
+      purrr::map(~boot::boot(
+        data = .,
+        statistic = boot_statistic_sum,
+        R = num_bootstrap))
+
+    # Calculate confidence intervals
+    ci_df <- get_bootstrap_ci(bootstraps, type = ci_type, ...)
+
+    # Convert negative values to zero as evenness cannot be below zero
+    ci_df$ll <- ifelse(ci_df$ll > 0, ci_df$ll, 0)
+
+    # Join confidence intervals to indicator values
+    indicator <- indicator %>%
+      full_join(ci_df,
+                by = join_by(year),
+                relationship = "many-to-many")
+
+  } else {
 
   # Calculate observed species richness by year
   x <-
@@ -178,36 +214,108 @@ calc_ts.obs_richness <- function(x, ...) {
                               .by = "year") %>%
     dplyr::arrange(year)
 
+  }
+
 }
 
 #' @export
 #' @rdname calc_ts
-calc_ts.cum_richness <- function(x, ...) {
+calc_ts.cum_richness <- function(x,
+                                 indicator = NULL,
+                                 bootstrap = FALSE,
+                                 num_bootstrap = 1000,
+                                 ci_type = ci_type,
+                                 ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
                   inherits(x, "cum_richness"))
 
-  # Calculate the cumulative number of unique species observed
-  indicator <-
-    x %>%
-    dplyr::select(year, taxonKey) %>%
-    dplyr::arrange(year) %>%
-    dplyr::distinct(taxonKey, .keep_all = TRUE) %>%
-    dplyr::summarize(unique_by_year = length(taxonKey),
-                     .by = year) %>%
-    dplyr::reframe(year = year,
-                   diversity_val = cumsum(unique_by_year))
+  if (bootstrap==TRUE) {
+
+    # Calculate the cumulative number of unique species observed
+    x <-
+      x %>%
+      dplyr::select(year, taxonKey) %>%
+      dplyr::arrange(year) %>%
+      dplyr::distinct(taxonKey, .keep_all = TRUE) %>%
+      dplyr::summarize(unique_by_year = length(taxonKey),
+                       .by = year)
+
+    # Put individual observations into a list organized by year
+    #ind_list <- list_org_by_year(x, "taxonKey")
+
+    # Calculate confidence intervals by permutation
+    ci_df <- permute_ci(x, num_bootstrap)
+
+    # Join confidence intervals to indicator values
+    indicator <- indicator %>%
+      full_join(ci_df,
+                by = join_by(year),
+                relationship = "many-to-many")
+
+
+  } else {
+
+    # Calculate the cumulative number of unique species observed
+    indicator <-
+      x %>%
+      dplyr::select(year, taxonKey) %>%
+      dplyr::arrange(year) %>%
+      dplyr::distinct(taxonKey, .keep_all = TRUE) %>%
+      dplyr::summarize(unique_by_year = length(taxonKey),
+                       .by = year) %>%
+      dplyr::reframe(year = year,
+                     diversity_val = cumsum(unique_by_year))
+
+  }
 
 }
 
 #' @export
 #' @rdname calc_ts
-calc_ts.total_occ <- function(x, ...) {
+calc_ts.total_occ <- function(x,
+                              indicator = NULL,
+                              bootstrap = FALSE,
+                              num_bootstrap = 1000,
+                              ci_type = ci_type,
+                              ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
                   inherits(x, "total_occ"))
+
+
+  if (bootstrap==TRUE) {
+
+    x <-
+      x %>%
+      dplyr::arrange(year)
+
+    # Put individual observations into a list organized by year
+    ind_list <- list_org_by_year(x, "obs")
+
+    # Bootstrap indicator value
+    bootstraps <-
+      ind_list %>%
+      purrr::map(~boot::boot(
+        data = .,
+        statistic = boot_statistic_sum,
+        R = num_bootstrap))
+
+    # Calculate confidence intervals
+    ci_df <- get_bootstrap_ci(bootstraps, type = ci_type, ...)
+
+    # Convert negative values to zero as evenness cannot be below zero
+    ci_df$ll <- ifelse(ci_df$ll > 0, ci_df$ll, 0)
+
+    # Join confidence intervals to indicator values
+    indicator <- indicator %>%
+      full_join(ci_df,
+                by = join_by(year),
+                relationship = "many-to-many")
+
+  } else {
 
   # Calculate total number of occurrences over the grid
   indicator <-
@@ -215,55 +323,127 @@ calc_ts.total_occ <- function(x, ...) {
     dplyr::summarize(diversity_val = sum(obs),
                      .by = "year")
 
+  }
+
 }
 
 #' @export
 #' @rdname calc_ts
-calc_ts.occ_density <- function(x, ...) {
+calc_ts.occ_density <- function(x,
+                                indicator = NULL,
+                                bootstrap = FALSE,
+                                num_bootstrap = 1000,
+                                ci_type = ci_type,
+                                ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
                   inherits(x, "occ_density"))
 
+
+  if (bootstrap==TRUE) {
+
+    x <-
+      x %>%
+      arrange(year, cellid) %>%
+      dplyr::reframe(diversity_val = sum(obs) / area_km2,
+                     .by = c("year", "cellid"))
+
+    # Put individual observations into a list organized by year
+    ind_list <- list_org_by_year(x, "diversity_val")
+
+    # Bootstrap indicator value
+    bootstraps <-
+      ind_list %>%
+      purrr::map(~boot::boot(
+        data = .,
+        statistic = boot_statistic_mean,
+        R = num_bootstrap))
+
+    # Calculate confidence intervals
+    ci_df <- get_bootstrap_ci(bootstraps, type = ci_type, ...)
+
+    # Convert negative values to zero as evenness cannot be below zero
+    ci_df$ll <- ifelse(ci_df$ll > 0, ci_df$ll, 0)
+
+    # Join confidence intervals to indicator values
+    indicator <- indicator %>%
+      full_join(ci_df,
+                by = join_by(year),
+                relationship = "many-to-many")
+
+  } else {
+
   # Calculate density of occurrences over the grid (per square km)
   indicator <-
     x %>%
+    arrange(year, cellid) %>%
     dplyr::reframe(diversity_val = sum(obs) / area_km2,
                    .by = c("year", "cellid")) %>%
     dplyr::reframe(diversity_val = mean(diversity_val), .by = "year") %>%
     dplyr::mutate(diversity_val = as.numeric(diversity_val)) %>%
     dplyr::arrange(year)
 
+  }
+
 }
 
 #' @export
 #' @rdname calc_ts
 calc_ts.newness <- function(x,
-                             ...) {
+                            indicator = NULL,
+                            bootstrap = FALSE,
+                            num_bootstrap = 1000,
+                            ci_type = ci_type,
+                            ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
                   inherits(x, "newness"))
 
-  yearvals <- vector()
-  counter <- 1
-  for (i in unique(x$year)) {
-    yearvals[counter]  <- round(mean(x$year[x$year <= i]))
-    counter <- counter + 1
+  if (bootstrap==TRUE) {
+
+    # Put individual observations into a list organized by year
+    ind_list <- lapply(unique(x$year), function(y){
+      a <- x$year[x$year<=y]
+      return(a)
+    })
+
+    # Use years to name list elements
+    names(ind_list) <- unique(x$year)
+
+    # Bootstrap indicator value
+    bootstraps <-
+      ind_list %>%
+      purrr::map(~boot::boot(
+        data = .,
+        statistic = boot_statistic_newness,
+        R = num_bootstrap))
+
+    # Calculate confidence intervals
+    ci_df <- get_bootstrap_ci(bootstraps, type = ci_type, ...)
+
+    # Convert negative values to zero as evenness cannot be below zero
+    ci_df$ll <- ifelse(ci_df$ll > 0, ci_df$ll, 0)
+
+    # Join confidence intervals to indicator values
+    indicator <- indicator %>%
+      full_join(ci_df,
+                by = join_by(year),
+                relationship = "many-to-many")
+
+  } else {
+
+    yearvals <- vector()
+    counter <- 1
+    for (i in unique(x$year)) {
+      yearvals[counter]  <- round(mean(x$year[x$year <= i]))
+      counter <- counter + 1
+    }
+
+    indicator <- data.frame("year" = unique(x$year),
+                            "diversity_val" = yearvals)
+
   }
-
-  indicator <- data.frame("year" = unique(x$year),
-                          "diversity_val" = yearvals)
-
-  # # Calculate mean year of occurrence over the grid
-  # indicator <-
-  #   x %>%
-  #   dplyr::summarize(diversity_val = mean(year),
-  #                    .by = c("year", "cellid")) %>%
-  #   dplyr::summarize(diversity_val = round(mean(year)),
-  #                    .by = c("year")) %>%
-  #   dplyr::arrange(year)
-
-  return(indicator)
 
 }
 
@@ -302,8 +482,9 @@ calc_ts.pielou_evenness <- function(x,
 #' @noRd
 calc_ts.evenness_core <- function(x,
                                   type,
+                                  indicator = NULL,
                                   bootstrap = FALSE,
-                                  num_bootstraps = 1000,
+                                  num_bootstrap = 1000,
                                   ci_type = ci_type,
                                   ...) {
 
@@ -329,21 +510,27 @@ calc_ts.evenness_core <- function(x,
 
   if (bootstrap==TRUE) {
 
-     boot_statistic <- function(data, indices, type) {
-       d <- data[indices]
-       return(compute_evenness_formula(d, type))
-     }
-
+    # Bootstrap evenness values
     bootstraps <-
       x %>%
       purrr::map(~boot::boot(
         data = .,
-        statistic = boot_statistic,
-        R = num_bootstraps,
+        statistic = boot_statistic_evenness,
+        R = num_bootstrap,
         type = type))
 
+    # Replace NA values to avoid errors when calculating confidence intervals
+    bootstraps <- lapply(bootstraps, ci_error_prevent)
+
+    names(bootstraps) <- unique(indicator$year)
+
+    # Calculate confidence intervals
     ci_df <- get_bootstrap_ci(bootstraps, type = ci_type, ...)
 
+    # Convert negative values to zero as evenness cannot be below zero
+    ci_df$ll <- ifelse(ci_df$ll > 0, ci_df$ll, 0)
+
+    # Join confidence intervals to indicator values
     indicator <- indicator %>%
       full_join(ci_df,
                 by = join_by(year),
@@ -370,8 +557,9 @@ calc_ts.evenness_core <- function(x,
 #' @export
 #' @rdname calc_ts
 calc_ts.ab_rarity <- function(x,
+                              indicator = NULL,
                               bootstrap = FALSE,
-                              num_bootstraps = 1000,
+                              num_bootstrap = 1000,
                               ci_type = ci_type,
                               ...) {
 
@@ -381,59 +569,36 @@ calc_ts.ab_rarity <- function(x,
 
   if (bootstrap==TRUE) {
 
-    # Function for boot statistic
-    boot_statistic <- function(data, indices) {
-      d <- data[indices]
-      return(sum(d))
-    }
-
-    # calc_thingy <- function(bs_data) {
-    #   #sum_data <- sum(bs_data)
-    #   1 / (bs_data / sumobs)
-    # }
-
-    indicator <-
+    # Calculate rarity for each cell each year
+    x <-
       x %>%
-      dplyr::mutate(records_taxon = sum(obs), .by = c(taxonKey)) %>%
+      dplyr::mutate(records_taxon = sum(obs), .by = taxonKey) %>%
       dplyr::mutate(rarity = 1 / (records_taxon / sum(obs))) %>%
-     # dplyr::summarise(diversity_val = sum(rarity), .by = c("year", "cellid")) %>%
       dplyr::arrange(year)
 
-    ind_list <- lapply(unique(indicator$year), function(x){
-      a <- indicator$rarity[indicator$year==x]
-      return(a)
-    })
+    ind_list <- list_org_by_year(x, "rarity")
 
-    names(ind_list) <- unique(indicator$year)
-
-    # ind_list <- list()
-    # counter <- 1
-    # for (i in unique(indicator$year)){
-    #   ind_list[[counter]] <- indicator$diversity_val[indicator$year==i]
-    #   counter <- counter + 1
-    # }
-
+    # Bootstrap indicator value
     bootstraps <-
     ind_list %>%
       purrr::map(~boot::boot(
         data = .,
-        statistic = boot_statistic,
-        R = num_bootstraps))
+        statistic = boot_statistic_sum,
+        R = num_bootstrap))
 
+    # Calculate confidence intervals
     ci_df <- get_bootstrap_ci(bootstraps, type = ci_type, ...)
 
+    # Convert negative values to zero as rarity cannot be less than zero
+    ci_df$ll <- ifelse(ci_df$ll > 0, ci_df$ll, 0)
+
+    # Join confidence intervals to indicator values by year
     indicator <- indicator %>%
       full_join(ci_df,
                 by = join_by(year),
                 relationship = "many-to-many")
 
     return(indicator)
-
-  #  ci_df <- get_bootstrap_ci(indicator_2, h = logit, hinv = inv_logit, type = ci_type)
-
-  #  indicator <-
-  #    ci_df %>%
-  #    dplyr::full_join(indicator, by = join_by())
 
   } else {
 
@@ -452,22 +617,69 @@ calc_ts.ab_rarity <- function(x,
 
 #' @export
 #' @rdname calc_ts
-calc_ts.area_rarity <- function(x, ...) {
+calc_ts.area_rarity <- function(x,
+                                indicator = NULL,
+                                bootstrap = FALSE,
+                                num_bootstrap = 1000,
+                                ci_type = ci_type,
+                                ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
                   inherits(x, "area_rarity"))
 
+  if (bootstrap==TRUE) {
+
+    # Calculate rarity for each cell each year
+    x <-
+      x %>%
+      dplyr::arrange(year, cellid, taxonKey) %>%
+      dplyr::mutate(rec_tax_cell = sum(dplyr::n_distinct(cellid)),
+                    .by = c(taxonKey)) %>%
+      dplyr::mutate(rarity = 1 / (rec_tax_cell / sum(dplyr::n_distinct(cellid)))) %>%
+      dplyr::summarise(diversity_val = sum(rarity), .by = c("year", "cellid")) %>%
+      dplyr::arrange(year)
+
+    # Put cell-based rarity values into a list organized by year
+    ind_list <- list_org_by_year(x, "diversity_val")
+
+    # Bootstrap indicator value
+    bootstraps <-
+      ind_list %>%
+      purrr::map(~boot::boot(
+        data = .,
+        statistic = boot_statistic_mean,
+        R = num_bootstrap))
+
+    # Calculate confidence intervals
+    ci_df <- get_bootstrap_ci(bootstraps, type = ci_type, ...)
+
+    # Convert negative values to zero as rarity cannot be less than zero
+    ci_df$ll <- ifelse(ci_df$ll > 0, ci_df$ll, 0)
+
+    # Join confidence intervals to indicator values by year
+    indicator <- indicator %>%
+      full_join(ci_df,
+                by = join_by(year),
+                relationship = "many-to-many")
+
+    return(indicator)
+
+  } else {
+
   # Calculate rarity as the sum (per grid cell) of the inverse of occupancy
   # frequency for each species
-  indicator <-
-    x %>%
-    dplyr::mutate(rec_tax_cell = sum(dplyr::n_distinct(cellid)),
-                  .by = c(taxonKey)) %>%
-    dplyr::mutate(rarity = 1 / (rec_tax_cell / sum(dplyr::n_distinct(cellid)))) %>%
-    dplyr::summarise(diversity_val = sum(rarity), .by = c("year", "cellid")) %>%
-    dplyr::summarise(diversity_val = mean(diversity_val), .by = "year") %>%
-    dplyr::arrange(year)
+    indicator <-
+      x %>%
+      dplyr::arrange(year, cellid, taxonKey) %>%
+      dplyr::mutate(rec_tax_cell = sum(dplyr::n_distinct(cellid)),
+                    .by = c(taxonKey)) %>%
+      dplyr::mutate(rarity = 1 / (rec_tax_cell / sum(dplyr::n_distinct(cellid)))) %>%
+      dplyr::summarise(diversity_val = sum(rarity), .by = c("year", "cellid")) %>%
+      dplyr::summarise(diversity_val = mean(diversity_val), .by = "year") %>%
+      dplyr::arrange(year)
+
+  }
 
 }
 
@@ -476,7 +688,7 @@ calc_ts.area_rarity <- function(x, ...) {
 calc_ts.spec_occ <- function(x,
                              indicator=indicator,
                              bootstrap=FALSE,
-                             num_bootstraps=1000,
+                             num_bootstrap=1000,
                              ci_type = ci_type,
                              ...) {
 
@@ -486,16 +698,11 @@ calc_ts.spec_occ <- function(x,
 
   if (bootstrap==TRUE) {
 
-  # Function for boot statistic
-  boot_statistic <- function(data, indices) {
-    d <- data[indices]
-    return(sum(d))
-  }
-
   x <-
     x %>%
     dplyr::arrange(taxonKey)
 
+  # Bootstrap species occurrence values
   bootstraps <-
     x %>%
     dplyr::summarize(totobs = sum(obs), .by = c(year,cellCode,taxonKey)) %>%
@@ -511,8 +718,8 @@ calc_ts.spec_occ <- function(x,
                  purrr::map(. %>%
                               boot::boot(
                                 data = .,
-                                statistic = boot_statistic,
-                                R = num_bootstraps
+                                statistic = boot_statistic_sum,
+                                R = num_bootstrap
                               )
                  )
                )
@@ -520,6 +727,7 @@ calc_ts.spec_occ <- function(x,
   taxkeys <- unique(x$taxonKey)
   scinames <- unique(x$scientificName)
 
+  # Calculate confidence intervals
   ci_df_list <- list()
   for (i in 1:length(bootstraps)) {
 
@@ -531,9 +739,13 @@ calc_ts.spec_occ <- function(x,
     }
   }
 
+  # Convert list to data frame
   ci_df <- do.call(rbind, ci_df_list)
 
+  # Convert negative values to zero as rarity cannot be less than zero
+  ci_df$ll <- ifelse(ci_df$ll > 0, ci_df$ll, 0)
 
+  # Join confidence intervals to indicator values
   indicator <- indicator %>%
     full_join(ci_df,
               by = join_by(year, taxonKey, scientificName),
@@ -560,7 +772,7 @@ calc_ts.spec_occ <- function(x,
 calc_ts.spec_range <- function(x,
                                indicator=indicator,
                                bootstrap=FALSE,
-                               num_bootstraps=1000,
+                               num_bootstrap=1000,
                                ci_type = ci_type,
                                ...) {
 
@@ -574,12 +786,7 @@ calc_ts.spec_range <- function(x,
 
   if (bootstrap==TRUE) {
 
-    # Function for boot statistic
-    boot_statistic <- function(data, indices) {
-      d <- data[indices]
-      return(sum(d))
-    }
-
+    # Bootstrap species range values
     bootstraps <-
       x %>%
       dplyr::summarize(observed = sum(obs >= 1), .by = c(taxonKey, year, cellCode)) %>%
@@ -595,8 +802,8 @@ calc_ts.spec_range <- function(x,
                    purrr::map(. %>%
                                 boot::boot(
                                   data = .,
-                                  statistic = boot_statistic,
-                                  R = num_bootstraps
+                                  statistic = boot_statistic_sum,
+                                  R = num_bootstrap
                                 )
                    )
       )
@@ -604,6 +811,7 @@ calc_ts.spec_range <- function(x,
     taxkeys <- unique(x$taxonKey)
     scinames <- unique(x$scientificName)
 
+    # Calculate confidence intervals
     ci_df_list <- list()
     for (i in 1:length(bootstraps)) {
 
@@ -615,9 +823,13 @@ calc_ts.spec_range <- function(x,
       }
     }
 
+    # Convert list to data frame
     ci_df <- do.call(rbind, ci_df_list)
 
+    # Convert negative values to zero as rarity cannot be less than zero
+    ci_df$ll <- ifelse(ci_df$ll > 0, ci_df$ll, 0)
 
+    # Join confidence intervals to indicator values
     indicator <- indicator %>%
       full_join(ci_df,
                 by = join_by(year, taxonKey, scientificName),
@@ -644,41 +856,120 @@ calc_ts.spec_range <- function(x,
 #'    is usually the best.
 #' @export
 #' @rdname calc_ts
-calc_ts.tax_distinct <- function(x, set_rows = 1, ...) {
+calc_ts.tax_distinct <- function(x,
+                                 set_rows = 1,
+                                 indicator=indicator,
+                                 bootstrap=FALSE,
+                                 num_bootstrap=1000,
+                                 ci_type = ci_type,
+                                 ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
                   inherits(x, "tax_distinct"))
 
-  # Retrieve taxonomic data from GBIF
-  tax_hier <- taxize::classification(unique(x$scientificName),
-                                     db = "gbif",
-                                     ...)
 
-  # Save data
-  #  saveRDS(tax_hier, file = "taxonomic_hierarchy.RDS")
+  if (bootstrap==TRUE) {
 
-  #  tax_hier <- readRDS("taxonomic_hierarchy.RDS")
+    # read data saved during the initial indicator calculation
+    tax_hier <- readRDS("taxonomic_hierarchy.RDS")
 
-  # Calculate taxonomic distinctness
-  indicator <-
-    x %>%
-    tibble::add_column(diversity_val = NA) %>%
-    dplyr::group_split(year) %>%
-    purrr::map(. %>%
-                 dplyr::mutate(diversity_val =
-                                 compute_tax_distinct_formula(.,
-                                                              tax_hier))) %>%
-    dplyr::bind_rows() %>%
-    dplyr::distinct(year, diversity_val, .keep_all = TRUE) %>%
-    dplyr::select(year, diversity_val)
+    x <-
+      x %>%
+      dplyr::arrange(year)
+
+    # organize data
+    x2 <-
+      x %>%
+      tibble::add_column(diversity_val = NA) %>%
+      dplyr::group_split(year)
+
+    x3 <- lapply(x2, function(y) {
+      a <- y$scientificName
+    })
+
+    names(x3) <- lapply(x2, function(y) {
+      a <- y$year[1]
+    })
+
+
+    # Bootstrap indicator value
+    bootstraps <-
+      x3 %>%
+      purrr::map(. %>%
+                 boot::boot(
+                   data = .,
+                   statistic = boot_statistic_td,
+                   R = num_bootstrap
+                 ))
+
+    # Replace NA values to avoid errors when calculating confidence intervals
+    bootstraps <- lapply(bootstraps, ci_error_prevent)
+
+    names(bootstraps) <- unique(x$year)
+
+    # Calculate confidence intervals
+    ci_df <- get_bootstrap_ci(bootstraps, type = ci_type, ...)
+
+    if (length(ci_df) > 0) {
+
+      # Convert negative values to zero as rarity cannot be less than zero
+      ci_df$ll <- ifelse(ci_df$ll > 0, ci_df$ll, 0)
+
+      # Join confidence intervals to indicator values by year
+      indicator <- indicator %>%
+        full_join(ci_df,
+                  by = join_by(year),
+                  relationship = "many-to-many")
+
+    } else {
+
+      warning("Unable to calculate confidence intervals. There may be insufficient data.")
+
+    }
+
+    return(indicator)
+
+  } else {
+
+    # Retrieve taxonomic data from GBIF
+    tax_hier <- taxize::classification(unique(x$scientificName),
+                                       db = "gbif",
+                                       ...)
+
+    # Save data for use when calculating bootstraps
+    saveRDS(tax_hier, file = "taxonomic_hierarchy.RDS")
+
+    # tax_hier <- readRDS("taxonomic_hierarchy.RDS")
+
+    # Calculate taxonomic distinctness
+    indicator <-
+      x %>%
+      tibble::add_column(diversity_val = NA) %>%
+      dplyr::group_split(year) %>%
+      purrr::map(. %>%
+                   dplyr::mutate(diversity_val =
+                                   compute_tax_distinct_formula(.,
+                                                                tax_hier))) %>%
+      dplyr::bind_rows() %>%
+      dplyr::distinct(year, diversity_val, .keep_all = TRUE) %>%
+      dplyr::select(year, diversity_val)
+
+    return(indicator)
+
+  }
 
 }
 
 
 #' @export
 #' @rdname calc_ts
-calc_ts.occ_turnover <- function(x, ...) {
+calc_ts.occ_turnover <- function(x,
+                                 indicator = NULL,
+                                 bootstrap = FALSE,
+                                 num_bootstrap = 1000,
+                                 ci_type = ci_type,
+                                 ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
@@ -688,41 +979,76 @@ calc_ts.occ_turnover <- function(x, ...) {
     dplyr::arrange(year)
 
   # Determine the species present each year
-  unique_species_l <- list()
-  counter <- 1
-  for (i in unique(x$year)) {
-    unique_species_l[[counter]] <- unique(x$taxonKey[x$year==i])
-    counter <- counter + 1
-  }
+  ind_list <- list_org_by_year(x, "taxonKey")
 
-  # Determine the new species added each year
-  species_added <- list()
-  species_added[[1]] <- unique_species_l[[1]]
-  for (i in 2:length(unique(x$year))) {
-    species_added[[i]] <- setdiff(unique_species_l[[i]], unique_species_l[[i-1]])
-  }
+  if (bootstrap==TRUE) {
 
-  # Determine the species lost each year
-  species_lost <- list()
-  species_lost[[1]] <- 0
-  for (i in 2:length(unique(x$year))) {
-    species_lost[[i]] <- setdiff(unique_species_l[[i-1]], unique_species_l[[i]])
-  }
 
-  # Combine the species present in the current with those present in the previous year
-  species_present <- list()
-  species_present[[1]] <- unique_species_l[[1]]
-  for (i in 2:length(unique(x$year))) {
-    species_present[[i]] <- union(unique_species_l[[i-1]], unique_species_l[[i]])
-  }
+    # Calculate bootstraps from tax_list
+    bootstraps <- multiyear_bootstrap(tax_list,
+                                      indicator = indicator,
+                                      num_bootstrap = num_bootstrap)
 
-  # Calculate occupancy turnover as the sum of the number of species added and the
-  # number of species lost divided by the total number of species present in the current
-  # and previous year combined
-  occ_turnover <- vector()
-  for (i in 1:length(unique(x$year))) {
-    occ_turnover[i] <- (length(species_added[[i]]) + length(species_lost[[i]])) / length(species_present[[i]])
+    # Replace NA values to avoid errors when calculating confidence intervals
+    bootstraps <- lapply(bootstraps, ci_error_prevent)
+
+    # Name bootstrap output list items by year
+    bootstraps <- add_yearvals_to_boot(bootstraps, x)
+
+    # Calculate confidence intervals
+    ci_df <- get_bootstrap_ci(bootstraps, type = ci_type, ...)
+
+    # Convert negative values to zero as rarity cannot be less than zero
+    ci_df$ll <- ifelse(ci_df$ll > 0, ci_df$ll, 0)
+
+    # Join confidence intervals to indicator values by year
+    indicator <- indicator %>%
+      full_join(ci_df,
+                by = join_by(year),
+                relationship = "many-to-many")
+
+    return(indicator)
+
+  } else {
+
+    # Determine the new species added each year
+    tax_added <- list()
+    tax_added[[1]] <- tax_list[[1]]
+    tax_added[2:length(tax_list)] <-
+      lapply(2:length(unique(x$year)), function(y){
+        a <- setdiff(tax_list[[y]], tax_list[[y-1]])
+        return(a)
+      })
+
+    # Determine the species lost each year
+    tax_lost <- list()
+    tax_lost[[1]] <- NULL
+    tax_lost[2:length(tax_list)] <-
+      lapply(2:length(unique(x$year)), function(y){
+        a <- setdiff(tax_list[[y-1]], tax_list[[y]])
+      })
+
+    # Combine the species present in the current with those present in the previous year
+    tax_present <- list()
+    tax_present[[1]] <- tax_list[[1]]
+    tax_present[2:length(tax_list)] <-
+      lapply(2:length(unique(x$year)), function(y){
+        a <- intersect(tax_list[[y-1]], tax_list[[y]])
+      })
+
+    # Calculate occupancy turnover as the sum of the number of species added and the
+    # number of species lost divided by the total number of species present in the current
+    # and previous year combined
+    occ_turnover <- sapply(1:length(unique(x$year)), function(y){
+      a <- (length(tax_added[[y]]) + length(tax_lost[[y]])) /
+        (length(tax_present[[y]]) + length(tax_added[[y]]) + length(tax_lost[[y]]))
+    })
+    occ_turnover[[1]] <- NA
+
+    indicator <- tibble::tibble(year = unique(x$year), diversity_val = occ_turnover)
+
+    return(indicator)
+
   }
-  indicator <- tibble::tibble(year = unique(x$year), diversity_val = occ_turnover)
 
 }
