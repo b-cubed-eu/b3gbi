@@ -1,3 +1,28 @@
+# alternative sampling function that works properly even with length of 1
+#' @noRd
+resample <- function(x, size, replace = TRUE) {
+
+  if (length(x) == 1) {
+
+    return(rep(x, size))
+
+  } else {
+
+    return(sample(x, size, replace = replace))
+
+  }
+
+}
+
+# Function to add missing year values into bootstrap results
+# boot is the bootstrap output, and orig_data is the original data used to
+# calculate the bootstraps (a data frame with a year column arranged in order)
+#' @noRd
+add_yearvals_to_boot <- function(boot, orig_data) {
+  names(boot) <- unique(orig_data$year)[2:length(unique(orig_data$year))]
+}
+
+
 # Copy of stopifnot_error from iregnet package
 #' @title stopifnot with custom error message
 #'
