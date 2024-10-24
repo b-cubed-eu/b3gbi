@@ -32,7 +32,7 @@ get_crs_for_mgrs <- function(cellcodes) {
   dominant_utm <- median(utm_zone)
   first_letter_a_m <- stringr::str_extract(cellcodes, "(?<=[0-9]{2})[A-M]{1}")
   first_letter_n_z <- stringr::str_extract(cellcodes, "(?<=[0-9]{2})[N-Z]{1}")
-  if (length(which(!is.na(first_letter_a_m)))>0 & length(which(!is.na(first_letter_n_z)))>0) {
+  if (length(which(!is.na(first_letter_a_m))) > 0 & length(which(!is.na(first_letter_n_z)))>0) {
     if (length(which(!is.na(first_letter_n_z))) >= length(which(!is.na(first_letter_a_m)))) {
       utm_north <- TRUE
     } else {
