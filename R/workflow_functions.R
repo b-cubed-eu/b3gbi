@@ -387,33 +387,20 @@ compute_indicator_workflow <- function(data,
 
       if (ci_type!="none") {
 
-        if (type == "pielou_evenness" |
-            type == "ab_rarity" |
-            type == "spec_occ" |
-            type == "spec_range"){
+        if (type != "hill0" &
+            type != "hill1" &
+            type != "hill2"){
 
           indicator <- calc_ts(df,
                                indicator = indicator,
                                bootstrap=TRUE,
-                               num_bootstraps=num_bootstrap,
+                               num_bootstrap=num_bootstrap,
                                ci_type = ci_type,
                                ...)
 
         } else {
 
-          boot_statistic <- function(data, indices, type) {
-            d <- data[indices,]
-            return(calc_ts(d, type))
-          }
-
-          boot::boot(
-            data = df,
-            statistic = boot_statistic,
-            R = num_bootstrap,
-            type = type)
-
-          ci_df <- get_bootstrap_ci(bootstraps, type = ci_type, ...)
-
+          stop("Cannot calculate confidence intervals for the chosen indicator.")
         }
 
       }
@@ -467,27 +454,20 @@ compute_indicator_workflow <- function(data,
 
       if (ci_type!="none") {
 
-        if (type == "pielou_evenness" | type == "ab_rarity" | type == "spec_occ" | type == "spec_range"){
+        if (type != "hill0" &
+            type != "hill1" &
+            type != "hill2"){
 
           indicator <- calc_ts(df,
                                indicator = indicator,
                                bootstrap = TRUE,
-                               num_bootstraps = 1000,
+                               num_bootstrap = 1000,
                                ci_type = ci_type,
                                ...)
 
         } else {
 
-          boot_statistic <- function(data, indices, type) {
-            d <- data[indices,]
-            return(calc_ts(d, type))
-          }
-
-          boot::boot(
-            data = df,
-            statistic = boot_statistic,
-            R = 1000,
-            type = type)
+          stop("Cannot calculate confidence intervals for your chosen indicator.")
 
         }
 
