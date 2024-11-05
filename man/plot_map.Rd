@@ -14,9 +14,11 @@ plot_map(
   trans = NULL,
   breaks = NULL,
   labels = NULL,
-  Europe_crop = TRUE,
+  Europe_crop_EEA = TRUE,
+  crop_to_grid = FALSE,
   surround = TRUE,
   panel_bg = NULL,
+  land_fill_colour = NULL,
   legend_title = NULL,
   legend_limits = NULL,
   legend_title_wrap_length = 10,
@@ -47,12 +49,21 @@ appropriate S3 method (if calling the function manually, leave as NULL).}
 
 \item{labels}{(Optional) Labels for legend scale break points.}
 
-\item{Europe_crop}{If TRUE, crops maps of Europe to exclude far-lying islands.}
+\item{Europe_crop_EEA}{If TRUE, crops maps of Europe using the EPSG:3035 CRS
+to exclude far-lying islands (default is TRUE, but does not affect other maps
+or projections). Will not work if crop_to_grid is set to TRUE.}
 
-\item{surround}{If TRUE, includes surrounding countries in gray when plotting
-at the country level.}
+\item{crop_to_grid}{If TRUE, the grid will determine the edges of the map.Overrides
+Europe_crop_EEA. Default is FALSE.}
 
-\item{panel_bg}{(Optional) Background color for the map panel.}
+\item{surround}{If TRUE, includes surrounding land area in gray when plotting
+at the country or continent level. If FALSE, all surrounding area will be colored
+ocean blue (or whatever colour you set manually using panel_bg). Default is TRUE.}
+
+\item{panel_bg}{(Optional) Background colour for the map panel.}
+
+\item{land_fill_colour}{(Optional) Colour for the land area outside of the grid
+(if surround = TRUE). Default is "grey85".}
 
 \item{legend_title}{(Optional) Title for the plot legend.}
 

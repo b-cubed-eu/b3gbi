@@ -16,10 +16,12 @@ plot_species_map(
   trans = NULL,
   breaks = NULL,
   labels = NULL,
-  Europe_crop = TRUE,
+  Europe_crop_EEA = TRUE,
+  crop_to_grid = FALSE,
   surround = TRUE,
   single_plot = TRUE,
   panel_bg = NULL,
+  land_fill_colour = NULL,
   legend_title = NULL,
   legend_limits = NULL,
   legend_title_wrap_length = 10,
@@ -57,15 +59,24 @@ custom title or if calling the function manually.}
 
 \item{labels}{(Optional) Labels for legend scale break points.}
 
-\item{Europe_crop}{If TRUE, crops maps of Europe to exclude far-lying islands.}
+\item{Europe_crop_EEA}{If TRUE, crops maps of Europe using the EPSG:3035 CRS
+to exclude far-lying islands (default is TRUE, but does not affect other maps
+or projections).}
 
-\item{surround}{If TRUE, includes surrounding countries in gray when plotting
-at the country level.}
+\item{crop_to_grid}{If TRUE, the grid will determine the edges of the map.Overrides
+Europe_crop_EEA. Default is FALSE.}
+
+\item{surround}{If TRUE, includes surrounding land area in gray when plotting
+at the country or continent level. If FALSE, all surrounding area will be coloured
+ocean blue (or whatever colour you set manually using panel_bg). Default is TRUE.}
 
 \item{single_plot}{By default all species occurrence time series will be combined
 into a single multi-panel plot. Set this to FALSE to plot each species separately.}
 
-\item{panel_bg}{(Optional) Background color for the map panel.}
+\item{panel_bg}{(Optional) Background colour for the map panel.}
+
+\item{land_fill_colour}{(Optional) Colour for the land area outside of the grid
+(if surround = TRUE). Default is "grey85".}
 
 \item{legend_title}{(Optional) Title for the plot legend.}
 

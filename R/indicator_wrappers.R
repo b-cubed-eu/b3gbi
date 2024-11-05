@@ -759,6 +759,9 @@ spec_range_ts <- function(data, ...) {
 #'
 #' @export
 tax_distinct_map <- function(data, rows = 1, ...) {
+  if (!requireNamespace("taxize", quietly = TRUE)) {
+    stop("The package {taxize} is required for this action")
+  }
   compute_indicator_workflow(data,
                              type = "tax_distinct",
                              dim_type = "map",
@@ -786,6 +789,9 @@ tax_distinct_map <- function(data, rows = 1, ...) {
 #'
 #' @export
 tax_distinct_ts <- function(data, rows = 1, ...) {
+  if (!requireNamespace("taxize", quietly = TRUE)) {
+    stop("The package {taxize} is required for this action")
+  }
   compute_indicator_workflow(data,
                              type = "tax_distinct",
                              dim_type = "ts",
