@@ -74,6 +74,7 @@ calc_ts.hill_core <- function(x,
   # Create list of occurrence matrices by year, with species as rows
   species_records_raw <-
     x %>%
+    dplyr::select(year, scientificName, obs, cellCode) %>%
     dplyr::group_by(year) %>%
     dplyr::group_split() %>%
     purrr::map(. %>%
@@ -81,21 +82,10 @@ calc_ts.hill_core <- function(x,
                  tidyr::pivot_wider(names_from = "scientificName",
                                     values_from = "obs") %>%
                  dplyr::ungroup() %>%
-                 dplyr::select(-taxonKey,
-                               -kingdom,
-                               -rank,
-                               -resolution,
-                               -geometry) %>%
-                 dplyr::select(-any_of(c("area_km2",
-                                         "xcoord",
-                                         "ycoord",
-                                         "basisOfRecord",
-                                         "datasetKey"))) %>%
                  replace(is.na(.), 0) %>%
                  dplyr::mutate_if(is.numeric,
                                   as.integer) %>%
-                 dplyr::select(-year,
-                               -cellid) %>%
+                 dplyr::select(-year, -cellCode) %>%
                  tibble::rownames_to_column() %>%
                  tidyr::gather(variable,
                                value,
@@ -127,39 +117,51 @@ calc_ts.hill_core <- function(x,
   coverage_rare <- species_records_raw2 %>%
     iNEXT::estimateD(base = "coverage", level = coverage, datatype="incidence_raw", q=qval)
 
+
   # Extract estimated relative species richness
-  est_richness <-
+  indicator <-
     coverage_rare %>%
-    #  coverage_rare$iNextEst$coverage_based %>%
-    #  dplyr::filter(abs(SC-coverage) == min(abs(SC-coverage)),
-    #                .by = Assemblage) %>%
-    dplyr::select(Assemblage, qD, t, SC, Order.q) %>%
+    dplyr::select(Assemblage, qD, t, SC, Order.q, qD.LCL, qD.UCL) %>%
     dplyr::rename(year = Assemblage,
-                  est_relative_richness = qD,
+                  diversity_val = qD,
                   samp_size_est = t,
                   coverage = SC,
-                  diversity_type = Order.q)
-
-  # Calculate estimated relative richness as an index
-  est_richness <-
-    est_richness %>%
-    dplyr::mutate(index = est_relative_richness/lag(est_relative_richness)) %>%
-    replace(is.na(.), 1) %>%
-    dplyr::mutate(index = cumprod(index))
-
-  # remove rows which are not present in estimated richness
-  richness_by_year <- richness_by_year[richness_by_year$year %in% est_richness$year,]
+                  diversity_type = Order.q,
+                  ll = qD.LCL,
+                  ul = qD.UCL) %>%
+    dplyr::mutate(year = as.numeric(year))
 
 
-  # Add observed richness and total records to df
-  indicator <-
-    richness_by_year %>%
-    tibble::add_column(est_relative_richness = est_richness$est_relative_richness,
-                       .after = "obs_richness") %>%
-    tibble::add_column(diversity_val = est_richness$index,
-                       .after = "est_relative_richness") %>%
-    tibble::as_tibble()
+  # indicator$diversity_type <- paste(c("hill", indicator$diversity_type))
 
+  # est_richness <-
+  #   est_richness %>%
+  #   dplyr::mutate(qD.LCL = replace(qD.LCL, qD.LCL == 0, 1))
+  #
+  #   # Calculate estimated relative richness as an index
+  #   est_richness <-
+  #     est_richness %>%
+  #     dplyr::mutate(index = diversity_val/lag(diversity_val),
+  #                   ll = qD.LCL/lag(qD.LCL),
+  #                   ul = qD.UCL/lag(qD.UCL)) %>%
+  #     replace(is.na(.), 1) %>%
+  #     dplyr::mutate(index = cumprod(index),
+  #                   ll = cumprod(ll),
+  #                   ul = cumprod(ul))
+  #
+  #   # remove rows which are not present in estimated richness
+  #   richness_by_year <- richness_by_year[richness_by_year$year %in% est_richness$year,]
+  #
+  #   # Add observed richness and total records to df
+  #   indicator <-
+  #     richness_by_year %>%
+  #     tibble::add_column(diversity_val = est_richness$diversity_val,
+  #                        .after = "obs_richness") %>%
+  #     tibble::add_column(index = est_richness$index,
+  #                        .after = "diversity_val") %>%
+  #     tibble::add_column(ll = est_richness$ll, .after = "diversity_val") %>%
+  #     tibble::add_column(ul = est_richness$ul, .after = "ll") %>%
+  #     tibble::as_tibble()
 
 }
 
