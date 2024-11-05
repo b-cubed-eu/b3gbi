@@ -25,9 +25,9 @@
 #'   specified, uses the latest year present in the cube.
 #' @param grid_type Specify which grid reference system your cube uses. By default
 #'  the function will attempt to determine this automatically and return an error if it fails.
-#'  If you want to perform analysis on a custom cube without grid codes (e.g. output
-#'  from the gcube package), select 'none'. The function will then create a dummy column and
-#'  fill it with zeros to avoid errors downstream when calculating indicators.
+#'  If you want to perform analysis on a cube with custom grid codes (e.g. output
+#'  from the gcube package) or a cube without grid codes, select 'custom' or 'none',
+#'  respectively.
 #' @param force_gridcode Force the function to assume a specific grid reference system.
 #'  This may cause unexpected downstream issues, so it is not recommended. If you are
 #'  getting errors related to grid cell codes, check to make sure they are valid.
@@ -83,7 +83,7 @@
 #' }
 #' @export
 process_cube <- function(cube_name,
-                         grid_type = c("automatic", "eea", "mgrs", "eqdgc", "none"),
+                         grid_type = c("automatic", "eea", "mgrs", "eqdgc", "custom", "none"),
                          first_year = NULL,
                          last_year = NULL,
                          force_gridcode = FALSE,
@@ -182,10 +182,33 @@ process_cube <- function(cube_name,
 
     }
 
+    # if the user has chosen 'custom' as a grid type...
+  } else if (grid_type == "custom") {
+
+    # check if the user has provided a name for the column containing grid cell codes
+    if (is.null(cols_cellCode)) {
+
+      stop("You have chosen custom grid type. Please provide the name of the column containing grid cell codes.")
+
+    }
+
+
+    # check that the column name they provided exists
+    if (!cols_cellCode %in% names(occurrence_data)) {
+
+      stop("The column name you provided for grid cell codes does not exist. Please double check that you spelled it correctly.")
+
+    }
+
+    # rename it to the default
+    occurrence_data <-
+      occurrence_data %>%
+      dplyr::rename(cellCode = cols_cellCode)
+
     # if the user has chosen 'none' as a grid type...
   } else if (grid_type == "none") {
 
-      # create dummy column full of zeros
+    # create dummy column full of zeros
     #  occurrence_data$cellCode <- 0
 
     # if the user has specified a grid type...
@@ -459,7 +482,8 @@ process_cube <- function(cube_name,
              .,
              ifelse(first_year > ., first_year, .))
     last_year <- occurrence_data %>%
-      dplyr::summarize(max_year = max(year, na.rm = TRUE)-1) %>%
+     # dplyr::summarize(max_year = max(year, na.rm = TRUE)-1) %>%
+      dplyr::summarize(max_year = max(year, na.rm = TRUE)) %>%
       dplyr::pull(max_year) %>%
       ifelse(is.null(last_year),
              .,
@@ -479,7 +503,7 @@ process_cube <- function(cube_name,
     dplyr::distinct() %>%
     dplyr::arrange(year)
 
-  if (grid_type == "none") {
+  if (grid_type == "none" | grid_type == "custom") {
 
     cube <- new_sim_cube(occurrence_data, grid_type)
 
