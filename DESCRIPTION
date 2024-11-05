@@ -48,3 +48,4 @@ RoxygenNote: 7.3.1
 VignetteBuilder: knitr, rmarkdown
 Remotes:  
     hrbrmstr/mgrs
+    ropensci/taxize
