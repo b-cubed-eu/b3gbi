@@ -553,8 +553,8 @@ plot.hill2 <- function(x, ...){
   if (inherits(x, "indicator_ts")) {
 
     # Set defaults
-    y_label_default <- "Species Diversity Index"
-    auto_title <- "Indexed Hill-Simpson Diversity Trend (Estimated by Coverage-Based Rarefaction)"
+    y_label_default <- "Hill-Simpson Diversity"
+    auto_title <- "Hill-Simpson Diversity Trend (Estimated by Coverage-Based Rarefaction)"
 
     # Call generalized plot_ts function
     plot_ts(x, y_label_default = y_label_default, auto_title = auto_title, ...)
@@ -583,8 +583,8 @@ plot.hill1 <- function(x, ...){
   if (inherits(x, "indicator_ts")) {
 
     # Set defaults
-    y_label_default <- "Species Diversity Index"
-    auto_title <- "Indexed Hill-Shannon Diversity Trend (Estimated by Coverage-Based Rarefaction)"
+    y_label_default <- "Hill-Shannon Diversity"
+    auto_title <- "Hill-Shannon Diversity Trend (Estimated by Coverage-Based Rarefaction)"
 
     # Call generalized plot_ts function
     plot_ts(x, y_label_default = y_label_default, auto_title = auto_title, ...)
@@ -613,8 +613,8 @@ plot.hill0 <- function(x, ...){
   if (inherits(x, "indicator_ts")) {
 
     # Set defaults
-    y_label_default <- "Species Richness Index"
-    auto_title <- "Indexed Species Richness Trend (Estimated by Coverage-Based Rarefaction)"
+    y_label_default <- "Species Richness"
+    auto_title <- "Species Richness Trend (Estimated by Coverage-Based Rarefaction)"
 
     # Call generalized plot_ts function
     plot_ts(x, y_label_default = y_label_default, auto_title = auto_title, ...)
