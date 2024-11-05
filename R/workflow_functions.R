@@ -37,11 +37,20 @@ create_grid <- function(data,
                          crs = cube_crs) %>%
     sf::st_transform(crs = output_crs)
 
+  res <- as.numeric(
+    stringr::str_extract(
+      example_cube_1$data$resolution[1],
+      "^[0-9,.]{1,6}(?=[a-z])"
+      )
+    )
+
+  offset_x <- sf::st_bbox(occ_sf)$xmin - (0.5 * res)
+  offset_y <- sf::st_bbox(occ_sf)$ymin - (0.5 * res)
+
   # Make a grid across the map area
   grid <- occ_sf %>%
     sf::st_make_grid(cellsize = c(cell_size, cell_size),
-                     offset = c(sf::st_bbox(occ_sf)$xmin,
-                                sf::st_bbox(occ_sf)$ymin)) %>%
+                     offset = c(offset_x, offset_y)) %>%
     sf::st_cast("MULTIPOLYGON") %>%
     sf::st_sf() %>%
     dplyr::mutate(cellid = dplyr::row_number())
@@ -386,9 +395,9 @@ compute_indicator_workflow <- function(data,
 
       if (ci_type!="none") {
 
-        if (type != "hill0" &
-            type != "hill1" &
-            type != "hill2"){
+        # if (type != "hill0" &
+        #     type != "hill1" &
+        #     type != "hill2"){
 
           indicator <- calc_ts(df,
                                indicator = indicator,
@@ -396,11 +405,11 @@ compute_indicator_workflow <- function(data,
                                num_bootstrap=num_bootstrap,
                                ci_type = ci_type,
                                ...)
-
-        } else {
-
-          stop("Cannot calculate confidence intervals for the chosen indicator.")
-        }
+#
+#         } else {
+#
+#           warning("Cannot calculate confidence intervals for the chosen indicator.")
+#         }
 
       }
 
@@ -452,10 +461,10 @@ compute_indicator_workflow <- function(data,
       indicator <- calc_ts(df, ...)
 
       if (ci_type!="none") {
-
-        if (type != "hill0" &
-            type != "hill1" &
-            type != "hill2"){
+#
+#         if (type != "hill0" &
+#             type != "hill1" &
+#             type != "hill2"){
 
           indicator <- calc_ts(df,
                                indicator = indicator,
@@ -463,12 +472,12 @@ compute_indicator_workflow <- function(data,
                                num_bootstrap = 1000,
                                ci_type = ci_type,
                                ...)
-
-        } else {
-
-          stop("Cannot calculate confidence intervals for your chosen indicator.")
-
-        }
+#
+#         } else {
+#
+#           warning("Cannot calculate confidence intervals for your chosen indicator.")
+#
+#         }
 
       }
 
