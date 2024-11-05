@@ -47,5 +47,5 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
 VignetteBuilder: knitr, rmarkdown
 Remotes:  
-    hrbrmstr/mgrs
-    ropensci/taxize
+    url::https://github.com/hrbrmstr/mgrs
+    url::https://github.com/ropensci/taxize
