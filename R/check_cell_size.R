@@ -32,8 +32,7 @@ check_cell_size <- function(cell_size, cell_size_units, resolution, level) {
 
         res_size <- as.numeric(stringr::str_extract(resolution, "[0-9,.]*(?=degrees)"))
 
-        if (!(res_size <= cell_size) |
-            !as.integer(cell_size / res_size)==(cell_size / res_size)) {
+        if (res_size %% cell_size != 0) {
 
           stop("cell_size must be a whole number multiple of the resolution.
                For example, if resolution is 0.25 degrees, cell_size can be 0.25, 0.5, 0.75, 1, etc.")
