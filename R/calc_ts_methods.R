@@ -110,13 +110,9 @@ calc_ts.hill_core <- function(x,
   species_records_raw2 <- species_records_raw %>%
     purrr::keep(., function(x) length(x) > cutoff_length)
 
-  # Calculate diversity estimates
-  #  coverage_rare <- species_records_raw %>%
-  #   iNEXT::iNEXT(endpoint=inext_sampsize, datatype="incidence_raw", q=qval)
 
   coverage_rare <- species_records_raw2 %>%
     iNEXT::estimateD(base = "coverage", level = coverage, datatype="incidence_raw", q=qval)
-
 
   # Extract estimated relative species richness
   indicator <-
@@ -130,38 +126,6 @@ calc_ts.hill_core <- function(x,
                   ll = qD.LCL,
                   ul = qD.UCL) %>%
     dplyr::mutate(year = as.numeric(year))
-
-
-  # indicator$diversity_type <- paste(c("hill", indicator$diversity_type))
-
-  # est_richness <-
-  #   est_richness %>%
-  #   dplyr::mutate(qD.LCL = replace(qD.LCL, qD.LCL == 0, 1))
-  #
-  #   # Calculate estimated relative richness as an index
-  #   est_richness <-
-  #     est_richness %>%
-  #     dplyr::mutate(index = diversity_val/lag(diversity_val),
-  #                   ll = qD.LCL/lag(qD.LCL),
-  #                   ul = qD.UCL/lag(qD.UCL)) %>%
-  #     replace(is.na(.), 1) %>%
-  #     dplyr::mutate(index = cumprod(index),
-  #                   ll = cumprod(ll),
-  #                   ul = cumprod(ul))
-  #
-  #   # remove rows which are not present in estimated richness
-  #   richness_by_year <- richness_by_year[richness_by_year$year %in% est_richness$year,]
-  #
-  #   # Add observed richness and total records to df
-  #   indicator <-
-  #     richness_by_year %>%
-  #     tibble::add_column(diversity_val = est_richness$diversity_val,
-  #                        .after = "obs_richness") %>%
-  #     tibble::add_column(index = est_richness$index,
-  #                        .after = "diversity_val") %>%
-  #     tibble::add_column(ll = est_richness$ll, .after = "diversity_val") %>%
-  #     tibble::add_column(ul = est_richness$ul, .after = "ll") %>%
-  #     tibble::as_tibble()
 
 }
 
@@ -178,28 +142,38 @@ calc_ts.obs_richness <- function(x,
                   meant to be called directly.",
                   inherits(x, "obs_richness"))
 
+  x <-
+    x %>%
+    select(year, taxonKey) %>%
+    dplyr::arrange(year)
+
   if (bootstrap==TRUE) {
 
     x <-
       x %>%
-      dplyr::arrange(year)
+      dplyr::summarise(unique_by_year = dplyr::n_distinct(taxonKey),
+                       .by = "year")
 
-    # Put individual observations into a list organized by year
-    ind_list <- list_org_by_year(x)
+    # # Put individual observations into a list organized by year
+    # ind_list <- list_org_by_year(x, "taxonKey")
+    #
+    # # Bootstrap indicator value
+    # bootstraps <-
+    #   ind_list %>%
+    #   purrr::map(~boot::boot(
+    #     data = .,
+    #     statistic = boot_statistic_ndistinct,
+    #     R = num_bootstrap))
+    #
+    # # Calculate confidence intervals
+    # ci_df <- get_bootstrap_ci(bootstraps, type = ci_type, ...)
+    #
+    # # Convert negative values to zero as evenness cannot be below zero
+    # ci_df$ll <- ifelse(ci_df$ll > 0, ci_df$ll, 0)
 
-    # Bootstrap indicator value
-    bootstraps <-
-      ind_list %>%
-      purrr::map(~boot::boot(
-        data = .,
-        statistic = boot_statistic_sum,
-        R = num_bootstrap))
 
-    # Calculate confidence intervals
-    ci_df <- get_bootstrap_ci(bootstraps, type = ci_type, ...)
-
-    # Convert negative values to zero as evenness cannot be below zero
-    ci_df$ll <- ifelse(ci_df$ll > 0, ci_df$ll, 0)
+    # Calculate confidence intervals by permutation
+    ci_df <- permute_ci(x, num_bootstrap)
 
     # Join confidence intervals to indicator values
     indicator <- indicator %>%
@@ -209,12 +183,11 @@ calc_ts.obs_richness <- function(x,
 
   } else {
 
-  # Calculate observed species richness by year
-  x <-
-    x %>%
-    dplyr::summarise(diversity_val = dplyr::n_distinct(scientificName),
-                              .by = "year") %>%
-    dplyr::arrange(year)
+    # Calculate observed species richness by year
+    indicator <-
+      x %>%
+      dplyr::summarise(diversity_val = dplyr::n_distinct(taxonKey),
+                       .by = "year")
 
   }
 
@@ -233,7 +206,6 @@ calc_ts.cum_richness <- function(x,
                   meant to be called directly.",
                   inherits(x, "cum_richness"))
 
-  if (bootstrap==TRUE) {
 
     # Calculate the cumulative number of unique species observed
     x <-
@@ -244,11 +216,10 @@ calc_ts.cum_richness <- function(x,
       dplyr::summarize(unique_by_year = length(taxonKey),
                        .by = year)
 
-    # Put individual observations into a list organized by year
-    #ind_list <- list_org_by_year(x, "taxonKey")
+    if (bootstrap==TRUE) {
 
     # Calculate confidence intervals by permutation
-    ci_df <- permute_ci(x, num_bootstrap)
+    ci_df <- permute_ci(x, num_bootstrap, cumsum = TRUE)
 
     # Join confidence intervals to indicator values
     indicator <- indicator %>%
@@ -262,11 +233,6 @@ calc_ts.cum_richness <- function(x,
     # Calculate the cumulative number of unique species observed
     indicator <-
       x %>%
-      dplyr::select(year, taxonKey) %>%
-      dplyr::arrange(year) %>%
-      dplyr::distinct(taxonKey, .keep_all = TRUE) %>%
-      dplyr::summarize(unique_by_year = length(taxonKey),
-                       .by = year) %>%
       dplyr::reframe(year = year,
                      diversity_val = cumsum(unique_by_year))
 
