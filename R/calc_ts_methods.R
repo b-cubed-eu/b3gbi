@@ -149,13 +149,14 @@ calc_ts.obs_richness <- function(x,
 
   if (bootstrap==TRUE) {
 
-    x <-
-      x %>%
-      dplyr::summarise(unique_by_year = dplyr::n_distinct(taxonKey),
-                       .by = "year")
+    # x <-
+    #   x %>%
+    #   dplyr::summarise(unique_by_year = dplyr::n_distinct(taxonKey),
+    #                    .by = "year")
 
-    # # Put individual observations into a list organized by year
-    # ind_list <- list_org_by_year(x, "taxonKey")
+  # Put individual observations into a list organized by year
+  ind_list <- list_org_by_year(x, "taxonKey")
+
     #
     # # Bootstrap indicator value
     # bootstraps <-
@@ -171,14 +172,28 @@ calc_ts.obs_richness <- function(x,
     # # Convert negative values to zero as evenness cannot be below zero
     # ci_df$ll <- ifelse(ci_df$ll > 0, ci_df$ll, 0)
 
+  # set number of resamples
+  size_resamples <- 0.67
+
+  # bootstrap by subsampling without replacement
+  bootstraps <-
+    ind_list %>%
+    purrr::map(
+      ~replicate(num_bootstrap, {
+        sample(., round(size_resamples * length(.)), replace = FALSE) %>%
+          round(as.numeric(n_distinct(.) / size_resamples))
+      })
+    )
+
+
 
     # Calculate confidence intervals by permutation
-    ci_df <- permute_ci(x, num_bootstrap)
+    # ci_df <- permute_ci(x, num_bootstrap)
 
     # Join confidence intervals to indicator values
     indicator <- indicator %>%
       dplyr::full_join(ci_df,
-                by = join_by(year),
+                by = dplyr::join_by(year),
                 relationship = "many-to-many")
 
   } else {
@@ -224,7 +239,7 @@ calc_ts.cum_richness <- function(x,
     # Join confidence intervals to indicator values
     indicator <- indicator %>%
       dplyr::full_join(ci_df,
-                by = join_by(year),
+                by = dplyr::join_by(year),
                 relationship = "many-to-many")
 
 
@@ -280,7 +295,7 @@ calc_ts.total_occ <- function(x,
     # Join confidence intervals to indicator values
     indicator <- indicator %>%
       dplyr::full_join(ci_df,
-                by = join_by(year),
+                by = dplyr::join_by(year),
                 relationship = "many-to-many")
 
   } else {
@@ -337,7 +352,7 @@ calc_ts.occ_density <- function(x,
     # Join confidence intervals to indicator values
     indicator <- indicator %>%
       dplyr::full_join(ci_df,
-                by = join_by(year),
+                by = dplyr::join_by(year),
                 relationship = "many-to-many")
 
   } else {
@@ -396,7 +411,7 @@ calc_ts.newness <- function(x,
     # Join confidence intervals to indicator values
     indicator <- indicator %>%
       dplyr::full_join(ci_df,
-                by = join_by(year),
+                by = dplyr::join_by(year),
                 relationship = "many-to-many")
 
   } else {
@@ -501,7 +516,7 @@ calc_ts.evenness_core <- function(x,
     # Join confidence intervals to indicator values
     indicator <- indicator %>%
       dplyr::full_join(ci_df,
-                by = join_by(year),
+                by = dplyr::join_by(year),
                 relationship = "many-to-many")
 
   } else {
@@ -563,7 +578,7 @@ calc_ts.ab_rarity <- function(x,
     # Join confidence intervals to indicator values by year
     indicator <- indicator %>%
       dplyr::full_join(ci_df,
-                by = join_by(year),
+                by = dplyr::join_by(year),
                 relationship = "many-to-many")
 
     return(indicator)
@@ -628,7 +643,7 @@ calc_ts.area_rarity <- function(x,
     # Join confidence intervals to indicator values by year
     indicator <- indicator %>%
       dplyr::full_join(ci_df,
-                by = join_by(year),
+                by = dplyr::join_by(year),
                 relationship = "many-to-many")
 
     return(indicator)
@@ -716,7 +731,7 @@ calc_ts.spec_occ <- function(x,
   # Join confidence intervals to indicator values
   indicator <- indicator %>%
     dplyr::full_join(ci_df,
-              by = join_by(year, taxonKey, scientificName),
+              by = dplyr::join_by(year, taxonKey, scientificName),
               relationship = "many-to-many")
 
   return(indicator)
@@ -800,7 +815,7 @@ calc_ts.spec_range <- function(x,
     # Join confidence intervals to indicator values
     indicator <- indicator %>%
       dplyr::full_join(ci_df,
-                by = join_by(year, taxonKey, scientificName),
+                by = dplyr::join_by(year, taxonKey, scientificName),
                 relationship = "many-to-many")
 
     return(indicator)
@@ -887,7 +902,7 @@ calc_ts.tax_distinct <- function(x,
       # Join confidence intervals to indicator values by year
       indicator <- indicator %>%
         dplyr::full_join(ci_df,
-                  by = join_by(year),
+                  by = dplyr::join_by(year),
                   relationship = "many-to-many")
 
     } else {
@@ -972,7 +987,7 @@ calc_ts.occ_turnover <- function(x,
     # Join confidence intervals to indicator values by year
     indicator <- indicator %>%
       dplyr::full_join(ci_df,
-                by = join_by(year),
+                by = dplyr::join_by(year),
                 relationship = "many-to-many")
 
     return(indicator)
