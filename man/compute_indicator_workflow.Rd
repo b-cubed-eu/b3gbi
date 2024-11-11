@@ -17,6 +17,7 @@ compute_indicator_workflow(
   last_year = NULL,
   spherical_geometry = TRUE,
   make_valid = FALSE,
+  num_bootstrap = 1000,
   ...
 )
 }
