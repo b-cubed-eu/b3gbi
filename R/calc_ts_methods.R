@@ -157,41 +157,45 @@ calc_ts.obs_richness <- function(x,
   # Put individual observations into a list organized by year
   ind_list <- list_org_by_year(x, "taxonKey")
 
-    #
-    # # Bootstrap indicator value
-    # bootstraps <-
-    #   ind_list %>%
-    #   purrr::map(~boot::boot(
-    #     data = .,
-    #     statistic = boot_statistic_ndistinct,
-    #     R = num_bootstrap))
-    #
-    # # Calculate confidence intervals
-    # ci_df <- get_bootstrap_ci(bootstraps, type = ci_type, ...)
-    #
-    # # Convert negative values to zero as evenness cannot be below zero
-    # ci_df$ll <- ifelse(ci_df$ll > 0, ci_df$ll, 0)
 
-  # set number of resamples
-  size_resamples <- 0.67
+    # Bootstrap indicator value
+    bootstraps <-
+      ind_list %>%
+      purrr::map(~boot::boot(
+        data = .,
+        statistic = boot_statistic_ndistinct,
+        R = num_bootstrap))
 
-  # bootstrap by subsampling without replacement
-  bootstraps <-
-    ind_list %>%
-    purrr::map(
-      ~replicate(num_bootstrap, {
-        sample(., round(size_resamples * length(.)), replace = FALSE) %>%
-          round(as.numeric(dplyr::n_distinct(.) / size_resamples))
-      })
-    )
+    # Calculate confidence intervals
+    ci_df <- get_bootstrap_ci(bootstraps, type = ci_type, ...)
+
+    # Convert negative values to zero as evenness cannot be below zero
+    ci_df$ll <- ifelse(ci_df$ll > 0, ci_df$ll, 0)
+
+  # # set number of resamples
+  # size_resamples <- 0.8
+  #
+  # # bootstrap by subsampling without replacement
+  # bootstraps <-
+  #   lapply(ind_list, function(x) {
+  #     replicate(num_bootstrap, {
+  #       test <- sample(x, round(size_resamples * length(x)), replace = FALSE)
+  #         round(as.numeric(dplyr::n_distinct(test)))
+  #     })}
+  #   )
+  #
+  # # Calculate confidence intervals
+  # ci_df <- get_bootstrap_ci(bootstraps, type = ci_type, ...)
+  #
+  # # Convert negative values to zero as richness cannot be below zero
+  # ci_df$ll <- ifelse(ci_df$ll > 0, ci_df$ll, 0)
 
 
+  # Calculate confidence intervals by permutation
+  # ci_df <- permute_ci(x, num_bootstrap)
 
-    # Calculate confidence intervals by permutation
-    # ci_df <- permute_ci(x, num_bootstrap)
-
-    # Join confidence intervals to indicator values
-    indicator <- indicator %>%
+  # Join confidence intervals to indicator values
+  indicator <- indicator %>%
       dplyr::full_join(ci_df,
                 by = dplyr::join_by(year),
                 relationship = "many-to-many")
