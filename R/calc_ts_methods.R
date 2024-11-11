@@ -144,7 +144,7 @@ calc_ts.obs_richness <- function(x,
 
   x <-
     x %>%
-    select(year, taxonKey) %>%
+    dplyr::select(year, taxonKey) %>%
     dplyr::arrange(year)
 
   if (bootstrap==TRUE) {
