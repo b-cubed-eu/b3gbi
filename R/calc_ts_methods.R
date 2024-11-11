@@ -181,7 +181,7 @@ calc_ts.obs_richness <- function(x,
     purrr::map(
       ~replicate(num_bootstrap, {
         sample(., round(size_resamples * length(.)), replace = FALSE) %>%
-          round(as.numeric(n_distinct(.) / size_resamples))
+          round(as.numeric(dplyr::n_distinct(.) / size_resamples))
       })
     )
 
