@@ -257,14 +257,14 @@ plot.cum_richness <- function(x,
                           smoothed_trend = FALSE,
                           ...)
 
-    if (is.null(envelopecolour)) envelopecolour = "lightsteelblue"
-
-
-    # Colour the area under the curve
-     trend_plot <- trend_plot +
-       geom_ribbon(aes(ymin = 0,
-                       ymax = diversity_val),
-                   fill = envelopecolour, alpha = 0.3)
+    # if (is.null(envelopecolour)) envelopecolour = "lightsteelblue"
+    #
+    #
+    # # Colour the area under the curve
+    #  trend_plot <- trend_plot +
+    #    geom_ribbon(aes(ymin = 0,
+    #                    ymax = diversity_val),
+    #                fill = envelopecolour, alpha = 0.3)
     # Show plot
     trend_plot
 
