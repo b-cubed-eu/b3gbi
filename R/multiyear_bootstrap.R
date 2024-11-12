@@ -67,7 +67,7 @@ multiyear_bootstrap <- function(tax_list, indicator, num_bootstrap = 1000) {
       }
 
       # Calculate turnover
-      boot_results[j] <- boot_statistic(year2samp, year1samp, seq_along(year2samp), seq_along(year1samp))
+      boot_results[j] <- multiyear_boot_statistic(year2samp, year1samp, seq_along(year2samp), seq_along(year1samp))
       # collect the data from the present year to feed to the boot.return function
       current_year_data[[j]] <- year2samp
 
