@@ -84,22 +84,22 @@ multiyear_bootstrap <- function(tax_list, indicator, num_bootstrap = 1000) {
                    length(boot_results))
 
     # use boot.return to format data appropriately for calculating confidence intervals
-    boot_results_formatted <- boot:::boot.return(sim = "ordinary",
-                                                 t0 = indicator$diversity_val[[i]],
-                                                 t = as.matrix(boot_results),
-                                                 strata = strata,
-                                                 R = num_bootstrap,
-                                                 data = current_year_data[[i]],
-                                                 stat = boot_statistic,
-                                                 stype = "i",
-                                                 call = NULL,
-                                                 seed = 432,
-                                                 L = NULL,
-                                                 m = NULL,
-                                                 pred.i = NULL,
-                                                 weights = weights,
-                                                 ran.gen = function(d, p) d,
-                                                 mle = NULL)
+    boot_results_formatted <- boot.return_int(sim = "ordinary",
+                                              t0 = indicator$diversity_val[[i]],
+                                              t = as.matrix(boot_results),
+                                              strata = strata,
+                                              R = num_bootstrap,
+                                              data = current_year_data[[i]],
+                                              stat = multiyear_boot_statistic,
+                                              stype = "i",
+                                              call = NULL,
+                                              seed = 432,
+                                              L = NULL,
+                                              m = NULL,
+                                              pred.i = NULL,
+                                              weights = weights,
+                                              ran.gen = function(d, p) d,
+                                              mle = NULL)
 
     turnover_list[[i - 1]] <- boot_results_formatted
   }
