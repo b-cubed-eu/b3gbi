@@ -17,127 +17,36 @@
 \alias{calc_ts}
 \title{Calculate Biodiversity Indicators Over Time}
 \usage{
-\method{calc_ts}{obs_richness}(
-  x,
-  indicator = NULL,
-  bootstrap = FALSE,
-  num_bootstrap = 1000,
-  ci_type = ci_type,
-  ...
-)
+\method{calc_ts}{obs_richness}(x, ...)
 
-\method{calc_ts}{cum_richness}(
-  x,
-  indicator = NULL,
-  bootstrap = FALSE,
-  num_bootstrap = 1000,
-  ci_type = ci_type,
-  ...
-)
+\method{calc_ts}{cum_richness}(x, ...)
 
-\method{calc_ts}{total_occ}(
-  x,
-  indicator = NULL,
-  bootstrap = FALSE,
-  num_bootstrap = 1000,
-  ci_type = ci_type,
-  ...
-)
+\method{calc_ts}{total_occ}(x, ...)
 
-\method{calc_ts}{occ_density}(
-  x,
-  indicator = NULL,
-  bootstrap = FALSE,
-  num_bootstrap = 1000,
-  ci_type = ci_type,
-  ...
-)
+\method{calc_ts}{occ_density}(x, ...)
 
-\method{calc_ts}{newness}(
-  x,
-  indicator = NULL,
-  bootstrap = FALSE,
-  num_bootstrap = 1000,
-  ci_type = ci_type,
-  ...
-)
+\method{calc_ts}{newness}(x, ...)
 
 \method{calc_ts}{williams_evenness}(x, ...)
 
 \method{calc_ts}{pielou_evenness}(x, ...)
 
-\method{calc_ts}{ab_rarity}(
-  x,
-  indicator = NULL,
-  bootstrap = FALSE,
-  num_bootstrap = 1000,
-  ci_type = ci_type,
-  ...
-)
+\method{calc_ts}{ab_rarity}(x, ...)
 
-\method{calc_ts}{area_rarity}(
-  x,
-  indicator = NULL,
-  bootstrap = FALSE,
-  num_bootstrap = 1000,
-  ci_type = ci_type,
-  ...
-)
+\method{calc_ts}{area_rarity}(x, ...)
 
-\method{calc_ts}{spec_occ}(
-  x,
-  indicator = indicator,
-  bootstrap = FALSE,
-  num_bootstrap = 1000,
-  ci_type = ci_type,
-  ...
-)
+\method{calc_ts}{spec_occ}(x, ...)
 
-\method{calc_ts}{spec_range}(
-  x,
-  indicator = indicator,
-  bootstrap = FALSE,
-  num_bootstrap = 1000,
-  ci_type = ci_type,
-  ...
-)
+\method{calc_ts}{spec_range}(x, ...)
 
-\method{calc_ts}{tax_distinct}(
-  x,
-  set_rows = 1,
-  indicator = indicator,
-  bootstrap = FALSE,
-  num_bootstrap = 1000,
-  ci_type = ci_type,
-  ...
-)
+\method{calc_ts}{tax_distinct}(x, set_rows = 1, ...)
 
-\method{calc_ts}{occ_turnover}(
-  x,
-  indicator = NULL,
-  bootstrap = FALSE,
-  num_bootstrap = 1000,
-  ci_type = ci_type,
-  ...
-)
+\method{calc_ts}{occ_turnover}(x, ...)
 
 calc_ts(x, ...)
 }
 \arguments{
 \item{x}{A data cube object ('processed_cube').}
-
-\item{indicator}{The calculated indicator to generate confidence intervals for.
-Only needed if you are using the function to generate bootstrap confidence
-intervals (Default = NULL).}
-
-\item{bootstrap}{Set this to true to generate bootstrap confidence intervals
-(Default = FALSE).}
-
-\item{num_bootstrap}{Number of bootstraps to calculate for bootstrap confidence
-intervals (Default = 1000).}
-
-\item{ci_type}{Type of bootstrap confidence intervals to generate. Options are
-'norm', 'basic', 'perc' for percent, or 'bca'.}
 
 \item{...}{Additional arguments passed to specific indicator calculation functions.}
 
