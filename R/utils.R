@@ -20,6 +20,7 @@ resample <- function(x, size, replace = TRUE) {
 #' @noRd
 add_yearvals_to_boot <- function(boot, orig_data) {
   names(boot) <- unique(orig_data$year)[2:length(unique(orig_data$year))]
+  return(boot)
 }
 
 
