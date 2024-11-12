@@ -984,7 +984,7 @@ calc_ts.occ_turnover <- function(x,
 
 
     # Calculate bootstraps from tax_list
-    bootstraps <- multiyear_bootstrap(tax_list,
+    bootstraps <- multiyear_bootstrap(ind_list,
                                       indicator = indicator,
                                       num_bootstrap = num_bootstrap)
 
@@ -1012,27 +1012,27 @@ calc_ts.occ_turnover <- function(x,
 
     # Determine the new species added each year
     tax_added <- list()
-    tax_added[[1]] <- tax_list[[1]]
-    tax_added[2:length(tax_list)] <-
+    tax_added[[1]] <- ind_list[[1]]
+    tax_added[2:length(ind_list)] <-
       lapply(2:length(unique(x$year)), function(y){
-        a <- setdiff(tax_list[[y]], tax_list[[y-1]])
+        a <- setdiff(ind_list[[y]], ind_list[[y-1]])
         return(a)
       })
 
     # Determine the species lost each year
     tax_lost <- list()
     tax_lost[[1]] <- NULL
-    tax_lost[2:length(tax_list)] <-
+    tax_lost[2:length(ind_list)] <-
       lapply(2:length(unique(x$year)), function(y){
-        a <- setdiff(tax_list[[y-1]], tax_list[[y]])
+        a <- setdiff(ind_list[[y-1]], ind_list[[y]])
       })
 
     # Combine the species present in the current with those present in the previous year
     tax_present <- list()
-    tax_present[[1]] <- tax_list[[1]]
-    tax_present[2:length(tax_list)] <-
+    tax_present[[1]] <- ind_list[[1]]
+    tax_present[2:length(ind_list)] <-
       lapply(2:length(unique(x$year)), function(y){
-        a <- intersect(tax_list[[y-1]], tax_list[[y]])
+        a <- intersect(ind_list[[y-1]], ind_list[[y]])
       })
 
     # Calculate occupancy turnover as the sum of the number of species added and the
