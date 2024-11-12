@@ -126,6 +126,19 @@ calc_ts(x, ...)
 \arguments{
 \item{x}{A data cube object ('processed_cube').}
 
+\item{indicator}{The calculated indicator to generate confidence intervals for.
+Only needed if you are using the function to generate bootstrap confidence
+intervals (Default = NULL).}
+
+\item{bootstrap}{Set this to true to generate bootstrap confidence intervals
+(Default = FALSE).}
+
+\item{num_bootstrap}{Number of bootstraps to calculate for bootstrap confidence
+intervals (Default = 1000).}
+
+\item{ci_type}{Type of bootstrap confidence intervals to generate. Options are
+'norm', 'basic', 'perc' for percent, or 'bca'.}
+
 \item{...}{Additional arguments passed to specific indicator calculation functions.}
 
 \item{set_rows}{Automatically select which taxonomic information to keep when

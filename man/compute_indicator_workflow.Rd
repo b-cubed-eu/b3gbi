@@ -58,6 +58,9 @@ while the function runs. Should only be used to solve specific issues. (Default 
 \item{make_valid}{Calls st_make_valid() from the sf package. Increases processing
 time but may help if you are getting polygon errors. (Default is FALSE).}
 
+\item{num_bootstrap}{Set the number of bootstraps to calculate for generating
+confidence intervals. (Default: 1000)}
+
 \item{...}{Additional arguments passed to specific indicator calculation functions.}
 }
 \value{

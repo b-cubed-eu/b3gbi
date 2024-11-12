@@ -51,6 +51,9 @@ calc_ts.hill2 <- function(x, ...) {
   return(indicator)
 }
 
+#' @param type Choose which Hill number, or q, to calculate. Choose 'hill0' (q = 0)
+#' for estimated species richness, 'hill1' for Hill-Shannon diversity, or 'hill2'
+#' for Hill-Simpson diversity.
 #' @noRd
 calc_ts.hill_core <- function(x,
                               type = c("hill0", "hill1", "hill2"),
@@ -129,6 +132,15 @@ calc_ts.hill_core <- function(x,
 
 }
 
+#' @param indicator The calculated indicator to generate confidence intervals for.
+#' Only needed if you are using the function to generate bootstrap confidence
+#' intervals (Default = NULL).
+#' @param bootstrap Set this to true to generate bootstrap confidence intervals
+#' (Default = FALSE).
+#' @param num_bootstrap Number of bootstraps to calculate for bootstrap confidence
+#' intervals (Default = 1000).
+#' @param ci_type Type of bootstrap confidence intervals to generate. Options are
+#' 'norm', 'basic', 'perc' for percent, or 'bca'.
 #' @export
 #' @rdname calc_ts
 calc_ts.obs_richness <- function(x,

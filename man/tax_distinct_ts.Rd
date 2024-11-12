@@ -27,6 +27,8 @@ to let the function choose a default based on grid reference system)}
 while the function runs. Should only be used to solve specific issues. (Default is TRUE)}
     \item{\code{make_valid}}{Calls st_make_valid() from the sf package. Increases processing
 time but may help if you are getting polygon errors. (Default is FALSE).}
+    \item{\code{num_bootstrap}}{Set the number of bootstraps to calculate for generating
+confidence intervals. (Default: 1000)}
   }}
 }
 \value{
