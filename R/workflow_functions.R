@@ -397,21 +397,11 @@ compute_indicator_workflow <- function(data,
 
       if (ci_type!="none") {
 
-        # if (type != "hill0" &
-        #     type != "hill1" &
-        #     type != "hill2"){
-
-          indicator <- calc_ts(df,
+          indicator <- calc_ci(df,
                                indicator = indicator,
-                               bootstrap=TRUE,
                                num_bootstrap=num_bootstrap,
                                ci_type = ci_type,
                                ...)
-#
-#         } else {
-#
-#           warning("Cannot calculate confidence intervals for the chosen indicator.")
-#         }
 
       }
 
@@ -444,10 +434,6 @@ compute_indicator_workflow <- function(data,
       if (is.numeric(data$coord_range)) {
         map_lims <- data$coord_range
       } else {
-        # map_lims <- unlist(list("xmin" = "NA",
-        #                         "xmax" = "NA",
-        #                         "ymin" = "NA",
-        #                         "ymax" = "NA"))
           map_lims <- "Coordinates not provided"
       }
 
@@ -463,23 +449,12 @@ compute_indicator_workflow <- function(data,
       indicator <- calc_ts(df, ...)
 
       if (ci_type!="none") {
-#
-#         if (type != "hill0" &
-#             type != "hill1" &
-#             type != "hill2"){
 
-          indicator <- calc_ts(df,
+          indicator <- calc_ci(df,
                                indicator = indicator,
-                               bootstrap = TRUE,
                                num_bootstrap = 1000,
                                ci_type = ci_type,
                                ...)
-#
-#         } else {
-#
-#           warning("Cannot calculate confidence intervals for your chosen indicator.")
-#
-#         }
 
       }
 
