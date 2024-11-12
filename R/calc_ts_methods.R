@@ -376,7 +376,7 @@ calc_ts.occ_density <- function(x,
   # Calculate density of occurrences over the grid (per square km)
   indicator <-
     x %>%
-    arrange(year, cellid) %>%
+    dplyr::arrange(year, cellid) %>%
     dplyr::reframe(diversity_val = sum(obs) / area_km2,
                    .by = c("year", "cellid")) %>%
     dplyr::reframe(diversity_val = mean(diversity_val), .by = "year") %>%
