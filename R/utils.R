@@ -1,3 +1,29 @@
+# copy of function boot.return from boot package
+#' @noRd
+boot.return_int <- function (sim, t0, t, strata, R, data, stat, stype, call, seed,
+          L, m, pred.i, weights, ran.gen, mle)
+{
+  out <- list(t0 = t0, t = t, R = R, data = data, seed = seed,
+              statistic = stat, sim = sim, call = call)
+  if (sim == "parametric")
+    out <- c(out, list(ran.gen = ran.gen, mle = mle))
+  else if (sim == "antithetic")
+    out <- c(out, list(stype = stype, strata = strata, L = L))
+  else if (sim == "ordinary") {
+    if (sum(m) > 0)
+      out <- c(out, list(stype = stype, strata = strata,
+                         weights = weights, pred.i = pred.i))
+    else out <- c(out, list(stype = stype, strata = strata,
+                            weights = weights))
+  }
+  else if (sim == "balanced")
+    out <- c(out, list(stype = stype, strata = strata, weights = weights))
+  else out <- c(out, list(stype = stype, strata = strata))
+  class(out) <- "boot"
+  out
+}
+
+
 # alternative sampling function that works properly even with length of 1
 #' @noRd
 resample <- function(x, size, replace = TRUE) {
