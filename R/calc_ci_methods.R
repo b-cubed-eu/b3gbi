@@ -616,10 +616,10 @@ calc_ci.spec_range <- function(x,
 #' @export
 #' @rdname calc_ci
 calc_ci.tax_distinct <- function(x,
-                                 set_rows = 1,
                                  indicator,
                                  num_bootstrap = 1000,
                                  ci_type = ci_type,
+                                 set_rows = 1,
                                  ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
