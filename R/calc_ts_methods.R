@@ -332,7 +332,7 @@ calc_ts.occ_density <- function(x,
 
     x <-
       x %>%
-      arrange(year, cellid) %>%
+      dplyr::arrange(year, cellid) %>%
       dplyr::reframe(diversity_val = sum(obs) / area_km2,
                      .by = c("year", "cellid"))
 
