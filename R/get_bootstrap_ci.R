@@ -14,9 +14,9 @@
 #' interval (`ll`), the upper limit of the confidence interval (`ul`), and the
 #' confidence level of the intervals (`conf_level`).
 
-get_bootstrap_ci <- function(bootstrap_list, ..., temporal_list_name = "year") {
-  require("dplyr")
-  require("rlang")
+get_bootstrap_ci <- function(bootstrap_list,
+                             ...,
+                             temporal_list_name = "year") {
 
   # Calculate nonparametric confidence intervals
   conf_ints <- lapply(bootstrap_list, boot::boot.ci, ...)
