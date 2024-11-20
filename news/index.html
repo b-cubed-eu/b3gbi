@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.3.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -33,6 +33,25 @@
       <small>Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.2.3.1" id="b3gbi-0231">b3gbi 0.2.3.1<a class="anchor" aria-label="anchor" href="#b3gbi-0231"></a></h2>
+<p>20.11.2024 - Minor update:</p>
+<ul><li>User-supplied resolutions for ‘km’-based grid systems are now properly handled</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.2.3" id="b3gbi-023">b3gbi 0.2.3<a class="anchor" aria-label="anchor" href="#b3gbi-023"></a></h2>
+<p>07.11.2024 - Minor update:</p>
+<p>Compatible with gcube output:</p>
+<ul><li>added class sim_cube for objects without grid codes</li>
+<li>added ‘none’ to grid_type options</li>
+</ul><p>Bug fixes:</p>
+<ul><li>No longer returns an error when you correctly specify a cell size when calculating indicators with mgrs grid</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.2.2" id="b3gbi-022">b3gbi 0.2.2<a class="anchor" aria-label="anchor" href="#b3gbi-022"></a></h2>
+<p>16.07.2024 - Minor update:</p>
+<ul><li>Cubes processed using process_cube_old() now have a column called minCoordinateUncertaintyInMeters, containing the spatial uncertainty from the cube. Previously the spatial uncertainty column was made available when using process_cube() but was ignored by process_cube_old().</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.2.1" id="b3gbi-021">b3gbi 0.2.1<a class="anchor" aria-label="anchor" href="#b3gbi-021"></a></h2>
 <p>27.06.2024 - Minor update:</p>
