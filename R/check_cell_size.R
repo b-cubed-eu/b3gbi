@@ -20,6 +20,9 @@ check_cell_size <- function(cell_size, cell_size_units, resolution, level) {
 
         }
 
+        # convert to meters
+        cell_size <- cell_size * 1000
+
       }
 
     } else if (cell_size_units=="degrees") {
