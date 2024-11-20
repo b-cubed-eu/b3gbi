@@ -1,3 +1,28 @@
+# b3gbi 0.2.3.1
+
+20.11.2024 - Minor update:
+
+* User-supplied resolutions for 'km'-based grid systems are now properly handled
+
+# b3gbi 0.2.3
+
+07.11.2024 - Minor update:
+
+Compatible with gcube output:
+
+* added class sim_cube for objects without grid codes
+* added 'none' to grid_type options
+
+Bug fixes:
+
+* No longer returns an error when you correctly specify a cell size when calculating indicators with mgrs grid
+
+# b3gbi 0.2.2
+
+16.07.2024 - Minor update:
+
+* Cubes processed using process_cube_old() now have a column called minCoordinateUncertaintyInMeters, containing the spatial uncertainty from the cube. Previously the spatial uncertainty column was made available when using process_cube() but was ignored by process_cube_old().
+
 # b3gbi 0.2.1
 
 27.06.2024 - Minor update:
