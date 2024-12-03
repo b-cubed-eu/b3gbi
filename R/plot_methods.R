@@ -989,12 +989,53 @@ plot_ts <- function(x,
   if (is.null(x_label)) x_label = "Year"
   if (is.null(y_label)) y_label = y_label_default
 
-  # Create plot with trend line
+  # Create basis of plot
   trend_plot <-
     ggplot2::ggplot(x$data, aes(x = year,
-                                y = diversity_val)) +
-    geom_point(colour = linecolour,
-               size = 2) +
+                                y = diversity_val))
+
+  # Add smooth trends (LOESS) if specified
+  if (smoothed_trend == TRUE) {
+    # Add a smoothed trend
+    trend_plot <- trend_plot +
+      geom_smooth(
+        colour = alpha(trendlinecolour, 0.5),
+        lwd = 1,
+        linetype = "dashed",
+        method = "loess",
+        formula = "y ~ x",
+        se = FALSE)
+
+    # Add smooth trends for confidence limits if available
+    if ("ll" %in% colnames(x$data) & "ul" %in% colnames(x$data)) {
+      trend_plot <- trend_plot +
+        geom_smooth(aes(y = ul),
+                    colour = envelopecolour,
+                    lwd = 1,
+                    linetype = "dashed",
+                    method = "loess",
+                    formula = "y ~ x",
+                    se = FALSE) +
+        geom_smooth(aes(y = ll),
+                    colour = envelopecolour,
+                    lwd = 1,
+                    linetype = "dashed",
+                    method = "loess",
+                    formula = "y ~ x",
+                    se = FALSE)
+    }
+  }
+
+  # If upper and lower limits are present, add errorbars
+  if ("ll" %in% colnames(x$data) & "ul" %in% colnames(x$data)) {
+    trend_plot <- trend_plot +
+      geom_errorbar(aes(ymin = ll, ymax = ul),
+                    colour = ribboncolour, width = 0.5, linewidth = 1)
+
+  }
+
+  trend_plot <- trend_plot +
+    geom_point(colour = linecolour, size = 3.2) +
     scale_x_continuous(breaks = breaks_pretty_int(n = x_breaks)) +
     scale_y_continuous(breaks = breaks_pretty_int(n = y_breaks)) +
     labs(x = x_label, y = y_label,
@@ -1015,45 +1056,6 @@ plot_ts <- function(x,
           },
           strip.text = element_text(face = "italic")
     )
-
-  if ("ll" %in% colnames(x$data) & "ul" %in% colnames(x$data)) {
-
-    trend_plot <- trend_plot +
-      geom_errorbar(aes(ymin = ll, ymax = ul),
-                    colour = ribboncolour)
-
-  }
-
-  if (smoothed_trend == TRUE) {
-
-    # Add a smoothed trend
-    trend_plot <- trend_plot +
-      geom_smooth(
-        colour = alpha(trendlinecolour, 0.3),
-        lwd = 1,
-        linetype = "dashed",
-        method = "loess",
-        formula = "y ~ x",
-        se = FALSE)
-
-    if ("ll" %in% colnames(x$data) & "ul" %in% colnames(x$data)) {
-
-      trend_plot <- trend_plot +
-        geom_smooth(aes(y = ul),
-                    lwd = 1,
-                    linetype = "dashed",
-                    method = "loess",
-                    formula = "y ~ x",
-                    se = FALSE)
-        geom_smooth(aes(y = ll),
-                    lwd = 1,
-                    linetype = "dashed",
-                    method = "loess",
-                    formula = "y ~ x",
-                    se = FALSE)
-
-    }
-  }
 
   # Wrap title if longer than wrap_length
   if(!is.null(title)) {
