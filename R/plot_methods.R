@@ -893,7 +893,8 @@ plot_map <- function(x,
 #' @param y_label_default Default label for the y-axis, provided by an appropriate
 #'   S3 method (if calling the function manually, leave as NULL).
 #' @param suppress_y If TRUE, suppresses y-axis labels.
-#' @param smoothed_trend If TRUE, plot a smoothed trendline.
+#' @param smoothed_trend If TRUE, plot a smoothed trendline over time
+#' (`stats::loess()`).
 #' @param linecolour (Optional) Colour for the indicator line.
 #'   Default is darkorange. Set to "NA" if you don't want to plot the indicator line.
 #' @param ribboncolour (Optional) Colour for the bootstrapped confidence intervals.
