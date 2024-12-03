@@ -993,8 +993,8 @@ plot_ts <- function(x,
   trend_plot <-
     ggplot2::ggplot(x$data, aes(x = year,
                                 y = diversity_val)) +
-    geom_line(colour = linecolour,
-              lwd = 1) +
+    geom_point(colour = linecolour,
+               size = 2) +
     scale_x_continuous(breaks = breaks_pretty_int(n = x_breaks)) +
     scale_y_continuous(breaks = breaks_pretty_int(n = y_breaks)) +
     labs(x = x_label, y = y_label,
@@ -1019,10 +1019,8 @@ plot_ts <- function(x,
   if ("ll" %in% colnames(x$data) & "ul" %in% colnames(x$data)) {
 
     trend_plot <- trend_plot +
-      geom_ribbon(aes(ymin = ll,
-                    ymax = ul),
-                alpha = 0.3,
-                fill = ribboncolour)
+      geom_errorbar(aes(ymin = ll, ymax = ul),
+                    colour = ribboncolour)
 
   }
 
@@ -1030,18 +1028,31 @@ plot_ts <- function(x,
 
     # Add a smoothed trend
     trend_plot <- trend_plot +
-      geom_smooth(fill = envelopecolour,
-                  lwd = 1,
-                  linetype = 0,
-                  method = "loess",
-                  formula = "y ~ x") +
-      stat_smooth(colour = trendlinecolour,
-                  geom = "line",
-                  method = "loess",
-                  formula = "y ~ x",
-                  linetype = "dashed",
-                  alpha = 0.3,
-                  lwd = 1)
+      geom_smooth(
+        colour = alpha(trendlinecolour, 0.3),
+        lwd = 1,
+        linetype = "dashed",
+        method = "loess",
+        formula = "y ~ x",
+        se = FALSE)
+
+    if ("ll" %in% colnames(x$data) & "ul" %in% colnames(x$data)) {
+
+      trend_plot <- trend_plot +
+        geom_smooth(aes(y = ul),
+                    lwd = 1,
+                    linetype = "dashed",
+                    method = "loess",
+                    formula = "y ~ x",
+                    se = FALSE)
+        geom_smooth(aes(y = ll),
+                    lwd = 1,
+                    linetype = "dashed",
+                    method = "loess",
+                    formula = "y ~ x",
+                    se = FALSE)
+
+    }
   }
 
   # Wrap title if longer than wrap_length
