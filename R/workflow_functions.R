@@ -238,6 +238,11 @@ compute_indicator_workflow <- function(data,
                     inherits(data, "processed_cube_dsinfo") |
                     inherits(data, "sim_cube"))
 
+  # List of indicators for which bootstrapped confidence intervals should not be calculated
+  noci_list <- c("obs_richness",
+                 "cum_richness",
+                 "occ_turnover")
+
   type <- match.arg(type,
                     names(available_indicators))
 
@@ -397,11 +402,19 @@ compute_indicator_workflow <- function(data,
 
       if (ci_type!="none") {
 
+        if (!type %in% noci_list) {
+
           indicator <- calc_ci(df,
                                indicator = indicator,
                                num_bootstrap=num_bootstrap,
                                ci_type = ci_type,
                                ...)
+
+        } else {
+
+          warning("Bootstrapped confidence intervals cannot be calculated for the chosen indicator.")
+
+        }
 
       }
 
@@ -450,11 +463,19 @@ compute_indicator_workflow <- function(data,
 
       if (ci_type!="none") {
 
+        if (!type %in% noci_list) {
+
           indicator <- calc_ci(df,
                                indicator = indicator,
                                num_bootstrap = 1000,
                                ci_type = ci_type,
                                ...)
+
+        } else {
+
+          warning("Bootstrapped confidence intervals cannot be alculated for the chosen indicator.")
+        }
+
 
       }
 
