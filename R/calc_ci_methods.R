@@ -9,7 +9,7 @@
 #' *Note: this should NOT be an 'indicator_ts' object as it is meant to be called by
 #' the 'compute_indicator_workflow' function.
 #'
-#' @noRd
+#' @export
 calc_ci <- function(x,
                     indicator,
                     ...) {
