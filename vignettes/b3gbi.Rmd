@@ -95,14 +95,15 @@ Each indicator comes with its own wrapper functions, and these should be used ra
 #   * Argument 1: x, a processed_cube object
 #   * Argument 2: type, the type of indicator to calculate
 #   * Argument 3: dim_type, dimension to calculate the indicator across (time, 'ts', or space, 'map').
-#   * Argument 4: cell_size (optional), the length (in km) of grid cells to use
-#   * Argument 5: level (optional), the scale of region to calculate over (country, continent, world). Uses the whole cube by default.
-#   * Argument 6: region (optional), the name of the region to calculate over (e.g. Germany, Europe). Uses the whole cube by default.
-#   * Argument 7: output_crs (optional), the projection to use for your calculated indicator if you don't want the default.
-#   * Argument 8: first_year (optional), use to limit the data used to calculate the indicator to a narrower range than the cube
-#   * Argument 9: last_year (optional), see first_year
-#   * Argument 10: spherical_geometry (optional), if FALSE, temporarily turn off spherical geometry when calculating indicator
-#   * Argument 11: make_valid (optional), call st_make_valid from the sf package to fix geometry issues if you are getting errors
+#   * Argument 4: ci_type, type of bootstrap confidence intervals to calculate (norm, basic, perc, bca, none). Uses 'norm' by default.
+#   * Argument 5: cell_size (optional), the length (in km) of grid cells to use
+#   * Argument 6: level (optional), the scale of region to calculate over (country, continent, world). Uses the whole cube by default.
+#   * Argument 7: region (optional), the name of the region to calculate over (e.g. Germany, Europe). Uses the whole cube by default.
+#   * Argument 8: output_crs (optional), the projection to use for your calculated indicator if you don't want the default.
+#   * Argument 9: first_year (optional), use to limit the data used to calculate the indicator to a narrower range than the cube
+#   * Argument 10: last_year (optional), see first_year
+#   * Argument 11: spherical_geometry (optional), if FALSE, temporarily turn off spherical geometry when calculating indicator
+#   * Argument 12: make_valid (optional), call st_make_valid from the sf package to fix geometry issues if you are getting errors
 # Outputs:
 #   * indicator_ts or indicator_map object containing a data frame of indicator values mapped to years or grid cells, along with various metadata.
 #     metadata include: range of years (as first_year and last_year), 
@@ -132,6 +133,9 @@ Each indicator comes with its own wrapper functions, and these should be used ra
 #   * area_rarity_ts(): Calculate area-based rarity over time
 #   * newness_map(): Calculate the mean year of occurrence over a gridded map
 #   * newness_ts(): Calculate the mean year of occurrence over time
+#   * tax_distinct_map(): Calculate taxonomic distinctness over a gridded map
+#   * tax_distinct_ts(): Calculate  taxonomic distinctness over time
+#   * occ_turnover_ts(): Calculate occupancy turnover over time
 # 
 
 					
@@ -185,7 +189,7 @@ The plot functions offer quite a few arguments to customize the output, but the 
 
 # Example:
 library(b3gbi)
-Denmark_observed_richness_ts <- obs_richness_ts(example_cube_1, first_year = 1980, level = "country", region = "Denmark") 
+Denmark_observed_richness_ts <- obs_richness_ts(example_cube_1, first_year = 1980, level = "country", region = "Denmark", ci_type = "none") 
 plot(Denmark_observed_richness_ts)
 
 ```

@@ -37,11 +37,20 @@ create_grid <- function(data,
                          crs = cube_crs) %>%
     sf::st_transform(crs = output_crs)
 
+  res <- as.numeric(
+    stringr::str_extract(
+      example_cube_1$data$resolution[1],
+      "^[0-9,.]{1,6}(?=[a-z])"
+      )
+    )
+
+  offset_x <- sf::st_bbox(occ_sf)$xmin - (0.5 * res)
+  offset_y <- sf::st_bbox(occ_sf)$ymin - (0.5 * res)
+
   # Make a grid across the map area
   grid <- occ_sf %>%
     sf::st_make_grid(cellsize = c(cell_size, cell_size),
-                     offset = c(sf::st_bbox(occ_sf)$xmin,
-                                sf::st_bbox(occ_sf)$ymin)) %>%
+                     offset = c(offset_x, offset_y)) %>%
     sf::st_cast("MULTIPOLYGON") %>%
     sf::st_sf() %>%
     dplyr::mutate(cellid = dplyr::row_number())
@@ -181,6 +190,8 @@ prepare_spatial_data <- function(data, grid, map_data, cube_crs, output_crs) {
 #'   * 'williams_evenness', 'pielou_evenness': Evenness measures.
 #'   * 'ab_rarity', 'area_rarity':  Abundance-based and area-based rarity scores.
 #' @param dim_type Dimension to calculate indicator over (time: 'ts', or space: 'map')
+#' @param ci_type Type of bootstrap confidence intervals to calculate. (Default: "norm".
+#'   Select "none" to avoid calculating bootstrap CIs.)
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
 #' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
 #' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
@@ -192,6 +203,8 @@ prepare_spatial_data <- function(data, grid, map_data, cube_crs, output_crs) {
 #' while the function runs. Should only be used to solve specific issues. (Default is TRUE)
 #' @param make_valid Calls st_make_valid() from the sf package. Increases processing
 #' time but may help if you are getting polygon errors. (Default is FALSE).
+#' @param num_bootstrap Set the number of bootstraps to calculate for generating
+#' confidence intervals. (Default: 1000)
 #' @param ... Additional arguments passed to specific indicator calculation functions.
 #'
 #' @return An S3 object containing the calculated indicator values and metadata.
@@ -208,15 +221,16 @@ prepare_spatial_data <- function(data, grid, map_data, cube_crs, output_crs) {
 compute_indicator_workflow <- function(data,
                                        type,
                                        dim_type = c("map", "ts"),
+                                       ci_type = c("norm", "basic", "perc", "bca", "none"),
                                        cell_size = NULL,
                                        level = c("continent", "country", "world"),
                                        region = "Europe",
-                                       #cube_crs = NULL,
                                        output_crs = NULL,
                                        first_year = NULL,
                                        last_year = NULL,
                                        spherical_geometry = TRUE,
                                        make_valid = FALSE,
+                                       num_bootstrap = 1000,
                                        ...) {
 
   stopifnot_error("Object class not recognized.",
@@ -224,8 +238,15 @@ compute_indicator_workflow <- function(data,
                     inherits(data, "processed_cube_dsinfo") |
                     inherits(data, "sim_cube"))
 
+  # List of indicators for which bootstrapped confidence intervals should not be calculated
+  noci_list <- c("obs_richness",
+                 "cum_richness",
+                 "occ_turnover")
+
   type <- match.arg(type,
                     names(available_indicators))
+
+  ci_type <- match.arg(ci_type)
 
   if (!is.null(first_year)) {
     first_year <- ifelse(first_year > data$first_year, first_year, data$first_year)
@@ -256,6 +277,8 @@ compute_indicator_workflow <- function(data,
     cell_size_units <- stringr::str_extract(data$resolutions, "(?<=[0-9,.]{1,6})[a-z]*$")
 
     num_families <- data$num_families
+
+    coord_range <- data$coord_range
 
     if (spherical_geometry==FALSE){
 
@@ -353,26 +376,6 @@ compute_indicator_workflow <- function(data,
 
     if (dim_type == "map") {
 
-      # # Deal with uncertainty
-      # if (cell_size_units == "km") {
-      #
-      #   df$uncertainty_cells <- df$minCoordinateUncertaintyInMeters / cell_size
-      #
-      # } else if (cell_size_units == "degrees") {
-      #
-      #   df$uncertainty_cells <- meters_to_decdeg(
-      #     df,
-      #     lat_col = "ycoord",
-      #     lon_col = "xcoord",
-      #     distance = "minCoordinateUncertaintyInMeters",
-      #     na_action = "NA as NA") / cell_size
-      #
-      # } else {
-      #
-      #   stop("Resolution not recognized. Must be in km or degrees.")
-      #
-      # }
-
       # Calculate indicator
       indicator <- calc_map(df, ...)
 
@@ -392,19 +395,28 @@ compute_indicator_workflow <- function(data,
         grid %>%
         dplyr::left_join(indicator, by = "cellid")
 
-      # diversity_grid <- dplyr::left_join(diversity_grid, df[,c("cellid", "uncertainty_cells")], by = "cellid", multiple = "first")
-
-      # diversity_grid <- diversity_grid[!is.na(diversity_grid$diversity_val),]
-
     } else {
 
       # Calculate indicator
       indicator <- calc_ts(df, ...)
 
-      # indicator <- dplyr::left_join(indicator, df[,c("year", "minTemporalUncertainty")], by = "year", multiple = "first")
+      if (ci_type!="none") {
 
-      # Calculate confidence intervals
-    #  conf_int <- calc_ci(df, ...)
+        if (!type %in% noci_list) {
+
+          indicator <- calc_ci(df,
+                               indicator = indicator,
+                               num_bootstrap=num_bootstrap,
+                               ci_type = ci_type,
+                               ...)
+
+        } else {
+
+          warning("Bootstrapped confidence intervals cannot be calculated for the chosen indicator.")
+
+        }
+
+      }
 
     }
 
@@ -422,29 +434,52 @@ compute_indicator_workflow <- function(data,
   } else {
 
     if (dim_type=="map") {
+
       stop("You have provided an object of class 'sim_cube' as input. As these objects
            do not contain grid information they can only be used to calculate
            indicators of dim_type 'ts'.")
-    }
 
-    year_names <- unique(df$year)
-    level <- "unknown"
-    region <- "unknown"
-    num_families <- data$num_families
-    kingdoms <- data$kingdoms
-    if (is.numeric(data$coord_range)) {
-      map_lims <- coord_range
     } else {
-      map_lims <- "Coordinates not provided"
+
+      year_names <- unique(df$year)
+      level <- "unknown"
+      region <- "unknown"
+      if (is.numeric(data$coord_range)) {
+        map_lims <- data$coord_range
+      } else {
+          map_lims <- "Coordinates not provided"
+      }
+
+      kingdoms <- data$kingdoms
+      num_families <- data$num_families
+
+      # Assign classes to send data to correct calculator function
+      subtype <- paste0(type, "_", dim_type)
+      class(df) <- append(type, class(df))
+      class(df) <- append(subtype, class(df))
+
+      # Calculate indicator
+      indicator <- calc_ts(df, ...)
+
+      if (ci_type!="none") {
+
+        if (!type %in% noci_list) {
+
+          indicator <- calc_ci(df,
+                               indicator = indicator,
+                               num_bootstrap = 1000,
+                               ci_type = ci_type,
+                               ...)
+
+        } else {
+
+          warning("Bootstrapped confidence intervals cannot be alculated for the chosen indicator.")
+        }
+
+
+      }
+
     }
-
-    # Assign classes to send data to correct calculator function
-    subtype <- paste0(type, "_", dim_type)
-    class(df) <- append(type, class(df))
-    class(df) <- append(subtype, class(df))
-
-    # Calculate indicator
-    indicator <- calc_ts(df, ...)
 
   }
 

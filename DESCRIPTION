@@ -1,7 +1,7 @@
 Type: Package
 Package: b3gbi
 Title: General Biodiversity Indicators for Biodiversity Data Cubes
-Version: 0.2.3.1
+Version: 0.3.0
 Authors@R: c(
     person("Shawn", "Dove", email = "Shawn.Dove@allzool.bio.uni-giessen.de",
            role = c("aut", "cre"), comment = c(ORCID = "0000-0001-9465-5638"))
@@ -12,10 +12,10 @@ Description: Calculate general biodiversity indicators from GBIF data
 License: MIT + file LICENSE
 URL: https://github.com/b-cubed-eu/b3gbi,
     https://b-cubed-eu.github.io/b3gbi/
-BugReports: https://github.com/b-cubed-eu/b3gbi/issues
 Depends:
     R (>= 3.5.0),
 Imports:
+    boot,
     dplyr,
     furrr,
     future,
@@ -50,4 +50,4 @@ VignetteBuilder: knitr, rmarkdown
 Remotes:  
     github::hrbrmstr/mgrs,
     github::ropensci/bold,
-    github::ropensci/taxize,
+    github::ropensci/taxize
