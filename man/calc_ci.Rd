@@ -2,8 +2,6 @@
 % Please edit documentation in R/calc_ci_methods.R
 \name{calc_ci}
 \alias{calc_ci}
-\alias{calc_ci.obs_richness}
-\alias{calc_ci.cum_richness}
 \alias{calc_ci.total_occ}
 \alias{calc_ci.occ_density}
 \alias{calc_ci.newness}
@@ -14,14 +12,9 @@
 \alias{calc_ci.spec_occ}
 \alias{calc_ci.spec_range}
 \alias{calc_ci.tax_distinct}
-\alias{calc_ci.occ_turnover}
 \title{Calculate Confidence Intervals for a Biodiversity Indicator}
 \usage{
 calc_ci(x, indicator, ...)
-
-\method{calc_ci}{obs_richness}(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
-
-\method{calc_ci}{cum_richness}(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
 
 \method{calc_ci}{total_occ}(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
 
@@ -49,21 +42,13 @@ calc_ci(x, indicator, ...)
   set_rows = 1,
   ...
 )
-
-\method{calc_ci}{occ_turnover}(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
 }
 \arguments{
 \item{x}{A data cube object}
 
-\item{indicator}{The calculated indicator to generate confidence intervals for.
-Only needed if you are using the function to generate bootstrap confidence
-intervals (Default = NULL).}
-
-\item{num_bootstrap}{Number of bootstraps to calculate for bootstrap confidence
-intervals (Default = 1000).}
-
-\item{ci_type}{Type of bootstrap confidence intervals to generate. Options are
-'norm', 'basic', 'perc' for percent, or 'bca'.}
+\item{indicator}{An indicator calculated over time, in the form of a data frame.
+*Note: this should NOT be an 'indicator_ts' object as it is meant to be called by
+the 'compute_indicator_workflow' function.}
 }
 \description{
 This function calculates bootstrap confidence intervals for a

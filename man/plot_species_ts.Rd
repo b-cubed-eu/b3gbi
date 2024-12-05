@@ -132,10 +132,10 @@ Default is 1.}
 \item{y_label}{Label for the y-axis.}
 
 \item{x_expand}{(Optional)  Expansion factor to expand the x-axis beyond the data.
-Left and right values are required in the form of c(0.1, 0.2). Default is c(0,0).}
+Left and right values are required in the form of c(0.1, 0.2). Default is c(0.05,0.05).}
 
 \item{y_expand}{(Optional)  Expansion factor to expand the y-axis beyond the data.
-Lower and upper values are required in the form of c(0.1, 0.2). Default is c(0,0).}
+Lower and upper values are required in the form of c(0.1, 0.2). Default is c(0.05,0.05).}
 
 \item{x_breaks}{Integer giving desired number of breaks for x axis.
 (May not return exactly the number requested.)}
