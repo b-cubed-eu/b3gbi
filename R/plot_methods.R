@@ -886,6 +886,8 @@ plot_map <- function(x,
 #'   indicator, with an optional smoothed trendline, and visualizes uncertainty.
 #'
 #' @param x An 'indicator_ts' object containing a time series of indicator values.
+#' @param min_year (Optional)  Earliest year to include in the plot.
+#' @param max_year (Optional)  Latest year to include in the plot.
 #' @param title Plot title. Replace "auto" with your own title if you want a
 #'   custom title or if calling the function manually.
 #' @param auto_title Text for automatic title generation, provided by an
@@ -893,21 +895,48 @@ plot_map <- function(x,
 #' @param y_label_default Default label for the y-axis, provided by an appropriate
 #'   S3 method (if calling the function manually, leave as NULL).
 #' @param suppress_y If TRUE, suppresses y-axis labels.
-#' @param smoothed_trend If TRUE, plot a smoothed trendline.
-#' @param linecolour (Optional) Colour for the indicator line.
-#'   Default is darkorange. Set to "NA" if you don't want to plot the indicator line.
+#' @param smoothed_trend If TRUE, plot a smoothed trendline over time
+#' (`stats::loess()`).
+#' @param linecolour (Optional) Colour for the indicator line or points.
+#'   Default is darkorange.
+#' @param linealpha Transparency for indicator line or points. Default is 0.8.
 #' @param ribboncolour (Optional) Colour for the bootstrapped confidence intervals.
 #'   Default is goldenrod1. Set to "NA" if you don't want to plot the CIs.
+#' @param ribbonalpha Transparency for indicator confidence interval ribbon (if
+#'   ci_type = "ribbon"). Default is 0.2.
+#' @param error_alpha Transparency for indicator error bars (if ci_type = "error_bar").
+#'   Default is 1.
 #' @param trendlinecolour (Optional) Colour for the smoothed trendline.
-#'   Default is blue. Set to "NA" if you don't want to plot the trend.
+#'   Default is blue.
+#' @param trendlinealpha Transparency for the smoothed trendline. Default is 0.5.
 #' @param envelopecolour (Optional) Colour for the uncertainty envelope.
-#'   Default is lightsteelblue. Set to "NA" if you don't want to plot the trend
-#'   uncertainty.
+#'   Default is lightsteelblue.
+#' @param envelopealpha Transparency for the smoothed trendline envelope. Default is 0.2.
+#' @param smooth_cialpha Transparency for the smoothed lines forming the edges of the
+#'   trendline envelope. Default is 1.
+#' @param point_line Whether to plot the indicator as a line or a series of points.
+#'   Options are "line" or "point". Default is "point".
+#' @param pointsize Size of the points if point_line = "point". Default is 2.
+#' @param linewidth Width of the line if point_line = "line". Default is 1.
+#' @param ci_type Whether to plot bootstrapped confidence intervals as a "ribbon"
+#'   or "error_bars". Default is "error_bars".
+#' @param error_width Width of error bars if ci_type = "error_bars". Default is 1.
+#'   Note that unlike the default 'width' parameter in geom_errorbar, 'error_width' is NOT
+#'   dependent on the number of data points in the plot. It is automatically scaled to
+#'   account for this. Therefore the width you select will be consistent relative to the
+#'   plot width even if you change 'min_year' and 'max_year'.
+#' @param error_thickness Thickness of error bars if ci_type = "error_bars". Default is 1.
+#' @param smooth_linetype Type of line to plot for smoothed trendline. Default is "solid".
+#' @param smooth_linewidth Line width for smoothed trendline. Default is 1.
+#' @param smooth_cilinewidth Line width for smoothed trendline confidence intervals.
+#'   Default is 1.
 #' @param gridoff  If TRUE, hides gridlines.
 #' @param x_label Label for the x-axis.
 #' @param y_label Label for the y-axis.
-#' @param min_year (Optional)  Earliest year to include in the plot.
-#' @param max_year (Optional)  Latest year to include in the plot.
+#' @param x_expand (Optional)  Expansion factor to expand the x-axis beyond the data.
+#'   Left and right values are required in the form of c(0.1, 0.2). Default is c(0,0).
+#' @param y_expand (Optional)  Expansion factor to expand the y-axis beyond the data.
+#'   Lower and upper values are required in the form of c(0.1, 0.2). Default is c(0,0).
 #' @param x_breaks Integer giving desired number of breaks for x axis.
 #'   (May not return exactly the number requested.)
 #' @param y_breaks Integer giving desired number of breaks for y axis.
@@ -932,24 +961,52 @@ plot_map <- function(x,
 #'         envelopecolour = "lightgreen")
 #' @export
 plot_ts <- function(x,
+                    min_year = NULL,
+                    max_year = NULL,
                     title = "auto",
                     auto_title = NULL,
                     y_label_default = NULL,
                     suppress_y = FALSE,
                     smoothed_trend = TRUE,
                     linecolour = NULL,
+                    linealpha = 0.8,
                     ribboncolour = NULL,
+                    ribbonalpha = 0.2,
+                    error_alpha = 1,
                     trendlinecolour = NULL,
+                    trendlinealpha = 0.5,
                     envelopecolour = NULL,
+                    envelopealpha = 0.2,
+                    smooth_cialpha = 1,
+                    point_line = c("point",
+                                   "line"),
+                    pointsize = 2,
+                    linewidth = 1,
+                    ci_type = c("error_bars",
+                                "ribbon"),
+                    error_width = 1,
+                    error_thickness = 1,
+                    smooth_linetype = c("solid",
+                                        "dashed",
+                                        "dotted",
+                                        "dotdash",
+                                        "longdash",
+                                        "twodash"),
+                    smooth_linewidth = 1,
+                    smooth_cilinewidth = 1,
                     gridoff = FALSE,
                     x_label = NULL,
                     y_label = NULL,
-                    min_year = NULL,
-                    max_year = NULL,
+                    x_expand = NULL,
+                    y_expand = NULL,
                     x_breaks = 10,
                     y_breaks = 6,
                     wrap_length = 60
                     ) {
+
+  point_line <- match.arg(point_line)
+  ci_type <- match.arg(ci_type)
+  smooth_linetype <- match.arg(smooth_linetype)
 
   # Filter by min and max year if set
   if (!is.null(min_year) | !is.null(max_year)) {
@@ -989,14 +1046,82 @@ plot_ts <- function(x,
   if (is.null(x_label)) x_label = "Year"
   if (is.null(y_label)) y_label = y_label_default
 
-  # Create plot with trend line
+  # Create basis of plot
   trend_plot <-
     ggplot2::ggplot(x$data, aes(x = year,
-                                y = diversity_val)) +
-    geom_line(colour = linecolour,
-              lwd = 1) +
-    scale_x_continuous(breaks = breaks_pretty_int(n = x_breaks)) +
-    scale_y_continuous(breaks = breaks_pretty_int(n = y_breaks)) +
+                                y = diversity_val))
+
+  # Add smooth trends (LOESS) if specified
+  if (smoothed_trend == TRUE) {
+    # Add a smoothed trend
+    trend_plot <- trend_plot +
+      geom_smooth(
+        colour = alpha(trendlinecolour, trendlinealpha),
+        lwd = smooth_linewidth,
+        linetype = smooth_linetype,
+        method = "loess",
+        formula = "y ~ x",
+        se = FALSE)
+
+    # Add smooth trends for confidence limits if available
+    if ("ll" %in% colnames(x$data) & "ul" %in% colnames(x$data)) {
+      trend_plot <- trend_plot +
+        geom_smooth(aes(y = ul),
+                    colour = alpha(envelopecolour, smooth_cialpha),
+                    lwd = smooth_cilinewidth,
+                    linetype = "dashed",
+                    method = "loess",
+                    formula = "y ~ x",
+                    se = FALSE) +
+        geom_smooth(aes(y = ll),
+                    colour = alpha(envelopecolour, smooth_cialpha),
+                    lwd = smooth_cilinewidth,
+                    linetype = "dashed",
+                    method = "loess",
+                    formula = "y ~ x",
+                    se = FALSE) +
+        geom_ribbon(aes(ymin = predict(loess(ll ~ year)),
+                        ymax = predict(loess(ul ~ year))),
+                    alpha = envelopealpha,
+                    fill = envelopecolour)
+    }
+  }
+
+  # If upper and lower limits are present, add errorbars
+  if ("ll" %in% colnames(x$data) & "ul" %in% colnames(x$data)) {
+    if (ci_type == "error_bars") {
+      trend_plot <- trend_plot +
+        geom_errorbar(aes(ymin = ll, ymax = ul),
+                      colour = ribboncolour,
+                      alpha = error_alpha,
+                      width = error_width,
+                      linewidth = error_thickness)
+    } else {
+      trend_plot <- trend_plot +
+        geom_ribbon(aes(ymin = ll, ymax = ul),
+                    alpha = ribbonalpha,
+                    fill = ribboncolour)
+    }
+
+  }
+
+  if (point_line == "point") {
+    trend_plot <- trend_plot +
+      geom_point(colour = linecolour,
+                 alpha = linealpha,
+                 size = pointsize)
+  } else {
+    trend_plot <- trend_plot +
+      geom_line(colour = linecolour,
+                alpha = linealpha,
+                lwd = linewidth)
+  }
+
+  trend_plot <- trend_plot +
+    scale_x_continuous(breaks = breaks_pretty_int(n = x_breaks),
+                       expand = expansion(mult = x_expand)) +
+    scale_y_continuous(breaks = breaks_pretty_int(n = y_breaks),
+                       expand = expansion(mult = y_expand)) +
     labs(x = x_label, y = y_label,
          title = title) +
     theme_minimal() +
@@ -1015,34 +1140,6 @@ plot_ts <- function(x,
           },
           strip.text = element_text(face = "italic")
     )
-
-  if ("ll" %in% colnames(x$data) & "ul" %in% colnames(x$data)) {
-
-    trend_plot <- trend_plot +
-      geom_ribbon(aes(ymin = ll,
-                    ymax = ul),
-                alpha = 0.3,
-                fill = ribboncolour)
-
-  }
-
-  if (smoothed_trend == TRUE) {
-
-    # Add a smoothed trend
-    trend_plot <- trend_plot +
-      geom_smooth(fill = envelopecolour,
-                  lwd = 1,
-                  linetype = 0,
-                  method = "loess",
-                  formula = "y ~ x") +
-      stat_smooth(colour = trendlinecolour,
-                  geom = "line",
-                  method = "loess",
-                  formula = "y ~ x",
-                  linetype = "dashed",
-                  alpha = 0.3,
-                  lwd = 1)
-  }
 
   # Wrap title if longer than wrap_length
   if(!is.null(title)) {
@@ -1063,13 +1160,17 @@ plot_ts <- function(x,
 #' @title Plot Occurrence Trends or Range Size Trends for Individual Species
 #'
 #' @description  Creates time series plots of species occurrences or species range
-#' sizes, with an optional smoothed trendline, and visualizes uncertainty.
+#'   sizes, with an optional smoothed trendline, and visualizes uncertainty.
 #'
 #' @param x An 'indicator_ts' object containing time series of indicator values
 #'   matched to species names and/or taxon keys.
 #' @param species Species you want to map occurrences for. Can be either numerical
 #'   taxonKeys or species names. Partial species names can be used (the function
 #'   will try to match them).
+#' @param single_plot By default all species occurrence time series will be combined
+#'   into a single multi-panel plot. Set this to FALSE to plot each species separately.
+#' @param min_year (Optional)  Earliest year to include in the plot.
+#' @param max_year (Optional)  Latest year to include in the plot.
 #' @param title Plot title. Replace "auto" with your own title if you want a
 #'   custom title or if calling the function manually.
 #' @param auto_title Text for automatic title generation, provided by an
@@ -1077,30 +1178,56 @@ plot_ts <- function(x,
 #' @param y_label_default Default label for the y-axis, provided by an appropriate
 #'   S3 method (if calling the function manually, leave as NULL).
 #' @param suppress_y If TRUE, suppresses y-axis labels.
-#' @param smoothed_trend If TRUE, plot a smoothed trendline.
-#' @param linecolour (Optional) Colour for the indicator line.
+#' @param smoothed_trend If TRUE, plot a smoothed trendline over time
+#' (`stats::loess()`).
+#' @param linecolour (Optional) Colour for the indicator line or points.
 #'   Default is darkorange.
+#' @param linealpha Transparency for indicator line or points. Default is 0.8.
 #' @param ribboncolour (Optional) Colour for the bootstrapped confidence intervals.
 #'   Default is goldenrod1. Set to "NA" if you don't want to plot the CIs.
+#' @param ribbonalpha Transparency for indicator confidence interval ribbon (if
+#'   ci_type = "ribbon"). Default is 0.2.
+#' @param error_alpha Transparency for indicator error bars (if ci_type = "error_bar").
+#'   Default is 1.
 #' @param trendlinecolour (Optional) Colour for the smoothed trendline.
 #'   Default is blue.
+#' @param trendlinealpha Transparency for the smoothed trendline. Default is 0.5.
 #' @param envelopecolour (Optional) Colour for the uncertainty envelope.
 #'   Default is lightsteelblue.
+#' @param envelopealpha Transparency for the smoothed trendline envelope. Default is 0.2.
+#' @param smooth_cialpha Transparency for the smoothed lines forming the edges of the
+#'   trendline envelope. Default is 1.
+#' @param point_line Whether to plot the indicator as a line or a series of points.
+#'   Options are "line" or "point". Default is "point".
+#' @param pointsize Size of the points if point_line = "point". Default is 2.
+#' @param linewidth Width of the line if point_line = "line". Default is 1.
+#' @param ci_type Whether to plot bootstrapped confidence intervals as a "ribbon"
+#'   or "error_bars". Default is "error_bars".
+#' @param error_width Width of error bars if ci_type = "error_bars". Default is 1.
+#'   Note that unlike the default 'width' parameter in geom_errorbar, 'error_width' is NOT
+#'   dependent on the number of data points in the plot. It is automatically scaled to
+#'   account for this. Therefore the width you select will be consistent relative to the
+#'   plot width even if you change 'min_year' and 'max_year'.
+#' @param error_thickness Thickness of error bars if ci_type = "error_bars". Default is 1.
+#' @param smooth_linetype Type of line to plot for smoothed trendline. Default is "solid".
+#' @param smooth_linewidth Line width for smoothed trendline. Default is 1.
+#' @param smooth_cilinewidth Line width for smoothed trendline confidence intervals.
+#'   Default is 1.
 #' @param gridoff  If TRUE, hides gridlines.
 #' @param x_label Label for the x-axis.
 #' @param y_label Label for the y-axis.
-#' @param min_year (Optional)  Earliest year to include in the plot.
-#' @param max_year (Optional)  Latest year to include in the plot.
+#' @param x_expand (Optional)  Expansion factor to expand the x-axis beyond the data.
+#'   Left and right values are required in the form of c(0.1, 0.2). Default is c(0,0).
+#' @param y_expand (Optional)  Expansion factor to expand the y-axis beyond the data.
+#'   Lower and upper values are required in the form of c(0.1, 0.2). Default is c(0,0).
 #' @param x_breaks Integer giving desired number of breaks for x axis.
 #'   (May not return exactly the number requested.)
 #' @param y_breaks Integer giving desired number of breaks for y axis.
 #'   (May not return exactly the number requested.)
 #' @param title_wrap_length  Maximum title length before wrapping to a new line.
-#' @param single_plot By default all species occurrence time series will be combined
-#'   into a single multi-panel plot. Set this to FALSE to plot each species separately.
 #'
 #' @return A ggplot object representing species range or occurrence time series plot(s).
-#' Can be customized using ggplot2 functions.
+#'   Can be customized using ggplot2 functions.
 #'
 #' @examples
 #' spec_occ_ts_mammals_denmark <- spec_occ_ts(example_cube_1,
@@ -1117,25 +1244,53 @@ plot_ts <- function(x,
 #' @export
 plot_species_ts <- function(x,
                             species = NULL,
-                            y_label_default = NULL,
-                            auto_title = NULL,
-                            title = "auto",
+                            single_plot = TRUE,
                             min_year = NULL,
                             max_year = NULL,
+                            title = "auto",
+                            auto_title = NULL,
+                            y_label_default = NULL,
+                            suppress_y = FALSE,
                             smoothed_trend = TRUE,
                             linecolour = NULL,
+                            linealpha = 0.8,
                             ribboncolour = NULL,
+                            ribbonalpha = 0.2,
+                            error_alpha = 1,
                             trendlinecolour = NULL,
+                            trendlinealpha = 0.5,
                             envelopecolour = NULL,
-                            single_plot = TRUE,
+                            envelopealpha = 0.2,
+                            smooth_cialpha = 1,
+                            point_line = c("point",
+                                           "line"),
+                            pointsize = 2,
+                            linewidth = 1,
+                            ci_type = c("error_bars",
+                                        "ribbon"),
+                            error_width = 1,
+                            error_thickness = 1,
+                            smooth_linetype = c("solid",
+                                                "dashed",
+                                                "dotted",
+                                                "dotdash",
+                                                "longdash",
+                                                "twodash"),
+                            smooth_linewidth = 1,
+                            smooth_cilinewidth = 1,
+                            gridoff = FALSE,
                             x_label = NULL,
                             y_label = NULL,
+                            x_expand = NULL,
+                            y_expand = NULL,
                             x_breaks = 10,
                             y_breaks = 6,
-                            suppress_y = FALSE,
-                            gridoff = FALSE,
                             title_wrap_length = 60
                             ) {
+
+  point_line <- match.arg(point_line)
+  ci_type <- match.arg(ci_type)
+  smooth_linetype <- match.arg(smooth_linetype)
 
   # Filter by min and max year if set
   if (!is.null(min_year) | !is.null(max_year)) {
@@ -1218,36 +1373,86 @@ plot_species_ts <- function(x,
   if (is.null(x_label)) x_label = "Year"
   if (is.null(y_label)) y_label = y_label_default
 
+  # Set axis limits
+  if (is.null(x_expand)) x_expand = c(0, 0)
+  if (is.null(y_expand)) y_expand = c(0, 0)
+
+  error_width = (error_width * (max_year - min_year)) / 100
+
+
   # Create bootstrapped confidence intervals if columns present
   if ("ll" %in% colnames(x$data) & "ul" %in% colnames(x$data)) {
 
-    ci_ribbon <- list(
+      if (ci_type == "error_bars") {
+        ci_ribbon <- list(
+          geom_errorbar(aes(ymin = ll, ymax = ul),
+                        colour = ribboncolour,
+                        alpha = error_alpha,
+                        width = error_width,
+                        linewidth = error_thickness)
+        )
+      } else {
+        ci_ribbon <- list(
+          geom_ribbon(aes(ymin = ll, ymax = ul),
+                      alpha = ribbonalpha,
+                      fill = ribboncolour)
+        )
+      }
 
-      geom_ribbon(aes(ymin = ll,
-                      ymax = ul),
-                  alpha = 0.3,
-                  fill = ribboncolour)
-    )
   } else {
     ci_ribbon <- list()
   }
 
   # Create smoothed trend if desired
   if (smoothed_trend == TRUE) {
-    smoothing <- list(
-      geom_smooth(fill = envelopecolour,
-                  lwd = 1,
-                  linetype = 0,
-                  method = "loess",
-                  formula = "y ~ x"),
-      stat_smooth(colour = trendlinecolour,
-                  geom = "line",
-                  method = "loess",
-                  formula = "y ~ x",
-                  linetype = "dashed",
-                  alpha = 0.3,
-                  lwd = 1)
-    )
+
+    # Include smooth trends for confidence limits if available
+    if ("ll" %in% colnames(x$data) & "ul" %in% colnames(x$data)) {
+      smoothing <- list(
+         geom_smooth(
+           colour = alpha(trendlinecolour, trendlinealpha),
+           lwd = smooth_linewidth,
+           linetype = smooth_linetype,
+           method = "loess",
+           formula = "y ~ x",
+           se = FALSE),
+
+         geom_ribbon(aes(ymin = predict(loess(ll ~ year)),
+                         ymax = predict(loess(ul ~ year))),
+                     alpha = envelopealpha,
+                     fill = envelopecolour),
+
+          geom_smooth(
+            aes(y = ul),
+            colour = alpha(envelopecolour, smooth_cialpha),
+            lwd = smooth_cilinewidth,
+            linetype = "dashed",
+            method = "loess",
+            formula = "y ~ x",
+            se = FALSE),
+
+          geom_smooth(
+            aes(y = ll),
+            colour = alpha(envelopecolour, smooth_cialpha),
+            lwd = smooth_cilinewidth,
+            linetype = "dashed",
+            method = "loess",
+            formula = "y ~ x",
+            se = FALSE)
+      )
+    } else {
+
+        smoothing <- list(
+          geom_smooth(
+            colour = alpha(trendlinecolour, 0.5),
+            lwd = 1,
+            linetype = smooth_linetype,
+            method = "loess",
+            formula = "y ~ x",
+            se = FALSE)
+        )
+    }
+
   } else {
     smoothing <- list()
   }
@@ -1257,12 +1462,26 @@ plot_species_ts <- function(x,
     purrr::map2(split_so,
                 sci_names,
                 function(x., y) {
-                  ggplot2::ggplot(x., aes(x = year,
-                                          y = diversity_val)) +
-                    geom_line(colour = linecolour,
-                              lwd = 1) +
-                    scale_x_continuous(breaks = breaks_pretty_int(n = x_breaks)) +
-                    scale_y_continuous(breaks = breaks_pretty_int(n = y_breaks)) +
+
+                  if (point_line == "point") {
+                    specplot <- ggplot2::ggplot(x., aes(x = year,
+                                                        y = diversity_val)) +
+                      geom_point(colour = linecolour,
+                                 size = pointsize,
+                                 alpha = linealpha)
+                  } else {
+                    specplot <- ggplot2::ggplot(x., aes(x = year,
+                                                        y = diversity_val)) +
+                      geom_line(colour = linecolour,
+                                lwd = linewidth,
+                                alpha = linealpha)
+                  }
+
+                  specplot <- specplot +
+                    scale_x_continuous(breaks = breaks_pretty_int(n = x_breaks),
+                                       expand = expansion(mult = x_expand)) +
+                    scale_y_continuous(breaks = breaks_pretty_int(n = y_breaks),
+                                       expand = expansion(mult = y_expand)) +
                     labs(x = x_label, y = y_label,
                          title = title) +
                     theme_minimal() +
@@ -1274,8 +1493,10 @@ plot_species_ts <- function(x,
                           strip.text = element_text(face = "italic")
                     ) +
                     labs(title = y) +
-                    ci_ribbon +
-                    smoothing
+                    smoothing +
+                    ci_ribbon
+
+                  return(specplot)
                 })
 
   names(trend_plot) <- sci_names
