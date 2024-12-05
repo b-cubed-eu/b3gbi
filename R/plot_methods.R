@@ -1046,6 +1046,13 @@ plot_ts <- function(x,
   if (is.null(x_label)) x_label = "Year"
   if (is.null(y_label)) y_label = y_label_default
 
+  # Set axis limits
+  if (is.null(x_expand)) x_expand = c(0, 0)
+  if (is.null(y_expand)) y_expand = c(0, 0)
+
+  # Adjust error bar width according to number of years being plotted
+  error_width = (error_width * (max_year - min_year)) / 100
+
   # Create basis of plot
   trend_plot <-
     ggplot2::ggplot(x$data, aes(x = year,
@@ -1217,9 +1224,9 @@ plot_ts <- function(x,
 #' @param x_label Label for the x-axis.
 #' @param y_label Label for the y-axis.
 #' @param x_expand (Optional)  Expansion factor to expand the x-axis beyond the data.
-#'   Left and right values are required in the form of c(0.1, 0.2). Default is c(0,0).
+#'   Left and right values are required in the form of c(0.1, 0.2). Default is c(0.05,0.05).
 #' @param y_expand (Optional)  Expansion factor to expand the y-axis beyond the data.
-#'   Lower and upper values are required in the form of c(0.1, 0.2). Default is c(0,0).
+#'   Lower and upper values are required in the form of c(0.1, 0.2). Default is c(0.05,0.05).
 #' @param x_breaks Integer giving desired number of breaks for x axis.
 #'   (May not return exactly the number requested.)
 #' @param y_breaks Integer giving desired number of breaks for y axis.
@@ -1377,8 +1384,8 @@ plot_species_ts <- function(x,
   if (is.null(x_expand)) x_expand = c(0, 0)
   if (is.null(y_expand)) y_expand = c(0, 0)
 
+  # Adjust error bar width according to number of years being plotted
   error_width = (error_width * (max_year - min_year)) / 100
-
 
   # Create bootstrapped confidence intervals if columns present
   if ("ll" %in% colnames(x$data) & "ul" %in% colnames(x$data)) {
