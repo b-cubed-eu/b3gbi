@@ -1053,9 +1053,13 @@ plot_ts <- function(x,
   # Adjust error bar width according to number of years being plotted
   error_width = (error_width * (max_year - min_year)) / 100
 
-  # Remove NAs from CIs
-  x$data$ll <- ifelse(is.na(x$data$ll), x$data$diversity_val, x$data$ll)
-  x$data$ul <- ifelse(is.na(x$data$ul), x$data$diversity_val, x$data$ul)
+  if ("ll" %in% colnames(x$data) & "ul" %in% colnames(x$data)) {
+
+    # Remove NAs from CIs
+    x$data$ll <- ifelse(is.na(x$data$ll), x$data$diversity_val, x$data$ll)
+    x$data$ul <- ifelse(is.na(x$data$ul), x$data$diversity_val, x$data$ul)
+
+  }
 
   # Create basis of plot
   trend_plot <-
@@ -1391,12 +1395,12 @@ plot_species_ts <- function(x,
   # Adjust error bar width according to number of years being plotted
   error_width = (error_width * (max_year - min_year)) / 100
 
-  # Remove NAs from CIs
-  x$data$ll <- ifelse(is.na(x$data$ll), x$data$diversity_val, x$data$ll)
-  x$data$ul <- ifelse(is.na(x$data$ul), x$data$diversity_val, x$data$ul)
-
   # Create bootstrapped confidence intervals if columns present
   if ("ll" %in% colnames(x$data) & "ul" %in% colnames(x$data)) {
+
+    # Remove NAs from CIs
+    x$data$ll <- ifelse(is.na(x$data$ll), x$data$diversity_val, x$data$ll)
+    x$data$ul <- ifelse(is.na(x$data$ul), x$data$diversity_val, x$data$ul)
 
       if (ci_type == "error_bars") {
         ci_ribbon <- list(
