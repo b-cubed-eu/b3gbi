@@ -1,3 +1,55 @@
+# copy of function boot.return from boot package
+#' @noRd
+boot.return_int <- function (sim, t0, t, strata, R, data, stat, stype, call, seed,
+          L, m, pred.i, weights, ran.gen, mle)
+{
+  out <- list(t0 = t0, t = t, R = R, data = data, seed = seed,
+              statistic = stat, sim = sim, call = call)
+  if (sim == "parametric")
+    out <- c(out, list(ran.gen = ran.gen, mle = mle))
+  else if (sim == "antithetic")
+    out <- c(out, list(stype = stype, strata = strata, L = L))
+  else if (sim == "ordinary") {
+    if (sum(m) > 0)
+      out <- c(out, list(stype = stype, strata = strata,
+                         weights = weights, pred.i = pred.i))
+    else out <- c(out, list(stype = stype, strata = strata,
+                            weights = weights))
+  }
+  else if (sim == "balanced")
+    out <- c(out, list(stype = stype, strata = strata, weights = weights))
+  else out <- c(out, list(stype = stype, strata = strata))
+  class(out) <- "boot"
+  out
+}
+
+
+# alternative sampling function that works properly even with length of 1
+#' @noRd
+resample <- function(x, size, replace = TRUE) {
+
+  if (length(x) == 1) {
+
+    return(rep(x, size))
+
+  } else {
+
+    return(sample(x, size, replace = replace))
+
+  }
+
+}
+
+# Function to add missing year values into bootstrap results
+# boot is the bootstrap output, and orig_data is the original data used to
+# calculate the bootstraps (a data frame with a year column arranged in order)
+#' @noRd
+add_yearvals_to_boot <- function(boot, orig_data) {
+  names(boot) <- unique(orig_data$year)[2:length(unique(orig_data$year))]
+  return(boot)
+}
+
+
 # Copy of stopifnot_error from iregnet package
 #' @title stopifnot with custom error message
 #'
