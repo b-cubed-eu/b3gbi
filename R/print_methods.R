@@ -40,11 +40,6 @@ print.indicator_ts <- function(x, n = 10, ...) {
 #' @param n Integer specifying the number of rows of data to display.
 #' @param ... Additional arguments.
 #'
-#' @examples
-#' library(sf)
-#' obs_rich_map <- obs_richness_map(example_cube_1, spherical_geometry = FALSE)
-#' print(obs_rich_map)
-#'
 #' @export
 print.indicator_map <- function(x, n = 10, ...) {
   cat("Gridded biodiversity indicator map\n\n")
