@@ -38,9 +38,10 @@ This function calculates the total number of species occurrence records
 as a time series.
 }
 \examples{
+\dontrun{
 to_ts <- total_occ_ts(example_cube_1, first_year = 1985)
 plot(to_ts)
-
+}
 }
 \seealso{
 compute_indicator_workflow

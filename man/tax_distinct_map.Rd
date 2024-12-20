@@ -39,8 +39,10 @@ the calculated indicator values and metadata.
 This function calculates the taxonomic distinctness index over a gridded map.
 }
 \examples{
+\dontrun{
 td_map <- tax_distinct_map(example_cube_1, level = "country", region = "Denmark")
 plot(td_map)
+}
 
 }
 \seealso{

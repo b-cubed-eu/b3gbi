@@ -37,9 +37,10 @@ the calculated indicator values and metadata.
 This function calculates Pielou's evenness over a gridded map.
 }
 \examples{
+\dontrun{
 pe_map <- pielou_evenness_map(example_cube_1, level = "country", region = "Denmark")
 plot(pe_map)
-
+}
 }
 \seealso{
 compute_indicator_workflow

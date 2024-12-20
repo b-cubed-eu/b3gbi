@@ -37,9 +37,10 @@ the calculated indicator values and metadata.
 This function calculates Williams' evenness over time.
 }
 \examples{
+\dontrun{
 we_ts <- williams_evenness_ts(example_cube_1, first_year = 1985)
 plot(we_ts)
-
+}
 }
 \seealso{
 compute_indicator_workflow

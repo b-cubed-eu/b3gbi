@@ -38,9 +38,10 @@ This function calculates number of cells occupied for individual
 species as time series.
 }
 \examples{
+\dontrun{
 sr_ts <- spec_range_ts(example_cube_1, first_year = 1985)
 plot(sr_ts, c(2440728, 4265185))
-
+}
 }
 \seealso{
 compute_indicator_workflow

@@ -37,9 +37,10 @@ the calculated indicator values and metadata.
 This function calculates observed species richness as a time series.
 }
 \examples{
+\dontrun{
 or_ts <- obs_richness_ts(example_cube_1, first_year = 1985)
 plot(or_ts)
-
+}
 }
 \seealso{
 compute_indicator_workflow

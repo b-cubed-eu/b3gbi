@@ -37,9 +37,10 @@ the calculated indicator values and metadata.
 This function calculates abundance-based rarity over time.
 }
 \examples{
+\dontrun{
 abr_ts <- ab_rarity_ts(example_cube_1, first_year = 1985)
 plot(abr_ts)
-
+}
 }
 \seealso{
 compute_indicator_workflow

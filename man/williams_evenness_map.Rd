@@ -37,9 +37,10 @@ the calculated indicator values and metadata.
 This function calculates Williams' evenness over a gridded map.
 }
 \examples{
+\dontrun{
 we_map <- williams_evenness_map(example_cube_1, level = "country", region = "Denmark")
 plot(we_map)
-
+}
 }
 \seealso{
 compute_indicator_workflow

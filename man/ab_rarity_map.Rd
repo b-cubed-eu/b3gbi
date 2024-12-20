@@ -37,9 +37,10 @@ the calculated indicator values and metadata.
 This function calculates abundance-based rarity over a gridded map.
 }
 \examples{
+\dontrun{
 abr_map <- ab_rarity_map(example_cube_1, level = "country", region = "Denmark")
 plot(abr_map)
-
+}
 }
 \seealso{
 compute_indicator_workflow

@@ -37,9 +37,10 @@ the calculated indicator values and metadata.
 This function calculates Pielou's evenness over time.
 }
 \examples{
+\dontrun{
 pe_ts <- pielou_evenness_ts(example_cube_1, first_year = 1985)
 plot(pe_ts)
-
+}
 }
 \seealso{
 compute_indicator_workflow

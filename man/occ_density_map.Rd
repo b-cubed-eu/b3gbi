@@ -37,9 +37,10 @@ the calculated indicator values and metadata.
 This function calculates the density of records over a gridded map.
 }
 \examples{
+\dontrun{
 od_map <- occ_density_map(example_cube_1, level = "country", region = "Denmark")
 plot(od_map)
-
+}
 }
 \seealso{
 compute_indicator_workflow

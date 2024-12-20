@@ -38,9 +38,10 @@ This function calculates the total number of species occurrence
 records over a gridded map.
 }
 \examples{
+\dontrun{
 to_map <- total_occ_map(example_cube_1, level = "country", region = "Denmark")
 plot(to_map)
-
+}
 }
 \seealso{
 compute_indicator_workflow
