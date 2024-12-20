@@ -12,9 +12,10 @@
 #' the calculated indicator values and metadata.
 #'
 #' @examples
+#' \dontrun{
 #' or_map <- obs_richness_map(example_cube_1, level = "country", region = "Denmark")
 #' plot(or_map)
-#'
+#' }
 #' @export
 obs_richness_map <- function(data, ...) {
   compute_indicator_workflow(data,
@@ -38,9 +39,10 @@ obs_richness_map <- function(data, ...) {
 #' the calculated indicator values and metadata.
 #'
 #' @examples
+#' \dontrun{
 #' or_ts <- obs_richness_ts(example_cube_1, first_year = 1985)
 #' plot(or_ts)
-#'
+#' }
 #' @export
 obs_richness_ts <- function(data, ...) {
   compute_indicator_workflow(data,
@@ -65,9 +67,10 @@ obs_richness_ts <- function(data, ...) {
 #' the calculated indicator values and metadata.
 #'
 #' @examples
+#' \dontrun{
 #' to_map <- total_occ_map(example_cube_1, level = "country", region = "Denmark")
 #' plot(to_map)
-#'
+#' }
 #' @export
 total_occ_map <- function(data, ...) {
   compute_indicator_workflow(data,
@@ -92,9 +95,10 @@ total_occ_map <- function(data, ...) {
 #' the calculated indicator values and metadata.
 #'
 #' @examples
+#' \dontrun{
 #' to_ts <- total_occ_ts(example_cube_1, first_year = 1985)
 #' plot(to_ts)
-#'
+#' }
 #' @export
 total_occ_ts <- function(data, ...) {
   compute_indicator_workflow(data,
@@ -118,9 +122,10 @@ total_occ_ts <- function(data, ...) {
 #' the calculated indicator values and metadata.
 #'
 #' @examples
+#' \dontrun{
 #' pe_map <- pielou_evenness_map(example_cube_1, level = "country", region = "Denmark")
 #' plot(pe_map)
-#'
+#' }
 #' @export
 pielou_evenness_map <- function(data, ...) {
   compute_indicator_workflow(data,
@@ -144,9 +149,10 @@ pielou_evenness_map <- function(data, ...) {
 #' the calculated indicator values and metadata.
 #'
 #' @examples
+#' \dontrun{
 #' pe_ts <- pielou_evenness_ts(example_cube_1, first_year = 1985)
 #' plot(pe_ts)
-#'
+#' }
 #' @export
 pielou_evenness_ts <- function(data, ...) {
   compute_indicator_workflow(data,
@@ -170,9 +176,10 @@ pielou_evenness_ts <- function(data, ...) {
 #' the calculated indicator values and metadata.
 #'
 #' @examples
+#' \dontrun{
 #' we_map <- williams_evenness_map(example_cube_1, level = "country", region = "Denmark")
 #' plot(we_map)
-#'
+#' }
 #' @export
 williams_evenness_map <- function(data, ...) {
   compute_indicator_workflow(data,
@@ -195,9 +202,10 @@ williams_evenness_map <- function(data, ...) {
 #' the calculated indicator values and metadata.
 #'
 #' @examples
+#' \dontrun{
 #' we_ts <- williams_evenness_ts(example_cube_1, first_year = 1985)
 #' plot(we_ts)
-#'
+#' }
 #' @export
 williams_evenness_ts <- function(data, ...) {
   compute_indicator_workflow(data,
@@ -221,9 +229,10 @@ williams_evenness_ts <- function(data, ...) {
 #' the calculated indicator values and metadata.
 #'
 #' @examples
+#' \dontrun{
 #' arr_map <- area_rarity_map(example_cube_1, level = "country", region = "Denmark")
 #' plot(arr_map)
-#'
+#' }
 #' @export
 area_rarity_map <- function(data, ...) {
   compute_indicator_workflow(data,
@@ -247,9 +256,10 @@ area_rarity_map <- function(data, ...) {
 #' the calculated indicator values and metadata.
 #'
 #' @examples
+#' \dontrun{
 #' arr_ts <- area_rarity_ts(example_cube_1, first_year = 1985)
 #' plot(arr_ts)
-#'
+#' }
 #' @export
 area_rarity_ts <- function(data, ...) {
   compute_indicator_workflow(data,
@@ -273,9 +283,10 @@ area_rarity_ts <- function(data, ...) {
 #' the calculated indicator values and metadata.
 #'
 #' @examples
+#' \dontrun{
 #' abr_map <- ab_rarity_map(example_cube_1, level = "country", region = "Denmark")
 #' plot(abr_map)
-#'
+#' }
 #' @export
 ab_rarity_map <- function(data, ...) {
   compute_indicator_workflow(data,
@@ -299,9 +310,10 @@ ab_rarity_map <- function(data, ...) {
 #' the calculated indicator values and metadata.
 #'
 #' @examples
+#' \dontrun{
 #' abr_ts <- ab_rarity_ts(example_cube_1, first_year = 1985)
 #' plot(abr_ts)
-#'
+#' }
 #' @export
 ab_rarity_ts <- function(data, ...) {
   compute_indicator_workflow(data,
@@ -328,9 +340,10 @@ ab_rarity_ts <- function(data, ...) {
 #' the calculated indicator values and metadata.
 #'
 #' @examples
+#' \dontrun{
 #' h0_map <- hill0_map(example_cube_1, level = "country", region = "Denmark")
 #' plot(h0_map)
-#'
+#' }
 #' @noRd
 hill0_map <- function(data,
                       coverage = 0.95,
@@ -360,9 +373,10 @@ hill0_map <- function(data,
 #' the calculated indicator values and metadata.
 #'
 #' @examples
+#' \dontrun{
 #' h0_ts <- hill0_ts(example_cube_1, first_year = 1985)
 #' plot(h0_ts)
-#'
+#' }
 #' @noRd
 hill0_ts <- function(data,
                      coverage = 0.95,
@@ -392,9 +406,10 @@ hill0_ts <- function(data,
 #' the calculated indicator values and metadata.
 #'
 #' @examples
+#' \dontrun{
 #' h1_map <- hill1_map(example_cube_1, level = "country", region = "Denmark")
 #' plot(h1_map)
-#'
+#' }
 #' @noRd
 hill1_map <- function(data,
                       cutoff_length = 5,
@@ -424,9 +439,10 @@ hill1_map <- function(data,
 #' the calculated indicator values and metadata.
 #'
 #' @examples
+#' \dontrun{
 #' h1_ts <- hill1_ts(example_cube_1, first_year = 1985)
 #' plot(h1_ts)
-#'
+#' }
 #' @noRd
 hill1_ts <- function(data,
                      cutoff_length = 5,
@@ -456,9 +472,10 @@ hill1_ts <- function(data,
 #' the calculated indicator values and metadata.
 #'
 #' @examples
+#' \dontrun{
 #' h2_map <- hill2_map(example_cube_1, level = "country", region = "Denmark")
 #' plot(h2_map)
-#'
+#' }
 #' @noRd
 hill2_map <- function(data,
                       cutoff_length = 5,
@@ -487,9 +504,10 @@ hill2_map <- function(data,
 #' the calculated indicator values and metadata.
 #'
 #' @examples
+#' \dontrun{
 #' h2_ts <- hill2_ts(example_cube_1, first_year = 1985)
 #' plot(h2_ts)
-#'
+#' }
 #' @noRd
 hill2_ts <- function(data,
                      cutoff_length = 5,
@@ -518,9 +536,10 @@ hill2_ts <- function(data,
 #' the calculated indicator values and metadata.
 #'
 #' @examples
+#' \dontrun{
 #' cr_ts <- cum_richness_ts(example_cube_1, first_year = 1985)
 #' plot(cr_ts)
-#'
+#' }
 #' @export
 cum_richness_ts <- function(data, ...) {
   compute_indicator_workflow(data,
@@ -545,9 +564,10 @@ cum_richness_ts <- function(data, ...) {
 #' the calculated indicator values and metadata.
 #'
 #' @examples
+#' \dontrun{
 #' n_map <- newness_map(example_cube_1, level = "country", region = "Denmark")
 #' plot(n_map)
-#'
+#' }
 #' @export
 newness_map <- function(data, ...) {
   compute_indicator_workflow(data,
@@ -572,9 +592,10 @@ newness_map <- function(data, ...) {
 #' the calculated indicator values and metadata.
 #'
 #' @examples
+#' \dontrun{
 #' n_ts <- newness_ts(example_cube_1, first_year = 1985)
 #' plot(n_ts)
-#'
+#' }
 #' @export
 newness_ts <- function(data, ...) {
   compute_indicator_workflow(data,
@@ -598,9 +619,10 @@ newness_ts <- function(data, ...) {
 #' the calculated indicator values and metadata.
 #'
 #' @examples
+#' \dontrun{
 #' od_map <- occ_density_map(example_cube_1, level = "country", region = "Denmark")
 #' plot(od_map)
-#'
+#' }
 #' @export
 occ_density_map <- function(data, ...) {
   compute_indicator_workflow(data,
@@ -624,9 +646,10 @@ occ_density_map <- function(data, ...) {
 #' the calculated indicator values and metadata.
 #'
 #' @examples
+#' \dontrun{
 #' od_ts <- occ_density_ts(example_cube_1, first_year = 1985)
 #' plot(od_ts)
-#'
+#' }
 #' @export
 occ_density_ts <- function(data, ...) {
   compute_indicator_workflow(data,
@@ -650,9 +673,10 @@ occ_density_ts <- function(data, ...) {
 #' the calculated indicator values and metadata.
 #'
 #' @examples
+#' \dontrun{
 #' so_map <- spec_occ_map(example_cube_1, level = "country", region = "Denmark")
 #' plot(so_map, c(2440728, 4265185))
-#'
+#' }
 #' @export
 spec_occ_map <- function(data, ...) {
   compute_indicator_workflow(data,
@@ -728,9 +752,10 @@ spec_range_map <- function(data, ...) {
 #' the calculated indicator values and metadata.
 #'
 #' @examples
+#' \dontrun{
 #' sr_ts <- spec_range_ts(example_cube_1, first_year = 1985)
 #' plot(sr_ts, c(2440728, 4265185))
-#'
+#' }
 #' @export
 spec_range_ts <- function(data, ...) {
   compute_indicator_workflow(data,
@@ -754,8 +779,10 @@ spec_range_ts <- function(data, ...) {
 #' the calculated indicator values and metadata.
 #'
 #' @examples
+#' \dontrun{
 #' td_map <- tax_distinct_map(example_cube_1, level = "country", region = "Denmark")
 #' plot(td_map)
+#' }
 #'
 #' @export
 tax_distinct_map <- function(data, rows = 1, ...) {
