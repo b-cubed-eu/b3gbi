@@ -811,9 +811,10 @@ tax_distinct_map <- function(data, rows = 1, ...) {
 #' the calculated indicator values and metadata.
 #'
 #' @examples
+#' \dontrun{
 #' td_ts <- tax_distinct_ts(example_cube_1, level = "country", region = "Denmark")
 #' plot(td_ts)
-#'
+#' }
 #' @export
 tax_distinct_ts <- function(data, rows = 1, ...) {
   if (!requireNamespace("taxize", quietly = TRUE)) {

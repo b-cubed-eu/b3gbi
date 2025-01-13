@@ -39,9 +39,10 @@ the calculated indicator values and metadata.
 This function calculates the taxonomic distinctness index as a time series.
 }
 \examples{
+\dontrun{
 td_ts <- tax_distinct_ts(example_cube_1, level = "country", region = "Denmark")
 plot(td_ts)
-
+}
 }
 \seealso{
 compute_indicator_workflow
