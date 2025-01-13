@@ -7,22 +7,40 @@
 plot_species_ts(
   x,
   species = NULL,
-  y_label_default = NULL,
-  auto_title = NULL,
-  title = "auto",
+  single_plot = TRUE,
   min_year = NULL,
   max_year = NULL,
+  title = "auto",
+  auto_title = NULL,
+  y_label_default = NULL,
+  suppress_y = FALSE,
   smoothed_trend = TRUE,
   linecolour = NULL,
+  linealpha = 0.8,
+  ribboncolour = NULL,
+  ribbonalpha = 0.2,
+  error_alpha = 1,
   trendlinecolour = NULL,
+  trendlinealpha = 0.5,
   envelopecolour = NULL,
-  single_plot = TRUE,
+  envelopealpha = 0.2,
+  smooth_cialpha = 1,
+  point_line = c("point", "line"),
+  pointsize = 2,
+  linewidth = 1,
+  ci_type = c("error_bars", "ribbon"),
+  error_width = 1,
+  error_thickness = 1,
+  smooth_linetype = c("solid", "dashed", "dotted", "dotdash", "longdash", "twodash"),
+  smooth_linewidth = 1,
+  smooth_cilinewidth = 1,
+  gridoff = FALSE,
   x_label = NULL,
   y_label = NULL,
+  x_expand = NULL,
+  y_expand = NULL,
   x_breaks = 10,
   y_breaks = 6,
-  suppress_y = FALSE,
-  gridoff = FALSE,
   title_wrap_length = 60
 )
 }
@@ -34,46 +52,96 @@ matched to species names and/or taxon keys.}
 taxonKeys or species names. Partial species names can be used (the function
 will try to match them).}
 
-\item{y_label_default}{Default label for the y-axis, provided by an appropriate
-S3 method (if calling the function manually, leave as NULL).}
-
-\item{auto_title}{Text for automatic title generation, provided by an
-appropriate S3 method (if calling the function manually, leave as NULL).}
-
-\item{title}{Plot title. Replace "auto" with your own title if you want a
-custom title or if calling the function manually.}
+\item{single_plot}{By default all species occurrence time series will be combined
+into a single multi-panel plot. Set this to FALSE to plot each species separately.}
 
 \item{min_year}{(Optional)  Earliest year to include in the plot.}
 
 \item{max_year}{(Optional)  Latest year to include in the plot.}
 
-\item{smoothed_trend}{If TRUE, plot a smoothed trendline.}
+\item{title}{Plot title. Replace "auto" with your own title if you want a
+custom title or if calling the function manually.}
 
-\item{linecolour}{(Optional) Colour for the indicator line.
+\item{auto_title}{Text for automatic title generation, provided by an
+appropriate S3 method (if calling the function manually, leave as NULL).}
+
+\item{y_label_default}{Default label for the y-axis, provided by an appropriate
+S3 method (if calling the function manually, leave as NULL).}
+
+\item{suppress_y}{If TRUE, suppresses y-axis labels.}
+
+\item{smoothed_trend}{If TRUE, plot a smoothed trendline over time
+(\code{stats::loess()}).}
+
+\item{linecolour}{(Optional) Colour for the indicator line or points.
 Default is darkorange.}
+
+\item{linealpha}{Transparency for indicator line or points. Default is 0.8.}
+
+\item{ribboncolour}{(Optional) Colour for the bootstrapped confidence intervals.
+Default is goldenrod1. Set to "NA" if you don't want to plot the CIs.}
+
+\item{ribbonalpha}{Transparency for indicator confidence interval ribbon (if
+ci_type = "ribbon"). Default is 0.2.}
+
+\item{error_alpha}{Transparency for indicator error bars (if ci_type = "error_bar").
+Default is 1.}
 
 \item{trendlinecolour}{(Optional) Colour for the smoothed trendline.
 Default is blue.}
 
+\item{trendlinealpha}{Transparency for the smoothed trendline. Default is 0.5.}
+
 \item{envelopecolour}{(Optional) Colour for the uncertainty envelope.
 Default is lightsteelblue.}
 
-\item{single_plot}{By default all species occurrence time series will be combined
-into a single multi-panel plot. Set this to FALSE to plot each species separately.}
+\item{envelopealpha}{Transparency for the smoothed trendline envelope. Default is 0.2.}
+
+\item{smooth_cialpha}{Transparency for the smoothed lines forming the edges of the
+trendline envelope. Default is 1.}
+
+\item{point_line}{Whether to plot the indicator as a line or a series of points.
+Options are "line" or "point". Default is "point".}
+
+\item{pointsize}{Size of the points if point_line = "point". Default is 2.}
+
+\item{linewidth}{Width of the line if point_line = "line". Default is 1.}
+
+\item{ci_type}{Whether to plot bootstrapped confidence intervals as a "ribbon"
+or "error_bars". Default is "error_bars".}
+
+\item{error_width}{Width of error bars if ci_type = "error_bars". Default is 1.
+Note that unlike the default 'width' parameter in geom_errorbar, 'error_width' is NOT
+dependent on the number of data points in the plot. It is automatically scaled to
+account for this. Therefore the width you select will be consistent relative to the
+plot width even if you change 'min_year' and 'max_year'.}
+
+\item{error_thickness}{Thickness of error bars if ci_type = "error_bars". Default is 1.}
+
+\item{smooth_linetype}{Type of line to plot for smoothed trendline. Default is "solid".}
+
+\item{smooth_linewidth}{Line width for smoothed trendline. Default is 1.}
+
+\item{smooth_cilinewidth}{Line width for smoothed trendline confidence intervals.
+Default is 1.}
+
+\item{gridoff}{If TRUE, hides gridlines.}
 
 \item{x_label}{Label for the x-axis.}
 
 \item{y_label}{Label for the y-axis.}
+
+\item{x_expand}{(Optional)  Expansion factor to expand the x-axis beyond the data.
+Left and right values are required in the form of c(0.1, 0.2). Default is c(0.05,0.05).}
+
+\item{y_expand}{(Optional)  Expansion factor to expand the y-axis beyond the data.
+Lower and upper values are required in the form of c(0.1, 0.2). Default is c(0.05,0.05).}
 
 \item{x_breaks}{Integer giving desired number of breaks for x axis.
 (May not return exactly the number requested.)}
 
 \item{y_breaks}{Integer giving desired number of breaks for y axis.
 (May not return exactly the number requested.)}
-
-\item{suppress_y}{If TRUE, suppresses y-axis labels.}
-
-\item{gridoff}{If TRUE, hides gridlines.}
 
 \item{title_wrap_length}{Maximum title length before wrapping to a new line.}
 }

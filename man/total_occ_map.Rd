@@ -12,6 +12,8 @@ total_occ_map(data, ...)
 \item{...}{
   Arguments passed on to \code{\link[=compute_indicator_workflow]{compute_indicator_workflow}}
   \describe{
+    \item{\code{ci_type}}{Type of bootstrap confidence intervals to calculate. (Default: "norm".
+Select "none" to avoid calculating bootstrap CIs.)}
     \item{\code{cell_size}}{Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)}
     \item{\code{level}}{Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')}
     \item{\code{region}}{The region of interest (e.g., "Europe"). (Default: "Europe")}
@@ -23,6 +25,8 @@ to let the function choose a default based on grid reference system)}
 while the function runs. Should only be used to solve specific issues. (Default is TRUE)}
     \item{\code{make_valid}}{Calls st_make_valid() from the sf package. Increases processing
 time but may help if you are getting polygon errors. (Default is FALSE).}
+    \item{\code{num_bootstrap}}{Set the number of bootstraps to calculate for generating
+confidence intervals. (Default: 1000)}
   }}
 }
 \value{
@@ -34,9 +38,10 @@ This function calculates the total number of species occurrence
 records over a gridded map.
 }
 \examples{
+\dontrun{
 to_map <- total_occ_map(example_cube_1, level = "country", region = "Denmark")
 plot(to_map)
-
+}
 }
 \seealso{
 compute_indicator_workflow

@@ -1,3 +1,12 @@
+# b3gbi 0.3
+
+05.12.2024 - Major update:
+
+* Added bootstrapped confidence intervals to most indicators.
+* Added many additional customatization parameters for time series plots. See plot_ts() documentation.
+* Defaults for some visualization parameters have changed.
+* Fixed bug that caused errors about incorrect cell sizes when they were actually correct.
+
 # b3gbi 0.2.3.1
 
 20.11.2024 - Minor update:

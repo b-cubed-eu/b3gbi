@@ -8,6 +8,7 @@ compute_indicator_workflow(
   data,
   type,
   dim_type = c("map", "ts"),
+  ci_type = c("norm", "basic", "perc", "bca", "none"),
   cell_size = NULL,
   level = c("continent", "country", "world"),
   region = "Europe",
@@ -16,6 +17,7 @@ compute_indicator_workflow(
   last_year = NULL,
   spherical_geometry = TRUE,
   make_valid = FALSE,
+  num_bootstrap = 1000,
   ...
 )
 }
@@ -33,6 +35,9 @@ compute_indicator_workflow(
 }}
 
 \item{dim_type}{Dimension to calculate indicator over (time: 'ts', or space: 'map')}
+
+\item{ci_type}{Type of bootstrap confidence intervals to calculate. (Default: "norm".
+Select "none" to avoid calculating bootstrap CIs.)}
 
 \item{cell_size}{Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)}
 
@@ -52,6 +57,9 @@ while the function runs. Should only be used to solve specific issues. (Default 
 
 \item{make_valid}{Calls st_make_valid() from the sf package. Increases processing
 time but may help if you are getting polygon errors. (Default is FALSE).}
+
+\item{num_bootstrap}{Set the number of bootstraps to calculate for generating
+confidence intervals. (Default: 1000)}
 
 \item{...}{Additional arguments passed to specific indicator calculation functions.}
 }
