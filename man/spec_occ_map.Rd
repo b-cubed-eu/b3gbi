@@ -38,9 +38,10 @@ This function calculates the number of occurrences for individual
 species over a gridded map.
 }
 \examples{
+\dontrun{
 so_map <- spec_occ_map(example_cube_1, level = "country", region = "Denmark")
 plot(so_map, c(2440728, 4265185))
-
+}
 }
 \seealso{
 compute_indicator_workflow

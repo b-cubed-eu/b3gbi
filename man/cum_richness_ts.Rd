@@ -37,9 +37,10 @@ the calculated indicator values and metadata.
 This function calculates cumulative species richness as a time series.
 }
 \examples{
+\dontrun{
 cr_ts <- cum_richness_ts(example_cube_1, first_year = 1985)
 plot(cr_ts)
-
+}
 }
 \seealso{
 compute_indicator_workflow

@@ -38,9 +38,10 @@ This function estimates the change in relative newness of records
 in a data cube over time by calculating the mean year of occurrence as a time series.
 }
 \examples{
+\dontrun{
 n_ts <- newness_ts(example_cube_1, first_year = 1985)
 plot(n_ts)
-
+}
 }
 \seealso{
 compute_indicator_workflow

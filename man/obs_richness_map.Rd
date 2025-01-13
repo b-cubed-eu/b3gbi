@@ -37,9 +37,10 @@ the calculated indicator values and metadata.
 This function calculates observed species richness over a gridded map.
 }
 \examples{
+\dontrun{
 or_map <- obs_richness_map(example_cube_1, level = "country", region = "Denmark")
 plot(or_map)
-
+}
 }
 \seealso{
 compute_indicator_workflow

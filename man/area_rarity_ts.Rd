@@ -37,9 +37,10 @@ the calculated indicator values and metadata.
 This function calculates area-based rarity over time.
 }
 \examples{
+\dontrun{
 arr_ts <- area_rarity_ts(example_cube_1, first_year = 1985)
 plot(arr_ts)
-
+}
 }
 \seealso{
 compute_indicator_workflow

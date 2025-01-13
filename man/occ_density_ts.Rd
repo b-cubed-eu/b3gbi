@@ -37,9 +37,10 @@ the calculated indicator values and metadata.
 This function calculates density of records as a time series.
 }
 \examples{
+\dontrun{
 od_ts <- occ_density_ts(example_cube_1, first_year = 1985)
 plot(od_ts)
-
+}
 }
 \seealso{
 compute_indicator_workflow

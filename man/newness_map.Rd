@@ -38,9 +38,10 @@ This function estimates the relative newness of records in a data cube
 by calculating the mean year of occurrence over a gridded map.
 }
 \examples{
+\dontrun{
 n_map <- newness_map(example_cube_1, level = "country", region = "Denmark")
 plot(n_map)
-
+}
 }
 \seealso{
 compute_indicator_workflow
