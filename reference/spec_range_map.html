@@ -9,7 +9,7 @@ species over a gridded map."><meta property="og:image" content="https://b-cubed-
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.3.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,7 +32,7 @@ species over a gridded map."><meta property="og:image" content="https://b-cubed-
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Plot Species Ranges Over Space</h1>
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.2.3.1/R/indicator_wrappers.R" class="external-link"><code>R/indicator_wrappers.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/R/indicator_wrappers.R" class="external-link"><code>R/indicator_wrappers.R</code></a></small>
       <div class="d-none name"><code>spec_range_map.Rd</code></div>
     </div>
 
@@ -55,7 +55,11 @@ species over a gridded map.</p>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Arguments passed on to <code><a href="compute_indicator_workflow.html">compute_indicator_workflow</a></code></p><dl><dt><code>cell_size</code></dt>
+<dd><p>Arguments passed on to <code><a href="compute_indicator_workflow.html">compute_indicator_workflow</a></code></p><dl><dt><code>ci_type</code></dt>
+<dd><p>Type of bootstrap confidence intervals to calculate. (Default: "norm".
+Select "none" to avoid calculating bootstrap CIs.)</p></dd>
+
+    <dt><code>cell_size</code></dt>
 <dd><p>Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)</p></dd>
 
     <dt><code>level</code></dt>
@@ -81,6 +85,10 @@ while the function runs. Should only be used to solve specific issues. (Default 
     <dt><code>make_valid</code></dt>
 <dd><p>Calls st_make_valid() from the sf package. Increases processing
 time but may help if you are getting polygon errors. (Default is FALSE).</p></dd>
+
+    <dt><code>num_bootstrap</code></dt>
+<dd><p>Set the number of bootstraps to calculate for generating
+confidence intervals. (Default: 1000)</p></dd>
 
 
 </dl></dd>

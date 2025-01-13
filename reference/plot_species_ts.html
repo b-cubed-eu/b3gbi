@@ -9,7 +9,7 @@ sizes, with an optional smoothed trendline, and visualizes uncertainty."><meta p
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.3.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,7 +32,7 @@ sizes, with an optional smoothed trendline, and visualizes uncertainty."><meta p
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Plot Occurrence Trends or Range Size Trends for Individual Species</h1>
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.2.3.1/R/plot_methods.R" class="external-link"><code>R/plot_methods.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/R/plot_methods.R" class="external-link"><code>R/plot_methods.R</code></a></small>
       <div class="d-none name"><code>plot_species_ts.Rd</code></div>
     </div>
 
@@ -46,22 +46,40 @@ sizes, with an optional smoothed trendline, and visualizes uncertainty.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plot_species_ts</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  species <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  y_label_default <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  auto_title <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  title <span class="op">=</span> <span class="st">"auto"</span>,</span>
+<span>  single_plot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  min_year <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  max_year <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  title <span class="op">=</span> <span class="st">"auto"</span>,</span>
+<span>  auto_title <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  y_label_default <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  suppress_y <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  smoothed_trend <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  linecolour <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  linealpha <span class="op">=</span> <span class="fl">0.8</span>,</span>
+<span>  ribboncolour <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ribbonalpha <span class="op">=</span> <span class="fl">0.2</span>,</span>
+<span>  error_alpha <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  trendlinecolour <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  trendlinealpha <span class="op">=</span> <span class="fl">0.5</span>,</span>
 <span>  envelopecolour <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  single_plot <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  envelopealpha <span class="op">=</span> <span class="fl">0.2</span>,</span>
+<span>  smooth_cialpha <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  point_line <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"point"</span>, <span class="st">"line"</span><span class="op">)</span>,</span>
+<span>  pointsize <span class="op">=</span> <span class="fl">2</span>,</span>
+<span>  linewidth <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  ci_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"error_bars"</span>, <span class="st">"ribbon"</span><span class="op">)</span>,</span>
+<span>  error_width <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  error_thickness <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  smooth_linetype <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"solid"</span>, <span class="st">"dashed"</span>, <span class="st">"dotted"</span>, <span class="st">"dotdash"</span>, <span class="st">"longdash"</span>, <span class="st">"twodash"</span><span class="op">)</span>,</span>
+<span>  smooth_linewidth <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  smooth_cilinewidth <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  gridoff <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  x_label <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  y_label <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  x_expand <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  y_expand <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  x_breaks <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  y_breaks <span class="op">=</span> <span class="fl">6</span>,</span>
-<span>  suppress_y <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  gridoff <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  title_wrap_length <span class="op">=</span> <span class="fl">60</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -81,19 +99,9 @@ taxonKeys or species names. Partial species names can be used (the function
 will try to match them).</p></dd>
 
 
-<dt id="arg-y-label-default">y_label_default<a class="anchor" aria-label="anchor" href="#arg-y-label-default"></a></dt>
-<dd><p>Default label for the y-axis, provided by an appropriate
-S3 method (if calling the function manually, leave as NULL).</p></dd>
-
-
-<dt id="arg-auto-title">auto_title<a class="anchor" aria-label="anchor" href="#arg-auto-title"></a></dt>
-<dd><p>Text for automatic title generation, provided by an
-appropriate S3 method (if calling the function manually, leave as NULL).</p></dd>
-
-
-<dt id="arg-title">title<a class="anchor" aria-label="anchor" href="#arg-title"></a></dt>
-<dd><p>Plot title. Replace "auto" with your own title if you want a
-custom title or if calling the function manually.</p></dd>
+<dt id="arg-single-plot">single_plot<a class="anchor" aria-label="anchor" href="#arg-single-plot"></a></dt>
+<dd><p>By default all species occurrence time series will be combined
+into a single multi-panel plot. Set this to FALSE to plot each species separately.</p></dd>
 
 
 <dt id="arg-min-year">min_year<a class="anchor" aria-label="anchor" href="#arg-min-year"></a></dt>
@@ -104,13 +112,52 @@ custom title or if calling the function manually.</p></dd>
 <dd><p>(Optional)  Latest year to include in the plot.</p></dd>
 
 
+<dt id="arg-title">title<a class="anchor" aria-label="anchor" href="#arg-title"></a></dt>
+<dd><p>Plot title. Replace "auto" with your own title if you want a
+custom title or if calling the function manually.</p></dd>
+
+
+<dt id="arg-auto-title">auto_title<a class="anchor" aria-label="anchor" href="#arg-auto-title"></a></dt>
+<dd><p>Text for automatic title generation, provided by an
+appropriate S3 method (if calling the function manually, leave as NULL).</p></dd>
+
+
+<dt id="arg-y-label-default">y_label_default<a class="anchor" aria-label="anchor" href="#arg-y-label-default"></a></dt>
+<dd><p>Default label for the y-axis, provided by an appropriate
+S3 method (if calling the function manually, leave as NULL).</p></dd>
+
+
+<dt id="arg-suppress-y">suppress_y<a class="anchor" aria-label="anchor" href="#arg-suppress-y"></a></dt>
+<dd><p>If TRUE, suppresses y-axis labels.</p></dd>
+
+
 <dt id="arg-smoothed-trend">smoothed_trend<a class="anchor" aria-label="anchor" href="#arg-smoothed-trend"></a></dt>
-<dd><p>If TRUE, plot a smoothed trendline.</p></dd>
+<dd><p>If TRUE, plot a smoothed trendline over time
+(<code><a href="https://rdrr.io/r/stats/loess.html" class="external-link">stats::loess()</a></code>).</p></dd>
 
 
 <dt id="arg-linecolour">linecolour<a class="anchor" aria-label="anchor" href="#arg-linecolour"></a></dt>
-<dd><p>(Optional) Colour for the indicator line.
+<dd><p>(Optional) Colour for the indicator line or points.
 Default is darkorange.</p></dd>
+
+
+<dt id="arg-linealpha">linealpha<a class="anchor" aria-label="anchor" href="#arg-linealpha"></a></dt>
+<dd><p>Transparency for indicator line or points. Default is 0.8.</p></dd>
+
+
+<dt id="arg-ribboncolour">ribboncolour<a class="anchor" aria-label="anchor" href="#arg-ribboncolour"></a></dt>
+<dd><p>(Optional) Colour for the bootstrapped confidence intervals.
+Default is goldenrod1. Set to "NA" if you don't want to plot the CIs.</p></dd>
+
+
+<dt id="arg-ribbonalpha">ribbonalpha<a class="anchor" aria-label="anchor" href="#arg-ribbonalpha"></a></dt>
+<dd><p>Transparency for indicator confidence interval ribbon (if
+ci_type = "ribbon"). Default is 0.2.</p></dd>
+
+
+<dt id="arg-error-alpha">error_alpha<a class="anchor" aria-label="anchor" href="#arg-error-alpha"></a></dt>
+<dd><p>Transparency for indicator error bars (if ci_type = "error_bar").
+Default is 1.</p></dd>
 
 
 <dt id="arg-trendlinecolour">trendlinecolour<a class="anchor" aria-label="anchor" href="#arg-trendlinecolour"></a></dt>
@@ -118,14 +165,69 @@ Default is darkorange.</p></dd>
 Default is blue.</p></dd>
 
 
+<dt id="arg-trendlinealpha">trendlinealpha<a class="anchor" aria-label="anchor" href="#arg-trendlinealpha"></a></dt>
+<dd><p>Transparency for the smoothed trendline. Default is 0.5.</p></dd>
+
+
 <dt id="arg-envelopecolour">envelopecolour<a class="anchor" aria-label="anchor" href="#arg-envelopecolour"></a></dt>
 <dd><p>(Optional) Colour for the uncertainty envelope.
 Default is lightsteelblue.</p></dd>
 
 
-<dt id="arg-single-plot">single_plot<a class="anchor" aria-label="anchor" href="#arg-single-plot"></a></dt>
-<dd><p>By default all species occurrence time series will be combined
-into a single multi-panel plot. Set this to FALSE to plot each species separately.</p></dd>
+<dt id="arg-envelopealpha">envelopealpha<a class="anchor" aria-label="anchor" href="#arg-envelopealpha"></a></dt>
+<dd><p>Transparency for the smoothed trendline envelope. Default is 0.2.</p></dd>
+
+
+<dt id="arg-smooth-cialpha">smooth_cialpha<a class="anchor" aria-label="anchor" href="#arg-smooth-cialpha"></a></dt>
+<dd><p>Transparency for the smoothed lines forming the edges of the
+trendline envelope. Default is 1.</p></dd>
+
+
+<dt id="arg-point-line">point_line<a class="anchor" aria-label="anchor" href="#arg-point-line"></a></dt>
+<dd><p>Whether to plot the indicator as a line or a series of points.
+Options are "line" or "point". Default is "point".</p></dd>
+
+
+<dt id="arg-pointsize">pointsize<a class="anchor" aria-label="anchor" href="#arg-pointsize"></a></dt>
+<dd><p>Size of the points if point_line = "point". Default is 2.</p></dd>
+
+
+<dt id="arg-linewidth">linewidth<a class="anchor" aria-label="anchor" href="#arg-linewidth"></a></dt>
+<dd><p>Width of the line if point_line = "line". Default is 1.</p></dd>
+
+
+<dt id="arg-ci-type">ci_type<a class="anchor" aria-label="anchor" href="#arg-ci-type"></a></dt>
+<dd><p>Whether to plot bootstrapped confidence intervals as a "ribbon"
+or "error_bars". Default is "error_bars".</p></dd>
+
+
+<dt id="arg-error-width">error_width<a class="anchor" aria-label="anchor" href="#arg-error-width"></a></dt>
+<dd><p>Width of error bars if ci_type = "error_bars". Default is 1.
+Note that unlike the default 'width' parameter in geom_errorbar, 'error_width' is NOT
+dependent on the number of data points in the plot. It is automatically scaled to
+account for this. Therefore the width you select will be consistent relative to the
+plot width even if you change 'min_year' and 'max_year'.</p></dd>
+
+
+<dt id="arg-error-thickness">error_thickness<a class="anchor" aria-label="anchor" href="#arg-error-thickness"></a></dt>
+<dd><p>Thickness of error bars if ci_type = "error_bars". Default is 1.</p></dd>
+
+
+<dt id="arg-smooth-linetype">smooth_linetype<a class="anchor" aria-label="anchor" href="#arg-smooth-linetype"></a></dt>
+<dd><p>Type of line to plot for smoothed trendline. Default is "solid".</p></dd>
+
+
+<dt id="arg-smooth-linewidth">smooth_linewidth<a class="anchor" aria-label="anchor" href="#arg-smooth-linewidth"></a></dt>
+<dd><p>Line width for smoothed trendline. Default is 1.</p></dd>
+
+
+<dt id="arg-smooth-cilinewidth">smooth_cilinewidth<a class="anchor" aria-label="anchor" href="#arg-smooth-cilinewidth"></a></dt>
+<dd><p>Line width for smoothed trendline confidence intervals.
+Default is 1.</p></dd>
+
+
+<dt id="arg-gridoff">gridoff<a class="anchor" aria-label="anchor" href="#arg-gridoff"></a></dt>
+<dd><p>If TRUE, hides gridlines.</p></dd>
 
 
 <dt id="arg-x-label">x_label<a class="anchor" aria-label="anchor" href="#arg-x-label"></a></dt>
@@ -136,6 +238,16 @@ into a single multi-panel plot. Set this to FALSE to plot each species separatel
 <dd><p>Label for the y-axis.</p></dd>
 
 
+<dt id="arg-x-expand">x_expand<a class="anchor" aria-label="anchor" href="#arg-x-expand"></a></dt>
+<dd><p>(Optional)  Expansion factor to expand the x-axis beyond the data.
+Left and right values are required in the form of c(0.1, 0.2). Default is c(0.05,0.05).</p></dd>
+
+
+<dt id="arg-y-expand">y_expand<a class="anchor" aria-label="anchor" href="#arg-y-expand"></a></dt>
+<dd><p>(Optional)  Expansion factor to expand the y-axis beyond the data.
+Lower and upper values are required in the form of c(0.1, 0.2). Default is c(0.05,0.05).</p></dd>
+
+
 <dt id="arg-x-breaks">x_breaks<a class="anchor" aria-label="anchor" href="#arg-x-breaks"></a></dt>
 <dd><p>Integer giving desired number of breaks for x axis.
 (May not return exactly the number requested.)</p></dd>
@@ -144,14 +256,6 @@ into a single multi-panel plot. Set this to FALSE to plot each species separatel
 <dt id="arg-y-breaks">y_breaks<a class="anchor" aria-label="anchor" href="#arg-y-breaks"></a></dt>
 <dd><p>Integer giving desired number of breaks for y axis.
 (May not return exactly the number requested.)</p></dd>
-
-
-<dt id="arg-suppress-y">suppress_y<a class="anchor" aria-label="anchor" href="#arg-suppress-y"></a></dt>
-<dd><p>If TRUE, suppresses y-axis labels.</p></dd>
-
-
-<dt id="arg-gridoff">gridoff<a class="anchor" aria-label="anchor" href="#arg-gridoff"></a></dt>
-<dd><p>If TRUE, hides gridlines.</p></dd>
 
 
 <dt id="arg-title-wrap-length">title_wrap_length<a class="anchor" aria-label="anchor" href="#arg-title-wrap-length"></a></dt>
@@ -169,6 +273,30 @@ Can be customized using ggplot2 functions.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">spec_occ_ts_mammals_denmark</span> <span class="op">&lt;-</span> <span class="fu"><a href="spec_occ_ts.html">spec_occ_ts</a></span><span class="op">(</span><span class="va">example_cube_1</span>,</span></span>
 <span class="r-in"><span>                                        level <span class="op">=</span> <span class="st">"country"</span>,</span></span>
 <span class="r-in"><span>                                        region <span class="op">=</span> <span class="st">"Denmark"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  2 \n Cannot calculate confidence intervals"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  2 \n Cannot calculate confidence intervals"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  22 \n Cannot calculate confidence intervals"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  2 \n Cannot calculate confidence intervals"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  3 \n Cannot calculate confidence intervals"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
 <span class="r-in"><span><span class="co"># default colours:</span></span></span>
 <span class="r-in"><span><span class="fu">plot_species_ts</span><span class="op">(</span><span class="va">spec_occ_ts_mammals_denmark</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2440728</span>, <span class="fl">4265185</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot_species_ts-1.png" alt="" width="700" height="433"></span>

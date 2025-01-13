@@ -9,7 +9,7 @@ designed for user-friendly display in the console."><meta property="og:image" co
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.3.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,7 +32,7 @@ designed for user-friendly display in the console."><meta property="og:image" co
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Print an Indicator Map Object</h1>
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.2.3.1/R/print_methods.R" class="external-link"><code>R/print_methods.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/R/print_methods.R" class="external-link"><code>R/print_methods.R</code></a></small>
       <div class="d-none name"><code>print.indicator_map.Rd</code></div>
     </div>
 
@@ -64,54 +64,6 @@ designed for user-friendly display in the console.</p>
 
 </dl></div>
 
-    <div class="section level2">
-    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/" class="external-link">sf</a></span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Linking to GEOS 3.10.2, GDAL 3.4.1, PROJ 8.2.1; sf_use_s2() is TRUE</span>
-<span class="r-in"><span><span class="va">obs_rich_map</span> <span class="op">&lt;-</span> <span class="fu"><a href="obs_richness_map.html">obs_richness_map</a></span><span class="op">(</span><span class="va">example_cube_1</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">obs_rich_map</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Gridded biodiversity indicator map</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Name of Indicator: Observed Species Richness </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Map of Europe </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Projected CRS: EPSG:4326 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Coordinate range:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      xmin      ymin      xmax      ymax </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  6.053729 54.375000 16.375000 58.375850 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Grid cell size: 1 km^2 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Number of cells: 46 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Observation years: 1862 - 2023 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Total years with observations: 125 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Number of species represented: 106 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Number of families represented: 31 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Kingdoms represented: Animalia </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> First 10 rows of data (use n = to show more):</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 46 × 3</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    cellid area_km2 diversity_val</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494;">[km^2]</span>         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>     10    <span style="text-decoration: underline;">7</span>114.            43</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>     11    <span style="text-decoration: underline;">7</span>114.            <span style="color: #BB0000;">NA</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>     23    <span style="text-decoration: underline;">6</span>936.            64</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>     24    <span style="text-decoration: underline;">6</span>936.            <span style="color: #BB0000;">NA</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>     25    <span style="text-decoration: underline;">6</span>936.            <span style="color: #BB0000;">NA</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>     26    <span style="text-decoration: underline;">6</span>936.            <span style="color: #BB0000;">NA</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>     35    <span style="text-decoration: underline;">6</span>756.             8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>     36    <span style="text-decoration: underline;">6</span>756.            <span style="color: #BB0000;">NA</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>     37    <span style="text-decoration: underline;">6</span>756.            <span style="color: #BB0000;">NA</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>     38    <span style="text-decoration: underline;">6</span>756.            <span style="color: #BB0000;">NA</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 36 more rows</span></span>
-<span class="r-in"><span></span></span>
-</code></pre></div>
-    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 
