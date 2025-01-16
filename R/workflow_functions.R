@@ -100,8 +100,8 @@ get_NE_data <- function(level, region, ne_type, ne_scale, output_crs) {
     ne_scale <- "medium"
   }
 
-  if (ne_scale == "small" & ne_type == "tiny_countries") {
-    error("tiny_countries are only available for medium (50 km) and large (110 km)
+  if (ne_scale == "large" & ne_type == "tiny_countries") {
+    stop("tiny_countries are only available for medium (50 km) or small (110 km)
           scale maps")
   }
 
@@ -110,7 +110,7 @@ get_NE_data <- function(level, region, ne_type, ne_scale, output_crs) {
 
     map_data <- rnaturalearth::ne_countries(scale = ne_scale,
                                             country = region,
-                                            type = ctype,
+                                            type = ne_type,
                                             returnclass = "sf")
 
   } else if (level == "continent") {
@@ -127,14 +127,14 @@ get_NE_data <- function(level, region, ne_type, ne_scale, output_crs) {
   } else if (level == "sovereignty") {
 
     map_data <- rnaturalearth::ne_countries(scale = ne_scale,
-                                            type = ctype,
+                                            type = ne_type,
                                             sovereignty = region,
                                             returnclass = "sf")
 
   } else if (level == "geounit") {
 
     map_data <- rnaturalearth::ne_countries(scale = ne_scale,
-                                            type = ctype,
+                                            type = ne_type,
                                             geounit = region,
                                             returnclass = "sf")
 
