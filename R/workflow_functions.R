@@ -92,24 +92,55 @@ create_grid <- function(data,
 #' # Retrieve a map of the entire world
 #' world_map <- get_NE_data(level = "world")
 #' @noRd
-get_NE_data <- function(level, region, output_crs) {
+get_NE_data <- function(level, region, ne_type, ne_scale, output_crs) {
+
+
+
+  if (is.null(ne_scale)) {
+    ne_scale <- "medium"
+  }
+
+  if (ne_scale == "small" & ne_type == "tiny_countries") {
+    error("tiny_countries are only available for medium (50 km) and large (110 km)
+          scale maps")
+  }
 
   # Download and prepare Natural Earth map data
   if (level == "country") {
 
-    map_data <- rnaturalearth::ne_countries(scale = "medium",
+    map_data <- rnaturalearth::ne_countries(scale = ne_scale,
                                             country = region,
+                                            type = ctype,
                                             returnclass = "sf")
 
   } else if (level == "continent") {
 
-    map_data <- rnaturalearth::ne_countries(scale = "medium",
+    map_data <- rnaturalearth::ne_countries(scale = ne_scale,
                                             continent = region,
                                             returnclass = "sf")
 
   } else if (level == "world") {
 
-    map_data <- rnaturalearth::ne_countries(scale = "medium",
+    map_data <- rnaturalearth::ne_countries(scale = ne_scale,
+                                            returnclass = "sf")
+
+  } else if (level == "sovereignty") {
+
+    map_data <- rnaturalearth::ne_countries(scale = ne_scale,
+                                            type = ctype,
+                                            sovereignty = region,
+                                            returnclass = "sf")
+
+  } else if (level == "geounit") {
+
+    map_data <- rnaturalearth::ne_countries(scale = ne_scale,
+                                            type = ctype,
+                                            geounit = region,
+                                            returnclass = "sf")
+
+  } else {
+
+    map_data <- rnaturalearth::ne_countries(scale = ne_scale,
                                             returnclass = "sf")
 
   }
@@ -223,8 +254,20 @@ compute_indicator_workflow <- function(data,
                                        dim_type = c("map", "ts"),
                                        ci_type = c("norm", "basic", "perc", "bca", "none"),
                                        cell_size = NULL,
-                                       level = c("continent", "country", "world"),
+                                       level = c("continent",
+                                                 "country",
+                                                 "world",
+                                                 "sovereignty",
+                                                 "geounit",
+                                                 "cube"),
                                        region = "Europe",
+                                       ne_type = c("countries",
+                                                   "map_units",
+                                                   "sovereignty",
+                                                   "tiny_countries"),
+                                       ne_scale = c("small",
+                                                    "medium",
+                                                    "large"),
                                        output_crs = NULL,
                                        first_year = NULL,
                                        last_year = NULL,
@@ -247,6 +290,12 @@ compute_indicator_workflow <- function(data,
                     names(available_indicators))
 
   ci_type <- match.arg(ci_type)
+
+  ne_type <- match.arg(ne_type)
+
+  ne_scale <- match.arg(ne_scale)
+
+  level <- match.arg(level)
 
   if (!is.null(first_year)) {
     first_year <- ifelse(first_year > data$first_year, first_year, data$first_year)
@@ -354,7 +403,7 @@ compute_indicator_workflow <- function(data,
     if (dim_type == "map" | (!is.null(level) & !is.null(region))) {
 
       # Download Natural Earth data
-      map_data <- get_NE_data(level, region, output_crs)
+      map_data <- get_NE_data(level, region, ne_type, ne_scale, output_crs)
 
       # Create grid from Natural Earth data
       grid <- create_grid(df, map_data, level, cell_size, cell_size_units, make_valid, cube_crs, output_crs)
