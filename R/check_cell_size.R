@@ -55,8 +55,7 @@ check_cell_size <- function(cell_size, cell_size_units, resolution, level) {
     if (stringr::str_detect(resolution, "km")) {
 
       cell_size <- ifelse(level == "world", 100,
-                          ifelse(level == "continent", 100,
-                                 ifelse(level == "country", 10)))
+                          ifelse(level == "continent", 100, 10))
 
       # convert to meters
       cell_size <- cell_size * 1000
@@ -66,8 +65,7 @@ check_cell_size <- function(cell_size, cell_size_units, resolution, level) {
       res_size <- as.numeric(stringr::str_extract(resolution, "[0-9,.]*(?=degrees)"))
       if (res_size < 1) {cont_res_size <- 1} else {cont_res_size <- res_size}
       cell_size <- ifelse(level == "world", 10,
-                          ifelse(level == "continent", cont_res_size,
-                                 ifelse(level == "country", res_size)))
+                          ifelse(level == "continent", cont_res_size, res_size))
 
     }
 
