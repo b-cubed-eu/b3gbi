@@ -768,21 +768,25 @@ plot_map <- function(x,
   map_lims <- x$coord_range
 
   # Crop map of Europe to leave out far-lying islands (if flag set)
-  if (Europe_crop_EEA == TRUE &
-      x$map_level == "continent" &
-      x$map_region == "Europe" &
-      x$projection == "EPSG:3035" &
-      crop_to_grid == FALSE)
-  {
+  # (conditional on there being only one map region to plot)
+  if (length(x$map_region)==1) {
+    if (Europe_crop_EEA == TRUE &
+        x$map_level == "continent" &
+        x$map_region == "Europe" &
+        x$projection == "EPSG:3035" &
+        crop_to_grid == FALSE)
+    {
 
-    # Set attributes as spatially constant to avoid warnings
-    sf::st_agr(x$data) <- "constant"
+      # Set attributes as spatially constant to avoid warnings
+      sf::st_agr(x$data) <- "constant"
 
-    # Manually set cropped limits
-    map_lims <- c(2600000, 1600000, 7000000, 6000000)
-    names(map_lims) <- c("xmin", "ymin", "xmax", "ymax")
+      # Manually set cropped limits
+      map_lims <- c(2600000, 1600000, 7000000, 6000000)
+      names(map_lims) <- c("xmin", "ymin", "xmax", "ymax")
 
+    }
   }
+
 
   # Get world data to plot surrounding land if surround flag is set
   if (surround == TRUE) {
@@ -1655,20 +1659,23 @@ plot_species_map <- function(x,
   map_lims <- x$coord_range
 
   # Crop map of Europe to leave out far-lying islands (if flag set)
-  if (Europe_crop_EEA == TRUE &
-      x$map_level == "continent" &
-      x$map_region == "Europe" &
-      x$projection == "EPSG:3035" &
-      crop_to_grid == TRUE)
-  {
+  # (conditional on there being only one map region to plot)
+  if(length(x$map_region==1)){
+    if (Europe_crop_EEA == TRUE &
+        x$map_level == "continent" &
+        x$map_region == "Europe" &
+        x$projection == "EPSG:3035" &
+        crop_to_grid == TRUE)
+    {
 
-    # Set attributes as spatially constant to avoid warnings
-    sf::st_agr(x$data) <- "constant"
+      # Set attributes as spatially constant to avoid warnings
+      sf::st_agr(x$data) <- "constant"
 
-    # Manually set cropped limits
-    map_lims <- c(2600000, 1600000, 7000000, 6000000)
-    names(map_lims) <- c("xmin", "ymin", "xmax", "ymax")
+      # Manually set cropped limits
+      map_lims <- c(2600000, 1600000, 7000000, 6000000)
+      names(map_lims) <- c("xmin", "ymin", "xmax", "ymax")
 
+    }
   }
 
   # Get world data to plot surrounding land if surround flag is set
