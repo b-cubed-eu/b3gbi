@@ -344,7 +344,7 @@ ab_rarity_ts <- function(data, ...) {
 #' h0_map <- hill0_map(example_cube_1, level = "country", region = "Denmark")
 #' plot(h0_map)
 #' }
-#' @noRd
+#' @export
 hill0_map <- function(data,
                       coverage = 0.95,
                       cutoff_length = 5,
@@ -377,7 +377,7 @@ hill0_map <- function(data,
 #' h0_ts <- hill0_ts(example_cube_1, first_year = 1985)
 #' plot(h0_ts)
 #' }
-#' @noRd
+#' @export
 hill0_ts <- function(data,
                      coverage = 0.95,
                      cutoff_length = 5,
@@ -410,7 +410,7 @@ hill0_ts <- function(data,
 #' h1_map <- hill1_map(example_cube_1, level = "country", region = "Denmark")
 #' plot(h1_map)
 #' }
-#' @noRd
+#' @export
 hill1_map <- function(data,
                       cutoff_length = 5,
                       coverage = 0.95,
@@ -443,7 +443,7 @@ hill1_map <- function(data,
 #' h1_ts <- hill1_ts(example_cube_1, first_year = 1985)
 #' plot(h1_ts)
 #' }
-#' @noRd
+#' @export
 hill1_ts <- function(data,
                      cutoff_length = 5,
                      coverage = 0.95,
@@ -476,7 +476,7 @@ hill1_ts <- function(data,
 #' h2_map <- hill2_map(example_cube_1, level = "country", region = "Denmark")
 #' plot(h2_map)
 #' }
-#' @noRd
+#' @export
 hill2_map <- function(data,
                       cutoff_length = 5,
                       coverage = 0.95,
@@ -508,7 +508,7 @@ hill2_map <- function(data,
 #' h2_ts <- hill2_ts(example_cube_1, first_year = 1985)
 #' plot(h2_ts)
 #' }
-#' @noRd
+#' @export
 hill2_ts <- function(data,
                      cutoff_length = 5,
                      coverage = 0.95,
