@@ -1,3 +1,10 @@
+# b3gbi 0.3.1
+
+12.02.2025 - Minor update:
+
+* Get dependencies from recognised repositories
+* Join the [R-universe](https://b-cubed-eu.r-universe.dev/)!
+
 # b3gbi 0.3
 
 05.12.2024 - Major update:
