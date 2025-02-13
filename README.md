@@ -45,12 +45,18 @@ b3gbi empowers biodiversity analysis with:
 
 ## Installation
 
-You can install the development version of b3gbi from
+Install **b3gbi** in R:
+
+``` r
+install.packages("b3gbi", repos = "https://b-cubed-eu.r-universe.dev")
+```
+
+You can install the development version from
 [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("devtools")
-devtools::install_github("b-cubed-eu/b3gbi")
+# install.packages("remotes")
+remotes::install_github("b-cubed-eu/b3gbi")
 ```
 
 ## Example
