@@ -49,3 +49,7 @@ RoxygenNote: 7.3.1
 VignetteBuilder: knitr, rmarkdown
 Additional_repositories: https://b-cubed-eu.r-universe.dev,
     https://ropensci.r-universe.dev
+Remotes:  
+    github::hrbrmstr/mgrs,
+    github::ropensci/bold,
+    github::ropensci/taxize
