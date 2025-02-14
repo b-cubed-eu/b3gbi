@@ -1,3 +1,11 @@
+# b3gbi 0.4
+
+14.02.2025 - Major update:
+
+* Better integration with rnaturalearth
+* Fully supports b3gbi GUI functions
+* Hill diversity functions are now exported and can be used
+
 # b3gbi 0.3.1
 
 12.02.2025 - Minor update:
@@ -10,7 +18,7 @@
 05.12.2024 - Major update:
 
 * Added bootstrapped confidence intervals to most indicators.
-* Added many additional customatization parameters for time series plots. See plot_ts() documentation.
+* Added many additional customization parameters for time series plots. See plot_ts() documentation.
 * Defaults for some visualization parameters have changed.
 * Fixed bug that caused errors about incorrect cell sizes when they were actually correct.
 

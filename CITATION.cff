@@ -8,7 +8,7 @@ message: 'To cite package "b3gbi" in publications use:'
 type: software
 license: MIT
 title: 'b3gbi: General Biodiversity Indicators for Biodiversity Data Cubes'
-version: 0.3.1
+version: 0.4.0
 abstract: Calculate general biodiversity indicators from GBIF data cubes. Includes
   many common indicators such as species richness and evenness, which can be calculated
   over time (trends) or space (maps).
@@ -26,10 +26,10 @@ preferred-citation:
     email: Shawn.Dove@allzool.bio.uni-giessen.de
     orcid: https://orcid.org/0000-0001-9465-5638
   year: '2024'
-  notes: R package version 0.1.0
-  url: https://github.com/ShawnDove/b3gbi
-repository-code: https://github.com/ShawnDove/b3gbi
-url: https://github.com/ShawnDove/b3gbi
+  notes: R package version 0.4.0
+  url: https://github.com/b-cubed-eu/b3gbi
+repository-code: https://github.com/b-cubed-eu/b3gbi
+url: https://github.com/b-cubed-eu/b3gbi
 date-released: '2024-03-05'
 contact:
 - family-names: Dove
