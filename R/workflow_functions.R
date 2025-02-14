@@ -509,11 +509,8 @@ compute_indicator_workflow <- function(data,
     }
 
     if (spherical_geometry==FALSE) {
-
       # restore the original spherical geometry setting
-        sf::sf_use_s2(original_s2_setting)
-      }
-
+      sf::sf_use_s2(original_s2_setting)
     }
 
     # if the object is of the class sim_cube it contains no grid information, so
