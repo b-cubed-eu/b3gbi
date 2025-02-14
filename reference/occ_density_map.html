@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -30,7 +30,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Calculate Occurrence Density Over Space</h1>
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.3.1/R/indicator_wrappers.R" class="external-link"><code>R/indicator_wrappers.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/R/indicator_wrappers.R" class="external-link"><code>R/indicator_wrappers.R</code></a></small>
       <div class="d-none name"><code>occ_density_map.Rd</code></div>
     </div>
 
@@ -60,10 +60,19 @@ Select "none" to avoid calculating bootstrap CIs.)</p></dd>
 <dd><p>Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)</p></dd>
 
     <dt><code>level</code></dt>
-<dd><p>Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')</p></dd>
+<dd><p>Spatial level: 'cube', 'continent', 'country', 'world', 'sovereignty',
+or 'geounit'. (Default: 'cube')</p></dd>
 
     <dt><code>region</code></dt>
 <dd><p>The region of interest (e.g., "Europe"). (Default: "Europe")</p></dd>
+
+    <dt><code>ne_type</code></dt>
+<dd><p>The type of Natural Earth data to download: 'countries', 'map_units',
+'sovereignty', or 'tiny_countries'. (Default: "countries")</p></dd>
+
+    <dt><code>ne_scale</code></dt>
+<dd><p>The scale of Natural Earth data to download: 'small' - 110m,
+'medium' - 50m, or 'large' - 10m. (Default: "medium")</p></dd>
 
     <dt><code>output_crs</code></dt>
 <dd><p>The CRS you want for your calculated indicator. (Leave blank
