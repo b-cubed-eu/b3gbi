@@ -224,8 +224,13 @@ prepare_spatial_data <- function(data, grid, map_data, cube_crs, output_crs) {
 #' @param ci_type Type of bootstrap confidence intervals to calculate. (Default: "norm".
 #'   Select "none" to avoid calculating bootstrap CIs.)
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
-#' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
+#' @param level Spatial level: 'cube', 'continent', 'country', 'world', 'sovereignty',
+#'  or 'geounit'. (Default: 'cube')
 #' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
+#' @param ne_type The type of Natural Earth data to download: 'countries', 'map_units',
+#'  'sovereignty', or 'tiny_countries'. (Default: "countries")
+#' @param ne_scale The scale of Natural Earth data to download: 'small' - 110m,
+#'  'medium' - 50m, or 'large' - 10m. (Default: "medium")
 #' @param output_crs The CRS you want for your calculated indicator. (Leave blank
 #'  to let the function choose a default based on grid reference system)
 #' @param first_year Exclude data before this year. (Uses all data in the cube by default.)
@@ -254,19 +259,19 @@ compute_indicator_workflow <- function(data,
                                        dim_type = c("map", "ts"),
                                        ci_type = c("norm", "basic", "perc", "bca", "none"),
                                        cell_size = NULL,
-                                       level = c("continent",
+                                       level = c("cube",
+                                                 "continent",
                                                  "country",
                                                  "world",
                                                  "sovereignty",
-                                                 "geounit",
-                                                 "cube"),
+                                                 "geounit"),
                                        region = "Europe",
                                        ne_type = c("countries",
                                                    "map_units",
                                                    "sovereignty",
                                                    "tiny_countries"),
-                                       ne_scale = c("small",
-                                                    "medium",
+                                       ne_scale = c("medium",
+                                                    "small",
                                                     "large"),
                                        output_crs = NULL,
                                        first_year = NULL,
