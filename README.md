@@ -5,12 +5,18 @@
 
 <!-- badges: start -->
 
+[![repo
+status](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
+[![Release](https://img.shields.io/github/release/b-cubed-eu/b3gbi.svg)](https://github.com/b-cubed-eu/b3gbi/releases)
+[![b3gbi status
+badge](https://b-cubed-eu.r-universe.dev/b3gbi/badges/version)](https://b-cubed-eu.r-universe.dev/b3gbi)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/b3gbi)](https://CRAN.R-project.org/package=b3gbi)
 [![R-CMD-check](https://github.com/b-cubed-eu/b3gbi/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/b-cubed-eu/b3gbi/actions/workflows/R-CMD-check.yaml)
 [![codecov](https://codecov.io/gh/b-cubed-eu/b3gbi/branch/main/graph/badge.svg)](https://app.codecov.io/gh/b-cubed-eu/b3gbi/)
-[![repo
-status](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
+[![name status
+badge](https://b-cubed-eu.r-universe.dev/badges/:name?color=6CDDB4)](https://b-cubed-eu.r-universe.dev/)
+
 <!-- badges: end -->
 
 Analyze biodiversity trends and spatial patterns from GBIF data cubes,
@@ -45,12 +51,18 @@ b3gbi empowers biodiversity analysis with:
 
 ## Installation
 
-You can install the development version of b3gbi from
+Install **b3gbi** in R:
+
+``` r
+install.packages("b3gbi", repos = "https://b-cubed-eu.r-universe.dev")
+```
+
+You can install the development version from
 [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("devtools")
-devtools::install_github("b-cubed-eu/b3gbi")
+# install.packages("remotes")
+remotes::install_github("b-cubed-eu/b3gbi")
 ```
 
 ## Example
