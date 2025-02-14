@@ -92,24 +92,55 @@ create_grid <- function(data,
 #' # Retrieve a map of the entire world
 #' world_map <- get_NE_data(level = "world")
 #' @noRd
-get_NE_data <- function(level, region, output_crs) {
+get_NE_data <- function(level, region, ne_type, ne_scale, output_crs) {
+
+
+
+  if (is.null(ne_scale)) {
+    ne_scale <- "medium"
+  }
+
+  if (ne_scale == "large" & ne_type == "tiny_countries") {
+    stop("tiny_countries are only available for medium (50 km) or small (110 km)
+          scale maps")
+  }
 
   # Download and prepare Natural Earth map data
   if (level == "country") {
 
-    map_data <- rnaturalearth::ne_countries(scale = "medium",
+    map_data <- rnaturalearth::ne_countries(scale = ne_scale,
                                             country = region,
+                                            type = ne_type,
                                             returnclass = "sf")
 
   } else if (level == "continent") {
 
-    map_data <- rnaturalearth::ne_countries(scale = "medium",
+    map_data <- rnaturalearth::ne_countries(scale = ne_scale,
                                             continent = region,
                                             returnclass = "sf")
 
   } else if (level == "world") {
 
-    map_data <- rnaturalearth::ne_countries(scale = "medium",
+    map_data <- rnaturalearth::ne_countries(scale = ne_scale,
+                                            returnclass = "sf")
+
+  } else if (level == "sovereignty") {
+
+    map_data <- rnaturalearth::ne_countries(scale = ne_scale,
+                                            type = ne_type,
+                                            sovereignty = region,
+                                            returnclass = "sf")
+
+  } else if (level == "geounit") {
+
+    map_data <- rnaturalearth::ne_countries(scale = ne_scale,
+                                            type = ne_type,
+                                            geounit = region,
+                                            returnclass = "sf")
+
+  } else {
+
+    map_data <- rnaturalearth::ne_countries(scale = ne_scale,
                                             returnclass = "sf")
 
   }
@@ -193,8 +224,13 @@ prepare_spatial_data <- function(data, grid, map_data, cube_crs, output_crs) {
 #' @param ci_type Type of bootstrap confidence intervals to calculate. (Default: "norm".
 #'   Select "none" to avoid calculating bootstrap CIs.)
 #' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
-#' @param level Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')
+#' @param level Spatial level: 'cube', 'continent', 'country', 'world', 'sovereignty',
+#'  or 'geounit'. (Default: 'cube')
 #' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
+#' @param ne_type The type of Natural Earth data to download: 'countries', 'map_units',
+#'  'sovereignty', or 'tiny_countries'. (Default: "countries")
+#' @param ne_scale The scale of Natural Earth data to download: 'small' - 110m,
+#'  'medium' - 50m, or 'large' - 10m. (Default: "medium")
 #' @param output_crs The CRS you want for your calculated indicator. (Leave blank
 #'  to let the function choose a default based on grid reference system)
 #' @param first_year Exclude data before this year. (Uses all data in the cube by default.)
@@ -223,8 +259,20 @@ compute_indicator_workflow <- function(data,
                                        dim_type = c("map", "ts"),
                                        ci_type = c("norm", "basic", "perc", "bca", "none"),
                                        cell_size = NULL,
-                                       level = c("continent", "country", "world"),
+                                       level = c("cube",
+                                                 "continent",
+                                                 "country",
+                                                 "world",
+                                                 "sovereignty",
+                                                 "geounit"),
                                        region = "Europe",
+                                       ne_type = c("countries",
+                                                   "map_units",
+                                                   "sovereignty",
+                                                   "tiny_countries"),
+                                       ne_scale = c("medium",
+                                                    "small",
+                                                    "large"),
                                        output_crs = NULL,
                                        first_year = NULL,
                                        last_year = NULL,
@@ -247,6 +295,12 @@ compute_indicator_workflow <- function(data,
                     names(available_indicators))
 
   ci_type <- match.arg(ci_type)
+
+  ne_type <- match.arg(ne_type)
+
+  ne_scale <- match.arg(ne_scale)
+
+  level <- match.arg(level)
 
   if (!is.null(first_year)) {
     first_year <- ifelse(first_year > data$first_year, first_year, data$first_year)
@@ -282,10 +336,12 @@ compute_indicator_workflow <- function(data,
 
     if (spherical_geometry==FALSE){
 
+      # Store the current spherical geometry setting
+      original_s2_setting <- sf::sf_use_s2()
+
       # if spherical geometry is on, turn it off
-      if (sf::sf_use_s2()) {
+      if (original_s2_setting == TRUE) {
         sf::sf_use_s2(FALSE)
-        turned_off <- TRUE
       }
 
     }
@@ -354,7 +410,7 @@ compute_indicator_workflow <- function(data,
     if (dim_type == "map" | (!is.null(level) & !is.null(region))) {
 
       # Download Natural Earth data
-      map_data <- get_NE_data(level, region, output_crs)
+      map_data <- get_NE_data(level, region, ne_type, ne_scale, output_crs)
 
       # Create grid from Natural Earth data
       grid <- create_grid(df, map_data, level, cell_size, cell_size_units, make_valid, cube_crs, output_crs)
@@ -383,12 +439,49 @@ compute_indicator_workflow <- function(data,
       sf::st_agr(grid) <- "constant"
       sf::st_agr(map_data) <- "constant"
 
-      # Clip grid to map
-      grid <- grid %>%
-        sf::st_intersection(map_data) %>%
-        dplyr::select(cellid,
-                      area_km2,
-                      geometry)
+      # The following intersection operation requires special error handling
+      # because it fails when the grid contains invalid geometries.
+      # Therefore when invalid geometries are encountered, it will retry the
+      # operation with spherical geometry turned off. This often succeeds.
+
+      # Store the current spherical geometry setting
+      original_s2_setting <- sf::sf_use_s2()
+
+      result <- NULL  # Initialize to capture result of intersection
+
+      tryCatch({
+        # Attempt without altering the spherical geometry setting
+        result <- grid %>%
+          sf::st_intersection(map_data) %>%
+          dplyr::select(cellid, area_km2, geometry)
+      }, error = function(e) {
+        if (grepl("Error in wk_handle.wk_wkb", e)) {
+          message(paste("Encountered a geometry error during intersection. This may be due",
+                        "to invalid polygons in the grid."))
+        } else {
+          stop(e)
+        }
+      })
+
+      if (is.null(result)) {
+        # If intersection failed, turn off spherical geometry
+        message("Retrying the intersection with spherical geometry turned off.")
+        sf::sf_use_s2(FALSE)
+
+        # Retry the intersection operation
+        result <- grid %>%
+          sf::st_intersection(map_data) %>%
+          dplyr::select(cellid, area_km2, geometry)
+
+        # Notify success after retry
+        message("Intersection succeeded with spherical geometry turned off.")
+
+        # Restore original spherical setting
+        sf::sf_use_s2(original_s2_setting)
+      }
+
+      # Set grid to result
+      grid <- result
 
       # Add indicator values to grid
       diversity_grid <-
@@ -421,12 +514,8 @@ compute_indicator_workflow <- function(data,
     }
 
     if (spherical_geometry==FALSE) {
-
-      # if spherical geometry had to be turned off, now turn it back on
-      if(turned_off == TRUE) {
-        sf::sf_use_s2(TRUE)
-      }
-
+      # restore the original spherical geometry setting
+      sf::sf_use_s2(original_s2_setting)
     }
 
     # if the object is of the class sim_cube it contains no grid information, so
@@ -435,9 +524,9 @@ compute_indicator_workflow <- function(data,
 
     if (dim_type=="map") {
 
-      stop("You have provided an object of class 'sim_cube' as input. As these objects
-           do not contain grid information they can only be used to calculate
-           indicators of dim_type 'ts'.")
+      stop(paste("You have provided an object of class 'sim_cube' as input.",
+                 "As these objects do not contain grid information they can only",
+                 "be used to calculate indicators of dim_type 'ts'."))
 
     } else {
 

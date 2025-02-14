@@ -10,8 +10,10 @@ compute_indicator_workflow(
   dim_type = c("map", "ts"),
   ci_type = c("norm", "basic", "perc", "bca", "none"),
   cell_size = NULL,
-  level = c("continent", "country", "world"),
+  level = c("cube", "continent", "country", "world", "sovereignty", "geounit"),
   region = "Europe",
+  ne_type = c("countries", "map_units", "sovereignty", "tiny_countries"),
+  ne_scale = c("medium", "small", "large"),
   output_crs = NULL,
   first_year = NULL,
   last_year = NULL,
@@ -41,9 +43,16 @@ Select "none" to avoid calculating bootstrap CIs.)}
 
 \item{cell_size}{Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)}
 
-\item{level}{Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')}
+\item{level}{Spatial level: 'cube', 'continent', 'country', 'world', 'sovereignty',
+or 'geounit'. (Default: 'cube')}
 
 \item{region}{The region of interest (e.g., "Europe"). (Default: "Europe")}
+
+\item{ne_type}{The type of Natural Earth data to download: 'countries', 'map_units',
+'sovereignty', or 'tiny_countries'. (Default: "countries")}
+
+\item{ne_scale}{The scale of Natural Earth data to download: 'small' - 110m,
+'medium' - 50m, or 'large' - 10m. (Default: "medium")}
 
 \item{output_crs}{The CRS you want for your calculated indicator. (Leave blank
 to let the function choose a default based on grid reference system)}

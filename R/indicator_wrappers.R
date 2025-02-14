@@ -331,6 +331,10 @@ ab_rarity_ts <- function(data, ...) {
 #' richness over a gridded map.
 #'
 #' @param data A data cube object (class 'processed_cube').
+#' @param coverage The sample coverage value for the estimator. Default is 0.95.
+#' @param cutoff_length The minimum number of data points for each grid cell.
+#'  Grid cells with fewer data points will be removed before calculations to avoid
+#'  errors.  Default is 5.
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
@@ -344,7 +348,7 @@ ab_rarity_ts <- function(data, ...) {
 #' h0_map <- hill0_map(example_cube_1, level = "country", region = "Denmark")
 #' plot(h0_map)
 #' }
-#' @noRd
+#' @export
 hill0_map <- function(data,
                       coverage = 0.95,
                       cutoff_length = 5,
@@ -364,6 +368,10 @@ hill0_map <- function(data,
 #' richness over time.
 #'
 #' @param data A data cube object (class 'processed_cube').
+#' @param coverage The sample coverage value for the estimator. Default is 0.95.
+#' @param cutoff_length The minimum number of data points for each year.
+#'  Years with fewer data points will be removed before calculations to avoid errors.
+#'  Default is 5.
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
@@ -377,7 +385,7 @@ hill0_map <- function(data,
 #' h0_ts <- hill0_ts(example_cube_1, first_year = 1985)
 #' plot(h0_ts)
 #' }
-#' @noRd
+#' @export
 hill0_ts <- function(data,
                      coverage = 0.95,
                      cutoff_length = 5,
@@ -396,7 +404,7 @@ hill0_ts <- function(data,
 #' @description This function uses coverage-based methods to estimate Hill-Shannon Diversity
 #' over a gridded map.
 #'
-#' @param data A data cube object (class 'processed_cube').
+#' @inheritParams hill0_map
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
@@ -410,7 +418,7 @@ hill0_ts <- function(data,
 #' h1_map <- hill1_map(example_cube_1, level = "country", region = "Denmark")
 #' plot(h1_map)
 #' }
-#' @noRd
+#' @export
 hill1_map <- function(data,
                       cutoff_length = 5,
                       coverage = 0.95,
@@ -429,7 +437,7 @@ hill1_map <- function(data,
 #' @description This function uses coverage-based methods to estimate Hill-Shannon Diversity
 #' over time.
 #'
-#' @param data A data cube object (class 'processed_cube').
+#' @inheritParams hill0_ts
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
@@ -443,7 +451,7 @@ hill1_map <- function(data,
 #' h1_ts <- hill1_ts(example_cube_1, first_year = 1985)
 #' plot(h1_ts)
 #' }
-#' @noRd
+#' @export
 hill1_ts <- function(data,
                      cutoff_length = 5,
                      coverage = 0.95,
@@ -462,7 +470,7 @@ hill1_ts <- function(data,
 #' @description This function uses coverage-based methods to estimate Hill-Simpson Diversity
 #' over a gridded map.
 #'
-#' @param data A data cube object (class 'processed_cube').
+#' @inheritParams hill0_map
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
@@ -476,7 +484,7 @@ hill1_ts <- function(data,
 #' h2_map <- hill2_map(example_cube_1, level = "country", region = "Denmark")
 #' plot(h2_map)
 #' }
-#' @noRd
+#' @export
 hill2_map <- function(data,
                       cutoff_length = 5,
                       coverage = 0.95,
@@ -494,7 +502,7 @@ hill2_map <- function(data,
 #' @description This function uses coverage-based methods to estimate Hill-Simpson Diversity
 #' over time.
 #'
-#' @param data A data cube object (class 'processed_cube').
+#' @inheritParams hill0_ts
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
@@ -508,7 +516,7 @@ hill2_map <- function(data,
 #' h2_ts <- hill2_ts(example_cube_1, first_year = 1985)
 #' plot(h2_ts)
 #' }
-#' @noRd
+#' @export
 hill2_ts <- function(data,
                      cutoff_length = 5,
                      coverage = 0.95,

@@ -15,8 +15,13 @@ pielou_evenness_map(data, ...)
     \item{\code{ci_type}}{Type of bootstrap confidence intervals to calculate. (Default: "norm".
 Select "none" to avoid calculating bootstrap CIs.)}
     \item{\code{cell_size}}{Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)}
-    \item{\code{level}}{Spatial level: 'continent', 'country', or 'world'. (Default: 'continent')}
+    \item{\code{level}}{Spatial level: 'cube', 'continent', 'country', 'world', 'sovereignty',
+or 'geounit'. (Default: 'cube')}
     \item{\code{region}}{The region of interest (e.g., "Europe"). (Default: "Europe")}
+    \item{\code{ne_type}}{The type of Natural Earth data to download: 'countries', 'map_units',
+'sovereignty', or 'tiny_countries'. (Default: "countries")}
+    \item{\code{ne_scale}}{The scale of Natural Earth data to download: 'small' - 110m,
+'medium' - 50m, or 'large' - 10m. (Default: "medium")}
     \item{\code{output_crs}}{The CRS you want for your calculated indicator. (Leave blank
 to let the function choose a default based on grid reference system)}
     \item{\code{first_year}}{Exclude data before this year. (Uses all data in the cube by default.)}

@@ -73,7 +73,7 @@ calc_map.hill_core <- function(x,
                  dplyr::ungroup() %>%
                  dplyr::select(-scientificName,
                                -kingdom,
-                               -rank,
+                            #   -rank,
                                -geometry,
                                -resolution,
                                -xcoord,
@@ -107,8 +107,28 @@ calc_map.hill_core <- function(x,
   coverage <- temp_opts$coverage
 
   # remove all cells with too little data to avoid errors from iNEXT
-  spec_rec_raw_cell2 <- spec_rec_raw_cell %>%
-    purrr::keep(., function(x) length(x) > cutoff_length)
+  spec_rec_raw_cell2 <-
+    purrr::keep(spec_rec_raw_cell, function(x) {
+      # Check if the element is a matrix or data frame
+      if (!is.null(x) && (is.data.frame(x) || is.matrix(x))) {
+        # Check if the number of columns is greater than or equal to the cutoff
+        return(ncol(x) >= cutoff_length)
+      } else {
+        # Return FALSE for any list elements that are not appropriately structured
+        return(FALSE)
+      }
+    })
+
+  # Convert list elements to numeric presence-absence matrices
+  spec_rec_raw_cell2 <- lapply(spec_rec_raw_cell2, function(x) {
+    # Attempt to convert all elements to numeric, assuming proper encoding of presence-absence
+    x <- apply(x, 2, as.numeric)
+
+    # Ensure all presence are converted to 1 (assuming all non-zero are present as original message suggests setting them as 1)
+    x[x != 0] <- 1
+
+    return(x)
+  })
 
   # Compute hill diversity
   coverage_rare_cell <- spec_rec_raw_cell2 %>%
