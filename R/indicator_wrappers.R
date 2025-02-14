@@ -331,6 +331,10 @@ ab_rarity_ts <- function(data, ...) {
 #' richness over a gridded map.
 #'
 #' @param data A data cube object (class 'processed_cube').
+#' @param coverage The sample coverage value for the estimator. Default is 0.95.
+#' @param cutoff_length The minimum number of data points for each grid cell.
+#'  Grid cells with fewer data points will be removed before calculations to avoid
+#'  errors.  Default is 5.
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
@@ -364,6 +368,10 @@ hill0_map <- function(data,
 #' richness over time.
 #'
 #' @param data A data cube object (class 'processed_cube').
+#' @param coverage The sample coverage value for the estimator. Default is 0.95.
+#' @param cutoff_length The minimum number of data points for each year.
+#'  Years with fewer data points will be removed before calculations to avoid errors.
+#'  Default is 5.
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
@@ -399,6 +407,7 @@ hill0_ts <- function(data,
 #' @param data A data cube object (class 'processed_cube').
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
+#' @inheritDotParams hill0_map -cutoff_length -coverage
 #'
 #' @seealso compute_indicator_workflow
 #'
@@ -432,6 +441,7 @@ hill1_map <- function(data,
 #' @param data A data cube object (class 'processed_cube').
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
+#' @inheritDotParams hill0_ts -cutoff_length -coverage
 #'
 #' @seealso compute_indicator_workflow
 #'
@@ -465,6 +475,7 @@ hill1_ts <- function(data,
 #' @param data A data cube object (class 'processed_cube').
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
+#' @inheritDotParams hill0_map -cutoff_length -coverage
 #'
 #' @seealso compute_indicator_workflow
 #'
@@ -497,6 +508,7 @@ hill2_map <- function(data,
 #' @param data A data cube object (class 'processed_cube').
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
+#' @inheritDotParams hill0_ts -cutoff_length -coverage
 #'
 #' @seealso compute_indicator_workflow
 #'

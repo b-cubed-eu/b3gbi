@@ -9,6 +9,12 @@ hill0_map(data, coverage = 0.95, cutoff_length = 5, ...)
 \arguments{
 \item{data}{A data cube object (class 'processed_cube').}
 
+\item{coverage}{The sample coverage value for the estimator. Default is 0.95.}
+
+\item{cutoff_length}{The minimum number of data points for each grid cell.
+Grid cells with fewer data points will be removed before calculations to avoid
+errors.  Default is 5.}
+
 \item{...}{
   Arguments passed on to \code{\link[=compute_indicator_workflow]{compute_indicator_workflow}}
   \describe{

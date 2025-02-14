@@ -10,7 +10,7 @@ hill1_ts(data, cutoff_length = 5, coverage = 0.95, ...)
 \item{data}{A data cube object (class 'processed_cube').}
 
 \item{...}{
-  Arguments passed on to \code{\link[=compute_indicator_workflow]{compute_indicator_workflow}}
+  Arguments passed on to \code{\link[=compute_indicator_workflow]{compute_indicator_workflow}}, \code{\link[=hill0_ts]{hill0_ts}}
   \describe{
     \item{\code{ci_type}}{Type of bootstrap confidence intervals to calculate. (Default: "norm".
 Select "none" to avoid calculating bootstrap CIs.)}
