@@ -4,6 +4,7 @@
 
 * Better integration with rnaturalearth
 * Fully supports b3gbi GUI functions
+* Hill diversity functions are now exported and can be used
 
 # b3gbi 0.3.1
 
