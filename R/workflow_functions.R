@@ -331,10 +331,12 @@ compute_indicator_workflow <- function(data,
 
     if (spherical_geometry==FALSE){
 
+      # Store the current spherical geometry setting
+      original_s2_setting <- sf::sf_use_s2()
+
       # if spherical geometry is on, turn it off
-      if (sf::sf_use_s2()) {
+      if (original_s2_setting == TRUE) {
         sf::sf_use_s2(FALSE)
-        turned_off <- TRUE
       }
 
     }
@@ -432,12 +434,49 @@ compute_indicator_workflow <- function(data,
       sf::st_agr(grid) <- "constant"
       sf::st_agr(map_data) <- "constant"
 
-      # Clip grid to map
-      grid <- grid %>%
-        sf::st_intersection(map_data) %>%
-        dplyr::select(cellid,
-                      area_km2,
-                      geometry)
+      # The following intersection operation requires special error handling
+      # because it fails when the grid contains invalid geometries.
+      # Therefore when invalid geometries are encountered, it will retry the
+      # operation with spherical geometry turned off. This often succeeds.
+
+      # Store the current spherical geometry setting
+      original_s2_setting <- sf::sf_use_s2()
+
+      result <- NULL  # Initialize to capture result of intersection
+
+      tryCatch({
+        # Attempt without altering the spherical geometry setting
+        result <- grid %>%
+          sf::st_intersection(map_data) %>%
+          dplyr::select(cellid, area_km2, geometry)
+      }, error = function(e) {
+        if (grepl("Error in wk_handle.wk_wkb", e)) {
+          message(paste("Encountered a geometry error during intersection. This may be due",
+                        "to invalid polygons in the grid."))
+        } else {
+          stop(e)
+        }
+      })
+
+      if (is.null(result)) {
+        # If intersection failed, turn off spherical geometry
+        message("Retrying the intersection with spherical geometry turned off.")
+        sf::sf_use_s2(FALSE)
+
+        # Retry the intersection operation
+        result <- grid %>%
+          sf::st_intersection(map_data) %>%
+          dplyr::select(cellid, area_km2, geometry)
+
+        # Notify success after retry
+        message("Intersection succeeded with spherical geometry turned off.")
+
+        # Restore original spherical setting
+        sf::sf_use_s2(original_s2_setting)
+      }
+
+      # Set grid to result
+      grid <- result
 
       # Add indicator values to grid
       diversity_grid <-
@@ -471,9 +510,8 @@ compute_indicator_workflow <- function(data,
 
     if (spherical_geometry==FALSE) {
 
-      # if spherical geometry had to be turned off, now turn it back on
-      if(turned_off == TRUE) {
-        sf::sf_use_s2(TRUE)
+      # restore the original spherical geometry setting
+        sf::sf_use_s2(original_s2_setting)
       }
 
     }
@@ -484,9 +522,9 @@ compute_indicator_workflow <- function(data,
 
     if (dim_type=="map") {
 
-      stop("You have provided an object of class 'sim_cube' as input. As these objects
-           do not contain grid information they can only be used to calculate
-           indicators of dim_type 'ts'.")
+      stop(paste("You have provided an object of class 'sim_cube' as input.",
+                 "As these objects do not contain grid information they can only",
+                 "be used to calculate indicators of dim_type 'ts'."))
 
     } else {
 
