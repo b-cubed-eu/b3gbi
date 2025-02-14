@@ -404,10 +404,9 @@ hill0_ts <- function(data,
 #' @description This function uses coverage-based methods to estimate Hill-Shannon Diversity
 #' over a gridded map.
 #'
-#' @param data A data cube object (class 'processed_cube').
+#' @inheritParams hill0_map
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
-#' @inheritDotParams hill0_map -cutoff_length -coverage
 #'
 #' @seealso compute_indicator_workflow
 #'
@@ -438,10 +437,9 @@ hill1_map <- function(data,
 #' @description This function uses coverage-based methods to estimate Hill-Shannon Diversity
 #' over time.
 #'
-#' @param data A data cube object (class 'processed_cube').
+#' @inheritParams hill0_ts
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
-#' @inheritDotParams hill0_ts -cutoff_length -coverage
 #'
 #' @seealso compute_indicator_workflow
 #'
@@ -472,10 +470,9 @@ hill1_ts <- function(data,
 #' @description This function uses coverage-based methods to estimate Hill-Simpson Diversity
 #' over a gridded map.
 #'
-#' @param data A data cube object (class 'processed_cube').
+#' @inheritParams hill0_map
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
-#' @inheritDotParams hill0_map -cutoff_length -coverage
 #'
 #' @seealso compute_indicator_workflow
 #'
@@ -505,10 +502,9 @@ hill2_map <- function(data,
 #' @description This function uses coverage-based methods to estimate Hill-Simpson Diversity
 #' over time.
 #'
-#' @param data A data cube object (class 'processed_cube').
+#' @inheritParams hill0_ts
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
-#' @inheritDotParams hill0_ts -cutoff_length -coverage
 #'
 #' @seealso compute_indicator_workflow
 #'

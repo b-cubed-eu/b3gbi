@@ -9,8 +9,14 @@ hill2_map(data, cutoff_length = 5, coverage = 0.95, ...)
 \arguments{
 \item{data}{A data cube object (class 'processed_cube').}
 
+\item{cutoff_length}{The minimum number of data points for each grid cell.
+Grid cells with fewer data points will be removed before calculations to avoid
+errors.  Default is 5.}
+
+\item{coverage}{The sample coverage value for the estimator. Default is 0.95.}
+
 \item{...}{
-  Arguments passed on to \code{\link[=compute_indicator_workflow]{compute_indicator_workflow}}, \code{\link[=hill0_map]{hill0_map}}
+  Arguments passed on to \code{\link[=compute_indicator_workflow]{compute_indicator_workflow}}
   \describe{
     \item{\code{ci_type}}{Type of bootstrap confidence intervals to calculate. (Default: "norm".
 Select "none" to avoid calculating bootstrap CIs.)}
