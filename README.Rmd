@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 
 [![repo status](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
-[![Release](https://img.shields.io/github/release/b-cubed-eu/b3gbi.svg)](https://github.com/b-cubed-eu/b3gbi/releases)
+[![Release](https://img.shields.io/github/release/b-cubed-eu/b3gbi.svg?include_prereleases)](https://github.com/b-cubed-eu/b3gbi/releases)
 [![b3gbi status
 badge](https://b-cubed-eu.r-universe.dev/b3gbi/badges/version)](https://b-cubed-eu.r-universe.dev/b3gbi)
 [![CRAN
@@ -80,7 +80,7 @@ cube_name <- system.file("extdata", "denmark_mammals_cube_eqdgc.csv", package = 
 mammal_data <- process_cube(cube_name)
 
 # Calculate diversity metric
-map_obs_rich_mammals <- obs_richness_map(mammal_data, level = "country", region = "Denmark")
+map_obs_rich_mammals <- obs_richness_map(mammal_data, level = "country", region = "Denmark", ne_scale = "medium")
 
 # Plot diversity metric
 plot(map_obs_rich_mammals, title = "Observed Species Richness: Mammals in Denmark")
