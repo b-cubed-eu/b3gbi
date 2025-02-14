@@ -115,7 +115,7 @@
 <span><span class="va">mammal_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/process_cube.html">process_cube</a></span><span class="op">(</span><span class="va">cube_name</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Calculate diversity metric</span></span>
-<span><span class="va">map_obs_rich_mammals</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/obs_richness_map.html">obs_richness_map</a></span><span class="op">(</span><span class="va">mammal_data</span>, level <span class="op">=</span> <span class="st">"country"</span>, region <span class="op">=</span> <span class="st">"Denmark"</span><span class="op">)</span></span>
+<span><span class="va">map_obs_rich_mammals</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/obs_richness_map.html">obs_richness_map</a></span><span class="op">(</span><span class="va">mammal_data</span>, level <span class="op">=</span> <span class="st">"country"</span>, region <span class="op">=</span> <span class="st">"Denmark"</span>, ne_scale <span class="op">=</span> <span class="st">"medium"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Plot diversity metric</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">map_obs_rich_mammals</span>, title <span class="op">=</span> <span class="st">"Observed Species Richness: Mammals in Denmark"</span><span class="op">)</span></span></code></pre></div>
@@ -164,7 +164,7 @@
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
 <li><a href="https://www.repostatus.org/#wip" class="external-link"><img src="https://www.repostatus.org/badges/latest/wip.svg" alt="repo status"></a></li>
-<li><a href="https://github.com/b-cubed-eu/b3gbi/releases" class="external-link"><img src="https://img.shields.io/github/release/b-cubed-eu/b3gbi.svg" alt="Release"></a></li>
+<li><a href="https://github.com/b-cubed-eu/b3gbi/releases" class="external-link"><img src="https://img.shields.io/github/release/b-cubed-eu/b3gbi.svg?include_prereleases" alt="Release"></a></li>
 <li><a href="https://b-cubed-eu.r-universe.dev/b3gbi" class="external-link"><img src="https://b-cubed-eu.r-universe.dev/b3gbi/badges/version" alt="b3gbi status badge"></a></li>
 <li><a href="https://CRAN.R-project.org/package=b3gbi" class="external-link"><img src="https://www.r-pkg.org/badges/version/b3gbi" alt="CRAN status"></a></li>
 <li><a href="https://github.com/b-cubed-eu/b3gbi/actions/workflows/R-CMD-check.yaml" class="external-link"><img src="https://github.com/b-cubed-eu/b3gbi/actions/workflows/R-CMD-check.yaml/badge.svg" alt="R-CMD-check"></a></li>
