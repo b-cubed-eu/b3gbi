@@ -54,6 +54,9 @@ calc_ts.hill2 <- function(x, ...) {
 #' @param type Choose which Hill number, or q, to calculate. Choose 'hill0' (q = 0)
 #' for estimated species richness, 'hill1' for Hill-Shannon diversity, or 'hill2'
 #' for Hill-Simpson diversity.
+#'
+#' @importFrom iNEXT estimateD
+#'
 #' @noRd
 calc_ts.hill_core <- function(x,
                               type = c("hill0", "hill1", "hill2"),
@@ -397,6 +400,9 @@ calc_ts.spec_range <- function(x,
 #' @param set_rows Automatically select which taxonomic information to keep when
 #'    there are multiple options. Default value of 1 keeps the first option, which
 #'    is usually the best.
+#'
+#' @importFrom taxize classification
+#'
 #' @export
 #' @rdname calc_ts
 calc_ts.tax_distinct <- function(x,
