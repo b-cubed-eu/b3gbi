@@ -217,9 +217,17 @@ prepare_spatial_data <- function(data, grid, map_data, cube_crs, output_crs) {
 #'   * 'obs_richness': Observed species richness.
 #'   * 'total_occ': Total number of occurrences.
 #'   * 'newness': Mean year of occurrence.
-#'   * 'density': Density of occurrences.
+#'   * 'occ_density': Density of occurrences.
 #'   * 'williams_evenness', 'pielou_evenness': Evenness measures.
 #'   * 'ab_rarity', 'area_rarity':  Abundance-based and area-based rarity scores.
+#'   * 'cum_richness': Cumulative species richness.
+#'   * 'occ_turnover': Occupancy turnover.
+#'   * 'spec_range': Species range size.
+#'   * 'spec_occ': Species occurrences.
+#'   * 'tax_distinct': Taxonomic distinctness.
+#'   * 'hill0': Species richness (estimated by coverage-based rarefaction).
+#'   * 'hill1': Hill-Shannon diversity (estimated by coverage-based rarefaction).
+#'   * 'hill2': Hill-Simpson diversity (estimated by coverage-based rarefaction).
 #' @param dim_type Dimension to calculate indicator over (time: 'ts', or space: 'map')
 #' @param ci_type Type of bootstrap confidence intervals to calculate. (Default: "norm".
 #'   Select "none" to avoid calculating bootstrap CIs.)
