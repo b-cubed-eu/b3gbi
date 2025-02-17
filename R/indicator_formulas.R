@@ -40,6 +40,8 @@ compute_evenness_formula <- function(x, type, ...) {
 
 }
 
+#' @importFrom taxize class2tree
+#'
 #' @noRd
 compute_tax_distinct_formula <- function(x, y) {
 

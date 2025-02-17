@@ -99,7 +99,6 @@ calc_ci.hill_core <- function(x,
 
 }
 
-
 #' @export
 #' @rdname calc_ci
 calc_ci.total_occ <- function(x,

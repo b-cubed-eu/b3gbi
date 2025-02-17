@@ -48,6 +48,8 @@ calc_map.hill2 <- function(x, ...) {
   return(indicator)
 }
 
+#' @importFrom iNEXT estimateD
+#'
 #' @noRd
 calc_map.hill_core <- function(x,
                                type = c("hill0", "hill1", "hill2"),
@@ -374,6 +376,8 @@ calc_map.spec_range <- function(x, ...) {
 
 }
 
+#' @importFrom taxize classification
+#'
 #' @export
 #' @rdname calc_map
 calc_map.tax_distinct <- function(x, ...) {
