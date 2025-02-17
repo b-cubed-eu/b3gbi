@@ -47,6 +47,8 @@ plot.occ_by_dataset <- function(x,
 
   if (!inherits(x, "indicator_ts")) stop("Incorrect object class. Must be class 'indicator_ts'.")
 
+  n <- type <- numrows <- diversity_val <- type <- totalocc <- diversity_val <- NULL
+
   # Set defaults
   y_label_default <- "Occurrences"
   auto_title <- "Total Occurrences (Segregated by Dataset)"
@@ -138,6 +140,8 @@ plot.occ_by_type <- function(x,
   stopifnot_error("Incorrect object class. Must be class 'occ_by_type'.", inherits(x, "occ_by_type"))
 
   if (!inherits(x, "indicator_ts")) {stop("Incorrect object class. Must be class 'indicator_ts'.")}
+
+  n <- type <- numrows <- NULL
 
     # Set defaults
     y_label_default <- "Occurrences"
@@ -764,6 +768,8 @@ plot_map <- function(x,
                      title_wrap_length = 60
                      ) {
 
+  diversity_val <- geometry <- NULL
+
   # Get map limits
   map_lims <- x$coord_range
 
@@ -1007,6 +1013,8 @@ plot_ts <- function(x,
                     y_breaks = 6,
                     wrap_length = 60
                     ) {
+
+  year <- diversity_val <- ul <- ll <- NULL
 
   point_line <- match.arg(point_line)
   ci_type <- match.arg(ci_type)
@@ -1306,6 +1314,8 @@ plot_species_ts <- function(x,
                             y_breaks = 6,
                             title_wrap_length = 60
                             ) {
+
+  year <- taxonKey <- . <- scientificName <- ll <- ul <- diversity_val <- NULL
 
   point_line <- match.arg(point_line)
   ci_type <- match.arg(ci_type)
@@ -1612,6 +1622,8 @@ plot_species_map <- function(x,
                              legend_title_wrap_length = 10,
                              title_wrap_length = 60
                              ) {
+
+  taxonKey <- . <- scientificName <- geometry <- diversity_val <- NULL
 
   if (is.null(species)) {
 
