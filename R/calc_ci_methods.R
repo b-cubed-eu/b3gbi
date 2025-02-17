@@ -111,6 +111,8 @@ calc_ci.total_occ <- function(x,
                   meant to be called directly.",
                   inherits(x, "total_occ"))
 
+  year <- NULL
+
   x <-
     x %>%
     dplyr::arrange(year)
@@ -151,6 +153,8 @@ calc_ci.occ_density <- function(x,
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
                   inherits(x, "occ_density"))
+
+  year <- cellid <- obs <- area_km2 <- NULL
 
   x <-
     x %>%
@@ -193,6 +197,8 @@ calc_ci.newness <- function(x,
 
   stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
                   inherits(x, "newness"))
+
+  year <- NULL
 
   # Put individual observations into a list organized by year
   ind_list <- lapply(unique(x$year), function(y){
@@ -265,6 +271,8 @@ calc_ci.evenness_core <- function(x,
                                   ci_type = ci_type,
                                   ...) {
 
+  obs <- year <- taxonKey <- num_occ <- . <- NULL
+
   stopifnot_error("Please check the class and structure of your data.
                   This is an internal function, not meant to be called directly.",
                   inherits(x, c("data.frame", "sf")))
@@ -324,6 +332,8 @@ calc_ci.ab_rarity <- function(x,
                   meant to be called directly.",
                   inherits(x, "ab_rarity"))
 
+  obs <- taxonKey <- records_taxon <- year <- NULL
+
     # Calculate rarity for each cell each year
     x <-
       x %>%
@@ -366,6 +376,8 @@ calc_ci.area_rarity <- function(x,
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
                   inherits(x, "area_rarity"))
+
+  year <- cellid <- taxonKey <- rec_tax_cell <- rarity <- diversity_val <- NULL
 
   # Calculate rarity for each cell each year
   x <-
@@ -413,6 +425,8 @@ calc_ci.spec_occ <- function(x,
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
                   inherits(x, "spec_occ"))
+
+  taxonKey <- totobs <- obs <- year <- cellCode <- . <- scientificName <- NULL
 
   x <-
     x %>%
@@ -481,6 +495,8 @@ calc_ci.spec_range <- function(x,
                   meant to be called directly.",
                   inherits(x, "spec_range"))
 
+  taxonKey <- obs <- observed <- year <- cellCode <- . <- scientificName <- NULL
+
   x <-
     x %>%
     dplyr::arrange(taxonKey, year, cellCode)
@@ -548,6 +564,8 @@ calc_ci.tax_distinct <- function(x,
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
                   inherits(x, "tax_distinct"))
+
+  year <- . <- NULL
 
   # read data saved during the initial indicator calculation
   tax_hier <- readRDS("taxonomic_hierarchy.RDS")

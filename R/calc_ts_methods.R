@@ -67,6 +67,9 @@ calc_ts.hill_core <- function(x,
                   This is an internal function, not meant to be called directly.",
                   inherits(x, c("data.frame", "sf")) & rlang::inherits_any(x, c("hill0", "hill1", "hill2")))
 
+  scientificName <- year <- obs <- cellCode <- . <- variable <- value <- NULL
+  rowname <- Assemblage <- qD <- SC <- Order.q <- qD.LCL <- qD.UCL <- NULL
+
   type <- match.arg(type)
 
   # Extract qvalue from hill diversity type
@@ -145,6 +148,8 @@ calc_ts.obs_richness <- function(x,
                   meant to be called directly.",
                   inherits(x, "obs_richness"))
 
+  year <- taxonKey <- NULL
+
   x <-
     x %>%
     dplyr::select(year, taxonKey) %>%
@@ -167,6 +172,7 @@ calc_ts.cum_richness <- function(x,
                   meant to be called directly.",
                   inherits(x, "cum_richness"))
 
+  year <- taxonKey <- unique_by_year <- NULL
 
     # Calculate the cumulative number of unique species observed
     x <-
@@ -194,6 +200,7 @@ calc_ts.total_occ <- function(x,
                   meant to be called directly.",
                   inherits(x, "total_occ"))
 
+  obs <- NULL
   # Calculate total number of occurrences over the grid
   indicator <-
     x %>%
@@ -210,6 +217,8 @@ calc_ts.occ_density <- function(x,
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
                   inherits(x, "occ_density"))
+
+  year <- cellid <- diversity_val <- obs <- area_km2 <- NULL
 
   # Calculate density of occurrences over the grid (per square km)
   indicator <-
@@ -284,9 +293,10 @@ calc_ts.evenness_core <- function(x,
                   This is an internal function, not meant to be called directly.",
                   inherits(x, c("data.frame", "sf")))
 
+  num_occ <- obs <- year <- taxonKey <- . <- NULL
 
-  type <- match.arg(type,
-                    names(available_indicators))
+   type <- match.arg(type,
+                     names(available_indicators))
 
   # Calculate number of records for each species by grid cell
   x <-
@@ -300,15 +310,15 @@ calc_ts.evenness_core <- function(x,
     tibble::column_to_rownames("taxonKey") %>%
     as.list()
 
-    indicator <-
-      x %>%
-      purrr::map(~compute_evenness_formula(. ,type)) %>%
-      unlist() %>%
-      as.data.frame() %>%
-      dplyr::rename(diversity_val = ".") %>%
-      tibble::rownames_to_column(var = "year") %>%
-      dplyr::mutate(year = as.integer(year),
-                    .keep = "unused")
+  indicator <-
+    x %>%
+    purrr::map(~compute_evenness_formula(. ,type)) %>%
+    unlist() %>%
+    as.data.frame() %>%
+    dplyr::rename(diversity_val = ".") %>%
+    tibble::rownames_to_column(var = "year") %>%
+    dplyr::mutate(year = as.integer(year),
+                  .keep = "unused")
 
 }
 
@@ -320,6 +330,8 @@ calc_ts.ab_rarity <- function(x,
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
                   inherits(x, "ab_rarity"))
+
+  obs <- taxonKey <- records_taxon <- year <- rarity <- diversity_val <- NULL
 
   # Calculate total summed rarity (in terms of abundance) for each grid cell
   indicator <-
@@ -340,6 +352,8 @@ calc_ts.area_rarity <- function(x,
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
                   inherits(x, "area_rarity"))
+
+  year <- cellid <- taxonKey <- rec_tax_cell <- rarity <- diversity_val <- NULL
 
   # Calculate rarity as the sum (per grid cell) of the inverse of occupancy
   # frequency for each species
@@ -364,6 +378,8 @@ calc_ts.spec_occ <- function(x,
                   meant to be called directly.",
                   inherits(x, "spec_occ"))
 
+  year <- scientificName <- taxonKey <- obs <- diversity_val <- NULL
+
   # Calculate total occurrences for each species by grid cell
   indicator <-
     x %>%
@@ -382,6 +398,8 @@ calc_ts.spec_range <- function(x,
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
                   inherits(x, "spec_range"))
+
+  year <- taxonKey <- cellCode <- obs <- diversity_val <- scientificName <- NULL
 
   x <-
     x %>%
@@ -412,6 +430,8 @@ calc_ts.tax_distinct <- function(x,
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
                   inherits(x, "tax_distinct"))
+
+  year <- . <- diversity_val <- NULL
 
   # Retrieve taxonomic data from GBIF
   tax_hier <- taxize::classification(unique(x$scientificName),
@@ -447,6 +467,8 @@ calc_ts.occ_turnover <- function(x,
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
                   inherits(x, "occ_turnover"))
+
+  year <- NULL
 
   x <- x %>%
     dplyr::arrange(year)
