@@ -42,6 +42,9 @@ print.indicator_ts <- function(x, n = 10, ...) {
 #'
 #' @export
 print.indicator_map <- function(x, n = 10, ...) {
+
+  geometry <- NULL
+
   cat("Gridded biodiversity indicator map\n\n")
   cat("Name of Indicator:", x$div_name, "\n\n")
   if (x$map_level == "continent" | x$map_level == "country") {

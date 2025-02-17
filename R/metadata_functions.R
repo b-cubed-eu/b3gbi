@@ -36,6 +36,7 @@ get_indicator_name <- function(x) {
 #' @noRd
 get_legend_title <- function(x) {
 
+
   ltitle <- as.character(available_indicators[[x]]$legend_label)
 
   if (!length(ltitle) > 0) {
@@ -95,6 +96,8 @@ get_observed_years <- function(x) {
 #' list_species(example_cube_1)
 #' @export
 list_species <- function(object) {
+
+  taxonKey <- scientificName <- NULL
 
   if(length(object$species_names) > 0) {
 

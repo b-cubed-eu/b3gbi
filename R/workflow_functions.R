@@ -157,6 +157,8 @@ get_NE_data <- function(level, region, ne_type, ne_scale, output_crs) {
 #' @noRd
 prepare_spatial_data <- function(data, grid, map_data, cube_crs, output_crs) {
 
+  cellid <- NULL
+
   # Set map limits
   # map_lims <- sf::st_buffer(grid, dist = 1000) %>%
   #   sf::st_bbox()
@@ -293,6 +295,8 @@ compute_indicator_workflow <- function(data,
                   inherits(data, "processed_cube") |
                     inherits(data, "processed_cube_dsinfo") |
                     inherits(data, "sim_cube"))
+
+  geometry <- area_km2 <- cellid <- NULL
 
   # List of indicators for which bootstrapped confidence intervals should not be calculated
   noci_list <- c("obs_richness",

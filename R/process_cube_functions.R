@@ -104,6 +104,9 @@ process_cube <- function(cube_name,
                          cols_sex = NULL,
                          cols_lifeStage = NULL) {
 
+  yearMonth <- species <- occurrences <- speciesKey <- cellCode <- NULL
+  year <- . <- max_year <- NULL
+
  # data_type = match.arg(data_type)
 
   if (is.character(cube_name) & length(cube_name == 1)) {
@@ -521,6 +524,9 @@ process_cube_old <- function(cube_name,
                              datasets_info = NULL,
                              first_year = 1600,
                              last_year = NULL) {
+
+  eea_cell_code <- taxonomicStatus <- includes <- notes <- n <- NULL
+  min_coord_uncertainty <- year <- . <- max_year <- NULL
 
   if (is.null(tax_info)) {
 
