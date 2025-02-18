@@ -271,6 +271,8 @@ calc_ci.evenness_core <- function(x,
                                   ci_type = ci_type,
                                   ...) {
 
+  available_indicators <- NULL; rm(available_indicators)
+
   obs <- year <- taxonKey <- num_occ <- . <- NULL
 
   stopifnot_error("Please check the class and structure of your data.
