@@ -410,14 +410,18 @@ calc_map.tax_distinct <- function(x, ...) {
 
   cellid <- . <- diversity_val <- NULL
 
-  if (!requireNamespace("taxize", quietly = TRUE)) {
-    stop("taxize is required to calculate taxonomic distinctness. Please install the package.")
-  }
+  if (requireNamespace("taxize", quietly = TRUE)) {
 
-  # Retrieve taxonomic data from GBIF
-  tax_hier <- taxize::classification(unique(x$scientificName),
-                                     db = "gbif",
-                                     ...)
+    # Retrieve taxonomic data from GBIF
+    tax_hier <- taxize::classification(unique(x$scientificName),
+                                       db = "gbif",
+                                       ...)
+
+  } else {
+
+    stop("The 'taxize' package is required to calculate taxonomic distinctness.")
+
+  }
 
   # Save data
   #  saveRDS(tax_hier, file = "taxonomic_hierarchy.RDS")

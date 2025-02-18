@@ -569,10 +569,6 @@ calc_ci.tax_distinct <- function(x,
 
   year <- . <- NULL
 
-  if(!requireNamespace("taxize", quietly = TRUE)) {
-    stop("The 'taxize' package is required for this function.")
-  }
-
   # read data saved during the initial indicator calculation
   tax_hier <- readRDS("taxonomic_hierarchy.RDS")
 

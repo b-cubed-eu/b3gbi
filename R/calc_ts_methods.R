@@ -433,14 +433,17 @@ calc_ts.tax_distinct <- function(x,
 
   year <- . <- diversity_val <- NULL
 
-  if (!requireNamespace("taxize", quietly = TRUE)) {
-    stop("Please install the taxize package to use this function.")
-  }
+  if (requireNamespace("taxize", quietly = TRUE)) {
 
-  # Retrieve taxonomic data from GBIF
-  tax_hier <- taxize::classification(unique(x$scientificName),
-                                     db = "gbif",
-                                     ...)
+    # Retrieve taxonomic data from GBIF
+    tax_hier <- taxize::classification(unique(x$scientificName),
+                                       db = "gbif",
+                                       ...)
+  } else {
+
+    stop("Please install the taxize package to use this function.")
+
+  }
 
   # Save data for use when calculating bootstraps
   saveRDS(tax_hier, file = "taxonomic_hierarchy.RDS")
