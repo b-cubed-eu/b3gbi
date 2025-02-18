@@ -1,7 +1,7 @@
 # Function to load the .rda file into R
 #' @noRd
 load_registered_indicators <- function() {
-  data(available_indicators, package = "b3gbi")
+  b3gbi::available_indicators
 }
 
 # Function to backup the available_indicators.rda file as .rda.old
