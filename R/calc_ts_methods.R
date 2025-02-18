@@ -421,6 +421,8 @@ calc_ts.spec_range <- function(x,
 #'    there are multiple options. Default value of 1 keeps the first option, which
 #'    is usually the best.
 #'
+#' @importFrom taxize classification
+#'
 #' @export
 #' @rdname calc_ts
 calc_ts.tax_distinct <- function(x,
