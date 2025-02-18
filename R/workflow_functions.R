@@ -32,6 +32,8 @@ create_grid <- function(data,
                         cube_crs,
                         output_crs) {
 
+  example_cube_1 <- NULL; rm(example_cube_1)
+
   occ_sf <- sf::st_as_sf(data,
                          coords = c("xcoord", "ycoord"),
                          crs = cube_crs) %>%
