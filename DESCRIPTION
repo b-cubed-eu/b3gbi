@@ -21,6 +21,7 @@ Imports:
     future,
     ggplot2,
     iNEXT,
+    labeling,
     magrittr,
     mgrs (>= 0.2.4),
     patchwork,
@@ -38,7 +39,6 @@ Imports:
 Suggests: 
     bold (>= 1.3.0),
     knitr,
-    labeling,
     rmarkdown,
     rnaturalearthdata,
     testthat (>= 3.0.0)
