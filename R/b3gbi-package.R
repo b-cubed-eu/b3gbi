@@ -9,8 +9,8 @@
 #' @importFrom purrr map keep map2
 #' @importFrom readr read_csv
 #' @importFrom dplyr group_split mutate bind_rows distinct select n_distinct
-#' @importFrom group_by summarise select arrange full_join inner_join left_join
-#' @importFrom rename filter slice_max across any_of
+#' @importFrom dplyr group_by summarise select arrange full_join inner_join left_join
+#' @importFrom dplyr rename filter slice_max across any_of
 #' @importFrom tidyr pivot_wider pivot_longer gather spread
 #' @importFrom ggplot2 ggplot geom_sf geom_smooth geom_ribbon geom_errorbar geom_point geom_line
 #' @importFrom tibble rownames_to_column column_to_rownames
