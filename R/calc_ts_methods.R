@@ -421,8 +421,6 @@ calc_ts.spec_range <- function(x,
 #'    there are multiple options. Default value of 1 keeps the first option, which
 #'    is usually the best.
 #'
-#' @importFrom taxize classification
-#'
 #' @export
 #' @rdname calc_ts
 calc_ts.tax_distinct <- function(x,
@@ -434,6 +432,10 @@ calc_ts.tax_distinct <- function(x,
                   inherits(x, "tax_distinct"))
 
   year <- . <- diversity_val <- NULL
+
+  if (!requireNamespace("taxize", quietly = TRUE)) {
+    stop("Please install the taxize package to use this function.")
+  }
 
   # Retrieve taxonomic data from GBIF
   tax_hier <- taxize::classification(unique(x$scientificName),

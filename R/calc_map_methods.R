@@ -400,7 +400,6 @@ calc_map.spec_range <- function(x, ...) {
 
 }
 
-#' @importFrom taxize classification
 #'
 #' @export
 #' @rdname calc_map
@@ -410,6 +409,10 @@ calc_map.tax_distinct <- function(x, ...) {
                   inherits(x, "tax_distinct"))
 
   cellid <- . <- diversity_val <- NULL
+
+  if (!requireNamespace("taxize", quietly = TRUE)) {
+    stop("taxize is required to calculate taxonomic distinctness. Please install the package.")
+  }
 
   # Retrieve taxonomic data from GBIF
   tax_hier <- taxize::classification(unique(x$scientificName),
