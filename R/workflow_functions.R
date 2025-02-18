@@ -296,6 +296,8 @@ compute_indicator_workflow <- function(data,
                     inherits(data, "processed_cube_dsinfo") |
                     inherits(data, "sim_cube"))
 
+  available_indicators <- NULL; rm(available_indicators)
+
   geometry <- area_km2 <- cellid <- NULL
 
   # List of indicators for which bootstrapped confidence intervals should not be calculated

@@ -293,6 +293,8 @@ calc_ts.evenness_core <- function(x,
                   This is an internal function, not meant to be called directly.",
                   inherits(x, c("data.frame", "sf")))
 
+  available_indicators <- NULL; rm(available_indicators)
+
   num_occ <- obs <- year <- taxonKey <- . <- NULL
 
    type <- match.arg(type,

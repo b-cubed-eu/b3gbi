@@ -8,6 +8,8 @@ load_registered_indicators <- function() {
 #' @noRd
 backup_registered_indicators <- function(suppress_prompt="FALSE") {
 
+  available_indicators <- NULL; rm(available_indicators)
+
     #Path to backup file
     backup_fname <- system.file("data", "available_indicators.rda.old", package = "b3gbi")
 
@@ -51,6 +53,8 @@ backup_registered_indicators <- function(suppress_prompt="FALSE") {
 #' @noRd
 reset_indicator_registry <- function(){
 
+  available_indicators <- NULL; rm(available_indicators)
+
   #Path to the data file
   fname <- system.file("data", "available_indicators.rda", package = "b3gbi")
   stopifnot(file.exists(fname))
@@ -79,6 +83,8 @@ register_indicator <- function(indicator_class,
                                ts_function_arguments = NULL,
                                overwrite = FALSE,
                                backup = TRUE) {
+
+  available_indicators <- NULL; rm(available_indicators)
 
   map_wrapper_exists <- find(paste0(indicator_class, "_map"))
 
@@ -214,6 +220,8 @@ deregister_indicator <- function(indicator_number,
                                  #indicator_class=NULL,
                                  #indicator_name=NULL,
                                  backup = TRUE) {
+
+  available_indicators <- NULL; rm(available_indicators)
 
   # Path to the data file
   fname <- system.file("data", "available_indicators.rda", package = "b3gbi")
