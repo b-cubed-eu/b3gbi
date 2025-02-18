@@ -38,6 +38,7 @@ Imports:
 Suggests: 
     bold (>= 1.3.0),
     knitr,
+    labeling,
     rmarkdown,
     rnaturalearthdata,
     testthat (>= 3.0.0)
