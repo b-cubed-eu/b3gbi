@@ -165,20 +165,48 @@ log_sub_breaks <- function (rng, n = 5, base = 10)
   }
 }
 
+# Copy of internal function extended_breaks from scales package
+#' @noRd
+extended_breaks <- function (n = 5, ...)
+{
+  n_default <- n
+  function(x, n = n_default) {
+    x <- x[is.finite(x)]
+    if (length(x) == 0) {
+      return(numeric())
+    }
+    rng <- range(x)
+    labeling::extended(rng[1], rng[2], n, ...)
+  }
+}
+
 # Copy of internal function cli_abort from cli package
 #' @noRd
 cli_abort <- function (message, ..., call = .envir, .envir = parent.frame(),
           .frame = .envir)
 {
+
+  format_inline <- NULL
+
   message[] <- vcapply(message, format_inline, .envir = .envir)
   rlang::abort(message, ..., call = call, use_cli_format = TRUE,
                .frame = .frame)
+}
+
+# Copy of internal function vcapply from cli package
+#' @noRd
+vcapply <- function (X, FUN, ..., USE.NAMES = TRUE)
+{
+  vapply(X, FUN, FUN.VALUE = character(1), ..., USE.NAMES = USE.NAMES)
 }
 
 # Copy of internal function exec from rlang package
 #' @noRd
 exec <- function (.fn, ..., .env = caller_env())
 {
+
+  ffi_exec <- NULL
+
   .External2(ffi_exec, .fn, .env)
 }
 
@@ -429,6 +457,86 @@ rarefy_int <- function (x, sample, se = FALSE, MARGIN = 1)
   }
   attr(S.rare, "Subsample") <- sample
   S.rare
+}
+
+#' Copy of internal function specpool from vegan package
+#' @noRd
+specpool <- function (x, pool, smallsample = TRUE)
+{
+  x <- as.matrix(x)
+  if (!(is.numeric(x) || is.logical(x)))
+    stop("input data must be numeric")
+  if (missing(pool))
+    pool <- rep("All", nrow(x))
+  if (length(pool) != NROW(x))
+    stop("length of 'pool' and number rows in 'x' do not match")
+  if (any(nas <- is.na(pool))) {
+    pool <- pool[!nas]
+    x <- x[!nas, , drop = FALSE]
+  }
+  out <- seq(1:nrow(x))
+  groups <- table(pool)
+  inds <- names(groups)
+  S <- var.chao <- chao <- var.jack1 <- jack.1 <- jack.2 <- var.boot <- bootS <- rep(NA,
+                                                                                     length(inds))
+  names(S) <- names(var.chao) <- names(chao) <- names(var.jack1) <- names(jack.1) <- names(jack.2) <- names(var.boot) <- names(bootS) <- inds
+  for (is in inds) {
+    a1 <- a2 <- NA
+    gr <- out[pool == is]
+    n <- length(gr)
+    if (n <= 0)
+      next
+    if (smallsample)
+      ssc <- (n - 1)/n
+    else ssc <- 1
+    X <- x[gr, , drop = FALSE]
+    freq <- colSums(X > 0)
+    p <- freq[freq > 0]/n
+    S[is] <- sum(freq > 0)
+    if (S[is] == 0)
+      next
+    if (n >= 1L)
+      a1 <- sum(freq == 1)
+    if (n >= 2L)
+      a2 <- sum(freq == 2)
+    else a2 <- 0
+    chao[is] <- S[is] + if (!is.na(a2) && a2 > 0)
+      ssc * a1 * a1/2/a2
+    else ssc * a1 * (a1 - 1)/2
+    jack.1[is] <- S[is] + a1 * (n - 1)/n
+    if (n > 1L)
+      jack.2[is] <- S[is] + a1 * (2 * n - 3)/n - a2 * (n -
+                                                         2)^2/n/(n - 1)
+    else jack.2[is] <- S[is]
+    bootS[is] <- S[is] + sum((1 - p)^n)
+    aa <- if (!is.na(a2) && a2 > 0)
+      a1/a2
+    else 0
+    if (!is.na(a2) && a2 > 0)
+      var.chao[is] <- a1 * ssc * (0.5 + ssc * (1 + aa/4) *
+                                    aa) * aa
+    else var.chao[is] <- ssc * (ssc * (a1 * (2 * a1 - 1)^2/4 -
+                                         a1^4/chao[is]/4) + a1 * (a1 - 1)/2)
+    if (!is.na(a1) && a1 > 0) {
+      jf <- table(rowSums(X[, freq == 1, drop = FALSE] >
+                            0))
+      var.jack1[is] <- (sum(as.numeric(names(jf))^2 * jf) -
+                          a1/n) * (n - 1)/n
+    }
+    else {
+      var.jack1[is] <- 0
+    }
+    pn <- (1 - p)^n
+    X <- X[, freq > 0, drop = FALSE]
+    Zp <- (crossprod(X == 0)/n)^n - outer(pn, pn, "*")
+    var.boot[is] <- sum(pn * (1 - pn)) + 2 * sum(Zp[lower.tri(Zp)])
+  }
+  out <- list(Species = S, chao = chao, chao.se = sqrt(var.chao),
+              jack1 = jack.1, jack1.se = sqrt(var.jack1), jack2 = jack.2,
+              boot = bootS, boot.se = sqrt(var.boot), n = as.vector(groups))
+  out <- as.data.frame(out)
+  attr(out, "pool") <- pool
+  out
 }
 
 
