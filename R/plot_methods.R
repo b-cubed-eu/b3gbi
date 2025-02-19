@@ -92,12 +92,12 @@ plot.occ_by_dataset <- function(x,
 
     # Use facets to separate multiple species trends
     trend_plot <- trend_plot +
-      facet_wrap(vars(type),
+      ggplot2::facet_wrap(ggplot2::vars(type),
                  scales = facet_scales,
                  nrow = facet_rows,
                  ncol = facet_cols,
-                 labeller = label_wrap_gen(width = facet_label_width)) +
-      theme(legend.position = "none")
+                 labeller = ggplot2::label_wrap_gen(width = facet_label_width)) +
+      ggplot2::theme(legend.position = "none")
 
   # Show plot
   trend_plot
@@ -167,12 +167,12 @@ plot.occ_by_type <- function(x,
 
       # Use facets to separate multiple species trends
       trend_plot <- trend_plot +
-        facet_wrap(vars(type),
+        ggplot2::facet_wrap(ggplot2::vars(type),
                    scales = facet_scales,
                    nrow = facet_rows,
                    ncol = facet_cols,
-                   labeller = label_wrap_gen(width = facet_label_width)) +
-        theme(legend.position = "none")
+                   labeller = ggplot2::label_wrap_gen(width = facet_label_width)) +
+        ggplot2::theme(legend.position = "none")
 
     # Show plot
     trend_plot
@@ -1083,7 +1083,7 @@ plot_ts <- function(x,
     # Add a smoothed trend
     trend_plot <- trend_plot +
       ggplot2::geom_smooth(
-        colour = scales::alpha(trendlinecolour, trendlinealpha),
+        colour = ggplot2::alpha(trendlinecolour, trendlinealpha),
         lwd = smooth_linewidth,
         linetype = smooth_linetype,
         method = "loess",
@@ -1094,14 +1094,14 @@ plot_ts <- function(x,
     if ("ll" %in% colnames(x$data) & "ul" %in% colnames(x$data)) {
       trend_plot <- trend_plot +
         ggplot2::geom_smooth(ggplot2::aes(y = ul),
-                    colour = scales::alpha(envelopecolour, smooth_cialpha),
+                    colour = ggplot2::alpha(envelopecolour, smooth_cialpha),
                     lwd = smooth_cilinewidth,
                     linetype = "dashed",
                     method = "loess",
                     formula = "y ~ x",
                     se = FALSE) +
         ggplot2::geom_smooth(ggplot2::aes(y = ll),
-                    colour = scales::alpha(envelopecolour, smooth_cialpha),
+                    colour = ggplot2::alpha(envelopecolour, smooth_cialpha),
                     lwd = smooth_cilinewidth,
                     linetype = "dashed",
                     method = "loess",
@@ -1443,7 +1443,7 @@ plot_species_ts <- function(x,
     if ("ll" %in% colnames(x$data) & "ul" %in% colnames(x$data)) {
       smoothing <- list(
          ggplot2::geom_smooth(
-           colour = scales::alpha(trendlinecolour, trendlinealpha),
+           colour = ggplot2::alpha(trendlinecolour, trendlinealpha),
            lwd = smooth_linewidth,
            linetype = smooth_linetype,
            method = "loess",
@@ -1457,7 +1457,7 @@ plot_species_ts <- function(x,
 
           ggplot2::geom_smooth(
             ggplot2::aes(y = ul),
-            colour = scales::alpha(envelopecolour, smooth_cialpha),
+            colour = ggplot2::alpha(envelopecolour, smooth_cialpha),
             lwd = smooth_cilinewidth,
             linetype = "dashed",
             method = "loess",
@@ -1466,7 +1466,7 @@ plot_species_ts <- function(x,
 
           ggplot2::geom_smooth(
             ggplot2::aes(y = ll),
-            colour = scales::alpha(envelopecolour, smooth_cialpha),
+            colour = ggplot2::alpha(envelopecolour, smooth_cialpha),
             lwd = smooth_cilinewidth,
             linetype = "dashed",
             method = "loess",
@@ -1477,7 +1477,7 @@ plot_species_ts <- function(x,
 
         smoothing <- list(
           ggplot2::geom_smooth(
-            colour = scales::alpha(trendlinecolour, 0.5),
+            colour = ggplot2::alpha(trendlinecolour, 0.5),
             lwd = 1,
             linetype = smooth_linetype,
             method = "loess",
@@ -1538,7 +1538,7 @@ plot_species_ts <- function(x,
   if (length(trend_plot) > 1 & single_plot == TRUE) {
     trend_plot <- patchwork::wrap_plots(trend_plot) +
       plot_annotation_int(title = title,
-                          theme = theme(plot.title = ggplot2::element_text(size = 20)))
+                          theme = ggplot2::theme(plot.title = ggplot2::element_text(size = 20)))
   } else if (length(trend_plot) > 1 & single_plot == FALSE) {
     cat("Option single_plot set to false. Creating separate plot for each species.\n\n")
   }
