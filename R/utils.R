@@ -202,7 +202,7 @@ vcapply <- function (X, FUN, ..., USE.NAMES = TRUE)
 
 # Copy of internal function exec from rlang package
 #' @noRd
-exec <- function (.fn, ..., .env = caller_env())
+exec <- function (.fn, ..., .env = rlang::caller_env())
 {
 
   ffi_exec <- NULL
@@ -294,14 +294,14 @@ specaccum_int <- function (comm, method = "exact", permutations = 100, condition
     sites <- seq_len(n)
     if (is.null(w)) {
       specaccum <- apply(perm, 1, mean)
-      sdaccum <- apply(perm, 1, sd)
+      sdaccum <- apply(perm, 1, stats::sd)
     } else {
       sumw <- sum(w)
       xout <- seq(sumw/n, sumw, length.out = n)
-      intx <- sapply(seq_len(NCOL(perm)), function(i) approx(weights[,
+      intx <- sapply(seq_len(NCOL(perm)), function(i) stats::approx(weights[,
                                                                      i], perm[, i], xout = xout)$y)
       specaccum <- apply(intx, 1, mean)
-      sdaccum <- apply(intx, 1, sd)
+      sdaccum <- apply(intx, 1, stats::sd)
     }
   }, exact = {
     freq <- colSums(x > 0)
@@ -317,7 +317,7 @@ specaccum_int <- function (comm, method = "exact", permutations = 100, condition
     specaccum <- rowSums(1 - result)
     if (conditioned) {
       V <- result * (1 - result)
-      tmp1 <- cor(x > 0)
+      tmp1 <- stats::cor(x > 0)
       ind <- lower.tri(tmp1)
       tmp1 <- tmp1[ind]
       tmp1[is.na(tmp1)] <- 0

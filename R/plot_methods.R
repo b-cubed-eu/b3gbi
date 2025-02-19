@@ -266,7 +266,7 @@ plot.cum_richness <- function(x,
     #
     # # Colour the area under the curve
     #  trend_plot <- trend_plot +
-    #    geom_ribbon(aes(ymin = 0,
+    #    ggplot2::geom_ribbon(aes(ymin = 0,
     #                    ymax = diversity_val),
     #                fill = envelopecolour, alpha = 0.3)
     # Show plot
@@ -692,7 +692,7 @@ plot.occ_turnover <- function(x,
   #
   # # Colour the area under the curve
   # trend_plot <- trend_plot +
-  #   geom_ribbon(aes(ymin = 0,
+  #   ggplot2::geom_ribbon(aes(ymin = 0,
   #                   ymax = diversity_val),
   #               fill = auccolour, alpha = 0.4)
 
@@ -820,7 +820,7 @@ plot_map <- function(x,
 
   # Define function to modify legend
   cust_leg <- function(scale.params = list()) {
-    do.call("scale_fill_gradient", modifyList(
+    do.call("scale_fill_gradient", utils::modifyList(
       list(low = "gold", high = "firebrick4", na.value = "grey95"),
       scale.params)
     )
@@ -828,7 +828,7 @@ plot_map <- function(x,
 
   # Plot map
   diversity_plot <- ggplot2::ggplot(x$data) +
-    geom_sf(aes(fill = diversity_val,
+    ggplot2::geom_sf(aes(fill = diversity_val,
                 geometry = geometry),
             colour = "black") +
     cust_leg(list(trans = trans,
@@ -866,7 +866,7 @@ plot_map <- function(x,
 
   # If surround flag set, add surrounding countries to map
   if (surround == TRUE) {
-    diversity_plot$layers <- c(geom_sf(data = map_surround, fill = land_fill_colour)[[1]], diversity_plot$layers)
+    diversity_plot$layers <- c(ggplot2::geom_sf(data = map_surround, fill = land_fill_colour)[[1]], diversity_plot$layers)
   }
 
   # Check for custom x and y limits and adjust map if found
@@ -1082,7 +1082,7 @@ plot_ts <- function(x,
   if (smoothed_trend == TRUE) {
     # Add a smoothed trend
     trend_plot <- trend_plot +
-      geom_smooth(
+      ggplot2::geom_smooth(
         colour = alpha(trendlinecolour, trendlinealpha),
         lwd = smooth_linewidth,
         linetype = smooth_linetype,
@@ -1093,22 +1093,22 @@ plot_ts <- function(x,
     # Add smooth trends for confidence limits if available
     if ("ll" %in% colnames(x$data) & "ul" %in% colnames(x$data)) {
       trend_plot <- trend_plot +
-        geom_smooth(aes(y = ul),
+        ggplot2::geom_smooth(aes(y = ul),
                     colour = alpha(envelopecolour, smooth_cialpha),
                     lwd = smooth_cilinewidth,
                     linetype = "dashed",
                     method = "loess",
                     formula = "y ~ x",
                     se = FALSE) +
-        geom_smooth(aes(y = ll),
+        ggplot2::geom_smooth(aes(y = ll),
                     colour = alpha(envelopecolour, smooth_cialpha),
                     lwd = smooth_cilinewidth,
                     linetype = "dashed",
                     method = "loess",
                     formula = "y ~ x",
                     se = FALSE) +
-        geom_ribbon(aes(ymin = predict(loess(ll ~ year)),
-                        ymax = predict(loess(ul ~ year))),
+        ggplot2::geom_ribbon(aes(ymin = stats::predict(stats::loess(ll ~ year)),
+                        ymax = stats::predict(stats::loess(ul ~ year))),
                     alpha = envelopealpha,
                     fill = envelopecolour)
     }
@@ -1118,14 +1118,14 @@ plot_ts <- function(x,
   if ("ll" %in% colnames(x$data) & "ul" %in% colnames(x$data)) {
     if (ci_type == "error_bars") {
       trend_plot <- trend_plot +
-        geom_errorbar(aes(ymin = ll, ymax = ul),
+        ggplot2::geom_errorbar(aes(ymin = ll, ymax = ul),
                       colour = ribboncolour,
                       alpha = error_alpha,
                       width = error_width,
                       linewidth = error_thickness)
     } else {
       trend_plot <- trend_plot +
-        geom_ribbon(aes(ymin = ll, ymax = ul),
+        ggplot2::geom_ribbon(aes(ymin = ll, ymax = ul),
                     alpha = ribbonalpha,
                     fill = ribboncolour)
     }
@@ -1134,12 +1134,12 @@ plot_ts <- function(x,
 
   if (point_line == "point") {
     trend_plot <- trend_plot +
-      geom_point(colour = linecolour,
+      ggplot2::geom_point(colour = linecolour,
                  alpha = linealpha,
                  size = pointsize)
   } else {
     trend_plot <- trend_plot +
-      geom_line(colour = linecolour,
+      ggplot2::geom_line(colour = linecolour,
                 alpha = linealpha,
                 lwd = linewidth)
   }
@@ -1418,7 +1418,7 @@ plot_species_ts <- function(x,
 
       if (ci_type == "error_bars") {
         ci_ribbon <- list(
-          geom_errorbar(aes(ymin = ll, ymax = ul),
+          ggplot2::geom_errorbar(aes(ymin = ll, ymax = ul),
                         colour = ribboncolour,
                         alpha = error_alpha,
                         width = error_width,
@@ -1426,7 +1426,7 @@ plot_species_ts <- function(x,
         )
       } else {
         ci_ribbon <- list(
-          geom_ribbon(aes(ymin = ll, ymax = ul),
+          ggplot2::geom_ribbon(aes(ymin = ll, ymax = ul),
                       alpha = ribbonalpha,
                       fill = ribboncolour)
         )
@@ -1442,7 +1442,7 @@ plot_species_ts <- function(x,
     # Include smooth trends for confidence limits if available
     if ("ll" %in% colnames(x$data) & "ul" %in% colnames(x$data)) {
       smoothing <- list(
-         geom_smooth(
+         ggplot2::geom_smooth(
            colour = alpha(trendlinecolour, trendlinealpha),
            lwd = smooth_linewidth,
            linetype = smooth_linetype,
@@ -1450,12 +1450,12 @@ plot_species_ts <- function(x,
            formula = "y ~ x",
            se = FALSE),
 
-         geom_ribbon(aes(ymin = predict(loess(ll ~ year)),
-                         ymax = predict(loess(ul ~ year))),
+         ggplot2::geom_ribbon(aes(ymin = stats::predict(stats::loess(ll ~ year)),
+                         ymax = stats::predict(stats::loess(ul ~ year))),
                      alpha = envelopealpha,
                      fill = envelopecolour),
 
-          geom_smooth(
+          ggplot2::geom_smooth(
             aes(y = ul),
             colour = alpha(envelopecolour, smooth_cialpha),
             lwd = smooth_cilinewidth,
@@ -1464,7 +1464,7 @@ plot_species_ts <- function(x,
             formula = "y ~ x",
             se = FALSE),
 
-          geom_smooth(
+          ggplot2::geom_smooth(
             aes(y = ll),
             colour = alpha(envelopecolour, smooth_cialpha),
             lwd = smooth_cilinewidth,
@@ -1476,7 +1476,7 @@ plot_species_ts <- function(x,
     } else {
 
         smoothing <- list(
-          geom_smooth(
+          ggplot2::geom_smooth(
             colour = alpha(trendlinecolour, 0.5),
             lwd = 1,
             linetype = smooth_linetype,
@@ -1499,13 +1499,13 @@ plot_species_ts <- function(x,
                   if (point_line == "point") {
                     specplot <- ggplot2::ggplot(x., aes(x = year,
                                                         y = diversity_val)) +
-                      geom_point(colour = linecolour,
+                      ggplot2::geom_point(colour = linecolour,
                                  size = pointsize,
                                  alpha = linealpha)
                   } else {
                     specplot <- ggplot2::ggplot(x., aes(x = year,
                                                         y = diversity_val)) +
-                      geom_line(colour = linecolour,
+                      ggplot2::geom_line(colour = linecolour,
                                 lwd = linewidth,
                                 alpha = linealpha)
                   }
@@ -1717,7 +1717,7 @@ plot_species_map <- function(x,
 
   # Define function to modify legend
   cust_leg <- function(scale.params = list()) {
-    do.call("scale_fill_gradient", modifyList(
+    do.call("scale_fill_gradient", utils::modifyList(
       list(low = "gold", high = "firebrick4", na.value = "grey95"),
       scale.params)
     )
@@ -1729,10 +1729,10 @@ plot_species_map <- function(x,
                 sci_names,
                 function(x., y) {
                   ggplot2::ggplot(x.) +
-                    geom_sf(data = x$data,
+                    ggplot2::geom_sf(data = x$data,
                             aes(geometry = geometry),
                             fill = "grey95") +
-                    geom_sf(aes(fill = diversity_val,
+                    ggplot2::geom_sf(aes(fill = diversity_val,
                                 geometry = geometry)) +
                     cust_leg(list(trans = trans,
                                   breaks = breaks,
@@ -1776,7 +1776,7 @@ plot_species_map <- function(x,
   # If surround flag is set, add surrounding countries to the map
   if (surround == TRUE) {
     for (i in 1:length(diversity_plot)) {
-      diversity_plot[[i]]$layers <- c(geom_sf(data = map_surround,
+      diversity_plot[[i]]$layers <- c(ggplot2::geom_sf(data = map_surround,
                                               fill = land_fill_colour)[[1]],
                                       diversity_plot[[i]]$layers)
     }
