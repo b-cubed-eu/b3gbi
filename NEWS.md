@@ -1,3 +1,10 @@
+# b3gbi 0.4.1
+
+19.02.2025 - Minor update:
+
+* All R CMD checks are now passing without any errors, warnings or notes
+* The 'taxize' package is no longer a dependency, but must be installed if you want to calculate taxonomic distinctness
+
 # b3gbi 0.4
 
 14.02.2025 - Major update:
