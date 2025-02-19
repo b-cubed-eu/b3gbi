@@ -11,14 +11,14 @@ Description: Calculate general biodiversity indicators from GBIF data
     evenness, which can be calculated over time (trends) or space (maps).
 License: MIT + file LICENSE
 URL: https://github.com/b-cubed-eu/b3gbi,
-    https://b-cubed-eu.github.io/b3gbi/
+    https://b-cubed-eu.github.io/b3gbi/,
+    https://b-cubed-eu.r-universe.dev/b3gbi
+BugReports: https://github.com/b-cubed-eu/b3gbi/issues
 Depends:
     R (>= 3.5.0),
 Imports:
     boot,
     dplyr,
-    furrr,
-    future,
     ggplot2,
     iNEXT,
     labeling,

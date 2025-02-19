@@ -3,9 +3,6 @@
 
 ## usethis namespace: start
 #' @import ggplot2
-#' @importFrom furrr future_map
-#' @importFrom future multisession
-#' @importFrom future plan
 #' @importFrom purrr map keep map2
 #' @importFrom readr read_csv
 #' @importFrom dplyr group_split mutate bind_rows distinct select n_distinct
