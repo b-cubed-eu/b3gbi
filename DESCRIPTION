@@ -22,7 +22,6 @@ Imports:
     ggplot2,
     iNEXT,
     labeling,
-    magrittr,
     mgrs (>= 0.2.4),
     patchwork,
     permute,
