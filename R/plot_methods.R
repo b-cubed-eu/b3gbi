@@ -851,8 +851,8 @@ plot_map <- function(x,
       panel.background = ggplot2::element_rect(fill = if(!is.null(panel_bg)) panel_bg
                                       else "#92c5f0"),
       if(x$map_level == "country") {
-        panel.grid.major = element_blank()
-        panel.grid.minor = element_blank()
+        panel.grid.major = ggplot2::element_blank()
+        panel.grid.minor = ggplot2::element_blank()
       }
     ) +
     # Wrap legend title if longer than user-specified wrap length
