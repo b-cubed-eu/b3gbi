@@ -400,7 +400,6 @@ calc_map.spec_range <- function(x, ...) {
 
 }
 
-#' @importFrom taxize classification
 #' @export
 #' @rdname calc_map
 calc_map.tax_distinct <- function(x, ...) {

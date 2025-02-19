@@ -42,7 +42,6 @@ compute_evenness_formula <- function(x, type, ...) {
 
 }
 
-#' @importFrom taxize class2tree
 #'
 #' @noRd
 compute_tax_distinct_formula <- function(x, y) {
@@ -59,12 +58,21 @@ compute_tax_distinct_formula <- function(x, y) {
 
   } else {
 
+    if (requireNamespace("taxize", quietly = TRUE)) {
+
       tax_tree <- taxize::class2tree(tax_hier_temp, check=FALSE)
       tax_distance <- tax_tree$distmat
       tax_distinct <- sum(tax_distance) / ((n_spec * (n_spec - 1)) / 2)
       return(tax_distinct)
 
+    } else {
+
+      stop("The taxize package is required to calculate taxonomic distinctness.")
+
+    }
+
   }
+
 }
 
 
