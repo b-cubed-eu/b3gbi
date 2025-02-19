@@ -820,7 +820,7 @@ plot_map <- function(x,
 
   # Define function to modify legend
   cust_leg <- function(scale.params = list()) {
-    do.call("ggplot2::scale_fill_gradient", utils::modifyList(
+    do.call(ggplot2::scale_fill_gradient, utils::modifyList(
       list(low = "gold", high = "firebrick4", na.value = "grey95"),
       scale.params)
     )
@@ -1717,7 +1717,7 @@ plot_species_map <- function(x,
 
   # Define function to modify legend
   cust_leg <- function(scale.params = list()) {
-    do.call("ggplot2::scale_fill_gradient", utils::modifyList(
+    do.call(ggplot2::scale_fill_gradient, utils::modifyList(
       list(low = "gold", high = "firebrick4", na.value = "grey95"),
       scale.params)
     )
