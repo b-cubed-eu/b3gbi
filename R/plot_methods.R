@@ -92,12 +92,12 @@ plot.occ_by_dataset <- function(x,
 
     # Use facets to separate multiple species trends
     trend_plot <- trend_plot +
-      facet_wrap(vars(type),
+      ggplot2::facet_wrap(ggplot2::vars(type),
                  scales = facet_scales,
                  nrow = facet_rows,
                  ncol = facet_cols,
-                 labeller = label_wrap_gen(width = facet_label_width)) +
-      theme(legend.position = "none")
+                 labeller = ggplot2::label_wrap_gen(width = facet_label_width)) +
+      ggplot2::theme(legend.position = "none")
 
   # Show plot
   trend_plot
@@ -167,12 +167,12 @@ plot.occ_by_type <- function(x,
 
       # Use facets to separate multiple species trends
       trend_plot <- trend_plot +
-        facet_wrap(vars(type),
+        ggplot2::facet_wrap(ggplot2::vars(type),
                    scales = facet_scales,
                    nrow = facet_rows,
                    ncol = facet_cols,
-                   labeller = label_wrap_gen(width = facet_label_width)) +
-        theme(legend.position = "none")
+                   labeller = ggplot2::label_wrap_gen(width = facet_label_width)) +
+        ggplot2::theme(legend.position = "none")
 
     # Show plot
     trend_plot
@@ -266,7 +266,7 @@ plot.cum_richness <- function(x,
     #
     # # Colour the area under the curve
     #  trend_plot <- trend_plot +
-    #    geom_ribbon(aes(ymin = 0,
+    #    ggplot2::geom_ribbon(ggplot2::aes(ymin = 0,
     #                    ymax = diversity_val),
     #                fill = envelopecolour, alpha = 0.3)
     # Show plot
@@ -692,7 +692,7 @@ plot.occ_turnover <- function(x,
   #
   # # Colour the area under the curve
   # trend_plot <- trend_plot +
-  #   geom_ribbon(aes(ymin = 0,
+  #   ggplot2::geom_ribbon(ggplot2::aes(ymin = 0,
   #                   ymax = diversity_val),
   #               fill = auccolour, alpha = 0.4)
 
@@ -820,7 +820,7 @@ plot_map <- function(x,
 
   # Define function to modify legend
   cust_leg <- function(scale.params = list()) {
-    do.call("scale_fill_gradient", modifyList(
+    do.call(ggplot2::scale_fill_gradient, utils::modifyList(
       list(low = "gold", high = "firebrick4", na.value = "grey95"),
       scale.params)
     )
@@ -828,14 +828,14 @@ plot_map <- function(x,
 
   # Plot map
   diversity_plot <- ggplot2::ggplot(x$data) +
-    geom_sf(aes(fill = diversity_val,
+    ggplot2::geom_sf(ggplot2::aes(fill = diversity_val,
                 geometry = geometry),
             colour = "black") +
     cust_leg(list(trans = trans,
                   breaks = breaks,
                   labels = labels,
                   limits = legend_limits)) +
-    coord_sf(
+    ggplot2::coord_sf(
       xlim = c(map_lims["xmin"],
                map_lims["xmax"]),
       ylim = c(map_lims["ymin"],
@@ -846,17 +846,17 @@ plot_map <- function(x,
         expand = TRUE
       }
     ) +
-    theme_bw() +
-    theme(
-      panel.background = element_rect(fill = if(!is.null(panel_bg)) panel_bg
+    ggplot2::theme_bw() +
+    ggplot2::theme(
+      panel.background = ggplot2::element_rect(fill = if(!is.null(panel_bg)) panel_bg
                                       else "#92c5f0"),
       if(x$map_level == "country") {
-        panel.grid.major = element_blank()
-        panel.grid.minor = element_blank()
+        panel.grid.major = ggplot2::element_blank()
+        panel.grid.minor = ggplot2::element_blank()
       }
     ) +
     # Wrap legend title if longer than user-specified wrap length
-    labs(fill = if(!is.null(legend_title)) wrapper(legend_title,
+    ggplot2::labs(fill = if(!is.null(legend_title)) wrapper(legend_title,
                                                    legend_title_wrap_length)
          else wrapper(leg_label_default,
                       legend_title_wrap_length))
@@ -866,13 +866,13 @@ plot_map <- function(x,
 
   # If surround flag set, add surrounding countries to map
   if (surround == TRUE) {
-    diversity_plot$layers <- c(geom_sf(data = map_surround, fill = land_fill_colour)[[1]], diversity_plot$layers)
+    diversity_plot$layers <- c(ggplot2::geom_sf(data = map_surround, fill = land_fill_colour)[[1]], diversity_plot$layers)
   }
 
   # Check for custom x and y limits and adjust map if found
   if(any(!is.null(xlims)) & any(!is.null(ylims))) {
     diversity_plot <-
-      diversity_plot + coord_sf(xlim = xlims,
+      diversity_plot + ggplot2::coord_sf(xlim = xlims,
                                 ylim = ylims)
 
   }
@@ -881,7 +881,7 @@ plot_map <- function(x,
   if(!is.null(title)) {
     diversity_plot <-
       diversity_plot +
-      labs(title = wrapper(title, title_wrap_length))
+      ggplot2::labs(title = wrapper(title, title_wrap_length))
   }
 
   # Exit function
@@ -1075,15 +1075,15 @@ plot_ts <- function(x,
 
   # Create basis of plot
   trend_plot <-
-    ggplot2::ggplot(x$data, aes(x = year,
+    ggplot2::ggplot(x$data, ggplot2::aes(x = year,
                                 y = diversity_val))
 
   # Add smooth trends (LOESS) if specified
   if (smoothed_trend == TRUE) {
     # Add a smoothed trend
     trend_plot <- trend_plot +
-      geom_smooth(
-        colour = alpha(trendlinecolour, trendlinealpha),
+      ggplot2::geom_smooth(
+        colour = ggplot2::alpha(trendlinecolour, trendlinealpha),
         lwd = smooth_linewidth,
         linetype = smooth_linetype,
         method = "loess",
@@ -1093,22 +1093,22 @@ plot_ts <- function(x,
     # Add smooth trends for confidence limits if available
     if ("ll" %in% colnames(x$data) & "ul" %in% colnames(x$data)) {
       trend_plot <- trend_plot +
-        geom_smooth(aes(y = ul),
-                    colour = alpha(envelopecolour, smooth_cialpha),
+        ggplot2::geom_smooth(ggplot2::aes(y = ul),
+                    colour = ggplot2::alpha(envelopecolour, smooth_cialpha),
                     lwd = smooth_cilinewidth,
                     linetype = "dashed",
                     method = "loess",
                     formula = "y ~ x",
                     se = FALSE) +
-        geom_smooth(aes(y = ll),
-                    colour = alpha(envelopecolour, smooth_cialpha),
+        ggplot2::geom_smooth(ggplot2::aes(y = ll),
+                    colour = ggplot2::alpha(envelopecolour, smooth_cialpha),
                     lwd = smooth_cilinewidth,
                     linetype = "dashed",
                     method = "loess",
                     formula = "y ~ x",
                     se = FALSE) +
-        geom_ribbon(aes(ymin = predict(loess(ll ~ year)),
-                        ymax = predict(loess(ul ~ year))),
+        ggplot2::geom_ribbon(ggplot2::aes(ymin = stats::predict(stats::loess(ll ~ year)),
+                        ymax = stats::predict(stats::loess(ul ~ year))),
                     alpha = envelopealpha,
                     fill = envelopecolour)
     }
@@ -1118,14 +1118,14 @@ plot_ts <- function(x,
   if ("ll" %in% colnames(x$data) & "ul" %in% colnames(x$data)) {
     if (ci_type == "error_bars") {
       trend_plot <- trend_plot +
-        geom_errorbar(aes(ymin = ll, ymax = ul),
+        ggplot2::geom_errorbar(ggplot2::aes(ymin = ll, ymax = ul),
                       colour = ribboncolour,
                       alpha = error_alpha,
                       width = error_width,
                       linewidth = error_thickness)
     } else {
       trend_plot <- trend_plot +
-        geom_ribbon(aes(ymin = ll, ymax = ul),
+        ggplot2::geom_ribbon(ggplot2::aes(ymin = ll, ymax = ul),
                     alpha = ribbonalpha,
                     fill = ribboncolour)
     }
@@ -1134,38 +1134,38 @@ plot_ts <- function(x,
 
   if (point_line == "point") {
     trend_plot <- trend_plot +
-      geom_point(colour = linecolour,
+      ggplot2::geom_point(colour = linecolour,
                  alpha = linealpha,
                  size = pointsize)
   } else {
     trend_plot <- trend_plot +
-      geom_line(colour = linecolour,
+      ggplot2::geom_line(colour = linecolour,
                 alpha = linealpha,
                 lwd = linewidth)
   }
 
   trend_plot <- trend_plot +
-    scale_x_continuous(breaks = breaks_pretty_int(n = x_breaks),
-                       expand = expansion(mult = x_expand)) +
-    scale_y_continuous(breaks = breaks_pretty_int(n = y_breaks),
-                       expand = expansion(mult = y_expand)) +
-    labs(x = x_label, y = y_label,
+    ggplot2::scale_x_continuous(breaks = breaks_pretty_int(n = x_breaks),
+                       expand = ggplot2::expansion(mult = x_expand)) +
+    ggplot2::scale_y_continuous(breaks = breaks_pretty_int(n = y_breaks),
+                       expand = ggplot2::expansion(mult = y_expand)) +
+    ggplot2::labs(x = x_label, y = y_label,
          title = title) +
-    theme_minimal() +
-    theme(plot.title = element_text(hjust = 0.5),
-          text = element_text(size = 14),
+    ggplot2::theme_minimal() +
+    ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5),
+          text = ggplot2::element_text(size = 14),
           panel.grid.major = if (gridoff == TRUE) {
-            element_blank()
+            ggplot2::element_blank()
           } else {
-            element_line()
+            ggplot2::element_line()
           },
-          panel.grid.minor = element_blank(),
+          panel.grid.minor = ggplot2::element_blank(),
           axis.text.y = if (suppress_y==TRUE) {
-            element_blank()
+            ggplot2::element_blank()
           } else {
-            element_text()
+            ggplot2::element_text()
           },
-          strip.text = element_text(face = "italic")
+          strip.text = ggplot2::element_text(face = "italic")
     )
 
   # Wrap title if longer than wrap_length
@@ -1176,7 +1176,7 @@ plot_ts <- function(x,
     }
     trend_plot <-
       trend_plot +
-      labs(title = wrapper(title, wrap_length))
+      ggplot2::labs(title = wrapper(title, wrap_length))
   }
 
   # Show plot
@@ -1418,7 +1418,7 @@ plot_species_ts <- function(x,
 
       if (ci_type == "error_bars") {
         ci_ribbon <- list(
-          geom_errorbar(aes(ymin = ll, ymax = ul),
+          ggplot2::geom_errorbar(ggplot2::aes(ymin = ll, ymax = ul),
                         colour = ribboncolour,
                         alpha = error_alpha,
                         width = error_width,
@@ -1426,7 +1426,7 @@ plot_species_ts <- function(x,
         )
       } else {
         ci_ribbon <- list(
-          geom_ribbon(aes(ymin = ll, ymax = ul),
+          ggplot2::geom_ribbon(ggplot2::aes(ymin = ll, ymax = ul),
                       alpha = ribbonalpha,
                       fill = ribboncolour)
         )
@@ -1442,31 +1442,31 @@ plot_species_ts <- function(x,
     # Include smooth trends for confidence limits if available
     if ("ll" %in% colnames(x$data) & "ul" %in% colnames(x$data)) {
       smoothing <- list(
-         geom_smooth(
-           colour = alpha(trendlinecolour, trendlinealpha),
+         ggplot2::geom_smooth(
+           colour = ggplot2::alpha(trendlinecolour, trendlinealpha),
            lwd = smooth_linewidth,
            linetype = smooth_linetype,
            method = "loess",
            formula = "y ~ x",
            se = FALSE),
 
-         geom_ribbon(aes(ymin = predict(loess(ll ~ year)),
-                         ymax = predict(loess(ul ~ year))),
+         ggplot2::geom_ribbon(ggplot2::aes(ymin = stats::predict(stats::loess(ll ~ year)),
+                         ymax = stats::predict(stats::loess(ul ~ year))),
                      alpha = envelopealpha,
                      fill = envelopecolour),
 
-          geom_smooth(
-            aes(y = ul),
-            colour = alpha(envelopecolour, smooth_cialpha),
+          ggplot2::geom_smooth(
+            ggplot2::aes(y = ul),
+            colour = ggplot2::alpha(envelopecolour, smooth_cialpha),
             lwd = smooth_cilinewidth,
             linetype = "dashed",
             method = "loess",
             formula = "y ~ x",
             se = FALSE),
 
-          geom_smooth(
-            aes(y = ll),
-            colour = alpha(envelopecolour, smooth_cialpha),
+          ggplot2::geom_smooth(
+            ggplot2::aes(y = ll),
+            colour = ggplot2::alpha(envelopecolour, smooth_cialpha),
             lwd = smooth_cilinewidth,
             linetype = "dashed",
             method = "loess",
@@ -1476,8 +1476,8 @@ plot_species_ts <- function(x,
     } else {
 
         smoothing <- list(
-          geom_smooth(
-            colour = alpha(trendlinecolour, 0.5),
+          ggplot2::geom_smooth(
+            colour = ggplot2::alpha(trendlinecolour, 0.5),
             lwd = 1,
             linetype = smooth_linetype,
             method = "loess",
@@ -1497,35 +1497,35 @@ plot_species_ts <- function(x,
                 function(x., y) {
 
                   if (point_line == "point") {
-                    specplot <- ggplot2::ggplot(x., aes(x = year,
+                    specplot <- ggplot2::ggplot(x., ggplot2::aes(x = year,
                                                         y = diversity_val)) +
-                      geom_point(colour = linecolour,
+                      ggplot2::geom_point(colour = linecolour,
                                  size = pointsize,
                                  alpha = linealpha)
                   } else {
-                    specplot <- ggplot2::ggplot(x., aes(x = year,
+                    specplot <- ggplot2::ggplot(x., ggplot2::aes(x = year,
                                                         y = diversity_val)) +
-                      geom_line(colour = linecolour,
+                      ggplot2::geom_line(colour = linecolour,
                                 lwd = linewidth,
                                 alpha = linealpha)
                   }
 
                   specplot <- specplot +
-                    scale_x_continuous(breaks = breaks_pretty_int(n = x_breaks),
-                                       expand = expansion(mult = x_expand)) +
-                    scale_y_continuous(breaks = breaks_pretty_int(n = y_breaks),
-                                       expand = expansion(mult = y_expand)) +
-                    labs(x = x_label, y = y_label,
+                    ggplot2::scale_x_continuous(breaks = breaks_pretty_int(n = x_breaks),
+                                       expand = ggplot2::expansion(mult = x_expand)) +
+                    ggplot2::scale_y_continuous(breaks = breaks_pretty_int(n = y_breaks),
+                                       expand = ggplot2::expansion(mult = y_expand)) +
+                    ggplot2::labs(x = x_label, y = y_label,
                          title = title) +
-                    theme_minimal() +
-                    theme(plot.title = element_text(hjust = 0.5, face = "italic"),
-                          text = element_text(size = 14),
-                          if (gridoff == TRUE) { panel.grid.major = element_blank() },
-                          panel.grid.minor = element_blank(),
-                          if (suppress_y==TRUE) { axis.text.y = element_blank() },
-                          strip.text = element_text(face = "italic")
+                    ggplot2::theme_minimal() +
+                    ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5, face = "italic"),
+                          text = ggplot2::element_text(size = 14),
+                          if (gridoff == TRUE) { panel.grid.major = ggplot2::element_blank() },
+                          panel.grid.minor = ggplot2::element_blank(),
+                          if (suppress_y==TRUE) { axis.text.y = ggplot2::element_blank() },
+                          strip.text = ggplot2::element_text(face = "italic")
                     ) +
-                    labs(title = y) +
+                    ggplot2::labs(title = y) +
                     smoothing +
                     ci_ribbon
 
@@ -1538,7 +1538,7 @@ plot_species_ts <- function(x,
   if (length(trend_plot) > 1 & single_plot == TRUE) {
     trend_plot <- patchwork::wrap_plots(trend_plot) +
       plot_annotation_int(title = title,
-                          theme = theme(plot.title = element_text(size = 20)))
+                          theme = ggplot2::theme(plot.title = ggplot2::element_text(size = 20)))
   } else if (length(trend_plot) > 1 & single_plot == FALSE) {
     cat("Option single_plot set to false. Creating separate plot for each species.\n\n")
   }
@@ -1717,7 +1717,7 @@ plot_species_map <- function(x,
 
   # Define function to modify legend
   cust_leg <- function(scale.params = list()) {
-    do.call("scale_fill_gradient", modifyList(
+    do.call(ggplot2::scale_fill_gradient, utils::modifyList(
       list(low = "gold", high = "firebrick4", na.value = "grey95"),
       scale.params)
     )
@@ -1729,16 +1729,16 @@ plot_species_map <- function(x,
                 sci_names,
                 function(x., y) {
                   ggplot2::ggplot(x.) +
-                    geom_sf(data = x$data,
-                            aes(geometry = geometry),
+                    ggplot2::geom_sf(data = x$data,
+                                     ggplot2::aes(geometry = geometry),
                             fill = "grey95") +
-                    geom_sf(aes(fill = diversity_val,
+                    ggplot2::geom_sf(ggplot2::aes(fill = diversity_val,
                                 geometry = geometry)) +
                     cust_leg(list(trans = trans,
                                   breaks = breaks,
                                   labels = labels,
                                   limits = legend_limits)) +
-                    coord_sf(
+                    ggplot2::coord_sf(
                       xlim = c(map_lims["xmin"],
                                map_lims["xmax"]),
                       ylim = c(map_lims["ymin"],
@@ -1750,24 +1750,24 @@ plot_species_map <- function(x,
                       }
                     ) +
                     #scale_x_continuous() +
-                    theme_bw()+
-                    theme(
-                      panel.background = element_rect(fill = panel_bg),
+                    ggplot2::theme_bw()+
+                    ggplot2::theme(
+                      panel.background = ggplot2::element_rect(fill = panel_bg),
                       if(x$map_level == "country") {
-                        panel.grid.major = element_blank()
-                        panel.grid.minor = element_blank()
+                        panel.grid.major = ggplot2::element_blank()
+                        panel.grid.minor = ggplot2::element_blank()
                       },
-                      legend.text = element_text(),
-                      strip.text = element_text(face = "italic"),
-                      plot.title = element_text(face = "italic")
+                      legend.text = ggplot2::element_text(),
+                      strip.text = ggplot2::element_text(face = "italic"),
+                      plot.title = ggplot2::element_text(face = "italic")
                     ) +
-                    labs(title = y,
+                    ggplot2::labs(title = y,
                          fill = if(!is.null(legend_title)) wrapper(legend_title,
                                                                    legend_title_wrap_length)
                          else wrapper(leg_label_default,
                                       legend_title_wrap_length)) +
                     if(suppress_legend==TRUE) {
-                      theme(legend.position = "none")
+                      ggplot2::theme(legend.position = "none")
                     }
                 })
 
@@ -1776,7 +1776,7 @@ plot_species_map <- function(x,
   # If surround flag is set, add surrounding countries to the map
   if (surround == TRUE) {
     for (i in 1:length(diversity_plot)) {
-      diversity_plot[[i]]$layers <- c(geom_sf(data = map_surround,
+      diversity_plot[[i]]$layers <- c(ggplot2::geom_sf(data = map_surround,
                                               fill = land_fill_colour)[[1]],
                                       diversity_plot[[i]]$layers)
     }
@@ -1788,7 +1788,7 @@ plot_species_map <- function(x,
   if (length(diversity_plot) > 1 & single_plot == TRUE) {
     diversity_plot <- patchwork::wrap_plots(diversity_plot) +
       plot_annotation_int(title = title,
-                          theme = theme(plot.title = element_text(size = 20)))
+                          theme = ggplot2::theme(plot.title = ggplot2::element_text(size = 20)))
   } else if (length(diversity_plot) > 1 & single_plot == FALSE) {
     cat("Option single_plot set to false. Creating separate plot for each species.\n\n")
   }

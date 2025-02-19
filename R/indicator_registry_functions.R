@@ -86,7 +86,7 @@ register_indicator <- function(indicator_class,
 
   available_indicators <- NULL; rm(available_indicators)
 
-  map_wrapper_exists <- find(paste0(indicator_class, "_map"))
+  map_wrapper_exists <- utils::find(paste0(indicator_class, "_map"))
 
   if(length(map_wrapper_exists)==0) {
     map_wrapper <- NULL
@@ -94,7 +94,7 @@ register_indicator <- function(indicator_class,
     map_wrapper <- paste0(indicator_class, "_map")
   }
 
-  ts_wrapper_exists <- find(paste0(indicator_class, "_ts"))
+  ts_wrapper_exists <- utils::find(paste0(indicator_class, "_ts"))
 
   if(length(ts_wrapper_exists)==0) {
     ts_wrapper <- NULL

@@ -86,7 +86,7 @@ calc_map.hill_core <- function(x,
                                -ycoord,
                                -year,
                                -area_km2) %>%
-                 dplyr::select(-any_of(c("basisOfRecord",
+                 dplyr::select(-dplyr::any_of(c("basisOfRecord",
                                          "datasetKey"))) %>%
                  replace(is.na(.), 0) %>%
                  dplyr::mutate_if(is.numeric,

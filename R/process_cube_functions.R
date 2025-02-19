@@ -371,7 +371,7 @@ process_cube <- function(cube_name,
   # make sure that essential columns are the correct type
   occurrence_data <-
     occurrence_data %>%
-    dplyr::mutate(across(any_of(essential_cols), as.numeric))
+    dplyr::mutate(dplyr::across(dplyr::any_of(essential_cols), as.numeric))
 
 
   # rename occurrences and speciesKey columns to be consistent with the other package functions (should maybe change this throughout package?)
