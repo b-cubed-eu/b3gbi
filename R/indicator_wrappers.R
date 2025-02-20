@@ -1,6 +1,7 @@
 #' @title Calculate Observed Species Richness Over Space
 #'
-#' @description This function calculates observed species richness over a gridded map.
+#' @description This function calculates observed species richness over a
+#'  gridded map.
 #'
 #' @param data A data cube object (class 'processed_cube').
 #'
@@ -8,12 +9,13 @@
 #'
 #' @seealso compute_indicator_workflow
 #'
-#' @return An S3 object with the classes 'indicator_map' and 'obs_richness' containing
-#' the calculated indicator values and metadata.
+#' @return An S3 object with the classes 'indicator_map' and 'obs_richness'
+#'  containing the calculated indicator values and metadata.
 #'
 #' @examples
 #' \dontrun{
-#' or_map <- obs_richness_map(example_cube_1, level = "country", region = "Denmark")
+#' or_map <- obs_richness_map(example_cube_1, level = "country",
+#'  region = "Denmark")
 #' plot(or_map)
 #' }
 #' @export
@@ -27,7 +29,8 @@ obs_richness_map <- function(data, ...) {
 
 #' @title Calculate Observed Species Richness Over Time
 #'
-#' @description This function calculates observed species richness as a time series.
+#' @description This function calculates observed species richness as a time
+#'  series.
 #'
 #' @param data A data cube object (class 'processed_cube').
 #'
@@ -35,8 +38,8 @@ obs_richness_map <- function(data, ...) {
 #'
 #' @seealso compute_indicator_workflow
 #'
-#' @return An S3 object with the classes 'indicator_ts' and 'obs_richness' containing
-#' the calculated indicator values and metadata.
+#' @return An S3 object with the classes 'indicator_ts' and 'obs_richness'
+#'  containing the calculated indicator values and metadata.
 #'
 #' @examples
 #' \dontrun{
@@ -55,7 +58,7 @@ obs_richness_ts <- function(data, ...) {
 #' @title Calculate Total Occurrences Over Space
 #'
 #' @description This function calculates the total number of species occurrence
-#' records over a gridded map.
+#'  records over a gridded map.
 #'
 #' @param data A data cube object (class 'processed_cube').
 #'
@@ -63,12 +66,13 @@ obs_richness_ts <- function(data, ...) {
 #'
 #' @seealso compute_indicator_workflow
 #'
-#' @return An S3 object with the classes 'indicator_map' and 'total_occ' containing
-#' the calculated indicator values and metadata.
+#' @return An S3 object with the classes 'indicator_map' and 'total_occ'
+#'  containing the calculated indicator values and metadata.
 #'
 #' @examples
 #' \dontrun{
-#' to_map <- total_occ_map(example_cube_1, level = "country", region = "Denmark")
+#' to_map <- total_occ_map(example_cube_1, level = "country",
+#'  region = "Denmark")
 #' plot(to_map)
 #' }
 #' @export
@@ -82,8 +86,8 @@ total_occ_map <- function(data, ...) {
 
 #' @title Calculate Total Occurrences Over Time
 #'
-#' @description This function calculates the total number of species occurrence records
-#' as a time series.
+#' @description This function calculates the total number of species occurrence
+#'  records as a time series.
 #'
 #' @param data A data cube object (class 'processed_cube').
 #'
@@ -91,8 +95,8 @@ total_occ_map <- function(data, ...) {
 #'
 #' @seealso compute_indicator_workflow
 #'
-#' @return An S3 object with the classes 'indicator_ts' and 'total_occ' containing
-#' the calculated indicator values and metadata.
+#' @return An S3 object with the classes 'indicator_ts' and 'total_occ'
+#'  containing the calculated indicator values and metadata.
 #'
 #' @examples
 #' \dontrun{
@@ -118,12 +122,13 @@ total_occ_ts <- function(data, ...) {
 #'
 #' @seealso compute_indicator_workflow
 #'
-#' @return An S3 object with the classes 'indicator_map' and 'pielou_evenness' containing
-#' the calculated indicator values and metadata.
+#' @return An S3 object with the classes 'indicator_map' and 'pielou_evenness'
+#'  containing the calculated indicator values and metadata.
 #'
 #' @examples
 #' \dontrun{
-#' pe_map <- pielou_evenness_map(example_cube_1, level = "country", region = "Denmark")
+#' pe_map <- pielou_evenness_map(example_cube_1, level = "country",
+#'  region = "Denmark")
 #' plot(pe_map)
 #' }
 #' @export
@@ -145,8 +150,8 @@ pielou_evenness_map <- function(data, ...) {
 #'
 #' @seealso compute_indicator_workflow
 #'
-#' @return An S3 object with the classes 'indicator_ts' and 'pielou_evenness' containing
-#' the calculated indicator values and metadata.
+#' @return An S3 object with the classes 'indicator_ts' and 'pielou_evenness'
+#'  containing the calculated indicator values and metadata.
 #'
 #' @examples
 #' \dontrun{
@@ -172,12 +177,13 @@ pielou_evenness_ts <- function(data, ...) {
 #'
 #' @seealso compute_indicator_workflow
 #'
-#' @return An S3 object with the classes 'indicator_map' and 'williams_evenness' containing
-#' the calculated indicator values and metadata.
+#' @return An S3 object with the classes 'indicator_map' and 'williams_evenness'
+#'  containing the calculated indicator values and metadata.
 #'
 #' @examples
 #' \dontrun{
-#' we_map <- williams_evenness_map(example_cube_1, level = "country", region = "Denmark")
+#' we_map <- williams_evenness_map(example_cube_1, level = "country",
+#'  region = "Denmark")
 #' plot(we_map)
 #' }
 #' @export
@@ -198,8 +204,8 @@ williams_evenness_map <- function(data, ...) {
 #'
 #' @seealso compute_indicator_workflow
 #'
-#' @return An S3 object with the classes 'indicator_ts' and 'williams_evenness' containing
-#' the calculated indicator values and metadata.
+#' @return An S3 object with the classes 'indicator_ts' and 'williams_evenness'
+#'  containing the calculated indicator values and metadata.
 #'
 #' @examples
 #' \dontrun{
@@ -225,12 +231,13 @@ williams_evenness_ts <- function(data, ...) {
 #'
 #' @seealso compute_indicator_workflow
 #'
-#' @return An S3 object with the classes 'indicator_map' and 'area_rarity' containing
-#' the calculated indicator values and metadata.
+#' @return An S3 object with the classes 'indicator_map' and 'area_rarity'
+#'  containing the calculated indicator values and metadata.
 #'
 #' @examples
 #' \dontrun{
-#' arr_map <- area_rarity_map(example_cube_1, level = "country", region = "Denmark")
+#' arr_map <- area_rarity_map(example_cube_1, level = "country",
+#'  region = "Denmark")
 #' plot(arr_map)
 #' }
 #' @export
@@ -252,8 +259,8 @@ area_rarity_map <- function(data, ...) {
 #'
 #' @seealso compute_indicator_workflow
 #'
-#' @return An S3 object with the classes 'indicator_ts' and 'area_rarity' containing
-#' the calculated indicator values and metadata.
+#' @return An S3 object with the classes 'indicator_ts' and 'area_rarity'
+#'  containing the calculated indicator values and metadata.
 #'
 #' @examples
 #' \dontrun{
@@ -271,7 +278,8 @@ area_rarity_ts <- function(data, ...) {
 
 #' @title Calculate Abundance-Based Rarity Over Space
 #'
-#' @description This function calculates abundance-based rarity over a gridded map.
+#' @description This function calculates abundance-based rarity over a gridded
+#'  map.
 #'
 #' @param data A data cube object (class 'processed_cube').
 #'
@@ -279,12 +287,13 @@ area_rarity_ts <- function(data, ...) {
 #'
 #' @seealso compute_indicator_workflow
 #'
-#' @return An S3 object with the classes 'indicator_map' and 'ab_rarity' containing
-#' the calculated indicator values and metadata.
+#' @return An S3 object with the classes 'indicator_map' and 'ab_rarity'
+#'  containing the calculated indicator values and metadata.
 #'
 #' @examples
 #' \dontrun{
-#' abr_map <- ab_rarity_map(example_cube_1, level = "country", region = "Denmark")
+#' abr_map <- ab_rarity_map(example_cube_1, level = "country",
+#'  region = "Denmark")
 #' plot(abr_map)
 #' }
 #' @export
@@ -306,8 +315,8 @@ ab_rarity_map <- function(data, ...) {
 #'
 #' @seealso compute_indicator_workflow
 #'
-#' @return An S3 object with the classes 'indicator_ts' and 'ab_rarity' containing
-#' the calculated indicator values and metadata.
+#' @return An S3 object with the classes 'indicator_ts' and 'ab_rarity'
+#'  containing the calculated indicator values and metadata.
 #'
 #' @examples
 #' \dontrun{
@@ -333,8 +342,8 @@ ab_rarity_ts <- function(data, ...) {
 #' @param data A data cube object (class 'processed_cube').
 #' @param coverage The sample coverage value for the estimator. Default is 0.95.
 #' @param cutoff_length The minimum number of data points for each grid cell.
-#'  Grid cells with fewer data points will be removed before calculations to avoid
-#'  errors.  Default is 5.
+#'  Grid cells with fewer data points will be removed before calculations to
+#'  avoid errors. Default is 5.
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
@@ -370,8 +379,8 @@ hill0_map <- function(data,
 #' @param data A data cube object (class 'processed_cube').
 #' @param coverage The sample coverage value for the estimator. Default is 0.95.
 #' @param cutoff_length The minimum number of data points for each year.
-#'  Years with fewer data points will be removed before calculations to avoid errors.
-#'  Default is 5.
+#'  Years with fewer data points will be removed before calculations to avoid
+#'  errors. Default is 5.
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
@@ -401,8 +410,8 @@ hill0_ts <- function(data,
 
 #' @title Calculate Hill-Shannon Diversity Over Space
 #'
-#' @description This function uses coverage-based methods to estimate Hill-Shannon Diversity
-#' over a gridded map.
+#' @description This function uses coverage-based methods to estimate
+#'  Hill-Shannon Diversity over a gridded map.
 #'
 #' @inheritParams hill0_map
 #'
@@ -411,7 +420,7 @@ hill0_ts <- function(data,
 #' @seealso compute_indicator_workflow
 #'
 #' @return An S3 object with the classes 'indicator_map' and 'hill1' containing
-#' the calculated indicator values and metadata.
+#'  the calculated indicator values and metadata.
 #'
 #' @examples
 #' \dontrun{
@@ -434,8 +443,8 @@ hill1_map <- function(data,
 
 #' @title Calculate Hill-Shannon Diversity Over Time
 #'
-#' @description This function uses coverage-based methods to estimate Hill-Shannon Diversity
-#' over time.
+#' @description This function uses coverage-based methods to estimate
+#'  Hill-Shannon Diversity over time.
 #'
 #' @inheritParams hill0_ts
 #'
@@ -467,8 +476,8 @@ hill1_ts <- function(data,
 
 #' @title Calculate Hill-Simpson Diversity Over Space
 #'
-#' @description This function uses coverage-based methods to estimate Hill-Simpson Diversity
-#' over a gridded map.
+#' @description This function uses coverage-based methods to estimate
+#'  Hill-Simpson Diversity over a gridded map.
 #'
 #' @inheritParams hill0_map
 #'
@@ -477,7 +486,7 @@ hill1_ts <- function(data,
 #' @seealso compute_indicator_workflow
 #'
 #' @return An S3 object with the classes 'indicator_map' and 'hill2' containing
-#' the calculated indicator values and metadata.
+#'  the calculated indicator values and metadata.
 #'
 #' @examples
 #' \dontrun{
@@ -499,8 +508,8 @@ hill2_map <- function(data,
 
 #' @title Calculate Hill-Simpson Diversity Over Time
 #'
-#' @description This function uses coverage-based methods to estimate Hill-Simpson Diversity
-#' over time.
+#' @description This function uses coverage-based methods to estimate
+#'  Hill-Simpson Diversity over time.
 #'
 #' @inheritParams hill0_ts
 #'
@@ -509,7 +518,7 @@ hill2_map <- function(data,
 #' @seealso compute_indicator_workflow
 #'
 #' @return An S3 object with the classes 'indicator_ts' and 'hill2' containing
-#' the calculated indicator values and metadata.
+#'  the calculated indicator values and metadata.
 #'
 #' @examples
 #' \dontrun{
@@ -532,7 +541,8 @@ hill2_ts <- function(data,
 
 #' @title Calculate Cumulative Species Richness
 #'
-#' @description This function calculates cumulative species richness as a time series.
+#' @description This function calculates cumulative species richness as a time
+#'  series.
 #'
 #' @param data A data cube object (class 'processed_cube').
 #'
@@ -540,8 +550,8 @@ hill2_ts <- function(data,
 #'
 #' @seealso compute_indicator_workflow
 #'
-#' @return An S3 object with the classes 'indicator_ts' and 'cum_richness' containing
-#' the calculated indicator values and metadata.
+#' @return An S3 object with the classes 'indicator_ts' and 'cum_richness'
+#'  containing the calculated indicator values and metadata.
 #'
 #' @examples
 #' \dontrun{
@@ -559,8 +569,8 @@ cum_richness_ts <- function(data, ...) {
 
 #' @title Calculate Mean Year of Occurrence Over Space
 #'
-#' @description This function estimates the relative newness of records in a data cube
-#' by calculating the mean year of occurrence over a gridded map.
+#' @description This function estimates the relative newness of records in a
+#'  data cube by calculating the mean year of occurrence over a gridded map.
 #'
 #' @param data A data cube object (class 'processed_cube').
 #'
@@ -568,8 +578,8 @@ cum_richness_ts <- function(data, ...) {
 #'
 #' @seealso compute_indicator_workflow
 #'
-#' @return An S3 object with the classes 'indicator_map' and 'newness' containing
-#' the calculated indicator values and metadata.
+#' @return An S3 object with the classes 'indicator_map' and 'newness'
+#'  containing the calculated indicator values and metadata.
 #'
 #' @examples
 #' \dontrun{
@@ -587,8 +597,9 @@ newness_map <- function(data, ...) {
 
 #' @title Calculate Mean Year of Occurrence Over Time
 #'
-#' @description This function estimates the change in relative newness of records
-#' in a data cube over time by calculating the mean year of occurrence as a time series.
+#' @description This function estimates the change in relative newness of
+#'  records in a data cube over time by calculating the mean year of occurrence
+#'  as a time series.
 #'
 #' @param data A data cube object (class 'processed_cube').
 #'
@@ -615,7 +626,8 @@ newness_ts <- function(data, ...) {
 
 #' @title Calculate Occurrence Density Over Space
 #'
-#' @description This function calculates the density of records over a gridded map.
+#' @description This function calculates the density of records over a gridded
+#'  map.
 #'
 #' @param data A data cube object (class 'processed_cube').
 #'
@@ -623,12 +635,13 @@ newness_ts <- function(data, ...) {
 #'
 #' @seealso compute_indicator_workflow
 #'
-#' @return An S3 object with the classes 'indicator_map' and 'occ_density' containing
-#' the calculated indicator values and metadata.
+#' @return An S3 object with the classes 'indicator_map' and 'occ_density'
+#'  containing the calculated indicator values and metadata.
 #'
 #' @examples
 #' \dontrun{
-#' od_map <- occ_density_map(example_cube_1, level = "country", region = "Denmark")
+#' od_map <- occ_density_map(example_cube_1, level = "country",
+#'  region = "Denmark")
 #' plot(od_map)
 #' }
 #' @export
@@ -650,8 +663,8 @@ occ_density_map <- function(data, ...) {
 #'
 #' @seealso compute_indicator_workflow
 #'
-#' @return An S3 object with the classes 'indicator_ts' and 'occ_density' containing
-#' the calculated indicator values and metadata.
+#' @return An S3 object with the classes 'indicator_ts' and 'occ_density'
+#'  containing the calculated indicator values and metadata.
 #'
 #' @examples
 #' \dontrun{
@@ -668,8 +681,8 @@ occ_density_ts <- function(data, ...) {
 
 #' @title Calculate Species Occurrences Over Space
 #'
-#' @description This function calculates the number of occurrences for individual
-#' species over a gridded map.
+#' @description This function calculates the number of occurrences for
+#'  individual species over a gridded map.
 #'
 #' @param data A data cube object (class 'processed_cube').
 #'
@@ -677,8 +690,8 @@ occ_density_ts <- function(data, ...) {
 #'
 #' @seealso compute_indicator_workflow
 #'
-#' @return An S3 object with the classes 'indicator_map' and 'spec_occ' containing
-#' the calculated indicator values and metadata.
+#' @return An S3 object with the classes 'indicator_map' and 'spec_occ'
+#'  containing the calculated indicator values and metadata.
 #'
 #' @examples
 #' \dontrun{
@@ -704,8 +717,8 @@ spec_occ_map <- function(data, ...) {
 #'
 #' @seealso compute_indicator_workflow
 #'
-#' @return An S3 object with the classes 'indicator_ts' and 'spec_occ' containing
-#' the calculated indicator values and metadata.
+#' @return An S3 object with the classes 'indicator_ts' and 'spec_occ'
+#'  containing the calculated indicator values and metadata.
 #'
 #' @examples
 #' so_ts <- spec_occ_ts(example_cube_1, first_year = 1985)
@@ -730,11 +743,12 @@ spec_occ_ts <- function(data, ...) {
 #'
 #' @seealso compute_indicator_workflow
 #'
-#' @return An S3 object with the classes 'indicator_map' and 'spec_range' containing
-#' the calculated indicator values and metadata.
+#' @return An S3 object with the classes 'indicator_map' and 'spec_range'
+#'  containing the calculated indicator values and metadata.
 #'
 #' @examples
-#' sr_map <- spec_range_map(example_cube_1, level = "country", region = "Denmark")
+#' sr_map <- spec_range_map(example_cube_1, level = "country",
+#'  region = "Denmark")
 #' plot(sr_map, c(2440728, 4265185))
 #'
 #' @export
@@ -745,7 +759,8 @@ spec_range_map <- function(data, ...) {
                              ...)
 }
 
-#' @title Calculate Range Size (Number of Cells Occupied) for One or More Species Over Time
+#' @title Calculate Range Size (Number of Cells Occupied) for One or More
+#'  Species Over Time
 #'
 #' @description This function calculates number of cells occupied for individual
 #' species as time series.
@@ -756,8 +771,8 @@ spec_range_map <- function(data, ...) {
 #'
 #' @seealso compute_indicator_workflow
 #'
-#' @return An S3 object with the classes 'indicator_ts' and 'spec_range' containing
-#' the calculated indicator values and metadata.
+#' @return An S3 object with the classes 'indicator_ts' and 'spec_range'
+#'  containing the calculated indicator values and metadata.
 #'
 #' @examples
 #' \dontrun{
@@ -774,21 +789,25 @@ spec_range_ts <- function(data, ...) {
 
 #' @title Calculate Taxonomic Distinctness Over Space
 #'
-#' @description This function calculates the taxonomic distinctness index over a gridded map.
+#' @description This function calculates the taxonomic distinctness index over
+#'  a gridded map.
 #'
 #' @param data A data cube object (class 'processed_cube').
-#' @param rows Choose which row to select if there are multiple matches when retrieving taxonomic information from GBIF. (Default is 1. Use NA for interactive mode.)
+#' @param rows Choose which row to select if there are multiple matches when
+#'  retrieving taxonomic information from GBIF. (Default is 1. Use NA for
+#'  interactive mode.)
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
 #' @seealso compute_indicator_workflow
 #'
-#' @return An S3 object with the classes 'indicator_map' and 'tax_distinct' containing
-#' the calculated indicator values and metadata.
+#' @return An S3 object with the classes 'indicator_map' and 'tax_distinct'
+#'  containing the calculated indicator values and metadata.
 #'
 #' @examples
 #' \dontrun{
-#' td_map <- tax_distinct_map(example_cube_1, level = "country", region = "Denmark")
+#' td_map <- tax_distinct_map(example_cube_1, level = "country",
+#'  region = "Denmark")
 #' plot(td_map)
 #' }
 #'
@@ -806,21 +825,25 @@ tax_distinct_map <- function(data, rows = 1, ...) {
 
 #' @title Calculate Taxonomic Distinctness Over Time
 #'
-#' @description This function calculates the taxonomic distinctness index as a time series.
+#' @description This function calculates the taxonomic distinctness index as a
+#'  time series.
 #'
 #' @param data A data cube object (class 'processed_cube').
-#' @param rows Choose which row to select if there are multiple matches when retrieving taxonomic information from GBIF. (Default is 1. Use NA for interactive mode.)
+#' @param rows Choose which row to select if there are multiple matches when
+#'  retrieving taxonomic information from GBIF. (Default is 1. Use NA for
+#'  interactive mode.)
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
 #' @seealso compute_indicator_workflow
 #'
-#' @return An S3 object with the classes 'indicator_ts' and 'tax_distinct' containing
-#' the calculated indicator values and metadata.
+#' @return An S3 object with the classes 'indicator_ts' and 'tax_distinct'
+#'  containing the calculated indicator values and metadata.
 #'
 #' @examples
 #' \dontrun{
-#' td_ts <- tax_distinct_ts(example_cube_1, level = "country", region = "Denmark")
+#' td_ts <- tax_distinct_ts(example_cube_1, level = "country",
+#'  region = "Denmark")
 #' plot(td_ts)
 #' }
 #' @export
@@ -846,8 +869,8 @@ tax_distinct_ts <- function(data, rows = 1, ...) {
 #'
 #' @seealso compute_indicator_workflow
 #'
-#' @return An S3 object with the classes 'indicator_ts' and 'occ_turnover' containing
-#' the calculated indicator values and metadata.
+#' @return An S3 object with the classes 'indicator_ts' and 'occ_turnover'
+#'  containing the calculated indicator values and metadata.
 #'
 #' @examples
 #' ot_ts <- occ_turnover_ts(example_cube_1, first_year = 1985)

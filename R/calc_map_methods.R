@@ -1,17 +1,20 @@
 #' @export
-calc_map.default <- function(x, ...){
+calc_map.default <- function(x, ...) {
 
-  warning(paste("calc_map does not know how to handle object of class ",
-                class(x),
-                ". Please ensure you are not calling calc_map directly on an object."))
+  warning(paste(
+    "calc_map does not know how to handle object of class ",
+    class(x),
+    ". Please ensure you are not calling calc_map directly on an object."
+    ))
 
 }
 
 #' @noRd
 calc_map.hill0 <- function(x, ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
-                  inherits(x, "hill0"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "hill0")
 
   indicator <- calc_map.hill_core(x = x,
                                   type = "hill0",
@@ -24,8 +27,9 @@ calc_map.hill0 <- function(x, ...) {
 #' @noRd
 calc_map.hill1 <- function(x, ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
-                  inherits(x, "hill1"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "hill1")
 
   indicator <- calc_map.hill_core(x = x,
                                   type = "hill1",
@@ -38,8 +42,9 @@ calc_map.hill1 <- function(x, ...) {
 #' @noRd
 calc_map.hill2 <- function(x, ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
-                  inherits(x, "hill2"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "hill2")
 
   indicator <- calc_map.hill_core(x = x,
                                   type = "hill2",
@@ -53,15 +58,16 @@ calc_map.hill2 <- function(x, ...) {
 #' @noRd
 calc_map.hill_core <- function(x,
                                type = c("hill0", "hill1", "hill2"),
-                               ...)
-{
+                               ...) {
 
-  stopifnot_error("Please check the class and structure of your data. This is an internal function, not meant to be called directly.",
-                  inherits(x, c("data.frame", "sf")) & rlang::inherits_any(x, c("hill0", "hill1", "hill2")))
+  err_msgs(obj = x,
+           err_code = "cls_str_int",
+           obj_class1 = c("data.frame", "sf"),
+           obj_class2 = c("hill0", "hill1", "hill2"))
 
-  obs <- cellid <- . <- taxonKey <-scientificName <- kingdom <- geometry <- NULL
-  resolution <- xcoord <- ycoord <- year <- area_km2 <- variable <- value <- NULL
-  rowname <- Assemblage <- qD <- NULL
+  obs <- cellid <- . <- taxonKey <- scientificName <- kingdom <- NULL
+  geometry <- resolution <- xcoord <- ycoord <- year <- area_km2 <- NULL
+  variable <- value <- rowname <- Assemblage <- qD <- NULL
 
   type <- match.arg(type)
 
@@ -79,7 +85,7 @@ calc_map.hill_core <- function(x,
                  dplyr::ungroup() %>%
                  dplyr::select(-scientificName,
                                -kingdom,
-                            #   -rank,
+                               #   -rank,
                                -geometry,
                                -resolution,
                                -xcoord,
@@ -87,7 +93,7 @@ calc_map.hill_core <- function(x,
                                -year,
                                -area_km2) %>%
                  dplyr::select(-dplyr::any_of(c("basisOfRecord",
-                                         "datasetKey"))) %>%
+                                                "datasetKey"))) %>%
                  replace(is.na(.), 0) %>%
                  dplyr::mutate_if(is.numeric,
                                   as.integer) %>%
@@ -120,28 +126,32 @@ calc_map.hill_core <- function(x,
         # Check if the number of columns is greater than or equal to the cutoff
         return(ncol(x) >= cutoff_length)
       } else {
-        # Return FALSE for any list elements that are not appropriately structured
+        # Return FALSE for any list elements that are not appropriately
+        # structured
         return(FALSE)
       }
     })
 
   # Convert list elements to numeric presence-absence matrices
   spec_rec_raw_cell2 <- lapply(spec_rec_raw_cell2, function(x) {
-    # Attempt to convert all elements to numeric, assuming proper encoding of presence-absence
+    # Attempt to convert all elements to numeric, assuming proper encoding of
+    # presence-absence
     x <- apply(x, 2, as.numeric)
 
-    # Ensure all presence are converted to 1 (assuming all non-zero are present as original message suggests setting them as 1)
+    # Ensure all presence are converted to 1 (assuming all non-zero are present
+    # as original message suggests setting them as 1)
     x[x != 0] <- 1
 
     return(x)
+
   })
 
   # Compute hill diversity
   coverage_rare_cell <- spec_rec_raw_cell2 %>%
-    iNEXT::estimateD(datatype="incidence_raw",
+    iNEXT::estimateD(datatype = "incidence_raw",
                      base = "coverage",
                      level = coverage,
-                     q=qval)
+                     q = qval)
 
   # Extract estimated relative diversity
   indicator <-
@@ -163,8 +173,9 @@ calc_map.hill_core <- function(x,
 #' @rdname calc_map
 calc_map.obs_richness <- function(x, ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
-                  inherits(x, "obs_richness"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "obs_richness")
 
   taxonKey <- NULL
 
@@ -182,8 +193,9 @@ calc_map.obs_richness <- function(x, ...) {
 #' @rdname calc_map
 calc_map.total_occ <- function(x, ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
-                  inherits(x, "total_occ"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "total_occ")
 
   obs <- NULL
 
@@ -197,18 +209,20 @@ calc_map.total_occ <- function(x, ...) {
 
 }
 
-#' @param newness_min_year If set, only shows values above this (e.g. 1970). Values
-#'    below the minimum will be replaced with NA. This can be useful e.g. if you have
-#'    outlier cells where the data is very old causing the legend gradient to stretch
-#'    in a way that makes other cell values difficult to discern.
+#' @param newness_min_year If set, only shows values above this (e.g. 1970).
+#'  Values below the minimum will be replaced with NA. This can be useful e.g.
+#'  if you have outlier cells where the data is very old causing the legend
+#'  gradient to stretch in a way that makes other cell values difficult to
+#'  discern.
 #' @export
 #' @rdname calc_map
 calc_map.newness <- function(x,
                              newness_min_year = NULL,
                              ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
-                  inherits(x, "newness"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "newness")
 
   year <- NULL
 
@@ -219,9 +233,10 @@ calc_map.newness <- function(x,
                      .by = "cellid")
 
   if (!is.null(newness_min_year)) {
-    indicator$diversity_val <- ifelse(indicator$diversity_val > newness_min_year,
-                                           indicator$diversity_val,
-                                           NA)
+    indicator$diversity_val <-
+      ifelse(indicator$diversity_val > newness_min_year,
+             indicator$diversity_val,
+             NA)
   }
 
   return(indicator)
@@ -232,8 +247,9 @@ calc_map.newness <- function(x,
 #' @rdname calc_map
 calc_map.occ_density <- function(x, ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
-                  inherits(x, "occ_density"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "occ_density")
 
   diversity_val <- obs <- area_km2 <- cellid <- NULL
 
@@ -253,8 +269,9 @@ calc_map.occ_density <- function(x, ...) {
 #' @rdname calc_map
 calc_map.williams_evenness <- function(x, ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
-                  inherits(x, "williams_evenness"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "williams_evenness")
 
   # Call function to calculate evenness over a grid
   indicator <- calc_map.evenness_core(x = x,
@@ -269,8 +286,9 @@ calc_map.williams_evenness <- function(x, ...) {
 #' @rdname calc_map
 calc_map.pielou_evenness <- function(x, ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
-                  inherits(x, "pielou_evenness"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "pielou_evenness")
 
   # Call function to calculate evenness over a grid
   indicator <- calc_map.evenness_core(x = x,
@@ -286,10 +304,13 @@ calc_map.evenness_core <- function(x,
                                    type,
                                    ...) {
 
-  stopifnot_error("Please check the class and structure of your data. This is an internal function, not meant to be called directly.",
-                  inherits(x, c("data.frame", "sf")))
+  err_msgs(obj = x,
+           err_code = "cls_str_int",
+           obj_class1 = c("data.frame", "sf"),
+           obj_class2 = c("williams_evenness", "pielou_evenness"))
 
-  available_indicators <- NULL; rm(available_indicators)
+  available_indicators <- NULL
+  rm(available_indicators)
 
   num_occ <- obs <- cellid <- taxonKey <- . <- NULL
 
@@ -315,24 +336,29 @@ calc_map.evenness_core <- function(x,
     dplyr::mutate(cellid = as.integer(cellid),
                   .keep = "unused")
 
+  return(indicator)
+
 }
 
 #' @export
 #' @rdname calc_map
 calc_map.ab_rarity <- function(x, ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
-                  inherits(x, "ab_rarity"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "ab_rarity")
 
   obs <- taxonKey <- cellid <- records_taxon <- rarity <- NULL
 
-# Calculate total summed rarity (in terms of abundance) for each grid cell
-indicator <-
-  x %>%
-  dplyr::mutate(records_taxon = sum(obs), .by = taxonKey) %>%
-  dplyr::mutate(rarity = 1 / (records_taxon / sum(obs))) %>%
-  dplyr::summarise(diversity_val = sum(rarity), .by = "cellid") %>%
-  dplyr::arrange(cellid)
+  # Calculate total summed rarity (in terms of abundance) for each grid cell
+  indicator <-
+    x %>%
+    dplyr::mutate(records_taxon = sum(obs), .by = taxonKey) %>%
+    dplyr::mutate(rarity = 1 / (records_taxon / sum(obs))) %>%
+    dplyr::summarise(diversity_val = sum(rarity), .by = "cellid") %>%
+    dplyr::arrange(cellid)
+
+  return(indicator)
 
 }
 
@@ -340,8 +366,9 @@ indicator <-
 #' @rdname calc_map
 calc_map.area_rarity <- function(x, ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
-                  inherits(x, "area_rarity"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "area_rarity")
 
   rec_tax_cell <- cellid <- taxonKey <- rarity <- NULL
 
@@ -351,7 +378,9 @@ calc_map.area_rarity <- function(x, ...) {
     x %>%
     dplyr::mutate(rec_tax_cell = sum(dplyr::n_distinct(cellid)),
                   .by = c(taxonKey)) %>%
-    dplyr::mutate(rarity = 1 / (rec_tax_cell / sum(dplyr::n_distinct(cellid)))) %>%
+    dplyr::mutate(
+      rarity = 1 / (rec_tax_cell / sum(dplyr::n_distinct(cellid)))
+      ) %>%
     dplyr::summarise(diversity_val = sum(rarity), .by = cellid)
 
   return(indicator)
@@ -362,8 +391,9 @@ calc_map.area_rarity <- function(x, ...) {
 #' @rdname calc_map
 calc_map.spec_occ <- function(x, ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
-                  inherits(x, "spec_occ"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "spec_occ")
 
   diversity_val <- obs <- taxonKey <- cellid <- scientificName <- NULL
 
@@ -383,8 +413,9 @@ calc_map.spec_occ <- function(x, ...) {
 #' @rdname calc_map
 calc_map.spec_range <- function(x, ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
-                  inherits(x, "spec_range"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "spec_range")
 
   cellid <- taxonKey <- scientificName <- diversity_val <- NULL
 
@@ -404,8 +435,9 @@ calc_map.spec_range <- function(x, ...) {
 #' @rdname calc_map
 calc_map.tax_distinct <- function(x, ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
-                  inherits(x, "tax_distinct"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "tax_distinct")
 
   cellid <- . <- diversity_val <- NULL
 
@@ -418,7 +450,8 @@ calc_map.tax_distinct <- function(x, ...) {
 
   } else {
 
-    stop("The 'taxize' package is required to calculate taxonomic distinctness.")
+    stop(paste("The 'taxize' package is required to",
+               "calculate taxonomic distinctness."))
 
   }
 
