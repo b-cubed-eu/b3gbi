@@ -1,3 +1,9 @@
+# b3gbi 0.4.2
+
+20.02.2025 - Minor update:
+
+* Bug fix: Coordinates now display correctly after using process_cube() with custom grid codes
+
 # b3gbi 0.4.1
 
 19.02.2025 - Minor update:

@@ -7,13 +7,13 @@
   "relatedLink": "https://b-cubed-eu.github.io/b3gbi/",
   "codeRepository": "https://github.com/b-cubed-eu/b3gbi",
   "license": "https://spdx.org/licenses/MIT",
-  "version": "0.3.1",
+  "version": "0.4.2",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.4.2 (2024-10-31 ucrt)",
+  "runtimePlatform": "R version 4.3.1 (2023-06-16 ucrt)",
   "author": [
     {
       "@type": "Person",
@@ -37,7 +37,8 @@
       "@type": "SoftwareApplication",
       "identifier": "bold",
       "name": "bold",
-      "version": ">= 1.3.0"
+      "version": ">= 1.3.0",
+      "sameAs": "https://github.com/ropensci/bold"
     },
     {
       "@type": "SoftwareApplication",
@@ -86,7 +87,7 @@
         "name": "Comprehensive R Archive Network (CRAN)",
         "url": "https://cran.r-project.org"
       },
-      "sameAs": "https://CRAN.R-project.org/package=taxize"
+      "sameAs": "https://github.com/ropensci/taxize"
     },
     {
       "@type": "SoftwareApplication",
@@ -183,6 +184,18 @@
     },
     "8": {
       "@type": "SoftwareApplication",
+      "identifier": "labeling",
+      "name": "labeling",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=labeling"
+    },
+    "9": {
+      "@type": "SoftwareApplication",
       "identifier": "magrittr",
       "name": "magrittr",
       "provider": {
@@ -193,13 +206,14 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=magrittr"
     },
-    "9": {
+    "10": {
       "@type": "SoftwareApplication",
       "identifier": "mgrs",
       "name": "mgrs",
-      "version": ">= 0.2.4"
+      "version": ">= 0.2.4",
+      "sameAs": "https://github.com/hrbrmstr/mgrs"
     },
-    "10": {
+    "11": {
       "@type": "SoftwareApplication",
       "identifier": "patchwork",
       "name": "patchwork",
@@ -211,7 +225,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=patchwork"
     },
-    "11": {
+    "12": {
       "@type": "SoftwareApplication",
       "identifier": "permute",
       "name": "permute",
@@ -223,7 +237,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=permute"
     },
-    "12": {
+    "13": {
       "@type": "SoftwareApplication",
       "identifier": "purrr",
       "name": "purrr",
@@ -235,7 +249,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=purrr"
     },
-    "13": {
+    "14": {
       "@type": "SoftwareApplication",
       "identifier": "readr",
       "name": "readr",
@@ -247,7 +261,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=readr"
     },
-    "14": {
+    "15": {
       "@type": "SoftwareApplication",
       "identifier": "rlang",
       "name": "rlang",
@@ -259,7 +273,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=rlang"
     },
-    "15": {
+    "16": {
       "@type": "SoftwareApplication",
       "identifier": "rnaturalearth",
       "name": "rnaturalearth",
@@ -271,7 +285,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=rnaturalearth"
     },
-    "16": {
+    "17": {
       "@type": "SoftwareApplication",
       "identifier": "sf",
       "name": "sf",
@@ -283,7 +297,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=sf"
     },
-    "17": {
+    "18": {
       "@type": "SoftwareApplication",
       "identifier": "stringr",
       "name": "stringr",
@@ -295,7 +309,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=stringr"
     },
-    "18": {
+    "19": {
       "@type": "SoftwareApplication",
       "identifier": "tibble",
       "name": "tibble",
@@ -307,7 +321,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=tibble"
     },
-    "19": {
+    "20": {
       "@type": "SoftwareApplication",
       "identifier": "tidyr",
       "name": "tidyr",
@@ -319,7 +333,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=tidyr"
     },
-    "20": {
+    "21": {
       "@type": "SoftwareApplication",
       "identifier": "units",
       "name": "units",
@@ -333,9 +347,10 @@
     },
     "SystemRequirements": null
   },
-  "fileSize": "5095.277KB",
+  "fileSize": "11940293.684KB",
   "releaseNotes": "https://github.com/b-cubed-eu/b3gbi/blob/master/NEWS.md",
   "readme": "https://github.com/b-cubed-eu/b3gbi/blob/main/README.md",
   "contIntegration": ["https://github.com/b-cubed-eu/b3gbi/actions/workflows/R-CMD-check.yaml", "https://app.codecov.io/gh/b-cubed-eu/b3gbi/"],
-  "developmentStatus": "https://www.repostatus.org/#wip"
+  "developmentStatus": "https://www.repostatus.org/#wip",
+  "keywords": ["biodiversity-indicators", "data-cubes"]
 }
