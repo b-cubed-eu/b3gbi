@@ -117,9 +117,9 @@ new_sim_cube <- function(x, grid_type) {
                                        length(unique(x$family)),
                                        "Data not present"),
                  grid_type = grid_type,
-                 resolutions = ifelse("resolution" %in% colnames(x),
-                                      c(unique(x$resolution)),
-                                      "(unknown)"),
+                 if ("resolution" %in% colnames(x)) {
+                   resolutions = unique(x$resolution)
+                 },
                  data = x),
             class = "sim_cube")
 }
