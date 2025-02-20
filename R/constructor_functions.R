@@ -100,10 +100,10 @@ new_sim_cube <- function(x, grid_type) {
                  last_year = max(x$year),
                  coord_range = ifelse(("xcoord" %in% colnames(x) &
                                          "ycoord" %in% colnames(x)),
-                                      list("xmin" = min(x$xcoord),
+                                      list(c("xmin" = min(x$xcoord),
                                            "xmax" = max(x$xcoord),
                                            "ymin" = min(x$ycoord),
-                                           "ymax" = max(x$ycoord)),
+                                           "ymax" = max(x$ycoord))),
                                       "Coordinates not provided"),
                  num_cells = ifelse("cellCode" %in% colnames(x),
                                     length(unique(x$cellCode)),
@@ -119,7 +119,7 @@ new_sim_cube <- function(x, grid_type) {
                  grid_type = grid_type,
                  resolutions = ifelse("resolution" %in% colnames(x),
                                       c(unique(x$resolution)),
-                                      "Resolution not provided"),
+                                      "(unknown)"),
                  data = x),
             class = "sim_cube")
 }
