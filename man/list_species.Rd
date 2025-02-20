@@ -8,7 +8,8 @@ list_species(object)
 }
 \arguments{
 \item{object}{A biodiversity data object containing species names, either as
-a separate vector called species_names or as a column called scientificName.}
+a separate vector called species_names or as a column called
+scientificName.}
 }
 \value{
 Either a character vector of species names (if directly available)

@@ -14,6 +14,6 @@
 \item{...}{Additional arguments.}
 }
 \description{
-Provides a summary representation of a processed_cube_dsinfo object,
-designed for user-friendly display in the console.
+Provides a summary representation of a processed_cube_dsinfo
+object, designed for user-friendly display in the console.
 }
