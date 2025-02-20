@@ -1,22 +1,23 @@
 #' @export
-calc_ts.default <- function(x, ...){
+calc_ts.default <- function(x, ...) {
 
-  warning(paste("calc_ts does not know how to handle object of class ",
-                class(x),
-                ". Please ensure you are not calling calc_ts directly on an object."))
+  warning(paste(
+    "calc_ts does not know how to handle object of class ",
+    class(x),
+    ". Please ensure you are not calling calc_ts directly on an object."))
 
 }
 
 #' @noRd
 calc_ts.hill0 <- function(x, ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
-                  inherits(x, "hill0"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "hill0")
 
   indicator <- calc_ts.hill_core(x = x,
-                                  type = "hill0",
-                                  ...)
+                                 type = "hill0",
+                                 ...)
 
   return(indicator)
 
@@ -25,9 +26,9 @@ calc_ts.hill0 <- function(x, ...) {
 #' @noRd
 calc_ts.hill1 <- function(x, ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
-                  inherits(x, "hill1"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "hill1")
 
   indicator <- calc_ts.hill_core(x = x,
                                   type = "hill1",
@@ -40,9 +41,9 @@ calc_ts.hill1 <- function(x, ...) {
 #' @noRd
 calc_ts.hill2 <- function(x, ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
-                  inherits(x, "hill2"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "hill2")
 
   indicator <- calc_ts.hill_core(x = x,
                                   type = "hill2",
@@ -51,21 +52,21 @@ calc_ts.hill2 <- function(x, ...) {
   return(indicator)
 }
 
-#' @param type Choose which Hill number, or q, to calculate. Choose 'hill0' (q = 0)
-#' for estimated species richness, 'hill1' for Hill-Shannon diversity, or 'hill2'
-#' for Hill-Simpson diversity.
+#' @param type Choose which Hill number, or q, to calculate. Choose 'hill0'
+#'  (q = 0) for estimated species richness, 'hill1' for Hill-Shannon diversity,
+#'  or 'hill2' for Hill-Simpson diversity.
 #'
 #' @importFrom iNEXT estimateD
 #'
 #' @noRd
 calc_ts.hill_core <- function(x,
                               type = c("hill0", "hill1", "hill2"),
-                              ...)
-{
+                              ...) {
 
-  stopifnot_error("Please check the class and structure of your data.
-                  This is an internal function, not meant to be called directly.",
-                  inherits(x, c("data.frame", "sf")) & rlang::inherits_any(x, c("hill0", "hill1", "hill2")))
+  err_msgs(obj = x,
+           err_code = "cls_str_int",
+           obj_class1 = c("data.frame", "sf"),
+           obj_class2 = c("hill0", "hill1", "hill2"))
 
   scientificName <- year <- obs <- cellCode <- . <- variable <- value <- NULL
   rowname <- Assemblage <- qD <- SC <- Order.q <- qD.LCL <- qD.UCL <- NULL
@@ -121,7 +122,10 @@ calc_ts.hill_core <- function(x,
 
 
   coverage_rare <- species_records_raw2 %>%
-    iNEXT::estimateD(base = "coverage", level = coverage, datatype="incidence_raw", q=qval)
+    iNEXT::estimateD(base = "coverage",
+                     level = coverage,
+                     datatype = "incidence_raw",
+                     q = qval)
 
   # Extract estimated relative species richness
   indicator <-
@@ -136,6 +140,8 @@ calc_ts.hill_core <- function(x,
                   ul = qD.UCL) %>%
     dplyr::mutate(year = as.numeric(year))
 
+  return(indicator)
+
 }
 
 
@@ -144,9 +150,9 @@ calc_ts.hill_core <- function(x,
 calc_ts.obs_richness <- function(x,
                                  ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
-                  inherits(x, "obs_richness"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "obs_richness")
 
   year <- taxonKey <- NULL
 
@@ -155,11 +161,13 @@ calc_ts.obs_richness <- function(x,
     dplyr::select(year, taxonKey) %>%
     dplyr::arrange(year)
 
-    # Calculate observed species richness by year
-    indicator <-
-      x %>%
-      dplyr::summarise(diversity_val = dplyr::n_distinct(taxonKey),
-                       .by = "year")
+  # Calculate observed species richness by year
+  indicator <-
+    x %>%
+    dplyr::summarise(diversity_val = dplyr::n_distinct(taxonKey),
+                     .by = "year")
+
+  return(indicator)
 
 }
 
@@ -168,26 +176,28 @@ calc_ts.obs_richness <- function(x,
 calc_ts.cum_richness <- function(x,
                                  ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
-                  inherits(x, "cum_richness"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "cum_richness")
 
   year <- taxonKey <- unique_by_year <- NULL
 
-    # Calculate the cumulative number of unique species observed
-    x <-
-      x %>%
-      dplyr::select(year, taxonKey) %>%
-      dplyr::arrange(year) %>%
-      dplyr::distinct(taxonKey, .keep_all = TRUE) %>%
-      dplyr::summarize(unique_by_year = length(taxonKey),
-                       .by = year)
+  # Calculate the cumulative number of unique species observed
+  x <-
+    x %>%
+    dplyr::select(year, taxonKey) %>%
+    dplyr::arrange(year) %>%
+    dplyr::distinct(taxonKey, .keep_all = TRUE) %>%
+    dplyr::summarize(unique_by_year = length(taxonKey),
+                     .by = year)
 
-    # Calculate the cumulative number of unique species observed
-    indicator <-
-      x %>%
-      dplyr::reframe(year = year,
-                     diversity_val = cumsum(unique_by_year))
+  # Calculate the cumulative number of unique species observed
+  indicator <-
+    x %>%
+    dplyr::reframe(year = year,
+                   diversity_val = cumsum(unique_by_year))
+
+  return(indicator)
 
 }
 
@@ -196,9 +206,9 @@ calc_ts.cum_richness <- function(x,
 calc_ts.total_occ <- function(x,
                               ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
-                  inherits(x, "total_occ"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "total_occ")
 
   obs <- NULL
   # Calculate total number of occurrences over the grid
@@ -207,6 +217,8 @@ calc_ts.total_occ <- function(x,
     dplyr::summarize(diversity_val = sum(obs),
                      .by = "year")
 
+  return(indicator)
+
 }
 
 #' @export
@@ -214,9 +226,9 @@ calc_ts.total_occ <- function(x,
 calc_ts.occ_density <- function(x,
                                 ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
-                  inherits(x, "occ_density"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "occ_density")
 
   year <- cellid <- diversity_val <- obs <- area_km2 <- NULL
 
@@ -230,6 +242,8 @@ calc_ts.occ_density <- function(x,
     dplyr::mutate(diversity_val = as.numeric(diversity_val)) %>%
     dplyr::arrange(year)
 
+  return(indicator)
+
 }
 
 #' @export
@@ -237,18 +251,21 @@ calc_ts.occ_density <- function(x,
 calc_ts.newness <- function(x,
                             ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
-                  inherits(x, "newness"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "newness")
 
-    yearvals <- vector()
-    counter <- 1
-    for (i in unique(x$year)) {
-      yearvals[counter]  <- round(mean(x$year[x$year <= i]))
-      counter <- counter + 1
-    }
+  yearvals <- vector()
+  counter <- 1
+  for (i in unique(x$year)) {
+    yearvals[counter]  <- round(mean(x$year[x$year <= i]))
+    counter <- counter + 1
+  }
 
-    indicator <- data.frame("year" = unique(x$year),
-                            "diversity_val" = yearvals)
+  indicator <- data.frame("year" = unique(x$year),
+                          "diversity_val" = yearvals)
+
+  return(indicator)
 
 }
 
@@ -257,14 +274,16 @@ calc_ts.newness <- function(x,
 calc_ts.williams_evenness <- function(x,
                                       ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
-                  inherits(x, "williams_evenness"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "williams_evenness")
 
   # Call function to calculate evenness over a grid
   indicator <- calc_ts.evenness_core(x = x,
-                                      type = "williams_evenness",
-                                      ...)
+                                     type = "williams_evenness",
+                                     ...)
+
+  return(indicator)
 
 }
 
@@ -273,14 +292,16 @@ calc_ts.williams_evenness <- function(x,
 calc_ts.pielou_evenness <- function(x,
                                     ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
-                  inherits(x, "pielou_evenness"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "pielou_evenness")
 
   # Call function to calculate evenness over a grid
   indicator <- calc_ts.evenness_core(x = x,
-                                      type = "pielou_evenness",
-                                      ...)
+                                     type = "pielou_evenness",
+                                     ...)
+
+  return(indicator)
 
 }
 
@@ -289,16 +310,18 @@ calc_ts.evenness_core <- function(x,
                                   type,
                                   ...) {
 
-  stopifnot_error("Please check the class and structure of your data.
-                  This is an internal function, not meant to be called directly.",
-                  inherits(x, c("data.frame", "sf")))
+  err_msgs(obj = x,
+           err_code = "cls_str_int",
+           obj_class1 = c("data.frame", "sf"),
+           obj_class2 = c("williams_evenness", "pielou_evenness"))
 
-  available_indicators <- NULL; rm(available_indicators)
+  available_indicators <- NULL
+  rm(available_indicators)
 
   num_occ <- obs <- year <- taxonKey <- . <- NULL
 
-   type <- match.arg(type,
-                     names(available_indicators))
+  type <- match.arg(type,
+                    names(available_indicators))
 
   # Calculate number of records for each species by grid cell
   x <-
@@ -314,13 +337,15 @@ calc_ts.evenness_core <- function(x,
 
   indicator <-
     x %>%
-    purrr::map(~compute_evenness_formula(. ,type)) %>%
+    purrr::map(~compute_evenness_formula(., type)) %>%
     unlist() %>%
     as.data.frame() %>%
     dplyr::rename(diversity_val = ".") %>%
     tibble::rownames_to_column(var = "year") %>%
     dplyr::mutate(year = as.integer(year),
                   .keep = "unused")
+
+  return(indicator)
 
 }
 
@@ -329,9 +354,9 @@ calc_ts.evenness_core <- function(x,
 calc_ts.ab_rarity <- function(x,
                               ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
-                  inherits(x, "ab_rarity"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "ab_rarity")
 
   obs <- taxonKey <- records_taxon <- year <- rarity <- diversity_val <- NULL
 
@@ -344,6 +369,8 @@ calc_ts.ab_rarity <- function(x,
     dplyr::summarise(diversity_val = sum(diversity_val), .by = "year") %>%
     dplyr::arrange(year)
 
+  return(indicator)
+
 }
 
 #' @export
@@ -351,9 +378,9 @@ calc_ts.ab_rarity <- function(x,
 calc_ts.area_rarity <- function(x,
                                 ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
-                  inherits(x, "area_rarity"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "area_rarity")
 
   year <- cellid <- taxonKey <- rec_tax_cell <- rarity <- diversity_val <- NULL
 
@@ -364,10 +391,14 @@ calc_ts.area_rarity <- function(x,
     dplyr::arrange(year, cellid, taxonKey) %>%
     dplyr::mutate(rec_tax_cell = sum(dplyr::n_distinct(cellid)),
                   .by = c(taxonKey)) %>%
-    dplyr::mutate(rarity = 1 / (rec_tax_cell / sum(dplyr::n_distinct(cellid)))) %>%
+    dplyr::mutate(
+      rarity = 1 / (rec_tax_cell / sum(dplyr::n_distinct(cellid)))
+    ) %>%
     dplyr::summarise(diversity_val = sum(rarity), .by = c("year", "cellid")) %>%
     dplyr::summarise(diversity_val = mean(diversity_val), .by = "year") %>%
     dplyr::arrange(year)
+
+  return(indicator)
 
 }
 
@@ -376,9 +407,9 @@ calc_ts.area_rarity <- function(x,
 calc_ts.spec_occ <- function(x,
                              ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
-                  inherits(x, "spec_occ"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "spec_occ")
 
   year <- scientificName <- taxonKey <- obs <- diversity_val <- NULL
 
@@ -390,6 +421,8 @@ calc_ts.spec_occ <- function(x,
     dplyr::arrange(year) %>%
     dplyr::select(year, taxonKey, scientificName, diversity_val)
 
+  return(indicator)
+
 }
 
 #' @export
@@ -397,9 +430,9 @@ calc_ts.spec_occ <- function(x,
 calc_ts.spec_range <- function(x,
                                ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
-                  inherits(x, "spec_range"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "spec_range")
 
   year <- taxonKey <- cellCode <- obs <- diversity_val <- scientificName <- NULL
 
@@ -415,11 +448,13 @@ calc_ts.spec_range <- function(x,
     dplyr::arrange(taxonKey) %>%
     dplyr::select(year, taxonKey, scientificName, diversity_val)
 
+  return(indicator)
+
 }
 
 #' @param set_rows Automatically select which taxonomic information to keep when
-#'    there are multiple options. Default value of 1 keeps the first option, which
-#'    is usually the best.
+#'  there are multiple options. Default value of 1 keeps the first option,
+#'  which is usually the best.
 #'
 #' @export
 #' @rdname calc_ts
@@ -427,9 +462,9 @@ calc_ts.tax_distinct <- function(x,
                                  set_rows = 1,
                                  ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
-                  inherits(x, "tax_distinct"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "tax_distinct")
 
   year <- . <- diversity_val <- NULL
 
@@ -463,6 +498,8 @@ calc_ts.tax_distinct <- function(x,
     dplyr::distinct(year, diversity_val, .keep_all = TRUE) %>%
     dplyr::select(year, diversity_val)
 
+  return(indicator)
+
 }
 
 
@@ -471,9 +508,9 @@ calc_ts.tax_distinct <- function(x,
 calc_ts.occ_turnover <- function(x,
                                  ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
-                  inherits(x, "occ_turnover"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "occ_turnover")
 
   year <- NULL
 
@@ -487,8 +524,8 @@ calc_ts.occ_turnover <- function(x,
   tax_added <- list()
   tax_added[[1]] <- ind_list[[1]]
   tax_added[2:length(ind_list)] <-
-    lapply(2:length(unique(x$year)), function(y){
-      a <- setdiff(ind_list[[y]], ind_list[[y-1]])
+    lapply(2:length(unique(x$year)), function(y) {
+      a <- setdiff(ind_list[[y]], ind_list[[y - 1]])
       return(a)
     })
 
@@ -496,27 +533,36 @@ calc_ts.occ_turnover <- function(x,
   tax_lost <- list()
   tax_lost[[1]] <- NULL
   tax_lost[2:length(ind_list)] <-
-    lapply(2:length(unique(x$year)), function(y){
-      a <- setdiff(ind_list[[y-1]], ind_list[[y]])
+    lapply(2:length(unique(x$year)), function(y) {
+      a <- setdiff(ind_list[[y - 1]], ind_list[[y]])
+      return(a)
     })
 
-  # Combine the species present in the current with those present in the previous year
+  # Combine the species present in the current with those present in the
+  # previous year
   tax_present <- list()
   tax_present[[1]] <- ind_list[[1]]
   tax_present[2:length(ind_list)] <-
-    lapply(2:length(unique(x$year)), function(y){
-      a <- intersect(ind_list[[y-1]], ind_list[[y]])
+    lapply(2:length(unique(x$year)), function(y) {
+      a <- intersect(ind_list[[y - 1]], ind_list[[y]])
+      return(a)
     })
 
-  # Calculate occupancy turnover as the sum of the number of species added and the
-  # number of species lost divided by the total number of species present in the current
-  # and previous year combined
-  occ_turnover <- sapply(1:length(unique(x$year)), function(y){
+  # Calculate occupancy turnover as the sum of the number of species added and
+  # the number of species lost divided by the total number of species present
+  # in the current and previous year combined
+  occ_turnover <- sapply(seq_along(unique(x$year)), function(y) {
     a <- (length(tax_added[[y]]) + length(tax_lost[[y]])) /
-      (length(tax_present[[y]]) + length(tax_added[[y]]) + length(tax_lost[[y]]))
+      (length(tax_present[[y]]) + length(tax_added[[y]]) +
+         length(tax_lost[[y]]))
+    return(a)
   })
+
   occ_turnover[[1]] <- NA
 
-  indicator <- tibble::tibble(year = unique(x$year), diversity_val = occ_turnover)
+  indicator <- tibble::tibble(year = unique(x$year),
+                              diversity_val = occ_turnover)
+
+  return(indicator)
 
 }

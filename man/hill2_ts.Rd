@@ -10,32 +10,37 @@ hill2_ts(data, cutoff_length = 5, coverage = 0.95, ...)
 \item{data}{A data cube object (class 'processed_cube').}
 
 \item{cutoff_length}{The minimum number of data points for each year.
-Years with fewer data points will be removed before calculations to avoid errors.
-Default is 5.}
+Years with fewer data points will be removed before calculations to avoid
+errors. Default is 5.}
 
 \item{coverage}{The sample coverage value for the estimator. Default is 0.95.}
 
 \item{...}{
   Arguments passed on to \code{\link[=compute_indicator_workflow]{compute_indicator_workflow}}
   \describe{
-    \item{\code{ci_type}}{Type of bootstrap confidence intervals to calculate. (Default: "norm".
-Select "none" to avoid calculating bootstrap CIs.)}
-    \item{\code{cell_size}}{Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)}
-    \item{\code{level}}{Spatial level: 'cube', 'continent', 'country', 'world', 'sovereignty',
-or 'geounit'. (Default: 'cube')}
+    \item{\code{ci_type}}{Type of bootstrap confidence intervals to calculate.
+(Default: "norm". Select "none" to avoid calculating bootstrap CIs.)}
+    \item{\code{cell_size}}{Length of grid cell sides, in km. (Default: 10 for country,
+100 for continent or world)}
+    \item{\code{level}}{Spatial level: 'cube', 'continent', 'country', 'world',
+'sovereignty', or 'geounit'. (Default: 'cube')}
     \item{\code{region}}{The region of interest (e.g., "Europe"). (Default: "Europe")}
-    \item{\code{ne_type}}{The type of Natural Earth data to download: 'countries', 'map_units',
-'sovereignty', or 'tiny_countries'. (Default: "countries")}
+    \item{\code{ne_type}}{The type of Natural Earth data to download: 'countries',
+'map_units', 'sovereignty', or 'tiny_countries'. (Default: "countries")}
     \item{\code{ne_scale}}{The scale of Natural Earth data to download: 'small' - 110m,
 'medium' - 50m, or 'large' - 10m. (Default: "medium")}
-    \item{\code{output_crs}}{The CRS you want for your calculated indicator. (Leave blank
-to let the function choose a default based on grid reference system)}
-    \item{\code{first_year}}{Exclude data before this year. (Uses all data in the cube by default.)}
-    \item{\code{last_year}}{Exclude data after this year. (Uses all data in the cube by default.)}
-    \item{\code{spherical_geometry}}{If set to FALSE, will temporarily disable spherical geometry
-while the function runs. Should only be used to solve specific issues. (Default is TRUE)}
-    \item{\code{make_valid}}{Calls st_make_valid() from the sf package. Increases processing
-time but may help if you are getting polygon errors. (Default is FALSE).}
+    \item{\code{output_crs}}{The CRS you want for your calculated indicator. (Leave
+blank to let the function choose a default based on grid reference system)}
+    \item{\code{first_year}}{Exclude data before this year. (Uses all data in the cube
+by default.)}
+    \item{\code{last_year}}{Exclude data after this year. (Uses all data in the cube
+by default.)}
+    \item{\code{spherical_geometry}}{If set to FALSE, will temporarily disable spherical
+geometry while the function runs. Should only be used to solve specific
+issues. (Default is TRUE)}
+    \item{\code{make_valid}}{Calls st_make_valid() from the sf package. Increases
+processing time but may help if you are getting polygon errors.
+(Default is FALSE).}
     \item{\code{num_bootstrap}}{Set the number of bootstraps to calculate for generating
 confidence intervals. (Default: 1000)}
   }}
@@ -45,8 +50,8 @@ An S3 object with the classes 'indicator_ts' and 'hill2' containing
 the calculated indicator values and metadata.
 }
 \description{
-This function uses coverage-based methods to estimate Hill-Simpson Diversity
-over time.
+This function uses coverage-based methods to estimate
+Hill-Simpson Diversity over time.
 }
 \examples{
 \dontrun{

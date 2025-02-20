@@ -1,21 +1,23 @@
 #' @title Calculate Confidence Intervals for a Biodiversity Indicator
 #'
 #' @description This function calculates bootstrap confidence intervals for a
-#' biodiversity indicator. It is called automatically when calculating a biodiversity
-#' indicator over time unless you choose 'none' for ci_type.
+#'  biodiversity indicator. It is called automatically when calculating a
+#'  biodiversity indicator over time unless you choose 'none' for ci_type.
 #'
 #' @param x A data cube object
-#' @param indicator An indicator calculated over time, in the form of a data frame.
-#' *Note: this should NOT be an 'indicator_ts' object as it is meant to be called by
-#' the 'compute_indicator_workflow' function.
-#' @param ci_type Type of bootstrap confidence intervals to calculate. (Default: "norm".
-#'  Select "none" to avoid calculating bootstrap CIs.)
+#' @param indicator An indicator calculated over time, in the form of a data
+#'  frame.
+#'  *Note: this should NOT be an 'indicator_ts' object as it is meant to be
+#'  called by the 'compute_indicator_workflow' function.
+#' @param ci_type Type of bootstrap confidence intervals to calculate. (Default:
+#' "norm". Select "none" to avoid calculating bootstrap CIs.)
 #' @param num_bootstrap Set the number of bootstraps to calculate for generating
 #'  confidence intervals. (Default: 1000)
 #' @param set_rows Automatically select which taxonomic information to keep when
 #'  there are multiple options. Default value of 1 keeps the first option, which
 #'  is usually the best.
-#' @param ... Additional arguments passed to specific indicator calculation functions.
+#' @param ... Additional arguments passed to specific indicator calculation
+#'  functions.
 #'
 #' @export
 calc_ci <- function(x,
@@ -27,50 +29,57 @@ calc_ci <- function(x,
 }
 
 #' @noRd
-calc_ci.default <- function(x, ...){
+calc_ci.default <- function(x, ...) {
 
   warning(paste("calc_ci does not know how to handle object of class ",
                 class(x),
-                ". Please ensure you are not calling calc_ci directly on an object."))
+                ". Please ensure you are not calling calc_ci directly on an ",
+                "object."))
 
 }
 
 #' @noRd
 calc_ci.hill0 <- function(x, ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
-                  inherits(x, "hill0"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "hill0")
 
   indicator <- calc_ci.hill_core(x = x,
                                  type = "hill0",
                                  ...)
+
+  return(indicator)
 
 }
 
 #' @noRd
 calc_ci.hill1 <- function(x, ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
-                  inherits(x, "hill1"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "hill1")
 
   indicator <- calc_ci.hill_core(x = x,
                                  type = "hill1",
                                  ...)
+
+  return(indicator)
 
 }
 
 #' @noRd
 calc_ci.hill2 <- function(x, ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
-                  inherits(x, "hill2"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "hill2")
 
   indicator <- calc_ci.hill_core(x = x,
                                  type = "hill2",
                                  ...)
+
+  return(indicator)
 
 }
 
@@ -78,22 +87,23 @@ calc_ci.hill2 <- function(x, ...) {
 calc_ci.hill_core <- function(x,
                               indicator,
                               type = c("hill0", "hill1", "hill2"),
-                              ...)
-{
+                              ...) {
 
-  stopifnot_error("Please check the class and structure of your data.
-                  This is an internal function, not meant to be called directly.",
-                  inherits(x, c("data.frame", "sf")) & rlang::inherits_any(x, c("hill0", "hill1", "hill2")))
+  err_msgs(obj = x,
+           err_code = "cls_str_int",
+           obj_class1 = c("data.frame", "sf"),
+           obj_class2 = c("hill0", "hill1", "hill2"))
 
   type <- match.arg(type)
 
-  if ("ll" %in% colnames(indicator) & "ul" %in% colnames(indicator)) {
+  if ("ll" %in% colnames(indicator) && "ul" %in% colnames(indicator)) {
 
     return(indicator)
 
   } else {
 
-    stop("Confidence intervals for Hill numbers should be calculated by the calc_ts function, but seem to be missing.")
+    stop(paste("Confidence intervals for Hill numbers should be calculated by",
+               "the calc_ts function, but seem to be missing."))
 
   }
 
@@ -107,9 +117,9 @@ calc_ci.total_occ <- function(x,
                               ci_type = ci_type,
                               ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
-                  inherits(x, "total_occ"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "total_occ")
 
   year <- NULL
 
@@ -150,9 +160,9 @@ calc_ci.occ_density <- function(x,
                                 ci_type = ci_type,
                                 ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
-                  inherits(x, "occ_density"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "occ_density")
 
   year <- cellid <- obs <- area_km2 <- NULL
 
@@ -195,14 +205,15 @@ calc_ci.newness <- function(x,
                             ci_type = ci_type,
                             ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
-                  inherits(x, "newness"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "newness")
 
   year <- NULL
 
   # Put individual observations into a list organized by year
-  ind_list <- lapply(unique(x$year), function(y){
-    a <- x$year[x$year<=y]
+  ind_list <- lapply(unique(x$year), function(y) {
+    a <- x$year[x$year <= y]
     return(a)
   })
 
@@ -229,6 +240,8 @@ calc_ci.newness <- function(x,
                      by = dplyr::join_by(year),
                      relationship = "many-to-many")
 
+  return(indicator)
+
 }
 
 #' @export
@@ -236,14 +249,16 @@ calc_ci.newness <- function(x,
 calc_ci.williams_evenness <- function(x,
                                       ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
-                  inherits(x, "williams_evenness"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "williams_evenness")
 
   # Call function to calculate evenness over a grid
   indicator <- calc_ci.evenness_core(x = x,
                                      type = "williams_evenness",
                                      ...)
+
+  return(indicator)
 
 }
 
@@ -252,14 +267,16 @@ calc_ci.williams_evenness <- function(x,
 calc_ci.pielou_evenness <- function(x,
                                     ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
-                  inherits(x, "pielou_evenness"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "pielou_evenness")
 
   # Call function to calculate evenness over a grid
   indicator <- calc_ci.evenness_core(x = x,
                                      type = "pielou_evenness",
                                      ...)
+
+  return(indicator)
 
 }
 
@@ -271,13 +288,15 @@ calc_ci.evenness_core <- function(x,
                                   ci_type = ci_type,
                                   ...) {
 
-  available_indicators <- NULL; rm(available_indicators)
+  available_indicators <- NULL
+  rm(available_indicators)
 
   obs <- year <- taxonKey <- num_occ <- . <- NULL
 
-  stopifnot_error("Please check the class and structure of your data.
-                  This is an internal function, not meant to be called directly.",
-                  inherits(x, c("data.frame", "sf")))
+  err_msgs(obj = x,
+           err_code = "cls_str_int",
+           obj_class1 = c("data.frame", "sf"),
+           obj_class2 = c("williams_evenness", "pielou_evenness"))
 
   type <- match.arg(type,
                     names(available_indicators))
@@ -320,6 +339,8 @@ calc_ci.evenness_core <- function(x,
                      by = dplyr::join_by(year),
                      relationship = "many-to-many")
 
+  return(indicator)
+
 }
 
 #' @export
@@ -330,40 +351,42 @@ calc_ci.ab_rarity <- function(x,
                               ci_type = ci_type,
                               ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
-                  inherits(x, "ab_rarity"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "ab_rarity")
 
   obs <- taxonKey <- records_taxon <- year <- NULL
 
-    # Calculate rarity for each cell each year
-    x <-
-      x %>%
-      dplyr::mutate(records_taxon = sum(obs), .by = taxonKey) %>%
-      dplyr::mutate(rarity = 1 / (records_taxon / sum(obs))) %>%
-      dplyr::arrange(year)
+  # Calculate rarity for each cell each year
+  x <-
+    x %>%
+    dplyr::mutate(records_taxon = sum(obs), .by = taxonKey) %>%
+    dplyr::mutate(rarity = 1 / (records_taxon / sum(obs))) %>%
+    dplyr::arrange(year)
 
-    ind_list <- list_org_by_year(x, "rarity")
+  ind_list <- list_org_by_year(x, "rarity")
 
-    # Bootstrap indicator value
-    bootstraps <-
-      ind_list %>%
-      purrr::map(~boot::boot(
-        data = .,
-        statistic = boot_statistic_sum,
-        R = num_bootstrap))
+  # Bootstrap indicator value
+  bootstraps <-
+    ind_list %>%
+    purrr::map(~boot::boot(
+      data = .,
+      statistic = boot_statistic_sum,
+      R = num_bootstrap))
 
-    # Calculate confidence intervals
-    ci_df <- get_bootstrap_ci(bootstraps, type = ci_type, ...)
+  # Calculate confidence intervals
+  ci_df <- get_bootstrap_ci(bootstraps, type = ci_type, ...)
 
-    # Convert negative values to zero as rarity cannot be less than zero
-    ci_df$ll <- ifelse(ci_df$ll > 0, ci_df$ll, 0)
+  # Convert negative values to zero as rarity cannot be less than zero
+  ci_df$ll <- ifelse(ci_df$ll > 0, ci_df$ll, 0)
 
-    # Join confidence intervals to indicator values by year
-    indicator <- indicator %>%
-      dplyr::full_join(ci_df,
-                       by = dplyr::join_by(year),
-                       relationship = "many-to-many")
+  # Join confidence intervals to indicator values by year
+  indicator <- indicator %>%
+    dplyr::full_join(ci_df,
+                     by = dplyr::join_by(year),
+                     relationship = "many-to-many")
+
+  return(indicator)
 
 }
 
@@ -375,9 +398,9 @@ calc_ci.area_rarity <- function(x,
                                 ci_type = ci_type,
                                 ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
-                  inherits(x, "area_rarity"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "area_rarity")
 
   year <- cellid <- taxonKey <- rec_tax_cell <- rarity <- diversity_val <- NULL
 
@@ -387,7 +410,9 @@ calc_ci.area_rarity <- function(x,
     dplyr::arrange(year, cellid, taxonKey) %>%
     dplyr::mutate(rec_tax_cell = sum(dplyr::n_distinct(cellid)),
                   .by = c(taxonKey)) %>%
-    dplyr::mutate(rarity = 1 / (rec_tax_cell / sum(dplyr::n_distinct(cellid)))) %>%
+    dplyr::mutate(
+      rarity = 1 / (rec_tax_cell / sum(dplyr::n_distinct(cellid)))
+      ) %>%
     dplyr::summarise(diversity_val = sum(rarity), .by = c("year", "cellid")) %>%
     dplyr::arrange(year)
 
@@ -414,6 +439,8 @@ calc_ci.area_rarity <- function(x,
                      by = dplyr::join_by(year),
                      relationship = "many-to-many")
 
+  return(indicator)
+
 }
 
 #' @export
@@ -424,9 +451,9 @@ calc_ci.spec_occ <- function(x,
                              ci_type = ci_type,
                              ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
-                  inherits(x, "spec_occ"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "spec_occ")
 
   taxonKey <- totobs <- obs <- year <- cellCode <- . <- scientificName <- NULL
 
@@ -437,14 +464,14 @@ calc_ci.spec_occ <- function(x,
   # Bootstrap species occurrence values
   bootstraps <-
     x %>%
-    dplyr::summarize(totobs = sum(obs), .by = c(year,cellCode,taxonKey)) %>%
+    dplyr::summarize(totobs = sum(obs), .by = c(year, cellCode, taxonKey)) %>%
     dplyr::group_by(taxonKey) %>%
     dplyr::group_split() %>%
     purrr::map(. %>%
-                 dplyr::select(year,totobs,cellCode) %>%
+                 dplyr::select(year, totobs, cellCode) %>%
                  dplyr::arrange(year) %>%
                  tidyr::pivot_wider(names_from = year, values_from = totobs) %>%
-                 replace(is.na(.),0) %>%
+                 replace(is.na(.), 0) %>%
                  tibble::column_to_rownames("cellCode") %>%
                  as.list() %>%
                  purrr::map(. %>%
@@ -461,7 +488,7 @@ calc_ci.spec_occ <- function(x,
 
   # Calculate confidence intervals
   ci_df_list <- list()
-  for (i in 1:length(bootstraps)) {
+  for (i in seq_along(bootstraps)) {
 
     ci_df_list[[i]] <- get_bootstrap_ci(bootstraps[[i]], type = ci_type, ...)
     if (length(ci_df_list[[i]]) > 0) {
@@ -482,6 +509,8 @@ calc_ci.spec_occ <- function(x,
     dplyr::full_join(ci_df,
                      by = dplyr::join_by(year, taxonKey, scientificName),
                      relationship = "many-to-many")
+
+  return(indicator)
 
 }
 
@@ -493,9 +522,9 @@ calc_ci.spec_range <- function(x,
                                ci_type = ci_type,
                                ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
-                  inherits(x, "spec_range"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "spec_range")
 
   taxonKey <- obs <- observed <- year <- cellCode <- . <- scientificName <- NULL
 
@@ -506,14 +535,16 @@ calc_ci.spec_range <- function(x,
   # Bootstrap species range values
   bootstraps <-
     x %>%
-    dplyr::summarize(observed = sum(obs >= 1), .by = c(taxonKey, year, cellCode)) %>%
+    dplyr::summarize(observed = sum(obs >= 1),
+                     .by = c(taxonKey, year, cellCode)) %>%
     dplyr::group_by(taxonKey) %>%
     dplyr::group_split() %>%
     purrr::map(. %>%
-                 dplyr::select(year,observed,cellCode) %>%
+                 dplyr::select(year, observed, cellCode) %>%
                  dplyr::arrange(year) %>%
-                 tidyr::pivot_wider(names_from = year, values_from = observed) %>%
-                 replace(is.na(.),0) %>%
+                 tidyr::pivot_wider(names_from = year,
+                                    values_from = observed) %>%
+                 replace(is.na(.), 0) %>%
                  tibble::column_to_rownames("cellCode") %>%
                  as.list() %>%
                  purrr::map(. %>%
@@ -530,7 +561,7 @@ calc_ci.spec_range <- function(x,
 
   # Calculate confidence intervals
   ci_df_list <- list()
-  for (i in 1:length(bootstraps)) {
+  for (i in seq_along(bootstraps)) {
 
     ci_df_list[[i]] <- get_bootstrap_ci(bootstraps[[i]], type = ci_type, ...)
     if (length(ci_df_list[[i]]) > 0) {
@@ -551,6 +582,8 @@ calc_ci.spec_range <- function(x,
     dplyr::full_join(ci_df,
                      by = dplyr::join_by(year, taxonKey, scientificName),
                      relationship = "many-to-many")
+
+  return(indicator)
 
 }
 
@@ -563,9 +596,9 @@ calc_ci.tax_distinct <- function(x,
                                  set_rows = 1,
                                  ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
-                  inherits(x, "tax_distinct"))
+  err_msgs(obj = x,
+           err_code = "cls_int",
+           obj_class1 = "tax_distinct")
 
   year <- . <- NULL
 
@@ -584,10 +617,12 @@ calc_ci.tax_distinct <- function(x,
 
   x3 <- lapply(x2, function(y) {
     a <- y$scientificName
+    return(y)
   })
 
   names(x3) <- lapply(x2, function(y) {
     a <- y$year[1]
+    return(y)
   })
 
 
@@ -620,11 +655,13 @@ calc_ci.tax_distinct <- function(x,
                        by = dplyr::join_by(year),
                        relationship = "many-to-many")
 
+    return(indicator)
+
   } else {
 
-    warning("Unable to calculate confidence intervals. There may be insufficient data.")
+    warning(paste("Unable to calculate confidence intervals.",
+                  "There may be insufficient data."))
 
   }
 
 }
-

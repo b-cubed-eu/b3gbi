@@ -26,8 +26,8 @@ plot_map(
 )
 }
 \arguments{
-\item{x}{An 'indicator_map' object containing indicator values associated with
-map grid cells.}
+\item{x}{An 'indicator_map' object containing indicator values associated
+with map grid cells.}
 
 \item{title}{Plot title. Replace "auto" with your own title if you want a
 custom title or if calling the function manually.}
@@ -50,26 +50,28 @@ appropriate S3 method (if calling the function manually, leave as NULL).}
 \item{labels}{(Optional) Labels for legend scale break points.}
 
 \item{Europe_crop_EEA}{If TRUE, crops maps of Europe using the EPSG:3035 CRS
-to exclude far-lying islands (default is TRUE, but does not affect other maps
-or projections). Will not work if crop_to_grid is set to TRUE.}
+to exclude far-lying islands (default is TRUE, but does not affect other
+maps or projections). Will not work if crop_to_grid is set to TRUE.}
 
-\item{crop_to_grid}{If TRUE, the grid will determine the edges of the map.Overrides
-Europe_crop_EEA. Default is FALSE.}
+\item{crop_to_grid}{If TRUE, the grid will determine the edges of the map.
+Overrides Europe_crop_EEA. Default is FALSE.}
 
 \item{surround}{If TRUE, includes surrounding land area in gray when plotting
-at the country or continent level. If FALSE, all surrounding area will be colored
-ocean blue (or whatever colour you set manually using panel_bg). Default is TRUE.}
+at the country or continent level. If FALSE, all surrounding area will be
+colored ocean blue (or whatever colour you set manually using panel_bg).
+Default is TRUE.}
 
 \item{panel_bg}{(Optional) Background colour for the map panel.}
 
-\item{land_fill_colour}{(Optional) Colour for the land area outside of the grid
-(if surround = TRUE). Default is "grey85".}
+\item{land_fill_colour}{(Optional) Colour for the land area outside of the
+grid (if surround = TRUE). Default is "grey85".}
 
 \item{legend_title}{(Optional) Title for the plot legend.}
 
 \item{legend_limits}{(Optional) Limits for the legend scale.}
 
-\item{legend_title_wrap_length}{Maximum legend title length before wrapping to a new line.}
+\item{legend_title_wrap_length}{Maximum legend title length before wrapping
+to a new line.}
 
 \item{title_wrap_length}{Maximum title length before wrapping to a new line.}
 }
@@ -78,8 +80,8 @@ A ggplot object representing the biodiversity indicator map.
 Can be customized using ggplot2 functions.
 }
 \description{
-Creates a map visualization of a calculated biodiversity indicator,
-providing customization options.
+Creates a map visualization of a calculated biodiversity
+indicator, providing customization options.
 }
 \examples{
 evenness_map <- pielou_evenness_map(example_cube_1,

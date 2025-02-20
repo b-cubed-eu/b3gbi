@@ -48,21 +48,23 @@ calc_ts(x, ...)
 \arguments{
 \item{x}{A data cube object ('processed_cube').}
 
-\item{...}{Additional arguments passed to specific indicator calculation functions.}
+\item{...}{Additional arguments passed to specific indicator calculation
+functions.}
 
 \item{set_rows}{Automatically select which taxonomic information to keep when
-there are multiple options. Default value of 1 keeps the first option, which
-is usually the best.}
+there are multiple options. Default value of 1 keeps the first option,
+which is usually the best.}
 }
 \value{
-An S3 object of the class 'indicator_ts' containing the calculated indicator values and metadata.
+An S3 object of the class 'indicator_ts' containing the calculated
+indicator values and metadata.
 }
 \description{
-This function provides a flexible framework for calculating various biodiversity
-indicators over time. It prepares the data, creates a grid, calculates indicators,
-and formats the output into an appropriate S3 object ('indicator_ts').
-Specific implementations for different indicator types are provided using the
-appropriate wrappers.
+This function provides a flexible framework for calculating
+various biodiversity indicators over time. It prepares the data, creates a
+grid, calculates indicators, and formats the output into an appropriate S3
+object ('indicator_ts'). Specific implementations for different indicator
+types are provided using the appropriate wrappers.
 }
 \examples{
 occurrence_density_trend <- occ_density_ts(example_cube_1)

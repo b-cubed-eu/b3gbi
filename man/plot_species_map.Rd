@@ -29,12 +29,12 @@ plot_species_map(
 )
 }
 \arguments{
-\item{x}{An 'indicator_map' object containing indicator values associated with
-map grid cells.}
+\item{x}{An 'indicator_map' object containing indicator values associated
+with map grid cells.}
 
-\item{species}{Species you want to map occurrences for. Can be either numerical
-taxonKeys or species names. Partial species names can be used (the function
-will try to match them).}
+\item{species}{Species you want to map occurrences for. Can be either
+numerical taxonKeys or species names. Partial species names can be used
+(the function will try to match them).}
 
 \item{leg_label_default}{Default label for the legend, provided by an
 appropriate S3 method (if calling the function manually, leave as NULL).}
@@ -60,29 +60,32 @@ custom title or if calling the function manually.}
 \item{labels}{(Optional) Labels for legend scale break points.}
 
 \item{Europe_crop_EEA}{If TRUE, crops maps of Europe using the EPSG:3035 CRS
-to exclude far-lying islands (default is TRUE, but does not affect other maps
-or projections).}
+to exclude far-lying islands (default is TRUE, but does not affect other
+maps or projections).}
 
-\item{crop_to_grid}{If TRUE, the grid will determine the edges of the map.Overrides
-Europe_crop_EEA. Default is FALSE.}
+\item{crop_to_grid}{If TRUE, the grid will determine the edges of the map.
+Overrides Europe_crop_EEA. Default is FALSE.}
 
-\item{surround}{If TRUE, includes surrounding land area in gray when plotting
-at the country or continent level. If FALSE, all surrounding area will be coloured
-ocean blue (or whatever colour you set manually using panel_bg). Default is TRUE.}
+\item{surround}{If TRUE, includes surrounding land area in gray when
+plotting at the country or continent level. If FALSE, all surrounding area
+will be coloured ocean blue (or whatever colour you set manually using
+panel_bg). Default is TRUE.}
 
-\item{single_plot}{By default all species occurrence time series will be combined
-into a single multi-panel plot. Set this to FALSE to plot each species separately.}
+\item{single_plot}{By default all species occurrence time series will be
+combined into a single multi-panel plot. Set this to FALSE to plot each
+species separately.}
 
 \item{panel_bg}{(Optional) Background colour for the map panel.}
 
-\item{land_fill_colour}{(Optional) Colour for the land area outside of the grid
-(if surround = TRUE). Default is "grey85".}
+\item{land_fill_colour}{(Optional) Colour for the land area outside of the
+grid (if surround = TRUE). Default is "grey85".}
 
 \item{legend_title}{(Optional) Title for the plot legend.}
 
 \item{legend_limits}{(Optional) Limits for the legend scale.}
 
-\item{legend_title_wrap_length}{Maximum legend title length before wrapping to a new line.}
+\item{legend_title_wrap_length}{Maximum legend title length before wrapping
+to a new line.}
 
 \item{title_wrap_length}{Maximum title length before wrapping to a new line.}
 }
@@ -91,8 +94,8 @@ A ggplot object representing the map of species range or occurrences.
 Can be customized using ggplot2 functions.
 }
 \description{
-Creates map visualizations of species ranges or species occurrences,
-providing customization options.
+Creates map visualizations of species ranges or species
+occurrences,providing customization options.
 }
 \examples{
 spec_occ_mammals_denmark <- spec_occ_map(example_cube_1,

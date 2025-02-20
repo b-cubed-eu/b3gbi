@@ -5,10 +5,12 @@
 \alias{example_cube_1}
 \title{Cube of GBIF Mammal Occurrences in Denmark}
 \format{
-A 'processed_cube' object containing a tibble with 276,950 rows and 10 variables, as well as metadata
+A 'processed_cube' object containing a tibble with 276,950 rows and
+10 variables, as well as metadata
 \describe{
 \item{year}{year occurrence was recorded}
-\item{eea_cell_code}{code containing the cell resolution and coordinates on the EEA grid}
+\item{eea_cell_code}{code containing the cell resolution and coordinates
+on the EEA grid}
 \item{taxonKey}{taxonomic key associated with the species on GBIF}
 \item{obs}{number of individuals observed}
 \item{scientificName}{scientific species name}
@@ -26,7 +28,8 @@ A 'processed_cube' object containing a tibble with 276,950 rows and 10 variables
 example_cube_1
 }
 \description{
-Small example cube containing the mammal occurrences in Denmark available on GBIF as of 16.03.2024.
+Small example cube containing the mammal occurrences in Denmark available on
+GBIF as of 16.03.2024.
 }
 \examples{
 {

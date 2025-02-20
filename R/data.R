@@ -1,11 +1,14 @@
 #' Cube of GBIF Mammal Occurrences in Denmark
 #'
-#' Small example cube containing the mammal occurrences in Denmark available on GBIF as of 16.03.2024.
+#' Small example cube containing the mammal occurrences in Denmark available on
+#' GBIF as of 16.03.2024.
 #'
-#' @format A 'processed_cube' object containing a tibble with 276,950 rows and 10 variables, as well as metadata
+#' @format A 'processed_cube' object containing a tibble with 276,950 rows and
+#'  10 variables, as well as metadata
 #' \describe{
 #'   \item{year}{year occurrence was recorded}
-#'   \item{eea_cell_code}{code containing the cell resolution and coordinates on the EEA grid}
+#'   \item{eea_cell_code}{code containing the cell resolution and coordinates
+#'    on the EEA grid}
 #'   \item{taxonKey}{taxonomic key associated with the species on GBIF}
 #'   \item{obs}{number of individuals observed}
 #'   \item{scientificName}{scientific species name}
@@ -31,9 +34,11 @@
 
 #' Time Series of Observed Species Richness for Mammals in Denmark
 #'
-#' Example indicator containing a time series of observed species richness for mammal occurrences in Denmark (occurrences from GBIF: 16.03.2024).
+#' Example indicator containing a time series of observed species richness for
+#' mammal occurrences in Denmark (occurrences from GBIF: 16.03.2024).
 #'
-#' @format An 'indicator_ts' object containing a tibble with 54 rows and 2 variables, as well as metadata
+#' @format An 'indicator_ts' object containing a tibble with 54 rows and 2
+#'  variables, as well as metadata
 #' \describe{
 #'   \item{year}{a year the indicator was calculated for}
 #'   \item{diversity_val}{calculated richness value for the year}
@@ -43,9 +48,11 @@
 
 #' Time Series of Cumulative Species Richness for Insects in Europe
 #'
-#' Example indicator containing a time series of cumulative species richness for insect occurrences in Europe (occurrences from GBIF: 16.03.2024).
+#' Example indicator containing a time series of cumulative species richness
+#' for insect occurrences in Europe (occurrences from GBIF: 16.03.2024).
 #'
-#' @format An 'indicator_ts' object containing a tibble with 89 rows and 2 variables, as well as metadata
+#' @format An 'indicator_ts' object containing a tibble with 89 rows and 2
+#'  variables, as well as metadata
 #' \describe{
 #'   \item{year}{a year the indicator was calculated for}
 #'   \item{diversity_val}{calculated richness value for the year}
@@ -55,19 +62,29 @@
 
 #' Indicators Available for Use in the Package
 #'
-#' A list of all biodiversity indicators available within the package, along with the dimensions they can be calculated across, the functions to access them, and any special arguments
+#' A list of all biodiversity indicators available within the package, along
+#' with the dimensions they can be calculated across, the functions to access
+#' them, and any special arguments
 #'
-#' @format A special object of class 'available_indicators' containing a list of indicators and six fields with information about them
+#' @format A special object of class 'available_indicators' containing a list
+#'  of indicators and six fields with information about them
 #' \describe{
 #'   \item{indicator_class}{class of the indicator}
 #'   \item{indicator_name}{name of the indicator}
-#'   \item{plot_title}{title to be used when plotting with automated title generation}
-#'   \item{legend_label}{title to be used when plotting with automated legend title generation}
-#'   \item{legend_transformation}{any transformation to perform on the legend when plotting, to improve visualization of maps}
-#'   \item{map_wrapper}{wrapper function to use when calculating indicator as a map}
-#'   \item{ts_wrapper}{wrapper function to use when calculating indicator as a time series}
-#'   \item{map_function_arguments}{any special arguments to consider when using the function to calculate an indicator map}
-#'   \item{ts_function_arguments}{any special arguments to consider when using the function to calculate an indicator time series}
+#'   \item{plot_title}{title to be used when plotting with automated title
+#'    generation}
+#'   \item{legend_label}{title to be used when plotting with automated legend
+#'    title generation}
+#'   \item{legend_transformation}{any transformation to perform on the legend
+#'    when plotting, to improve visualization of maps}
+#'   \item{map_wrapper}{wrapper function to use when calculating indicator as a
+#'    map}
+#'   \item{ts_wrapper}{wrapper function to use when calculating indicator as a
+#'    time series}
+#'   \item{map_function_arguments}{any special arguments to consider when using
+#'    the function to calculate an indicator map}
+#'   \item{ts_function_arguments}{any special arguments to consider when using
+#'    the function to calculate an indicator time series}
 #' }
 #' @source N/A
 "available_indicators"

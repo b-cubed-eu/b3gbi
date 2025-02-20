@@ -46,17 +46,19 @@ calc_ci(x, indicator, ...)
 \arguments{
 \item{x}{A data cube object}
 
-\item{indicator}{An indicator calculated over time, in the form of a data frame.
-*Note: this should NOT be an 'indicator_ts' object as it is meant to be called by
-the 'compute_indicator_workflow' function.}
+\item{indicator}{An indicator calculated over time, in the form of a data
+frame.
+*Note: this should NOT be an 'indicator_ts' object as it is meant to be
+called by the 'compute_indicator_workflow' function.}
 
-\item{...}{Additional arguments passed to specific indicator calculation functions.}
+\item{...}{Additional arguments passed to specific indicator calculation
+functions.}
 
 \item{num_bootstrap}{Set the number of bootstraps to calculate for generating
 confidence intervals. (Default: 1000)}
 
-\item{ci_type}{Type of bootstrap confidence intervals to calculate. (Default: "norm".
-Select "none" to avoid calculating bootstrap CIs.)}
+\item{ci_type}{Type of bootstrap confidence intervals to calculate. (Default:
+"norm". Select "none" to avoid calculating bootstrap CIs.)}
 
 \item{set_rows}{Automatically select which taxonomic information to keep when
 there are multiple options. Default value of 1 keeps the first option, which
@@ -64,6 +66,6 @@ is usually the best.}
 }
 \description{
 This function calculates bootstrap confidence intervals for a
-biodiversity indicator. It is called automatically when calculating a biodiversity
-indicator over time unless you choose 'none' for ci_type.
+biodiversity indicator. It is called automatically when calculating a
+biodiversity indicator over time unless you choose 'none' for ci_type.
 }

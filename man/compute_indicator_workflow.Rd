@@ -33,60 +33,71 @@ compute_indicator_workflow(
 \item 'newness': Mean year of occurrence.
 \item 'occ_density': Density of occurrences.
 \item 'williams_evenness', 'pielou_evenness': Evenness measures.
-\item 'ab_rarity', 'area_rarity':  Abundance-based and area-based rarity scores.
+\item 'ab_rarity', 'area_rarity':  Abundance-based and area-based rarity
+scores.
 \item 'cum_richness': Cumulative species richness.
 \item 'occ_turnover': Occupancy turnover.
 \item 'spec_range': Species range size.
 \item 'spec_occ': Species occurrences.
 \item 'tax_distinct': Taxonomic distinctness.
 \item 'hill0': Species richness (estimated by coverage-based rarefaction).
-\item 'hill1': Hill-Shannon diversity (estimated by coverage-based rarefaction).
-\item 'hill2': Hill-Simpson diversity (estimated by coverage-based rarefaction).
+\item 'hill1': Hill-Shannon diversity (estimated by coverage-based
+rarefaction).
+\item 'hill2': Hill-Simpson diversity (estimated by coverage-based
+rarefaction).
 }}
 
-\item{dim_type}{Dimension to calculate indicator over (time: 'ts', or space: 'map')}
+\item{dim_type}{Dimension to calculate indicator over (time: 'ts', or space:
+'map')}
 
-\item{ci_type}{Type of bootstrap confidence intervals to calculate. (Default: "norm".
-Select "none" to avoid calculating bootstrap CIs.)}
+\item{ci_type}{Type of bootstrap confidence intervals to calculate.
+(Default: "norm". Select "none" to avoid calculating bootstrap CIs.)}
 
-\item{cell_size}{Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)}
+\item{cell_size}{Length of grid cell sides, in km. (Default: 10 for country,
+100 for continent or world)}
 
-\item{level}{Spatial level: 'cube', 'continent', 'country', 'world', 'sovereignty',
-or 'geounit'. (Default: 'cube')}
+\item{level}{Spatial level: 'cube', 'continent', 'country', 'world',
+'sovereignty', or 'geounit'. (Default: 'cube')}
 
 \item{region}{The region of interest (e.g., "Europe"). (Default: "Europe")}
 
-\item{ne_type}{The type of Natural Earth data to download: 'countries', 'map_units',
-'sovereignty', or 'tiny_countries'. (Default: "countries")}
+\item{ne_type}{The type of Natural Earth data to download: 'countries',
+'map_units', 'sovereignty', or 'tiny_countries'. (Default: "countries")}
 
 \item{ne_scale}{The scale of Natural Earth data to download: 'small' - 110m,
 'medium' - 50m, or 'large' - 10m. (Default: "medium")}
 
-\item{output_crs}{The CRS you want for your calculated indicator. (Leave blank
-to let the function choose a default based on grid reference system)}
+\item{output_crs}{The CRS you want for your calculated indicator. (Leave
+blank to let the function choose a default based on grid reference system)}
 
-\item{first_year}{Exclude data before this year. (Uses all data in the cube by default.)}
+\item{first_year}{Exclude data before this year. (Uses all data in the cube
+by default.)}
 
-\item{last_year}{Exclude data after this year. (Uses all data in the cube by default.)}
+\item{last_year}{Exclude data after this year. (Uses all data in the cube
+by default.)}
 
-\item{spherical_geometry}{If set to FALSE, will temporarily disable spherical geometry
-while the function runs. Should only be used to solve specific issues. (Default is TRUE)}
+\item{spherical_geometry}{If set to FALSE, will temporarily disable spherical
+geometry while the function runs. Should only be used to solve specific
+issues. (Default is TRUE)}
 
-\item{make_valid}{Calls st_make_valid() from the sf package. Increases processing
-time but may help if you are getting polygon errors. (Default is FALSE).}
+\item{make_valid}{Calls st_make_valid() from the sf package. Increases
+processing time but may help if you are getting polygon errors.
+(Default is FALSE).}
 
 \item{num_bootstrap}{Set the number of bootstraps to calculate for generating
 confidence intervals. (Default: 1000)}
 
-\item{...}{Additional arguments passed to specific indicator calculation functions.}
+\item{...}{Additional arguments passed to specific indicator calculation
+functions.}
 }
 \value{
 An S3 object containing the calculated indicator values and metadata.
 }
 \description{
-This function provides a flexible framework for calculating various biodiversity
-indicators on a spatial grid or as a time series. It prepares the data, creates a grid, calculates indicators,
-and formats the output into an appropriate S3 object ('indicator_map' or 'indicator_ts').
+This function provides a flexible framework for calculating
+various biodiversity indicators on a spatial grid or as a time series.
+It prepares the data, creates a grid, calculates indicators, and formats the
+output into an appropriate S3 object ('indicator_map' or 'indicator_ts').
 }
 \examples{
 diversity_map <- compute_indicator_workflow(example_cube_1,

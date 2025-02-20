@@ -48,12 +48,13 @@ plot_species_ts(
 \item{x}{An 'indicator_ts' object containing time series of indicator values
 matched to species names and/or taxon keys.}
 
-\item{species}{Species you want to map occurrences for. Can be either numerical
-taxonKeys or species names. Partial species names can be used (the function
-will try to match them).}
+\item{species}{Species you want to map occurrences for. Can be either
+numerical taxonKeys or species names. Partial species names can be used
+(the function will try to match them).}
 
-\item{single_plot}{By default all species occurrence time series will be combined
-into a single multi-panel plot. Set this to FALSE to plot each species separately.}
+\item{single_plot}{By default all species occurrence time series will be
+combined into a single multi-panel plot. Set this to FALSE to plot each
+species separately.}
 
 \item{min_year}{(Optional)  Earliest year to include in the plot.}
 
@@ -65,8 +66,8 @@ custom title or if calling the function manually.}
 \item{auto_title}{Text for automatic title generation, provided by an
 appropriate S3 method (if calling the function manually, leave as NULL).}
 
-\item{y_label_default}{Default label for the y-axis, provided by an appropriate
-S3 method (if calling the function manually, leave as NULL).}
+\item{y_label_default}{Default label for the y-axis, provided by an
+appropriate S3 method (if calling the function manually, leave as NULL).}
 
 \item{suppress_y}{If TRUE, suppresses y-axis labels.}
 
@@ -78,52 +79,59 @@ Default is darkorange.}
 
 \item{linealpha}{Transparency for indicator line or points. Default is 0.8.}
 
-\item{ribboncolour}{(Optional) Colour for the bootstrapped confidence intervals.
-Default is goldenrod1. Set to "NA" if you don't want to plot the CIs.}
+\item{ribboncolour}{(Optional) Colour for the bootstrapped confidence
+intervals. Default is goldenrod1. Set to "NA" if you don't want to plot
+the CIs.}
 
 \item{ribbonalpha}{Transparency for indicator confidence interval ribbon (if
 ci_type = "ribbon"). Default is 0.2.}
 
-\item{error_alpha}{Transparency for indicator error bars (if ci_type = "error_bar").
-Default is 1.}
+\item{error_alpha}{Transparency for indicator error bars (if ci_type =
+"error_bar"). Default is 1.}
 
 \item{trendlinecolour}{(Optional) Colour for the smoothed trendline.
 Default is blue.}
 
-\item{trendlinealpha}{Transparency for the smoothed trendline. Default is 0.5.}
+\item{trendlinealpha}{Transparency for the smoothed trendline.
+Default is 0.5.}
 
 \item{envelopecolour}{(Optional) Colour for the uncertainty envelope.
 Default is lightsteelblue.}
 
-\item{envelopealpha}{Transparency for the smoothed trendline envelope. Default is 0.2.}
+\item{envelopealpha}{Transparency for the smoothed trendline envelope.
+Default is 0.2.}
 
-\item{smooth_cialpha}{Transparency for the smoothed lines forming the edges of the
-trendline envelope. Default is 1.}
+\item{smooth_cialpha}{Transparency for the smoothed lines forming the edges
+of the trendline envelope. Default is 1.}
 
-\item{point_line}{Whether to plot the indicator as a line or a series of points.
-Options are "line" or "point". Default is "point".}
+\item{point_line}{Whether to plot the indicator as a line or a series of
+points. Options are "line" or "point". Default is "point".}
 
 \item{pointsize}{Size of the points if point_line = "point". Default is 2.}
 
 \item{linewidth}{Width of the line if point_line = "line". Default is 1.}
 
-\item{ci_type}{Whether to plot bootstrapped confidence intervals as a "ribbon"
-or "error_bars". Default is "error_bars".}
+\item{ci_type}{Whether to plot bootstrapped confidence intervals as a
+"ribbon" or "error_bars". Default is "error_bars".}
 
-\item{error_width}{Width of error bars if ci_type = "error_bars". Default is 1.
-Note that unlike the default 'width' parameter in geom_errorbar, 'error_width' is NOT
-dependent on the number of data points in the plot. It is automatically scaled to
-account for this. Therefore the width you select will be consistent relative to the
-plot width even if you change 'min_year' and 'max_year'.}
+\item{error_width}{Width of error bars if ci_type = "error_bars".
+Default is 1.
+Note that unlike the default 'width' parameter in geom_errorbar,
+'error_width' is NOT dependent on the number of data points in the plot.
+It is automatically scaled to account for this. Therefore the width you
+select will be consistent relative to the plot width even if you change
+'min_year' and 'max_year'.}
 
-\item{error_thickness}{Thickness of error bars if ci_type = "error_bars". Default is 1.}
+\item{error_thickness}{Thickness of error bars if ci_type = "error_bars".
+Default is 1.}
 
-\item{smooth_linetype}{Type of line to plot for smoothed trendline. Default is "solid".}
+\item{smooth_linetype}{Type of line to plot for smoothed trendline.
+Default is "solid".}
 
 \item{smooth_linewidth}{Line width for smoothed trendline. Default is 1.}
 
-\item{smooth_cilinewidth}{Line width for smoothed trendline confidence intervals.
-Default is 1.}
+\item{smooth_cilinewidth}{Line width for smoothed trendline confidence
+intervals. Default is 1.}
 
 \item{gridoff}{If TRUE, hides gridlines.}
 
@@ -131,11 +139,13 @@ Default is 1.}
 
 \item{y_label}{Label for the y-axis.}
 
-\item{x_expand}{(Optional)  Expansion factor to expand the x-axis beyond the data.
-Left and right values are required in the form of c(0.1, 0.2). Default is c(0.05,0.05).}
+\item{x_expand}{(Optional)  Expansion factor to expand the x-axis beyond the
+data. Left and right values are required in the form of c(0.1, 0.2).
+Default is c(0.05,0.05).}
 
-\item{y_expand}{(Optional)  Expansion factor to expand the y-axis beyond the data.
-Lower and upper values are required in the form of c(0.1, 0.2). Default is c(0.05,0.05).}
+\item{y_expand}{(Optional)  Expansion factor to expand the y-axis beyond the
+data. Lower and upper values are required in the form of c(0.1, 0.2).
+Default is c(0.05,0.05).}
 
 \item{x_breaks}{Integer giving desired number of breaks for x axis.
 (May not return exactly the number requested.)}
@@ -146,12 +156,13 @@ Lower and upper values are required in the form of c(0.1, 0.2). Default is c(0.0
 \item{title_wrap_length}{Maximum title length before wrapping to a new line.}
 }
 \value{
-A ggplot object representing species range or occurrence time series plot(s).
-Can be customized using ggplot2 functions.
+A ggplot object representing species range or occurrence time series
+plot(s). Can be customized using ggplot2 functions.
 }
 \description{
-Creates time series plots of species occurrences or species range
-sizes, with an optional smoothed trendline, and visualizes uncertainty.
+Creates time series plots of species occurrences or species
+range sizes, with an optional smoothed trendline, and visualizes
+uncertainty.
 }
 \examples{
 spec_occ_ts_mammals_denmark <- spec_occ_ts(example_cube_1,

@@ -10,7 +10,7 @@ list_org_by_year <- function(df, col) {
   # iterate over unique years
   for (i in unique(df$year)) {
     # add observations from year i to list
-    a[[j]] <- df[[col]][df$year==i]
+    a[[j]] <- df[[col]][df$year == i]
     # iterate counter
     j <- j + 1
   }

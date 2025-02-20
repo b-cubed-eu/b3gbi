@@ -5,7 +5,8 @@
 \alias{example_indicator_ts1}
 \title{Time Series of Observed Species Richness for Mammals in Denmark}
 \format{
-An 'indicator_ts' object containing a tibble with 54 rows and 2 variables, as well as metadata
+An 'indicator_ts' object containing a tibble with 54 rows and 2
+variables, as well as metadata
 \describe{
 \item{year}{a year the indicator was calculated for}
 \item{diversity_val}{calculated richness value for the year}
@@ -18,6 +19,7 @@ An 'indicator_ts' object containing a tibble with 54 rows and 2 variables, as we
 example_indicator_ts1
 }
 \description{
-Example indicator containing a time series of observed species richness for mammal occurrences in Denmark (occurrences from GBIF: 16.03.2024).
+Example indicator containing a time series of observed species richness for
+mammal occurrences in Denmark (occurrences from GBIF: 16.03.2024).
 }
 \keyword{datasets}

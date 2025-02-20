@@ -15,6 +15,8 @@ Useful links:
 \itemize{
   \item \url{https://github.com/b-cubed-eu/b3gbi}
   \item \url{https://b-cubed-eu.github.io/b3gbi/}
+  \item \url{https://b-cubed-eu.r-universe.dev/b3gbi}
+  \item Report bugs at \url{https://github.com/b-cubed-eu/b3gbi/issues}
 }
 
 }

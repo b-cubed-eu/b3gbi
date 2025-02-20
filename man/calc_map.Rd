@@ -42,24 +42,30 @@ calc_map(x, ...)
 \arguments{
 \item{x}{A data cube object ('processed_cube').}
 
-\item{...}{Additional arguments passed to specific indicator calculation functions.}
+\item{...}{Additional arguments passed to specific indicator calculation
+functions.}
 
-\item{newness_min_year}{If set, only shows values above this (e.g. 1970). Values
-below the minimum will be replaced with NA. This can be useful e.g. if you have
-outlier cells where the data is very old causing the legend gradient to stretch
-in a way that makes other cell values difficult to discern.}
+\item{newness_min_year}{If set, only shows values above this (e.g. 1970).
+Values below the minimum will be replaced with NA. This can be useful e.g.
+if you have outlier cells where the data is very old causing the legend
+gradient to stretch in a way that makes other cell values difficult to
+discern.}
 }
 \value{
-An S3 object of the class 'indicator_map' containing the calculated indicator values and metadata.
+An S3 object of the class 'indicator_map' containing the calculated
+indicator values and metadata.
 }
 \description{
-This function provides a flexible framework for calculating various biodiversity
-indicators on a spatial grid or as a time series. It prepares the data, creates a grid, calculates indicators,
-and formats the output into an appropriate S3 object ('indicator_map'). Specific implementations
-for different indicator types are provided using the appropriate wrappers.
+This function provides a flexible framework for calculating
+various biodiversity indicators on a spatial grid or as a time series. It
+prepares the data, creates a grid, calculates indicators, and formats the
+output into an appropriate S3 object ('indicator_map'). Specific
+implementations for different indicator types are provided using the
+appropriate wrappers.
 }
 \examples{
-observed_richness_map <- obs_richness_map(example_cube_1, level = "country", region = "Denmark")
+observed_richness_map <- obs_richness_map(example_cube_1, level = "country",
+ region = "Denmark")
 plot(observed_richness_map)
 
 }

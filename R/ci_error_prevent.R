@@ -1,4 +1,5 @@
-# Function to replace NA values to avoid errors when calculating confidence intervals
+# Function to replace NA values to avoid errors when calculating confidence
+# intervals.
 # Use lapply over a list returned by the boot::boot function (or boot.out)
 #' @noRd
 ci_error_prevent <- function(x) {
@@ -10,7 +11,7 @@ ci_error_prevent <- function(x) {
     x$t <- matrix(rep(1.2, length(x$t)))
     x$t0 <- 1.2
     return(x)
-  } else if (any(is.na(x$t))){
+  } else if (any(is.na(x$t))) {
     # when any values are NA, replace with the mean of the other values
     # this avoids an error without affecting the CI calculation
     x$t[is.na(x$t)] <- mean(x$t, na.rm = TRUE)
