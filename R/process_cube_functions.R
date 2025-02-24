@@ -84,20 +84,24 @@
 #' @examples
 #' \dontrun{
 #' cube_name <- system.file("extdata", "europe_species_cube.csv",
-#'  package = "b3gbi")
+#'   package = "b3gbi"
+#' )
 #' tax_info <- system.file("extdata", "europe_species_info.csv",
-#'  package = "b3gbi")
+#'   package = "b3gbi"
+#' )
 #' europe_example_cube <- process_cube(cube_name, tax_info)
 #' europe_example_cube
 #' }
 #' @export
 process_cube <- function(cube_name,
-                         grid_type = c("automatic",
-                                       "eea",
-                                       "mgrs",
-                                       "eqdgc",
-                                       "custom",
-                                       "none"),
+                         grid_type = c(
+                           "automatic",
+                           "eea",
+                           "mgrs",
+                           "eqdgc",
+                           "custom",
+                           "none"
+                         ),
                          first_year = NULL,
                          last_year = NULL,
                          force_gridcode = FALSE,
@@ -117,12 +121,10 @@ process_cube <- function(cube_name,
                          cols_familyCount = NULL,
                          cols_sex = NULL,
                          cols_lifeStage = NULL) {
-
   yearMonth <- species <- occurrences <- speciesKey <- cellCode <- NULL
   year <- . <- max_year <- NULL
 
   if (is.character(cube_name) && length(cube_name == 1)) {
-
     # Read in data cube
     occurrence_data <- readr::read_delim(
       file = cube_name,
@@ -130,36 +132,27 @@ process_cube <- function(cube_name,
       na = "",
       show_col_types = FALSE
     )
-
   } else if (inherits(cube_name, "data.frame")) {
-
     # Read in data cube
     occurrence_data <- tibble::as_tibble(cube_name)
-
   } else {
-
     stop("`cube_name` should be a file path or dataframe.")
-
   }
 
   grid_type <- match.arg(grid_type)
 
   if (grid_type == "automatic") {
-
     # check if the user has provided a name for the column containing grid cell
     # codes
     if (!is.null(cols_cellCode)) {
-
       # check that the column name they provided exists
       if (!cols_cellCode %in% names(occurrence_data)) {
-
         stop(
           paste(
             "The column name you provided for grid cell codes does not exist.",
             "Please double check that you spelled it correctly."
           )
         )
-
       }
 
       # try to identify the reference grid and return an error if it fails
@@ -173,20 +166,16 @@ process_cube <- function(cube_name,
       occurrence_data <-
         occurrence_data %>%
         dplyr::rename(cellCode = cols_cellCode)
-
     } else {
-
       # if no name was provided loop through columns to find grid codes and
       # identify reference grid
       for (col in colnames(occurrence_data)) {
-
         grid_code_sample <-
           occurrence_data[[col]][!is.na(occurrence_data[[col]])][1]
         grid_type <- detect_grid(grid_code_sample, stop_on_fail = FALSE)
 
         # check whether grid_type was successfully identified
         if (!is.na(grid_type)) {
-
           # if successful rename the found column to the default for grid
           # cell codes
           occurrence_data <-
@@ -195,48 +184,38 @@ process_cube <- function(cube_name,
 
           # then end the loop
           break
-
         }
-
       }
 
       if (is.na(grid_type)) {
-
         # if grid cell codes could not be identified in any column, return an
         # error
         stop("Could not detect grid type. Please specify manually.")
-
       }
-
     }
 
     # if the user has chosen 'custom' as a grid type...
   } else if (grid_type == "custom") {
-
     # check if the user has provided a name for the column containing grid
     # cell codes
     if (is.null(cols_cellCode)) {
-
       stop(
         paste(
           "You have chosen custom grid type. Please provide the name",
           "of the column containing grid cell codes."
         )
       )
-
     }
 
 
     # check that the column name they provided exists
     if (!cols_cellCode %in% names(occurrence_data)) {
-
       stop(
         paste(
           "The column name you provided for grid cell codes does not exist.",
           "Please double check that you spelled it correctly."
         )
       )
-
     }
 
     # rename it to the default
@@ -246,36 +225,27 @@ process_cube <- function(cube_name,
 
     # if the user has chosen 'none' as a grid type...
   } else if (grid_type == "none") {
-
     # if the user has specified a grid type...
   } else {
-
     # check if the user has provided a name for the column containing grid
     # cell codes
     if (is.null(cols_cellCode)) {
-
       # if not, try to identify it automatically (returns an error if
       # unsuccessful)
       cols_cellCode <- detect_grid_column(occurrence_data, grid_type)
-
     } else {
-
       # check that the column name they provided exists
       if (!cols_cellCode %in% names(occurrence_data)) {
-
         stop(
           paste(
             "The column name you provided for grid cell codes does not exist.",
             "Please double check that you spelled it correctly."
           )
         )
-
       }
-
     }
 
     if (force_gridcode == FALSE && grid_type != "none") {
-
       grid_type_test <- ifelse(
         grid_type == "eea",
         stringr::str_detect(
@@ -300,7 +270,6 @@ process_cube <- function(cube_name,
       )
 
       if (!grid_type_test == TRUE) {
-
         stop(
           paste(
             "Cell codes do not match the expected format. Are you sure you have",
@@ -310,58 +279,61 @@ process_cube <- function(cube_name,
             "this could lead to unexpected downstream errors."
           )
         )
-
       }
-
     }
 
     # rename it to the default
     occurrence_data <-
       occurrence_data %>%
       dplyr::rename(cellCode = cols_cellCode)
-
   }
 
   # make a list of other user provided column names
-  col_names_userlist <- list(cols_year,
-                             cols_yearMonth,
-                             cols_occurrences,
-                             cols_scientificName,
-                             cols_minCoordinateUncertaintyInMeters,
-                             cols_minTemporalUncertainty,
-                             cols_kingdom,
-                             cols_family,
-                             cols_species,
-                             cols_kingdomKey,
-                             cols_familyKey,
-                             cols_speciesKey,
-                             cols_familyCount,
-                             cols_sex,
-                             cols_lifeStage)
+  col_names_userlist <- list(
+    cols_year,
+    cols_yearMonth,
+    cols_occurrences,
+    cols_scientificName,
+    cols_minCoordinateUncertaintyInMeters,
+    cols_minTemporalUncertainty,
+    cols_kingdom,
+    cols_family,
+    cols_species,
+    cols_kingdomKey,
+    cols_familyKey,
+    cols_speciesKey,
+    cols_familyCount,
+    cols_sex,
+    cols_lifeStage
+  )
 
   # replace NULL values with NA
   col_names_userlist[sapply(col_names_userlist, is.null)] <- NA
 
   # list default column names to replace them with
-  col_names_defaultlist <- list("year",
-                                "yearMonth",
-                                "occurrences",
-                                "scientificName",
-                                "minCoordinateUncertaintyInMeters",
-                                "minTemporalUncertainty",
-                                "kingdom",
-                                "family",
-                                "species",
-                                "kingdomKey",
-                                "familyKey",
-                                "speciesKey",
-                                "familyCount",
-                                "sex",
-                                "lifeStage")
+  col_names_defaultlist <- list(
+    "year",
+    "yearMonth",
+    "occurrences",
+    "scientificName",
+    "minCoordinateUncertaintyInMeters",
+    "minTemporalUncertainty",
+    "kingdom",
+    "family",
+    "species",
+    "kingdomKey",
+    "familyKey",
+    "speciesKey",
+    "familyCount",
+    "sex",
+    "lifeStage"
+  )
 
   # combine lists into data frame
-  col_names <- data.frame("default" = unlist(col_names_defaultlist),
-                          "user" = unlist(col_names_userlist))
+  col_names <- data.frame(
+    "default" = unlist(col_names_defaultlist),
+    "user" = unlist(col_names_userlist)
+  )
 
   # rename user-supplied column names to defaults expected by package functions
   for (i in (which(names(occurrence_data) %in% col_names[, 2]))) {
@@ -372,29 +344,25 @@ process_cube <- function(cube_name,
   # check for any non-user-supplied column names which match the default names
   # but not the capitalization pattern and fix them
   for (i in seq_along(col_names_defaultlist)) {
-
     if (!col_names_defaultlist[[i]] %in% colnames(occurrence_data) &&
-        tolower(col_names_defaultlist[[i]]) %in% tolower(
-          colnames(occurrence_data)
-        )) {
-
+      tolower(col_names_defaultlist[[i]]) %in% tolower(
+        colnames(occurrence_data)
+      )) {
       new_name <- col_names_defaultlist[[i]]
       old_name <- colnames(occurrence_data)[grepl(
-        new_name, colnames(occurrence_data), ignore.case = TRUE
-        )]
+        new_name, colnames(occurrence_data),
+        ignore.case = TRUE
+      )]
       occurrence_data <-
         occurrence_data %>%
         dplyr::rename(!!new_name := old_name)
-
     }
-
   }
 
   # If year column missing but yearMonth column present, convert yearMonth
   # to year
   if (!"year" %in% colnames(occurrence_data) &&
-      "yearMonth" %in% colnames(occurrence_data)) {
-
+    "yearMonth" %in% colnames(occurrence_data)) {
     occurrence_data <-
       occurrence_data %>%
       dplyr::mutate(
@@ -404,28 +372,24 @@ process_cube <- function(cube_name,
           )
         )
       )
-
   }
 
   # If scientificName column missing but species column present, copy species
   # to scientificName
   if ("species" %in% colnames(occurrence_data) &&
-      !("scientificName" %in% colnames(occurrence_data))) {
-
+    !("scientificName" %in% colnames(occurrence_data))) {
     occurrence_data <-
       occurrence_data %>%
       dplyr::rename(scientificName = species)
-
   }
 
   # check if any essential columns (required by package functions) are missing
   required_colnames <- c("year", "occurrences", "scientificName", "speciesKey")
   missing_colnames <- required_colnames[which(
     !required_colnames %in% colnames(occurrence_data)
-    )]
+  )]
 
   if (length(missing_colnames) >= 1) {
-
     stop(
       paste0(
         "\nThe following columns could not be detected in cube:",
@@ -433,17 +397,18 @@ process_cube <- function(cube_name,
         "\nPlease supply missing column names as arguments to the function.\n"
       )
     )
-
   }
 
-  essential_cols <- c("year",
-                      "occurrences",
-                      "minCoordinateUncertaintyInMeters",
-                      "minTemporalUncertainty",
-                      "kingdomKey",
-                      "familyKey",
-                      "speciesKey",
-                      "familyCount")
+  essential_cols <- c(
+    "year",
+    "occurrences",
+    "minCoordinateUncertaintyInMeters",
+    "minTemporalUncertainty",
+    "kingdomKey",
+    "familyKey",
+    "speciesKey",
+    "familyCount"
+  )
   # make sure that essential columns are the correct type
   occurrence_data <-
     occurrence_data %>%
@@ -458,26 +423,22 @@ process_cube <- function(cube_name,
     dplyr::rename(taxonKey = speciesKey)
 
   if (grid_type != "none") {
-
     # Remove NA values in cell code column
     occurrence_data <-
       occurrence_data %>%
       dplyr::filter(!is.na(cellCode))
-
   }
 
   if (grid_type == "eea") {
-
     if (force_gridcode == FALSE) {
-
       if (!ifelse(
         stringr::str_detect(
           occurrence_data$cellCode[1],
           "^[0-9]{1,3}[km]{1,2}[EW]{1}[0-9]{2,7}[NS]{1}[0-9]{2,7}$"
         ),
-        TRUE, FALSE)
+        TRUE, FALSE
+      )
       ) {
-
         stop(
           paste(
             "Cell codes do not match the expected format. Are you sure you",
@@ -487,9 +448,7 @@ process_cube <- function(cube_name,
             "this could lead to unexpected downstream errors."
           )
         )
-
       }
-
     }
 
     occurrence_data <-
@@ -502,25 +461,23 @@ process_cube <- function(cube_name,
       dplyr::mutate(
         xcoord = as.numeric(stringr::str_extract(
           cellCode, "(?<=[EW])-?\\d+"
-          )) * 1000,
+        )) * 1000,
         ycoord = as.numeric(stringr::str_extract(
           cellCode, "(?<=[NS])-?\\d+"
-          )) * 1000,
+        )) * 1000,
         resolution = stringr::str_replace_all(
           cellCode, "(E\\d+)|(N\\d+)|(W-\\d+)|(S-\\d+)", ""
-          ))
-
+        )
+      )
   } else if (grid_type == "mgrs") {
-
     if (force_gridcode == FALSE) {
-
       if (!ifelse(
         stringr::str_detect(
           occurrence_data$cellCode[1],
           "^[0-9]{2}[A-Z]{3}[0-9]{0,10}$"
-        ), TRUE, FALSE)
+        ), TRUE, FALSE
+      )
       ) {
-
         stop(
           paste(
             "Cell codes do not match the expected format. Are you sure you",
@@ -530,9 +487,7 @@ process_cube <- function(cube_name,
             "this could lead to unexpected downstream errors."
           )
         )
-
       }
-
     }
 
     latlong <- mgrs::mgrs_to_latlng(occurrence_data$cellCode)
@@ -543,18 +498,15 @@ process_cube <- function(cube_name,
     occurrence_data$resolution <- paste0(
       10^((9 - nchar(occurrence_data$cellCode[1])) / 2), "km"
     )
-
   } else if (grid_type == "eqdgc") {
-
     if (force_gridcode == FALSE) {
-
       if (!ifelse(
         stringr::str_detect(
           occurrence_data$cellCode[1],
           "^[EW]{1}[0-9]{3}[NS]{1}[0-9]{2}[A-D]{0,6}$"
-        ), TRUE, FALSE)
+        ), TRUE, FALSE
+      )
       ) {
-
         stop(
           paste(
             "Cell codes do not match the expected format. Are you sure you",
@@ -564,9 +516,7 @@ process_cube <- function(cube_name,
             "this could lead to unexpected downstream errors."
           )
         )
-
       }
-
     }
 
     occurrence_data <-
@@ -581,14 +531,15 @@ process_cube <- function(cube_name,
     occurrence_data$xcoord <- long
     occurrence_data$ycoord <- lat
     occurrence_data$resolution <-
-      rep(paste0((1 / (2^(nchar(occurrence_data$cellCode[1]) - 7))), "degrees"),
-          nrow(occurrence_data))
-
+      rep(
+        paste0((1 / (2^(nchar(occurrence_data$cellCode[1]) - 7))), "degrees"),
+        nrow(occurrence_data)
+      )
   }
 
   if (min(occurrence_data$year, na.rm = TRUE) == max(occurrence_data$year,
-                                                  na.rm = TRUE)) {
-
+    na.rm = TRUE
+  )) {
     first_year <- min(occurrence_data$year)
     last_year <- first_year
 
@@ -598,29 +549,28 @@ process_cube <- function(cube_name,
         "from the same year."
       )
     )
-
   } else {
-
     # Check whether start and end years are within dataset
     first_year <- occurrence_data %>%
       dplyr::select(year) %>%
       min(na.rm = TRUE) %>%
       ifelse(is.null(first_year),
-             .,
-             ifelse(first_year > ., first_year, .))
+        .,
+        ifelse(first_year > ., first_year, .)
+      )
     last_year <- occurrence_data %>%
       dplyr::summarize(max_year = max(year, na.rm = TRUE)) %>%
       dplyr::pull(max_year) %>%
       ifelse(is.null(last_year),
-             .,
-             ifelse(last_year < ., last_year, .))
+        .,
+        ifelse(last_year < ., last_year, .)
+      )
 
     # Limit data set
     occurrence_data <-
       occurrence_data %>%
       dplyr::filter(year >= first_year) %>%
       dplyr::filter(year <= last_year)
-
   }
 
   # Remove any duplicate rows
@@ -630,14 +580,10 @@ process_cube <- function(cube_name,
     dplyr::arrange(year)
 
   if (grid_type == "none" || grid_type == "custom") {
-
     cube <- new_sim_cube(occurrence_data, grid_type)
-
   } else {
-
     cube <- new_processed_cube(occurrence_data, grid_type)
   }
-
 }
 
 #' @rdname process_cube
@@ -647,12 +593,10 @@ process_cube_old <- function(cube_name,
                              datasets_info = NULL,
                              first_year = 1600,
                              last_year = NULL) {
-
   eea_cell_code <- taxonomicStatus <- includes <- notes <- n <- NULL
   min_coord_uncertainty <- year <- . <- max_year <- NULL
 
   if (is.null(tax_info)) {
-
     stop(
       paste(
         "Please provide a taxonomic information file using the argument",
@@ -661,7 +605,6 @@ process_cube_old <- function(cube_name,
         "built using the GBIF API should be processed using process_cube()."
       )
     )
-
   }
 
   # Read in data cube
@@ -690,7 +633,6 @@ process_cube_old <- function(cube_name,
   )
 
   if (!is.null(datasets_info)) {
-
     # Read in associated dataset info
     datasets_info <- readr::read_csv(
       file = datasets_info,
@@ -700,11 +642,9 @@ process_cube_old <- function(cube_name,
       ),
       na = ""
     )
-
   }
 
   if ("speciesKey" %in% colnames(occurrence_data)) {
-
     occurrence_data <-
       occurrence_data %>%
       dplyr::rename(taxonKey = "speciesKey")
@@ -716,21 +656,19 @@ process_cube_old <- function(cube_name,
     taxonomic_info <-
       taxonomic_info %>%
       dplyr::rename(taxonKey = "speciesKey")
-
-
   }
 
   # Merged the three data frames together
   merged_data <- dplyr::left_join(occurrence_data,
-                                  taxonomic_info,
-                                  by = "taxonKey")
+    taxonomic_info,
+    by = "taxonKey"
+  )
 
   if (!is.null(datasets_info)) {
-
     merged_data <- dplyr::left_join(merged_data,
-                                    datasets_info,
-                                    by = "datasetKey")
-
+      datasets_info,
+      by = "datasetKey"
+    )
   }
 
   # Separate 'eea_cell_code' into resolution, coordinates
@@ -752,41 +690,41 @@ process_cube_old <- function(cube_name,
     )
 
   if (!is.null(datasets_info)) {
-
     # Remove columns that are not needed
     merged_data <-
       merged_data %>%
       dplyr::select(-taxonomicStatus, -includes, -notes)
-
   } else {
-
     # Remove columns that are not needed
     merged_data <-
       merged_data %>%
       dplyr::select(-taxonomicStatus, -includes)
-
   }
 
   # Rename column n to obs
   merged_data <-
     merged_data %>%
-    dplyr::rename(obs = n,
-                  cellCode = eea_cell_code,
-                  minCoordUncertaintyInMeters = min_coord_uncertainty)
+    dplyr::rename(
+      obs = n,
+      cellCode = eea_cell_code,
+      minCoordUncertaintyInMeters = min_coord_uncertainty
+    )
 
   # Check whether start and end years are within dataset
   first_year <- merged_data %>%
     dplyr::select(year) %>%
     min(na.rm = TRUE) %>%
     ifelse(is.null(first_year),
-           .,
-           ifelse(first_year > ., first_year, .))
+      .,
+      ifelse(first_year > ., first_year, .)
+    )
   last_year <- merged_data %>%
     dplyr::summarize(max_year = max(year, na.rm = TRUE) - 1) %>%
     dplyr::pull(max_year) %>%
     ifelse(is.null(last_year),
-           .,
-           ifelse(last_year < ., last_year, .))
+      .,
+      ifelse(last_year < ., last_year, .)
+    )
 
   # Limit data set
   merged_data <-
@@ -803,5 +741,4 @@ process_cube_old <- function(cube_name,
   cube <- new_processed_cube(merged_data, grid_type = "eea")
 
   return(cube)
-
 }

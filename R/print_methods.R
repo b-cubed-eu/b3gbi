@@ -24,8 +24,10 @@ print.indicator_ts <- function(x, n = 10, ...) {
   print(x$coord_range)
   cat("\nNumber of species represented:", x$num_species, "\n")
   if (!is.null(x$num_families)) {
-    cat("Number of families represented:",
-        paste(x$num_families, collapse = ", "), "\n\n")
+    cat(
+      "Number of families represented:",
+      paste(x$num_families, collapse = ", "), "\n\n"
+    )
   }
   if (!is.null(x$kingdoms)) {
     cat("Kingdoms represented:", x$kingdoms, "\n")
@@ -47,7 +49,6 @@ print.indicator_ts <- function(x, n = 10, ...) {
 #'
 #' @export
 print.indicator_map <- function(x, n = 10, ...) {
-
   geometry <- NULL
 
   cat("Gridded biodiversity indicator map\n\n")
@@ -65,8 +66,10 @@ print.indicator_map <- function(x, n = 10, ...) {
   cat("Observation years:", x$first_year, "-", x$last_year, "\n")
   cat("Total years with observations:", x$num_years, "\n\n")
   cat("Number of species represented:", x$num_species, "\n")
-  cat("Number of families represented:",
-      paste(x$num_families, collapse = ", "), "\n\n")
+  cat(
+    "Number of families represented:",
+    paste(x$num_families, collapse = ", "), "\n\n"
+  )
   cat("Kingdoms represented:", paste(x$kingdoms, collapse = ", "), "\n\n")
   cat("First", n, "rows of data (use n = to show more):\n\n")
   tibble::as_tibble(x$data) %>%
@@ -99,8 +102,10 @@ print.processed_cube <- function(x, n = 10, ...) {
   print(unlist(x$coord_range))
   cat("\nTotal number of observations:", x$num_obs, "\n")
   cat("Number of species represented:", x$num_species, "\n")
-  cat("Number of families represented:",
-      paste(x$num_families, collapse = ", "), "\n\n")
+  cat(
+    "Number of families represented:",
+    paste(x$num_families, collapse = ", "), "\n\n"
+  )
   cat("Kingdoms represented:", paste(x$kingdoms, collapse = ", "), "\n\n")
   cat("First", n, "rows of data (use n = to show more):\n\n")
   print(x$data, n = n, ...)
@@ -121,20 +126,26 @@ print.processed_cube <- function(x, n = 10, ...) {
 print.processed_cube_dsinfo <- function(x, n = 10, ...) {
   cat("\nProcessed data cube for calculating biodiversity indicators.\n\n")
   cat("Date Range:", x$first_year, "-", x$last_year, "\n")
-  cat("Single-resolution cube with cell size",
-      paste(x$resolutions, "^2\n", sep = ""))
+  cat(
+    "Single-resolution cube with cell size",
+    paste(x$resolutions, "^2\n", sep = "")
+  )
   cat("Number of cells:", x$num_cells, "\n")
   cat("Grid reference system:", x$grid_type, "\n")
   cat("Coordinate range:\n")
   print(unlist(x$coord_range))
   cat("\nTotal number of observations:", x$num_obs, "\n")
   cat("Number of species represented:", x$num_species, "\n")
-  cat("Number of families represented:",
-      paste(x$num_families, collapse = ", "), "\n\n")
+  cat(
+    "Number of families represented:",
+    paste(x$num_families, collapse = ", "), "\n\n"
+  )
   cat("Kingdoms represented:", paste(x$kingdoms, collapse = ", "), "\n\n")
   cat("Number of datasets represented:", x$num_datasets, "\n")
-  cat("Record types represented:",
-      paste(x$record_types, collapse = ", "), "\n\n")
+  cat(
+    "Record types represented:",
+    paste(x$record_types, collapse = ", "), "\n\n"
+  )
   cat("First", n, "rows of data (use n = to show more):\n\n")
   print(x$data, n = n, ...)
 }
@@ -164,8 +175,10 @@ print.sim_cube <- function(x, n = 10, ...) {
   print(unlist(x$coord_range))
   cat("\nTotal number of observations:", x$num_obs, "\n")
   cat("Number of species represented:", x$num_species, "\n")
-  cat("Number of families represented:",
-      paste(x$num_families, collapse = ", "), "\n\n")
+  cat(
+    "Number of families represented:",
+    paste(x$num_families, collapse = ", "), "\n\n"
+  )
   cat("Kingdoms represented:", paste(x$kingdoms, collapse = ", "), "\n\n")
   cat("First", n, "rows of data (use n = to show more):\n\n")
   print(x$data, n = n, ...)
@@ -193,7 +206,8 @@ print.available_indicators <- function(x, n = 30, ...) {
         x[[i]]$indicator_name,
         "\033[0m"
       ),
-      sep = "")
+      sep = ""
+    )
     cat("\n     Class: ", x[[i]]$indicator_class, sep = "")
     if (!is.null(x[[i]]$map_wrapper)) {
       cat(
@@ -218,7 +232,7 @@ print.available_indicators <- function(x, n = 30, ...) {
       cat(
         "\n     Additional map function arguments: ",
         paste(x[[i]]$map_function_arguments,
-              collapse = ", "
+          collapse = ", "
         ),
         sep = ""
       )
@@ -227,15 +241,19 @@ print.available_indicators <- function(x, n = 30, ...) {
     }
     if (!is.null(x[[i]]$ts_function_arguments)) {
       cat("\n     Additional time series function arguments: ",
-          paste(x[[i]]$ts_function_arguments, collapse = ", "), sep = "")
+        paste(x[[i]]$ts_function_arguments, collapse = ", "),
+        sep = ""
+      )
     } else {
       cat("\n     Additional time series function arguments: none", sep = "")
     }
   }
   if (n < length(names(x))) {
     cat("\n*Note: There are ", length(names(x)) - n,
-        " additional indicator(s). To see more, increase n (e.g. n = ",
-        length(names(x)), ").", sep = "")
+      " additional indicator(s). To see more, increase n (e.g. n = ",
+      length(names(x)), ").",
+      sep = ""
+    )
   } else {
     cat("\n")
   }

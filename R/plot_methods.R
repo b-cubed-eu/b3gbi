@@ -44,13 +44,16 @@ plot.occ_by_dataset <- function(x,
                                 max_datasets = 20,
                                 min_occurrences = NULL,
                                 ...) {
-
-  stopifnot_error("Incorrect object class. Must be class 'occ_by_dataset'.",
-                  inherits(x, "occ_by_dataset"))
-
-  if (!inherits(x, "indicator_ts")) stop(
-    "Incorrect object class. Must be class 'indicator_ts'."
+  stopifnot_error(
+    "Incorrect object class. Must be class 'occ_by_dataset'.",
+    inherits(x, "occ_by_dataset")
   )
+
+  if (!inherits(x, "indicator_ts")) {
+    stop(
+      "Incorrect object class. Must be class 'indicator_ts'."
+    )
+  }
 
   n <- type <- numrows <- diversity_val <- type <- totalocc <- NULL
   diversity_val <- NULL
@@ -61,7 +64,8 @@ plot.occ_by_dataset <- function(x,
 
   # Set type as a factor and remove any types with only 1 occurrence
   x$data$type <- factor(x$data$type,
-                        levels = unique(x$data$type))
+    levels = unique(x$data$type)
+  )
 
   # Filter out datasets with no occurrences or too few to plot
   x$data <-
@@ -93,25 +97,26 @@ plot.occ_by_dataset <- function(x,
 
   # Call generalized plot_map function
   trend_plot <- plot_ts(x,
-                        y_label_default = y_label_default,
-                        auto_title = auto_title,
-                        x_breaks = x_breaks,
-                        ...)
+    y_label_default = y_label_default,
+    auto_title = auto_title,
+    x_breaks = x_breaks,
+    ...
+  )
 
   # Use facets to separate multiple species trends
   trend_plot <- trend_plot +
     ggplot2::facet_wrap(ggplot2::vars(type),
-                        scales = facet_scales,
-                        nrow = facet_rows,
-                        ncol = facet_cols,
-                        labeller = ggplot2::label_wrap_gen(
-                          width = facet_label_width)
-                        ) +
+      scales = facet_scales,
+      nrow = facet_rows,
+      ncol = facet_cols,
+      labeller = ggplot2::label_wrap_gen(
+        width = facet_label_width
+      )
+    ) +
     ggplot2::theme(legend.position = "none")
 
   # Show plot
   trend_plot
-
 }
 
 #' @title Plot Occurrences Segregated by Type
@@ -148,9 +153,10 @@ plot.occ_by_type <- function(x,
                              facet_cols = NULL,
                              facet_label_width = 60,
                              ...) {
-
-  stopifnot_error("Incorrect object class. Must be class 'occ_by_type'.",
-                  inherits(x, "occ_by_type"))
+  stopifnot_error(
+    "Incorrect object class. Must be class 'occ_by_type'.",
+    inherits(x, "occ_by_type")
+  )
 
   if (!inherits(x, "indicator_ts")) {
     stop(
@@ -166,7 +172,8 @@ plot.occ_by_type <- function(x,
 
   # Set type as a factor and remove any types with only 1 occurrence
   x$data$type <- factor(x$data$type,
-                        levels = unique(x$data$type))
+    levels = unique(x$data$type)
+  )
 
   # Filter out types with too few or no occurrences
   x$data <-
@@ -177,105 +184,98 @@ plot.occ_by_type <- function(x,
 
   # Call generalized plot_map function
   trend_plot <- plot_ts(x,
-                        y_label_default = y_label_default,
-                        auto_title = auto_title,
-                        x_breaks = x_breaks,
-                        ...)
+    y_label_default = y_label_default,
+    auto_title = auto_title,
+    x_breaks = x_breaks,
+    ...
+  )
 
   # Use facets to separate multiple species trends
   trend_plot <- trend_plot +
     ggplot2::facet_wrap(ggplot2::vars(type),
-                        scales = facet_scales,
-                        nrow = facet_rows,
-                        ncol = facet_cols,
-                        labeller = ggplot2::label_wrap_gen(
-                          width = facet_label_width)
-                        ) +
+      scales = facet_scales,
+      nrow = facet_rows,
+      ncol = facet_cols,
+      labeller = ggplot2::label_wrap_gen(
+        width = facet_label_width
+      )
+    ) +
     ggplot2::theme(legend.position = "none")
 
   # Show plot
   trend_plot
-
 }
 
 #' @export
 plot.spec_range <- function(x, ...) {
-
-  stopifnot_error("Incorrect object class. Must be class 'spec_range'.",
-                  inherits(x, "spec_range"))
+  stopifnot_error(
+    "Incorrect object class. Must be class 'spec_range'.",
+    inherits(x, "spec_range")
+  )
 
   if (inherits(x, "indicator_ts")) {
-
     # Set defaults
     y_label_default <- "Cells Occupied"
     auto_title <- paste("Species Range Size", sep = "")
 
     # Call generalized plot_ts function
     plot_species_ts(x,
-                    y_label_default = y_label_default,
-                    auto_title = auto_title,
-                    ...)
-
+      y_label_default = y_label_default,
+      auto_title = auto_title,
+      ...
+    )
   } else if (inherits(x, "indicator_map")) {
-
     # Set defaults
     suppress_legend <- TRUE
     auto_title <- paste("Species Range", sep = "")
 
     # Call generalized plot_map function
     plot_species_map(x,
-                     suppress_legend = suppress_legend,
-                     auto_title = auto_title,
-                     ...)
-
+      suppress_legend = suppress_legend,
+      auto_title = auto_title,
+      ...
+    )
   } else {
-
     stop(
       "Incorrect object class. Must be class 'indicator_ts' or 'indicator_map'."
     )
-
   }
-
 }
 
 #' @export
 plot.spec_occ <- function(x, ...) {
-
-  stopifnot_error("Incorrect object class. Must be class 'spec_occ'.",
-                  inherits(x, "spec_occ") | inherits(x, "spec_range"))
+  stopifnot_error(
+    "Incorrect object class. Must be class 'spec_occ'.",
+    inherits(x, "spec_occ") | inherits(x, "spec_range")
+  )
 
   if (inherits(x, "indicator_ts")) {
-
     # Set defaults
     y_label_default <- "Occurrences"
     auto_title <- paste("Species Occurrences", sep = "")
 
     # Call generalized plot_ts function
     plot_species_ts(x,
-                    y_label_default = y_label_default,
-                    auto_title = auto_title,
-                    ...)
-
+      y_label_default = y_label_default,
+      auto_title = auto_title,
+      ...
+    )
   } else if (inherits(x, "indicator_map")) {
-
     # Set defaults
     leg_label_default <- "Occurrences"
     auto_title <- paste("Species Occurrences", sep = "")
 
     # Call generalized plot_map function
     plot_species_map(x,
-                     leg_label_default = leg_label_default,
-                     auto_title = auto_title,
-                     ...)
-
+      leg_label_default = leg_label_default,
+      auto_title = auto_title,
+      ...
+    )
   } else {
-
     stop(
       "Incorrect object class. Must be class 'indicator_ts' or 'indicator_map'."
     )
-
   }
-
 }
 
 
@@ -283,9 +283,10 @@ plot.spec_occ <- function(x, ...) {
 plot.cum_richness <- function(x,
                               envelopecolour = NULL,
                               ...) {
-
-  stopifnot_error("Incorrect object class. Must be class 'cum_richness'.",
-                  inherits(x, "cum_richness"))
+  stopifnot_error(
+    "Incorrect object class. Must be class 'cum_richness'.",
+    inherits(x, "cum_richness")
+  )
 
   if (!inherits(x, "indicator_ts")) {
     stop(
@@ -293,344 +294,320 @@ plot.cum_richness <- function(x,
     )
   }
 
-    # Set defaults
-    y_label_default <- "Cumulative Species Richness"
-    auto_title <- "Cumulative Species Richness"
+  # Set defaults
+  y_label_default <- "Cumulative Species Richness"
+  auto_title <- "Cumulative Species Richness"
 
-    # Call generalized plot_map function
-    trend_plot <- plot_ts(x,
-                          y_label_default = y_label_default,
-                          auto_title = auto_title,
-                          smoothed_trend = FALSE,
-                          ...)
+  # Call generalized plot_map function
+  trend_plot <- plot_ts(x,
+    y_label_default = y_label_default,
+    auto_title = auto_title,
+    smoothed_trend = FALSE,
+    ...
+  )
 
-    trend_plot
-
+  trend_plot
 }
 
 
 #' @export
 plot.pielou_evenness <- function(x, ...) {
-
-  stopifnot_error("Incorrect object class. Must be class 'pielou_evenness'.",
-                  inherits(x, "pielou_evenness"))
+  stopifnot_error(
+    "Incorrect object class. Must be class 'pielou_evenness'.",
+    inherits(x, "pielou_evenness")
+  )
 
   if (inherits(x, "indicator_ts")) {
-
     # Set defaults
     y_label_default <- "Evenness"
     auto_title <- paste("Pielou's Evenness Trend", sep = "")
 
     # Call generalized plot_ts function
     plot_ts(x,
-            y_label_default = y_label_default,
-            auto_title = auto_title,
-            ...)
-
+      y_label_default = y_label_default,
+      auto_title = auto_title,
+      ...
+    )
   } else if (inherits(x, "indicator_map")) {
+    # Set defaults
+    leg_label_default <- "Evenness"
+    auto_title <- paste("Pielou's Evenness", sep = "")
 
-  # Set defaults
-  leg_label_default <- "Evenness"
-  auto_title <- paste("Pielou's Evenness", sep = "")
-
-  # Call generalized plot_map function
-  plot_map(x,
-           leg_label_default = leg_label_default,
-           auto_title = auto_title,
-           ...)
-
+    # Call generalized plot_map function
+    plot_map(x,
+      leg_label_default = leg_label_default,
+      auto_title = auto_title,
+      ...
+    )
   } else {
-
     stop(
       "Incorrect object class. Must be class 'indicator_ts' or 'indicator_map'."
     )
-
   }
 }
 
 
 #' @export
 plot.williams_evenness <- function(x, ...) {
-
-  stopifnot_error("Incorrect object class. Must be class 'williams_evenness'.",
-                  inherits(x, "williams_evenness"))
+  stopifnot_error(
+    "Incorrect object class. Must be class 'williams_evenness'.",
+    inherits(x, "williams_evenness")
+  )
 
   if (inherits(x, "indicator_ts")) {
-
     # Set defaults
     y_label_default <- "Evenness"
     auto_title <- paste("Williams' Evenness Trend", sep = "")
 
     # Call generalized plot_ts function
     plot_ts(x,
-            y_label_default = y_label_default,
-            auto_title = auto_title,
-            ...)
-
+      y_label_default = y_label_default,
+      auto_title = auto_title,
+      ...
+    )
   } else if (inherits(x, "indicator_map")) {
-
     # Set defaults
     leg_label_default <- "Evenness"
     auto_title <- paste("Williams' Evenness", sep = "")
 
     # Call generalized plot_map function
     plot_map(x,
-             leg_label_default = leg_label_default,
-             auto_title = auto_title,
-             ...)
-
+      leg_label_default = leg_label_default,
+      auto_title = auto_title,
+      ...
+    )
   } else {
-
     stop(
       "Incorrect object class. Must be class 'indicator_ts' or 'indicator_map'."
     )
-
   }
 }
 
 
 #' @export
 plot.tax_distinct <- function(x, ...) {
-
-  stopifnot_error("Incorrect object class. Must be class 'tax_distinct'.",
-                  inherits(x, "tax_distinct"))
+  stopifnot_error(
+    "Incorrect object class. Must be class 'tax_distinct'.",
+    inherits(x, "tax_distinct")
+  )
 
   if (inherits(x, "indicator_ts")) {
-
     # Set defaults
     y_label_default <- "Taxonomic Distinctness"
     auto_title <- "Taxonomic Distinctness Trend"
 
     # Call generalized plot_ts function
     plot_ts(x,
-            y_label_default = y_label_default,
-            auto_title = auto_title,
-            ...)
-
+      y_label_default = y_label_default,
+      auto_title = auto_title,
+      ...
+    )
   } else if (inherits(x, "indicator_map")) {
+    # Set defaults
+    leg_label_default <- "Taxonomic Distinctness"
+    auto_title <- "Taxonomic Distinctness"
 
-  # Set defaults
-  leg_label_default <- "Taxonomic Distinctness"
-  auto_title <- "Taxonomic Distinctness"
-
-  # Call generalized plot_map function
-  plot_map(x,
-           leg_label_default = leg_label_default,
-           auto_title = auto_title,
-           ...)
-
+    # Call generalized plot_map function
+    plot_map(x,
+      leg_label_default = leg_label_default,
+      auto_title = auto_title,
+      ...
+    )
   } else {
-
     stop(
       "Incorrect object class. Must be class 'indicator_ts' or 'indicator_map'."
     )
-
   }
 }
 
 
 #' @export
 plot.occ_density <- function(x, ...) {
-
-  stopifnot_error("Incorrect object class. Must be class 'occ_density'.",
-                  inherits(x, "occ_density"))
+  stopifnot_error(
+    "Incorrect object class. Must be class 'occ_density'.",
+    inherits(x, "occ_density")
+  )
 
   if (inherits(x, "indicator_ts")) {
-
     # Set defaults
     y_label_default <- "Mean Occurrences \nper km^2"
     auto_title <- "Trend of Mean Occurrence Density"
 
     # Call generalized plot_ts function
     plot_ts(x,
-            y_label_default = y_label_default,
-            auto_title = auto_title,
-            ...)
-
+      y_label_default = y_label_default,
+      auto_title = auto_title,
+      ...
+    )
   } else if (inherits(x, "indicator_map")) {
-
     # Set defaults
     leg_label_default <- "Occurrences \nper km^2"
     auto_title <- "Density of Occurrences"
 
     # Call generalized plot_map function
     plot_map(x,
-             leg_label_default = leg_label_default,
-             auto_title = auto_title,
-             ...)
-
+      leg_label_default = leg_label_default,
+      auto_title = auto_title,
+      ...
+    )
   } else {
-
     stop(
       "Incorrect object class. Must be class 'indicator_ts' or 'indicator_map'."
     )
-
   }
 }
 
 #' @export
 plot.newness <- function(x, ...) {
-
-  stopifnot_error("Incorrect object class. Must be class 'newness'.",
-                  inherits(x, "newness"))
+  stopifnot_error(
+    "Incorrect object class. Must be class 'newness'.",
+    inherits(x, "newness")
+  )
 
   if (inherits(x, "indicator_ts")) {
-
     # Set defaults
     y_label_default <- "Mean Year of Occurrence"
     auto_title <- "Trend of Mean Year of Occurrence"
 
     # Call generalized plot_map function
     plot_ts(x,
-            y_label_default = y_label_default,
-            auto_title = auto_title,
-            ...)
-
+      y_label_default = y_label_default,
+      auto_title = auto_title,
+      ...
+    )
   } else if (inherits(x, "indicator_map")) {
-
     # Set defaults
     leg_label_default <- "Mean Year of \nOccurrence"
     auto_title <- "Mean Year of Occurrence"
 
     # Call generalized plot_map function
     plot_map(x,
-             leg_label_default = leg_label_default,
-             auto_title = auto_title,
-             ...)
-
+      leg_label_default = leg_label_default,
+      auto_title = auto_title,
+      ...
+    )
   } else {
-
     stop("Incorrect object class. Must be class 'indicator_map'.")
-
   }
 }
 
 
 #' @export
 plot.total_occ <- function(x, ...) {
-
-  stopifnot_error("Incorrect object class. Must be class 'total_occ'.",
-                  inherits(x, "total_occ"))
+  stopifnot_error(
+    "Incorrect object class. Must be class 'total_occ'.",
+    inherits(x, "total_occ")
+  )
 
   if (inherits(x, "indicator_ts")) {
-
     # Set defaults
     y_label_default <- "Occurrences"
     auto_title <- "Trend of Total Occurrences"
 
     # Call generalized plot_ts function
     plot_ts(x,
-            y_label_default = y_label_default,
-            auto_title = auto_title,
-            ...)
-
+      y_label_default = y_label_default,
+      auto_title = auto_title,
+      ...
+    )
   } else if (inherits(x, "indicator_map")) {
+    # Set defaults
+    leg_label_default <- "Occurrences"
+    auto_title <- "Total Occurrences"
 
-  # Set defaults
-  leg_label_default <- "Occurrences"
-  auto_title <- "Total Occurrences"
-
-  # Call generalized plot_map function
-  plot_map(x,
-           leg_label_default = leg_label_default,
-           auto_title = auto_title,
-           ...)
-
+    # Call generalized plot_map function
+    plot_map(x,
+      leg_label_default = leg_label_default,
+      auto_title = auto_title,
+      ...
+    )
   } else {
-
     stop(
       "Incorrect object class. Must be class 'indicator_ts' or 'indicator_map'."
     )
-
   }
 }
 
 #' @export
 plot.area_rarity <- function(x, ...) {
-
-  stopifnot_error("Incorrect object class. Must be class 'area_rarity'.",
-                  inherits(x, "area_rarity"))
+  stopifnot_error(
+    "Incorrect object class. Must be class 'area_rarity'.",
+    inherits(x, "area_rarity")
+  )
 
   if (inherits(x, "indicator_ts")) {
-
     # Set defaults
     y_label_default <- "Mean of Rarity (Summed by Cell)"
     auto_title <- "Area-Based Rarity Trend"
 
     # Call generalized plot_ts function
     plot_ts(x,
-            y_label_default = y_label_default,
-            auto_title = auto_title,
-            ...)
-
+      y_label_default = y_label_default,
+      auto_title = auto_title,
+      ...
+    )
   } else if (inherits(x, "indicator_map")) {
+    # Set defaults
+    leg_label_default <- "Summed Rarity"
+    auto_title <- "Area-Based Rarity"
 
-  # Set defaults
-  leg_label_default <- "Summed Rarity"
-  auto_title <- "Area-Based Rarity"
-
-  # Call generalized plot_map function
-  plot_map(x,
-           leg_label_default = leg_label_default,
-           auto_title = auto_title,
-           ...)
-
+    # Call generalized plot_map function
+    plot_map(x,
+      leg_label_default = leg_label_default,
+      auto_title = auto_title,
+      ...
+    )
   } else {
-
     stop(
       "Incorrect object class. Must be class 'indicator_ts' or 'indicator_map'."
     )
-
   }
 }
 
 #' @export
 plot.ab_rarity <- function(x, ...) {
-
-  stopifnot_error("Incorrect object class. Must be class 'ab_rarity'.",
-                  inherits(x, "ab_rarity"))
+  stopifnot_error(
+    "Incorrect object class. Must be class 'ab_rarity'.",
+    inherits(x, "ab_rarity")
+  )
 
   if (inherits(x, "indicator_ts")) {
-
     # Set defaults
     y_label_default <- "Mean of Rarity (Summed by Cell)"
     auto_title <- "Abundance-Based Rarity Trend"
 
     # Call generalized plot_ts function
     plot_ts(x,
-            y_label_default = y_label_default,
-            auto_title = auto_title,
-            ...)
-
+      y_label_default = y_label_default,
+      auto_title = auto_title,
+      ...
+    )
   } else if (inherits(x, "indicator_map")) {
+    # Set defaults
+    leg_label_default <- "Summed Rarity"
+    auto_title <- "Abundance-Based Rarity"
 
-  # Set defaults
-  leg_label_default <- "Summed Rarity"
-  auto_title <- "Abundance-Based Rarity"
-
-  # Call generalized plot_map function
-  plot_map(x,
-           leg_label_default = leg_label_default,
-           auto_title = auto_title,
-           ...)
-
+    # Call generalized plot_map function
+    plot_map(x,
+      leg_label_default = leg_label_default,
+      auto_title = auto_title,
+      ...
+    )
   } else {
-
     stop(
       "Incorrect object class. Must be class 'indicator_ts' or 'indicator_map'."
     )
-
   }
 }
 
 #' @noRd
 plot.rarefied <- function(x, ...) {
-
-  stopifnot_error("Incorrect object class. Must be class 'rarefied'.",
-                  inherits(x, "rarefied"))
+  stopifnot_error(
+    "Incorrect object class. Must be class 'rarefied'.",
+    inherits(x, "rarefied")
+  )
 
   if (inherits(x, "indicator_ts")) {
-
     # Set defaults
     y_label_default <- "Species Richness Index"
     auto_title <-
@@ -638,39 +615,36 @@ plot.rarefied <- function(x, ...) {
 
     # Call generalized plot_ts function
     plot_ts(x,
-            y_label_default = y_label_default,
-            auto_title = auto_title,
-            ...)
-
+      y_label_default = y_label_default,
+      auto_title = auto_title,
+      ...
+    )
   } else if (inherits(x, "indicator_map")) {
+    # Set defaults
+    leg_label_default <- "Richness"
+    auto_title <- "Species Richness (Estimated by Sample Size-Based Rarefaction)"
 
-  # Set defaults
-  leg_label_default <- "Richness"
-  auto_title <- "Species Richness (Estimated by Sample Size-Based Rarefaction)"
-
-  # Call generalized plot_map function
-  plot_map(x,
-           leg_label_default = leg_label_default,
-           auto_title = auto_title,
-           ...)
-
+    # Call generalized plot_map function
+    plot_map(x,
+      leg_label_default = leg_label_default,
+      auto_title = auto_title,
+      ...
+    )
   } else {
-
     stop(
       "Incorrect object class. Must be class 'indicator_ts' or 'indicator_map'."
     )
-
   }
 }
 
 #' @export
 plot.hill2 <- function(x, ...) {
-
-  stopifnot_error("Incorrect object class. Must be class 'hill2'.",
-                  inherits(x, "hill2"))
+  stopifnot_error(
+    "Incorrect object class. Must be class 'hill2'.",
+    inherits(x, "hill2")
+  )
 
   if (inherits(x, "indicator_ts")) {
-
     # Set defaults
     y_label_default <- "Hill-Simpson Diversity"
     auto_title <-
@@ -678,12 +652,11 @@ plot.hill2 <- function(x, ...) {
 
     # Call generalized plot_ts function
     plot_ts(x,
-            y_label_default = y_label_default,
-            auto_title = auto_title,
-            ...)
-
+      y_label_default = y_label_default,
+      auto_title = auto_title,
+      ...
+    )
   } else if (inherits(x, "indicator_map")) {
-
     # Set defaults
     leg_label_default <- "Hill-Simpson Diversity"
     auto_title <-
@@ -691,27 +664,25 @@ plot.hill2 <- function(x, ...) {
 
     # Call generalized plot_map function
     plot_map(x,
-             leg_label_default = leg_label_default,
-             auto_title = auto_title,
-             ...)
-
+      leg_label_default = leg_label_default,
+      auto_title = auto_title,
+      ...
+    )
   } else {
-
     stop(
       "Incorrect object class. Must be class 'indicator_ts' or 'indicator_map'."
     )
-
   }
 }
 
 #' @export
 plot.hill1 <- function(x, ...) {
-
-  stopifnot_error("Incorrect object class. Must be class 'hill1'.",
-                  inherits(x, "hill1"))
+  stopifnot_error(
+    "Incorrect object class. Must be class 'hill1'.",
+    inherits(x, "hill1")
+  )
 
   if (inherits(x, "indicator_ts")) {
-
     # Set defaults
     y_label_default <- "Hill-Shannon Diversity"
     auto_title <-
@@ -719,12 +690,11 @@ plot.hill1 <- function(x, ...) {
 
     # Call generalized plot_ts function
     plot_ts(x,
-            y_label_default = y_label_default,
-            auto_title = auto_title,
-            ...)
-
+      y_label_default = y_label_default,
+      auto_title = auto_title,
+      ...
+    )
   } else if (inherits(x, "indicator_map")) {
-
     # Set defaults
     leg_label_default <- "Hill-Shannon Diversity"
     auto_title <-
@@ -732,27 +702,25 @@ plot.hill1 <- function(x, ...) {
 
     # Call generalized plot_map function
     plot_map(x,
-             leg_label_default = leg_label_default,
-             auto_title = auto_title,
-             ...)
-
+      leg_label_default = leg_label_default,
+      auto_title = auto_title,
+      ...
+    )
   } else {
-
     stop(
       "Incorrect object class. Must be class 'indicator_ts' or 'indicator_map'."
     )
-
   }
 }
 
 #' @export
 plot.hill0 <- function(x, ...) {
-
-  stopifnot_error("Incorrect object class. Must be class 'hill0'.",
-                  inherits(x, "hill0"))
+  stopifnot_error(
+    "Incorrect object class. Must be class 'hill0'.",
+    inherits(x, "hill0")
+  )
 
   if (inherits(x, "indicator_ts")) {
-
     # Set defaults
     y_label_default <- "Species Richness"
     auto_title <-
@@ -760,67 +728,61 @@ plot.hill0 <- function(x, ...) {
 
     # Call generalized plot_ts function
     plot_ts(x,
-            y_label_default = y_label_default,
-            auto_title = auto_title,
-            ...)
-
+      y_label_default = y_label_default,
+      auto_title = auto_title,
+      ...
+    )
   } else if (inherits(x, "indicator_map")) {
-
     # Set defaults
     leg_label_default <- "Richness"
     auto_title <- "Species Richness (Estimated by Coverage-Based Rarefaction)"
 
     # Call generalized plot_map function
     plot_map(x,
-             leg_label_default = leg_label_default,
-             auto_title = auto_title,
-             ...)
-
+      leg_label_default = leg_label_default,
+      auto_title = auto_title,
+      ...
+    )
   } else {
-
     stop(
       "Incorrect object class. Must be class 'indicator_ts' or 'indicator_map'."
     )
-
   }
 }
 
 #' @export
 plot.obs_richness <- function(x, ...) {
-
-  stopifnot_error("Incorrect object class. Must be class 'obs_richness'.",
-                  inherits(x, "obs_richness"))
+  stopifnot_error(
+    "Incorrect object class. Must be class 'obs_richness'.",
+    inherits(x, "obs_richness")
+  )
 
   if (inherits(x, "indicator_ts")) {
-
     # Set defaults
     y_label_default <- "Species Richness"
     auto_title <- "Observed Species Richness Trend"
 
     # Call generalized plot_ts function
     plot_ts(x,
-            y_label_default = y_label_default,
-            auto_title = auto_title,
-            ...)
-
+      y_label_default = y_label_default,
+      auto_title = auto_title,
+      ...
+    )
   } else if (inherits(x, "indicator_map")) {
-
     # Set defaults
     leg_label_default <- "Richness"
     auto_title <- "Observed Species Richness"
 
     # Call generalized plot_map function
     plot_map(x,
-             leg_label_default = leg_label_default,
-             auto_title = auto_title,
-             ...)
-
+      leg_label_default = leg_label_default,
+      auto_title = auto_title,
+      ...
+    )
   } else {
-
     stop(
       "Incorrect object class. Must be class 'indicator_ts' or 'indicator_map'."
     )
-
   }
 }
 
@@ -828,9 +790,10 @@ plot.obs_richness <- function(x, ...) {
 plot.occ_turnover <- function(x,
                               auccolour = NULL,
                               ...) {
-
-  stopifnot_error("Incorrect object class. Must be class 'occ_turnover'.",
-                  inherits(x, "occ_turnover"))
+  stopifnot_error(
+    "Incorrect object class. Must be class 'occ_turnover'.",
+    inherits(x, "occ_turnover")
+  )
 
   if (!inherits(x, "indicator_ts")) {
     stop(
@@ -844,13 +807,13 @@ plot.occ_turnover <- function(x,
 
   # Call generalized plot_map function
   trend_plot <- plot_ts(x,
-                        y_label_default = y_label_default,
-                        auto_title = auto_title,
-                        ...)
+    y_label_default = y_label_default,
+    auto_title = auto_title,
+    ...
+  )
 
   # Show plot
   trend_plot
-
 }
 
 #' @title Plot Biodiversity Indicator Map
@@ -895,11 +858,14 @@ plot.occ_turnover <- function(x,
 #'
 #' @examples
 #' evenness_map <- pielou_evenness_map(example_cube_1,
-#'                                     level = "country",
-#'                                     region = "Denmark")
-#' plot_map(x = evenness_map,
-#'          title = "Map of Species Evenness in Denmark",
-#'          legend_title = "Evenness")
+#'   level = "country",
+#'   region = "Denmark"
+#' )
+#' plot_map(
+#'   x = evenness_map,
+#'   title = "Map of Species Evenness in Denmark",
+#'   legend_title = "Evenness"
+#' )
 #'
 #' @export
 plot_map <- function(x,
@@ -919,9 +885,7 @@ plot_map <- function(x,
                      legend_title = NULL,
                      legend_limits = NULL,
                      legend_title_wrap_length = 10,
-                     title_wrap_length = 60
-                     ) {
-
+                     title_wrap_length = 60) {
   diversity_val <- geometry <- NULL
 
   # Get map limits
@@ -931,35 +895,35 @@ plot_map <- function(x,
   # (conditional on there being only one map region to plot)
   if (length(x$map_region) == 1) {
     if (Europe_crop_EEA == TRUE &&
-        x$map_level == "continent" &&
-        x$map_region == "Europe" &&
-        x$projection == "EPSG:3035" &&
-        crop_to_grid == FALSE) {
-
+      x$map_level == "continent" &&
+      x$map_region == "Europe" &&
+      x$projection == "EPSG:3035" &&
+      crop_to_grid == FALSE) {
       # Set attributes as spatially constant to avoid warnings
       sf::st_agr(x$data) <- "constant"
 
       # Manually set cropped limits
       map_lims <- c(2600000, 1600000, 7000000, 6000000)
       names(map_lims) <- c("xmin", "ymin", "xmax", "ymax")
-
     }
   }
 
 
   # Get world data to plot surrounding land if surround flag is set
   if (surround == TRUE) {
-    map_surround <- rnaturalearth::ne_countries(scale = "medium",
-                                                returnclass = "sf") %>%
+    map_surround <- rnaturalearth::ne_countries(
+      scale = "medium",
+      returnclass = "sf"
+    ) %>%
       sf::st_as_sf() %>%
       sf::st_transform(crs = x$projection)
 
-  # Otherwise make all the surroundings ocean blue
-  # (unless a different colour is specified)
+    # Otherwise make all the surroundings ocean blue
+    # (unless a different colour is specified)
   } else {
     if (is.null(panel_bg)) {
       panel_bg <- "#92c5f0"
-      }
+    }
   }
 
   # Define function to wrap title and legend title if too long
@@ -978,64 +942,92 @@ plot_map <- function(x,
   cust_leg <- function(scale.params = list()) {
     do.call(ggplot2::scale_fill_gradient, utils::modifyList(
       list(low = "gold", high = "firebrick4", na.value = "grey95"),
-      scale.params)
-    )
+      scale.params
+    ))
   }
 
   # Plot map
   diversity_plot <- ggplot2::ggplot(x$data) +
-    ggplot2::geom_sf(ggplot2::aes(fill = diversity_val,
-                geometry = geometry),
-            colour = "black") +
-    cust_leg(list(trans = trans,
-                  breaks = breaks,
-                  labels = labels,
-                  limits = legend_limits)) +
+    ggplot2::geom_sf(
+      ggplot2::aes(
+        fill = diversity_val,
+        geometry = geometry
+      ),
+      colour = "black"
+    ) +
+    cust_leg(list(
+      trans = trans,
+      breaks = breaks,
+      labels = labels,
+      limits = legend_limits
+    )) +
     ggplot2::coord_sf(
-      xlim = c(map_lims["xmin"],
-               map_lims["xmax"]),
-      ylim = c(map_lims["ymin"],
-               map_lims["ymax"]),
+      xlim = c(
+        map_lims["xmin"],
+        map_lims["xmax"]
+      ),
+      ylim = c(
+        map_lims["ymin"],
+        map_lims["ymax"]
+      ),
       if (crop_to_grid == TRUE) {
-        expand = FALSE
+        expand <- FALSE
       } else {
-        expand = TRUE
+        expand <- TRUE
       }
     ) +
     ggplot2::theme_bw() +
     ggplot2::theme(
-      panel.background = ggplot2::element_rect(fill =
-                                                 if (!is.null(panel_bg)) panel_bg
-                                               else "#92c5f0"),
+      panel.background = ggplot2::element_rect(
+        fill =
+          if (!is.null(panel_bg)) {
+            panel_bg
+          } else {
+            "#92c5f0"
+          }
+      ),
       if (x$map_level == "country") {
-        panel.grid.major = ggplot2::element_blank()
-        panel.grid.minor = ggplot2::element_blank()
+        panel.grid.major <- ggplot2::element_blank()
+        panel.grid.minor <- ggplot2::element_blank()
       }
     ) +
     # Wrap legend title if longer than user-specified wrap length
-    ggplot2::labs(fill = if (!is.null(legend_title)) wrapper(legend_title,
-                                                   legend_title_wrap_length)
-         else wrapper(leg_label_default,
-                      legend_title_wrap_length))
+    ggplot2::labs(fill = if (!is.null(legend_title)) {
+      wrapper(
+        legend_title,
+        legend_title_wrap_length
+      )
+    } else {
+      wrapper(
+        leg_label_default,
+        legend_title_wrap_length
+      )
+    })
 
 
   land_fill_colour <- ifelse(is.null(land_fill_colour),
-                             "grey85",
-                             land_fill_colour)
+    "grey85",
+    land_fill_colour
+  )
 
   # If surround flag set, add surrounding countries to map
   if (surround == TRUE) {
-    diversity_plot$layers <- c(ggplot2::geom_sf(data = map_surround, fill =
-                                                  land_fill_colour)[[1]],
-                               diversity_plot$layers)
+    diversity_plot$layers <- c(
+      ggplot2::geom_sf(
+        data = map_surround, fill =
+          land_fill_colour
+      )[[1]],
+      diversity_plot$layers
+    )
   }
 
   # Check for custom x and y limits and adjust map if found
   if (any(!is.null(xlims)) && any(!is.null(ylims))) {
     diversity_plot <-
-      diversity_plot + ggplot2::coord_sf(xlim = xlims,
-                                ylim = ylims)
-
+      diversity_plot + ggplot2::coord_sf(
+        xlim = xlims,
+        ylim = ylims
+      )
   }
 
   # Wrap title if longer than user-specified wrap length
@@ -1047,7 +1039,6 @@ plot_map <- function(x,
 
   # Exit function
   return(diversity_plot)
-
 }
 
 
@@ -1130,16 +1121,18 @@ plot_map <- function(x,
 #' @examples
 #' # default colours:
 #' plot_ts(example_indicator_ts1,
-#'         y_label = "Species Richness",
-#'         title = "Observed Species Richness: Mammals in Denmark")
+#'   y_label = "Species Richness",
+#'   title = "Observed Species Richness: Mammals in Denmark"
+#' )
 #'
 #' # custom colours:
 #' plot_ts(example_indicator_ts1,
-#'         y_label = "Species Richness",
-#'         title = "Observed Species Richness: Mammals in Denmark",
-#'         linecolour = "thistle",
-#'         trendlinecolour = "forestgreen",
-#'         envelopecolour = "lightgreen")
+#'   y_label = "Species Richness",
+#'   title = "Observed Species Richness: Mammals in Denmark",
+#'   linecolour = "thistle",
+#'   trendlinecolour = "forestgreen",
+#'   envelopecolour = "lightgreen"
+#' )
 #' @export
 plot_ts <- function(x,
                     min_year = NULL,
@@ -1159,20 +1152,26 @@ plot_ts <- function(x,
                     envelopecolour = NULL,
                     envelopealpha = 0.2,
                     smooth_cialpha = 1,
-                    point_line = c("point",
-                                   "line"),
+                    point_line = c(
+                      "point",
+                      "line"
+                    ),
                     pointsize = 2,
                     linewidth = 1,
-                    ci_type = c("error_bars",
-                                "ribbon"),
+                    ci_type = c(
+                      "error_bars",
+                      "ribbon"
+                    ),
                     error_width = 1,
                     error_thickness = 1,
-                    smooth_linetype = c("solid",
-                                        "dashed",
-                                        "dotted",
-                                        "dotdash",
-                                        "longdash",
-                                        "twodash"),
+                    smooth_linetype = c(
+                      "solid",
+                      "dashed",
+                      "dotted",
+                      "dotdash",
+                      "longdash",
+                      "twodash"
+                    ),
                     smooth_linewidth = 1,
                     smooth_cilinewidth = 1,
                     gridoff = FALSE,
@@ -1182,9 +1181,7 @@ plot_ts <- function(x,
                     y_expand = NULL,
                     x_breaks = 10,
                     y_breaks = 6,
-                    wrap_length = 60
-                    ) {
-
+                    wrap_length = 60) {
   year <- diversity_val <- ul <- ll <- NULL
 
   point_line <- match.arg(point_line)
@@ -1208,12 +1205,13 @@ plot_ts <- function(x,
   if (!is.null(title)) {
     if (title == "auto") {
       title <- paste(auto_title,
-                     " (",
-                     min_year,
-                     "-",
-                     max_year,
-                     ")",
-                     sep = "")
+        " (",
+        min_year,
+        "-",
+        max_year,
+        ")",
+        sep = ""
+      )
     }
   }
 
@@ -1234,20 +1232,20 @@ plot_ts <- function(x,
   if (is.null(y_expand)) y_expand <- c(0, 0)
 
   # Adjust error bar width according to number of years being plotted
-  error_width = (error_width * (max_year - min_year)) / 100
+  error_width <- (error_width * (max_year - min_year)) / 100
 
   if ("ll" %in% colnames(x$data) && "ul" %in% colnames(x$data)) {
-
     # Remove NAs from CIs
     x$data$ll <- ifelse(is.na(x$data$ll), x$data$diversity_val, x$data$ll)
     x$data$ul <- ifelse(is.na(x$data$ul), x$data$diversity_val, x$data$ul)
-
   }
 
   # Create basis of plot
   trend_plot <-
-    ggplot2::ggplot(x$data, ggplot2::aes(x = year,
-                                y = diversity_val))
+    ggplot2::ggplot(x$data, ggplot2::aes(
+      x = year,
+      y = diversity_val
+    ))
 
   # Add smooth trends (LOESS) if specified
   if (smoothed_trend == TRUE) {
@@ -1259,30 +1257,36 @@ plot_ts <- function(x,
         linetype = smooth_linetype,
         method = "loess",
         formula = "y ~ x",
-        se = FALSE)
+        se = FALSE
+      )
 
     # Add smooth trends for confidence limits if available
     if ("ll" %in% colnames(x$data) && "ul" %in% colnames(x$data)) {
       trend_plot <- trend_plot +
         ggplot2::geom_smooth(ggplot2::aes(y = ul),
-                    colour = ggplot2::alpha(envelopecolour, smooth_cialpha),
-                    lwd = smooth_cilinewidth,
-                    linetype = "dashed",
-                    method = "loess",
-                    formula = "y ~ x",
-                    se = FALSE) +
+          colour = ggplot2::alpha(envelopecolour, smooth_cialpha),
+          lwd = smooth_cilinewidth,
+          linetype = "dashed",
+          method = "loess",
+          formula = "y ~ x",
+          se = FALSE
+        ) +
         ggplot2::geom_smooth(ggplot2::aes(y = ll),
-                    colour = ggplot2::alpha(envelopecolour, smooth_cialpha),
-                    lwd = smooth_cilinewidth,
-                    linetype = "dashed",
-                    method = "loess",
-                    formula = "y ~ x",
-                    se = FALSE) +
+          colour = ggplot2::alpha(envelopecolour, smooth_cialpha),
+          lwd = smooth_cilinewidth,
+          linetype = "dashed",
+          method = "loess",
+          formula = "y ~ x",
+          se = FALSE
+        ) +
         ggplot2::geom_ribbon(
-          ggplot2::aes(ymin = stats::predict(stats::loess(ll ~ year)),
-                        ymax = stats::predict(stats::loess(ul ~ year))),
-                    alpha = envelopealpha,
-                    fill = envelopecolour)
+          ggplot2::aes(
+            ymin = stats::predict(stats::loess(ll ~ year)),
+            ymax = stats::predict(stats::loess(ul ~ year))
+          ),
+          alpha = envelopealpha,
+          fill = envelopecolour
+        )
     }
   }
 
@@ -1291,53 +1295,65 @@ plot_ts <- function(x,
     if (ci_type == "error_bars") {
       trend_plot <- trend_plot +
         ggplot2::geom_errorbar(ggplot2::aes(ymin = ll, ymax = ul),
-                      colour = ribboncolour,
-                      alpha = error_alpha,
-                      width = error_width,
-                      linewidth = error_thickness)
+          colour = ribboncolour,
+          alpha = error_alpha,
+          width = error_width,
+          linewidth = error_thickness
+        )
     } else {
       trend_plot <- trend_plot +
         ggplot2::geom_ribbon(ggplot2::aes(ymin = ll, ymax = ul),
-                    alpha = ribbonalpha,
-                    fill = ribboncolour)
+          alpha = ribbonalpha,
+          fill = ribboncolour
+        )
     }
-
   }
 
   if (point_line == "point") {
     trend_plot <- trend_plot +
-      ggplot2::geom_point(colour = linecolour,
-                 alpha = linealpha,
-                 size = pointsize)
+      ggplot2::geom_point(
+        colour = linecolour,
+        alpha = linealpha,
+        size = pointsize
+      )
   } else {
     trend_plot <- trend_plot +
-      ggplot2::geom_line(colour = linecolour,
-                alpha = linealpha,
-                lwd = linewidth)
+      ggplot2::geom_line(
+        colour = linecolour,
+        alpha = linealpha,
+        lwd = linewidth
+      )
   }
 
   trend_plot <- trend_plot +
-    ggplot2::scale_x_continuous(breaks = breaks_pretty_int(n = x_breaks),
-                       expand = ggplot2::expansion(mult = x_expand)) +
-    ggplot2::scale_y_continuous(breaks = breaks_pretty_int(n = y_breaks),
-                       expand = ggplot2::expansion(mult = y_expand)) +
-    ggplot2::labs(x = x_label, y = y_label,
-         title = title) +
+    ggplot2::scale_x_continuous(
+      breaks = breaks_pretty_int(n = x_breaks),
+      expand = ggplot2::expansion(mult = x_expand)
+    ) +
+    ggplot2::scale_y_continuous(
+      breaks = breaks_pretty_int(n = y_breaks),
+      expand = ggplot2::expansion(mult = y_expand)
+    ) +
+    ggplot2::labs(
+      x = x_label, y = y_label,
+      title = title
+    ) +
     ggplot2::theme_minimal() +
-    ggplot2::theme(plot.title = ggplot2::element_text(hjust = 0.5),
-          text = ggplot2::element_text(size = 14),
-          panel.grid.major = if (gridoff == TRUE) {
-            ggplot2::element_blank()
-          } else {
-            ggplot2::element_line()
-          },
-          panel.grid.minor = ggplot2::element_blank(),
-          axis.text.y = if (suppress_y == TRUE) {
-            ggplot2::element_blank()
-          } else {
-            ggplot2::element_text()
-          },
-          strip.text = ggplot2::element_text(face = "italic")
+    ggplot2::theme(
+      plot.title = ggplot2::element_text(hjust = 0.5),
+      text = ggplot2::element_text(size = 14),
+      panel.grid.major = if (gridoff == TRUE) {
+        ggplot2::element_blank()
+      } else {
+        ggplot2::element_line()
+      },
+      panel.grid.minor = ggplot2::element_blank(),
+      axis.text.y = if (suppress_y == TRUE) {
+        ggplot2::element_blank()
+      } else {
+        ggplot2::element_text()
+      },
+      strip.text = ggplot2::element_text(face = "italic")
     )
 
   # Wrap title if longer than wrap_length
@@ -1352,7 +1368,6 @@ plot_ts <- function(x,
 
   # Show plot
   trend_plot
-
 }
 
 #' @title Plot Occurrence Trends or Range Size Trends for Individual Species
@@ -1440,16 +1455,18 @@ plot_ts <- function(x,
 #'
 #' @examples
 #' spec_occ_ts_mammals_denmark <- spec_occ_ts(example_cube_1,
-#'                                         level = "country",
-#'                                         region = "Denmark")
+#'   level = "country",
+#'   region = "Denmark"
+#' )
 #' # default colours:
 #' plot_species_ts(spec_occ_ts_mammals_denmark, c(2440728, 4265185))
 #'
 #' # custom colours:
 #' plot_species_ts(spec_occ_ts_mammals_denmark, c(2440728, 4265185),
-#'         linecolour = "thistle",
-#'         trendlinecolour = "forestgreen",
-#'         envelopecolour = "lightgreen")
+#'   linecolour = "thistle",
+#'   trendlinecolour = "forestgreen",
+#'   envelopecolour = "lightgreen"
+#' )
 #' @export
 plot_species_ts <- function(x,
                             species = NULL,
@@ -1471,20 +1488,26 @@ plot_species_ts <- function(x,
                             envelopecolour = NULL,
                             envelopealpha = 0.2,
                             smooth_cialpha = 1,
-                            point_line = c("point",
-                                           "line"),
+                            point_line = c(
+                              "point",
+                              "line"
+                            ),
                             pointsize = 2,
                             linewidth = 1,
-                            ci_type = c("error_bars",
-                                        "ribbon"),
+                            ci_type = c(
+                              "error_bars",
+                              "ribbon"
+                            ),
                             error_width = 1,
                             error_thickness = 1,
-                            smooth_linetype = c("solid",
-                                                "dashed",
-                                                "dotted",
-                                                "dotdash",
-                                                "longdash",
-                                                "twodash"),
+                            smooth_linetype = c(
+                              "solid",
+                              "dashed",
+                              "dotted",
+                              "dotdash",
+                              "longdash",
+                              "twodash"
+                            ),
                             smooth_linewidth = 1,
                             smooth_cilinewidth = 1,
                             gridoff = FALSE,
@@ -1494,9 +1517,7 @@ plot_species_ts <- function(x,
                             y_expand = NULL,
                             x_breaks = 10,
                             y_breaks = 6,
-                            title_wrap_length = 60
-                            ) {
-
+                            title_wrap_length = 60) {
   year <- taxonKey <- . <- scientificName <- ll <- ul <- diversity_val <- NULL
 
   point_line <- match.arg(point_line)
@@ -1518,74 +1539,84 @@ plot_species_ts <- function(x,
 
 
   if (is.null(species)) {
-
     stop(
       paste(
         "Please enter either the species names or the numeric taxonKeys",
         "for the species you want to plot."
       )
     )
-
   } else if (is.numeric(species)) {
-
     # Get occurrences for selected species
     species_occurrences <-
       x$data %>%
       dplyr::filter(taxonKey %in% species) %>%
-      { if (nrow(.) < 1)
-        stop(
-          paste(
-            "No matching taxonKeys. Please check that you have entered",
-            "them correctly."
+      {
+        if (nrow(.) < 1) {
+          stop(
+            paste(
+              "No matching taxonKeys. Please check that you have entered",
+              "them correctly."
+            )
           )
-        )
-        else (.) } %>%
+        } else {
+          (.)
+        }
+      } %>%
       dplyr::mutate(taxonKey = factor(taxonKey,
-                                      levels = unique(taxonKey)))
+        levels = unique(taxonKey)
+      ))
 
     split_so <-
       species_occurrences %>%
       dplyr::group_split(taxonKey)
-
   } else {
-
     # Get occurrences for selected species
     species_occurrences <-
       x$data %>%
-      dplyr::filter(grepl(paste("^", species, collapse = "|", sep = ""),
-                          scientificName)) %>%
-      { if (nrow(.) < 1)
-        stop(
-          paste(
-            "No matching species. Please check that you have entered the names",
-            "correctly."
+      dplyr::filter(grepl(
+        paste("^", species, collapse = "|", sep = ""),
+        scientificName
+      )) %>%
+      {
+        if (nrow(.) < 1) {
+          stop(
+            paste(
+              "No matching species. Please check that you have entered the names",
+              "correctly."
+            )
           )
+        } else {
+          (.)
+        }
+      } %>%
+      dplyr::arrange(
+        scientificName,
+        grepl(
+          paste("^", species, collapse = "|", sep = ""),
+          scientificName
         )
-        else (.) } %>%
-      dplyr::arrange(scientificName,
-                     grepl(paste("^", species, collapse = "|", sep = ""),
-                           scientificName))
+      )
 
     split_so <-
       species_occurrences %>%
       dplyr::group_split(scientificName)
-
   }
 
   sci_names <-
     split_so %>%
-    purrr::map(~unique(.$scientificName))
+    purrr::map(~ unique(.$scientificName))
 
   # Create plot title if title is set to "auto"
   if (!is.null(title)) {
     if (title == "auto") {
       title <- paste(auto_title,
-                     " (",
-                     min_year,
-                     "-",
-                     max_year,
-                     ")",
-                     sep = "")
+        " (",
+        min_year,
+        "-",
+        max_year,
+        ")",
+        sep = ""
+      )
     }
   }
 
@@ -1610,150 +1641,175 @@ plot_species_ts <- function(x,
 
   # Create bootstrapped confidence intervals if columns present
   if ("ll" %in% colnames(x$data) && "ul" %in% colnames(x$data)) {
-
     # Remove NAs from CIs
     x$data$ll <- ifelse(is.na(x$data$ll), x$data$diversity_val, x$data$ll)
     x$data$ul <- ifelse(is.na(x$data$ul), x$data$diversity_val, x$data$ul)
 
-      if (ci_type == "error_bars") {
-        ci_ribbon <- list(
-          ggplot2::geom_errorbar(ggplot2::aes(ymin = ll, ymax = ul),
-                        colour = ribboncolour,
-                        alpha = error_alpha,
-                        width = error_width,
-                        linewidth = error_thickness)
+    if (ci_type == "error_bars") {
+      ci_ribbon <- list(
+        ggplot2::geom_errorbar(ggplot2::aes(ymin = ll, ymax = ul),
+          colour = ribboncolour,
+          alpha = error_alpha,
+          width = error_width,
+          linewidth = error_thickness
         )
-      } else {
-        ci_ribbon <- list(
-          ggplot2::geom_ribbon(ggplot2::aes(ymin = ll, ymax = ul),
-                      alpha = ribbonalpha,
-                      fill = ribboncolour)
+      )
+    } else {
+      ci_ribbon <- list(
+        ggplot2::geom_ribbon(ggplot2::aes(ymin = ll, ymax = ul),
+          alpha = ribbonalpha,
+          fill = ribboncolour
         )
-      }
-
+      )
+    }
   } else {
     ci_ribbon <- list()
   }
 
   # Create smoothed trend if desired
   if (smoothed_trend == TRUE) {
-
     # Include smooth trends for confidence limits if available
     if ("ll" %in% colnames(x$data) && "ul" %in% colnames(x$data)) {
       smoothing <- list(
-         ggplot2::geom_smooth(
-           colour = ggplot2::alpha(trendlinecolour, trendlinealpha),
-           lwd = smooth_linewidth,
-           linetype = smooth_linetype,
-           method = "loess",
-           formula = "y ~ x",
-           se = FALSE),
-
-         ggplot2::geom_ribbon(
-           ggplot2::aes(ymin = stats::predict(stats::loess(ll ~ year)),
-                         ymax = stats::predict(stats::loess(ul ~ year))),
-                     alpha = envelopealpha,
-                     fill = envelopecolour),
-
-          ggplot2::geom_smooth(
-            ggplot2::aes(y = ul),
-            colour = ggplot2::alpha(envelopecolour, smooth_cialpha),
-            lwd = smooth_cilinewidth,
-            linetype = "dashed",
-            method = "loess",
-            formula = "y ~ x",
-            se = FALSE),
-
-          ggplot2::geom_smooth(
-            ggplot2::aes(y = ll),
-            colour = ggplot2::alpha(envelopecolour, smooth_cialpha),
-            lwd = smooth_cilinewidth,
-            linetype = "dashed",
-            method = "loess",
-            formula = "y ~ x",
-            se = FALSE)
+        ggplot2::geom_smooth(
+          colour = ggplot2::alpha(trendlinecolour, trendlinealpha),
+          lwd = smooth_linewidth,
+          linetype = smooth_linetype,
+          method = "loess",
+          formula = "y ~ x",
+          se = FALSE
+        ),
+        ggplot2::geom_ribbon(
+          ggplot2::aes(
+            ymin = stats::predict(stats::loess(ll ~ year)),
+            ymax = stats::predict(stats::loess(ul ~ year))
+          ),
+          alpha = envelopealpha,
+          fill = envelopecolour
+        ),
+        ggplot2::geom_smooth(
+          ggplot2::aes(y = ul),
+          colour = ggplot2::alpha(envelopecolour, smooth_cialpha),
+          lwd = smooth_cilinewidth,
+          linetype = "dashed",
+          method = "loess",
+          formula = "y ~ x",
+          se = FALSE
+        ),
+        ggplot2::geom_smooth(
+          ggplot2::aes(y = ll),
+          colour = ggplot2::alpha(envelopecolour, smooth_cialpha),
+          lwd = smooth_cilinewidth,
+          linetype = "dashed",
+          method = "loess",
+          formula = "y ~ x",
+          se = FALSE
+        )
       )
     } else {
-
-        smoothing <- list(
-          ggplot2::geom_smooth(
-            colour = ggplot2::alpha(trendlinecolour, 0.5),
-            lwd = 1,
-            linetype = smooth_linetype,
-            method = "loess",
-            formula = "y ~ x",
-            se = FALSE)
+      smoothing <- list(
+        ggplot2::geom_smooth(
+          colour = ggplot2::alpha(trendlinecolour, 0.5),
+          lwd = 1,
+          linetype = smooth_linetype,
+          method = "loess",
+          formula = "y ~ x",
+          se = FALSE
         )
+      )
     }
-
   } else {
     smoothing <- list()
   }
 
   # Create plot with trend line
   trend_plot <-
-    purrr::map2(split_so,
-                sci_names,
-                function(x., y) {
+    purrr::map2(
+      split_so,
+      sci_names,
+      function(x., y) {
+        if (point_line == "point") {
+          specplot <-
+            ggplot2::ggplot(
+              x.,
+              ggplot2::aes(
+                x = year,
+                y = diversity_val
+              )
+            ) +
+            ggplot2::geom_point(
+              colour = linecolour,
+              size = pointsize,
+              alpha = linealpha
+            )
+        } else {
+          specplot <-
+            ggplot2::ggplot(
+              x.,
+              ggplot2::aes(
+                x = year,
+                y = diversity_val
+              )
+            ) +
+            ggplot2::geom_line(
+              colour = linecolour,
+              lwd = linewidth,
+              alpha = linealpha
+            )
+        }
 
-                  if (point_line == "point") {
-                    specplot <-
-                      ggplot2::ggplot(x.,
-                                      ggplot2::aes(x = year,
-                                                   y = diversity_val)) +
-                      ggplot2::geom_point(colour = linecolour,
-                                          size = pointsize,
-                                          alpha = linealpha)
-                  } else {
-                    specplot <-
-                      ggplot2::ggplot(x.,
-                                      ggplot2::aes(x = year,
-                                                   y = diversity_val)) +
-                      ggplot2::geom_line(colour = linecolour,
-                                         lwd = linewidth,
-                                         alpha = linealpha)
-                  }
+        specplot <- specplot +
+          ggplot2::scale_x_continuous(
+            breaks = breaks_pretty_int(n = x_breaks),
+            expand = ggplot2::expansion(
+              mult = x_expand
+            )
+          ) +
+          ggplot2::scale_y_continuous(
+            breaks = breaks_pretty_int(n = y_breaks),
+            expand = ggplot2::expansion(
+              mult = y_expand
+            )
+          ) +
+          ggplot2::labs(
+            x = x_label, y = y_label,
+            title = title
+          ) +
+          ggplot2::theme_minimal() +
+          ggplot2::theme(
+            plot.title = ggplot2::element_text(
+              hjust = 0.5, face = "italic"
+            ),
+            text = ggplot2::element_text(size = 14),
+            if (gridoff == TRUE) {
+              panel.grid.major <- ggplot2::element_blank()
+            },
+            panel.grid.minor = ggplot2::element_blank(),
+            if (suppress_y == TRUE) {
+              axis.text.y <- ggplot2::element_blank()
+            },
+            strip.text = ggplot2::element_text(face = "italic")
+          ) +
+          ggplot2::labs(title = y) +
+          smoothing +
+          ci_ribbon
 
-                  specplot <- specplot +
-                    ggplot2::scale_x_continuous(
-                      breaks = breaks_pretty_int(n = x_breaks),
-                      expand = ggplot2::expansion(
-                        mult = x_expand)) +
-                    ggplot2::scale_y_continuous(
-                      breaks = breaks_pretty_int(n = y_breaks),
-                      expand = ggplot2::expansion(
-                        mult = y_expand)) +
-                    ggplot2::labs(x = x_label, y = y_label,
-                                  title = title) +
-                    ggplot2::theme_minimal() +
-                    ggplot2::theme(plot.title = ggplot2::element_text(
-                      hjust = 0.5, face = "italic"),
-                      text = ggplot2::element_text(size = 14),
-                      if (gridoff == TRUE) {
-                        panel.grid.major = ggplot2::element_blank()
-                        },
-                      panel.grid.minor = ggplot2::element_blank(),
-                      if (suppress_y == TRUE) {
-                        axis.text.y = ggplot2::element_blank()
-                        },
-                      strip.text = ggplot2::element_text(face = "italic")
-                    ) +
-                    ggplot2::labs(title = y) +
-                    smoothing +
-                    ci_ribbon
-
-                  return(specplot)
-                })
+        return(specplot)
+      }
+    )
 
   names(trend_plot) <- sci_names
 
   # Combine plots using wrap_plots function from patchwork
   if (length(trend_plot) > 1 && single_plot == TRUE) {
     trend_plot <- patchwork::wrap_plots(trend_plot) +
-      plot_annotation_int(title = title,
-                          theme = ggplot2::theme(
-                            plot.title =
-                              ggplot2::element_text(size = 20)))
+      plot_annotation_int(
+        title = title,
+        theme = ggplot2::theme(
+          plot.title =
+            ggplot2::element_text(size = 20)
+        )
+      )
   } else if (length(trend_plot) > 1 && single_plot == FALSE) {
     cat(
       "single_plot set to false. Creating separate plot for each species.\n\n"
@@ -1761,7 +1817,6 @@ plot_species_ts <- function(x,
   }
 
   return(trend_plot)
-
 }
 
 
@@ -1815,8 +1870,9 @@ plot_species_ts <- function(x,
 #'
 #' @examples
 #' spec_occ_mammals_denmark <- spec_occ_map(example_cube_1,
-#'                                     level = "country",
-#'                                     region = "Denmark")
+#'   level = "country",
+#'   region = "Denmark"
+#' )
 #' plot_species_map(x = spec_occ_mammals_denmark, c(2440728, 4265185))
 #'
 #' @export
@@ -1840,105 +1896,112 @@ plot_species_map <- function(x,
                              legend_title = NULL,
                              legend_limits = NULL,
                              legend_title_wrap_length = 10,
-                             title_wrap_length = 60
-                             ) {
-
+                             title_wrap_length = 60) {
   taxonKey <- . <- scientificName <- geometry <- diversity_val <- NULL
 
   if (is.null(species)) {
-
     stop(
       paste(
         "Please enter either the species names or the numeric taxonKeys",
         "for the species you want to plot."
       )
     )
-
   } else if (is.numeric(species)) {
-
     # Get occurrences for selected species
     species_occurrences <-
       x$data %>%
       dplyr::filter(taxonKey %in% species) %>%
-      { if (nrow(.) < 1)
-        stop(
-          paste(
-            "No matching taxonKeys. Please check that you have entered",
-            "them correctly."
+      {
+        if (nrow(.) < 1) {
+          stop(
+            paste(
+              "No matching taxonKeys. Please check that you have entered",
+              "them correctly."
+            )
           )
-        )
-        else (.) } %>%
+        } else {
+          (.)
+        }
+      } %>%
       dplyr::mutate(taxonKey = factor(taxonKey,
-                                      levels = unique(taxonKey)))
+        levels = unique(taxonKey)
+      ))
 
     split_so <-
       species_occurrences %>%
       dplyr::group_split(taxonKey)
-
   } else {
-
     # Get occurrences for selected species
     species_occurrences <-
       x$data %>%
-      dplyr::filter(grepl(paste("^", species, collapse = "|", sep = ""),
-                          scientificName)) %>%
-      { if (nrow(.) < 1)
-        stop(
-          paste(
-            "No matching species. Please check that you have entered",
-            "the names correctly."
+      dplyr::filter(grepl(
+        paste("^", species, collapse = "|", sep = ""),
+        scientificName
+      )) %>%
+      {
+        if (nrow(.) < 1) {
+          stop(
+            paste(
+              "No matching species. Please check that you have entered",
+              "the names correctly."
+            )
           )
+        } else {
+          (.)
+        }
+      } %>%
+      dplyr::arrange(
+        scientificName,
+        grepl(
+          paste("^", species, collapse = "|", sep = ""),
+          scientificName
         )
-        else (.) } %>%
-      dplyr::arrange(scientificName,
-                     grepl(paste("^", species, collapse = "|", sep = ""),
-                           scientificName))
+      )
 
     split_so <-
       species_occurrences %>%
       dplyr::group_split(scientificName)
-
   }
 
   sci_names <-
     split_so %>%
-    purrr::map(~unique(.$scientificName))
+    purrr::map(~ unique(.$scientificName))
 
   # Get map limits
   map_lims <- x$coord_range
 
   # Crop map of Europe to leave out far-lying islands (if flag set)
   # (conditional on there being only one map region to plot)
-  if (length(x$map_region == 1)){
+  if (length(x$map_region == 1)) {
     if (Europe_crop_EEA == TRUE &&
-        x$map_level == "continent" &&
-        x$map_region == "Europe" &&
-        x$projection == "EPSG:3035" &&
-        crop_to_grid == TRUE) {
-
+      x$map_level == "continent" &&
+      x$map_region == "Europe" &&
+      x$projection == "EPSG:3035" &&
+      crop_to_grid == TRUE) {
       # Set attributes as spatially constant to avoid warnings
       sf::st_agr(x$data) <- "constant"
 
       # Manually set cropped limits
       map_lims <- c(2600000, 1600000, 7000000, 6000000)
       names(map_lims) <- c("xmin", "ymin", "xmax", "ymax")
-
     }
   }
 
   # Get world data to plot surrounding land if surround flag is set
   if (surround == TRUE) {
-    map_surround <- rnaturalearth::ne_countries(scale = "medium",
-                                                returnclass = "sf") %>%
+    map_surround <- rnaturalearth::ne_countries(
+      scale = "medium",
+      returnclass = "sf"
+    ) %>%
       sf::st_as_sf() %>%
       sf::st_transform(crs = "EPSG:3035")
 
-  # Otherwise make the surroundings ocean blue (unless another colour
-  # is specified)
+    # Otherwise make the surroundings ocean blue (unless another colour
+    # is specified)
   } else {
     if (is.null(panel_bg)) {
       panel_bg <- "#92c5f0"
-      }
+    }
   }
 
   # Define function to wrap title and legend title if too long
@@ -1957,68 +2020,91 @@ plot_species_map <- function(x,
   cust_leg <- function(scale.params = list()) {
     do.call(ggplot2::scale_fill_gradient, utils::modifyList(
       list(low = "gold", high = "firebrick4", na.value = "grey95"),
-      scale.params)
-    )
+      scale.params
+    ))
   }
 
   # Plot on map
   diversity_plot <-
-    purrr::map2(split_so,
-                sci_names,
-                function(x., y) {
-                  ggplot2::ggplot(x.) +
-                    ggplot2::geom_sf(data = x$data,
-                                     ggplot2::aes(geometry = geometry),
-                            fill = "grey95") +
-                    ggplot2::geom_sf(ggplot2::aes(fill = diversity_val,
-                                geometry = geometry)) +
-                    cust_leg(list(trans = trans,
-                                  breaks = breaks,
-                                  labels = labels,
-                                  limits = legend_limits)) +
-                    ggplot2::coord_sf(
-                      xlim = c(map_lims["xmin"],
-                               map_lims["xmax"]),
-                      ylim = c(map_lims["ymin"],
-                               map_lims["ymax"]),
-                      if (crop_to_grid == TRUE) {
-                        expand = FALSE
-                      } else {
-                        expand = TRUE
-                      }
-                    ) +
-                    #scale_x_continuous() +
-                    ggplot2::theme_bw()+
-                    ggplot2::theme(
-                      panel.background = ggplot2::element_rect(fill = panel_bg),
-                      if(x$map_level == "country") {
-                        panel.grid.major = ggplot2::element_blank()
-                        panel.grid.minor = ggplot2::element_blank()
-                      },
-                      legend.text = ggplot2::element_text(),
-                      strip.text = ggplot2::element_text(face = "italic"),
-                      plot.title = ggplot2::element_text(face = "italic")
-                    ) +
-                    ggplot2::labs(title = y,
-                         fill = if (!is.null(legend_title))
-                           wrapper(legend_title, legend_title_wrap_length)
-                         else wrapper(leg_label_default,
-                                      legend_title_wrap_length)) +
-                    if(suppress_legend==TRUE) {
-                      ggplot2::theme(legend.position = "none")
-                    }
-                })
+    purrr::map2(
+      split_so,
+      sci_names,
+      function(x., y) {
+        ggplot2::ggplot(x.) +
+          ggplot2::geom_sf(
+            data = x$data,
+            ggplot2::aes(geometry = geometry),
+            fill = "grey95"
+          ) +
+          ggplot2::geom_sf(ggplot2::aes(
+            fill = diversity_val,
+            geometry = geometry
+          )) +
+          cust_leg(list(
+            trans = trans,
+            breaks = breaks,
+            labels = labels,
+            limits = legend_limits
+          )) +
+          ggplot2::coord_sf(
+            xlim = c(
+              map_lims["xmin"],
+              map_lims["xmax"]
+            ),
+            ylim = c(
+              map_lims["ymin"],
+              map_lims["ymax"]
+            ),
+            if (crop_to_grid == TRUE) {
+              expand <- FALSE
+            } else {
+              expand <- TRUE
+            }
+          ) +
+          # scale_x_continuous() +
+          ggplot2::theme_bw() +
+          ggplot2::theme(
+            panel.background = ggplot2::element_rect(fill = panel_bg),
+            if (x$map_level == "country") {
+              panel.grid.major <- ggplot2::element_blank()
+              panel.grid.minor <- ggplot2::element_blank()
+            },
+            legend.text = ggplot2::element_text(),
+            strip.text = ggplot2::element_text(face = "italic"),
+            plot.title = ggplot2::element_text(face = "italic")
+          ) +
+          ggplot2::labs(
+            title = y,
+            fill = if (!is.null(legend_title)) {
+              wrapper(legend_title, legend_title_wrap_length)
+            } else {
+              wrapper(
+                leg_label_default,
+                legend_title_wrap_length
+              )
+            }
+          ) +
+          if (suppress_legend == TRUE) {
+            ggplot2::theme(legend.position = "none")
+          }
+      }
+    )
 
   land_fill_colour <- ifelse(is.null(land_fill_colour),
-                             "grey85",
-                             land_fill_colour)
+    "grey85",
+    land_fill_colour
+  )
 
   # If surround flag is set, add surrounding countries to the map
   if (surround == TRUE) {
     for (i in seq_along(diversity_plot)) {
-      diversity_plot[[i]]$layers <- c(ggplot2::geom_sf(data = map_surround,
-                                              fill = land_fill_colour)[[1]],
-                                      diversity_plot[[i]]$layers)
+      diversity_plot[[i]]$layers <- c(
+        ggplot2::geom_sf(
+          data = map_surround,
+          fill = land_fill_colour
+        )[[1]],
+        diversity_plot[[i]]$layers
+      )
     }
   }
 
@@ -2027,9 +2113,12 @@ plot_species_map <- function(x,
   # Combine plots using wrap_plots function from patchwork
   if (length(diversity_plot) > 1 && single_plot == TRUE) {
     diversity_plot <- patchwork::wrap_plots(diversity_plot) +
-      plot_annotation_int(title = title,
-                          theme = ggplot2::theme(
-                            plot.title = ggplot2::element_text(size = 20)))
+      plot_annotation_int(
+        title = title,
+        theme = ggplot2::theme(
+          plot.title = ggplot2::element_text(size = 20)
+        )
+      )
   } else if (length(diversity_plot) > 1 && single_plot == FALSE) {
     cat(
       "single_plot set to false. Creating separate plot for each species.\n\n"
@@ -2038,5 +2127,4 @@ plot_species_map <- function(x,
 
   # Exit function
   return(diversity_plot)
-
 }

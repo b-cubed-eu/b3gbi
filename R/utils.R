@@ -2,22 +2,30 @@
 #' @noRd
 boot.return_int <- function(sim, t0, t, strata, R, data, stat, stype, call,
                             seed, L, m, pred.i, weights, ran.gen, mle) {
-  out <- list(t0 = t0, t = t, R = R, data = data, seed = seed,
-              statistic = stat, sim = sim, call = call)
+  out <- list(
+    t0 = t0, t = t, R = R, data = data, seed = seed,
+    statistic = stat, sim = sim, call = call
+  )
   if (sim == "parametric") {
     out <- c(out, list(ran.gen = ran.gen, mle = mle))
   } else if (sim == "antithetic") {
     out <- c(out, list(stype = stype, strata = strata, L = L))
   } else if (sim == "ordinary") {
     if (sum(m) > 0) {
-      out <- c(out, list(stype = stype, strata = strata,
-                         weights = weights, pred.i = pred.i))
-    } else { out <- c(out, list(stype = stype, strata = strata,
-                                weights = weights))
+      out <- c(out, list(
+        stype = stype, strata = strata,
+        weights = weights, pred.i = pred.i
+      ))
+    } else {
+      out <- c(out, list(
+        stype = stype, strata = strata,
+        weights = weights
+      ))
     }
   } else if (sim == "balanced") {
     out <- c(out, list(stype = stype, strata = strata, weights = weights))
-  } else { out <- c(out, list(stype = stype, strata = strata))
+  } else {
+    out <- c(out, list(stype = stype, strata = strata))
   }
   class(out) <- "boot"
   out
@@ -27,17 +35,11 @@ boot.return_int <- function(sim, t0, t, strata, R, data, stat, stype, call,
 # alternative sampling function that works properly even with length of 1
 #' @noRd
 resample <- function(x, size, replace = TRUE) {
-
   if (length(x) == 1) {
-
     return(rep(x, size))
-
   } else {
-
     return(sample(x, size, replace = replace))
-
   }
-
 }
 
 # Function to add missing year values into bootstrap results
@@ -80,7 +82,6 @@ stopifnot_error <- function(err_message, ...) {
 #'
 #' @noRd
 err_msgs <- function(obj, err_code, obj_class1, obj_class2 = NULL) {
-
   # Define the allowable error codes
   err_codes <- c(
     "cls_int",
@@ -92,14 +93,11 @@ err_msgs <- function(obj, err_code, obj_class1, obj_class2 = NULL) {
   err_code <- match.arg(err_code, err_codes)
 
   if (err_code == "cls_int") {
-
     # Check if x inherits from obj_class1 when err_code is "cls_int"
     stopifnot_error(paste(
       "Wrong data class! Have you called an internal function directly?"
-    ),  inherits(obj, obj_class1)) # Ensure x is of the expected class
-
+    ), inherits(obj, obj_class1)) # Ensure x is of the expected class
   } else if (err_code == "cls_str_int") {
-
     # Determine the condition to evaluate based on obj_class2
     if (is.null(obj_class2)) {
       # If obj_class2 is NULL, only check if x inherits from obj_class1
@@ -116,7 +114,6 @@ err_msgs <- function(obj, err_code, obj_class1, obj_class2 = NULL) {
       "Have you called an internal function directly?"
     ), condition)
   }
-
 }
 
 # Copy of breaks_log from scales package
@@ -201,9 +198,9 @@ log_sub_breaks <- function(rng, n = 5, base = 10) {
   if (sum(relevant_breaks) >= (n - 2)) {
     breaks <- sort(breaks)
     lower_end <- pmax(min(which(base^rng[1] <= breaks)) -
-                        1, 1)
+      1, 1)
     upper_end <- pmin(max(which(breaks <= base^rng[2])) +
-                        1, length(breaks))
+      1, length(breaks))
     breaks[lower_end:upper_end]
   } else {
     extended_breaks(n = n)(base^rng)
@@ -228,12 +225,13 @@ extended_breaks <- function(n = 5, ...) {
 #' @noRd
 cli_abort <- function(message, ..., call = .envir, .envir = parent.frame(),
                       .frame = .envir) {
-
   format_inline <- NULL
 
   message[] <- vcapply(message, format_inline, .envir = .envir)
-  rlang::abort(message, ..., call = call, use_cli_format = TRUE,
-               .frame = .frame)
+  rlang::abort(message, ...,
+    call = call, use_cli_format = TRUE,
+    .frame = .frame
+  )
 }
 
 # Copy of internal function vcapply from cli package
@@ -245,7 +243,6 @@ vcapply <- function(X, FUN, ..., USE.NAMES = TRUE) {
 # Copy of internal function exec from rlang package
 #' @noRd
 exec <- function(.fn, ..., .env = rlang::caller_env()) {
-
   ffi_exec <- NULL
 
   .External2(ffi_exec, .fn, .env)
@@ -267,13 +264,19 @@ plot_annotation_int <- function(title = NULL,
                                 tag_suffix = NULL,
                                 tag_sep = NULL,
                                 theme = NULL) {
-  th <- if (is.null(theme))
+  th <- if (is.null(theme)) {
     ggplot2::theme()
-  else theme
-  structure(list(title = title, subtitle = subtitle, caption = caption,
-                 tag_levels = tag_levels, tag_prefix = tag_prefix,
-                 tag_suffix = tag_suffix, tag_sep = tag_sep, theme = th),
-            class = "plot_annotation")
+  } else {
+    theme
+  }
+  structure(
+    list(
+      title = title, subtitle = subtitle, caption = caption,
+      tag_levels = tag_levels, tag_prefix = tag_prefix,
+      tag_suffix = tag_suffix, tag_sep = tag_sep, theme = th
+    ),
+    class = "plot_annotation"
+  )
 }
 
 
@@ -282,11 +285,14 @@ plot_annotation_int <- function(title = NULL,
 specaccum_int <- function(comm, method = "exact", permutations = 100,
                           conditioned = TRUE, gamma = "jack1", w = NULL,
                           subset, ...) {
-  METHODS <- c("collector", "random", "exact", "rarefaction",
-               "coleman")
+  METHODS <- c(
+    "collector", "random", "exact", "rarefaction",
+    "coleman"
+  )
   method <- match.arg(method, METHODS)
-  if (!is.null(w) && !(method %in% c("random", "collector")))
+  if (!is.null(w) && !(method %in% c("random", "collector"))) {
     stop("weights 'w' can be only used with methods 'random' and 'collector'")
+  }
   if (!missing(subset)) {
     comm <- subset(comm, subset)
     w <- subset(w, subset)
@@ -300,111 +306,136 @@ specaccum_int <- function(comm, method = "exact", permutations = 100,
     rowSums(apply(x[ind, , drop = FALSE], 2, cumsum) > 0)
   }
   specaccum <- sdaccum <- sites <- perm <- NULL
-  if (n == 1 && method != "rarefaction")
+  if (n == 1 && method != "rarefaction") {
     message("no actual accumulation since only one site provided")
-  switch(method, collector = {
-    sites <- seq_len(n)
-    xout <- weights <- cumsum(w)
-    specaccum <- accumulator(x, sites)
-    perm <- as.matrix(specaccum)
-    weights <- as.matrix(weights)
-  }, random = {
-    permat <- getPermuteMatrix(permutations, n)
-    perm <- apply(permat, 1, accumulator, x = x)
-    if (!is.null(w)) weights <- as.matrix(apply(permat,
-                                                1, function(i) cumsum(w[i])))
-    sites <- seq_len(n)
-    if (is.null(w)) {
-      specaccum <- apply(perm, 1, mean)
-      sdaccum <- apply(perm, 1, stats::sd)
-    } else {
-      sumw <- sum(w)
-      xout <- seq(sumw / n, sumw, length.out = n)
-      intx <- sapply(seq_len(NCOL(perm)),
-                     function(i) stats::approx(weights[, i],
-                                               perm[, i],
-                                               xout = xout)$y)
-      specaccum <- apply(intx, 1, mean)
-      sdaccum <- apply(intx, 1, stats::sd)
-    }
-  }, exact = {
-    freq <- colSums(x > 0)
-    freq <- freq[freq > 0]
-    f <- length(freq)
-    ldiv <- lchoose(n, 1:n)
-    result <- array(dim = c(n, f))
-    for (i in 1:n) {
-      result[i, ] <- ifelse(n - freq < i, 0, exp(lchoose(n -
-                                                           freq, i) - ldiv[i]))
-    }
-    sites <- 1:n
-    specaccum <- rowSums(1 - result)
-    if (conditioned) {
-      V <- result * (1 - result)
-      tmp1 <- stats::cor(x > 0)
-      ind <- lower.tri(tmp1)
-      tmp1 <- tmp1[ind]
-      tmp1[is.na(tmp1)] <- 0
-      cv <- numeric(n)
-      for (i in 1:n) {
-        tmp2 <- outer(sqrt(V[i, ]), sqrt(V[i, ]))[ind]
-        cv[i] <- 2 * sum(tmp1 * tmp2)
+  }
+  switch(method,
+    collector = {
+      sites <- seq_len(n)
+      xout <- weights <- cumsum(w)
+      specaccum <- accumulator(x, sites)
+      perm <- as.matrix(specaccum)
+      weights <- as.matrix(weights)
+    },
+    random = {
+      permat <- getPermuteMatrix(permutations, n)
+      perm <- apply(permat, 1, accumulator, x = x)
+      if (!is.null(w)) {
+        weights <- as.matrix(apply(
+          permat,
+          1, function(i) cumsum(w[i])
+        ))
       }
-      V <- rowSums(V)
-      sdaccum <- sqrt(V + cv)
-    } else {
-      Stot <- specpool(x)[, gamma]
-      sdaccum1 <- rowSums((1 - result)^2)
-      sdaccum2 <- specaccum^2 / Stot
-      sdaccum <- sqrt(sdaccum1 - sdaccum2)
+      sites <- seq_len(n)
+      if (is.null(w)) {
+        specaccum <- apply(perm, 1, mean)
+        sdaccum <- apply(perm, 1, stats::sd)
+      } else {
+        sumw <- sum(w)
+        xout <- seq(sumw / n, sumw, length.out = n)
+        intx <- sapply(
+          seq_len(NCOL(perm)),
+          function(i) {
+            stats::approx(weights[, i],
+              perm[, i],
+              xout = xout
+            )$y
+          }
+        )
+        specaccum <- apply(intx, 1, mean)
+        sdaccum <- apply(intx, 1, stats::sd)
+      }
+    },
+    exact = {
+      freq <- colSums(x > 0)
+      freq <- freq[freq > 0]
+      f <- length(freq)
+      ldiv <- lchoose(n, 1:n)
+      result <- array(dim = c(n, f))
+      for (i in 1:n) {
+        result[i, ] <- ifelse(n - freq < i, 0, exp(lchoose(n -
+          freq, i) - ldiv[i]))
+      }
+      sites <- 1:n
+      specaccum <- rowSums(1 - result)
+      if (conditioned) {
+        V <- result * (1 - result)
+        tmp1 <- stats::cor(x > 0)
+        ind <- lower.tri(tmp1)
+        tmp1 <- tmp1[ind]
+        tmp1[is.na(tmp1)] <- 0
+        cv <- numeric(n)
+        for (i in 1:n) {
+          tmp2 <- outer(sqrt(V[i, ]), sqrt(V[i, ]))[ind]
+          cv[i] <- 2 * sum(tmp1 * tmp2)
+        }
+        V <- rowSums(V)
+        sdaccum <- sqrt(V + cv)
+      } else {
+        Stot <- specpool(x)[, gamma]
+        sdaccum1 <- rowSums((1 - result)^2)
+        sdaccum2 <- specaccum^2 / Stot
+        sdaccum <- sqrt(sdaccum1 - sdaccum2)
+      }
+    },
+    rarefaction = {
+      minobs <- min(x[x > 0])
+      if (minobs > 1) {
+        warning(
+          gettextf(
+            paste(
+              "most observed count data have counts 1, but",
+              "smallest count is %d",
+              sep = " "
+            ),
+            minobs
+          )
+        )
+      }
+      freq <- colSums(x)
+      freq <- freq[freq > 0]
+      tot <- sum(freq)
+      ind <- round(seq(tot / n, tot, length = n))
+      result <- matrix(NA, nrow = 2, ncol = n)
+      for (i in 1:n) {
+        result[, i] <- suppressWarnings(rarefy_int(t(freq),
+          ind[i],
+          se = TRUE
+        ))
+      }
+      specaccum <- result[1, ]
+      sdaccum <- result[2, ]
+      sites <- ind / tot * n
+    },
+    coleman = {
+      freq <- colSums(x > 0)
+      result <- array(dim = c(n, p))
+      for (i in 1:n) {
+        result[i, ] <- (1 - i / n)^freq
+      }
+      result <- 1 - result
+      sites <- seq_len(n)
+      specaccum <- rowSums(result)
+      sdaccum <- sqrt(rowSums(result * (1 - result)))
     }
-  }, rarefaction = {
-    minobs <- min(x[x > 0])
-    if (minobs > 1) warning(
-      gettextf(
-        paste(
-          "most observed count data have counts 1, but",
-          "smallest count is %d",
-          sep = " "
-        ),
-        minobs
-      )
-    )
-    freq <- colSums(x)
-    freq <- freq[freq > 0]
-    tot <- sum(freq)
-    ind <- round(seq(tot / n, tot, length = n))
-    result <- matrix(NA, nrow = 2, ncol = n)
-    for (i in 1:n) {
-      result[, i] <- suppressWarnings(rarefy_int(t(freq),
-                                             ind[i], se = TRUE))
-    }
-    specaccum <- result[1, ]
-    sdaccum <- result[2, ]
-    sites <- ind / tot * n
-  }, coleman = {
-    freq <- colSums(x > 0)
-    result <- array(dim = c(n, p))
-    for (i in 1:n) {
-      result[i, ] <- (1 - i / n)^freq
-    }
-    result <- 1 - result
-    sites <- seq_len(n)
-    specaccum <- rowSums(result)
-    sdaccum <- sqrt(rowSums(result * (1 - result)))
-  })
-  out <- list(call = match.call(), method = method, sites = sites,
-              richness = specaccum, sd = sdaccum, perm = perm)
+  )
+  out <- list(
+    call = match.call(), method = method, sites = sites,
+    richness = specaccum, sd = sdaccum, perm = perm
+  )
   if (!is.null(w)) {
     out$weights <- weights
     out$effort <- xout
   }
-  if (method == "rarefaction")
+  if (method == "rarefaction") {
     out$individuals <- ind
-  if (method %in% c("exact", "rarefaction", "coleman"))
+  }
+  if (method %in% c("exact", "rarefaction", "coleman")) {
     out$freq <- freq
-  if (method == "random")
+  }
+  if (method == "random") {
     attr(out, "control") <- attr(permat, "control")
+  }
   class(out) <- "specaccum"
   out
 }
@@ -429,8 +460,10 @@ getPermuteMatrix <- function(perm, N, strata = NULL) {
   }
   if (is.null(attr(perm, "control"))) {
     attr(perm, "control") <-
-      structure(list(within = list(type = "supplied matrix"),
-                     nperm = nrow(perm)), class = "how")
+      structure(list(
+        within = list(type = "supplied matrix"),
+        nperm = nrow(perm)
+      ), class = "how")
   }
   perm
 }
@@ -439,33 +472,38 @@ getPermuteMatrix <- function(perm, N, strata = NULL) {
 #' @noRd
 rarefy_int <- function(x, sample, se = FALSE, MARGIN = 1) {
   x <- as.matrix(x)
-  if (ncol(x) == 1 && MARGIN == 1)
+  if (ncol(x) == 1 && MARGIN == 1) {
     x <- t(x)
-  if (!identical(all.equal(x, round(x)), TRUE))
+  }
+  if (!identical(all.equal(x, round(x)), TRUE)) {
     stop("function accepts only integers (counts)")
+  }
   minobs <- min(x[x > 0])
   if (minobs > 1) {
     warning(gettextf(
-        "most observed count data have counts 1, but smallest count is %d",
-                     minobs))
+      "most observed count data have counts 1, but smallest count is %d",
+      minobs
+    ))
   }
   minsample <- min(apply(x, MARGIN, sum))
   if (missing(sample)) {
     stop(gettextf(
       "the size of 'sample' must be given --\nHint: Smallest site maximum %d",
-                  minsample))
+      minsample
+    ))
   }
   if (any(sample > minsample)) {
     warning(gettextf(
       "requested 'sample' was larger than smallest site maximum (%d)",
-                     minsample))
+      minsample
+    ))
   }
   rarefun <- function(x, sample) {
     x <- x[x > 0]
     J <- sum(x)
     ldiv <- lchoose(J, sample)
     p1 <- ifelse(J - x < sample, 0, exp(lchoose(J - x, sample) -
-                                          ldiv))
+      ldiv))
     out <- sum(1 - p1)
     if (se) {
       V <- sum(p1 * (1 - p1))
@@ -474,25 +512,32 @@ rarefy_int <- function(x, sample, se = FALSE, MARGIN = 1) {
       Jxx <- Jxx[ind]
       V <- V + 2 * sum(ifelse(Jxx < sample, 0, exp(
         lchoose(Jxx, sample) - ldiv
-        )) - outer(p1, p1)[ind])
+      )) - outer(p1, p1)[ind])
       out <- cbind(out, sqrt(max(V, 0)))
     }
     out
   }
   if (length(sample) > 1) {
-    S.rare <- sapply(sample, function(n) apply(x, MARGIN,
-                                               rarefun, sample = n))
+    S.rare <- sapply(sample, function(n) {
+      apply(x, MARGIN,
+        rarefun,
+        sample = n
+      )
+    })
     S.rare <- matrix(S.rare, ncol = length(sample))
     colnames(S.rare) <- paste("N", sample, sep = "")
     if (se) {
       dn <- unlist(dimnames(x)[MARGIN])
-      rownames(S.rare) <- paste(rep(dn, each = 2), c("S",
-                                                     "se"), sep = ".")
+      rownames(S.rare) <- paste(rep(dn, each = 2), c(
+        "S",
+        "se"
+      ), sep = ".")
     }
   } else {
     S.rare <- apply(x, MARGIN, rarefun, sample = sample)
-    if (se)
+    if (se) {
       rownames(S.rare) <- c("S", "se")
+    }
   }
   attr(S.rare, "Subsample") <- sample
   S.rare
@@ -502,12 +547,15 @@ rarefy_int <- function(x, sample, se = FALSE, MARGIN = 1) {
 #' @noRd
 specpool <- function(x, pool, smallsample = TRUE) {
   x <- as.matrix(x)
-  if (!(is.numeric(x) || is.logical(x)))
+  if (!(is.numeric(x) || is.logical(x))) {
     stop("input data must be numeric")
-  if (missing(pool))
+  }
+  if (missing(pool)) {
     pool <- rep("All", nrow(x))
-  if (length(pool) != NROW(x))
+  }
+  if (length(pool) != NROW(x)) {
     stop("length of 'pool' and number rows in 'x' do not match")
+  }
   if (any(nas <- is.na(pool))) {
     pool <- pool[!nas]
     x <- x[!nas, , drop = FALSE]
@@ -523,45 +571,59 @@ specpool <- function(x, pool, smallsample = TRUE) {
     a1 <- a2 <- NA
     gr <- out[pool == is]
     n <- length(gr)
-    if (n <= 0)
+    if (n <= 0) {
       next
-    if (smallsample)
+    }
+    if (smallsample) {
       ssc <- (n - 1) / n
-    else ssc <- 1
+    } else {
+      ssc <- 1
+    }
     X <- x[gr, , drop = FALSE]
     freq <- colSums(X > 0)
     p <- freq[freq > 0] / n
     S[is] <- sum(freq > 0)
-    if (S[is] == 0)
+    if (S[is] == 0) {
       next
-    if (n >= 1L)
+    }
+    if (n >= 1L) {
       a1 <- sum(freq == 1)
-    if (n >= 2L)
+    }
+    if (n >= 2L) {
       a2 <- sum(freq == 2)
-    else a2 <- 0
-    chao[is] <- S[is] + if (!is.na(a2) && a2 > 0)
+    } else {
+      a2 <- 0
+    }
+    chao[is] <- S[is] + if (!is.na(a2) && a2 > 0) {
       ssc * a1 * a1 / 2 / a2
-    else ssc * a1 * (a1 - 1) / 2
+    } else {
+      ssc * a1 * (a1 - 1) / 2
+    }
     jack.1[is] <- S[is] + a1 * (n - 1) / n
-    if (n > 1L)
+    if (n > 1L) {
       jack.2[is] <- S[is] + a1 * (2 * n - 3) / n - a2 * (n -
-                                                         2)^2 / n / (n - 1)
-    else jack.2[is] <- S[is]
+        2)^2 / n / (n - 1)
+    } else {
+      jack.2[is] <- S[is]
+    }
     bootS[is] <- S[is] + sum((1 - p)^n)
-    aa <- if (!is.na(a2) && a2 > 0)
+    aa <- if (!is.na(a2) && a2 > 0) {
       a1 / a2
-    else 0
+    } else {
+      0
+    }
     if (!is.na(a2) && a2 > 0) {
       var.chao[is] <- a1 * ssc * (0.5 + ssc * (1 + aa / 4) *
-                                    aa) * aa
-    } else { var.chao[is] <- ssc * (ssc * (a1 * (2 * a1 - 1)^2 / 4 -
-                                             a1^4 / chao[is] / 4) + a1 * (a1 - 1) / 2)
+        aa) * aa
+    } else {
+      var.chao[is] <- ssc * (ssc * (a1 * (2 * a1 - 1)^2 / 4 -
+        a1^4 / chao[is] / 4) + a1 * (a1 - 1) / 2)
     }
     if (!is.na(a1) && a1 > 0) {
       jf <- table(rowSums(X[, freq == 1, drop = FALSE] >
-                            0))
+        0))
       var.jack1[is] <- (sum(as.numeric(names(jf))^2 * jf) -
-                          a1 / n) * (n - 1) / n
+        a1 / n) * (n - 1) / n
     } else {
       var.jack1[is] <- 0
     }
@@ -570,9 +632,11 @@ specpool <- function(x, pool, smallsample = TRUE) {
     Zp <- (crossprod(X == 0) / n)^n - outer(pn, pn, "*")
     var.boot[is] <- sum(pn * (1 - pn)) + 2 * sum(Zp[lower.tri(Zp)])
   }
-  out <- list(Species = S, chao = chao, chao.se = sqrt(var.chao),
-              jack1 = jack.1, jack1.se = sqrt(var.jack1), jack2 = jack.2,
-              boot = bootS, boot.se = sqrt(var.boot), n = as.vector(groups))
+  out <- list(
+    Species = S, chao = chao, chao.se = sqrt(var.chao),
+    jack1 = jack.1, jack1.se = sqrt(var.jack1), jack2 = jack.2,
+    boot = bootS, boot.se = sqrt(var.boot), n = as.vector(groups)
+  )
   out <- as.data.frame(out)
   attr(out, "pool") <- pool
   out
@@ -614,7 +678,7 @@ meters_to_decdeg <- function(occs_df,
   lat <- occs_df[[lat_col]]
   lon <- occs_df[[lon_col]]
   dist <- occs_df[[distance]]
-  #enact distance options for NA
+  # enact distance options for NA
   # treat NA as 0
   # treat NA as mean dist
   # treat NA as NA
@@ -622,20 +686,22 @@ meters_to_decdeg <- function(occs_df,
     dist <- ifelse(is.na(dist), yes = 0, no = dist)
   } else if (na_action == "NA as mean") {
     dist <- ifelse(is.na(dist), yes = mean(dist, na.rm = TRUE), no = dist)
-  } else if (na_action == "NA as NA" ) {
-    dist = dist
+  } else if (na_action == "NA as NA") {
+    dist <- dist
   } else {
     warning("Incorrect na_action chosen")
     return(0)
   }
 
-  #each degree the radius line of the Earth corresponds to 111139 meters.
+  # each degree the radius line of the Earth corresponds to 111139 meters.
   lat_uncertainty <- dist / 111325
-  #at the equator, longitude approx equals latitude
-  #decrease in a trigonometric cosine-based fashion as one moves toward the
+  # at the equator, longitude approx equals latitude
+  # decrease in a trigonometric cosine-based fashion as one moves toward the
   # earth's poles
-  lon_uncertainty <- dist / (111325  * cos(lat * (pi / 180)))
-  dist_dd <- data.frame(lon_uncertainty = lon_uncertainty,
-                        lat_uncertainty = lat_uncertainty)
+  lon_uncertainty <- dist / (111325 * cos(lat * (pi / 180)))
+  dist_dd <- data.frame(
+    lon_uncertainty = lon_uncertainty,
+    lat_uncertainty = lat_uncertainty
+  )
   return(dist_dd)
 }

@@ -29,10 +29,8 @@ Since b3gbi is only available on github, you will need the R package called devt
 ## Package Installation
 
 ```{r, eval=FALSE}
-
 install.packages("devtools") # unnecessary if you already have devtools
 devtools::install_github("b-cubed-eu/b3gbi")
-
 ```
 
 ## Core Functions
@@ -44,32 +42,32 @@ The old ones come with an additional .csv file containing taxonomic information 
 
 ```{r}
 # Function 1: process_cube()
-# Description: Imports a data cube from a .csv file and prepares it as a 
+# Description: Imports a data cube from a .csv file and prepares it as a
 # processed_cube object for indicator calculations and plotting.
-# Inputs: 
-#   * Argument 1: data cube in .csv format 
-#   * Argument 2 (only for older cubes): associated taxonomic info in .csv 
+# Inputs:
+#   * Argument 1: data cube in .csv format
+#   * Argument 2 (only for older cubes): associated taxonomic info in .csv
 #     format
 # Outputs:
-#   * processed_cube object containing the data cube as output_object$data 
+#   * processed_cube object containing the data cube as output_object$data
 #     along with various metadata.
-#     metadata include: range of years (as first_year and last_year), 
-#												coordinate range (as xmin, xmax, ymin, ymax), 
-#												number of grid cells (num_cells), 
-#												number of species (num_species), 
-#												total number of observations (num_obs), 
-#												vector of kingdoms (kingdoms), 
-#												number of families (num_families),
-#												resolutions (resolution)
-												
+#     metadata include: range of years (as first_year and last_year),
+# 												coordinate range (as xmin, xmax, ymin, ymax),
+# 												number of grid cells (num_cells),
+# 												number of species (num_species),
+# 												total number of observations (num_obs),
+# 												vector of kingdoms (kingdoms),
+# 												number of families (num_families),
+# 												resolutions (resolution)
+
 
 # Example:
 library(b3gbi)
-denmark_cube <- process_cube(system.file("extdata", 
-                                         "denmark_mammals_cube_eqdgc.csv", 
-                                         package = "b3gbi"))
+denmark_cube <- process_cube(system.file("extdata",
+  "denmark_mammals_cube_eqdgc.csv",
+  package = "b3gbi"
+))
 denmark_cube
-
 ```
 
 When you type the name of the cube object, the contents are displayed by a custom print function within the package. You can see the object structure using str().
@@ -95,41 +93,41 @@ Each indicator comes with its own wrapper functions, and these should be used ra
 
 ```{r}
 # Function 2: compute_indicator_workflow()
-# Description: Calculates a biodiversity indicator over time or space from a 
-# processed_cube object. Should be called by one of the wrapper functions 
-# listed below. 
-# Inputs: 
+# Description: Calculates a biodiversity indicator over time or space from a
+# processed_cube object. Should be called by one of the wrapper functions
+# listed below.
+# Inputs:
 #   * Argument 1: x, a processed_cube object
 #   * Argument 2: type, the type of indicator to calculate
-#   * Argument 3: dim_type, dimension to calculate the indicator across 
+#   * Argument 3: dim_type, dimension to calculate the indicator across
 #     (time, 'ts', or space, 'map').
-#   * Argument 4: ci_type, type of bootstrap confidence intervals to calculate 
+#   * Argument 4: ci_type, type of bootstrap confidence intervals to calculate
 #     (norm, basic, perc, bca, none). Uses 'norm' by default.
 #   * Argument 5: cell_size (optional), the length (in km) of grid cells to use
-#   * Argument 6: level (optional), the scale of region to calculate over 
+#   * Argument 6: level (optional), the scale of region to calculate over
 #     (country, continent, world). Uses the whole cube by default.
-#   * Argument 7: region (optional), the name of the region to calculate over 
+#   * Argument 7: region (optional), the name of the region to calculate over
 #     (e.g. Germany, Europe). Uses the whole cube by default.
-#   * Argument 8: output_crs (optional), the projection to use for your 
+#   * Argument 8: output_crs (optional), the projection to use for your
 #     calculated indicator if you don't want the default.
-#   * Argument 9: first_year (optional), use to limit the data used to 
+#   * Argument 9: first_year (optional), use to limit the data used to
 #     calculate the indicator to a narrower range than the cube
 #   * Argument 10: last_year (optional), see first_year
-#   * Argument 11: spherical_geometry (optional), if FALSE, temporarily turn 
+#   * Argument 11: spherical_geometry (optional), if FALSE, temporarily turn
 #     off spherical geometry when calculating indicator
-#   * Argument 12: make_valid (optional), call st_make_valid from the sf 
+#   * Argument 12: make_valid (optional), call st_make_valid from the sf
 #     package to fix geometry issues if you are getting errors
 # Outputs:
-#   * indicator_ts or indicator_map object containing a data frame of indicator 
+#   * indicator_ts or indicator_map object containing a data frame of indicator
 #     values mapped to years or grid cells, along with various metadata.
-#     metadata include: range of years (as first_year and last_year), 
-#												coordinate range (as xmin, xmax, ymin, ymax), 
-#												number of grid cells (num_cells), 
-#												number of species (num_species), 
-#												total number of observations (num_obs), 
-#												vector of kingdoms (kingdoms), 
-#												number of families (num_families),
-#												resolutions (resolution)
+#     metadata include: range of years (as first_year and last_year),
+# 												coordinate range (as xmin, xmax, ymin, ymax),
+# 												number of grid cells (num_cells),
+# 												number of species (num_species),
+# 												total number of observations (num_obs),
+# 												vector of kingdoms (kingdoms),
+# 												number of families (num_families),
+# 												resolutions (resolution)
 #
 # Wrapper functions:
 #   * obs_richness_map(): Calculate a gridded map of observed richness
@@ -152,17 +150,17 @@ Each indicator comes with its own wrapper functions, and these should be used ra
 #   * tax_distinct_map(): Calculate taxonomic distinctness over a gridded map
 #   * tax_distinct_ts(): Calculate  taxonomic distinctness over time
 #   * occ_turnover_ts(): Calculate occupancy turnover over time
-# 
+#
 
-					
+
 # Example:
 library(b3gbi)
-Denmark_observed_richness_map <- obs_richness_map(example_cube_1, 
-                                                  first_year = 1980, 
-                                                  level = "country", 
-                                                  region = "Denmark") 
+Denmark_observed_richness_map <- obs_richness_map(example_cube_1,
+  first_year = 1980,
+  level = "country",
+  region = "Denmark"
+)
 Denmark_observed_richness_map
-
 ```
 
 When you type the name of the indicator object, you will again see that it is plotted by an internal function of the package.
@@ -183,95 +181,96 @@ The plot functions offer quite a few arguments to customize the output, but the 
 
 ```{r}
 # Function 3: plot_ts()
-# Description: Plots an indicator_ts object as a time series using ggplot. 
+# Description: Plots an indicator_ts object as a time series using ggplot.
 #  Called by plot().
-# Inputs: 
-#   * Argument 1: x, an indicator_ts object 
+# Inputs:
+#   * Argument 1: x, an indicator_ts object
 #   * Argument 2: title (optional), specify a title for the plot
-#   * Argument 3: auto_title (optional), specified by the calling function if 
+#   * Argument 3: auto_title (optional), specified by the calling function if
 #     title is set to "auto"
-#   * Argument 4: y_label_default (optional), specified by the calling function 
+#   * Argument 4: y_label_default (optional), specified by the calling function
 #     if no y_label is provided
-#   * Argument 5: suppress_y (optional), default is "FALSE". Set to "TRUE" to 
+#   * Argument 5: suppress_y (optional), default is "FALSE". Set to "TRUE" to
 #     turn off y axis text
-#   * Argument 6: smoothed_trend (optional), default is "TRUE". Set to "FALSE" 
-#     to avoid displaying only the time series, without a smoothed trend 
-#   * Argument 7: linecolour (optional), sets the colour of the unsmoothed time 
+#   * Argument 6: smoothed_trend (optional), default is "TRUE". Set to "FALSE"
+#     to avoid displaying only the time series, without a smoothed trend
+#   * Argument 7: linecolour (optional), sets the colour of the unsmoothed time
 #     series line
-#   * Argument 8: trendlinecolour (optional), sets the colour of the smoothed 
-#     trend line 
-#   * Argument 9: envelopecolour (optional), sets the colour of smoothed trend 
+#   * Argument 8: trendlinecolour (optional), sets the colour of the smoothed
+#     trend line
+#   * Argument 9: envelopecolour (optional), sets the colour of smoothed trend
 #     envelope
-#   * Argument 10: gridoff (optional), default is "FALSE". Set to "TRUE" to 
-#     turn off grid lines on the plot  
+#   * Argument 10: gridoff (optional), default is "FALSE". Set to "TRUE" to
+#     turn off grid lines on the plot
 #   * Argument 11: x_label (optional), use to set a custom label for the x-axis
 #   * Argument 12: y_label (optional), use to set a custom label for the y-axis
 #   * Argument 13: min_year (optional), set the first year that will be plotted
 #   * Argument 14: max_year (optional), set the final year that will be plotted
-#   * Argument 15: x_breaks (optional), set the number of breaks along the 
+#   * Argument 15: x_breaks (optional), set the number of breaks along the
 #     x-axis
-#   * Argument 16: y_breaks (optional), set the number of breaks along the 
+#   * Argument 16: y_breaks (optional), set the number of breaks along the
 #     y-axis
-#   * Argument 17: wrap_length (optional), set maximum length of text allowed 
+#   * Argument 17: wrap_length (optional), set maximum length of text allowed
 #     on a single line for the plot title
 # Outputs:
-#   * Time series plot with optional smoothed trend overlay. The plot can be 
+#   * Time series plot with optional smoothed trend overlay. The plot can be
 #     further customized (beyond the provided arguments) using ggplot functions.
 #   * Plots can be saved using ggsave.
 
 # Example:
 library(b3gbi)
-Denmark_observed_richness_ts <- obs_richness_ts(example_cube_1, 
-                                                first_year = 1980, 
-                                                level = "country", 
-                                                region = "Denmark", 
-                                                ci_type = "none") 
+Denmark_observed_richness_ts <- obs_richness_ts(example_cube_1,
+  first_year = 1980,
+  level = "country",
+  region = "Denmark",
+  ci_type = "none"
+)
 plot(Denmark_observed_richness_ts)
-
 ```
 
 
 ```{r}
 # Function 4: plot_map()
-# Description: Plots an indicator_map object as a gridded map using ggplot. 
+# Description: Plots an indicator_map object as a gridded map using ggplot.
 #  Called by plot().
-# Inputs: 
-#   * Argument 1: x, an indicator_map object 
+# Inputs:
+#   * Argument 1: x, an indicator_map object
 #   * Argument 2: title (optional), specify a title for the plot
-#   * Argument 3: auto_title (optional), specified by the calling function if 
+#   * Argument 3: auto_title (optional), specified by the calling function if
 #     title is set to "auto"
-#   * Argument 4: leg_label_default (optional), legend title specified by the 
+#   * Argument 4: leg_label_default (optional), legend title specified by the
 #     calling function if no leg_label is provided
 #   * Argument 5: xlims (optional), use to set custom map limits
-#   * Argument 6: ylims (optional), use to set custom map limits 
-#   * Argument 7: trans (optional), set transformation to apply to the legend, 
+#   * Argument 6: ylims (optional), use to set custom map limits
+#   * Argument 7: trans (optional), set transformation to apply to the legend,
 #     e.g. "log10"
 #   * Argument 8: breaks (optional), set custom breaks for the legend
 #   * Argument 9: labels (optional), set custom labels for the legend
-#   * Argument 10: Europe_crop (optional), default is "TRUE". Crops outlying 
-#     islands when plotting a continental map of Europe. You can set this to 
-#     "FALSE" to show the islands, but the output will be less pretty.  
-#   * Argument 11: surround (optional), default is "TRUE". Shows surrounding 
-#     countries when plotting a single country. Set to "FALSE" to show only the 
+#   * Argument 10: Europe_crop (optional), default is "TRUE". Crops outlying
+#     islands when plotting a continental map of Europe. You can set this to
+#     "FALSE" to show the islands, but the output will be less pretty.
+#   * Argument 11: surround (optional), default is "TRUE". Shows surrounding
+#     countries when plotting a single country. Set to "FALSE" to show only the
 #     country of interest, but output will be less pretty.
-#   * Argument 12: panel_gb (optional), set panel background colour. Default 
+#   * Argument 12: panel_gb (optional), set panel background colour. Default
 #     is "white".
 #   * Argument 13: legend_title (optional), set a custom legend title
 #   * Argument 14: legend_limits (optional), set custom limits for the legend
-#   * Argument 15: legend_title_wrap_length (optional), set maximum length of 
+#   * Argument 15: legend_title_wrap_length (optional), set maximum length of
 #     text allowed on a single line for the legend title
-#   * Argument 16: title_wrap_length (optional), set maximum length of text 
+#   * Argument 16: title_wrap_length (optional), set maximum length of text
 #     allowed on a single line for the plot title
 # Outputs:
-#   * Time series plot with optional smoothed trend overlay. The plot can be 
+#   * Time series plot with optional smoothed trend overlay. The plot can be
 #     further customized (beyond the provided arguments) using ggplot functions.
 #   * Plots can be saved using ggsave.
 
 # Example:
 library(b3gbi)
-Denmark_observed_richness_map <- obs_richness_map(example_cube_1, 
-                                                  level = "country", 
-                                                  region = "Denmark") 
+Denmark_observed_richness_map <- obs_richness_map(example_cube_1,
+  level = "country",
+  region = "Denmark"
+)
 plot(Denmark_observed_richness_map)
 ```
 

@@ -4,7 +4,6 @@ multiyear_boot_statistic <- function(data_current,
                                      data_previous,
                                      indices_current,
                                      indices_previous) {
-
   tax_current <- data_current # [indices_current]
   tax_previous <- data_previous # [indices_previous]
 
@@ -31,5 +30,4 @@ multiyear_boot_statistic <- function(data_current,
     length(tax_present)
 
   return(occ_turnover)
-
 }

@@ -20,57 +20,77 @@
 #' @noRd
 new_processed_cube <- function(x, grid_type) {
   # check that x is a tibble and all necessary columns are present
-  stopifnot(tibble::is_tibble(x),
-            all(c("year",
-                  "cellCode",
-                  "taxonKey",
-                  "obs",
-                  "scientificName",
-                  "xcoord",
-                  "ycoord",
-                  "resolution") %in% names(x)))
+  stopifnot(
+    tibble::is_tibble(x),
+    all(c(
+      "year",
+      "cellCode",
+      "taxonKey",
+      "obs",
+      "scientificName",
+      "xcoord",
+      "ycoord",
+      "resolution"
+    ) %in% names(x))
+  )
   if (all(c("datasetKey", "basisOfRecord") %in% names(x))) {
-    structure(list(first_year = min(x$year),
-                   last_year = max(x$year),
-                   coord_range = list("xmin" = min(x$xcoord),
-                                      "xmax" = max(x$xcoord),
-                                      "ymin" = min(x$ycoord),
-                                      "ymax" = max(x$ycoord)),
-                   num_cells = length(unique(x$cellCode)),
-                   num_species = length(unique(x$taxonKey)),
-                   num_obs = sum(x$obs),
-                   kingdoms = ifelse("kingdom" %in% colnames(x),
-                                     c(unique(x$kingdom)),
-                                     "Data not present"),
-                   num_families = ifelse("family" %in% colnames(x),
-                                         length(unique(x$family)),
-                                         "Data not present"),
-                   grid_type = grid_type,
-                   resolutions = unique(x$resolution),
-                   num_datasets = length(unique(x$datasetKey)),
-                   record_types = unique(x$basisOfRecord),
-                   data = x),
-              class = "processed_cube_dsinfo")
+    structure(
+      list(
+        first_year = min(x$year),
+        last_year = max(x$year),
+        coord_range = list(
+          "xmin" = min(x$xcoord),
+          "xmax" = max(x$xcoord),
+          "ymin" = min(x$ycoord),
+          "ymax" = max(x$ycoord)
+        ),
+        num_cells = length(unique(x$cellCode)),
+        num_species = length(unique(x$taxonKey)),
+        num_obs = sum(x$obs),
+        kingdoms = ifelse("kingdom" %in% colnames(x),
+          c(unique(x$kingdom)),
+          "Data not present"
+        ),
+        num_families = ifelse("family" %in% colnames(x),
+          length(unique(x$family)),
+          "Data not present"
+        ),
+        grid_type = grid_type,
+        resolutions = unique(x$resolution),
+        num_datasets = length(unique(x$datasetKey)),
+        record_types = unique(x$basisOfRecord),
+        data = x
+      ),
+      class = "processed_cube_dsinfo"
+    )
   } else {
-    structure(list(first_year = min(x$year),
-                   last_year = max(x$year),
-                   coord_range = list("xmin" = min(x$xcoord),
-                                      "xmax" = max(x$xcoord),
-                                      "ymin" = min(x$ycoord),
-                                      "ymax" = max(x$ycoord)),
-                   num_cells = length(unique(x$cellCode)),
-                   num_species = length(unique(x$taxonKey)),
-                   num_obs = sum(x$obs),
-                   kingdoms = ifelse("kingdom" %in% colnames(x),
-                                     c(unique(x$kingdom)),
-                                     "Data not present"),
-                   num_families = ifelse("family" %in% colnames(x),
-                                         length(unique(x$family)),
-                                         "Data not present"),
-                   grid_type = grid_type,
-                   resolutions = unique(x$resolution),
-                   data = x),
-              class = "processed_cube")
+    structure(
+      list(
+        first_year = min(x$year),
+        last_year = max(x$year),
+        coord_range = list(
+          "xmin" = min(x$xcoord),
+          "xmax" = max(x$xcoord),
+          "ymin" = min(x$ycoord),
+          "ymax" = max(x$ycoord)
+        ),
+        num_cells = length(unique(x$cellCode)),
+        num_species = length(unique(x$taxonKey)),
+        num_obs = sum(x$obs),
+        kingdoms = ifelse("kingdom" %in% colnames(x),
+          c(unique(x$kingdom)),
+          "Data not present"
+        ),
+        num_families = ifelse("family" %in% colnames(x),
+          length(unique(x$family)),
+          "Data not present"
+        ),
+        grid_type = grid_type,
+        resolutions = unique(x$resolution),
+        data = x
+      ),
+      class = "processed_cube"
+    )
   }
 }
 
@@ -92,36 +112,50 @@ new_processed_cube <- function(x, grid_type) {
 #' @noRd
 new_sim_cube <- function(x, grid_type) {
   # check that x is a tibble and all necessary columns are present
-  stopifnot(tibble::is_tibble(x),
-            all(c("year",
-                  "taxonKey",
-                  "obs") %in% names(x)))
-  structure(list(first_year = min(x$year),
-                 last_year = max(x$year),
-                 coord_range = ifelse(("xcoord" %in% colnames(x) &
-                                         "ycoord" %in% colnames(x)),
-                                      list(c("xmin" = min(x$xcoord),
-                                           "xmax" = max(x$xcoord),
-                                           "ymin" = min(x$ycoord),
-                                           "ymax" = max(x$ycoord))),
-                                      "Coordinates not provided"),
-                 num_cells = ifelse("cellCode" %in% colnames(x),
-                                    length(unique(x$cellCode)),
-                                    "No cell codes provided"),
-                 num_species = length(unique(x$taxonKey)),
-                 num_obs = sum(x$obs),
-                 kingdoms = ifelse("kingdom" %in% colnames(x),
-                                   c(unique(x$kingdom)),
-                                   "Data not present"),
-                 num_families = ifelse("family" %in% colnames(x),
-                                       length(unique(x$family)),
-                                       "Data not present"),
-                 grid_type = grid_type,
-                 if ("resolution" %in% colnames(x)) {
-                   resolutions = unique(x$resolution)
-                 },
-                 data = x),
-            class = "sim_cube")
+  stopifnot(
+    tibble::is_tibble(x),
+    all(c(
+      "year",
+      "taxonKey",
+      "obs"
+    ) %in% names(x))
+  )
+  structure(
+    list(
+      first_year = min(x$year),
+      last_year = max(x$year),
+      coord_range = ifelse(("xcoord" %in% colnames(x) &
+        "ycoord" %in% colnames(x)),
+      list(c(
+        "xmin" = min(x$xcoord),
+        "xmax" = max(x$xcoord),
+        "ymin" = min(x$ycoord),
+        "ymax" = max(x$ycoord)
+      )),
+      "Coordinates not provided"
+      ),
+      num_cells = ifelse("cellCode" %in% colnames(x),
+        length(unique(x$cellCode)),
+        "No cell codes provided"
+      ),
+      num_species = length(unique(x$taxonKey)),
+      num_obs = sum(x$obs),
+      kingdoms = ifelse("kingdom" %in% colnames(x),
+        c(unique(x$kingdom)),
+        "Data not present"
+      ),
+      num_families = ifelse("family" %in% colnames(x),
+        length(unique(x$family)),
+        "Data not present"
+      ),
+      grid_type = grid_type,
+      if ("resolution" %in% colnames(x)) {
+        resolutions <- unique(x$resolution)
+      },
+      data = x
+    ),
+    class = "sim_cube"
+  )
 }
 
 
@@ -169,29 +203,36 @@ new_indicator_ts <- function(x,
                              num_years,
                              species_names,
                              coord_range) {
-
   # check that x is a tibble and all necessary columns are present
-  stopifnot(tibble::is_tibble(x),
-            all(c("year",
-                  "diversity_val") %in% names(x)))
+  stopifnot(
+    tibble::is_tibble(x),
+    all(c(
+      "year",
+      "diversity_val"
+    ) %in% names(x))
+  )
   id <- div_type
   class(x) <- c("indicator_data", class(x))
-  structure(list(div_name = get_indicator_name(id),
-                 div_type = div_type,
-                 first_year = min(x$year),
-                 last_year = max(x$year),
-                 num_years = num_years,
-                 num_species = num_species,
-                 map_level = map_level,
-                 map_region = map_region,
-                 kingdoms = kingdoms,
-                 num_families = num_families,
-                 coord_range = coord_range,
-                 species_names = species_names,
-                 data = x),
-            class = c("indicator_ts", div_type),
-            indicator_id = id,
-            type = "ts")
+  structure(
+    list(
+      div_name = get_indicator_name(id),
+      div_type = div_type,
+      first_year = min(x$year),
+      last_year = max(x$year),
+      num_years = num_years,
+      num_species = num_species,
+      map_level = map_level,
+      map_region = map_region,
+      kingdoms = kingdoms,
+      num_families = num_families,
+      coord_range = coord_range,
+      species_names = species_names,
+      data = x
+    ),
+    class = c("indicator_ts", div_type),
+    indicator_id = id,
+    type = "ts"
+  )
 }
 
 
@@ -244,31 +285,39 @@ new_indicator_map <- function(x,
                               years_with_obs) {
   # check that x is both a data frame and sf object
   # and all necessary columns are present
-  stopifnot(inherits(x, c("sf", "data.frame")),
-            all(c("cellid",
-                  "geometry") %in% names(x)))
+  stopifnot(
+    inherits(x, c("sf", "data.frame")),
+    all(c(
+      "cellid",
+      "geometry"
+    ) %in% names(x))
+  )
   coord_range <- sf::st_bbox(x)
   cell_size <- paste(cell_size, "km^2")
   id <- div_type
   class(x) <- c("indicator_data", class(x))
-  structure(list(div_name = get_indicator_name(id),
-                 div_type = div_type,
-                 num_cells = length(x$cellid),
-                 cell_size = cell_size,
-                 map_level = map_level,
-                 map_region = map_region,
-                 projection = sf::st_crs(x$geometry)$input,
-                 coord_range = coord_range,
-                 first_year = first_year,
-                 last_year = last_year,
-                 num_years = num_years,
-                 num_species = num_species,
-                 kingdoms = kingdoms,
-                 num_families = num_families,
-                 species_names = species_names,
-                 years_with_obs = years_with_obs,
-                 data = x),
-            class = c("indicator_map", div_type),
-            indicator_id = id,
-            type = "map")
+  structure(
+    list(
+      div_name = get_indicator_name(id),
+      div_type = div_type,
+      num_cells = length(x$cellid),
+      cell_size = cell_size,
+      map_level = map_level,
+      map_region = map_region,
+      projection = sf::st_crs(x$geometry)$input,
+      coord_range = coord_range,
+      first_year = first_year,
+      last_year = last_year,
+      num_years = num_years,
+      num_species = num_species,
+      kingdoms = kingdoms,
+      num_families = num_families,
+      species_names = species_names,
+      years_with_obs = years_with_obs,
+      data = x
+    ),
+    class = c("indicator_map", div_type),
+    indicator_id = id,
+    type = "map"
+  )
 }

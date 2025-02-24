@@ -11,7 +11,6 @@
 #'
 #' @noRd
 get_indicator_name <- function(x) {
-
   available_indicators <- NULL
   rm(available_indicators)
 
@@ -22,7 +21,6 @@ get_indicator_name <- function(x) {
   } else {
     iname
   }
-
 }
 
 #' Retrieve Legend Title for Biodiversity Indicator
@@ -38,7 +36,6 @@ get_indicator_name <- function(x) {
 #'
 #' @noRd
 get_legend_title <- function(x) {
-
   available_indicators <- NULL
   rm(available_indicators)
 
@@ -47,11 +44,10 @@ get_legend_title <- function(x) {
   if (!length(ltitle) > 0) {
     stop(
       "Indicator class is not registered. Check that you typed it correctly."
-      )
+    )
   } else {
     ltitle
   }
-
 }
 
 #' Extract Years With Observations from an Indicator Map
@@ -67,12 +63,13 @@ get_legend_title <- function(x) {
 #'      for each year (`TRUE` if present, `FALSE` if absent).
 #'
 #' @examples
-#' total_occ_mammals_denmark <- total_occ_map(example_cube_1, level = "country",
-#'  region = "Denmark")
+#' total_occ_mammals_denmark <- total_occ_map(example_cube_1,
+#'   level = "country",
+#'   region = "Denmark"
+#' )
 #' get_observed_years(total_occ_mammals_denmark)
 #' @export
 get_observed_years <- function(x) {
-
   if (inherits(x, "indicator_map")) {
     obs <- x$years_with_obs
     years <- min(x$years_with_obs):max(x$years_with_obs)
@@ -82,9 +79,10 @@ get_observed_years <- function(x) {
   }
 
   observed <- ifelse(years %in% obs, TRUE, FALSE)
-  data.frame("years" = years,
-             "occurrences" = observed)
-
+  data.frame(
+    "years" = years,
+    "occurrences" = observed
+  )
 }
 
 
@@ -105,21 +103,16 @@ get_observed_years <- function(x) {
 #' list_species(example_cube_1)
 #' @export
 list_species <- function(object) {
-
   taxonKey <- scientificName <- NULL
 
   if (length(object$species_names) > 0) {
-
     return(object$species_names)
-
   } else {
-
     species_df <-
       object$data %>%
       dplyr::select(taxonKey, scientificName) %>%
       dplyr::distinct(taxonKey, scientificName)
 
     return(species_df)
-
   }
 }

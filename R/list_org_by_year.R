@@ -2,7 +2,6 @@
 # col should be a column name in quotes, e.g. "obs"
 #' @noRd
 list_org_by_year <- function(df, col) {
-
   # create empty list
   a <- list()
   # set counter j to 1

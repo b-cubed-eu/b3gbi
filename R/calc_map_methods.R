@@ -1,54 +1,59 @@
 #' @export
 calc_map.default <- function(x, ...) {
-
   warning(paste(
     "calc_map does not know how to handle object of class ",
     class(x),
     ". Please ensure you are not calling calc_map directly on an object."
-    ))
-
+  ))
 }
 
 #' @noRd
 calc_map.hill0 <- function(x, ...) {
+  err_msgs(
+    obj = x,
+    err_code = "cls_int",
+    obj_class1 = "hill0"
+  )
 
-  err_msgs(obj = x,
-           err_code = "cls_int",
-           obj_class1 = "hill0")
-
-  indicator <- calc_map.hill_core(x = x,
-                                  type = "hill0",
-                                  ...)
+  indicator <- calc_map.hill_core(
+    x = x,
+    type = "hill0",
+    ...
+  )
 
   return(indicator)
-
 }
 
 #' @noRd
 calc_map.hill1 <- function(x, ...) {
+  err_msgs(
+    obj = x,
+    err_code = "cls_int",
+    obj_class1 = "hill1"
+  )
 
-  err_msgs(obj = x,
-           err_code = "cls_int",
-           obj_class1 = "hill1")
-
-  indicator <- calc_map.hill_core(x = x,
-                                  type = "hill1",
-                                  ...)
+  indicator <- calc_map.hill_core(
+    x = x,
+    type = "hill1",
+    ...
+  )
 
   return(indicator)
-
 }
 
 #' @noRd
 calc_map.hill2 <- function(x, ...) {
+  err_msgs(
+    obj = x,
+    err_code = "cls_int",
+    obj_class1 = "hill2"
+  )
 
-  err_msgs(obj = x,
-           err_code = "cls_int",
-           obj_class1 = "hill2")
-
-  indicator <- calc_map.hill_core(x = x,
-                                  type = "hill2",
-                                  ...)
+  indicator <- calc_map.hill_core(
+    x = x,
+    type = "hill2",
+    ...
+  )
 
   return(indicator)
 }
@@ -59,11 +64,12 @@ calc_map.hill2 <- function(x, ...) {
 calc_map.hill_core <- function(x,
                                type = c("hill0", "hill1", "hill2"),
                                ...) {
-
-  err_msgs(obj = x,
-           err_code = "cls_str_int",
-           obj_class1 = c("data.frame", "sf"),
-           obj_class2 = c("hill0", "hill1", "hill2"))
+  err_msgs(
+    obj = x,
+    err_code = "cls_str_int",
+    obj_class1 = c("data.frame", "sf"),
+    obj_class2 = c("hill0", "hill1", "hill2")
+  )
 
   obs <- cellid <- . <- taxonKey <- scientificName <- kingdom <- NULL
   geometry <- resolution <- xcoord <- ycoord <- year <- area_km2 <- NULL
@@ -79,35 +85,44 @@ calc_map.hill_core <- function(x,
     x %>%
     dplyr::group_split(cellid) %>%
     purrr::map(. %>%
-                 dplyr::group_by(taxonKey) %>%
-                 tidyr::pivot_wider(names_from = taxonKey,
-                                    values_from = obs) %>%
-                 dplyr::ungroup() %>%
-                 dplyr::select(-scientificName,
-                               -kingdom,
-                               #   -rank,
-                               -geometry,
-                               -resolution,
-                               -xcoord,
-                               -ycoord,
-                               -year,
-                               -area_km2) %>%
-                 dplyr::select(-dplyr::any_of(c("basisOfRecord",
-                                                "datasetKey"))) %>%
-                 replace(is.na(.), 0) %>%
-                 dplyr::mutate_if(is.numeric,
-                                  as.integer) %>%
-                 dplyr::select(-cellid) %>%
-                 tibble::rownames_to_column() %>%
-                 tidyr::gather(variable,
-                               value,
-                               -rowname) %>%
-                 tidyr::spread(rowname, value) %>%
-                 'row.names<-'(., NULL) %>%
-                 tibble::column_to_rownames(var = "variable") %>%
-                 as.matrix() %>%
-                 replace(. > 1, as.integer(1))
-    )
+      dplyr::group_by(taxonKey) %>%
+      tidyr::pivot_wider(
+        names_from = taxonKey,
+        values_from = obs
+      ) %>%
+      dplyr::ungroup() %>%
+      dplyr::select(
+        -scientificName,
+        -kingdom,
+        #   -rank,
+        -geometry,
+        -resolution,
+        -xcoord,
+        -ycoord,
+        -year,
+        -area_km2
+      ) %>%
+      dplyr::select(-dplyr::any_of(c(
+        "basisOfRecord",
+        "datasetKey"
+      ))) %>%
+      replace(is.na(.), 0) %>%
+      dplyr::mutate_if(
+        is.numeric,
+        as.integer
+      ) %>%
+      dplyr::select(-cellid) %>%
+      tibble::rownames_to_column() %>%
+      tidyr::gather(
+        variable,
+        value,
+        -rowname
+      ) %>%
+      tidyr::spread(rowname, value) %>%
+      "row.names<-"(., NULL) %>%
+      tibble::column_to_rownames(var = "variable") %>%
+      as.matrix() %>%
+      replace(. > 1, as.integer(1)))
 
   # name list elements
   names(spec_rec_raw_cell) <- unique(x$cellid)
@@ -143,70 +158,76 @@ calc_map.hill_core <- function(x,
     x[x != 0] <- 1
 
     return(x)
-
   })
 
   # Compute hill diversity
   coverage_rare_cell <- spec_rec_raw_cell2 %>%
-    iNEXT::estimateD(datatype = "incidence_raw",
-                     base = "coverage",
-                     level = coverage,
-                     q = qval)
+    iNEXT::estimateD(
+      datatype = "incidence_raw",
+      base = "coverage",
+      level = coverage,
+      q = qval
+    )
 
   # Extract estimated relative diversity
   indicator <-
     coverage_rare_cell %>%
-    #coverage_rare_cell$iNextEst$coverage_based %>%
-    #dplyr::filter(abs(SC-coverage) == min(abs(SC-coverage)),
+    # coverage_rare_cell$iNextEst$coverage_based %>%
+    # dplyr::filter(abs(SC-coverage) == min(abs(SC-coverage)),
     #              .by = Assemblage) %>%
     dplyr::select(Assemblage, qD, t) %>%
-    dplyr::rename(cellid = Assemblage,
-                  diversity_val = qD,
-                  samp_size_est = t) %>%
+    dplyr::rename(
+      cellid = Assemblage,
+      diversity_val = qD,
+      samp_size_est = t
+    ) %>%
     dplyr::mutate(cellid = as.integer(cellid), .keep = "unused")
 
   return(indicator)
-
 }
 
 #' @export
 #' @rdname calc_map
 calc_map.obs_richness <- function(x, ...) {
-
-  err_msgs(obj = x,
-           err_code = "cls_int",
-           obj_class1 = "obs_richness")
+  err_msgs(
+    obj = x,
+    err_code = "cls_int",
+    obj_class1 = "obs_richness"
+  )
 
   taxonKey <- NULL
 
   # Calculate observed species richness over the grid
   indicator <-
     x %>%
-    dplyr::summarize(diversity_val = sum(dplyr::n_distinct(taxonKey)),
-                     .by = "cellid")
+    dplyr::summarize(
+      diversity_val = sum(dplyr::n_distinct(taxonKey)),
+      .by = "cellid"
+    )
 
   return(indicator)
-
 }
 
 #' @export
 #' @rdname calc_map
 calc_map.total_occ <- function(x, ...) {
-
-  err_msgs(obj = x,
-           err_code = "cls_int",
-           obj_class1 = "total_occ")
+  err_msgs(
+    obj = x,
+    err_code = "cls_int",
+    obj_class1 = "total_occ"
+  )
 
   obs <- NULL
 
   # Calculate total number of occurrences over the grid
   indicator <-
     x %>%
-    dplyr::summarize(diversity_val = sum(obs),
-                     .by = "cellid")
+    dplyr::summarize(
+      diversity_val = sum(obs),
+      .by = "cellid"
+    )
 
   return(indicator)
-
 }
 
 #' @param newness_min_year If set, only shows values above this (e.g. 1970).
@@ -219,134 +240,152 @@ calc_map.total_occ <- function(x, ...) {
 calc_map.newness <- function(x,
                              newness_min_year = NULL,
                              ...) {
-
-  err_msgs(obj = x,
-           err_code = "cls_int",
-           obj_class1 = "newness")
+  err_msgs(
+    obj = x,
+    err_code = "cls_int",
+    obj_class1 = "newness"
+  )
 
   year <- NULL
 
   # Calculate mean year of occurrence over the grid
   indicator <-
     x %>%
-    dplyr::summarize(diversity_val = round(mean(year)),
-                     .by = "cellid")
+    dplyr::summarize(
+      diversity_val = round(mean(year)),
+      .by = "cellid"
+    )
 
   if (!is.null(newness_min_year)) {
     indicator$diversity_val <-
       ifelse(indicator$diversity_val > newness_min_year,
-             indicator$diversity_val,
-             NA)
+        indicator$diversity_val,
+        NA
+      )
   }
 
   return(indicator)
-
 }
 
 #' @export
 #' @rdname calc_map
 calc_map.occ_density <- function(x, ...) {
-
-  err_msgs(obj = x,
-           err_code = "cls_int",
-           obj_class1 = "occ_density")
+  err_msgs(
+    obj = x,
+    err_code = "cls_int",
+    obj_class1 = "occ_density"
+  )
 
   diversity_val <- obs <- area_km2 <- cellid <- NULL
 
   # Calculate density of occurrences over the grid (per square km)
   indicator <-
     x %>%
-    dplyr::reframe(diversity_val = sum(obs) / area_km2,
-                   .by = "cellid") %>%
+    dplyr::reframe(
+      diversity_val = sum(obs) / area_km2,
+      .by = "cellid"
+    ) %>%
     dplyr::distinct(cellid, diversity_val) %>%
     dplyr::mutate(diversity_val = as.numeric(diversity_val))
 
   return(indicator)
-
 }
 
 #' @export
 #' @rdname calc_map
 calc_map.williams_evenness <- function(x, ...) {
-
-  err_msgs(obj = x,
-           err_code = "cls_int",
-           obj_class1 = "williams_evenness")
+  err_msgs(
+    obj = x,
+    err_code = "cls_int",
+    obj_class1 = "williams_evenness"
+  )
 
   # Call function to calculate evenness over a grid
-  indicator <- calc_map.evenness_core(x = x,
-                                      type = "williams_evenness",
-                                      ...)
+  indicator <- calc_map.evenness_core(
+    x = x,
+    type = "williams_evenness",
+    ...
+  )
 
   return(indicator)
-
 }
 
 #' @export
 #' @rdname calc_map
 calc_map.pielou_evenness <- function(x, ...) {
-
-  err_msgs(obj = x,
-           err_code = "cls_int",
-           obj_class1 = "pielou_evenness")
+  err_msgs(
+    obj = x,
+    err_code = "cls_int",
+    obj_class1 = "pielou_evenness"
+  )
 
   # Call function to calculate evenness over a grid
-  indicator <- calc_map.evenness_core(x = x,
-                                      type = "pielou_evenness",
-                                      ...)
+  indicator <- calc_map.evenness_core(
+    x = x,
+    type = "pielou_evenness",
+    ...
+  )
 
   return(indicator)
-
 }
 
 #' @noRd
 calc_map.evenness_core <- function(x,
                                    type,
                                    ...) {
-
-  err_msgs(obj = x,
-           err_code = "cls_str_int",
-           obj_class1 = c("data.frame", "sf"),
-           obj_class2 = c("williams_evenness", "pielou_evenness"))
+  err_msgs(
+    obj = x,
+    err_code = "cls_str_int",
+    obj_class1 = c("data.frame", "sf"),
+    obj_class2 = c("williams_evenness", "pielou_evenness")
+  )
 
   available_indicators <- NULL
   rm(available_indicators)
 
   num_occ <- obs <- cellid <- taxonKey <- . <- NULL
 
-  type <- match.arg(type,
-                    names(available_indicators))
+  type <- match.arg(
+    type,
+    names(available_indicators)
+  )
 
   # Calculate adjusted evenness fo r each grid cell
   indicator <-
     x %>%
-    dplyr::summarize(num_occ = sum(obs),
-                     .by = c(cellid, taxonKey)) %>%
+    dplyr::summarize(
+      num_occ = sum(obs),
+      .by = c(cellid, taxonKey)
+    ) %>%
     dplyr::arrange(cellid) %>%
-    tidyr::pivot_wider(names_from = cellid,
-                       values_from = num_occ) %>%
+    tidyr::pivot_wider(
+      names_from = cellid,
+      values_from = num_occ
+    ) %>%
     replace(is.na(.), 0) %>%
     tibble::column_to_rownames("taxonKey") %>%
     as.list() %>%
-    purrr::map(~compute_evenness_formula(., type)) %>%
+    purrr::map(~ compute_evenness_formula(., type)) %>%
     unlist() %>%
     as.data.frame() %>%
     dplyr::rename(diversity_val = ".") %>%
     tibble::rownames_to_column(var = "cellid") %>%
-    dplyr::mutate(cellid = as.integer(cellid),
-                  .keep = "unused")
+    dplyr::mutate(
+      cellid = as.integer(cellid),
+      .keep = "unused"
+    )
 
   return(indicator)
-
 }
 
 #' @export
 #' @rdname calc_map
 calc_map.ab_rarity <- function(x, ...) {
-
-  err_msgs(obj = x,
-           err_code = "cls_int",
-           obj_class1 = "ab_rarity")
+  err_msgs(
+    obj = x,
+    err_code = "cls_int",
+    obj_class1 = "ab_rarity"
+  )
 
   obs <- taxonKey <- cellid <- records_taxon <- rarity <- NULL
 
@@ -359,16 +398,16 @@ calc_map.ab_rarity <- function(x, ...) {
     dplyr::arrange(cellid)
 
   return(indicator)
-
 }
 
 #' @export
 #' @rdname calc_map
 calc_map.area_rarity <- function(x, ...) {
-
-  err_msgs(obj = x,
-           err_code = "cls_int",
-           obj_class1 = "area_rarity")
+  err_msgs(
+    obj = x,
+    err_code = "cls_int",
+    obj_class1 = "area_rarity"
+  )
 
   rec_tax_cell <- cellid <- taxonKey <- rarity <- NULL
 
@@ -376,24 +415,26 @@ calc_map.area_rarity <- function(x, ...) {
   # frequency for each species
   indicator <-
     x %>%
-    dplyr::mutate(rec_tax_cell = sum(dplyr::n_distinct(cellid)),
-                  .by = c(taxonKey)) %>%
+    dplyr::mutate(
+      rec_tax_cell = sum(dplyr::n_distinct(cellid)),
+      .by = c(taxonKey)
+    ) %>%
     dplyr::mutate(
       rarity = 1 / (rec_tax_cell / sum(dplyr::n_distinct(cellid)))
-      ) %>%
+    ) %>%
     dplyr::summarise(diversity_val = sum(rarity), .by = cellid)
 
   return(indicator)
-
 }
 
 #' @export
 #' @rdname calc_map
 calc_map.spec_occ <- function(x, ...) {
-
-  err_msgs(obj = x,
-           err_code = "cls_int",
-           obj_class1 = "spec_occ")
+  err_msgs(
+    obj = x,
+    err_code = "cls_int",
+    obj_class1 = "spec_occ"
+  )
 
   diversity_val <- obs <- taxonKey <- cellid <- scientificName <- NULL
 
@@ -406,16 +447,16 @@ calc_map.spec_occ <- function(x, ...) {
     dplyr::select(cellid, taxonKey, scientificName, diversity_val)
 
   return(indicator)
-
 }
 
 #' @export
 #' @rdname calc_map
 calc_map.spec_range <- function(x, ...) {
-
-  err_msgs(obj = x,
-           err_code = "cls_int",
-           obj_class1 = "spec_range")
+  err_msgs(
+    obj = x,
+    err_code = "cls_int",
+    obj_class1 = "spec_range"
+  )
 
   cellid <- taxonKey <- scientificName <- diversity_val <- NULL
 
@@ -428,31 +469,30 @@ calc_map.spec_range <- function(x, ...) {
     dplyr::select(cellid, taxonKey, scientificName, diversity_val)
 
   return(indicator)
-
 }
 
 #' @export
 #' @rdname calc_map
 calc_map.tax_distinct <- function(x, ...) {
-
-  err_msgs(obj = x,
-           err_code = "cls_int",
-           obj_class1 = "tax_distinct")
+  err_msgs(
+    obj = x,
+    err_code = "cls_int",
+    obj_class1 = "tax_distinct"
+  )
 
   cellid <- . <- diversity_val <- NULL
 
   if (requireNamespace("taxize", quietly = TRUE)) {
-
     # Retrieve taxonomic data from GBIF
     tax_hier <- taxize::classification(unique(x$scientificName),
-                                       db = "gbif",
-                                       ...)
-
+      db = "gbif",
+      ...
+    )
   } else {
-
-    stop(paste("The 'taxize' package is required to",
-               "calculate taxonomic distinctness."))
-
+    stop(paste(
+      "The 'taxize' package is required to",
+      "calculate taxonomic distinctness."
+    ))
   }
 
   # Save data
@@ -466,13 +506,16 @@ calc_map.tax_distinct <- function(x, ...) {
     tibble::add_column(diversity_val = NA) %>%
     dplyr::group_split(cellid) %>%
     purrr::map(. %>%
-                 dplyr::mutate(diversity_val =
-                                 compute_tax_distinct_formula(.,
-                                                              tax_hier))) %>%
+      dplyr::mutate(
+        diversity_val =
+          compute_tax_distinct_formula(
+            .,
+            tax_hier
+          )
+      )) %>%
     dplyr::bind_rows() %>%
     dplyr::distinct(cellid, diversity_val, .keep_all = TRUE) %>%
     dplyr::select(cellid, diversity_val)
 
   return(indicator)
-
 }

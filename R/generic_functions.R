@@ -15,7 +15,7 @@
 #'
 #' @examples
 #' occurrence_density_trend <- occ_density_ts(example_cube_1)
-#' plot(occurrence_density_trend, min_year=1980)
+#' plot(occurrence_density_trend, min_year = 1980)
 #'
 #' @export
 calc_ts <- function(x, ...) {
@@ -40,8 +40,10 @@ calc_ts <- function(x, ...) {
 #'  indicator values and metadata.
 #'
 #' @examples
-#' observed_richness_map <- obs_richness_map(example_cube_1, level = "country",
-#'  region = "Denmark")
+#' observed_richness_map <- obs_richness_map(example_cube_1,
+#'   level = "country",
+#'   region = "Denmark"
+#' )
 #' plot(observed_richness_map)
 #'
 #' @export

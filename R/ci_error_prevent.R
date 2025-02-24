@@ -3,7 +3,6 @@
 # Use lapply over a list returned by the boot::boot function (or boot.out)
 #' @noRd
 ci_error_prevent <- function(x) {
-
   if (all(is.na(x$t))) {
     # when all values are NA, replace with 1.2 (the actual value is not
     # important as it will be ignored). No confidence intervals will be

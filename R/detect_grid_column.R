@@ -1,8 +1,6 @@
 #' @noRd
 detect_grid_column <- function(df, grid_type) {
-
   for (col in colnames(df)) {
-
     temp_val <- df[[col]][!is.na(df[[col]])][1]
     grid_type_test <- ifelse(
       grid_type == "eea",
@@ -28,11 +26,8 @@ detect_grid_column <- function(df, grid_type) {
     )
 
     if (grid_type_test == TRUE) {
-
       return(col)
-
     }
-
   }
 
   stop(
@@ -41,5 +36,4 @@ detect_grid_column <- function(df, grid_type) {
       "containing grid cell codes."
     )
   )
-
 }

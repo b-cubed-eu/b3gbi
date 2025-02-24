@@ -12,15 +12,19 @@
 #'
 #' @examples
 #' # Get some map data
-#' germany_map <- rnaturalearth::ne_countries(country = "Germany",
-#'                                            scale = "medium",
-#'                                            returnclass = "sf")
+#' germany_map <- rnaturalearth::ne_countries(
+#'   country = "Germany",
+#'   scale = "medium",
+#'   returnclass = "sf"
+#' )
 #' # Change projection to EPSG:3035 (works well with metric grid size)
 #' germany_map <- sf::st_transform(germany_map,
-#'                                 crs = "EPSG:3035")
+#'   crs = "EPSG:3035"
+#' )
 #' # Calculate a 100km x 100km grid and plot it
 #' germany_grid <- create_grid(germany_map,
-#'                             cell_size = 10)
+#'   cell_size = 10
+#' )
 #' plot(germany_grid)
 #' @noRd
 create_grid <- function(data,
@@ -31,13 +35,13 @@ create_grid <- function(data,
                         make_valid,
                         cube_crs,
                         output_crs) {
-
   example_cube_1 <- NULL
   rm(example_cube_1)
 
   occ_sf <- sf::st_as_sf(data,
-                         coords = c("xcoord", "ycoord"),
-                         crs = cube_crs) %>%
+    coords = c("xcoord", "ycoord"),
+    crs = cube_crs
+  ) %>%
     sf::st_transform(crs = output_crs)
 
   res <- as.numeric(
@@ -52,16 +56,16 @@ create_grid <- function(data,
 
   # Make a grid across the map area
   grid <- occ_sf %>%
-    sf::st_make_grid(cellsize = c(cell_size, cell_size),
-                     offset = c(offset_x, offset_y)) %>%
+    sf::st_make_grid(
+      cellsize = c(cell_size, cell_size),
+      offset = c(offset_x, offset_y)
+    ) %>%
     sf::st_cast("MULTIPOLYGON") %>%
     sf::st_sf() %>%
     dplyr::mutate(cellid = dplyr::row_number())
 
   if (make_valid == TRUE) {
-
     grid <- sf::st_make_valid(grid)
-
   }
 
   # Add area column to grid
@@ -71,7 +75,6 @@ create_grid <- function(data,
     units::set_units("km^2")
 
   return(grid)
-
 }
 
 #' Retrieve Map Data from rnaturalearth
@@ -97,7 +100,6 @@ create_grid <- function(data,
 #' world_map <- get_NE_data(level = "world")
 #' @noRd
 get_NE_data <- function(level, region, ne_type, ne_scale, output_crs) {
-
   if (is.null(ne_scale)) {
     ne_scale <- "medium"
   }
@@ -113,42 +115,42 @@ get_NE_data <- function(level, region, ne_type, ne_scale, output_crs) {
 
   # Download and prepare Natural Earth map data
   if (level == "country") {
-
-    map_data <- rnaturalearth::ne_countries(scale = ne_scale,
-                                            country = region,
-                                            type = ne_type,
-                                            returnclass = "sf")
-
+    map_data <- rnaturalearth::ne_countries(
+      scale = ne_scale,
+      country = region,
+      type = ne_type,
+      returnclass = "sf"
+    )
   } else if (level == "continent") {
-
-    map_data <- rnaturalearth::ne_countries(scale = ne_scale,
-                                            continent = region,
-                                            returnclass = "sf")
-
+    map_data <- rnaturalearth::ne_countries(
+      scale = ne_scale,
+      continent = region,
+      returnclass = "sf"
+    )
   } else if (level == "world") {
-
-    map_data <- rnaturalearth::ne_countries(scale = ne_scale,
-                                            returnclass = "sf")
-
+    map_data <- rnaturalearth::ne_countries(
+      scale = ne_scale,
+      returnclass = "sf"
+    )
   } else if (level == "sovereignty") {
-
-    map_data <- rnaturalearth::ne_countries(scale = ne_scale,
-                                            type = ne_type,
-                                            sovereignty = region,
-                                            returnclass = "sf")
-
+    map_data <- rnaturalearth::ne_countries(
+      scale = ne_scale,
+      type = ne_type,
+      sovereignty = region,
+      returnclass = "sf"
+    )
   } else if (level == "geounit") {
-
-    map_data <- rnaturalearth::ne_countries(scale = ne_scale,
-                                            type = ne_type,
-                                            geounit = region,
-                                            returnclass = "sf")
-
+    map_data <- rnaturalearth::ne_countries(
+      scale = ne_scale,
+      type = ne_type,
+      geounit = region,
+      returnclass = "sf"
+    )
   } else {
-
-    map_data <- rnaturalearth::ne_countries(scale = ne_scale,
-                                            returnclass = "sf")
-
+    map_data <- rnaturalearth::ne_countries(
+      scale = ne_scale,
+      returnclass = "sf"
+    )
   }
 
   map_data <- map_data %>%
@@ -156,19 +158,18 @@ get_NE_data <- function(level, region, ne_type, ne_scale, output_crs) {
     sf::st_transform(crs = output_crs)
 
   return(map_data)
-
 }
 
 
 #' @noRd
 prepare_spatial_data <- function(data, grid, map_data, cube_crs, output_crs) {
-
   cellid <- NULL
 
   # Convert the x and y columns to the correct format for plotting with sf
   occ_sf <- sf::st_as_sf(data,
-                         coords = c("xcoord", "ycoord"),
-                         crs = cube_crs) %>%
+    coords = c("xcoord", "ycoord"),
+    crs = cube_crs
+  ) %>%
     sf::st_transform(crs = output_crs)
 
   # Set attributes as spatially constant to avoid warnings
@@ -176,9 +177,9 @@ prepare_spatial_data <- function(data, grid, map_data, cube_crs, output_crs) {
   sf::st_agr(occ_sf) <- "constant"
 
   # Calculate intersection between occurrences and grid cells
-   occ_grid_int <- occ_sf[sf::st_intersects(occ_sf, grid) %>%
-                            lengths > 0, ] %>%
-     sf::st_join(grid)
+  occ_grid_int <- occ_sf[sf::st_intersects(occ_sf, grid) %>%
+    lengths() > 0, ] %>%
+    sf::st_join(grid)
 
   # Add cell numbers to occurrence data
   data <-
@@ -188,7 +189,6 @@ prepare_spatial_data <- function(data, grid, map_data, cube_crs, output_crs) {
     dplyr::arrange(cellid)
 
   return(data)
-
 }
 
 #' @title Calculate Biodiversity Indicators Over Space or Time
@@ -251,37 +251,48 @@ prepare_spatial_data <- function(data, grid, map_data, cube_crs, output_crs) {
 #'
 #' @examples
 #' diversity_map <- compute_indicator_workflow(example_cube_1,
-#'                                             type = "obs_richness",
-#'                                             dim_type = "map",
-#'                                             level = "country",
-#'                                             region = "Denmark")
+#'   type = "obs_richness",
+#'   dim_type = "map",
+#'   level = "country",
+#'   region = "Denmark"
+#' )
 #' diversity_map
 #'
 #' @export
 compute_indicator_workflow <- function(data,
                                        type,
-                                       dim_type = c("map",
-                                                    "ts"),
-                                       ci_type = c("norm",
-                                                   "basic",
-                                                   "perc",
-                                                   "bca",
-                                                   "none"),
+                                       dim_type = c(
+                                         "map",
+                                         "ts"
+                                       ),
+                                       ci_type = c(
+                                         "norm",
+                                         "basic",
+                                         "perc",
+                                         "bca",
+                                         "none"
+                                       ),
                                        cell_size = NULL,
-                                       level = c("cube",
-                                                 "continent",
-                                                 "country",
-                                                 "world",
-                                                 "sovereignty",
-                                                 "geounit"),
+                                       level = c(
+                                         "cube",
+                                         "continent",
+                                         "country",
+                                         "world",
+                                         "sovereignty",
+                                         "geounit"
+                                       ),
                                        region = "Europe",
-                                       ne_type = c("countries",
-                                                   "map_units",
-                                                   "sovereignty",
-                                                   "tiny_countries"),
-                                       ne_scale = c("medium",
-                                                    "small",
-                                                    "large"),
+                                       ne_type = c(
+                                         "countries",
+                                         "map_units",
+                                         "sovereignty",
+                                         "tiny_countries"
+                                       ),
+                                       ne_scale = c(
+                                         "medium",
+                                         "small",
+                                         "large"
+                                       ),
                                        output_crs = NULL,
                                        first_year = NULL,
                                        last_year = NULL,
@@ -289,11 +300,12 @@ compute_indicator_workflow <- function(data,
                                        make_valid = FALSE,
                                        num_bootstrap = 1000,
                                        ...) {
-
-  stopifnot_error("Object class not recognized.",
-                  inherits(data, "processed_cube") |
-                    inherits(data, "processed_cube_dsinfo") |
-                    inherits(data, "sim_cube"))
+  stopifnot_error(
+    "Object class not recognized.",
+    inherits(data, "processed_cube") |
+      inherits(data, "processed_cube_dsinfo") |
+      inherits(data, "sim_cube")
+  )
 
   available_indicators <- NULL
   rm(available_indicators)
@@ -302,12 +314,16 @@ compute_indicator_workflow <- function(data,
 
   # List of indicators for which bootstrapped confidence intervals
   # should not be calculated
-  noci_list <- c("obs_richness",
-                 "cum_richness",
-                 "occ_turnover")
+  noci_list <- c(
+    "obs_richness",
+    "cum_richness",
+    "occ_turnover"
+  )
 
-  type <- match.arg(type,
-                    names(available_indicators))
+  type <- match.arg(
+    type,
+    names(available_indicators)
+  )
 
   ci_type <- match.arg(ci_type)
 
@@ -319,22 +335,24 @@ compute_indicator_workflow <- function(data,
 
   if (!is.null(first_year)) {
     first_year <- ifelse(first_year > data$first_year,
-                         first_year,
-                         data$first_year)
+      first_year,
+      data$first_year
+    )
   } else {
     first_year <- data$first_year
   }
 
   if (!is.null(last_year)) {
     last_year <- ifelse(last_year < data$last_year,
-                        last_year,
-                        data$last_year)
+      last_year,
+      data$last_year
+    )
   } else {
     last_year <- data$last_year
   }
 
   df <- data$data[(data$data$year >= first_year) &
-                    (data$data$year <= last_year), ]
+    (data$data$year <= last_year), ]
 
   # Collect information to add to final object
   num_species <- data$num_species
@@ -343,7 +361,6 @@ compute_indicator_workflow <- function(data,
   years_with_obs <- unique(df$year)
 
   if (!inherits(data, "sim_cube")) {
-
     dim_type <- match.arg(dim_type)
 
     level <- match.arg(level)
@@ -356,8 +373,7 @@ compute_indicator_workflow <- function(data,
 
     coord_range <- data$coord_range
 
-    if (spherical_geometry == FALSE){
-
+    if (spherical_geometry == FALSE) {
       # Store the current spherical geometry setting
       original_s2_setting <- sf::sf_use_s2()
 
@@ -365,17 +381,16 @@ compute_indicator_workflow <- function(data,
       if (original_s2_setting == TRUE) {
         sf::sf_use_s2(FALSE)
       }
-
     }
 
     if (dim_type == "ts") {
-
       year_names <- unique(df$year)
-      map_lims <- unlist(list("xmin" = min(df$xcoord),
-                              "xmax" = max(df$xcoord),
-                              "ymin" = min(df$ycoord),
-                              "ymax" = max(df$ycoord)))
-
+      map_lims <- unlist(list(
+        "xmin" = min(df$xcoord),
+        "xmax" = max(df$xcoord),
+        "ymin" = min(df$ycoord),
+        "ymax" = max(df$ycoord)
+      ))
     }
 
     kingdoms <- data$kingdoms
@@ -383,85 +398,71 @@ compute_indicator_workflow <- function(data,
     #  if (is.null(cube_crs)) {
 
     if (data$grid_type == "eea") {
-
       cube_crs <- "EPSG:3035"
-
     } else if (data$grid_type == "eqdgc") {
-
       cube_crs <- "EPSG:4326"
-
     } else if (data$grid_type == "mgrs") {
-
       cube_crs <- "EPSG:4326"
-
     } else {
-
       stop("Grid reference system not found.")
-
     }
 
     #  }
 
     if (is.null(output_crs)) {
-
       if (data$grid_type == "eea") {
-
         output_crs <- "EPSG:3035"
-
       } else if (data$grid_type == "eqdgc") {
-
         output_crs <- "EPSG:4326"
-
       } else if (data$grid_type == "mgrs") {
-
         output_crs <- "EPSG:9822"
-
       } else {
-
         stop("Grid reference system not found.")
-
       }
-
     }
 
     # Check that the grid cell size (if provided) is sensible.
     # Determine a default size if nothing is provided.
-    cell_size <- check_cell_size(cell_size,
-                                 cell_size_units,
-                                 data$resolution,
-                                 level)
+    cell_size <- check_cell_size(
+      cell_size,
+      cell_size_units,
+      data$resolution,
+      level
+    )
 
     if (dim_type == "map" || (!is.null(level) && !is.null(region))) {
-
       # Download Natural Earth data
-      map_data <- get_NE_data(level,
-                              region,
-                              ne_type,
-                              ne_scale,
-                              output_crs)
+      map_data <- get_NE_data(
+        level,
+        region,
+        ne_type,
+        ne_scale,
+        output_crs
+      )
 
       # Create grid from Natural Earth data
-      grid <- create_grid(df,
-                          map_data,
-                          level,
-                          cell_size,
-                          cell_size_units,
-                          make_valid,
-                          cube_crs,
-                          output_crs)
+      grid <- create_grid(
+        df,
+        map_data,
+        level,
+        cell_size,
+        cell_size_units,
+        make_valid,
+        cube_crs,
+        output_crs
+      )
 
       # Format spatial data and merge with grid
-      df <- prepare_spatial_data(df,
-                                 grid,
-                                 map_data,
-                                 cube_crs,
-                                 output_crs)
-
+      df <- prepare_spatial_data(
+        df,
+        grid,
+        map_data,
+        cube_crs,
+        output_crs
+      )
     } else {
-
       level <- "unknown"
       region <- "unknown"
-
     }
 
     # Assign classes to send data to correct calculator function
@@ -470,7 +471,6 @@ compute_indicator_workflow <- function(data,
     class(df) <- append(subtype, class(df))
 
     if (dim_type == "map") {
-
       # Calculate indicator
       indicator <- calc_map(df, ...)
 
@@ -486,25 +486,28 @@ compute_indicator_workflow <- function(data,
       # Store the current spherical geometry setting
       original_s2_setting <- sf::sf_use_s2()
 
-      result <- NULL  # Initialize to capture result of intersection
+      result <- NULL # Initialize to capture result of intersection
 
-      tryCatch({
-        # Attempt without altering the spherical geometry setting
-        result <- grid %>%
-          sf::st_intersection(map_data) %>%
-          dplyr::select(cellid, area_km2, geometry)
-      }, error = function(e) {
-        if (grepl("Error in wk_handle.wk_wkb", e)) {
-          message(
-            paste(
-              "Encountered a geometry error during intersection. This may be",
-              "due to invalid polygons in the grid."
+      tryCatch(
+        {
+          # Attempt without altering the spherical geometry setting
+          result <- grid %>%
+            sf::st_intersection(map_data) %>%
+            dplyr::select(cellid, area_km2, geometry)
+        },
+        error = function(e) {
+          if (grepl("Error in wk_handle.wk_wkb", e)) {
+            message(
+              paste(
+                "Encountered a geometry error during intersection. This may be",
+                "due to invalid polygons in the grid."
+              )
             )
-          )
-        } else {
-          stop(e)
+          } else {
+            stop(e)
+          }
         }
-      })
+      )
 
       if (is.null(result)) {
         # If intersection failed, turn off spherical geometry
@@ -530,35 +533,27 @@ compute_indicator_workflow <- function(data,
       diversity_grid <-
         grid %>%
         dplyr::left_join(indicator, by = "cellid")
-
     } else {
-
       # Calculate indicator
       indicator <- calc_ts(df, ...)
 
       if (ci_type != "none") {
-
         if (!type %in% noci_list) {
-
           indicator <- calc_ci(df,
-                               indicator = indicator,
-                               num_bootstrap = num_bootstrap,
-                               ci_type = ci_type,
-                               ...)
-
+            indicator = indicator,
+            num_bootstrap = num_bootstrap,
+            ci_type = ci_type,
+            ...
+          )
         } else {
-
           warning(
             paste(
               "Bootstrapped confidence intervals cannot be calculated for the",
               "chosen indicator."
             )
           )
-
         }
-
       }
-
     }
 
     if (spherical_geometry == FALSE) {
@@ -569,9 +564,7 @@ compute_indicator_workflow <- function(data,
     # if the object is of the class sim_cube it contains no grid information, so
     # bypass the usual workflow and deal with it here
   } else {
-
     if (dim_type == "map") {
-
       stop(
         paste(
           "You have provided an object of class 'sim_cube' as input.",
@@ -579,16 +572,14 @@ compute_indicator_workflow <- function(data,
           "be used to calculate indicators of dim_type 'ts'."
         )
       )
-
     } else {
-
       year_names <- unique(df$year)
       level <- "unknown"
       region <- "unknown"
       if (is.numeric(data$coord_range)) {
         map_lims <- data$coord_range
       } else {
-          map_lims <- "Coordinates not provided"
+        map_lims <- "Coordinates not provided"
       }
 
       kingdoms <- data$kingdoms
@@ -603,17 +594,14 @@ compute_indicator_workflow <- function(data,
       indicator <- calc_ts(df, ...)
 
       if (ci_type != "none") {
-
         if (!type %in% noci_list) {
-
           indicator <- calc_ci(df,
-                               indicator = indicator,
-                               num_bootstrap = 1000,
-                               ci_type = ci_type,
-                               ...)
-
+            indicator = indicator,
+            num_bootstrap = 1000,
+            ci_type = ci_type,
+            ...
+          )
         } else {
-
           warning(
             paste(
               "Bootstrapped confidence intervals cannot be alculated for the",
@@ -621,47 +609,40 @@ compute_indicator_workflow <- function(data,
             )
           )
         }
-
-
       }
-
     }
-
   }
 
   # Create indicator object
 
   if (dim_type == "map") {
-
     diversity_obj <- new_indicator_map(diversity_grid,
-                                       div_type = type,
-                                       cell_size = cell_size,
-                                       map_level = level,
-                                       map_region = region,
-                                       kingdoms = kingdoms,
-                                       num_families = num_families,
-                                       num_species = num_species,
-                                       first_year = first_year,
-                                       last_year = last_year,
-                                       num_years = num_years,
-                                       species_names = species_names,
-                                       years_with_obs = years_with_obs)
-
+      div_type = type,
+      cell_size = cell_size,
+      map_level = level,
+      map_region = region,
+      kingdoms = kingdoms,
+      num_families = num_families,
+      num_species = num_species,
+      first_year = first_year,
+      last_year = last_year,
+      num_years = num_years,
+      species_names = species_names,
+      years_with_obs = years_with_obs
+    )
   } else {
-
     diversity_obj <- new_indicator_ts(dplyr::as_tibble(indicator),
-                                      div_type = type,
-                                      map_level = level,
-                                      map_region = region,
-                                      kingdoms = kingdoms,
-                                      num_families = num_families,
-                                      num_species = num_species,
-                                      num_years = num_years,
-                                      species_names = species_names,
-                                      coord_range = map_lims)
-
+      div_type = type,
+      map_level = level,
+      map_region = region,
+      kingdoms = kingdoms,
+      num_families = num_families,
+      num_species = num_species,
+      num_years = num_years,
+      species_names = species_names,
+      coord_range = map_lims
+    )
   }
 
   return(diversity_obj)
-
 }

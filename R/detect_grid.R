@@ -1,6 +1,5 @@
 #' @noRd
 detect_grid <- function(grid_code, stop_on_fail = FALSE) {
-
   grid_type <- ifelse(
     stringr::str_detect(
       grid_code,
@@ -25,11 +24,8 @@ detect_grid <- function(grid_code, stop_on_fail = FALSE) {
   )
 
   if (stop_on_fail == TRUE && is.na(grid_type)) {
-
     stop("Could not detect grid type. Please specify manually.")
-
   }
 
   return(grid_type)
-
 }
