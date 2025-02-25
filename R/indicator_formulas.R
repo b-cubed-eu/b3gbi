@@ -43,7 +43,7 @@ compute_evenness_formula <- function(x, type, ...) {
 compute_tax_distinct_formula <- function(x, y) {
   temp <- names(y) %in% x$scientificName
   tax_hier_temp <- y[c(temp)]
-  print(length(tax_hier_temp))
+  message(length(tax_hier_temp))
   n_spec <- length(tax_hier_temp)
 
   if (length(tax_hier_temp) < 3) {
