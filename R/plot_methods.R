@@ -1811,7 +1811,7 @@ plot_species_ts <- function(x,
         )
       )
   } else if (length(trend_plot) > 1 && single_plot == FALSE) {
-    cat(
+    message(
       "single_plot set to false. Creating separate plot for each species.\n\n"
     )
   }
@@ -2120,7 +2120,7 @@ plot_species_map <- function(x,
         )
       )
   } else if (length(diversity_plot) > 1 && single_plot == FALSE) {
-    cat(
+    message(
       "single_plot set to false. Creating separate plot for each species.\n\n"
     )
   }
