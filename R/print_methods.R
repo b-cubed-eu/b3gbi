@@ -7,6 +7,7 @@
 #'
 #' @param x An indicator_ts object.
 #' @param n Integer specifying the number of rows of data to display.
+#'  (Default is 10.)
 #' @param ... Additional arguments.
 #'
 #' @examples
@@ -45,6 +46,7 @@ print.indicator_ts <- function(x, n = 10, ...) {
 #'
 #' @param x An indicator_map object.
 #' @param n Integer specifying the number of rows of data to display.
+#'  (Default is 10.)
 #' @param ... Additional arguments.
 #'
 #' @export
@@ -86,6 +88,7 @@ print.indicator_map <- function(x, n = 10, ...) {
 #'
 #' @param x A processed_cube object.
 #' @param n Integer specifying the number of rows of cube data to display.
+#'  (Default is 10.)
 #' @param ... Additional arguments.
 #'
 #' @examples
@@ -120,6 +123,7 @@ print.processed_cube <- function(x, n = 10, ...) {
 #'
 #' @param x A processed_cube_dsinfo object.
 #' @param n Integer specifying the number of rows of data to display.
+#'  (Default is 10.)
 #' @param ... Additional arguments.
 #'
 #' @export
@@ -159,6 +163,7 @@ print.processed_cube_dsinfo <- function(x, n = 10, ...) {
 #'
 #' @param x A sim_cube object.
 #' @param n Integer specifying the number of rows of cube data to display.
+#'  (Default is 10.)
 #' @param ... Additional arguments.
 #'
 #'
@@ -191,6 +196,7 @@ print.sim_cube <- function(x, n = 10, ...) {
 #'
 #' @param x Object of class available_indicators
 #' @param n Integer specifying the number of rows of data to display.
+#'  (Default is 30.)
 #' @param ... Additional arguments.
 #'
 #' @export
