@@ -146,9 +146,11 @@ The function will return an error if it cannot find all required columns.
 \examples{
 \dontrun{
 cube_name <- system.file("extdata", "europe_species_cube.csv",
- package = "b3gbi")
+  package = "b3gbi"
+)
 tax_info <- system.file("extdata", "europe_species_info.csv",
- package = "b3gbi")
+  package = "b3gbi"
+)
 europe_example_cube <- process_cube(cube_name, tax_info)
 europe_example_cube
 }

@@ -53,8 +53,10 @@ time series.
 }
 \examples{
 \dontrun{
-td_ts <- tax_distinct_ts(example_cube_1, level = "country",
- region = "Denmark")
+td_ts <- tax_distinct_ts(example_cube_1,
+  level = "country",
+  region = "Denmark"
+)
 plot(td_ts)
 }
 }

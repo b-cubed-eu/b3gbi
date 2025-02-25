@@ -101,10 +101,11 @@ output into an appropriate S3 object ('indicator_map' or 'indicator_ts').
 }
 \examples{
 diversity_map <- compute_indicator_workflow(example_cube_1,
-                                            type = "obs_richness",
-                                            dim_type = "map",
-                                            level = "country",
-                                            region = "Denmark")
+  type = "obs_richness",
+  dim_type = "map",
+  level = "country",
+  region = "Denmark"
+)
 diversity_map
 
 }

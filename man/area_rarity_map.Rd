@@ -48,8 +48,10 @@ This function calculates area-based rarity over a gridded map.
 }
 \examples{
 \dontrun{
-arr_map <- area_rarity_map(example_cube_1, level = "country",
- region = "Denmark")
+arr_map <- area_rarity_map(example_cube_1,
+  level = "country",
+  region = "Denmark"
+)
 plot(arr_map)
 }
 }

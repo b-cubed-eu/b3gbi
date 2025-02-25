@@ -166,14 +166,16 @@ uncertainty.
 }
 \examples{
 spec_occ_ts_mammals_denmark <- spec_occ_ts(example_cube_1,
-                                        level = "country",
-                                        region = "Denmark")
+  level = "country",
+  region = "Denmark"
+)
 # default colours:
 plot_species_ts(spec_occ_ts_mammals_denmark, c(2440728, 4265185))
 
 # custom colours:
 plot_species_ts(spec_occ_ts_mammals_denmark, c(2440728, 4265185),
-        linecolour = "thistle",
-        trendlinecolour = "forestgreen",
-        envelopecolour = "lightgreen")
+  linecolour = "thistle",
+  trendlinecolour = "forestgreen",
+  envelopecolour = "lightgreen"
+)
 }

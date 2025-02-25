@@ -99,8 +99,9 @@ occurrences,providing customization options.
 }
 \examples{
 spec_occ_mammals_denmark <- spec_occ_map(example_cube_1,
-                                    level = "country",
-                                    region = "Denmark")
+  level = "country",
+  region = "Denmark"
+)
 plot_species_map(x = spec_occ_mammals_denmark, c(2440728, 4265185))
 
 }

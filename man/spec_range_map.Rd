@@ -48,8 +48,10 @@ This function plots the cells occupied for individual
 species over a gridded map.
 }
 \examples{
-sr_map <- spec_range_map(example_cube_1, level = "country",
- region = "Denmark")
+sr_map <- spec_range_map(example_cube_1,
+  level = "country",
+  region = "Denmark"
+)
 plot(sr_map, c(2440728, 4265185))
 
 }

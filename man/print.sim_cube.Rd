@@ -9,7 +9,8 @@
 \arguments{
 \item{x}{A sim_cube object.}
 
-\item{n}{Integer specifying the number of rows of cube data to display.}
+\item{n}{Integer specifying the number of rows of cube data to display.
+(Default is 10.)}
 
 \item{...}{Additional arguments.}
 }

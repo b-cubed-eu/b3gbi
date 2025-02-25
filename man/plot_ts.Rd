@@ -156,14 +156,16 @@ indicator, with an optional smoothed trendline, and visualizes uncertainty.
 \examples{
 # default colours:
 plot_ts(example_indicator_ts1,
-        y_label = "Species Richness",
-        title = "Observed Species Richness: Mammals in Denmark")
+  y_label = "Species Richness",
+  title = "Observed Species Richness: Mammals in Denmark"
+)
 
 # custom colours:
 plot_ts(example_indicator_ts1,
-        y_label = "Species Richness",
-        title = "Observed Species Richness: Mammals in Denmark",
-        linecolour = "thistle",
-        trendlinecolour = "forestgreen",
-        envelopecolour = "lightgreen")
+  y_label = "Species Richness",
+  title = "Observed Species Richness: Mammals in Denmark",
+  linecolour = "thistle",
+  trendlinecolour = "forestgreen",
+  envelopecolour = "lightgreen"
+)
 }

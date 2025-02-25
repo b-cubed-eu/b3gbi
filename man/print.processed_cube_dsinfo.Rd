@@ -9,7 +9,8 @@
 \arguments{
 \item{x}{A processed_cube_dsinfo object.}
 
-\item{n}{Integer specifying the number of rows of data to display.}
+\item{n}{Integer specifying the number of rows of data to display.
+(Default is 10.)}
 
 \item{...}{Additional arguments.}
 }

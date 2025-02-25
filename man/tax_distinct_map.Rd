@@ -53,8 +53,10 @@ a gridded map.
 }
 \examples{
 \dontrun{
-td_map <- tax_distinct_map(example_cube_1, level = "country",
- region = "Denmark")
+td_map <- tax_distinct_map(example_cube_1,
+  level = "country",
+  region = "Denmark"
+)
 plot(td_map)
 }
 

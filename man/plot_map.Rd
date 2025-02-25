@@ -85,10 +85,13 @@ indicator, providing customization options.
 }
 \examples{
 evenness_map <- pielou_evenness_map(example_cube_1,
-                                    level = "country",
-                                    region = "Denmark")
-plot_map(x = evenness_map,
-         title = "Map of Species Evenness in Denmark",
-         legend_title = "Evenness")
+  level = "country",
+  region = "Denmark"
+)
+plot_map(
+  x = evenness_map,
+  title = "Map of Species Evenness in Denmark",
+  legend_title = "Evenness"
+)
 
 }

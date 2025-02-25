@@ -49,8 +49,10 @@ map.
 }
 \examples{
 \dontrun{
-abr_map <- ab_rarity_map(example_cube_1, level = "country",
- region = "Denmark")
+abr_map <- ab_rarity_map(example_cube_1,
+  level = "country",
+  region = "Denmark"
+)
 plot(abr_map)
 }
 }

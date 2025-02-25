@@ -49,8 +49,10 @@ map.
 }
 \examples{
 \dontrun{
-od_map <- occ_density_map(example_cube_1, level = "country",
- region = "Denmark")
+od_map <- occ_density_map(example_cube_1,
+  level = "country",
+  region = "Denmark"
+)
 plot(od_map)
 }
 }
