@@ -1110,10 +1110,11 @@ plot_map <- function(x,
 #'  data. Lower and upper values are required in the form of c(0.1, 0.2).
 #'  Default is c(0,0).
 #' @param x_breaks Integer giving desired number of breaks for x axis.
-#'   (May not return exactly the number requested.)
+#'  (May not return exactly the number requested.)
 #' @param y_breaks Integer giving desired number of breaks for y axis.
-#'   (May not return exactly the number requested.)
+#'  (May not return exactly the number requested.)
 #' @param wrap_length  Maximum title length before wrapping to a new line.
+#'  (Default is 60).
 #'
 #' @return A ggplot object representing the biodiversity indicator time series
 #'  plot. Can be customized using ggplot2 functions.

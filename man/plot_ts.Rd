@@ -143,7 +143,8 @@ Default is c(0,0).}
 \item{y_breaks}{Integer giving desired number of breaks for y axis.
 (May not return exactly the number requested.)}
 
-\item{wrap_length}{Maximum title length before wrapping to a new line.}
+\item{wrap_length}{Maximum title length before wrapping to a new line.
+(Default is 60).}
 }
 \value{
 A ggplot object representing the biodiversity indicator time series
