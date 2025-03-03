@@ -444,7 +444,7 @@ process_cube <- function(cube_name,
             "Cell codes do not match the expected format. Are you sure you",
             "have specified the correct grid system? It is recommended to",
             "leave grid_type on 'automatic'. If you are certain, you can use",
-            "force_gridecode = TRUE to attempt to translate them anyway, but",
+            "force_gridcode = TRUE to attempt to translate them anyway, but",
             "this could lead to unexpected downstream errors."
           )
         )
@@ -483,7 +483,7 @@ process_cube <- function(cube_name,
             "Cell codes do not match the expected format. Are you sure you",
             "have specified the correct grid system? It is recommended to",
             "leave grid_type on 'automatic'. If you are certain, you can use",
-            "force_gridecode = TRUE to attempt to translate them anyway, but",
+            "force_gridcode = TRUE to attempt to translate them anyway, but",
             "this could lead to unexpected downstream errors."
           )
         )
@@ -512,7 +512,7 @@ process_cube <- function(cube_name,
             "Cell codes do not match the expected format. Are you sure you",
             "have specified the correct grid system? It is recommended to",
             "leave grid_type on 'automatic'. If you are certain, you can use",
-            "force_gridecode = TRUE to attempt to translate them anyway, but",
+            "force_gridcode = TRUE to attempt to translate them anyway, but",
             "this could lead to unexpected downstream errors."
           )
         )
