@@ -821,12 +821,14 @@ plot_map <- function(x,
     }
   }
 
-  if (trans == "boxcox") {
-    trans <- scales::transform_boxcox(p = bcpower)
-  } else if (trans == "modulus") {
-    trans <- scales::transform_modulus(p = bcpower)
-  } else if (trans == "yj") {
-    trans <- scales::transform_yj(p = bcpower)
+  if (!is.null(trans)) {
+    if (trans == "boxcox") {
+      trans <- scales::transform_boxcox(p = bcpower)
+    } else if (trans == "modulus") {
+      trans <- scales::transform_modulus(p = bcpower)
+    } else if (trans == "yj") {
+      trans <- scales::transform_yj(p = bcpower)
+    }
   }
 
   # Define function to modify legend
@@ -1581,6 +1583,8 @@ plot_species_ts <- function(x,
 #' @param ylims (Optional) Custom y-axis limits.
 #' @param trans (Optional) Scale transformation for the fill gradient
 #'   (e.g., 'log').
+#' @param bcpower (Optional) Power parameter for the Box-Cox, modulus, or
+#'   Yeo-Johnson transformations.
 #' @param breaks (Optional) Break points for the legend scale.
 #' @param labels (Optional) Labels for legend scale break points.
 #' @param Europe_crop_EEA If TRUE, crops maps of Europe using the EPSG:3035 CRS
@@ -1620,6 +1624,7 @@ plot_species_map <- function(x,
                              xlims = NULL,
                              ylims = NULL,
                              trans = NULL,
+                             bcpower = NULL,
                              breaks = NULL,
                              labels = NULL,
                              Europe_crop_EEA = TRUE,
@@ -1723,6 +1728,16 @@ plot_species_map <- function(x,
   if (!is.null(title)) {
     if (title == "auto") {
       title <- auto_title
+    }
+  }
+
+  if (!is.null(trans)) {
+    if (trans == "boxcox") {
+      trans <- scales::transform_boxcox(p = bcpower)
+    } else if (trans == "modulus") {
+      trans <- scales::transform_modulus(p = bcpower)
+    } else if (trans == "yj") {
+      trans <- scales::transform_yj(p = bcpower)
     }
   }
 

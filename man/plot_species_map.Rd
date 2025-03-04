@@ -14,6 +14,7 @@ plot_species_map(
   xlims = NULL,
   ylims = NULL,
   trans = NULL,
+  bcpower = NULL,
   breaks = NULL,
   labels = NULL,
   Europe_crop_EEA = TRUE,
@@ -54,6 +55,9 @@ custom title or if calling the function manually.}
 
 \item{trans}{(Optional) Scale transformation for the fill gradient
 (e.g., 'log').}
+
+\item{bcpower}{(Optional) Power parameter for the Box-Cox, modulus, or
+Yeo-Johnson transformations.}
 
 \item{breaks}{(Optional) Break points for the legend scale.}
 
