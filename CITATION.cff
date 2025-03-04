@@ -2,13 +2,13 @@
 # CITATION file created with {cffr} R package, v0.5.0
 # See also: https://docs.ropensci.org/cffr/
 # -----------------------------------------------------------
- 
+
 cff-version: 1.2.0
 message: 'To cite package "b3gbi" in publications use:'
 type: software
 license: MIT
 title: 'b3gbi: General Biodiversity Indicators for Biodiversity Data Cubes'
-version: 0.4.2
+version: 0.4.3
 abstract: Calculate general biodiversity indicators from GBIF data cubes. Includes
   many common indicators such as species richness and evenness, which can be calculated
   over time (trends) or space (maps).
