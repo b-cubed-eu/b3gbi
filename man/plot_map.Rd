@@ -12,6 +12,7 @@ plot_map(
   xlims = NULL,
   ylims = NULL,
   trans = NULL,
+  bcpower = NULL,
   breaks = NULL,
   labels = NULL,
   Europe_crop_EEA = TRUE,
@@ -44,6 +45,9 @@ appropriate S3 method (if calling the function manually, leave as NULL).}
 
 \item{trans}{(Optional) Scale transformation for the fill gradient
 (e.g., 'log').}
+
+\item{bcpower}{(Optional) Power parameter for the Box-Cox, modulus, or
+Yeo-Johnson transformations.}
 
 \item{breaks}{(Optional) Break points for the legend scale.}
 
