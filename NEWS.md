@@ -1,3 +1,9 @@
+# b3gbi 0.4.3
+
+04.03.2025 - Minor update:
+
+* Add power parameter for map legend scale transformations. This enables the use of Box-Cox, modulus, and Yeo-Johnson transformations.
+
 # b3gbi 0.4.2
 
 20.02.2025 - Minor update:

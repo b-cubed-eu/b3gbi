@@ -8,7 +8,7 @@ message: 'To cite package "b3gbi" in publications use:'
 type: software
 license: MIT
 title: 'b3gbi: General Biodiversity Indicators for Biodiversity Data Cubes'
-version: 0.4.2
+version: 0.4.3
 abstract: Calculate general biodiversity indicators from GBIF data cubes. Includes
   many common indicators such as species richness and evenness, which can be calculated
   over time (trends) or space (maps).
@@ -76,32 +76,6 @@ references:
     given-names: Davis
     email: davis@posit.co
     orcid: https://orcid.org/0000-0003-4777-038X
-  year: '2025'
-- type: software
-  title: furrr
-  abstract: 'furrr: Apply Mapping Functions in Parallel using Futures'
-  notes: Imports
-  url: https://furrr.futureverse.org/
-  repository: https://CRAN.R-project.org/package=furrr
-  authors:
-  - family-names: Vaughan
-    given-names: Davis
-    email: davis@rstudio.com
-  - family-names: Dancho
-    given-names: Matt
-    email: mdancho@business-science.io
-  year: '2025'
-- type: software
-  title: future
-  abstract: 'future: Unified Parallel and Distributed Processing in R for Everyone'
-  notes: Imports
-  url: https://future.futureverse.org
-  repository: https://CRAN.R-project.org/package=future
-  authors:
-  - family-names: Bengtsson
-    given-names: Henrik
-    email: henrikb@braju.com
-    orcid: https://orcid.org/0000-0002-7579-5165
   year: '2025'
 - type: software
   title: ggplot2
@@ -275,6 +249,23 @@ references:
   - family-names: South
     given-names: Andy
     email: southandy@gmail.com
+  year: '2025'
+- type: software
+  title: scales
+  abstract: 'scales: Scale Functions for Visualization'
+  notes: Imports
+  url: https://scales.r-lib.org
+  repository: https://CRAN.R-project.org/package=scales
+  authors:
+  - family-names: Wickham
+    given-names: Hadley
+    email: hadley@posit.co
+  - family-names: Pedersen
+    given-names: Thomas Lin
+    email: thomas.pedersen@posit.co
+    orcid: https://orcid.org/0000-0002-5147-4711
+  - family-names: Seidel
+    given-names: Dana
   year: '2025'
 - type: software
   title: sf
