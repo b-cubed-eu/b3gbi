@@ -17,8 +17,6 @@ Depends:
 Imports:
     boot,
     dplyr,
-    furrr,
-    future,
     ggplot2,
     iNEXT,
     labeling,
@@ -30,6 +28,7 @@ Imports:
     readr,
     rlang,
     rnaturalearth,
+    scales,
     sf,
     stringr,
     tibble,
