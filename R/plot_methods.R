@@ -718,6 +718,8 @@ plot.occ_turnover <- function(x,
 #' @param ylims (Optional) Custom y-axis limits.
 #' @param trans (Optional) Scale transformation for the fill gradient
 #'   (e.g., 'log').
+#' @param bcpower (Optional) Power parameter for the Box-Cox, modulus, or
+#'   Yeo-Johnson transformations.
 #' @param breaks (Optional) Break points for the legend scale.
 #' @param labels (Optional) Labels for legend scale break points.
 #' @param Europe_crop_EEA If TRUE, crops maps of Europe using the EPSG:3035 CRS
@@ -755,6 +757,7 @@ plot_map <- function(x,
                      xlims = NULL,
                      ylims = NULL,
                      trans = NULL,
+                     bcpower = NULL,
                      breaks = NULL,
                      labels = NULL,
                      Europe_crop_EEA = TRUE,
@@ -816,6 +819,14 @@ plot_map <- function(x,
     if (title == "auto") {
       title <- auto_title
     }
+  }
+
+  if (trans == "boxcox") {
+    trans <- scales::transform_boxcox(p = bcpower)
+  } else if (trans == "modulus") {
+    trans <- scales::transform_modulus(p = bcpower)
+  } else if (trans == "yj") {
+    trans <- scales::transform_yj(p = bcpower)
   }
 
   # Define function to modify legend
