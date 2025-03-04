@@ -9,7 +9,7 @@ providing customization options."><meta property="og:image" content="https://b-c
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,7 +32,7 @@ providing customization options."><meta property="og:image" content="https://b-c
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Plot Occurrence Map or Range Map of Individual Species</h1>
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.4.2/R/plot_methods.R" class="external-link"><code>R/plot_methods.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/R/plot_methods.R" class="external-link"><code>R/plot_methods.R</code></a></small>
       <div class="d-none name"><code>plot_species_map.Rd</code></div>
     </div>
 
@@ -53,6 +53,7 @@ providing customization options.</p>
 <span>  xlims <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ylims <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  trans <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  bcpower <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  breaks <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  labels <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  Europe_crop_EEA <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -114,6 +115,11 @@ custom title or if calling the function manually.</p></dd>
 <dt id="arg-trans">trans<a class="anchor" aria-label="anchor" href="#arg-trans"></a></dt>
 <dd><p>(Optional) Scale transformation for the fill gradient
 (e.g., 'log').</p></dd>
+
+
+<dt id="arg-bcpower">bcpower<a class="anchor" aria-label="anchor" href="#arg-bcpower"></a></dt>
+<dd><p>(Optional) Power parameter for the Box-Cox, modulus, or
+Yeo-Johnson transformations.</p></dd>
 
 
 <dt id="arg-breaks">breaks<a class="anchor" aria-label="anchor" href="#arg-breaks"></a></dt>
