@@ -1,3 +1,9 @@
+# b3gbi 0.4.4 - Minor update:
+
+* Area is no longer calculated for projections that use degrees.
+* Occurrence density now refuses to calculate for projections that use degrees.
+* Object metadata now displays 'degrees' instead of 'degrees^2'.
+
 # b3gbi 0.4.3
 
 04.03.2025 - Minor update:
