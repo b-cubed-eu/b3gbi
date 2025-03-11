@@ -780,7 +780,7 @@ plot_map <- function(x,
   # (conditional on there being only one map region to plot)
   if (length(x$map_region)==1) {
     if (Europe_crop_EEA == TRUE &
-        x$map_level == "continent" &
+      #  x$map_level == "continent" &
         x$map_region == "Europe" &
         x$projection == "EPSG:3035" &
         crop_to_grid == FALSE)
@@ -1690,7 +1690,7 @@ plot_species_map <- function(x,
   # (conditional on there being only one map region to plot)
   if(length(x$map_region==1)){
     if (Europe_crop_EEA == TRUE &
-        x$map_level == "continent" &
+      #  x$map_level == "continent" &
         x$map_region == "Europe" &
         x$projection == "EPSG:3035" &
         crop_to_grid == TRUE)

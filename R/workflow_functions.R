@@ -1,78 +1,3 @@
-#' Create a Spatial Grid for Mapping
-#'
-#' Generates a grid of polygons covering a specified geographic area,
-#' suitable for mapping data retrieved with the rnaturalearth package.
-#'
-#' @param map_data A spatial object (e.g., an sf object) representing the
-#'   geographic area of interest.  Obtained from rnaturalearth.
-#' @param cell_size Cell length in kilometers.
-#' @return An sf object containing the grid polygons, with attributes:
-#'   * `cellid`: A unique ID for each grid cell.
-#'   * `area_km2`: Area of each grid cell in square kilometers.
-#'
-#' @examples
-#' # Get some map data
-#' germany_map <- rnaturalearth::ne_countries(country = "Germany",
-#'                                            scale = "medium",
-#'                                            returnclass = "sf")
-#' # Change projection to EPSG:3035 (works well with metric grid size)
-#' germany_map <- sf::st_transform(germany_map,
-#'                                 crs = "EPSG:3035")
-#' # Calculate a 100km x 100km grid and plot it
-#' germany_grid <- create_grid(germany_map,
-#'                             cell_size = 10)
-#' plot(germany_grid)
-#' @noRd
-create_grid <- function(data,
-                        map_data,
-                        level,
-                        cell_size,
-                        cell_size_units,
-                        make_valid,
-                        cube_crs,
-                        output_crs) {
-
-  example_cube_1 <- NULL; rm(example_cube_1)
-
-  occ_sf <- sf::st_as_sf(data,
-                         coords = c("xcoord", "ycoord"),
-                         crs = cube_crs) %>%
-    sf::st_transform(crs = output_crs)
-
-  res <- as.numeric(
-    stringr::str_extract(
-      example_cube_1$data$resolution[1],
-      "^[0-9,.]{1,6}(?=[a-z])"
-      )
-    )
-
-  offset_x <- sf::st_bbox(occ_sf)$xmin - (0.5 * res)
-  offset_y <- sf::st_bbox(occ_sf)$ymin - (0.5 * res)
-
-  # Make a grid across the map area
-  grid <- occ_sf %>%
-    sf::st_make_grid(cellsize = c(cell_size, cell_size),
-                     offset = c(offset_x, offset_y)) %>%
-    sf::st_cast("MULTIPOLYGON") %>%
-    sf::st_sf() %>%
-    dplyr::mutate(cellid = dplyr::row_number())
-
-  if (make_valid==TRUE) {
-
-    grid <- sf::st_make_valid(grid)
-
-  }
-
-  # Add area column to grid
-  grid$area_km2 <-
-    grid %>%
-    sf::st_area() %>%
-    units::set_units("km^2")
-
-  return(grid)
-
-}
-
 #' Retrieve Map Data from rnaturalearth
 #'
 #' Downloads and prepares map data from the rnaturalearth package at
@@ -147,17 +72,101 @@ get_NE_data <- function(level, region, ne_type, ne_scale, output_crs) {
 
   }
 
-    map_data <- map_data %>%
-      sf::st_as_sf() %>%
-      sf::st_transform(crs = output_crs)
+  map_data <- map_data %>%
+    sf::st_as_sf() %>%
+    sf::st_transform(crs = output_crs)
 
   return(map_data)
 
 }
 
 
+#' Create a Spatial Grid for Mapping
+#'
+#' Generates a grid of polygons covering a specified geographic area,
+#' suitable for mapping data retrieved with the rnaturalearth package.
+#'
+#' @param map_data A spatial object (e.g., an sf object) representing the
+#'   geographic area of interest.  Obtained from rnaturalearth.
+#' @param cell_size Cell length in kilometers.
+#' @return An sf object containing the grid polygons, with attributes:
+#'   * `cellid`: A unique ID for each grid cell.
+#'   * `area`: Area of each grid cell.
+#'
+#' @examples
+#' # Get some map data
+#' germany_map <- rnaturalearth::ne_countries(country = "Germany",
+#'                                            scale = "medium",
+#'                                            returnclass = "sf")
+#' # Change projection to EPSG:3035 (works well with metric grid size)
+#' germany_map <- sf::st_transform(germany_map,
+#'                                 crs = "EPSG:3035")
+#' # Calculate a 100km x 100km grid and plot it
+#' germany_grid <- create_grid(germany_map,
+#'                             cell_size = 10)
+#' plot(germany_grid)
 #' @noRd
-prepare_spatial_data <- function(data, grid, map_data, cube_crs, output_crs) {
+create_grid <- function(data,
+                       # map_data,
+                       # level,
+                        cell_size,
+                        cell_size_units,
+                        make_valid,
+                        cube_crs,
+                        output_crs) {
+
+  # example_cube_1 <- NULL; rm(example_cube_1)
+
+  occ_sf <- sf::st_as_sf(data,
+                         coords = c("xcoord", "ycoord"),
+                         crs = cube_crs) %>%
+    sf::st_transform(crs = output_crs)
+
+  res <- as.numeric(
+    stringr::str_extract(
+      data$resolution[1],
+      "^[0-9,.]{1,6}(?=[a-z])"
+      )
+    )
+
+  offset_x <- sf::st_bbox(occ_sf)$xmin - (0.5 * res)
+  offset_y <- sf::st_bbox(occ_sf)$ymin - (0.5 * res)
+
+  # Make a grid across the map area
+  grid <- occ_sf %>%
+    sf::st_make_grid(cellsize = c(cell_size, cell_size),
+                     offset = c(offset_x, offset_y)) %>%
+    sf::st_cast("MULTIPOLYGON") %>%
+    sf::st_sf() %>%
+    dplyr::mutate(cellid = dplyr::row_number())
+
+  if (make_valid==TRUE) {
+
+    grid <- sf::st_make_valid(grid)
+
+  }
+
+  if (cell_size_units == "km") {
+
+    # Add area column to grid
+    grid$area <-
+      grid %>%
+      sf::st_area() %>%
+      units::set_units("km^2")
+
+  }
+
+  return(grid)
+
+}
+
+
+#' @noRd
+prepare_spatial_data <- function(data,
+                                 grid,
+                                # map_data,
+                                 cube_crs,
+                                 output_crs) {
 
   cellid <- NULL
 
@@ -199,7 +208,7 @@ prepare_spatial_data <- function(data, grid, map_data, cube_crs, output_crs) {
   # # Remove grid cells with areas smaller than 20% of the largest one
   # grid <-
   #   grid %>%
-  #   filter(area_km2 > 0.2 * max(area_km2))
+  #   filter(area > 0.2 * max(area))
   #
   # # Remove same grid cells from data
   # data <-
@@ -268,8 +277,13 @@ prepare_spatial_data <- function(data, grid, map_data, cube_crs, output_crs) {
 #' @export
 compute_indicator_workflow <- function(data,
                                        type,
-                                       dim_type = c("map", "ts"),
-                                       ci_type = c("norm", "basic", "perc", "bca", "none"),
+                                       dim_type = c("map",
+                                                    "ts"),
+                                       ci_type = c("norm",
+                                                   "basic",
+                                                   "perc",
+                                                   "bca",
+                                                   "none"),
                                        cell_size = NULL,
                                        level = c("cube",
                                                  "continent",
@@ -300,7 +314,7 @@ compute_indicator_workflow <- function(data,
 
   available_indicators <- NULL; rm(available_indicators)
 
-  geometry <- area_km2 <- cellid <- NULL
+  geometry <- area <- cellid <- NULL
 
   # List of indicators for which bootstrapped confidence intervals should not be calculated
   noci_list <- c("obs_richness",
@@ -319,7 +333,9 @@ compute_indicator_workflow <- function(data,
   level <- match.arg(level)
 
   if (!is.null(first_year)) {
-    first_year <- ifelse(first_year > data$first_year, first_year, data$first_year)
+    first_year <- ifelse(first_year > data$first_year,
+                         first_year,
+                         data$first_year)
   } else {
     first_year <- data$first_year
   }
@@ -330,7 +346,8 @@ compute_indicator_workflow <- function(data,
     last_year <- data$last_year
   }
 
-  df <- data$data[(data$data$year >= first_year) & (data$data$year <= last_year),]
+  df <- data$data[(data$data$year >= first_year) &
+                    (data$data$year <= last_year),]
 
   # Collect information to add to final object
   num_species <- data$num_species
@@ -426,13 +443,28 @@ compute_indicator_workflow <- function(data,
     if (dim_type == "map" | (!is.null(level) & !is.null(region))) {
 
       # Download Natural Earth data
-      map_data <- get_NE_data(level, region, ne_type, ne_scale, output_crs)
+      map_data <- get_NE_data(level,
+                              region,
+                              ne_type,
+                              ne_scale,
+                              output_crs)
 
       # Create grid from Natural Earth data
-      grid <- create_grid(df, map_data, level, cell_size, cell_size_units, make_valid, cube_crs, output_crs)
+      grid <- create_grid(df,
+                         # map_data,
+                         # level,
+                          cell_size,
+                          cell_size_units,
+                          make_valid,
+                          cube_crs,
+                          output_crs)
 
       # Format spatial data and merge with grid
-      df <- prepare_spatial_data(df, grid, map_data, cube_crs, output_crs)
+      df <- prepare_spatial_data(df,
+                                 grid,
+                                # map_data,
+                                 cube_crs,
+                                 output_crs)
 
     } else {
 
@@ -469,7 +501,7 @@ compute_indicator_workflow <- function(data,
         # Attempt without altering the spherical geometry setting
         result <- grid %>%
           sf::st_intersection(map_data) %>%
-          dplyr::select(cellid, area_km2, geometry)
+          dplyr::select(cellid, area, geometry)
       }, error = function(e) {
         if (grepl("Error in wk_handle.wk_wkb", e)) {
           message(paste("Encountered a geometry error during intersection. This may be due",
@@ -487,7 +519,7 @@ compute_indicator_workflow <- function(data,
         # Retry the intersection operation
         result <- grid %>%
           sf::st_intersection(map_data) %>%
-          dplyr::select(cellid, area_km2, geometry)
+          dplyr::select(cellid, area, geometry)
 
         # Notify success after retry
         message("Intersection succeeded with spherical geometry turned off.")
@@ -595,6 +627,7 @@ compute_indicator_workflow <- function(data,
     diversity_obj <- new_indicator_map(diversity_grid,
                                        div_type = type,
                                        cell_size = cell_size,
+                                       cell_size_units = cell_size_units,
                                        map_level = level,
                                        map_region = region,
                                        kingdoms = kingdoms,

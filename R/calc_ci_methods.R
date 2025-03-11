@@ -154,12 +154,12 @@ calc_ci.occ_density <- function(x,
                   meant to be called directly.",
                   inherits(x, "occ_density"))
 
-  year <- cellid <- obs <- area_km2 <- NULL
+  year <- cellid <- obs <- area <- NULL
 
   x <-
     x %>%
     dplyr::arrange(year, cellid) %>%
-    dplyr::reframe(diversity_val = sum(obs) / area_km2,
+    dplyr::reframe(diversity_val = sum(obs) / area,
                    .by = c("year", "cellid"))
 
   # Put individual observations into a list organized by year
