@@ -86,9 +86,13 @@ get_NE_data <- function(level, region, ne_type, ne_scale, output_crs) {
 #' Generates a grid of polygons covering a specified geographic area,
 #' suitable for mapping data retrieved with the rnaturalearth package.
 #'
-#' @param map_data A spatial object (e.g., an sf object) representing the
-#'   geographic area of interest.  Obtained from rnaturalearth.
+#' @param data An object provided by compute_indicate_workflow containing
+#'  occurrence data from a processed data cube.
 #' @param cell_size Cell length in kilometers.
+#' @param cell_size_units Cell size unit type: "km" or "degrees".
+#' @param make_valid Run sf::st_make_valid() on grid. TRUE or FALSE.
+#' @param cube_crs Coordinate reference system of the input data cube.
+#' @param output_crs Coordinate reference system to use for the output grid.
 #' @return An sf object containing the grid polygons, with attributes:
 #'   * `cellid`: A unique ID for each grid cell.
 #'   * `area`: Area of each grid cell.
