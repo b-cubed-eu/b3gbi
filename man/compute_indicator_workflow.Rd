@@ -20,6 +20,9 @@ compute_indicator_workflow(
   spherical_geometry = TRUE,
   make_valid = FALSE,
   num_bootstrap = 1000,
+  crs_unit_convert = FALSE,
+  shapefile_path = NULL,
+  invert = FALSE,
   ...
 )
 }
