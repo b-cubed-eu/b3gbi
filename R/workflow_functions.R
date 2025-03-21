@@ -533,7 +533,9 @@ compute_indicator_workflow <- function(data,
       df_sf_output <- sf::st_transform(df_sf_input,
                                        crs = output_crs)
 
-      if (crs_unit_convert == TRUE && input_units != output_units) {
+      if (crs_unit_convert == TRUE &&
+          input_units != output_units &&
+          output_units != "degrees") {
 
         output_units <- "m"
         grid <- reproject_and_create_grid(df_sf_input,
@@ -544,6 +546,18 @@ compute_indicator_workflow <- function(data,
                                           input_units = input_units,
                                           target_units = output_units)
         output_units <- "km"
+
+      } else if (crs_unit_convert == TRUE &&
+                 input_units != output_units &&
+                 output_units == "degrees") {
+
+        grid <- reproject_and_create_grid(df_sf_input,
+                                          c(input_cell_size, input_cell_size),
+                                          output_crs,
+                                          c((cell_size),
+                                            (cell_size)),
+                                          input_units = input_units,
+                                          target_units = output_units)
 
       } else {
 
