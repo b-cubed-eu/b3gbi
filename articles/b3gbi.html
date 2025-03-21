@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -57,7 +57,7 @@
                         <h4 data-toc-skip class="author">Shawn Dove</h4>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.4.3/vignettes/b3gbi.Rmd" class="external-link"><code>vignettes/b3gbi.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/vignettes/b3gbi.Rmd" class="external-link"><code>vignettes/b3gbi.Rmd</code></a></small>
       <div class="d-none name"><code>b3gbi.Rmd</code></div>
     </div>
 
@@ -126,7 +126,7 @@ with both the old and new cubes. The old ones come with an additional
 <span><span class="co">#&gt; Processed data cube for calculating biodiversity indicators</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Date Range: 1862 - 2024 </span></span>
-<span><span class="co">#&gt; Single-resolution cube with cell size 0.25degrees ^2</span></span>
+<span><span class="co">#&gt; Single-resolution cube with cell size 0.25degrees </span></span>
 <span><span class="co">#&gt; Number of cells: 323 </span></span>
 <span><span class="co">#&gt; Grid reference system: eqdgc </span></span>
 <span><span class="co">#&gt; Coordinate range:</span></span>
@@ -395,7 +395,7 @@ below.</p>
 <span><span class="co">#&gt;      xmin      ymin      xmax      ymax </span></span>
 <span><span class="co">#&gt;  8.121484 54.628857 15.137109 57.736914 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Grid cell size: 0.25 km^2 </span></span>
+<span><span class="co">#&gt; Grid cell size: 0.25 degrees </span></span>
 <span><span class="co">#&gt; Number of cells: 168 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Observation years: 1980 - 2023 </span></span>
@@ -408,19 +408,19 @@ below.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; First 10 rows of data (use n = to show more):</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 168 × 3</span></span></span>
-<span><span class="co">#&gt;    cellid area_km2 diversity_val</span></span>
-<span><span class="co">#&gt;     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>   <span style="color: #949494;">[km^2]</span>         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>     80     447.            21</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>     82     447.             7</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>     83     447.            30</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>     84     447.            40</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>     85     447.            43</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>    122     445.            20</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>    123     445.            29</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>    124     445.            17</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>    125     445.            32</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>    126     445.            40</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 168 × 2</span></span></span>
+<span><span class="co">#&gt;    cellid diversity_val</span></span>
+<span><span class="co">#&gt;     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>     80            21</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>     82             7</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>     83            30</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>     84            40</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>     85            43</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>    122            20</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>    123            29</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>    124            17</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>    125            32</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>    126            40</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 158 more rows</span></span></span></code></pre></div>
 <p>When you type the name of the indicator object, you will again see
 that it is plotted by an internal function of the package. As with the
