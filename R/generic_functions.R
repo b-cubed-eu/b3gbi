@@ -12,8 +12,8 @@
 #' @return An S3 object of the class 'indicator_ts' containing the calculated indicator values and metadata.
 #'
 #' @examples
-#' occurrence_density_trend <- occ_density_ts(example_cube_1)
-#' plot(occurrence_density_trend, min_year=1980)
+#' total_occurrences_trend <- total_occ_ts(example_cube_1)
+#' plot(total_occurrences_trend, min_year=1980)
 #'
 #' @export
 calc_ts <- function(x, ...) {
