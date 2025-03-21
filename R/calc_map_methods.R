@@ -60,7 +60,7 @@ calc_map.hill_core <- function(x,
                   inherits(x, c("data.frame", "sf")) & rlang::inherits_any(x, c("hill0", "hill1", "hill2")))
 
   obs <- cellid <- . <- taxonKey <-scientificName <- kingdom <- geometry <- NULL
-  resolution <- xcoord <- ycoord <- year <- area_km2 <- variable <- value <- NULL
+  resolution <- xcoord <- ycoord <- year <- area <- variable <- value <- NULL
   rowname <- Assemblage <- qD <- NULL
 
   type <- match.arg(type)
@@ -85,7 +85,7 @@ calc_map.hill_core <- function(x,
                                -xcoord,
                                -ycoord,
                                -year,
-                               -area_km2) %>%
+                               -area) %>%
                  dplyr::select(-any_of(c("basisOfRecord",
                                          "datasetKey"))) %>%
                  replace(is.na(.), 0) %>%
@@ -235,12 +235,19 @@ calc_map.occ_density <- function(x, ...) {
   stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
                   inherits(x, "occ_density"))
 
-  diversity_val <- obs <- area_km2 <- cellid <- NULL
+  diversity_val <- obs <- area <- cellid <- NULL
+
+  cell_size_units <- stringr::str_extract(x$resolution[1], "(?<=[0-9,.]{1,6})[a-z]*$")
+
+  stopifnot_error(
+    paste0(
+      "To calculate occurrence density, please choose a projected CRS that ",
+      "uses meters or kilometers, not degrees."), cell_size_units == "km")
 
   # Calculate density of occurrences over the grid (per square km)
   indicator <-
     x %>%
-    dplyr::reframe(diversity_val = sum(obs) / area_km2,
+    dplyr::reframe(diversity_val = sum(obs) / area,
                    .by = "cellid") %>%
     dplyr::distinct(cellid, diversity_val) %>%
     dplyr::mutate(diversity_val = as.numeric(diversity_val))

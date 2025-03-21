@@ -86,7 +86,13 @@ print.indicator_map <- function(x, n = 10, ...) {
 print.processed_cube <- function(x, n = 10, ...) {
   cat("\nProcessed data cube for calculating biodiversity indicators\n\n")
   cat("Date Range:", x$first_year, "-", x$last_year, "\n")
-  cat("Single-resolution cube with cell size", x$resolutions, "^2\n")
+  cell_size_units <- stringr::str_extract(x$resolutions, "(?<=[0-9,.]{1,6})[a-z]*$")
+  if (cell_size_units == "km") {
+    res_adjust <- paste(x$resolutions,"^2")
+  } else {
+    res_adjust <- x$resolutions
+  }
+  cat("Single-resolution cube with cell size", res_adjust, "\n")
   cat("Number of cells:", x$num_cells, "\n")
   cat("Grid reference system:", x$grid_type, "\n")
   cat("Coordinate range:\n")

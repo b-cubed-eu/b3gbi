@@ -201,6 +201,7 @@ new_indicator_ts <- function(x,
 new_indicator_map <- function(x,
                           div_type,
                           cell_size,
+                          cell_size_units,
                           map_level,
                           map_region,
                           kingdoms,
@@ -218,7 +219,8 @@ new_indicator_map <- function(x,
                   "geometry") %in% names(x)))
   coord_range = sf::st_bbox(x)
  # names(coord_range) = c("xmin", "ymin", "xmax", "ymax")
-  cell_size = paste(cell_size, "km^2")
+  if (cell_size_units == "km") { cell_size_units <- "km^2" }
+  cell_size = paste(cell_size, cell_size_units)
   id = div_type
   class(x) <- c("indicator_data", class(x))
   structure(list(div_name = get_indicator_name(id),

@@ -1,7 +1,7 @@
 Type: Package
 Package: b3gbi
 Title: General Biodiversity Indicators for Biodiversity Data Cubes
-Version: 0.4.3
+Version: 0.4.4
 Authors@R: c(
     person("Shawn", "Dove", email = "Shawn.Dove@allzool.bio.uni-giessen.de",
            role = c("aut", "cre"), comment = c(ORCID = "0000-0001-9465-5638"))
@@ -45,11 +45,11 @@ Config/testthat/edition: 3
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 VignetteBuilder: knitr, rmarkdown
 Additional_repositories: https://b-cubed-eu.r-universe.dev,
     https://ropensci.r-universe.dev
-Remotes:  
+Remotes: 
     github::hrbrmstr/mgrs,
     github::ropensci/bold,
     github::ropensci/taxize
