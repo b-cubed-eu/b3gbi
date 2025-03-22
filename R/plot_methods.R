@@ -918,7 +918,7 @@ plot_map <- function(x,
     map_surround <- sf::st_intersection(map_surround, bbox)
 
     # Plot map_surround as plot as layer
-    diversity_plot$layers <- c(ggplot2::geom_sf(data = map_surround, fill = land_fill_colour, geometry = map_surround$geometry)[[1]], diversity_plot$layers)
+    diversity_plot$layers <- c(ggplot2::geom_sf(data = map_surround, fill = land_fill_colour, aes(geometry = geometry))[[1]], diversity_plot$layers)
   }
 
   # Check for custom x and y limits and adjust map if found
