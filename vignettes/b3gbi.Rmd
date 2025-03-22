@@ -92,18 +92,21 @@ Each indicator comes with its own wrapper functions, and these should be used ra
 # Function 2: compute_indicator_workflow()
 # Description: Calculates a biodiversity indicator over time or space from a processed_cube object. Should be called by one of the wrapper functions listed below. 
 # Inputs: 
-#   * Argument 1: x, a processed_cube object
+#   * Argument 1: data, a processed_cube object
 #   * Argument 2: type, the type of indicator to calculate
 #   * Argument 3: dim_type, dimension to calculate the indicator across (time, 'ts', or space, 'map').
-#   * Argument 4: ci_type, type of bootstrap confidence intervals to calculate (norm, basic, perc, bca, none). Uses 'norm' by default.
+#   * Argument 4: ci_type (optional), type of bootstrap confidence intervals to calculate (norm, basic, perc, bca, none). Uses 'norm' by default.
 #   * Argument 5: cell_size (optional), the length (in km) of grid cells to use
 #   * Argument 6: level (optional), the scale of region to calculate over (country, continent, world). Uses the whole cube by default.
 #   * Argument 7: region (optional), the name of the region to calculate over (e.g. Germany, Europe). Uses the whole cube by default.
-#   * Argument 8: output_crs (optional), the projection to use for your calculated indicator if you don't want the default.
-#   * Argument 9: first_year (optional), use to limit the data used to calculate the indicator to a narrower range than the cube
-#   * Argument 10: last_year (optional), see first_year
-#   * Argument 11: spherical_geometry (optional), if FALSE, temporarily turn off spherical geometry when calculating indicator
-#   * Argument 12: make_valid (optional), call st_make_valid from the sf package to fix geometry issues if you are getting errors
+#   * Argument 8: ne_type (optional), the type of natural earth data to download (countries, map units, sovereignty, geounit). Uses 'countries' by default.
+#   * Argument 9: ne_scale (optional), the scale of natural earth data to download (small - 110m, medium - 50m, large - 10m). Uses 'medium' by default.
+#   * Argument 10: output_crs (optional), the projection to use for your calculated indicator if you don't want the default.
+#   * Argument 11: first_year (optional), use to limit the data used to calculate the indicator to a narrower range than the cube.
+#   * Argument 12: last_year (optional), see first_year.
+#   * Argument 13: spherical_geometry (optional), if FALSE, temporarily turn off spherical geometry when calculating indicator.
+#   * Argument 14: make_valid (optional), call st_make_valid from the sf package to fix geometry issues if you are getting errors.
+#   * Argument 15: num_bootstraps (optional), set the number of bootstraps to calculate for generating confidence intervals. Uses 1000 by default.
 # Outputs:
 #   * indicator_ts or indicator_map object containing a data frame of indicator values mapped to years or grid cells, along with various metadata.
 #     metadata include: range of years (as first_year and last_year), 
@@ -167,22 +170,40 @@ The plot functions offer quite a few arguments to customize the output, but the 
 # Description: Plots an indicator_ts object as a time series using ggplot. Called by plot().
 # Inputs: 
 #   * Argument 1: x, an indicator_ts object 
-#   * Argument 2: title (optional), specify a title for the plot
-#   * Argument 3: auto_title (optional), specified by the calling function if title is set to "auto"
-#   * Argument 4: y_label_default (optional), specified by the calling function if no y_label is provided
-#   * Argument 5: suppress_y (optional), default is "FALSE". Set to "TRUE" to turn off y axis text
-#   * Argument 6: smoothed_trend (optional), default is "TRUE". Set to "FALSE" to avoid displaying only the time series, without a smoothed trend 
-#   * Argument 7: linecolour (optional), sets the colour of the unsmoothed time series line
-#   * Argument 8: trendlinecolour (optional), sets the colour of the smoothed trend line 
-#   * Argument 9: envelopecolour (optional), sets the colour of smoothed trend envelope
-#   * Argument 10: gridoff (optional), default is "FALSE". Set to "TRUE" to turn off grid lines on the plot  
-#   * Argument 11: x_label (optional), use to set a custom label for the x-axis
-#   * Argument 12: y_label (optional), use to set a custom label for the y-axis
-#   * Argument 13: min_year (optional), set the first year that will be plotted
-#   * Argument 14: max_year (optional), set the final year that will be plotted
-#   * Argument 15: x_breaks (optional), set the number of breaks along the x-axis
-#   * Argument 16: y_breaks (optional), set the number of breaks along the y-axis
-#   * Argument 17: wrap_length (optional), set maximum length of text allowed on a single line for the plot title
+#   * Argument 2: min_year (optional), earliest year to include in plot
+#   * Argument 3: max_year (optional), latest year to include in plot
+#   * Argument 4: title (optional), specify a title for the plot
+#   * Argument 5: auto_title (optional), specified by the calling function if title is set to "auto"
+#   * Argument 6: y_label_default (optional), specified by the calling function if no y_label is provided
+#   * Argument 7: suppress_y (optional), default is "FALSE". Set to "TRUE" to turn off y axis text
+#   * Argument 8: smoothed_trend (optional), default is "TRUE". Set to "FALSE" to avoid displaying only the time series, without a smoothed trend 
+#   * Argument 9: linecolour (optional), sets the colour of the indicator line or points. Default is darkorange. 
+#   * Argument 10: linealpha (optional), sets the transparency of the indicator line or points. Default is 0.8.
+#   * Argument 11: ribboncolour (optional), colour for bootstrapped confidence intervals. Default is goldenrod1. Set to NA if you don't want to plot the CIs.
+#   * Argument 12: ribbonalpha (optional), transparency for confidence interval ribbon (if CI type set to 'ribbon'. Default is 0.2.
+#   * Argument 13: error_alpha (optional), transparency for error bars (if CI type set to 'error_bar). Default is 1.
+#   * Argument 14: trendlinecolour (optional), sets the colour of the smoothed trend line. Default is blue.
+#   * Argument 15: trendlinealpha (optional), sets the transparency of the smoothed trend line. Default is 0.5.
+#   * Argument 16: envelopecolour (optional), sets the colour of the smoothed trend envelope. Default is lightsteelblue.
+#   * Argument 17: envelopealpha (optional), sets the transparency of the smoothed trend envelope. Default is 0.2.
+#   * Argument 18: smooth_cialpha (optional), sets the transparency for the smoothed lines forming the edges of the smoothed trend envelope. Default is 1.
+#   * Argument 19: point_line (optional)
+#   * Argument 20: pointsize (optional)
+#   * Argument 21: linewidth (optional)
+#   * Argument 22: ci_type (optional)
+#   * Argument 23: error_width (optional)
+#   * Argument 24: error_thickness (optional)
+#   * Argument 25: smooth_linetype (optional)
+#   * Argument 26: smooth_linewidth (optional)
+#   * Argument 27: smooth_cilinewidth (optional)
+#   * Argument 28: gridoff (optional), default is "FALSE". Set to "TRUE" to turn off grid lines on the plot  
+#   * Argument 29: x_label (optional), use to set a custom label for the x-axis
+#   * Argument 30: y_label (optional), use to set a custom label for the y-axis
+#   * Argument 31: x_expand (optional)
+#   * Argument 32: y_expand (optional)
+#   * Argument 33: x_breaks (optional), set the number of breaks along the x-axis
+#   * Argument 34: y_breaks (optional), set the number of breaks along the y-axis
+#   * Argument 35: wrap_length (optional), set maximum length of text allowed on a single line for the plot title
 # Outputs:
 #   * Time series plot with optional smoothed trend overlay. The plot can be further customized (beyond the provided arguments) using ggplot functions.
 #   * Plots can be saved using ggsave.
@@ -208,13 +229,15 @@ plot(Denmark_observed_richness_ts)
 #   * Argument 7: trans (optional), set transformation to apply to the legend, e.g. "log10"
 #   * Argument 8: breaks (optional), set custom breaks for the legend
 #   * Argument 9: labels (optional), set custom labels for the legend
-#   * Argument 10: Europe_crop (optional), default is "TRUE". Crops outlying islands when plotting a continental map of Europe. You can set this to "FALSE" to show the islands, but the output will be less pretty.  
-#   * Argument 11: surround (optional), default is "TRUE". Shows surrounding countries when plotting a single country. Set to "FALSE" to show only the country of interest, but output will be less pretty.
-#   * Argument 12: panel_gb (optional), set panel background colour. Default is "white".
-#   * Argument 13: legend_title (optional), set a custom legend title
-#   * Argument 14: legend_limits (optional), set custom limits for the legend
-#   * Argument 15: legend_title_wrap_length (optional), set maximum length of text allowed on a single line for the legend title
-#   * Argument 16: title_wrap_length (optional), set maximum length of text allowed on a single line for the plot title
+#   * Argument 10: Europe_crop_EEA (optional), default is "TRUE". Crops outlying islands when plotting a continental map of Europe using the EEA grid. You can set this to "FALSE" to show the islands, but the output will be less pretty. Will be overridden if crop_to_grid set to "TRUE".
+#   * Argument 11: crop_to_grid (optional), If set to "TRUE" the grid will determine the edges of the map. This argument overrides Europe_crop_EEA. Default is "FALSE".
+#   * Argument 12: surround (optional), default is "TRUE". Shows surrounding countries when plotting a single country. Set to "FALSE" to show only the country of interest, but output will be less pretty.
+#   * Argument 13: panel_bg (optional), set panel background colour. Default is "white".
+#   * Argument 14: land_fill_colour (optional), set colour for the land area outside of the grid. Default is "grey85".
+#   * Argument 15: legend_title (optional), set a custom legend title
+#   * Argument 16: legend_limits (optional), set custom limits for the legend
+#   * Argument 17: legend_title_wrap_length (optional), set maximum length of text allowed on a single line for the legend title
+#   * Argument 18: title_wrap_length (optional), set maximum length of text allowed on a single line for the plot title
 # Outputs:
 #   * Time series plot with optional smoothed trend overlay. The plot can be further customized (beyond the provided arguments) using ggplot functions.
 #   * Plots can be saved using ggsave.

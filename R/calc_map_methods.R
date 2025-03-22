@@ -242,7 +242,7 @@ calc_map.occ_density <- function(x, ...) {
   stopifnot_error(
     paste0(
       "To calculate occurrence density, please choose a projected CRS that ",
-      "uses meters or kilometers, not degrees."), cell_size_units == "km")
+      "uses meters or kilometers, not degrees."), "area" %in% names(x))
 
   # Calculate density of occurrences over the grid (per square km)
   indicator <-
