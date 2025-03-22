@@ -44,11 +44,10 @@ determine_cell_size <- function(data,
                                 input_units,
                                 target_units,
                                 target_resolution = NULL) {
-  require(sf)
 
   # Get the centroid of the data to use for conversion calculations
   if (inherits(data, "sf")) {
-    data_bbox <- st_bbox(data)
+    data_bbox <- sf::st_bbox(data)
     centroid <- c(
       (data_bbox["xmin"] + data_bbox["xmax"]) / 2,
       (data_bbox["ymin"] + data_bbox["ymax"]) / 2
@@ -185,7 +184,7 @@ determine_cell_size <- function(data,
     recommended_x <- cell_size_m_x / mpd["longitude"]
     recommended_y <- cell_size_m_y / mpd["latitude"]
 
-    message(sprintf("Converting from %s to degrees: %.6f° x %.6f°",
+    message(sprintf("Converting from %s to degrees: %.6f degrees x %.6f degrees",
                     if(is_km_crs) "km" else input_units, recommended_x, recommended_y))
 
     result$recommended_cell_size <- c(recommended_x, recommended_y)
@@ -267,10 +266,9 @@ determine_cell_size <- function(data,
 #' @noRd
 #'
 create_grid_from_reprojected_data <- function(data, resolution) {
-  require(sf)
 
   # Check for unreasonable grid size
-  bbox <- st_bbox(data)
+  bbox <- sf::st_bbox(data)
   nx <- ceiling((bbox["xmax"] - bbox["xmin"]) / resolution[1])
   ny <- ceiling((bbox["ymax"] - bbox["ymin"]) / resolution[2])
 
@@ -281,7 +279,7 @@ create_grid_from_reprojected_data <- function(data, resolution) {
 
   # Get the bounding box of the data
   if (inherits(data, "sf")) {
-    bbox <- st_bbox(data)
+    bbox <- sf::st_bbox(data)
   } else if (inherits(data, "SpatRaster")) {
     ext <- terra::ext(data)
     bbox <- c(
@@ -338,10 +336,9 @@ reproject_and_create_grid <- function(input_data,
                                       input_units,
                                       target_units,
                                       target_resolution = NULL) {
-  require(sf)
 
   # 1. Get input CRS
-  input_crs <- st_crs(input_data)
+  input_crs <- sf::st_crs(input_data)
 
   # 2. Determine appropriate cell size
   cell_size_result <- determine_cell_size(
@@ -366,7 +363,7 @@ reproject_and_create_grid <- function(input_data,
   }
 
   # 4. Reproject the data to target CRS
-  reprojected_data <- st_transform(input_data, target_crs)
+  reprojected_data <- sf::st_transform(input_data, target_crs)
 
   # 5. Create a grid with the appropriate cell size
   grid <- create_grid_from_reprojected_data(
