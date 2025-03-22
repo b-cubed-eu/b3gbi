@@ -801,7 +801,8 @@ plot_map <- function(x,
   if (surround == TRUE) {
     map_surround <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf") %>%
       sf::st_as_sf() %>%
-      sf::st_transform(crs = x$projection)
+      sf::st_transform(crs = x$projection) %>%
+      sf::st_make_valid()
 
   # Otherwise make all the surroundings ocean blue (unless a different colour is specified)
   } else {
@@ -879,7 +880,45 @@ plot_map <- function(x,
 
   # If surround flag set, add surrounding countries to map
   if (surround == TRUE) {
-    diversity_plot$layers <- c(geom_sf(data = map_surround, fill = land_fill_colour)[[1]], diversity_plot$layers)
+
+    map_surround <- st_transform(map_surround, crs = x$projection)
+    map_surround <- st_make_valid(map_surround)
+
+    # If crop to grid is set to FALSE
+    if (!crop_to_grid) {
+      # Define percentage for expansion
+      expand_percent <- 0.1  # 10% expansion
+
+      # Calculate the amount to expand
+      x_range <- map_lims["xmax"] - map_lims["xmin"]
+      y_range <- map_lims["ymax"] - map_lims["ymin"]
+
+      # Compute new expanded limits
+      expanded_lims <- st_bbox(c(
+        map_lims["xmin"] - (expand_percent * x_range),
+        map_lims["ymin"] - (expand_percent * y_range),
+        map_lims["xmax"] + (expand_percent * x_range),
+        map_lims["ymax"] + (expand_percent * y_range)
+      ))
+
+      # Assign CRS
+      attributes(expanded_lims)$crs <- st_crs(map_surround)
+
+      # Get bounding box with expanded limits
+      bbox <- st_as_sfc(st_bbox(expanded_lims), crs = x$projection)
+
+    } else {
+
+      # If crop to grid is TRUE get bounding box with map limits
+      bbox <- st_as_sfc(st_bbox(map_lims), crs = x$projection)
+
+    }
+
+    # Crop map_surround to bounding box
+    map_surround <- st_intersection(map_surround, bbox)
+
+    # Plot map_surround as plot as layer
+    diversity_plot$layers <- c(geom_sf(data = map_surround, fill = land_fill_colour, geometry = map_surround$geometry)[[1]], diversity_plot$layers)
   }
 
   # Check for custom x and y limits and adjust map if found
