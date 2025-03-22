@@ -2,6 +2,9 @@
 #'
 #' @param latitude Latitude in decimal degrees
 #' @return Named vector with meters per degree longitude and latitude
+#'
+#' @noRd
+#'
 meters_per_degree <- function(latitude) {
   # Constants for Earth's dimensions (WGS84)
   a <- 6378137.0  # semi-major axis in meters
@@ -27,11 +30,20 @@ meters_per_degree <- function(latitude) {
 #' @param input_resolution Original resolution as vector c(x, y)
 #' @param input_crs CRS of the input data (EPSG code or proj4string)
 #' @param target_crs Target CRS (EPSG code or proj4string)
+#' @param input_units Units of the input data (degrees or km)
+#' @param target_units Units of the output (degrees or km)
 #' @param target_resolution Optional. If provided, validates if it's appropriate
 #' @return A list with recommended cell size in target CRS units and validation result
-#' @export
-determine_cell_size <- function(data, input_resolution, input_crs, target_crs, target_resolution = NULL,
-                                input_units, target_units) {
+#'
+#' @noRd
+#'
+determine_cell_size <- function(data,
+                                input_resolution,
+                                input_crs,
+                                target_crs,
+                                input_units,
+                                target_units,
+                                target_resolution = NULL) {
   require(sf)
 
   # Get the centroid of the data to use for conversion calculations
@@ -251,7 +263,9 @@ determine_cell_size <- function(data, input_resolution, input_crs, target_crs, t
 #' @param data Reprojected spatial data (sf or terra object)
 #' @param resolution Cell size in the units of data's CRS c(x, y)
 #' @return An sf object with the grid
-#' @export
+#'
+#' @noRd
+#'
 create_grid_from_reprojected_data <- function(data, resolution) {
   require(sf)
 
@@ -311,11 +325,19 @@ create_grid_from_reprojected_data <- function(data, resolution) {
 #' @param input_data Input spatial data (sf or terra object)
 #' @param input_resolution Resolution of input data c(x, y)
 #' @param target_crs Target CRS as EPSG code or proj4string
+#' @param input_units Units of the input data (degrees or km)
+#' @param target_units Units of the output (degrees or km)
 #' @param target_resolution Optional target resolution in target CRS units
 #' @return A list with the reprojected data and grid
-#' @export
-reproject_and_create_grid <- function(input_data, input_resolution, target_crs, target_resolution = NULL,
-                                      input_units, target_units) {
+#'
+#' @noRd
+#'
+reproject_and_create_grid <- function(input_data,
+                                      input_resolution,
+                                      target_crs,
+                                      input_units,
+                                      target_units,
+                                      target_resolution = NULL) {
   require(sf)
 
   # 1. Get input CRS

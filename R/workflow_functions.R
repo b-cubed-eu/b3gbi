@@ -290,11 +290,18 @@ prepare_spatial_data <- function(data,
 #' @param first_year Exclude data before this year. (Uses all data in the cube by default.)
 #' @param last_year Exclude data after this year. (Uses all data in the cube by default.)
 #' @param spherical_geometry If set to FALSE, will temporarily disable spherical geometry
-#' while the function runs. Should only be used to solve specific issues. (Default is TRUE)
+#'  while the function runs. Should only be used to solve specific issues. (Default is TRUE)
 #' @param make_valid Calls st_make_valid() from the sf package. Increases processing
-#' time but may help if you are getting polygon errors. (Default is FALSE).
+#'  time but may help if you are getting polygon errors. (Default is FALSE).
 #' @param num_bootstrap Set the number of bootstraps to calculate for generating
-#' confidence intervals. (Default: 1000)
+#'  confidence intervals. (Default: 1000)
+#' @param crs_unit_convert Force a particular output CRS even when it has
+#'  different units than the input CRS. (Default: FALSE)
+#' @param shapefile_path Path of an external shapefile to merge into the workflow. For example,
+#'  if you want to calculate your indicator particular features such as protected areas or wetlands.
+#' @param invert Calculate an indicator over the inverse of the shapefile (e.g.
+#'  if you have a protected areas shapefile this would calculate an indicator over
+#'  all non protected areas)
 #' @param ... Additional arguments passed to specific indicator calculation functions.
 #'
 #' @return An S3 object containing the calculated indicator values and metadata.

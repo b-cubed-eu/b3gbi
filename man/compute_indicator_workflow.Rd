@@ -81,6 +81,16 @@ time but may help if you are getting polygon errors. (Default is FALSE).}
 \item{num_bootstrap}{Set the number of bootstraps to calculate for generating
 confidence intervals. (Default: 1000)}
 
+\item{crs_unit_convert}{Force a particular output CRS even when it has
+different units than the input CRS. (Default: FALSE)}
+
+\item{shapefile_path}{Path of an external shapefile to merge into the workflow. For example,
+if you want to calculate your indicator particular features such as protected areas or wetlands.}
+
+\item{invert}{Calculate an indicator over the inverse of the shapefile (e.g.
+if you have a protected areas shapefile this would calculate an indicator over
+all non protected areas)}
+
 \item{...}{Additional arguments passed to specific indicator calculation functions.}
 }
 \value{
