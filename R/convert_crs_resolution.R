@@ -52,15 +52,8 @@ determine_cell_size <- function(data,
       (data_bbox["xmin"] + data_bbox["xmax"]) / 2,
       (data_bbox["ymin"] + data_bbox["ymax"]) / 2
     )
-  } else if (inherits(data, "SpatRaster")) {
-    # For terra objects
-    data_bbox <- terra::ext(data)
-    centroid <- c(
-      (data_bbox[1] + data_bbox[2]) / 2,
-      (data_bbox[3] + data_bbox[4]) / 2
-    )
   } else {
-    stop("Data must be an sf or terra object")
+    stop("Data must be an sf object")
   }
 
   # Check if target CRS uses km (not always correctly reported by units)
@@ -259,7 +252,7 @@ determine_cell_size <- function(data,
 
 #' Create a grid based on reprojected data
 #'
-#' @param data Reprojected spatial data (sf or terra object)
+#' @param data Reprojected spatial data (sf object)
 #' @param resolution Cell size in the units of data's CRS c(x, y)
 #' @return An sf object with the grid
 #'
@@ -280,15 +273,9 @@ create_grid_from_reprojected_data <- function(data, resolution) {
   # Get the bounding box of the data
   if (inherits(data, "sf")) {
     bbox <- sf::st_bbox(data)
-  } else if (inherits(data, "SpatRaster")) {
-    ext <- terra::ext(data)
-    bbox <- c(
-      xmin = ext[1], ymin = ext[3],
-      xmax = ext[2], ymax = ext[4]
-    )
     names(bbox) <- c("xmin", "ymin", "xmax", "ymax")
   } else {
-    stop("Data must be an sf or terra object")
+    stop("Data must be an sf object")
   }
 
   # Calculate number of cells in each dimension
@@ -320,7 +307,7 @@ create_grid_from_reprojected_data <- function(data, resolution) {
 
 #' Example workflow function to demonstrate the entire process
 #'
-#' @param input_data Input spatial data (sf or terra object)
+#' @param input_data Input spatial data (sf object)
 #' @param input_resolution Resolution of input data c(x, y)
 #' @param target_crs Target CRS as EPSG code or proj4string
 #' @param input_units Units of the input data (degrees or km)
