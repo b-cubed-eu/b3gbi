@@ -523,6 +523,7 @@ compute_indicator_workflow <- function(data,
     #                              data = df,
     #                              input_crs = cube_crs,
     #                              output_crs = output_crs)
+    cell_size <- check_cell_size(cell_size, data$resolution, level)
 
     if (dim_type == "map" | (!is.null(level) & !is.null(region))) {
 
