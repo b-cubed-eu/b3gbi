@@ -48,7 +48,27 @@ An S3 object with the classes 'indicator_map' and 'tax_distinct' containing
 the calculated indicator values and metadata.
 }
 \description{
-This function calculates the taxonomic distinctness index over a gridded map.
+This function calculates the taxonomic distinctness index (TDI)
+over a gridded map (see 'Details' for more information).
+}
+\details{
+Taxonomic distinctness measures the taxonomic relatedness between
+species, providing a measure of biodiversity that accounts for
+evolutionary relationships. A distance matrix based on pairwise
+taxonomic relationships is calculated for each cell using the taxize
+package (Chamberlain & Szöcs, 2013; Chamberlain et al., 2020), then
+taxonomic distinctness is calculated as the Taxonomic Distinctness
+Index (TDI; Clarke & Warwick, 1999):
+\deqn{
+ \frac{\sum\sum_{i<j} \frac{|R_i - R_j|}{L}}{\frac{S(S-1)}{2}}
+}{
+ (∑∑ from i<j of (|R_i-R_j| / L) / (S * (S - 1) / 2)
+}
+where S is the number of species, Ri and Rj are the taxonomic ranks
+of species i and j (from the GBIF Taxonomic Backbone), and L is the
+maximum number of taxonomic ranks.
+The TDI ranges from 0 to 1, with higher values indicating greater
+taxonomic distinctness.
 }
 \examples{
 \dontrun{
@@ -56,6 +76,20 @@ td_map <- tax_distinct_map(example_cube_1, level = "country", region = "Denmark"
 plot(td_map)
 }
 
+}
+\references{
+\enumerate{
+\item Chamberlain, S. A., & Szöcs, E. (2013). taxize: taxonomic search and
+retrieval in R. \emph{F1000Research}, 2.
+\item Chamberlain, S., Szoecs, E., Foster, Z., Boettiger, C., Ram, K., Bartomeus,
+I., Baumgartner, J., O’Donnell, J., Oksanen, J., Tzovaras, B. G., Marchand,
+P., Tran, V., Salmon, M., Li, G., & Grenié, M. (2020). taxize: Taxonomic
+Information from Around the Web. R package version 0.9.98.
+https://github.com/ropensci/taxize.
+\item Clarke, K. R., & Warwick, R. M. (1999). The taxonomic distinctness measure
+of biodiversity: weighting of step lengths between hierarchical levels.
+Marine Ecology Progress Series, 184, 21-29.
+}
 }
 \seealso{
 compute_indicator_workflow

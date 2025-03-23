@@ -53,13 +53,53 @@ the calculated indicator values and metadata.
 }
 \description{
 This function uses coverage-based methods to estimate species
-richness over a gridded map.
+richness over a gridded map (see 'Details' for more information).
+}
+\details{
+\if{html}{\out{
+<h3>Hill diversity</h3>
+}}
+
+
+Hill (1973) introduced the concept of Hill diversity, which assumes that the number and relative abundance of species are inseparable components of diversity. Hill diversity uses a single equation to calculate multiple measures of diversity by varying a single parameter ℓ, which changes the emphasis on rare vs common species (Roswell et al., 2019). It represents the mean rarity of sampled species, and is calculated as: \deqn{  D = \left( \sum_{i=1}^{S} p_i^\ell \right)^{1/(1-\ell)}  }{  D = (Sum from i=1 to S of pi^l) ^ (1 / (1 - l))  }where D is diversity, S is the number of species, pi is the proportion of individuals belonging to species i, ri is the rarity of species i, and ℓ determines the rarity scale for the mean. While ℓ can theoretically take almost any value, three common measures of diversity are special cases: species richness, and modified versions of the Shannon and Simpson diversity indices (Roswell et al., 2019). These three measures occur when ℓ takes the value of 1, 0 (or near-zero, as ℓ cannot actually take the value of 0), or -1, respectively.
+\itemize{
+\item \strong{Species Richness (ℓ = 1):}  \deqn{    D = S  }{    D = S  }
+\item \strong{Hill-Shannon Diversity (ℓ ≈ 0):}  \deqn{    D = e^{-\sum_{i=1}^{S} p_i \ln(p_i)}  }{    D = e ^ (-Sum from i=1 to S of pi * ln(pi))  }
+\item \strong{Hill-Simpson Diversity (ℓ = -1):}  \deqn{    D = \frac{1}{\sum_{i=1}^{S} p_i^2}  }{    D = 1 / (Sum from i=1 to S of pi^2)  }
+}
+
+Richness uses an arithmetic scale (the arithmetic mean), thus giving rare species a lot of leverage. By contrast, Hill-Shannon diversity uses a logarithmic scale (the geometric mean), treating common and rare species equally, and Hill-Simpson diversity uses a reciprocal scale (the harmonic mean), giving common species higher leverage.\if{html}{\out{
+<h3>Coverage-based estimation</h3>
+}}
+
+
+Hill diversity values can be estimated through different standardisation procedures as a way to mitigate the effects of sample size and sampling biases. One way to do this is by equalising sample size by calculating a species accumulation curve (a plot of cumulative species richness as a function of sample size) for each year or grid cell. The smallest sample size from among all the grid cells or years in the dataset is used as a reference to select richness values from each curve. This is called rarefaction. It is also possible to use a larger sample size as a reference, but this requires extrapolation of smaller samples, which is more prone to error than rarefaction.
+
+However, results from sample-size based estimation can be problematic as they depend on both richness and evenness. A sample from a community with a more even distribution of individuals across species is likely to show higher richness than a sample of the same size from a community where many species are rare, as the rare species are less likely to appear in the sample. Similarly, a community containing a lot of species will appear less rich than it actually is if the sample size used for comparison is too small. Detectability also plays an important part; hard to detect species are less likely to appear in the sample, so communities in which rare species are more easily detectable are likely to yield richer samples.
+
+Another way to estimate species richness is to standardise by coverage. The iNEXT package (Chao et al., 2014; Hsieh et al., 2016) for R is used to estimate species richness at an equal level of coverage (e.g. 0.95) for each cell or year in a biodiversity data cube. Coverage is the proportion of individuals in the community belonging to species in the sample. So, at a coverage of 0.95, 95\% of individuals in the community belong to species detected in the sample while 5\% belong to species that are not detected in the sample. Coverage is estimated based on the frequencies of species already in the sample. It can be illustrated using a species accumulation curve, the slope of which represents the probability of detecting a new species with the next individual you sample from a community. At a sample size of zero, the slope would be one, meaning the next individual sampled has a 100\% probability of being a species not already in the sample. Therefore, a coverage value of one corresponds to the asymptote of a species accumulation curve (slope of zero), meaning no new species would be uncovered through further sampling.
 }
 \examples{
 \dontrun{
 h0_map <- hill0_map(example_cube_1, level = "country", region = "Denmark")
 plot(h0_map)
 }
+}
+\references{
+Hill, M. O. (1973). Diversity and evenness: a unifying notation and its consequences.
+\emph{Ecology}, \emph{54}(2), 427-432.
+
+Roswell, M., Shipley, J., & Ewers, R. M. (2019). A conceptual guide to measuring and interpreting functional diversity.
+\emph{Journal of Applied Ecology}, \emph{56}(12), 2533-2543.
+
+Chao, A., Gotelli, N. J., Hsieh, T. C., Sander, E. L., Ma, K. H.,
+Colwell, R. K., & Ellison, A. M. (2014). Rarefaction and extrapolation with
+Hill numbers: a framework for sampling and estimation in species diversity
+studies. \emph{Ecological monographs}, \emph{84}(1), 45-67.
+
+Hsieh, T. C., Ma, K. H., & Chao, A. (2016). iNEXT: an R package for
+rarefaction and extrapolation of species diversity (Hill numbers).
+\emph{Methods in Ecology and Evolution}, \emph{7}(12), 1451-1456.
 }
 \seealso{
 compute_indicator_workflow

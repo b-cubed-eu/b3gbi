@@ -2,9 +2,12 @@
 % Please edit documentation in R/indicator_wrappers.R
 \name{newness_map}
 \alias{newness_map}
-\title{Calculate Mean Year of Occurrence Over Space}
+\alias{newness_ts}
+\title{Calculate Mean Year of Occurrence Over Time or Space}
 \usage{
 newness_map(data, ...)
+
+newness_ts(data, ...)
 }
 \arguments{
 \item{data}{A data cube object (class 'processed_cube').}
@@ -42,17 +45,39 @@ all non protected areas)}
   }}
 }
 \value{
-An S3 object with the classes 'indicator_map' and 'newness' containing
-the calculated indicator values and metadata.
+An S3 object with the classes 'indicator_map' or 'indicator_ts' and
+'newness' containing the calculated indicator values and metadata.
 }
 \description{
-This function estimates the relative newness of records in a data cube
-by calculating the mean year of occurrence over a gridded map.
+This function estimates the relative newness of records in a
+data cube by calculating the mean year of occurrence over a gridded map or as
+a time series (see 'Details' for more information).
 }
+\details{
+The mean year of occurrence is calculated per cell, giving an
+indication of how recent the data is for each cell. A recent
+mean year is not necessarily an indication of quality, as some
+countries or regions have been conducting comprehensive
+biodiversity monitoring for many years and will therefore
+reflect an older mean year of occurrence, while others may show
+a recent mean year due to e.g., the sudden availability of large
+amounts of citizen science data.
+}
+\section{Functions}{
+\itemize{
+\item \code{newness_map()}: 
+
+\item \code{newness_ts()}: 
+
+}}
 \examples{
 \dontrun{
 n_map <- newness_map(example_cube_1, level = "country", region = "Denmark")
 plot(n_map)
+}
+\dontrun{
+n_ts <- newness_ts(example_cube_1, first_year = 1985)
+plot(n_ts)
 }
 }
 \seealso{
