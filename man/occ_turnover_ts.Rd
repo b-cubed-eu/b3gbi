@@ -2,7 +2,7 @@
 % Please edit documentation in R/indicator_wrappers.R
 \name{occ_turnover_ts}
 \alias{occ_turnover_ts}
-\title{Calculate Occupancy Turnover Over Time}
+\title{Calculate Occupancy Turnover}
 \usage{
 occ_turnover_ts(data, ...)
 }
@@ -42,17 +42,52 @@ all non protected areas)}
   }}
 }
 \value{
-An S3 object with the classes 'indicator_ts' and 'occ_turnover' containing
-the calculated indicator values and metadata.
+An S3 object with the classes 'indicator_ts' and 'occ_turnover'
+containing the calculated indicator values and metadata.
 }
 \description{
-This function calculates occupancy turnover
-as a time series.
+This function calculates occupancy turnover as a time series
+(see 'Details' for more information).
+}
+\details{
+\if{html}{\out{
+<h3>Occupancy turnover</h3>
+Occupancy turnover measures the change in species composition over time,
+reflecting the rate at which species appear or disappear from a given area.
+It provides insights into the dynamic nature of ecological communities,
+highlighting shifts in species distributions and potential environmental
+changes. High turnover rates may indicate rapid community restructuring,
+potentially driven by factors such as habitat alteration, climate change,
+or invasive species. Analyzing occupancy turnover can be crucial for
+understanding ecosystem stability, identifying areas of conservation concern,
+and assessing the effectiveness of management strategies.
+}}
+
+
+Occupancy turnover can be calculated in different ways, but here we use the
+Jaccard dissimilarity index (Jaccard, 1901) to measure the similarity between
+two sets of species occurrences. The Jaccard index is calculated as:
+
+\deqn{
+  J = (b + c) / (a + b + c)
+}{
+  J = (b + c) / (a + b + c)
+}
+
+where a is the number of species present in both time periods, b is the
+number of species present only in the first time period, and c is the number
+of species present only in the second time period. The index ranges
+from 0 (no turnover) to 1 (complete turnover).
 }
 \examples{
 ot_ts <- occ_turnover_ts(example_cube_1, first_year = 1985)
 plot(ot_ts)
 
+}
+\references{
+Jaccard, P. (1901). Étude de la distribution florale dans une portion des
+Alpes et du Jura. \emph{Bulletin de la Société Vaudoise des Science Naturelles},
+\emph{37}(142), 547-579.
 }
 \seealso{
 compute_indicator_workflow

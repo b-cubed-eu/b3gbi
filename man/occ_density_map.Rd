@@ -2,9 +2,12 @@
 % Please edit documentation in R/indicator_wrappers.R
 \name{occ_density_map}
 \alias{occ_density_map}
-\title{Calculate Occurrence Density Over Space}
+\alias{occ_density_ts}
+\title{Calculate Occurrence Density Over Space or Time}
 \usage{
 occ_density_map(data, ...)
+
+occ_density_ts(data, ...)
 }
 \arguments{
 \item{data}{A data cube object (class 'processed_cube').}
@@ -42,16 +45,37 @@ all non protected areas)}
   }}
 }
 \value{
-An S3 object with the classes 'indicator_map' and 'occ_density' containing
-the calculated indicator values and metadata.
+An S3 object with the classes 'indicator_map' or 'indicator_ts' and
+'occ_density' containing the calculated indicator values and metadata.
 }
 \description{
-This function calculates the density of records over a gridded map.
+This function calculates the density of records over a gridded
+map or as a time series (see 'Details' for more information).
 }
+\details{
+\if{html}{\out{
+<h3>Occurrence density</h3>
+Density is calculated by summing the total number of occurrences per square
+kilometre for each cell or year. This provides similar information to total
+occurrences, but is adjusted for cell area.
+}}
+}
+\section{Functions}{
+\itemize{
+\item \code{occ_density_map()}: 
+
+\item \code{occ_density_ts()}: 
+
+}}
 \examples{
 \dontrun{
-od_map <- occ_density_map(example_cube_1, level = "country", region = "Denmark")
+od_map <- occ_density_map(example_cube_1, level = "country",
+                                          region = "Denmark")
 plot(od_map)
+}
+\dontrun{
+od_ts <- occ_density_ts(example_cube_1, first_year = 1985)
+plot(od_ts)
 }
 }
 \seealso{

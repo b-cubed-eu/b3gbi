@@ -2,9 +2,24 @@
 % Please edit documentation in R/indicator_wrappers.R
 \name{hill0_map}
 \alias{hill0_map}
-\title{Calculate Estimated Species Richness Over Space}
+\alias{hill0_ts}
+\alias{hill1_map}
+\alias{hill1_ts}
+\alias{hill2_map}
+\alias{hill2_ts}
+\title{Calculate Estimated Hill Diversity Over Space or Time}
 \usage{
 hill0_map(data, coverage = 0.95, cutoff_length = 5, ...)
+
+hill0_ts(data, coverage = 0.95, cutoff_length = 5, ...)
+
+hill1_map(data, cutoff_length = 5, coverage = 0.95, ...)
+
+hill1_ts(data, cutoff_length = 5, coverage = 0.95, ...)
+
+hill2_map(data, cutoff_length = 5, coverage = 0.95, ...)
+
+hill2_ts(data, cutoff_length = 5, coverage = 0.95, ...)
 }
 \arguments{
 \item{data}{A data cube object (class 'processed_cube').}
@@ -12,8 +27,8 @@ hill0_map(data, coverage = 0.95, cutoff_length = 5, ...)
 \item{coverage}{The sample coverage value for the estimator. Default is 0.95.}
 
 \item{cutoff_length}{The minimum number of data points for each grid cell.
-Grid cells with fewer data points will be removed before calculations to avoid
-errors.  Default is 5.}
+Grid cells with fewer data points will be removed before calculations to
+avoid errors.  Default is 5.}
 
 \item{...}{
   Arguments passed on to \code{\link[=compute_indicator_workflow]{compute_indicator_workflow}}
@@ -48,12 +63,22 @@ all non protected areas)}
   }}
 }
 \value{
-An S3 object with the classes 'indicator_map' and 'hill0' containing
-the calculated indicator values and metadata.
+An S3 object with the classes 'indicator_map' or 'indicator_ts' and
+'hill0' or 'hill1' or 'hill2' containing the calculated indicator values and
+metadata.
 }
 \description{
-This function uses coverage-based methods to estimate species
-richness over a gridded map (see 'Details' for more information).
+Use coverage-based methods to estimate Hill diversity measures
+over a gridded map or as a time series.
+Three Hill diversity measures are covered:
+
+\emph{Species richness} - \if{html}{\out{<code>}}hill0_map()\if{html}{\out{</code>}} and \if{html}{\out{<code>}}hill0_ts()\if{html}{\out{</code>}}
+
+\emph{Hill-Shannon diversity} - \if{html}{\out{<code>}}hill1_map()\if{html}{\out{</code>}} and \if{html}{\out{<code>}}hill1_ts()\if{html}{\out{</code>}}
+
+\emph{Hill-Simpson diversity} - \if{html}{\out{<code>}}hill2_map()\if{html}{\out{</code>}} and \if{html}{\out{<code>}}hill2_ts()\if{html}{\out{</code>}}
+
+(see 'Details' for more information).
 }
 \details{
 \if{html}{\out{
@@ -79,17 +104,53 @@ However, results from sample-size based estimation can be problematic as they de
 
 Another way to estimate species richness is to standardise by coverage. The iNEXT package (Chao et al., 2014; Hsieh et al., 2016) for R is used to estimate species richness at an equal level of coverage (e.g. 0.95) for each cell or year in a biodiversity data cube. Coverage is the proportion of individuals in the community belonging to species in the sample. So, at a coverage of 0.95, 95\% of individuals in the community belong to species detected in the sample while 5\% belong to species that are not detected in the sample. Coverage is estimated based on the frequencies of species already in the sample. It can be illustrated using a species accumulation curve, the slope of which represents the probability of detecting a new species with the next individual you sample from a community. At a sample size of zero, the slope would be one, meaning the next individual sampled has a 100\% probability of being a species not already in the sample. Therefore, a coverage value of one corresponds to the asymptote of a species accumulation curve (slope of zero), meaning no new species would be uncovered through further sampling.
 }
+\section{Functions}{
+\itemize{
+\item \code{hill0_map()}: 
+
+\item \code{hill0_ts()}: 
+
+\item \code{hill1_map()}: 
+
+\item \code{hill1_ts()}: 
+
+\item \code{hill2_map()}: 
+
+\item \code{hill2_ts()}: 
+
+}}
 \examples{
 \dontrun{
 h0_map <- hill0_map(example_cube_1, level = "country", region = "Denmark")
 plot(h0_map)
 }
+\dontrun{
+h0_ts <- hill0_ts(example_cube_1, first_year = 1985)
+plot(h0_ts)
+}
+\dontrun{
+h1_map <- hill1_map(example_cube_1, level = "country", region = "Denmark")
+plot(h1_map)
+}
+\dontrun{
+h1_ts <- hill1_ts(example_cube_1, first_year = 1985)
+plot(h1_ts)
+}
+\dontrun{
+h2_map <- hill2_map(example_cube_1, level = "country", region = "Denmark")
+plot(h2_map)
+}
+\dontrun{
+h2_ts <- hill2_ts(example_cube_1, first_year = 1985)
+plot(h2_ts)
+}
 }
 \references{
-Hill, M. O. (1973). Diversity and evenness: a unifying notation and its consequences.
-\emph{Ecology}, \emph{54}(2), 427-432.
+Hill, M. O. (1973). Diversity and evenness: a unifying notation and its
+consequences. \emph{Ecology}, \emph{54}(2), 427-432.
 
-Roswell, M., Shipley, J., & Ewers, R. M. (2019). A conceptual guide to measuring and interpreting functional diversity.
+Roswell, M., Shipley, J., & Ewers, R. M. (2019). A conceptual guide to
+measuring and interpreting functional diversity.
 \emph{Journal of Applied Ecology}, \emph{56}(12), 2533-2543.
 
 Chao, A., Gotelli, N. J., Hsieh, T. C., Sander, E. L., Ma, K. H.,

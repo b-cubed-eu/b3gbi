@@ -2,14 +2,19 @@
 % Please edit documentation in R/indicator_wrappers.R
 \name{tax_distinct_map}
 \alias{tax_distinct_map}
-\title{Calculate Taxonomic Distinctness Over Space}
+\alias{tax_distinct_ts}
+\title{Calculate Taxonomic Distinctness Over Space or Time}
 \usage{
 tax_distinct_map(data, rows = 1, ...)
+
+tax_distinct_ts(data, rows = 1, ...)
 }
 \arguments{
 \item{data}{A data cube object (class 'processed_cube').}
 
-\item{rows}{Choose which row to select if there are multiple matches when retrieving taxonomic information from GBIF. (Default is 1. Use NA for interactive mode.)}
+\item{rows}{Choose which row to select if there are multiple matches when
+retrieving taxonomic information from GBIF. (Default is 1. Use NA for
+interactive mode.)}
 
 \item{...}{
   Arguments passed on to \code{\link[=compute_indicator_workflow]{compute_indicator_workflow}}
@@ -44,21 +49,21 @@ all non protected areas)}
   }}
 }
 \value{
-An S3 object with the classes 'indicator_map' and 'tax_distinct' containing
-the calculated indicator values and metadata.
+An S3 object with the classes 'indicator_map' or 'indicator_ts' and
+'tax_distinct' containing the calculated indicator values and metadata.
 }
 \description{
 This function calculates the taxonomic distinctness index (TDI)
-over a gridded map (see 'Details' for more information).
+over a gridded map or as a time series (see 'Details' for more information).
 }
 \details{
-Taxonomic distinctness measures the taxonomic relatedness between
-species, providing a measure of biodiversity that accounts for
-evolutionary relationships. A distance matrix based on pairwise
-taxonomic relationships is calculated for each cell using the taxize
-package (Chamberlain & Szöcs, 2013; Chamberlain et al., 2020), then
-taxonomic distinctness is calculated as the Taxonomic Distinctness
-Index (TDI; Clarke & Warwick, 1999):
+Taxonomic distinctness is an essential biodiversity variable (EBV)
+that measures the taxonomic relatedness between species, providing a measure
+of biodiversity that accounts for evolutionary relationships. A distance
+matrix based on pairwise taxonomic relationships is calculated for each cell
+using the taxize package (Chamberlain & Szöcs, 2013; Chamberlain et al.,
+2020), then taxonomic distinctness is calculated as the Taxonomic
+Distinctness Index (TDI; Clarke & Warwick, 1999):
 \deqn{
  \frac{\sum\sum_{i<j} \frac{|R_i - R_j|}{L}}{\frac{S(S-1)}{2}}
 }{
@@ -70,26 +75,37 @@ maximum number of taxonomic ranks.
 The TDI ranges from 0 to 1, with higher values indicating greater
 taxonomic distinctness.
 }
+\section{Functions}{
+\itemize{
+\item \code{tax_distinct_map()}: 
+
+\item \code{tax_distinct_ts()}: 
+
+}}
 \examples{
 \dontrun{
 td_map <- tax_distinct_map(example_cube_1, level = "country", region = "Denmark")
 plot(td_map)
 }
 
+\dontrun{
+td_ts <- tax_distinct_ts(example_cube_1, level = "country", region = "Denmark")
+plot(td_ts)
+}
 }
 \references{
-\enumerate{
-\item Chamberlain, S. A., & Szöcs, E. (2013). taxize: taxonomic search and
+Chamberlain, S. A., & Szöcs, E. (2013). taxize: taxonomic search and
 retrieval in R. \emph{F1000Research}, 2.
-\item Chamberlain, S., Szoecs, E., Foster, Z., Boettiger, C., Ram, K., Bartomeus,
+
+Chamberlain, S., Szoecs, E., Foster, Z., Boettiger, C., Ram, K., Bartomeus,
 I., Baumgartner, J., O’Donnell, J., Oksanen, J., Tzovaras, B. G., Marchand,
 P., Tran, V., Salmon, M., Li, G., & Grenié, M. (2020). taxize: Taxonomic
 Information from Around the Web. R package version 0.9.98.
 https://github.com/ropensci/taxize.
-\item Clarke, K. R., & Warwick, R. M. (1999). The taxonomic distinctness measure
+
+Clarke, K. R., & Warwick, R. M. (1999). The taxonomic distinctness measure
 of biodiversity: weighting of step lengths between hierarchical levels.
 Marine Ecology Progress Series, 184, 21-29.
-}
 }
 \seealso{
 compute_indicator_workflow

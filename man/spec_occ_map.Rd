@@ -2,9 +2,12 @@
 % Please edit documentation in R/indicator_wrappers.R
 \name{spec_occ_map}
 \alias{spec_occ_map}
-\title{Calculate Species Occurrences Over Space}
+\alias{spec_occ_ts}
+\title{Calculate Species Occurrences Over Space or Time}
 \usage{
 spec_occ_map(data, ...)
+
+spec_occ_ts(data, ...)
 }
 \arguments{
 \item{data}{A data cube object (class 'processed_cube').}
@@ -42,18 +45,41 @@ all non protected areas)}
   }}
 }
 \value{
-An S3 object with the classes 'indicator_map' and 'spec_occ' containing
-the calculated indicator values and metadata.
+An S3 object with the classes 'indicator_map' or 'indicator_ts' and
+'spec_occ' containing the calculated indicator values and metadata.
 }
 \description{
 This function calculates the number of occurrences for individual
-species over a gridded map.
+species over a gridded map or as a time series (see 'Details' for more
+information).
 }
+\details{
+\if{html}{\out{
+<h3>Species occurrences</h3>
+Species occurrences are considered an essential biodiversity variable (EBV).
+They are mapped by calculating the total number of occurrences
+of a given species for each cell. This represents the occurrence frequency
+distribution, and also indicates the observed species distribution. The
+number of occurrences can act as a proxy for relative abundance of species
+with a similar detectability, which is an important aspect of biodiversity
+although not an indicator when calculated in isolation.
+}}
+}
+\section{Functions}{
+\itemize{
+\item \code{spec_occ_map()}: 
+
+\item \code{spec_occ_ts()}: 
+
+}}
 \examples{
 \dontrun{
 so_map <- spec_occ_map(example_cube_1, level = "country", region = "Denmark")
 plot(so_map, c(2440728, 4265185))
 }
+so_ts <- spec_occ_ts(example_cube_1, first_year = 1985)
+plot(so_ts, c(2440728, 4265185))
+
 }
 \seealso{
 compute_indicator_workflow

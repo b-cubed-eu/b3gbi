@@ -2,9 +2,12 @@
 % Please edit documentation in R/indicator_wrappers.R
 \name{obs_richness_map}
 \alias{obs_richness_map}
-\title{Calculate Observed Species Richness Over Space}
+\alias{obs_richness_ts}
+\title{Calculate Observed Species Richness Over Space or Time}
 \usage{
 obs_richness_map(data, ...)
+
+obs_richness_ts(data, ...)
 }
 \arguments{
 \item{data}{A data cube object (class 'processed_cube').}
@@ -42,12 +45,12 @@ all non protected areas)}
   }}
 }
 \value{
-An S3 object with the classes 'indicator_map' and 'obs_richness' containing
-the calculated indicator values and metadata.
+An S3 object with the classes 'indicator_map' or 'indicator_ts' and
+'obs_richness' containing the calculated indicator values and metadata.
 }
 \description{
 This function calculates observed species richness over a
-gridded map (see 'Details' for more information).
+gridded map or as a time series (see 'Details' for more information).
 }
 \details{
 \if{html}{\out{
@@ -78,10 +81,21 @@ be discovered during surveys (Hillebrand et al., 2018), as well as the
 detectability of each species.
 }}
 }
+\section{Functions}{
+\itemize{
+\item \code{obs_richness_map()}: 
+
+\item \code{obs_richness_ts()}: 
+
+}}
 \examples{
 \dontrun{
 or_map <- obs_richness_map(example_cube_1, level = "country", region = "Denmark")
 plot(or_map)
+}
+\dontrun{
+or_ts <- obs_richness_ts(example_cube_1, first_year = 1985)
+plot(or_ts)
 }
 }
 \references{

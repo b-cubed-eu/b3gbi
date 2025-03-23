@@ -56,8 +56,8 @@ An S3 object with the classes 'indicator_map' or 'indicator_ts' and
 values and metadata.
 }
 \description{
-Calculate evenness a gridded map or as a time series using
-Pielou's evenness or Williams' evenness (see 'Details' for more information).
+Calculate evenness over a gridded map or as a time series (see
+'Details' for more information).
 }
 \details{
 \if{html}{\out{

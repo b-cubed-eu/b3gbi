@@ -1,7 +1,7 @@
-#' @title Calculate Observed Species Richness Over Space
+#' @title Calculate Observed Species Richness Over Space or Time
 #'
 #' @description This function calculates observed species richness over a
-#' gridded map (see 'Details' for more information).
+#' gridded map or as a time series (see 'Details' for more information).
 #'
 #' @details <h3>Species richness</h3>
 #' Species richness is the total number of species present in a
@@ -42,8 +42,10 @@
 #'
 #' @seealso compute_indicator_workflow
 #'
-#' @return An S3 object with the classes 'indicator_map' and 'obs_richness' containing
-#' the calculated indicator values and metadata.
+#' @return An S3 object with the classes 'indicator_map' or 'indicator_ts' and
+#' 'obs_richness' containing the calculated indicator values and metadata.
+#'
+#' @describeIn obs_richness_map
 #'
 #' @examples
 #' \dontrun{
@@ -59,52 +61,7 @@ obs_richness_map <- function(data, ...) {
 }
 
 
-#' @title Calculate Observed Species Richness Over Time
-#'
-#' @description This function calculates observed species richness as a time
-#' series (see 'Details' for more information).
-#'
-#' @details <h3>Species richness</h3>
-#' Species richness is the total number of species present in a
-#' sample (Magurran, 1988). It is a fundamental and commonly used
-#' measure of biodiversity, providing a simple and intuitive
-#' overview of the status of biodiversity. However, richness is not
-#' well suited to measuring biodiversity change over time, as it
-#' only decreases when local extinctions occur and thus lags behind
-#' abundance for negative trends. While it may act as a leading
-#' indicator of alien species invasions, it will not indicate
-#' establishment because it ignores abundance. Nor will it
-#' necessarily indicate changes in local species composition, which
-#' can occur without any change in richness. Although richness is
-#' conceptually simple, it can be measured in different ways.
-#'
-#' <h3>Observed richness</h3>
-#' Observed richness is calculated by summing the number of unique species
-#' observed for each year or each cell. Observed richness is highly dependent
-#' on the comprehensiveness of the dataset it is being applied to. If some
-#' regions are more intensively, carefully or systematically sampled than
-#' others, this will likely reflect as higher observed richness. Observed
-#' richness also depends on the relative abundance and spatial aggregation of
-#' each species, with less abundant and less aggregated species less likely to
-#' be discovered during surveys (Hillebrand et al., 2018), as well as the
-#' detectability of each species.
-#'
-#' @references
-#' Hillebrand, H., Blasius, B., Borer, E. T., Chase, J. M., Downing, J. A.,
-#' Eriksson, B. K., Filstrup, C. T., Harpole, W. S., Hodapp, D., Larsen, S.,
-#' Lewandowska, A. M., Seabloom, E. W., Van de Waal, D. B., & Ryabov, A. B.
-#' (2018). Biodiversity change is uncoupled from species richness trends:
-#' Consequences for conservation and monitoring. *Journal of Applied Ecology*,
-#' *55*(1), 169-184.
-#'
-#' @param data A data cube object (class 'processed_cube').
-#'
-#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
-#'
-#' @seealso compute_indicator_workflow
-#'
-#' @return An S3 object with the classes 'indicator_ts' and 'obs_richness' containing
-#' the calculated indicator values and metadata.
+#' @describeIn obs_richness_map
 #'
 #' @examples
 #' \dontrun{
@@ -120,10 +77,18 @@ obs_richness_ts <- function(data, ...) {
 }
 
 
-#' @title Calculate Total Occurrences Over Space
+#' @title Calculate Total Occurrences Over Space or Time
 #'
 #' @description This function calculates the total number of species occurrence
-#' records over a gridded map.
+#' records over a gridded map or as a time series (see 'Details' for more '
+#' information).
+#'
+#' @details <h3>Total occurrences</h3>
+#' The total number of occurrences is calculated by summing the occurrences of
+#' all species observed for each cell or year. While not itself an indicator,
+#' this variable provides an overview of the comprehensiveness and distribution
+#' of data in the cube being analysed, and may be helpful, or even vital, for
+#' interpreting the results of calculated indicators.
 #'
 #' @param data A data cube object (class 'processed_cube').
 #'
@@ -131,12 +96,15 @@ obs_richness_ts <- function(data, ...) {
 #'
 #' @seealso compute_indicator_workflow
 #'
-#' @return An S3 object with the classes 'indicator_map' and 'total_occ' containing
-#' the calculated indicator values and metadata.
+#' @return An S3 object with the classes 'indicator_map' or 'indicator_ts' and
+#' 'total_occ' containing the calculated indicator values and metadata.
+#'
+#' @describeIn total_occ_map
 #'
 #' @examples
 #' \dontrun{
-#' to_map <- total_occ_map(example_cube_1, level = "country", region = "Denmark")
+#' to_map <- total_occ_map(example_cube_1, level = "country",
+#'                                         region = "Denmark")
 #' plot(to_map)
 #' }
 #' @export
@@ -148,19 +116,7 @@ total_occ_map <- function(data, ...) {
 }
 
 
-#' @title Calculate Total Occurrences Over Time
-#'
-#' @description This function calculates the total number of species occurrence records
-#' as a time series.
-#'
-#' @param data A data cube object (class 'processed_cube').
-#'
-#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
-#'
-#' @seealso compute_indicator_workflow
-#'
-#' @return An S3 object with the classes 'indicator_ts' and 'total_occ' containing
-#' the calculated indicator values and metadata.
+#' @describeIn total_occ_map
 #'
 #' @examples
 #' \dontrun{
@@ -178,8 +134,8 @@ total_occ_ts <- function(data, ...) {
 
 #' @title Calculate Evenness Over Time or Space
 #'
-#' @description Calculate evenness a gridded map or as a time series using
-#' Pielou's evenness or Williams' evenness (see 'Details' for more information).
+#' @description Calculate evenness over a gridded map or as a time series (see
+#' 'Details' for more information).
 #'
 #' @details <h3>Evenness</h3>
 #'
@@ -530,230 +486,19 @@ hill_diversity_details <- paste0(
 
 )
 
-
-
-
-#' @title Calculate Estimated Species Richness Over Space
+#' @title Calculate Estimated Hill Diversity Over Space or Time
 #'
-#' @description This function uses coverage-based methods to estimate species
-#' richness over a gridded map (see 'Details' for more information).
+#' @description Use coverage-based methods to estimate Hill diversity measures
+#' over a gridded map or as a time series.
+#' Three Hill diversity measures are covered:
 #'
-#' @details `r hill_diversity_details`
+#' *Species richness* - <code>hill0_map()</code> and <code>hill0_ts()</code>
 #'
-#' @references
-#' Hill, M. O. (1973). Diversity and evenness: a unifying notation and its consequences.
-#' *Ecology*, *54*(2), 427-432.
+#' *Hill-Shannon diversity* - <code>hill1_map()</code> and <code>hill1_ts()</code>
 #'
-#' Roswell, M., Shipley, J., & Ewers, R. M. (2019). A conceptual guide to measuring and interpreting functional diversity.
-#' *Journal of Applied Ecology*, *56*(12), 2533-2543.
+#' *Hill-Simpson diversity* - <code>hill2_map()</code> and <code>hill2_ts()</code>
 #'
-#' Chao, A., Gotelli, N. J., Hsieh, T. C., Sander, E. L., Ma, K. H.,
-#' Colwell, R. K., & Ellison, A. M. (2014). Rarefaction and extrapolation with
-#' Hill numbers: a framework for sampling and estimation in species diversity
-#' studies. *Ecological monographs*, *84*(1), 45-67.
-#'
-#' Hsieh, T. C., Ma, K. H., & Chao, A. (2016). iNEXT: an R package for
-#' rarefaction and extrapolation of species diversity (Hill numbers).
-#' *Methods in Ecology and Evolution*, *7*(12), 1451-1456.
-#'
-#' @param data A data cube object (class 'processed_cube').
-#' @param coverage The sample coverage value for the estimator. Default is 0.95.
-#' @param cutoff_length The minimum number of data points for each grid cell.
-#'  Grid cells with fewer data points will be removed before calculations to avoid
-#'  errors.  Default is 5.
-#'
-#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
-#'
-#' @seealso compute_indicator_workflow
-#'
-#' @return An S3 object with the classes 'indicator_map' and 'hill0' containing
-#' the calculated indicator values and metadata.
-#'
-#' @examples
-#' \dontrun{
-#' h0_map <- hill0_map(example_cube_1, level = "country", region = "Denmark")
-#' plot(h0_map)
-#' }
-#' @export
-hill0_map <- function(data,
-                      coverage = 0.95,
-                      cutoff_length = 5,
-                      ...) {
-  compute_indicator_workflow(data,
-                             type = "hill0",
-                             dim_type = "map",
-                             cutoff_length = cutoff_length,
-                             coverage = coverage,
-                             ...)
-}
-
-
-#' @title Calculate Estimated Species Richness Over Time
-#'
-#' @description This function uses coverage-based methods to estimate species
-#' richness over time (see 'Details' for more information).
-#'
-#' @details `r hill_diversity_details`
-#'
-#' @references
-#' Hill, M. O. (1973). Diversity and evenness: a unifying notation and its consequences.
-#' *Ecology*, *54*(2), 427-432.
-#'
-#' Roswell, M., Dushoff, J., & Winfree, R. (2021). A conceptual guide to
-#' measuring species diversity. *Oikos*, *130*(3), 321-338.
-#'
-#' Chao, A., Gotelli, N. J., Hsieh, T. C., Sander, E. L., Ma, K. H.,
-#' Colwell, R. K., & Ellison, A. M. (2014). Rarefaction and extrapolation with
-#' Hill numbers: a framework for sampling and estimation in species diversity
-#' studies. *Ecological monographs*, *84*(1), 45-67.
-#'
-#' Hsieh, T. C., Ma, K. H., & Chao, A. (2016). iNEXT: an R package for
-#' rarefaction and extrapolation of species diversity (Hill numbers).
-#' *Methods in Ecology and Evolution*, *7*(12), 1451-1456.
-#'
-#' @param data A data cube object (class 'processed_cube').
-#' @param coverage The sample coverage value for the estimator. Default is 0.95.
-#' @param cutoff_length The minimum number of data points for each year.
-#'  Years with fewer data points will be removed before calculations to avoid errors.
-#'  Default is 5.
-#'
-#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
-#'
-#' @seealso compute_indicator_workflow
-#'
-#' @return An S3 object with the classes 'indicator_ts' and 'hill0' containing
-#' the calculated indicator values and metadata.
-#'
-#' @examples
-#' \dontrun{
-#' h0_ts <- hill0_ts(example_cube_1, first_year = 1985)
-#' plot(h0_ts)
-#' }
-#' @export
-hill0_ts <- function(data,
-                     coverage = 0.95,
-                     cutoff_length = 5,
-                     ...) {
-  compute_indicator_workflow(data,
-                             type = "hill0",
-                             dim_type = "ts",
-                             cutoff_length = cutoff_length,
-                             coverage = coverage,
-                             ...)
-}
-
-
-#' @title Calculate Hill-Shannon Diversity Over Space
-#'
-#' @description This function uses coverage-based methods to estimate
-#' Hill-Shannon Diversity over a gridded map (see 'Details' for more information).
-#'
-#' @details `r hill_diversity_details`
-#'
-#' @references
-#' Hill, M. O. (1973). Diversity and evenness: a unifying notation and its
-#' consequences.
-#' *Ecology*, *54*(2), 427-432.
-#'
-#' Roswell, M., Shipley, J., & Ewers, R. M. (2019). A conceptual guide to
-#' measuring and interpreting functional diversity.
-#' *Journal of Applied Ecology*, *56*(12), 2533-2543.
-#'
-#' Chao, A., Gotelli, N. J., Hsieh, T. C., Sander, E. L., Ma, K. H.,
-#' Colwell, R. K., & Ellison, A. M. (2014). Rarefaction and extrapolation with
-#' Hill numbers: a framework for sampling and estimation in species diversity
-#' studies. *Ecological monographs*, *84*(1), 45-67.
-#'
-#' Hsieh, T. C., Ma, K. H., & Chao, A. (2016). iNEXT: an R package for
-#' rarefaction and extrapolation of species diversity (Hill numbers).
-#' *Methods in Ecology and Evolution*, *7*(12), 1451-1456.
-#'
-#' @inheritParams hill0_map
-#'
-#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
-#'
-#' @seealso compute_indicator_workflow
-#'
-#' @return An S3 object with the classes 'indicator_map' and 'hill1' containing
-#' the calculated indicator values and metadata.
-#'
-#' @examples
-#' \dontrun{
-#' h1_map <- hill1_map(example_cube_1, level = "country", region = "Denmark")
-#' plot(h1_map)
-#' }
-#' @export
-hill1_map <- function(data,
-                      cutoff_length = 5,
-                      coverage = 0.95,
-                      ...) {
-  compute_indicator_workflow(data,
-                             type = "hill1",
-                             dim_type = "map",
-                             cutoff_length = cutoff_length,
-                             coverage = coverage,
-                             ...)
-}
-
-
-#' @title Calculate Hill-Shannon Diversity Over Time
-#'
-#' @description This function uses coverage-based methods to estimate
-#' Hill-Shannon Diversity over time (see 'Details' for more information).
-#'
-#' @details `r hill_diversity_details`
-#'
-#' @references
-#' Hill, M. O. (1973). Diversity and evenness: a unifying notation and its
-#' consequences.
-#' *Ecology*, *54*(2), 427-432.
-#'
-#' Roswell, M., Shipley, J., & Ewers, R. M. (2019). A conceptual guide to
-#' measuring and interpreting functional diversity.
-#' *Journal of Applied Ecology*, *56*(12), 2533-2543.
-#'
-#' Chao, A., Gotelli, N. J., Hsieh, T. C., Sander, E. L., Ma, K. H.,
-#' Colwell, R. K., & Ellison, A. M. (2014). Rarefaction and extrapolation with
-#' Hill numbers: a framework for sampling and estimation in species diversity
-#' studies. *Ecological monographs*, *84*(1), 45-67.
-#'
-#' Hsieh, T. C., Ma, K. H., & Chao, A. (2016). iNEXT: an R package for
-#' rarefaction and extrapolation of species diversity (Hill numbers).
-#' *Methods in Ecology and Evolution*, *7*(12), 1451-1456.
-#'
-#' @inheritParams hill0_ts
-#'
-#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
-#'
-#' @seealso compute_indicator_workflow
-#'
-#' @return An S3 object with the classes 'indicator_ts' and 'hill1' containing
-#' the calculated indicator values and metadata.
-#'
-#' @examples
-#' \dontrun{
-#' h1_ts <- hill1_ts(example_cube_1, first_year = 1985)
-#' plot(h1_ts)
-#' }
-#' @export
-hill1_ts <- function(data,
-                     cutoff_length = 5,
-                     coverage = 0.95,
-                     ...) {
-  compute_indicator_workflow(data,
-                             type = "hill1",
-                             dim_type = "ts",
-                             cutoff_length = cutoff_length,
-                             coverage = coverage,
-                             ...)
-}
-
-
-#' @title Calculate Hill-Simpson Diversity Over Space
-#'
-#' @description This function uses coverage-based methods to estimate
-#' Hill-Simpson Diversity over a gridded map (see 'Details' for more
-#' information).
+#' (see 'Details' for more information).
 #'
 #' @details `r hill_diversity_details`
 #'
@@ -774,14 +519,105 @@ hill1_ts <- function(data,
 #' rarefaction and extrapolation of species diversity (Hill numbers).
 #' *Methods in Ecology and Evolution*, *7*(12), 1451-1456.
 #'
-#' @inheritParams hill0_map
+#' @param data A data cube object (class 'processed_cube').
+#' @param coverage The sample coverage value for the estimator. Default is 0.95.
+#' @param cutoff_length The minimum number of data points for each grid cell.
+#'  Grid cells with fewer data points will be removed before calculations to
+#'  avoid errors.  Default is 5.
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
 #' @seealso compute_indicator_workflow
 #'
-#' @return An S3 object with the classes 'indicator_map' and 'hill2' containing
-#' the calculated indicator values and metadata.
+#' @return An S3 object with the classes 'indicator_map' or 'indicator_ts' and
+#' 'hill0' or 'hill1' or 'hill2' containing the calculated indicator values and
+#' metadata.
+#'
+#' @describeIn hill0_map
+#'
+#' @examples
+#' \dontrun{
+#' h0_map <- hill0_map(example_cube_1, level = "country", region = "Denmark")
+#' plot(h0_map)
+#' }
+#' @export
+hill0_map <- function(data,
+                      coverage = 0.95,
+                      cutoff_length = 5,
+                      ...) {
+  compute_indicator_workflow(data,
+                             type = "hill0",
+                             dim_type = "map",
+                             cutoff_length = cutoff_length,
+                             coverage = coverage,
+                             ...)
+}
+
+
+#' @describeIn hill0_map
+#'
+#' @examples
+#' \dontrun{
+#' h0_ts <- hill0_ts(example_cube_1, first_year = 1985)
+#' plot(h0_ts)
+#' }
+#' @export
+hill0_ts <- function(data,
+                     coverage = 0.95,
+                     cutoff_length = 5,
+                     ...) {
+  compute_indicator_workflow(data,
+                             type = "hill0",
+                             dim_type = "ts",
+                             cutoff_length = cutoff_length,
+                             coverage = coverage,
+                             ...)
+}
+
+
+#' @describeIn hill0_map
+#'
+#' @examples
+#' \dontrun{
+#' h1_map <- hill1_map(example_cube_1, level = "country", region = "Denmark")
+#' plot(h1_map)
+#' }
+#' @export
+hill1_map <- function(data,
+                      cutoff_length = 5,
+                      coverage = 0.95,
+                      ...) {
+  compute_indicator_workflow(data,
+                             type = "hill1",
+                             dim_type = "map",
+                             cutoff_length = cutoff_length,
+                             coverage = coverage,
+                             ...)
+}
+
+
+#' @describeIn hill0_map
+#'
+#' @examples
+#' \dontrun{
+#' h1_ts <- hill1_ts(example_cube_1, first_year = 1985)
+#' plot(h1_ts)
+#' }
+#' @export
+hill1_ts <- function(data,
+                     cutoff_length = 5,
+                     coverage = 0.95,
+                     ...) {
+  compute_indicator_workflow(data,
+                             type = "hill1",
+                             dim_type = "ts",
+                             cutoff_length = cutoff_length,
+                             coverage = coverage,
+                             ...)
+}
+
+
+#' @describeIn hill0_map
 #'
 #' @examples
 #' \dontrun{
@@ -801,39 +637,7 @@ hill2_map <- function(data,
                              ...)
 }
 
-#' @title Calculate Hill-Simpson Diversity Over Time
-#'
-#' @description This function uses coverage-based methods to estimate
-#' Hill-Simpson Diversity over time (see 'Details' for more information).
-#'
-#' @details `r hill_diversity_details`
-#'
-#' @references
-#' Hill, M. O. (1973). Diversity and evenness: a unifying notation and its
-#' consequences.
-#' *Ecology*, *54*(2), 427-432.
-#'
-#' Roswell, M., Shipley, J., & Ewers, R. M. (2019). A conceptual guide to
-#' measuring and interpreting functional diversity.
-#' *Journal of Applied Ecology*, *56*(12), 2533-2543.
-#'
-#' Chao, A., Gotelli, N. J., Hsieh, T. C., Sander, E. L., Ma, K. H.,
-#' Colwell, R. K., & Ellison, A. M. (2014). Rarefaction and extrapolation with
-#' Hill numbers: a framework for sampling and estimation in species diversity
-#' studies. *Ecological monographs*, *84*(1), 45-67.
-#'
-#' Hsieh, T. C., Ma, K. H., & Chao, A. (2016). iNEXT: an R package for
-#' rarefaction and extrapolation of species diversity (Hill numbers).
-#' *Methods in Ecology and Evolution*, *7*(12), 1451-1456.
-#'
-#' @inheritParams hill0_ts
-#'
-#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
-#'
-#' @seealso compute_indicator_workflow
-#'
-#' @return An S3 object with the classes 'indicator_ts' and 'hill2' containing
-#' the calculated indicator values and metadata.
+#' @describeIn hill0_map
 #'
 #' @examples
 #' \dontrun{
@@ -962,9 +766,15 @@ newness_ts <- function(data, ...) {
 }
 
 
-#' @title Calculate Occurrence Density Over Space
+#' @title Calculate Occurrence Density Over Space or Time
 #'
-#' @description This function calculates the density of records over a gridded map.
+#' @description This function calculates the density of records over a gridded
+#' map or as a time series (see 'Details' for more information).
+#'
+#' @details <h3>Occurrence density</h3>
+#' Density is calculated by summing the total number of occurrences per square
+#' kilometre for each cell or year. This provides similar information to total
+#' occurrences, but is adjusted for cell area.
 #'
 #' @param data A data cube object (class 'processed_cube').
 #'
@@ -972,12 +782,15 @@ newness_ts <- function(data, ...) {
 #'
 #' @seealso compute_indicator_workflow
 #'
-#' @return An S3 object with the classes 'indicator_map' and 'occ_density' containing
-#' the calculated indicator values and metadata.
+#' @return An S3 object with the classes 'indicator_map' or 'indicator_ts' and
+#' 'occ_density' containing the calculated indicator values and metadata.
+#'
+#' @describeIn occ_density_map
 #'
 #' @examples
 #' \dontrun{
-#' od_map <- occ_density_map(example_cube_1, level = "country", region = "Denmark")
+#' od_map <- occ_density_map(example_cube_1, level = "country",
+#'                                           region = "Denmark")
 #' plot(od_map)
 #' }
 #' @export
@@ -989,18 +802,7 @@ occ_density_map <- function(data, ...) {
 }
 
 
-#' @title Calculate Occurrence Density Over Time
-#'
-#' @description This function calculates density of records as a time series.
-#'
-#' @param data A data cube object (class 'processed_cube').
-#'
-#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
-#'
-#' @seealso compute_indicator_workflow
-#'
-#' @return An S3 object with the classes 'indicator_ts' and 'occ_density' containing
-#' the calculated indicator values and metadata.
+#' @describeIn occ_density_map
 #'
 #' @examples
 #' \dontrun{
@@ -1015,10 +817,20 @@ occ_density_ts <- function(data, ...) {
                              ...)
 }
 
-#' @title Calculate Species Occurrences Over Space
+#' @title Calculate Species Occurrences Over Space or Time
 #'
 #' @description This function calculates the number of occurrences for individual
-#' species over a gridded map.
+#' species over a gridded map or as a time series (see 'Details' for more
+#' information).
+#'
+#' @details <h3>Species occurrences</h3>
+#' Species occurrences are considered an essential biodiversity variable (EBV).
+#' They are mapped by calculating the total number of occurrences
+#' of a given species for each cell. This represents the occurrence frequency
+#' distribution, and also indicates the observed species distribution. The
+#' number of occurrences can act as a proxy for relative abundance of species
+#' with a similar detectability, which is an important aspect of biodiversity
+#' although not an indicator when calculated in isolation.
 #'
 #' @param data A data cube object (class 'processed_cube').
 #'
@@ -1026,8 +838,10 @@ occ_density_ts <- function(data, ...) {
 #'
 #' @seealso compute_indicator_workflow
 #'
-#' @return An S3 object with the classes 'indicator_map' and 'spec_occ' containing
-#' the calculated indicator values and metadata.
+#' @return An S3 object with the classes 'indicator_map' or 'indicator_ts' and
+#' 'spec_occ' containing the calculated indicator values and metadata.
+#'
+#' @describeIn spec_occ_map
 #'
 #' @examples
 #' \dontrun{
@@ -1042,19 +856,7 @@ spec_occ_map <- function(data, ...) {
                              ...)
 }
 
-#' @title Calculate Number of Occurrences for One or More Species Over Time
-#'
-#' @description This function calculates number of occurrences for individual
-#' species as time series.
-#'
-#' @param data A data cube object (class 'processed_cube').
-#'
-#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
-#'
-#' @seealso compute_indicator_workflow
-#'
-#' @return An S3 object with the classes 'indicator_ts' and 'spec_occ' containing
-#' the calculated indicator values and metadata.
+#' @describeIn spec_occ_map
 #'
 #' @examples
 #' so_ts <- spec_occ_ts(example_cube_1, first_year = 1985)
@@ -1068,10 +870,10 @@ spec_occ_ts <- function(data, ...) {
                              ...)
 }
 
-#' @title Plot Species Ranges Over Space
+#' @title Plot Species Ranges Over Space or Time
 #'
-#' @description This function plots the cells occupied for individual
-#' species over a gridded map.
+#' @description Plot the cells occupied for individual species over a gridded
+#' map or calculate the change in the number of cells occupied as a time series.
 #'
 #' @param data A data cube object (class 'processed_cube').
 #'
@@ -1079,8 +881,10 @@ spec_occ_ts <- function(data, ...) {
 #'
 #' @seealso compute_indicator_workflow
 #'
-#' @return An S3 object with the classes 'indicator_map' and 'spec_range' containing
-#' the calculated indicator values and metadata.
+#' @return An S3 object with the classes 'indicator_map' or 'indicator_ts' and
+#' 'spec_range' containing the calculated indicator values and metadata.
+#'
+#' @describeIn spec_range_map
 #'
 #' @examples
 #' sr_map <- spec_range_map(example_cube_1, level = "country", region = "Denmark")
@@ -1094,19 +898,7 @@ spec_range_map <- function(data, ...) {
                              ...)
 }
 
-#' @title Calculate Range Size (Number of Cells Occupied) for One or More Species Over Time
-#'
-#' @description This function calculates number of cells occupied for individual
-#' species as time series.
-#'
-#' @param data A data cube object (class 'processed_cube').
-#'
-#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
-#'
-#' @seealso compute_indicator_workflow
-#'
-#' @return An S3 object with the classes 'indicator_ts' and 'spec_range' containing
-#' the calculated indicator values and metadata.
+#' @describeIn spec_range_map
 #'
 #' @examples
 #' \dontrun{
@@ -1121,18 +913,18 @@ spec_range_ts <- function(data, ...) {
                              ...)
 }
 
-#' @title Calculate Taxonomic Distinctness Over Space
+#' @title Calculate Taxonomic Distinctness Over Space or Time
 #'
 #' @description This function calculates the taxonomic distinctness index (TDI)
-#' over a gridded map (see 'Details' for more information).
+#' over a gridded map or as a time series (see 'Details' for more information).
 #'
-#' @details Taxonomic distinctness measures the taxonomic relatedness between
-#' species, providing a measure of biodiversity that accounts for
-#' evolutionary relationships. A distance matrix based on pairwise
-#' taxonomic relationships is calculated for each cell using the taxize
-#' package (Chamberlain & Szöcs, 2013; Chamberlain et al., 2020), then
-#' taxonomic distinctness is calculated as the Taxonomic Distinctness
-#' Index (TDI; Clarke & Warwick, 1999):
+#' @details Taxonomic distinctness is an essential biodiversity variable (EBV)
+#' that measures the taxonomic relatedness between species, providing a measure
+#' of biodiversity that accounts for evolutionary relationships. A distance
+#' matrix based on pairwise taxonomic relationships is calculated for each cell
+#' using the taxize package (Chamberlain & Szöcs, 2013; Chamberlain et al.,
+#' 2020), then taxonomic distinctness is calculated as the Taxonomic
+#' Distinctness Index (TDI; Clarke & Warwick, 1999):
 #' \deqn{
 #'  \frac{\sum\sum_{i<j} \frac{|R_i - R_j|}{L}}{\frac{S(S-1)}{2}}
 #' }{
@@ -1145,27 +937,32 @@ spec_range_ts <- function(data, ...) {
 #' taxonomic distinctness.
 #'
 #' @references
-#' 1. Chamberlain, S. A., & Szöcs, E. (2013). taxize: taxonomic search and
+#' Chamberlain, S. A., & Szöcs, E. (2013). taxize: taxonomic search and
 #' retrieval in R. *F1000Research*, 2.
-#' 2. Chamberlain, S., Szoecs, E., Foster, Z., Boettiger, C., Ram, K., Bartomeus,
+#'
+#' Chamberlain, S., Szoecs, E., Foster, Z., Boettiger, C., Ram, K., Bartomeus,
 #' I., Baumgartner, J., O’Donnell, J., Oksanen, J., Tzovaras, B. G., Marchand,
 #' P., Tran, V., Salmon, M., Li, G., & Grenié, M. (2020). taxize: Taxonomic
 #' Information from Around the Web. R package version 0.9.98.
 #' https://github.com/ropensci/taxize.
-#' 3. Clarke, K. R., & Warwick, R. M. (1999). The taxonomic distinctness measure
+#'
+#' Clarke, K. R., & Warwick, R. M. (1999). The taxonomic distinctness measure
 #' of biodiversity: weighting of step lengths between hierarchical levels.
 #' Marine Ecology Progress Series, 184, 21-29.
 #'
-#'
 #' @param data A data cube object (class 'processed_cube').
-#' @param rows Choose which row to select if there are multiple matches when retrieving taxonomic information from GBIF. (Default is 1. Use NA for interactive mode.)
+#' @param rows Choose which row to select if there are multiple matches when
+#' retrieving taxonomic information from GBIF. (Default is 1. Use NA for
+#' interactive mode.)
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
 #' @seealso compute_indicator_workflow
 #'
-#' @return An S3 object with the classes 'indicator_map' and 'tax_distinct' containing
-#' the calculated indicator values and metadata.
+#' @return An S3 object with the classes 'indicator_map' or 'indicator_ts' and
+#' 'tax_distinct' containing the calculated indicator values and metadata.
+#'
+#' @describeIn tax_distinct_map
 #'
 #' @examples
 #' \dontrun{
@@ -1185,50 +982,7 @@ tax_distinct_map <- function(data, rows = 1, ...) {
                              ...)
 }
 
-#' @title Calculate Taxonomic Distinctness Over Time
-#'
-#' @description This function calculates the taxonomic distinctness index as a
-#' time series (see 'Details' for more information).
-#'
-#' @details Taxonomic distinctness measures the taxonomic relatedness between
-#' species, providing a measure of biodiversity that accounts for
-#' evolutionary relationships. A distance matrix based on pairwise
-#' taxonomic relationships is calculated for each cell using the taxize
-#' package (Chamberlain & Szöcs, 2013; Chamberlain et al., 2020), then
-#' taxonomic distinctness is calculated as the Taxonomic Distinctness
-#' Index (TDI; Clarke & Warwick, 1999):
-#' \deqn{
-#' \frac{\sum\sum_{i<j} \frac{|R_i - R_j|}{L}}{\frac{S(S-1)}{2}}
-#' }{
-#' (∑∑ from i<j of (|R_i-R_j| / L) / (S * (S - 1) / 2)
-#' }
-#' where S is the number of species, Ri and Rj are the taxonomic ranks
-#' of species i and j (from the GBIF Taxonomic Backbone), and L is the
-#' maximum number of taxonomic ranks.
-#' The TDI ranges from 0 to 1, with higher values indicating greater
-#' taxonomic distinctness.
-#'
-#' @references
-#' 1. Chamberlain, S. A., & Szöcs, E. (2013). taxize: taxonomic search and
-#' retrieval in R. *F1000Research*, 2.
-#' 2. Chamberlain, S., Szoecs, E., Foster, Z., Boettiger, C., Ram, K., Bartomeus,
-#' I., Baumgartner, J., O’Donnell, J., Oksanen, J., Tzovaras, B. G., Marchand,
-#' P., Tran, V., Salmon, M., Li, G., & Grenié, M. (2020). taxize: Taxonomic
-#' Information from Around the Web. R package version 0.9.98.
-#' https://github.com/ropensci/taxize.
-#' 3. Clarke, K. R., & Warwick, R. M. (1999). The taxonomic distinctness measure
-#' of biodiversity: weighting of step lengths between hierarchical levels.
-#' Marine Ecology Progress Series, 184, 21-29.
-#'
-#' @param data A data cube object (class 'processed_cube').
-#' @param rows Choose which row to select if there are multiple matches when retrieving taxonomic information from GBIF. (Default is 1. Use NA for interactive mode.)
-#'
-#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
-#'
-#' @seealso compute_indicator_workflow
-#'
-#' @return An S3 object with the classes 'indicator_ts' and 'tax_distinct' containing
-#' the calculated indicator values and metadata.
+#' @describeIn tax_distinct_map
 #'
 #' @examples
 #' \dontrun{
@@ -1247,10 +1001,41 @@ tax_distinct_ts <- function(data, rows = 1, ...) {
                              ...)
 }
 
-#' @title Calculate Occupancy Turnover Over Time
+#' @title Calculate Occupancy Turnover
 #'
-#' @description This function calculates occupancy turnover
-#' as a time series.
+#' @description This function calculates occupancy turnover as a time series
+#' (see 'Details' for more information).
+#'
+#' @details <h3>Occupancy turnover</h3>
+#' Occupancy turnover measures the change in species composition over time,
+#' reflecting the rate at which species appear or disappear from a given area.
+#' It provides insights into the dynamic nature of ecological communities,
+#' highlighting shifts in species distributions and potential environmental
+#' changes. High turnover rates may indicate rapid community restructuring,
+#' potentially driven by factors such as habitat alteration, climate change,
+#' or invasive species. Analyzing occupancy turnover can be crucial for
+#' understanding ecosystem stability, identifying areas of conservation concern,
+#' and assessing the effectiveness of management strategies.
+#'
+#' Occupancy turnover can be calculated in different ways, but here we use the
+#' Jaccard dissimilarity index (Jaccard, 1901) to measure the similarity between
+#' two sets of species occurrences. The Jaccard index is calculated as:
+#'
+#' \deqn{
+#'   J = (b + c) / (a + b + c)
+#' }{
+#'   J = (b + c) / (a + b + c)
+#' }
+#'
+#' where a is the number of species present in both time periods, b is the
+#' number of species present only in the first time period, and c is the number
+#' of species present only in the second time period. The index ranges
+#' from 0 (no turnover) to 1 (complete turnover).
+#'
+#' @references
+#' Jaccard, P. (1901). Étude de la distribution florale dans une portion des
+#' Alpes et du Jura. *Bulletin de la Société Vaudoise des Science Naturelles*,
+#' *37*(142), 547-579.
 #'
 #' @param data A data cube object (class 'processed_cube').
 #'
@@ -1258,8 +1043,8 @@ tax_distinct_ts <- function(data, rows = 1, ...) {
 #'
 #' @seealso compute_indicator_workflow
 #'
-#' @return An S3 object with the classes 'indicator_ts' and 'occ_turnover' containing
-#' the calculated indicator values and metadata.
+#' @return An S3 object with the classes 'indicator_ts' and 'occ_turnover'
+#' containing the calculated indicator values and metadata.
 #'
 #' @examples
 #' ot_ts <- occ_turnover_ts(example_cube_1, first_year = 1985)
