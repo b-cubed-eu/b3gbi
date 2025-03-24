@@ -1,3 +1,8 @@
+# b3gbi 0.5.1 - Minor update:
+
+* Equations in pkgdown help website now display correctly.
+* Fixed bad example in spec_occ_ts() documentation.
+
 # b3gbi 0.5.0 - Major update:
 
 * Conversion between input and output coordinate reference systems is now handled correctly even if they have different units (e.g. degrees vs km).
