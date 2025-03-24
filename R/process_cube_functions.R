@@ -15,19 +15,15 @@
 #'
 #' @param cube_name The location and name of a data cube file
 #'   (e.g., 'inst/extdata/europe_species_cube.csv').
-#' @param tax_info The location and name of an associated taxonomic info file
-#'   (e.g.,  'inst/extdata/europe_species_info.csv').
-#' @param datasets_info The location and name of an associated dataset info file
-#'   (e.g., 'inst/extdata/europe_species_datasets.csv').
-#' @param first_year (Optional) The first year of occurrences to include. If not
-#'   specified, uses a default of 1600 to prevent false records (e.g. with year = 0).
-#' @param last_year (Optional) The final year of occurrences to include. If not
-#'   specified, uses the latest year present in the cube.
 #' @param grid_type Specify which grid reference system your cube uses. By default
 #'  the function will attempt to determine this automatically and return an error if it fails.
 #'  If you want to perform analysis on a cube with custom grid codes (e.g. output
 #'  from the gcube package) or a cube without grid codes, select 'custom' or 'none',
 #'  respectively.
+#' @param first_year (Optional) The first year of occurrences to include. If not
+#'   specified, uses a default of 1600 to prevent false records (e.g. with year = 0).
+#' @param last_year (Optional) The final year of occurrences to include. If not
+#'   specified, uses the latest year present in the cube.
 #' @param force_gridcode Force the function to assume a specific grid reference system.
 #'  This may cause unexpected downstream issues, so it is not recommended. If you are
 #'  getting errors related to grid cell codes, check to make sure they are valid.
@@ -59,7 +55,7 @@
 #'  species (if other than 'species'). Note that it is not necessary to have both a
 #'  species column and a scientificName column. One or the other is sufficient.
 #' @param cols_kingdomKey The name of the column containing the kingdom key of the
-#'  occurring species (if other than 'kingdomKey'). This column is optinal.
+#'  occurring species (if other than 'kingdomKey'). This column is optional.
 #' @param cols_familyKey The name of the column containing the family key of the
 #'  occurring species (if other than 'familykey'). This column is optional.
 #' @param cols_speciesKey The name of the column containing the species key of the

@@ -21,17 +21,13 @@ knitr::opts_chunk$set(
 The goal of this tutorial is to get you familiar with how to use the b3gbi package, which contains a number of functions for calculating and plotting biodiversity indicators from GBIF occurrence cubes.
 The package is not ready for official release yet, but it is publicly available at https://www.github.com/b-cubed-eu/b3gbi. 
 
-Below I will explain how to install the package on your own computer, and give a quick tutorial on the core functions, with examples. Given that the package is unfinished and has undergone very limited testing, it is possible that you will encounter errors.
-If you are unable to install the package on your computer, you can also clone it through github.
-
-Since b3gbi is only available on github, you will need the R package called devtools to install it.
+Below I will explain how to install the package on your own computer, and give a quick tutorial on the core functions, with examples. Given that the package is unfinished and has undergone limited testing, it is possible that you will encounter errors.
 
 ## Package Installation
 
 ```{r, eval=FALSE}
 
-install.packages("devtools") # unnecessary if you already have devtools
-devtools::install_github("b-cubed-eu/b3gbi")
+install.packages("b3gbi", repos = "https://b-cubed-eu.r-universe.dev")
 
 ```
 
@@ -46,8 +42,29 @@ The old ones come with an additional .csv file containing taxonomic information 
 # Function 1: process_cube()
 # Description: Imports a data cube from a .csv file and prepares it as a processed_cube object for indicator calculations and plotting.
 # Inputs: 
-#   * Argument 1: data cube in .csv format 
-#   * Argument 2 (only for older cubes): associated taxonomic info in .csv format
+#   * Argument 1: data, cube in .csv format 
+#   * Argument 2: grid_type (optional). By default the function will attempt to determine this automatically. However, you have the option to manually specify 'eea', 'mgrs', or 'eqdgc'. If you are using a simulated cube. e.g. output by the gcube package, choose 'custom'.
+#   * Argument 3: first_year (optional), you can filter your cube to include only data in a certain time period, by default this will be the first year of data in your cube
+#   * Argument 4: last_year (optional), by default this will be the last year of data in your cube
+#   * Argument 5: force_gridcode (optional), this will force the function to assume a specific grid reference code, not recommended and could lead to problems downstream.
+# The remaining arguments are all column names. Some columns are required, some are not, but it is only necessary to provide the names if they cannot be autodetected by the function.
+#   * Argument 6: cols_year (optional), the name of the column containing the year of occurrence. You must have either a year or yearMonth column in your cube.
+#   * Argument 7: cols_yearMonth (optional), the name of the column containing the year and month of occurrence
+#   * Argument 8: cols_cellCode (optional), the name of the column containing the cell codes. This column is required
+#   * Argument 9: cols_occurrences (optional), the name of the column containing species occurrences. This column is required
+#   * Argument 10: cols_scientificName (optional), the name of the column containing species names. This column is required
+#   * Argument 11: cols_minCoordinateUncertaintyInMeters (optional), the name of the column containing the minimum coordinate uncertainty. This column is not required
+#   * Argument 12: cols_minTemporalUncertainty (optional), the name of the column containing the minimum temporal uncertainty. This column is not required
+#   * Argument 13: cols_kingdom (optional)
+#   * Argument 14: cols_family (optional)
+#   * Argument 15: cols_species (optional), you must have either a scientificName or a species column, but you do not need both
+#   * Argument 16: cols_kingdomKey (optional)
+#   * Argument 17: cols_familyKey (optional)
+#   * Argument 18: cols_speciesKey (required), this can be either a taxonKey or speciesKey
+#   * Argument 19: cols_familyCount (optional)
+#   * Argument 20: cols_sex (optional)
+#   * Argument 20: cols_lifeStage (optional)
+#
 # Outputs:
 #   * processed_cube object containing the data cube as output_object$data along with various metadata.
 #     metadata include: range of years (as first_year and last_year), 

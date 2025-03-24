@@ -95,7 +95,7 @@ species (if other than 'species'). Note that it is not necessary to have both a
 species column and a scientificName column. One or the other is sufficient.}
 
 \item{cols_kingdomKey}{The name of the column containing the kingdom key of the
-occurring species (if other than 'kingdomKey'). This column is optinal.}
+occurring species (if other than 'kingdomKey'). This column is optional.}
 
 \item{cols_familyKey}{The name of the column containing the family key of the
 occurring species (if other than 'familykey'). This column is optional.}
@@ -112,12 +112,6 @@ individuals. This column is optional.}
 
 \item{cols_lifeStage}{the name of the column containing the life stage of the
 observed individuals. This column is optional.}
-
-\item{tax_info}{The location and name of an associated taxonomic info file
-(e.g.,  'inst/extdata/europe_species_info.csv').}
-
-\item{datasets_info}{The location and name of an associated dataset info file
-(e.g., 'inst/extdata/europe_species_datasets.csv').}
 }
 \value{
 A tibble containing the processed GBIF occurrence data.
