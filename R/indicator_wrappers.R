@@ -153,7 +153,7 @@ total_occ_ts <- function(data, ...) {
 #'
 #' <h3>Pielou's evenness</h3>
 #'
-#' Pielou’s evenness (1966) is a well-known and commonly
+#' Pielou's evenness (1966) is a well-known and commonly
 #' used evenness measure. It is calculated as:
 #'
 #' \deqn{
@@ -166,10 +166,10 @@ total_occ_ts <- function(data, ...) {
 #'
 #' <h3>Williams' evenness</h3>
 #'
-#' An analysis of evenness properties by Kvålseth (2015) showed
+#' An analysis of evenness properties by Kv&aring;lseth (2015) showed
 #' that an evenness index introduced by Williams in 1977 in an
 #' unpublished manuscript has two important properties which
-#' Pielou’s does not. The properties in question are complex
+#' Pielou's does not. The properties in question are complex
 #' mathematical properties known as the Schur-Concavity and
 #' value validity, but we attempt to describe them here more
 #' simply. If a measure of evenness is Schur-concave, it means
@@ -178,8 +178,8 @@ total_occ_ts <- function(data, ...) {
 #' same or increase, but never decrease. Value validity means
 #' that an evenness index should provide sensible and meaningful
 #' values across its range for any given distribution of species
-#' abundances. Kvålseth referred to this evenness measure as E9
-#' but we refer to it as Williams’ evenness.
+#' abundances. Kv&aring;lseth referred to this evenness measure as E9
+#' but we refer to it as Williams' evenness.
 #'
 #' Williams' evenness is calculated as:
 #'
@@ -197,7 +197,7 @@ total_occ_ts <- function(data, ...) {
 #' different types of biological collections. *Journal of theoretical biology*,
 #' *13*, 131-144.
 #'
-#' Kvålseth, T. O. (2015). Evenness indices once again: critical analysis of
+#' Kv&aring;lseth, T. O. (2015). Evenness indices once again: critical analysis of
 #' properties. *SpringerPlus*, *4*, 1-12.
 #'
 #' @param data A data cube object (class 'processed_cube').
@@ -407,7 +407,7 @@ hill_diversity_details <- paste0(
   "that the number and relative abundance of species are inseparable ",
   "components of diversity. Hill diversity uses a single equation to ",
   "calculate multiple measures of diversity by varying a single ",
-  "parameter ℓ, which changes the emphasis on rare vs common species ",
+  "parameter \u2113, which changes the emphasis on rare vs common species ",
   "(Roswell et al., 2019). It represents the mean rarity of sampled ",
   "species, and is calculated as: ",
   "\\deqn{",
@@ -417,25 +417,25 @@ hill_diversity_details <- paste0(
   "  }",
   "where D is diversity, S is the number of species, pi is the proportion ",
   "of individuals belonging to species i, ri is the rarity of species i, ",
-  "and ℓ determines the rarity scale for the mean. While ℓ can ",
+  "and \u2113 determines the rarity scale for the mean. While \u2113 can ",
   "theoretically take almost any value, three common measures of diversity ",
   "are special cases: species richness, and modified versions of the ",
   "Shannon and Simpson diversity indices (Roswell et al., 2019). These ",
-  "three measures occur when ℓ takes the value of 1, 0 (or near-zero, ",
-  "as ℓ cannot actually take the value of 0), or -1, respectively. \n",
-  "\n* **Species Richness (ℓ = 1):**",
+  "three measures occur when \u2113 takes the value of 1, 0 (or near-zero, ",
+  "as \u2113 cannot actually take the value of 0), or -1, respectively. \n",
+  "\n* **Species Richness (\u2113 = 1):**",
   "  \\deqn{",
   "    D = S",
   "  }{",
   "    D = S",
   "  }",
-  "\n* **Hill-Shannon Diversity (ℓ ≈ 0):**",
+  "\n* **Hill-Shannon Diversity (\u2113 \u2248 0):**",
   "  \\deqn{",
   "    D = e^{-\\sum_{i=1}^{S} p_i \\ln(p_i)}",
   "  }{",
   "    D = e ^ (-Sum from i=1 to S of pi * ln(pi))",
   "  }",
-  "\n* **Hill-Simpson Diversity (ℓ = -1):**",
+  "\n* **Hill-Simpson Diversity (\u2113 = -1):**",
   "  \\deqn{",
   "    D = \\frac{1}{\\sum_{i=1}^{S} p_i^2}",
   "  }{",
@@ -922,13 +922,13 @@ spec_range_ts <- function(data, ...) {
 #' that measures the taxonomic relatedness between species, providing a measure
 #' of biodiversity that accounts for evolutionary relationships. A distance
 #' matrix based on pairwise taxonomic relationships is calculated for each cell
-#' using the taxize package (Chamberlain & Szöcs, 2013; Chamberlain et al.,
+#' using the taxize package (Chamberlain & Sz&ouml;cs, 2013; Chamberlain et al.,
 #' 2020), then taxonomic distinctness is calculated as the Taxonomic
 #' Distinctness Index (TDI; Clarke & Warwick, 1999):
 #' \deqn{
 #'  \frac{\sum\sum_{i<j} \frac{|R_i - R_j|}{L}}{\frac{S(S-1)}{2}}
 #' }{
-#'  (∑∑ from i<j of (|R_i-R_j| / L) / (S * (S - 1) / 2)
+#'  (&sum;&sum; from i<j of (|R_i-R_j| / L) / (S * (S - 1) / 2)
 #' }
 #' where S is the number of species, Ri and Rj are the taxonomic ranks
 #' of species i and j (from the GBIF Taxonomic Backbone), and L is the
@@ -937,12 +937,12 @@ spec_range_ts <- function(data, ...) {
 #' taxonomic distinctness.
 #'
 #' @references
-#' Chamberlain, S. A., & Szöcs, E. (2013). taxize: taxonomic search and
+#' Chamberlain, S. A., & Sz&ouml;cs, E. (2013). taxize: taxonomic search and
 #' retrieval in R. *F1000Research*, 2.
 #'
 #' Chamberlain, S., Szoecs, E., Foster, Z., Boettiger, C., Ram, K., Bartomeus,
-#' I., Baumgartner, J., O’Donnell, J., Oksanen, J., Tzovaras, B. G., Marchand,
-#' P., Tran, V., Salmon, M., Li, G., & Grenié, M. (2020). taxize: Taxonomic
+#' I., Baumgartner, J., O'Donnell, J., Oksanen, J., Tzovaras, B. G., Marchand,
+#' P., Tran, V., Salmon, M., Li, G., & Greni&eacute;, M. (2020). taxize: Taxonomic
 #' Information from Around the Web. R package version 0.9.98.
 #' https://github.com/ropensci/taxize.
 #'
@@ -1033,9 +1033,9 @@ tax_distinct_ts <- function(data, rows = 1, ...) {
 #' from 0 (no turnover) to 1 (complete turnover).
 #'
 #' @references
-#' Jaccard, P. (1901). Étude de la distribution florale dans une portion des
-#' Alpes et du Jura. *Bulletin de la Société Vaudoise des Science Naturelles*,
-#' *37*(142), 547-579.
+#' Jaccard, P. (1901). &Eacute;tude de la distribution florale dans une portion
+#' des Alpes et du Jura. *Bulletin de la Soci&eacute;t&eacute; Vaudoise des*
+#' *Science Naturelles*, *37*(142), 547-579.
 #'
 #' @param data A data cube object (class 'processed_cube').
 #'

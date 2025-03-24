@@ -85,9 +85,9 @@ plot(ot_ts)
 
 }
 \references{
-Jaccard, P. (1901). Étude de la distribution florale dans une portion des
-Alpes et du Jura. \emph{Bulletin de la Société Vaudoise des Science Naturelles},
-\emph{37}(142), 547-579.
+Jaccard, P. (1901). Étude de la distribution florale dans une portion
+des Alpes et du Jura. \emph{Bulletin de la Société Vaudoise des}
+\emph{Science Naturelles}, \emph{37}(142), 547-579.
 }
 \seealso{
 compute_indicator_workflow

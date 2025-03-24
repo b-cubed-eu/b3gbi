@@ -67,7 +67,7 @@ Distinctness Index (TDI; Clarke & Warwick, 1999):
 \deqn{
  \frac{\sum\sum_{i<j} \frac{|R_i - R_j|}{L}}{\frac{S(S-1)}{2}}
 }{
- (∑∑ from i<j of (|R_i-R_j| / L) / (S * (S - 1) / 2)
+ (&sum;&sum; from i<j of (|R_i-R_j| / L) / (S * (S - 1) / 2)
 }
 where S is the number of species, Ri and Rj are the taxonomic ranks
 of species i and j (from the GBIF Taxonomic Backbone), and L is the
@@ -98,7 +98,7 @@ Chamberlain, S. A., & Szöcs, E. (2013). taxize: taxonomic search and
 retrieval in R. \emph{F1000Research}, 2.
 
 Chamberlain, S., Szoecs, E., Foster, Z., Boettiger, C., Ram, K., Bartomeus,
-I., Baumgartner, J., O’Donnell, J., Oksanen, J., Tzovaras, B. G., Marchand,
+I., Baumgartner, J., O'Donnell, J., Oksanen, J., Tzovaras, B. G., Marchand,
 P., Tran, V., Salmon, M., Li, G., & Grenié, M. (2020). taxize: Taxonomic
 Information from Around the Web. R package version 0.9.98.
 https://github.com/ropensci/taxize.

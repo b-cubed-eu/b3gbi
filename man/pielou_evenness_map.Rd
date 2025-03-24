@@ -80,7 +80,7 @@ evenness of the ecological community.\if{html}{\out{
 }}
 
 
-Pielou’s evenness (1966) is a well-known and commonly
+Pielou's evenness (1966) is a well-known and commonly
 used evenness measure. It is calculated as:
 
 \deqn{
@@ -97,7 +97,7 @@ represented by species i.\if{html}{\out{
 An analysis of evenness properties by Kvålseth (2015) showed
 that an evenness index introduced by Williams in 1977 in an
 unpublished manuscript has two important properties which
-Pielou’s does not. The properties in question are complex
+Pielou's does not. The properties in question are complex
 mathematical properties known as the Schur-Concavity and
 value validity, but we attempt to describe them here more
 simply. If a measure of evenness is Schur-concave, it means
@@ -107,7 +107,7 @@ same or increase, but never decrease. Value validity means
 that an evenness index should provide sensible and meaningful
 values across its range for any given distribution of species
 abundances. Kvålseth referred to this evenness measure as E9
-but we refer to it as Williams’ evenness.
+but we refer to it as Williams' evenness.
 
 Williams' evenness is calculated as:
 
