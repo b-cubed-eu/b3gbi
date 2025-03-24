@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,28 +45,10 @@
 
       <dl><dt>
 
-          <code><a href="ab_rarity_map.html">ab_rarity_map()</a></code>
+          <code><a href="area_rarity_map.html">area_rarity_map()</a></code> <code><a href="area_rarity_map.html">area_rarity_ts()</a></code> <code><a href="area_rarity_map.html">ab_rarity_map()</a></code> <code><a href="area_rarity_map.html">ab_rarity_ts()</a></code>
 
         </dt>
-        <dd>Calculate Abundance-Based Rarity Over Space</dd>
-      </dl><dl><dt>
-
-          <code><a href="ab_rarity_ts.html">ab_rarity_ts()</a></code>
-
-        </dt>
-        <dd>Calculate Abundance-Based Rarity Over Time</dd>
-      </dl><dl><dt>
-
-          <code><a href="area_rarity_map.html">area_rarity_map()</a></code>
-
-        </dt>
-        <dd>Calculate Area-Based Rarity Over Space</dd>
-      </dl><dl><dt>
-
-          <code><a href="area_rarity_ts.html">area_rarity_ts()</a></code>
-
-        </dt>
-        <dd>Calculate Area-Based Rarity Over Time</dd>
+        <dd>Calculate Rarity Over Time or Space</dd>
       </dl><dl><dt>
 
           <code><a href="available_indicators.html">available_indicators</a></code>
@@ -91,6 +73,12 @@
 
         </dt>
         <dd>Calculate Biodiversity Indicators Over Time</dd>
+      </dl><dl><dt>
+
+          <code><a href="check_crs_units.html">check_crs_units()</a></code>
+
+        </dt>
+        <dd>Check if a given CRS is in meters or degrees.</dd>
       </dl><dl><dt>
 
           <code><a href="compute_indicator_workflow.html">compute_indicator_workflow()</a></code>
@@ -135,40 +123,10 @@
         <dd>Extract Years With Observations from an Indicator Map</dd>
       </dl><dl><dt>
 
-          <code><a href="hill0_map.html">hill0_map()</a></code>
+          <code><a href="hill0_map.html">hill0_map()</a></code> <code><a href="hill0_map.html">hill0_ts()</a></code> <code><a href="hill0_map.html">hill1_map()</a></code> <code><a href="hill0_map.html">hill1_ts()</a></code> <code><a href="hill0_map.html">hill2_map()</a></code> <code><a href="hill0_map.html">hill2_ts()</a></code>
 
         </dt>
-        <dd>Calculate Estimated Species Richness Over Space</dd>
-      </dl><dl><dt>
-
-          <code><a href="hill0_ts.html">hill0_ts()</a></code>
-
-        </dt>
-        <dd>Calculate Estimated Species Richness Over Time</dd>
-      </dl><dl><dt>
-
-          <code><a href="hill1_map.html">hill1_map()</a></code>
-
-        </dt>
-        <dd>Calculate Hill-Shannon Diversity Over Space</dd>
-      </dl><dl><dt>
-
-          <code><a href="hill1_ts.html">hill1_ts()</a></code>
-
-        </dt>
-        <dd>Calculate Hill-Shannon Diversity Over Time</dd>
-      </dl><dl><dt>
-
-          <code><a href="hill2_map.html">hill2_map()</a></code>
-
-        </dt>
-        <dd>Calculate Hill-Simpson Diversity Over Space</dd>
-      </dl><dl><dt>
-
-          <code><a href="hill2_ts.html">hill2_ts()</a></code>
-
-        </dt>
-        <dd>Calculate Hill-Simpson Diversity Over Time</dd>
+        <dd>Calculate Estimated Hill Diversity Over Space or Time</dd>
       </dl><dl><dt>
 
           <code><a href="list_species.html">list_species()</a></code>
@@ -177,58 +135,34 @@
         <dd>Extract Species Names.</dd>
       </dl><dl><dt>
 
-          <code><a href="newness_map.html">newness_map()</a></code>
+          <code><a href="newness_map.html">newness_map()</a></code> <code><a href="newness_map.html">newness_ts()</a></code>
 
         </dt>
-        <dd>Calculate Mean Year of Occurrence Over Space</dd>
+        <dd>Calculate Mean Year of Occurrence Over Time or Space</dd>
       </dl><dl><dt>
 
-          <code><a href="newness_ts.html">newness_ts()</a></code>
+          <code><a href="obs_richness_map.html">obs_richness_map()</a></code> <code><a href="obs_richness_map.html">obs_richness_ts()</a></code>
 
         </dt>
-        <dd>Calculate Mean Year of Occurrence Over Time</dd>
+        <dd>Calculate Observed Species Richness Over Space or Time</dd>
       </dl><dl><dt>
 
-          <code><a href="obs_richness_map.html">obs_richness_map()</a></code>
+          <code><a href="occ_density_map.html">occ_density_map()</a></code> <code><a href="occ_density_map.html">occ_density_ts()</a></code>
 
         </dt>
-        <dd>Calculate Observed Species Richness Over Space</dd>
-      </dl><dl><dt>
-
-          <code><a href="obs_richness_ts.html">obs_richness_ts()</a></code>
-
-        </dt>
-        <dd>Calculate Observed Species Richness Over Time</dd>
-      </dl><dl><dt>
-
-          <code><a href="occ_density_map.html">occ_density_map()</a></code>
-
-        </dt>
-        <dd>Calculate Occurrence Density Over Space</dd>
-      </dl><dl><dt>
-
-          <code><a href="occ_density_ts.html">occ_density_ts()</a></code>
-
-        </dt>
-        <dd>Calculate Occurrence Density Over Time</dd>
+        <dd>Calculate Occurrence Density Over Space or Time</dd>
       </dl><dl><dt>
 
           <code><a href="occ_turnover_ts.html">occ_turnover_ts()</a></code>
 
         </dt>
-        <dd>Calculate Occupancy Turnover Over Time</dd>
+        <dd>Calculate Occupancy Turnover</dd>
       </dl><dl><dt>
 
-          <code><a href="pielou_evenness_map.html">pielou_evenness_map()</a></code>
+          <code><a href="pielou_evenness_map.html">pielou_evenness_map()</a></code> <code><a href="pielou_evenness_map.html">pielou_evenness_ts()</a></code> <code><a href="pielou_evenness_map.html">williams_evenness_map()</a></code> <code><a href="pielou_evenness_map.html">williams_evenness_ts()</a></code>
 
         </dt>
-        <dd>Calculate Pielou's Evenness Over Space</dd>
-      </dl><dl><dt>
-
-          <code><a href="pielou_evenness_ts.html">pielou_evenness_ts()</a></code>
-
-        </dt>
-        <dd>Calculate Pielou's Evenness Over Time</dd>
+        <dd>Calculate Evenness Over Time or Space</dd>
       </dl><dl><dt>
 
           <code><a href="plot_map.html">plot_map()</a></code>
@@ -291,70 +225,34 @@
         <dd>Print a Simulated Data Cube Object</dd>
       </dl><dl><dt>
 
-          <code><a href="process_cube.html">process_cube()</a></code> <code><a href="process_cube.html">process_cube_old()</a></code>
+          <code><a href="process_cube.html">process_cube()</a></code>
 
         </dt>
         <dd>Process GBIF Data Cubes</dd>
       </dl><dl><dt>
 
-          <code><a href="spec_occ_map.html">spec_occ_map()</a></code>
+          <code><a href="spec_occ_map.html">spec_occ_map()</a></code> <code><a href="spec_occ_map.html">spec_occ_ts()</a></code>
 
         </dt>
-        <dd>Calculate Species Occurrences Over Space</dd>
+        <dd>Calculate Species Occurrences Over Space or Time</dd>
       </dl><dl><dt>
 
-          <code><a href="spec_occ_ts.html">spec_occ_ts()</a></code>
+          <code><a href="spec_range_map.html">spec_range_map()</a></code> <code><a href="spec_range_map.html">spec_range_ts()</a></code>
 
         </dt>
-        <dd>Calculate Number of Occurrences for One or More Species Over Time</dd>
+        <dd>Plot Species Ranges Over Space or Time</dd>
       </dl><dl><dt>
 
-          <code><a href="spec_range_map.html">spec_range_map()</a></code>
+          <code><a href="tax_distinct_map.html">tax_distinct_map()</a></code> <code><a href="tax_distinct_map.html">tax_distinct_ts()</a></code>
 
         </dt>
-        <dd>Plot Species Ranges Over Space</dd>
+        <dd>Calculate Taxonomic Distinctness Over Space or Time</dd>
       </dl><dl><dt>
 
-          <code><a href="spec_range_ts.html">spec_range_ts()</a></code>
+          <code><a href="total_occ_map.html">total_occ_map()</a></code> <code><a href="total_occ_map.html">total_occ_ts()</a></code>
 
         </dt>
-        <dd>Calculate Range Size (Number of Cells Occupied) for One or More Species Over Time</dd>
-      </dl><dl><dt>
-
-          <code><a href="tax_distinct_map.html">tax_distinct_map()</a></code>
-
-        </dt>
-        <dd>Calculate Taxonomic Distinctness Over Space</dd>
-      </dl><dl><dt>
-
-          <code><a href="tax_distinct_ts.html">tax_distinct_ts()</a></code>
-
-        </dt>
-        <dd>Calculate Taxonomic Distinctness Over Time</dd>
-      </dl><dl><dt>
-
-          <code><a href="total_occ_map.html">total_occ_map()</a></code>
-
-        </dt>
-        <dd>Calculate Total Occurrences Over Space</dd>
-      </dl><dl><dt>
-
-          <code><a href="total_occ_ts.html">total_occ_ts()</a></code>
-
-        </dt>
-        <dd>Calculate Total Occurrences Over Time</dd>
-      </dl><dl><dt>
-
-          <code><a href="williams_evenness_map.html">williams_evenness_map()</a></code>
-
-        </dt>
-        <dd>Calculate Williams' Evenness Over Space</dd>
-      </dl><dl><dt>
-
-          <code><a href="williams_evenness_ts.html">williams_evenness_ts()</a></code>
-
-        </dt>
-        <dd>Calculate Williams' Evenness Over Time</dd>
+        <dd>Calculate Total Occurrences Over Space or Time</dd>
       </dl></div>
   </main></div>
 

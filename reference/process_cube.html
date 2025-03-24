@@ -29,7 +29,7 @@ an error if it cannot find all required columns."><meta property="og:image" cont
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,7 +52,7 @@ an error if it cannot find all required columns."><meta property="og:image" cont
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Process GBIF Data Cubes</h1>
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.4.4/R/process_cube_functions.R" class="external-link"><code>R/process_cube_functions.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/R/process_cube_functions.R" class="external-link"><code>R/process_cube_functions.R</code></a></small>
       <div class="d-none name"><code>process_cube.Rd</code></div>
     </div>
 
@@ -95,14 +95,6 @@ an error if it cannot find all required columns.</p>
 <span>  cols_familyCount <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  cols_sex <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  cols_lifeStage <span class="op">=</span> <span class="cn">NULL</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">process_cube_old</span><span class="op">(</span></span>
-<span>  <span class="va">cube_name</span>,</span>
-<span>  tax_info <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  datasets_info <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  first_year <span class="op">=</span> <span class="fl">1600</span>,</span>
-<span>  last_year <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -198,7 +190,7 @@ species column and a scientificName column. One or the other is sufficient.</p><
 
 <dt id="arg-cols-kingdomkey">cols_kingdomKey<a class="anchor" aria-label="anchor" href="#arg-cols-kingdomkey"></a></dt>
 <dd><p>The name of the column containing the kingdom key of the
-occurring species (if other than 'kingdomKey'). This column is optinal.</p></dd>
+occurring species (if other than 'kingdomKey'). This column is optional.</p></dd>
 
 
 <dt id="arg-cols-familykey">cols_familyKey<a class="anchor" aria-label="anchor" href="#arg-cols-familykey"></a></dt>
@@ -225,16 +217,6 @@ individuals. This column is optional.</p></dd>
 <dt id="arg-cols-lifestage">cols_lifeStage<a class="anchor" aria-label="anchor" href="#arg-cols-lifestage"></a></dt>
 <dd><p>the name of the column containing the life stage of the
 observed individuals. This column is optional.</p></dd>
-
-
-<dt id="arg-tax-info">tax_info<a class="anchor" aria-label="anchor" href="#arg-tax-info"></a></dt>
-<dd><p>The location and name of an associated taxonomic info file
-(e.g.,  'inst/extdata/europe_species_info.csv').</p></dd>
-
-
-<dt id="arg-datasets-info">datasets_info<a class="anchor" aria-label="anchor" href="#arg-datasets-info"></a></dt>
-<dd><p>The location and name of an associated dataset info file
-(e.g., 'inst/extdata/europe_species_datasets.csv').</p></dd>
 
 </dl></div>
     <div class="section level2">
