@@ -2,9 +2,12 @@
 % Please edit documentation in R/indicator_wrappers.R
 \name{spec_range_map}
 \alias{spec_range_map}
-\title{Plot Species Ranges Over Space}
+\alias{spec_range_ts}
+\title{Plot Species Ranges Over Space or Time}
 \usage{
 spec_range_map(data, ...)
+
+spec_range_ts(data, ...)
 }
 \arguments{
 \item{data}{A data cube object (class 'processed_cube').}
@@ -32,20 +35,38 @@ while the function runs. Should only be used to solve specific issues. (Default 
 time but may help if you are getting polygon errors. (Default is FALSE).}
     \item{\code{num_bootstrap}}{Set the number of bootstraps to calculate for generating
 confidence intervals. (Default: 1000)}
+    \item{\code{crs_unit_convert}}{Force a particular output CRS even when it has
+different units than the input CRS. (Default: FALSE)}
+    \item{\code{shapefile_path}}{Path of an external shapefile to merge into the workflow. For example,
+if you want to calculate your indicator particular features such as protected areas or wetlands.}
+    \item{\code{invert}}{Calculate an indicator over the inverse of the shapefile (e.g.
+if you have a protected areas shapefile this would calculate an indicator over
+all non protected areas)}
   }}
 }
 \value{
-An S3 object with the classes 'indicator_map' and 'spec_range' containing
-the calculated indicator values and metadata.
+An S3 object with the classes 'indicator_map' or 'indicator_ts' and
+'spec_range' containing the calculated indicator values and metadata.
 }
 \description{
-This function plots the cells occupied for individual
-species over a gridded map.
+Plot the cells occupied for individual species over a gridded
+map or calculate the change in the number of cells occupied as a time series.
 }
+\section{Functions}{
+\itemize{
+\item \code{spec_range_map()}: 
+
+\item \code{spec_range_ts()}: 
+
+}}
 \examples{
 sr_map <- spec_range_map(example_cube_1, level = "country", region = "Denmark")
 plot(sr_map, c(2440728, 4265185))
 
+\dontrun{
+sr_ts <- spec_range_ts(example_cube_1, first_year = 1985)
+plot(sr_ts, c(2440728, 4265185))
+}
 }
 \seealso{
 compute_indicator_workflow

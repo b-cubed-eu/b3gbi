@@ -41,7 +41,7 @@ plot_species_ts(
   y_expand = NULL,
   x_breaks = 10,
   y_breaks = 6,
-  title_wrap_length = 60
+  wrap_length = 60
 )
 }
 \arguments{
@@ -143,7 +143,7 @@ Lower and upper values are required in the form of c(0.1, 0.2). Default is c(0.0
 \item{y_breaks}{Integer giving desired number of breaks for y axis.
 (May not return exactly the number requested.)}
 
-\item{title_wrap_length}{Maximum title length before wrapping to a new line.}
+\item{wrap_length}{Maximum title length before wrapping to a new line.}
 }
 \value{
 A ggplot object representing species range or occurrence time series plot(s).

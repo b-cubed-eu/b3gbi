@@ -2,9 +2,12 @@
 % Please edit documentation in R/indicator_wrappers.R
 \name{obs_richness_map}
 \alias{obs_richness_map}
-\title{Calculate Observed Species Richness Over Space}
+\alias{obs_richness_ts}
+\title{Calculate Observed Species Richness Over Space or Time}
 \usage{
 obs_richness_map(data, ...)
+
+obs_richness_ts(data, ...)
 }
 \arguments{
 \item{data}{A data cube object (class 'processed_cube').}
@@ -32,20 +35,77 @@ while the function runs. Should only be used to solve specific issues. (Default 
 time but may help if you are getting polygon errors. (Default is FALSE).}
     \item{\code{num_bootstrap}}{Set the number of bootstraps to calculate for generating
 confidence intervals. (Default: 1000)}
+    \item{\code{crs_unit_convert}}{Force a particular output CRS even when it has
+different units than the input CRS. (Default: FALSE)}
+    \item{\code{shapefile_path}}{Path of an external shapefile to merge into the workflow. For example,
+if you want to calculate your indicator particular features such as protected areas or wetlands.}
+    \item{\code{invert}}{Calculate an indicator over the inverse of the shapefile (e.g.
+if you have a protected areas shapefile this would calculate an indicator over
+all non protected areas)}
   }}
 }
 \value{
-An S3 object with the classes 'indicator_map' and 'obs_richness' containing
-the calculated indicator values and metadata.
+An S3 object with the classes 'indicator_map' or 'indicator_ts' and
+'obs_richness' containing the calculated indicator values and metadata.
 }
 \description{
-This function calculates observed species richness over a gridded map.
+This function calculates observed species richness over a
+gridded map or as a time series (see 'Details' for more information).
 }
+\details{
+\subsection{Species richness}{
+
+Species richness is the total number of species present in a
+sample (Magurran, 1988). It is a fundamental and commonly used
+measure of biodiversity, providing a simple and intuitive
+overview of the status of biodiversity. However, richness is not
+well suited to measuring biodiversity change over time, as it
+only decreases when local extinctions occur and thus lags behind
+abundance for negative trends. While it may act as a leading
+indicator of alien species invasions, it will not indicate
+establishment because it ignores abundance. Nor will it
+necessarily indicate changes in local species composition, which
+can occur without any change in richness. Although richness is
+conceptually simple, it can be measured in different ways.
+}
+
+\subsection{Observed richness}{
+
+Observed richness is calculated by summing the number of unique species
+observed for each year or each cell. Observed richness is highly dependent
+on the comprehensiveness of the dataset it is being applied to. If some
+regions are more intensively, carefully or systematically sampled than
+others, this will likely reflect as higher observed richness. Observed
+richness also depends on the relative abundance and spatial aggregation of
+each species, with less abundant and less aggregated species less likely to
+be discovered during surveys (Hillebrand et al., 2018), as well as the
+detectability of each species.
+}
+}
+\section{Functions}{
+\itemize{
+\item \code{obs_richness_map()}: 
+
+\item \code{obs_richness_ts()}: 
+
+}}
 \examples{
 \dontrun{
 or_map <- obs_richness_map(example_cube_1, level = "country", region = "Denmark")
 plot(or_map)
 }
+\dontrun{
+or_ts <- obs_richness_ts(example_cube_1, first_year = 1985)
+plot(or_ts)
+}
+}
+\references{
+Hillebrand, H., Blasius, B., Borer, E. T., Chase, J. M., Downing, J. A.,
+Eriksson, B. K., Filstrup, C. T., Harpole, W. S., Hodapp, D., Larsen, S.,
+Lewandowska, A. M., Seabloom, E. W., Van de Waal, D. B., & Ryabov, A. B.
+(2018). Biodiversity change is uncoupled from species richness trends:
+Consequences for conservation and monitoring. \emph{Journal of Applied Ecology},
+\emph{55}(1), 169-184.
 }
 \seealso{
 compute_indicator_workflow

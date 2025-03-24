@@ -32,6 +32,13 @@ while the function runs. Should only be used to solve specific issues. (Default 
 time but may help if you are getting polygon errors. (Default is FALSE).}
     \item{\code{num_bootstrap}}{Set the number of bootstraps to calculate for generating
 confidence intervals. (Default: 1000)}
+    \item{\code{crs_unit_convert}}{Force a particular output CRS even when it has
+different units than the input CRS. (Default: FALSE)}
+    \item{\code{shapefile_path}}{Path of an external shapefile to merge into the workflow. For example,
+if you want to calculate your indicator particular features such as protected areas or wetlands.}
+    \item{\code{invert}}{Calculate an indicator over the inverse of the shapefile (e.g.
+if you have a protected areas shapefile this would calculate an indicator over
+all non protected areas)}
   }}
 }
 \value{
@@ -39,7 +46,36 @@ An S3 object with the classes 'indicator_ts' and 'cum_richness' containing
 the calculated indicator values and metadata.
 }
 \description{
-This function calculates cumulative species richness as a time series.
+This function calculates cumulative species richness as a time
+series (see 'Details' for more information).
+}
+\details{
+\subsection{Species richness}{
+
+Species richness is the total number of species present in a
+sample (Magurran, 1988). It is a fundamental and commonly used
+measure of biodiversity, providing a simple and intuitive
+overview of the status of biodiversity. However, richness is not
+well suited to measuring biodiversity change over time, as it
+only decreases when local extinctions occur and thus lags behind
+abundance for negative trends. While it may act as a leading
+indicator of alien species invasions, it will not indicate
+establishment because it ignores abundance. Nor will it
+necessarily indicate changes in local species composition, which
+can occur without any change in richness. Although richness is
+conceptually simple, it can be measured in different ways.
+}
+
+\subsection{Cumulative richness}{
+
+Cumulative richness is calculated by adding the newly observed unique species
+each year to a cumulative sum. This indicator provides an estimation of
+whether and how many new species are still being discovered in a region.
+While an influx of alien species could cause an increase in cumulative
+richness, a fast-rising trend as shown in Fig. 2 is likely an indication
+that the dataset is not comprehensive and therefore observed richness will
+provide an underestimate of species richness.
+}
 }
 \examples{
 \dontrun{

@@ -19,7 +19,7 @@
 #' # Retrieve a map of the entire world
 #' world_map <- get_NE_data(level = "world")
 #' @noRd
-get_NE_data <- function(level, region, ne_type, ne_scale, output_crs) {
+get_NE_data <- function(data, level, region, ne_type, ne_scale, cube_crs, output_crs) {
 
 
 
@@ -72,6 +72,30 @@ get_NE_data <- function(level, region, ne_type, ne_scale, output_crs) {
 
   }
 
+  # data <- sf::st_as_sf(data,
+  #                        coords = c("xcoord", "ycoord"),
+  #                        crs = cube_crs)
+  #
+  # # get bounding box from grid
+  # data_bbox <- sf::st_bbox(data)
+  #
+  # # 2. Create polygon from bounding box
+  # xmin <- data_bbox["xmin"]
+  # ymin <- data_bbox["ymin"]
+  # xmax <- data_bbox["xmax"]
+  # ymax <- data_bbox["ymax"]
+  # data_crs <- sf::st_crs(data)
+  #
+  # bbox_polygon <- sf::st_polygon(list(cbind(c(xmin, xmax, xmax, xmin, xmin),
+  #                                       c(ymin, ymin, ymax, ymax, ymin))))
+  # bbox_sf <- sf::st_sf(geometry = sf::st_sfc(bbox_polygon), crs = data_crs)
+  #
+  # # map_data <- sf::st_make_valid(map_data)
+  #
+  # # Subset map data
+  # map_data <- sf::st_intersection(map_data, bbox_sf)
+
+  # transform map crs
   map_data <- map_data %>%
     sf::st_as_sf() %>%
     sf::st_transform(crs = output_crs)
@@ -111,36 +135,41 @@ get_NE_data <- function(level, region, ne_type, ne_scale, output_crs) {
 #' plot(germany_grid)
 #' @noRd
 create_grid <- function(data,
-                       # map_data,
+                       # resolution,
                        # level,
                         cell_size,
-                        cell_size_units,
-                        make_valid,
-                        cube_crs,
-                        output_crs) {
+                        grid_units,
+                       # input_units,
+                       # output_units,
+                        make_valid) {
 
   # example_cube_1 <- NULL; rm(example_cube_1)
 
-  occ_sf <- sf::st_as_sf(data,
-                         coords = c("xcoord", "ycoord"),
-                         crs = cube_crs) %>%
-    sf::st_transform(crs = output_crs)
+  # cell_size <- check_cell_size(cell_size, resolution, level)
 
-  res <- as.numeric(
-    stringr::str_extract(
-      data$resolution[1],
-      "^[0-9,.]{1,6}(?=[a-z])"
-      )
-    )
+  # # Calculate offset based on cell_size and output_crs units
+  # bbox <- sf::st_bbox(occ_sf)
+  #
+  # if (cell_size_units == "km" &&
+  #     st_crs(output_crs)$units_gdal == "metre") {
+  #   offset_x <- bbox$xmin - (0.5 * cell_size)
+  #   offset_y <- bbox$ymin - (0.5 * cell_size)
+  # } else if (cell_size_units == "degrees" &&
+  #            st_crs(output_crs)$units_gdal == "degree") {
+  #   offset_x <- bbox$xmin - (0.5 * cell_size)
+  #   offset_y <- bbox$ymin - (0.5 * cell_size)
+  # } else {
+  #   stop("Error: cell_size_units or output_crs units are incompatible.")
+  # }
 
-  offset_x <- sf::st_bbox(occ_sf)$xmin - (0.5 * res)
-  offset_y <- sf::st_bbox(occ_sf)$ymin - (0.5 * res)
+  offset_x <- sf::st_bbox(data)$xmin - (0.5 * cell_size)
+  offset_y <- sf::st_bbox(data)$ymin - (0.5 * cell_size)
 
-  # Make a grid across the map area
-  grid <- occ_sf %>%
+  # Make a grid across the cube
+  grid <- data %>%
     sf::st_make_grid(cellsize = c(cell_size, cell_size),
                      offset = c(offset_x, offset_y)) %>%
-    sf::st_cast("MULTIPOLYGON") %>%
+   # sf::st_cast("MULTIPOLYGON") %>%
     sf::st_sf() %>%
     dplyr::mutate(cellid = dplyr::row_number())
 
@@ -150,7 +179,7 @@ create_grid <- function(data,
 
   }
 
-  if (cell_size_units == "km") {
+  if (grid_units == "km") {
 
     # Add area column to grid
     grid$area <-
@@ -261,11 +290,18 @@ prepare_spatial_data <- function(data,
 #' @param first_year Exclude data before this year. (Uses all data in the cube by default.)
 #' @param last_year Exclude data after this year. (Uses all data in the cube by default.)
 #' @param spherical_geometry If set to FALSE, will temporarily disable spherical geometry
-#' while the function runs. Should only be used to solve specific issues. (Default is TRUE)
+#'  while the function runs. Should only be used to solve specific issues. (Default is TRUE)
 #' @param make_valid Calls st_make_valid() from the sf package. Increases processing
-#' time but may help if you are getting polygon errors. (Default is FALSE).
+#'  time but may help if you are getting polygon errors. (Default is FALSE).
 #' @param num_bootstrap Set the number of bootstraps to calculate for generating
-#' confidence intervals. (Default: 1000)
+#'  confidence intervals. (Default: 1000)
+#' @param crs_unit_convert Force a particular output CRS even when it has
+#'  different units than the input CRS. (Default: FALSE)
+#' @param shapefile_path Path of an external shapefile to merge into the workflow. For example,
+#'  if you want to calculate your indicator particular features such as protected areas or wetlands.
+#' @param invert Calculate an indicator over the inverse of the shapefile (e.g.
+#'  if you have a protected areas shapefile this would calculate an indicator over
+#'  all non protected areas)
 #' @param ... Additional arguments passed to specific indicator calculation functions.
 #'
 #' @return An S3 object containing the calculated indicator values and metadata.
@@ -309,12 +345,20 @@ compute_indicator_workflow <- function(data,
                                        spherical_geometry = TRUE,
                                        make_valid = FALSE,
                                        num_bootstrap = 1000,
+                                       crs_unit_convert = FALSE,
+                                       shapefile_path = NULL,
+                                       invert = FALSE,
                                        ...) {
 
   stopifnot_error("Object class not recognized.",
                   inherits(data, "processed_cube") |
                     inherits(data, "processed_cube_dsinfo") |
                     inherits(data, "sim_cube"))
+
+  # Early shapefile path check
+  if (!is.null(shapefile_path) && !file.exists(shapefile_path)) {
+    stop("Shapefile not found at the specified path.")
+  }
 
   available_indicators <- NULL; rm(available_indicators)
 
@@ -365,7 +409,8 @@ compute_indicator_workflow <- function(data,
 
     level <- match.arg(level)
 
-    cell_size_units <- stringr::str_extract(data$resolutions, "(?<=[0-9,.]{1,6})[a-z]*$")
+    # input_units <- stringr::str_extract(data$resolutions,
+    #                                     "(?<=[0-9,.]{1,6})[a-z]*$")
 
     num_families <- data$num_families
 
@@ -440,28 +485,101 @@ compute_indicator_workflow <- function(data,
 
     }
 
-    # Check that the grid cell size (if provided) is sensible.
-    # Determine a default size if nothing is provided.
-    cell_size <- check_cell_size(cell_size, cell_size_units, data$resolution, level)
+    input_units <- check_crs_units(cube_crs)
+
+    output_units <- check_crs_units(output_crs)
+
+    if (crs_unit_convert == FALSE && input_units != output_units) {
+
+      stop(
+        paste0(
+          "Cube CRS units are ", input_units, " while output CRS ",
+          "units are ", output_units, ".\n The conversion could increase ",
+          "processing time and lead to invalid output.\n If you are certain ",
+          "you want to proceed you can force it with 'crs_unit_convert = TRUE'."
+        )
+      )
+
+    } else if (crs_unit_convert == TRUE && input_units != output_units) {
+      warning(
+        paste0(
+          "Cube CRS units are ", input_units, " while output CRS ",
+          "units are ", output_units, ".\n The conversion could lead ",
+          "to invalid output."
+        )
+      )
+    }
+
+    if (stringr::str_detect(data$resolution, "degrees")) {
+      input_cell_size <- as.numeric(stringr::str_extract(data$resolution,
+                                                  "[0-9,.]*(?=degrees)"))
+    } else if (stringr::str_detect(data$resolution, "km")) {
+      input_cell_size <- as.numeric(stringr::str_extract(data$resolution,
+                                                  "[0-9]*(?=km)"))
+    } else {
+      stop("Resolution units not recognized. Must be km or degrees.")
+    }
+
+    # # Check that the grid cell size (if provided) is sensible.
+    # # Determine a default size if nothing is provided.
+    # cell_size <- check_cell_size(resolution = data$resolution,
+    #                              cell_size = cell_size,
+    #                              input_units = input_units,
+    #                              output_units = output_units,
+    #                              level = level,
+    #                              data = df,
+    #                              input_crs = cube_crs,
+    #                              output_crs = output_crs)
+    cell_size <- check_cell_size(cell_size, data$resolution, level)
 
     if (dim_type == "map" | (!is.null(level) & !is.null(region))) {
 
-      # Download Natural Earth data
-      map_data <- get_NE_data(level,
-                              region,
-                              ne_type,
-                              ne_scale,
-                              output_crs)
+      df_sf_input <- sf::st_as_sf(df,
+                             coords = c("xcoord", "ycoord"),
+                             crs = cube_crs)
 
-      # Create grid from Natural Earth data
-      grid <- create_grid(df,
-                         # map_data,
-                         # level,
-                          cell_size,
-                          cell_size_units,
-                          make_valid,
-                          cube_crs,
-                          output_crs)
+      df_sf_output <- sf::st_transform(df_sf_input,
+                                       crs = output_crs)
+
+      if (crs_unit_convert == TRUE &&
+          input_units != output_units &&
+          output_units != "degrees") {
+
+        output_units <- "m"
+        grid <- reproject_and_create_grid(df_sf_input,
+                                          c(input_cell_size, input_cell_size),
+                                          output_crs,
+                                          c((cell_size * 1000),
+                                            (cell_size * 1000)),
+                                          input_units = input_units,
+                                          target_units = output_units)
+        output_units <- "km"
+
+      } else if (crs_unit_convert == TRUE &&
+                 input_units != output_units &&
+                 output_units == "degrees") {
+
+        grid <- reproject_and_create_grid(df_sf_input,
+                                          c(input_cell_size, input_cell_size),
+                                          output_crs,
+                                          c((cell_size),
+                                            (cell_size)),
+                                          input_units = input_units,
+                                          target_units = output_units)
+
+      } else {
+
+        # Create grid
+        grid <- create_grid(df_sf_output,
+                            # data$resolution,
+                            # level,
+                            cell_size,
+                            # input_units,
+                            output_units,
+                            make_valid)
+
+      }
+
 
       # Format spatial data and merge with grid
       df <- prepare_spatial_data(df,
@@ -470,22 +588,18 @@ compute_indicator_workflow <- function(data,
                                  cube_crs,
                                  output_crs)
 
-    } else {
+      sf::sf_use_s2(FALSE)
 
-      level <- "unknown"
-      region <- "unknown"
+      # Download Natural Earth data
+      map_data <- get_NE_data(df,
+                              level,
+                              region,
+                              ne_type,
+                              ne_scale,
+                              cube_crs,
+                              output_crs)
 
-    }
-
-    # Assign classes to send data to correct calculator function
-    subtype <- paste0(type, "_", dim_type)
-    class(df) <- append(type, class(df))
-    class(df) <- append(subtype, class(df))
-
-    if (dim_type == "map") {
-
-      # Calculate indicator
-      indicator <- calc_map(df, ...)
+      map_data <- sf::st_make_valid(map_data)
 
       # Set attributes as spatially constant to avoid warnings when clipping
       sf::st_agr(grid) <- "constant"
@@ -535,12 +649,130 @@ compute_indicator_workflow <- function(data,
       # Set grid to result
       grid <- result
 
+      # Shapefile Filtering
+      if (!is.null(shapefile_path)) {
+        shapefile <- sf::read_sf(shapefile_path)
+
+        if (sf::st_crs(grid) != sf::st_crs(shapefile)) {
+          shapefile <- sf::st_transform(shapefile, crs = sf::st_crs(grid))
+        }
+
+        if (invert) {
+          grid <- sf::st_difference(grid, sf::st_union(shapefile))
+        } else {
+          grid <- sf::st_filter(grid, shapefile)
+        }
+
+        # Handle empty geometries after spatial operations
+        grid <- grid[!sf::st_is_empty(grid), ]
+
+        if (nrow(grid) == 0) {
+          stop("No grid cells remain after shapefile filtering.")
+        }
+      }
+
+      # Restore original spherical setting
+      sf::sf_use_s2(TRUE)
+
+    } else {
+
+      level <- "unknown"
+      region <- "unknown"
+
+    }
+
+    # Assign classes to send data to correct calculator function
+    subtype <- paste0(type, "_", dim_type)
+    class(df) <- append(type, class(df))
+    class(df) <- append(subtype, class(df))
+
+    if (dim_type == "map") {
+
+      # Calculate indicator
+      indicator <- calc_map(df, ...)
+
       # Add indicator values to grid
       diversity_grid <-
         grid %>%
         dplyr::left_join(indicator, by = "cellid")
 
     } else {
+
+      # Spatial Filtering for Time Series using rnaturalearth
+      if (!is.null(level) && !is.null(region)) {
+        map_data <- get_NE_data(df, level, region, ne_type, ne_scale, cube_crs, output_crs)
+        df_sf <- sf::st_as_sf(df, coords = c("xcoord", "ycoord"), crs = cube_crs)
+
+        if (sf::st_crs(df_sf) != sf::st_crs(map_data)) {
+          map_data <- sf::st_transform(map_data, crs = sf::st_crs(df_sf))
+        }
+
+        map_data <- sf::st_make_valid(map_data)
+
+        # Initialize filtered_sf as NULL to capture the result of the intersection
+        filtered_sf <- NULL
+
+        tryCatch({
+
+          # Attempt without altering the spherical geometry setting
+          filtered_sf <- sf::st_intersection(df_sf, sf::st_union(map_data))
+        }, error = function(e) {
+          if (grepl("Error in wk_handle.wk_wkb", e)) {
+            message(paste("Encountered a geometry error during intersection. This may be due",
+                          "to invalid polygons in the grid."))
+          } else {
+            stop(e)
+          }
+        })
+
+        if (is.null(filtered_sf)) {
+          # If intersection failed, turn off spherical geometry
+          message("Retrying the intersection with spherical geometry turned off.")
+          sf::sf_use_s2(FALSE)
+
+          # Retry the intersection operation
+          filtered_sf <- sf::st_intersection(df_sf, sf::st_union(map_data))
+
+          # Notify success after retry
+          message("Intersection succeeded with spherical geometry turned off.")
+
+          # Restore original spherical setting
+          sf::sf_use_s2(original_s2_setting)
+        }
+
+       # filtered_sf <- sf::st_intersection(df_sf, sf::st_union(map_data))
+
+        # Filter the original data frame
+        df <- df[df$cellid %in% filtered_sf$cellid, ]
+
+        if (nrow(df) == 0) {
+          stop("No data points remain after spatial filtering.")
+        }
+      }
+
+      # Shapefile Filtering
+      if (!is.null(shapefile_path)) {
+        shapefile <- sf::read_sf(shapefile_path)
+
+        df_sf <- sf::st_as_sf(df, coords = c("xcoord", "ycoord"), crs = cube_crs)
+
+        if (sf::st_crs(df_sf) != sf::st_crs(shapefile)) {
+          shapefile <- sf::st_transform(shapefile, crs = sf::st_crs(df_sf))
+        }
+
+        if (invert) {
+          filtered_df <- sf::st_difference(df_sf, sf::st_union(shapefile))
+        } else {
+          filtered_df <- sf::st_filter(df_sf, shapefile)
+        }
+
+        # Filter the original data frame
+        df <- df[df$cellid %in% filtered_df$cellid, ]
+
+        if (nrow(df) == 0) {
+          stop("No data points remain after shapefile filtering.")
+        }
+      }
 
       # Calculate indicator
       indicator <- calc_ts(df, ...)
@@ -631,7 +863,7 @@ compute_indicator_workflow <- function(data,
     diversity_obj <- new_indicator_map(diversity_grid,
                                        div_type = type,
                                        cell_size = cell_size,
-                                       cell_size_units = cell_size_units,
+                                       cell_size_units = output_units,
                                        map_level = level,
                                        map_region = region,
                                        kingdoms = kingdoms,

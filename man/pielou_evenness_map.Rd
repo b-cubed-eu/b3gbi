@@ -2,9 +2,18 @@
 % Please edit documentation in R/indicator_wrappers.R
 \name{pielou_evenness_map}
 \alias{pielou_evenness_map}
-\title{Calculate Pielou's Evenness Over Space}
+\alias{pielou_evenness_ts}
+\alias{williams_evenness_map}
+\alias{williams_evenness_ts}
+\title{Calculate Evenness Over Time or Space}
 \usage{
 pielou_evenness_map(data, ...)
+
+pielou_evenness_ts(data, ...)
+
+williams_evenness_map(data, ...)
+
+williams_evenness_ts(data, ...)
 }
 \arguments{
 \item{data}{A data cube object (class 'processed_cube').}
@@ -32,20 +41,119 @@ while the function runs. Should only be used to solve specific issues. (Default 
 time but may help if you are getting polygon errors. (Default is FALSE).}
     \item{\code{num_bootstrap}}{Set the number of bootstraps to calculate for generating
 confidence intervals. (Default: 1000)}
+    \item{\code{crs_unit_convert}}{Force a particular output CRS even when it has
+different units than the input CRS. (Default: FALSE)}
+    \item{\code{shapefile_path}}{Path of an external shapefile to merge into the workflow. For example,
+if you want to calculate your indicator particular features such as protected areas or wetlands.}
+    \item{\code{invert}}{Calculate an indicator over the inverse of the shapefile (e.g.
+if you have a protected areas shapefile this would calculate an indicator over
+all non protected areas)}
   }}
 }
 \value{
-An S3 object with the classes 'indicator_map' and 'pielou_evenness' containing
-the calculated indicator values and metadata.
+An S3 object with the classes 'indicator_map' or 'indicator_ts' and
+'pielou_evenness' or 'williams_evenness' containing the calculated indicator
+values and metadata.
 }
 \description{
-This function calculates Pielou's evenness over a gridded map.
+Calculate evenness over a gridded map or as a time series (see
+'Details' for more information).
 }
+\details{
+\subsection{Evenness}{
+
+Species evenness is a commonly used indicator that measures how
+uniformly individuals are distributed across species in a region
+or over time. It provides a complement to richness by taking
+relative abundance into account. Although GBIF provides
+information about abundances as individual counts, the majority
+of entries lack this information. Hence, evenness can only be
+calculated using the proportions of observations rather than
+proportions of individuals. Strictly speaking, the evenness
+measures therefore indicate how uniformly species are
+represented in the respective data set rather than the true
+evenness of the ecological community.
+}
+
+\subsection{Pielou's evenness}{
+
+Pielou's evenness (1966) is a well-known and commonly
+used evenness measure. It is calculated as:
+
+\deqn{
+ E = \frac{-\sum_{i=1}^{S} p_i \ln(p_i)}{\ln(S)}
+}{
+ E = -Sum from i=1 to S of pi * ln(pi) / ln(S)
+}
+where S is the number of species and pi is the proportion of occurrences
+represented by species i.
+}
+
+\subsection{Williams' evenness}{
+
+An analysis of evenness properties by Kvålseth (2015) showed
+that an evenness index introduced by Williams in 1977 in an
+unpublished manuscript has two important properties which
+Pielou's does not. The properties in question are complex
+mathematical properties known as the Schur-Concavity and
+value validity, but we attempt to describe them here more
+simply. If a measure of evenness is Schur-concave, it means
+that when the distribution of individuals becomes more evenly
+spread across species, the measure of evenness will stay the
+same or increase, but never decrease. Value validity means
+that an evenness index should provide sensible and meaningful
+values across its range for any given distribution of species
+abundances. Kvålseth referred to this evenness measure as E9
+but we refer to it as Williams' evenness.
+
+Williams' evenness is calculated as:
+
+\deqn{
+  1 - \sqrt{\frac{S\sum_{i=1}^{S} p_i^2 - 1}{S - 1}}
+}{
+  1 - sqrt((S * Sum from i=1 to S of pi^2 - 1) / (S - 1))
+}
+
+where S is the number of species and pi is the proportion of occurrences
+represented by species i.
+}
+}
+\section{Functions}{
+\itemize{
+\item \code{pielou_evenness_map()}: 
+
+\item \code{pielou_evenness_ts()}: 
+
+\item \code{williams_evenness_map()}: 
+
+\item \code{williams_evenness_ts()}: 
+
+}}
 \examples{
 \dontrun{
 pe_map <- pielou_evenness_map(example_cube_1, level = "country", region = "Denmark")
 plot(pe_map)
 }
+\dontrun{
+pe_ts <- pielou_evenness_ts(example_cube_1, first_year = 1985)
+plot(pe_ts)
+}
+\dontrun{
+we_map <- williams_evenness_map(example_cube_1, level = "country", region = "Denmark")
+plot(we_map)
+}
+\dontrun{
+we_ts <- williams_evenness_ts(example_cube_1, first_year = 1985)
+plot(we_ts)
+}
+}
+\references{
+Pielou, E. C. (1966). The measurement of diversity in
+different types of biological collections. \emph{Journal of theoretical biology},
+\emph{13}, 131-144.
+
+Kvålseth, T. O. (2015). Evenness indices once again: critical analysis of
+properties. \emph{SpringerPlus}, \emph{4}, 1-12.
 }
 \seealso{
 compute_indicator_workflow
