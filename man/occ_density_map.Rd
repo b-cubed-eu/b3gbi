@@ -53,12 +53,9 @@ This function calculates the density of records over a gridded
 map or as a time series (see 'Details' for more information).
 }
 \details{
-\if{html}{\out{
-<h3>Occurrence density</h3>
 Density is calculated by summing the total number of occurrences per square
 kilometre for each cell or year. This provides similar information to total
 occurrences, but is adjusted for cell area.
-}}
 }
 \section{Functions}{
 \itemize{

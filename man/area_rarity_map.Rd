@@ -60,8 +60,8 @@ This function calculates area-based or abundance-based rarity
 over a gridded map or as a time series (see 'Details' for more information).
 }
 \details{
-\if{html}{\out{
-<h3>Rarity</h3>
+\subsection{Rarity}{
+
 Rarity is the scarcity or infrequency of a particular species in
 an area. A rare species might have a small population size, a
 limited distribution, or a unique ecological niche (Maciel,
@@ -70,15 +70,14 @@ indicator when summed over multiple species in an area, and may
 provide important insight for determining conservation
 priorities. When measured over time, rarity may indicate
 potential threats or changes in the environment.
-}}
-\if{html}{\out{
-<h3>Abundance-Based Rarity</h3>
+}
+
+\subsection{Abundance-Based Rarity}{
+
 Abundance-based rarity is the inverse of the proportion of total occurrences
 represented by a particular species. The total summed rarity for each grid
 cell or year is calculated (sum the rarity values of each species present
 there). It is calculated as:
-}}
-
 
 \deqn{
   \sum_{i=1}^{S} \frac{1}{p_i}
@@ -87,14 +86,15 @@ there). It is calculated as:
 }
 
 where S is the number of species and pi is the proportion of occurrences
-represented by species i.\if{html}{\out{
-<h3>Area-Based Rarity</h3>
+represented by species i.
+}
+
+\subsection{Area-Based Rarity}{
+
 Area-based rarity is the inverse of occupancy frequency (proportion of grid
 cells occupied) for a particular species. The total summed rarity for each
 grid cell or year is calculated (sum the rarity values of each species
 present there). It is calculated as:
-}}
-
 
 \deqn{
   \sum_{i=1}^{S} \frac{N}{n_i}
@@ -104,6 +104,7 @@ present there). It is calculated as:
 
 where S is the number of species, N is the total number of occupied grid
 cells, and ni is the number of grid cells occupied by species i.
+}
 }
 \section{Functions}{
 \itemize{

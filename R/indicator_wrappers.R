@@ -3,7 +3,8 @@
 #' @description This function calculates observed species richness over a
 #' gridded map or as a time series (see 'Details' for more information).
 #'
-#' @details <h3>Species richness</h3>
+#' @details
+#' ## Species richness
 #' Species richness is the total number of species present in a
 #' sample (Magurran, 1988). It is a fundamental and commonly used
 #' measure of biodiversity, providing a simple and intuitive
@@ -17,7 +18,7 @@
 #' can occur without any change in richness. Although richness is
 #' conceptually simple, it can be measured in different ways.
 #'
-#' <h3>Observed richness</h3>
+#' ## Observed richness
 #' Observed richness is calculated by summing the number of unique species
 #' observed for each year or each cell. Observed richness is highly dependent
 #' on the comprehensiveness of the dataset it is being applied to. If some
@@ -83,7 +84,7 @@ obs_richness_ts <- function(data, ...) {
 #' records over a gridded map or as a time series (see 'Details' for more '
 #' information).
 #'
-#' @details <h3>Total occurrences</h3>
+#' @details
 #' The total number of occurrences is calculated by summing the occurrences of
 #' all species observed for each cell or year. While not itself an indicator,
 #' this variable provides an overview of the comprehensiveness and distribution
@@ -137,7 +138,8 @@ total_occ_ts <- function(data, ...) {
 #' @description Calculate evenness over a gridded map or as a time series (see
 #' 'Details' for more information).
 #'
-#' @details <h3>Evenness</h3>
+#' @details
+#' ## Evenness
 #'
 #' Species evenness is a commonly used indicator that measures how
 #' uniformly individuals are distributed across species in a region
@@ -151,7 +153,7 @@ total_occ_ts <- function(data, ...) {
 #' represented in the respective data set rather than the true
 #' evenness of the ecological community.
 #'
-#' <h3>Pielou's evenness</h3>
+#' ## Pielou's evenness
 #'
 #' Pielou's evenness (1966) is a well-known and commonly
 #' used evenness measure. It is calculated as:
@@ -164,7 +166,7 @@ total_occ_ts <- function(data, ...) {
 #' where S is the number of species and pi is the proportion of occurrences
 #' represented by species i.
 #'
-#' <h3>Williams' evenness</h3>
+#' ## Williams' evenness
 #'
 #' An analysis of evenness properties by Kv&aring;lseth (2015) showed
 #' that an evenness index introduced by Williams in 1977 in an
@@ -279,7 +281,7 @@ williams_evenness_ts <- function(data, ...) {
 #' over a gridded map or as a time series (see 'Details' for more information).
 #'
 #' @details
-#' <h3>Rarity</h3>
+#' ## Rarity
 #' Rarity is the scarcity or infrequency of a particular species in
 #' an area. A rare species might have a small population size, a
 #' limited distribution, or a unique ecological niche (Maciel,
@@ -289,7 +291,7 @@ williams_evenness_ts <- function(data, ...) {
 #' priorities. When measured over time, rarity may indicate
 #' potential threats or changes in the environment.
 #'
-#' <h3>Abundance-Based Rarity</h3>
+#' ## Abundance-Based Rarity
 #' Abundance-based rarity is the inverse of the proportion of total occurrences
 #' represented by a particular species. The total summed rarity for each grid
 #' cell or year is calculated (sum the rarity values of each species present
@@ -304,7 +306,7 @@ williams_evenness_ts <- function(data, ...) {
 #' where S is the number of species and pi is the proportion of occurrences
 #' represented by species i.
 #'
-#' <h3>Area-Based Rarity</h3>
+#' ## Area-Based Rarity
 #' Area-based rarity is the inverse of occupancy frequency (proportion of grid
 #' cells occupied) for a particular species. The total summed rarity for each
 #' grid cell or year is calculated (sum the rarity values of each species
@@ -663,7 +665,8 @@ hill2_ts <- function(data,
 #' @description This function calculates cumulative species richness as a time
 #' series (see 'Details' for more information).
 #'
-#' @details <h3>Species richness</h3>
+#' @details
+#' ## Species richness
 #' Species richness is the total number of species present in a
 #' sample (Magurran, 1988). It is a fundamental and commonly used
 #' measure of biodiversity, providing a simple and intuitive
@@ -677,7 +680,7 @@ hill2_ts <- function(data,
 #' can occur without any change in richness. Although richness is
 #' conceptually simple, it can be measured in different ways.
 #'
-#' <h3>Cumulative richness</h3>
+#' ## Cumulative richness
 #' Cumulative richness is calculated by adding the newly observed unique species
 #' each year to a cumulative sum. This indicator provides an estimation of
 #' whether and how many new species are still being discovered in a region.
@@ -771,7 +774,7 @@ newness_ts <- function(data, ...) {
 #' @description This function calculates the density of records over a gridded
 #' map or as a time series (see 'Details' for more information).
 #'
-#' @details <h3>Occurrence density</h3>
+#' @details
 #' Density is calculated by summing the total number of occurrences per square
 #' kilometre for each cell or year. This provides similar information to total
 #' occurrences, but is adjusted for cell area.
@@ -823,7 +826,7 @@ occ_density_ts <- function(data, ...) {
 #' species over a gridded map or as a time series (see 'Details' for more
 #' information).
 #'
-#' @details <h3>Species occurrences</h3>
+#' @details
 #' Species occurrences are considered an essential biodiversity variable (EBV).
 #' They are mapped by calculating the total number of occurrences
 #' of a given species for each cell. This represents the occurrence frequency
@@ -1006,7 +1009,7 @@ tax_distinct_ts <- function(data, rows = 1, ...) {
 #' @description This function calculates occupancy turnover as a time series
 #' (see 'Details' for more information).
 #'
-#' @details <h3>Occupancy turnover</h3>
+#' @details
 #' Occupancy turnover measures the change in species composition over time,
 #' reflecting the rate at which species appear or disappear from a given area.
 #' It provides insights into the dynamic nature of ecological communities,

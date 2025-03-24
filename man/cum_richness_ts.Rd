@@ -50,8 +50,8 @@ This function calculates cumulative species richness as a time
 series (see 'Details' for more information).
 }
 \details{
-\if{html}{\out{
-<h3>Species richness</h3>
+\subsection{Species richness}{
+
 Species richness is the total number of species present in a
 sample (Magurran, 1988). It is a fundamental and commonly used
 measure of biodiversity, providing a simple and intuitive
@@ -64,9 +64,10 @@ establishment because it ignores abundance. Nor will it
 necessarily indicate changes in local species composition, which
 can occur without any change in richness. Although richness is
 conceptually simple, it can be measured in different ways.
-}}
-\if{html}{\out{
-<h3>Cumulative richness</h3>
+}
+
+\subsection{Cumulative richness}{
+
 Cumulative richness is calculated by adding the newly observed unique species
 each year to a cumulative sum. This indicator provides an estimation of
 whether and how many new species are still being discovered in a region.
@@ -74,7 +75,7 @@ While an influx of alien species could cause an increase in cumulative
 richness, a fast-rising trend as shown in Fig. 2 is likely an indication
 that the dataset is not comprehensive and therefore observed richness will
 provide an underestimate of species richness.
-}}
+}
 }
 \examples{
 \dontrun{

@@ -50,8 +50,6 @@ This function calculates occupancy turnover as a time series
 (see 'Details' for more information).
 }
 \details{
-\if{html}{\out{
-<h3>Occupancy turnover</h3>
 Occupancy turnover measures the change in species composition over time,
 reflecting the rate at which species appear or disappear from a given area.
 It provides insights into the dynamic nature of ecological communities,
@@ -61,8 +59,6 @@ potentially driven by factors such as habitat alteration, climate change,
 or invasive species. Analyzing occupancy turnover can be crucial for
 understanding ecosystem stability, identifying areas of conservation concern,
 and assessing the effectiveness of management strategies.
-}}
-
 
 Occupancy turnover can be calculated in different ways, but here we use the
 Jaccard dissimilarity index (Jaccard, 1901) to measure the similarity between

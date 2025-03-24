@@ -54,14 +54,11 @@ records over a gridded map or as a time series (see 'Details' for more '
 information).
 }
 \details{
-\if{html}{\out{
-<h3>Total occurrences</h3>
 The total number of occurrences is calculated by summing the occurrences of
 all species observed for each cell or year. While not itself an indicator,
 this variable provides an overview of the comprehensiveness and distribution
 of data in the cube being analysed, and may be helpful, or even vital, for
 interpreting the results of calculated indicators.
-}}
 }
 \section{Functions}{
 \itemize{

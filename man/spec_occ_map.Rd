@@ -54,8 +54,6 @@ species over a gridded map or as a time series (see 'Details' for more
 information).
 }
 \details{
-\if{html}{\out{
-<h3>Species occurrences</h3>
 Species occurrences are considered an essential biodiversity variable (EBV).
 They are mapped by calculating the total number of occurrences
 of a given species for each cell. This represents the occurrence frequency
@@ -63,7 +61,6 @@ distribution, and also indicates the observed species distribution. The
 number of occurrences can act as a proxy for relative abundance of species
 with a similar detectability, which is an important aspect of biodiversity
 although not an indicator when calculated in isolation.
-}}
 }
 \section{Functions}{
 \itemize{

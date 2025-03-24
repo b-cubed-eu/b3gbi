@@ -53,8 +53,8 @@ This function calculates observed species richness over a
 gridded map or as a time series (see 'Details' for more information).
 }
 \details{
-\if{html}{\out{
-<h3>Species richness</h3>
+\subsection{Species richness}{
+
 Species richness is the total number of species present in a
 sample (Magurran, 1988). It is a fundamental and commonly used
 measure of biodiversity, providing a simple and intuitive
@@ -67,9 +67,10 @@ establishment because it ignores abundance. Nor will it
 necessarily indicate changes in local species composition, which
 can occur without any change in richness. Although richness is
 conceptually simple, it can be measured in different ways.
-}}
-\if{html}{\out{
-<h3>Observed richness</h3>
+}
+
+\subsection{Observed richness}{
+
 Observed richness is calculated by summing the number of unique species
 observed for each year or each cell. Observed richness is highly dependent
 on the comprehensiveness of the dataset it is being applied to. If some
@@ -79,7 +80,7 @@ richness also depends on the relative abundance and spatial aggregation of
 each species, with less abundant and less aggregated species less likely to
 be discovered during surveys (Hillebrand et al., 2018), as well as the
 detectability of each species.
-}}
+}
 }
 \section{Functions}{
 \itemize{

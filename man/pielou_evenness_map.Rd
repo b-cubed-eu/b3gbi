@@ -60,10 +60,7 @@ Calculate evenness over a gridded map or as a time series (see
 'Details' for more information).
 }
 \details{
-\if{html}{\out{
-<h3>Evenness</h3>
-}}
-
+\subsection{Evenness}{
 
 Species evenness is a commonly used indicator that measures how
 uniformly individuals are distributed across species in a region
@@ -75,10 +72,10 @@ calculated using the proportions of observations rather than
 proportions of individuals. Strictly speaking, the evenness
 measures therefore indicate how uniformly species are
 represented in the respective data set rather than the true
-evenness of the ecological community.\if{html}{\out{
-<h3>Pielou's evenness</h3>
-}}
+evenness of the ecological community.
+}
 
+\subsection{Pielou's evenness}{
 
 Pielou's evenness (1966) is a well-known and commonly
 used evenness measure. It is calculated as:
@@ -89,10 +86,10 @@ used evenness measure. It is calculated as:
  E = -Sum from i=1 to S of pi * ln(pi) / ln(S)
 }
 where S is the number of species and pi is the proportion of occurrences
-represented by species i.\if{html}{\out{
-<h3>Williams' evenness</h3>
-}}
+represented by species i.
+}
 
+\subsection{Williams' evenness}{
 
 An analysis of evenness properties by Kvålseth (2015) showed
 that an evenness index introduced by Williams in 1977 in an
@@ -119,6 +116,7 @@ Williams' evenness is calculated as:
 
 where S is the number of species and pi is the proportion of occurrences
 represented by species i.
+}
 }
 \section{Functions}{
 \itemize{
