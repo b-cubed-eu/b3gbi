@@ -1303,7 +1303,7 @@ plot_ts <- function(x,
 #'   (May not return exactly the number requested.)
 #' @param y_breaks Integer giving desired number of breaks for y axis.
 #'   (May not return exactly the number requested.)
-#' @param title_wrap_length  Maximum title length before wrapping to a new line.
+#' @param wrap_length  Maximum title length before wrapping to a new line.
 #'
 #' @return A ggplot object representing species range or occurrence time series plot(s).
 #'   Can be customized using ggplot2 functions.
@@ -1364,7 +1364,7 @@ plot_species_ts <- function(x,
                             y_expand = NULL,
                             x_breaks = 10,
                             y_breaks = 6,
-                            title_wrap_length = 60
+                            wrap_length = 60
                             ) {
 
   year <- taxonKey <- . <- scientificName <- ll <- ul <- diversity_val <- NULL
