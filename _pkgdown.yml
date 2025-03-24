@@ -19,4 +19,4 @@ navbar:
       icon: fa-cube
       href: https://b-cubed.eu/
       aria-label: B-Cubed website
-mathjax: yes
+math-rendering: mathjax

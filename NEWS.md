@@ -1,3 +1,7 @@
+# b3gbi 0.5.2 - Minor update:
+
+* Fixed species occurrence and species range plots when selecting only one species (previously it was not possible to add additional ggplot code when only one species was plotted due to a bug in the plotting code).
+
 # b3gbi 0.5.1 - Minor update:
 
 * Equations in pkgdown help website now display correctly.
