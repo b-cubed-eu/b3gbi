@@ -1587,7 +1587,8 @@ plot_species_ts <- function(x,
   names(trend_plot) <- sci_names
 
   # Combine plots using wrap_plots function from patchwork
-  if (length(trend_plot) > 1 & single_plot == TRUE) {
+  if ((length(trend_plot) > 0 & single_plot == TRUE) ||
+       length(trend_plot) == 1) {
     trend_plot <- patchwork::wrap_plots(trend_plot) +
       plot_annotation_int(title = title,
                           theme = theme(plot.title = element_text(size = 20)))
