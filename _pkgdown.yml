@@ -2,6 +2,7 @@ url: https://b-cubed-eu.github.io/b3gbi/
 
 template:
   bootstrap: 5
+  math-rendering: mathjax
   bslib:
     bg: "#ffffff"
     fg: "#2f2f2f"
@@ -19,4 +20,3 @@ navbar:
       icon: fa-cube
       href: https://b-cubed.eu/
       aria-label: B-Cubed website
-math-rendering: mathjax
