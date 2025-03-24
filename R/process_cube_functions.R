@@ -513,8 +513,7 @@ process_cube <- function(cube_name,
 
 }
 
-#' @rdname process_cube
-#' @export
+#' @noRd
 process_cube_old <- function(cube_name,
                              tax_info = NULL,
                              datasets_info = NULL,

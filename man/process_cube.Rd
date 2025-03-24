@@ -2,7 +2,6 @@
 % Please edit documentation in R/process_cube_functions.R
 \name{process_cube}
 \alias{process_cube}
-\alias{process_cube_old}
 \title{Process GBIF Data Cubes}
 \usage{
 process_cube(
@@ -27,14 +26,6 @@ process_cube(
   cols_familyCount = NULL,
   cols_sex = NULL,
   cols_lifeStage = NULL
-)
-
-process_cube_old(
-  cube_name,
-  tax_info = NULL,
-  datasets_info = NULL,
-  first_year = 1600,
-  last_year = NULL
 )
 }
 \arguments{

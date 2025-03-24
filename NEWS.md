@@ -4,6 +4,7 @@
 * Conversion between CRSs with different units (e.g. degrees vs km) must now be forced by the user, and a warning is given.
 * More extensive documentation is now provided for indicator functions, including formulas and background information.
 * Users can now provide external shapefiles to limit indicator calculations to feature boundaries.
+* Removed compatibility with previous generation cubes (created using TriAs project code).
 
 # b3gbi 0.4.4 - Minor update:
 
