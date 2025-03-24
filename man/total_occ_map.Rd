@@ -2,9 +2,12 @@
 % Please edit documentation in R/indicator_wrappers.R
 \name{total_occ_map}
 \alias{total_occ_map}
-\title{Calculate Total Occurrences Over Space}
+\alias{total_occ_ts}
+\title{Calculate Total Occurrences Over Space or Time}
 \usage{
 total_occ_map(data, ...)
+
+total_occ_ts(data, ...)
 }
 \arguments{
 \item{data}{A data cube object (class 'processed_cube').}
@@ -42,17 +45,37 @@ all non protected areas)}
   }}
 }
 \value{
-An S3 object with the classes 'indicator_map' and 'total_occ' containing
-the calculated indicator values and metadata.
+An S3 object with the classes 'indicator_map' or 'indicator_ts' and
+'total_occ' containing the calculated indicator values and metadata.
 }
 \description{
 This function calculates the total number of species occurrence
-records over a gridded map.
+records over a gridded map or as a time series (see 'Details' for more '
+information).
 }
+\details{
+The total number of occurrences is calculated by summing the occurrences of
+all species observed for each cell or year. While not itself an indicator,
+this variable provides an overview of the comprehensiveness and distribution
+of data in the cube being analysed, and may be helpful, or even vital, for
+interpreting the results of calculated indicators.
+}
+\section{Functions}{
+\itemize{
+\item \code{total_occ_map()}: 
+
+\item \code{total_occ_ts()}: 
+
+}}
 \examples{
 \dontrun{
-to_map <- total_occ_map(example_cube_1, level = "country", region = "Denmark")
+to_map <- total_occ_map(example_cube_1, level = "country",
+                                        region = "Denmark")
 plot(to_map)
+}
+\dontrun{
+to_ts <- total_occ_ts(example_cube_1, first_year = 1985)
+plot(to_ts)
 }
 }
 \seealso{

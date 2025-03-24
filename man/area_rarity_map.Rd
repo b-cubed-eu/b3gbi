@@ -2,9 +2,18 @@
 % Please edit documentation in R/indicator_wrappers.R
 \name{area_rarity_map}
 \alias{area_rarity_map}
-\title{Calculate Area-Based Rarity Over Space}
+\alias{area_rarity_ts}
+\alias{ab_rarity_map}
+\alias{ab_rarity_ts}
+\title{Calculate Rarity Over Time or Space}
 \usage{
 area_rarity_map(data, ...)
+
+area_rarity_ts(data, ...)
+
+ab_rarity_map(data, ...)
+
+ab_rarity_ts(data, ...)
 }
 \arguments{
 \item{data}{A data cube object (class 'processed_cube').}
@@ -42,17 +51,96 @@ all non protected areas)}
   }}
 }
 \value{
-An S3 object with the classes 'indicator_map' and 'area_rarity' containing
-the calculated indicator values and metadata.
+An S3 object with the classes 'indicator_map' or 'indicator_ts' and
+'area_rarity' or 'ab_rarity' containing the calculated indicator values and
+metadata.
 }
 \description{
-This function calculates area-based rarity over a gridded map.
+This function calculates area-based or abundance-based rarity
+over a gridded map or as a time series (see 'Details' for more information).
 }
+\details{
+\subsection{Rarity}{
+
+Rarity is the scarcity or infrequency of a particular species in
+an area. A rare species might have a small population size, a
+limited distribution, or a unique ecological niche (Maciel,
+2021; Rabinowitz, 1981). Rarity can also be a biodiversity
+indicator when summed over multiple species in an area, and may
+provide important insight for determining conservation
+priorities. When measured over time, rarity may indicate
+potential threats or changes in the environment.
+}
+
+\subsection{Abundance-Based Rarity}{
+
+Abundance-based rarity is the inverse of the proportion of total occurrences
+represented by a particular species. The total summed rarity for each grid
+cell or year is calculated (sum the rarity values of each species present
+there). It is calculated as:
+
+\deqn{
+  \sum_{i=1}^{S} \frac{1}{p_i}
+}{
+  Sum from i=1 to S of 1 / pi
+}
+
+where S is the number of species and pi is the proportion of occurrences
+represented by species i.
+}
+
+\subsection{Area-Based Rarity}{
+
+Area-based rarity is the inverse of occupancy frequency (proportion of grid
+cells occupied) for a particular species. The total summed rarity for each
+grid cell or year is calculated (sum the rarity values of each species
+present there). It is calculated as:
+
+\deqn{
+  \sum_{i=1}^{S} \frac{N}{n_i}
+}{
+  Sum from i=1 to S of N / ni
+}
+
+where S is the number of species, N is the total number of occupied grid
+cells, and ni is the number of grid cells occupied by species i.
+}
+}
+\section{Functions}{
+\itemize{
+\item \code{area_rarity_map()}: 
+
+\item \code{area_rarity_ts()}: 
+
+\item \code{ab_rarity_map()}: 
+
+\item \code{ab_rarity_ts()}: 
+
+}}
 \examples{
 \dontrun{
 arr_map <- area_rarity_map(example_cube_1, level = "country", region = "Denmark")
 plot(arr_map)
 }
+\dontrun{
+arr_ts <- area_rarity_ts(example_cube_1, first_year = 1985)
+plot(arr_ts)
+}
+\dontrun{
+abr_map <- ab_rarity_map(example_cube_1, level = "country", region = "Denmark")
+plot(abr_map)
+}
+\dontrun{
+abr_ts <- ab_rarity_ts(example_cube_1, first_year = 1985)
+plot(abr_ts)
+}
+}
+\references{
+Maciel, E. A. (2021). An index for assessing the rare species of a community.
+\emph{Ecological Indicators}, 124, 107424.
+
+Rabinowitz, D. (1981). Seven forms of rarity. *Biological aspects of rare *
+\emph{plant conservation}.
 }
 \seealso{
 compute_indicator_workflow

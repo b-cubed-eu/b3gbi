@@ -707,7 +707,40 @@ compute_indicator_workflow <- function(data,
           map_data <- sf::st_transform(map_data, crs = sf::st_crs(df_sf))
         }
 
-        filtered_sf <- sf::st_intersection(df_sf, sf::st_union(map_data))
+        map_data <- sf::st_make_valid(map_data)
+
+        # Initialize filtered_sf as NULL to capture the result of the intersection
+        filtered_sf <- NULL
+
+        tryCatch({
+
+          # Attempt without altering the spherical geometry setting
+          filtered_sf <- sf::st_intersection(df_sf, sf::st_union(map_data))
+        }, error = function(e) {
+          if (grepl("Error in wk_handle.wk_wkb", e)) {
+            message(paste("Encountered a geometry error during intersection. This may be due",
+                          "to invalid polygons in the grid."))
+          } else {
+            stop(e)
+          }
+        })
+
+        if (is.null(filtered_sf)) {
+          # If intersection failed, turn off spherical geometry
+          message("Retrying the intersection with spherical geometry turned off.")
+          sf::sf_use_s2(FALSE)
+
+          # Retry the intersection operation
+          filtered_sf <- sf::st_intersection(df_sf, sf::st_union(map_data))
+
+          # Notify success after retry
+          message("Intersection succeeded with spherical geometry turned off.")
+
+          # Restore original spherical setting
+          sf::sf_use_s2(original_s2_setting)
+        }
+
+       # filtered_sf <- sf::st_intersection(df_sf, sf::st_union(map_data))
 
         # Filter the original data frame
         df <- df[df$cellid %in% filtered_sf$cellid, ]
