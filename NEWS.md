@@ -1,3 +1,7 @@
+# b3gbi 0.5.3 - Minor update:
+
+* Updated old and non-working example in process_cube() documentation.
+
 # b3gbi 0.5.2 - Minor update:
 
 * Fixed species occurrence and species range plots when selecting only one species (previously it was not possible to add additional ggplot code when only one species was plotted due to a bug in the plotting code).
