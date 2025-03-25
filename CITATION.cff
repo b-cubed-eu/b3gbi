@@ -8,7 +8,7 @@ message: 'To cite package "b3gbi" in publications use:'
 type: software
 license: MIT
 title: 'b3gbi: General Biodiversity Indicators for Biodiversity Data Cubes'
-version: 0.5.2
+version: 0.5.3
 abstract: Calculate general biodiversity indicators from GBIF data cubes. Includes
   many common indicators such as species richness and evenness, which can be calculated
   over time (trends) or space (maps).
@@ -112,10 +112,6 @@ references:
   - family-names: Dunnington
     given-names: Dewey
     orcid: https://orcid.org/0000-0002-9415-4582
-  - family-names: Brand
-    given-names: Teun
-    name-particle: van den
-    orcid: https://orcid.org/0000-0002-9335-7468
   year: '2025'
   doi: 10.32614/CRAN.package.ggplot2
 - type: software
@@ -271,11 +267,7 @@ references:
   authors:
   - family-names: Wickham
     given-names: Hadley
-    email: hadley@posit.co
-  - family-names: Pedersen
-    given-names: Thomas Lin
-    email: thomas.pedersen@posit.co
-    orcid: https://orcid.org/0000-0002-5147-4711
+    email: hadley@rstudio.com
   - family-names: Seidel
     given-names: Dana
   year: '2025'
@@ -302,7 +294,7 @@ references:
   authors:
   - family-names: Wickham
     given-names: Hadley
-    email: hadley@posit.co
+    email: hadley@rstudio.com
   year: '2025'
   doi: 10.32614/CRAN.package.stringr
 - type: software
@@ -365,6 +357,7 @@ references:
   abstract: 'bold: Interface to Bold Systems API'
   notes: Suggests
   url: https://docs.ropensci.org/bold/
+  repository: https://CRAN.R-project.org/package=bold
   authors:
   - family-names: Dubois
     given-names: Salix
