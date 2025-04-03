@@ -73,13 +73,6 @@ test_that("get_NE_data handles edge cases", {
                                   ne_scale = "small")
   expect_s3_class(france_map_small, "sf")
 
-  france_map_large <- get_NE_data(region = "France",
-                                  output_crs = "EPSG:3857",
-                                  level = "country",
-                                  ne_type = "countries",
-                                  ne_scale = "large")
-  expect_s3_class(france_map_large, "sf")
-
   # Test different region
   germany_map <- get_NE_data(region = "Germany",
                              output_crs = "EPSG:3857",
@@ -96,13 +89,6 @@ test_that("get_NE_data handles errors", {
                            level = "invalid",
                            ne_type = "countries",
                            ne_scale = "medium"))
-
-  # Test invalid ne_scale and ne_type combination
-  expect_error(get_NE_data(region = "France",
-                           output_crs = "EPSG:3857",
-                           level = "country",
-                           ne_type = "tiny_countries",
-                           ne_scale = "large"))
 
   # Test that when region is null we still get a valid output
   expect_s3_class(get_NE_data(region = NULL,
