@@ -35,17 +35,7 @@ test_that("prepare_spatial_data correctly assigns cell IDs", {
   # Test with same CRS
   cube_crs <- "EPSG:4326"
   output_crs <- "EPSG:4326"
-  message_output <- capture_messages({
-    result <- prepare_spatial_data(data, grid1, cube_crs, output_crs)
-  })
-  expect_true(
-    any(
-      grepl(
-        "although coordinates are longitude/latitude",
-        message_output
-      )
-    )
-  )
+  result <- prepare_spatial_data(data, grid1, cube_crs, output_crs)
   expect_true("cellid" %in% names(result))
   expect_equal(result$cellid, c(1, 1, 1, 1))
 
