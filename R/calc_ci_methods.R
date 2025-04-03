@@ -1,23 +1,17 @@
 #' @title Calculate Confidence Intervals for a Biodiversity Indicator
 #'
 #' @description This function calculates bootstrap confidence intervals for a
-#' biodiversity indicator. It is called automatically when calculating a biodiversity
-#' indicator over time unless you choose 'none' for ci_type.
+#' biodiversity indicator. It is called automatically when calculating a
+#' biodiversity indicator over time unless you choose 'none' for ci_type.
 #'
 #' @param x A data cube object
-#' @param indicator An indicator calculated over time, in the form of a data frame.
-#' *Note: this should NOT be an 'indicator_ts' object as it is meant to be called by
-#' the 'compute_indicator_workflow' function.
-#' @param ci_type Type of bootstrap confidence intervals to calculate. (Default: "norm".
-#'  Select "none" to avoid calculating bootstrap CIs.)
-#' @param num_bootstrap Set the number of bootstraps to calculate for generating
-#'  confidence intervals. (Default: 1000)
-#' @param set_rows Automatically select which taxonomic information to keep when
-#'  there are multiple options. Default value of 1 keeps the first option, which
-#'  is usually the best.
-#' @param ... Additional arguments passed to specific indicator calculation functions.
+#' @param indicator An indicator calculated over time, in the form of a data
+#'  frame. *Note: this should NOT be an 'indicator_ts' object as it is meant to
+#'  be called by the 'compute_indicator_workflow' function.
+#' @param ... Additional arguments passed to specific indicator calculation
+#'  functions.
 #'
-#' @export
+#' @noRd
 calc_ci <- function(x,
                     indicator,
                     ...) {
@@ -29,12 +23,19 @@ calc_ci <- function(x,
 #' @noRd
 calc_ci.default <- function(x, ...){
 
-  warning(paste("calc_ci does not know how to handle object of class ",
-                class(x),
-                ". Please ensure you are not calling calc_ci directly on an object."))
+  warning(
+    paste(
+      "calc_ci does not know how to handle object of class ",
+      class(x),
+      ". Please ensure you are not calling calc_ci directly on an object."
+    )
+  )
 
 }
 
+#' Core function for handling the confidence interval calculations for different
+#'  indicator types. This function is called by the calc_ci functions for each
+#'  indicator type.
 #' @noRd
 calc_ci.core <- function(bootstraps,
                          indicator,
@@ -59,14 +60,20 @@ calc_ci.core <- function(bootstraps,
 
   } else {
 
-    warning("Unable to calculate confidence intervals. There may be insufficient data.")
-
+    warning(
+      paste0(
+        "Unable to calculate confidence intervals. There may be ",
+        "insufficient data."
+      )
+    )
   }
 
   return(indicator)
 
 }
 
+#' @describeIn calc_ci Calculate confidence intervals for Hill richness
+#' @inheritParams calc_ci
 #' @noRd
 calc_ci.hill0 <- function(x, ...) {
 
@@ -80,6 +87,8 @@ calc_ci.hill0 <- function(x, ...) {
 
 }
 
+#' @describeIn calc_ci Calculate confidence intervals for Simpson-Hill diversity
+#' @inheritParams calc_ci
 #' @noRd
 calc_ci.hill1 <- function(x, ...) {
 
@@ -93,6 +102,8 @@ calc_ci.hill1 <- function(x, ...) {
 
 }
 
+#' @describeIn calc_ci Calculate confidence intervals for Shannon-Hill diversity
+#' @inheritParams calc_ci
 #' @noRd
 calc_ci.hill2 <- function(x, ...) {
 
@@ -106,6 +117,13 @@ calc_ci.hill2 <- function(x, ...) {
 
 }
 
+#' Core function for handling the confidence interval calculations for Hill
+#' diversity. This function is called by the calc_ci.hill0, calc_ci.hill1,
+#' calc_ci.hill2 functions.
+#' @inheritParams calc_ci
+#' @param type Type of Hill diversity function to calculate confidence
+#' intervals for. Options are "hill0" for richness, "hill1" for Simpson-Hill
+#' diversity, or "hill2" for Shannon-Hill diversity.
 #' @noRd
 calc_ci.hill_core <- function(x,
                               indicator,
@@ -113,9 +131,12 @@ calc_ci.hill_core <- function(x,
                               ...)
 {
 
-  stopifnot_error("Please check the class and structure of your data.
-                  This is an internal function, not meant to be called directly.",
-                  inherits(x, c("data.frame", "sf")) & rlang::inherits_any(x, c("hill0", "hill1", "hill2")))
+  stopifnot_error(
+    "Please check the class and structure of your data.
+     This is an internal function, not meant to be called directly.",
+    inherits(x, c("data.frame", "sf")) &
+      rlang::inherits_any(x, c("hill0", "hill1", "hill2"))
+  )
 
   type <- match.arg(type)
 
@@ -125,12 +146,21 @@ calc_ci.hill_core <- function(x,
 
   } else {
 
-    stop("Confidence intervals for Hill numbers should be calculated by the calc_ts function, but seem to be missing.")
-
+    stop(
+      paste0(
+        "Confidence intervals for Hill numbers should be calculated by ",
+        "the calc_ts function, but seem to be missing."
+      )
+    )
   }
-
 }
 
+#' @describeIn calc_ci Calculate confidence intervals for total occurrences
+#' @param ci_type Type of bootstrap confidence intervals to calculate.
+#'  (Default: "norm". Select "none" to avoid calculating bootstrap CIs.)
+#' @param num_bootstrap Set the number of bootstraps to calculate for generating
+#'  confidence intervals. (Default: 1000)
+#' @inheritParams calc_ci
 #' @noRd
 calc_ci.total_occ <- function(x,
                               indicator,
@@ -164,6 +194,12 @@ calc_ci.total_occ <- function(x,
 
 }
 
+#' @describeIn calc_ci Calculate confidence intervals for occurrence density
+#' @param ci_type Type of bootstrap confidence intervals to calculate.
+#'  (Default: "norm". Select "none" to avoid calculating bootstrap CIs.)
+#' @param num_bootstrap Set the number of bootstraps to calculate for generating
+#'  confidence intervals. (Default: 1000)
+#' @inheritParams calc_ci
 #' @noRd
 calc_ci.occ_density <- function(x,
                                 indicator,
@@ -200,6 +236,12 @@ calc_ci.occ_density <- function(x,
 
 }
 
+#' @describeIn calc_ci Calculate confidence intervals for newness
+#' @param ci_type Type of bootstrap confidence intervals to calculate.
+#'  (Default: "norm". Select "none" to avoid calculating bootstrap CIs.)
+#' @param num_bootstrap Set the number of bootstraps to calculate for generating
+#'  confidence intervals. (Default: 1000)
+#' @inheritParams calc_ci
 #' @noRd
 calc_ci.newness <- function(x,
                             indicator,
@@ -207,7 +249,8 @@ calc_ci.newness <- function(x,
                             ci_type = ci_type,
                             ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
+  stopifnot_error("Wrong data class. This is an internal function and is not
+                  meant to be called directly.",
                   inherits(x, "newness"))
 
   year <- NULL
@@ -234,6 +277,12 @@ calc_ci.newness <- function(x,
 
 }
 
+#' @describeIn calc_ci Calculate confidence intervals for Williams' evenness
+#' @param ci_type Type of bootstrap confidence intervals to calculate.
+#'  (Default: "norm". Select "none" to avoid calculating bootstrap CIs.)
+#' @param num_bootstrap Set the number of bootstraps to calculate for generating
+#'  confidence intervals. (Default: 1000)
+#' @inheritParams calc_ci
 #' @noRd
 calc_ci.williams_evenness <- function(x,
                                       ...) {
@@ -249,6 +298,12 @@ calc_ci.williams_evenness <- function(x,
 
 }
 
+#' @describeIn calc_ci Calculate confidence intervals for Pielou's evenness
+#' @param ci_type Type of bootstrap confidence intervals to calculate.
+#'  (Default: "norm". Select "none" to avoid calculating bootstrap CIs.)
+#' @param num_bootstrap Set the number of bootstraps to calculate for generating
+#'  confidence intervals. (Default: 1000)
+#' @inheritParams calc_ci
 #' @noRd
 calc_ci.pielou_evenness <- function(x,
                                     ...) {
@@ -264,6 +319,13 @@ calc_ci.pielou_evenness <- function(x,
 
 }
 
+#' Core function to calculate confidence intervals for evenness. This is called
+#'  by the calc_ci.pielou_evenness and calc_ci.williams_evenness functions.
+#' @param ci_type Type of bootstrap confidence intervals to calculate.
+#'  (Default: "norm". Select "none" to avoid calculating bootstrap CIs.)
+#' @param num_bootstrap Set the number of bootstraps to calculate for generating
+#'  confidence intervals. (Default: 1000)
+#' @inheritParams calc_ci
 #' @noRd
 calc_ci.evenness_core <- function(x,
                                   type,
@@ -276,9 +338,11 @@ calc_ci.evenness_core <- function(x,
 
   obs <- year <- taxonKey <- num_occ <- . <- NULL
 
-  stopifnot_error("Please check the class and structure of your data.
-                  This is an internal function, not meant to be called directly.",
-                  inherits(x, c("data.frame", "sf")))
+  stopifnot_error(
+    "Please check the class and structure of your data.
+    This is an internal function, not meant to be called directly.",
+    inherits(x, c("data.frame", "sf"))
+  )
 
   type <- match.arg(type,
                     names(available_indicators))
@@ -314,6 +378,12 @@ calc_ci.evenness_core <- function(x,
 
 }
 
+#' @describeIn calc_ci Calculate confidence intervals for abundance-based rarity
+#' @param ci_type Type of bootstrap confidence intervals to calculate.
+#'  (Default: "norm". Select "none" to avoid calculating bootstrap CIs.)
+#' @param num_bootstrap Set the number of bootstraps to calculate for generating
+#'  confidence intervals. (Default: 1000)
+#' @inheritParams calc_ci
 #' @noRd
 calc_ci.ab_rarity <- function(x,
                               indicator,
@@ -349,6 +419,12 @@ calc_ci.ab_rarity <- function(x,
 
 }
 
+#' @describeIn calc_ci Calculate confidence intervals for area-based rarity
+#' @param ci_type Type of bootstrap confidence intervals to calculate.
+#'  (Default: "norm". Select "none" to avoid calculating bootstrap CIs.)
+#' @param num_bootstrap Set the number of bootstraps to calculate for generating
+#'  confidence intervals. (Default: 1000)
+#' @inheritParams calc_ci
 #' @noRd
 calc_ci.area_rarity <- function(x,
                                 indicator,
@@ -368,7 +444,8 @@ calc_ci.area_rarity <- function(x,
     dplyr::arrange(year, cellid, taxonKey) %>%
     dplyr::mutate(rec_tax_cell = sum(dplyr::n_distinct(cellid)),
                   .by = c(taxonKey)) %>%
-    dplyr::mutate(rarity = 1 / (rec_tax_cell / sum(dplyr::n_distinct(cellid)))) %>%
+    dplyr::mutate(rarity = 1 /
+                    (rec_tax_cell / sum(dplyr::n_distinct(cellid)))) %>%
     dplyr::summarise(diversity_val = sum(rarity), .by = c("year", "cellid")) %>%
     dplyr::arrange(year)
 
@@ -388,6 +465,12 @@ calc_ci.area_rarity <- function(x,
 
 }
 
+#' @describeIn calc_ci Calculate confidence intervals for species occurrence
+#' @param ci_type Type of bootstrap confidence intervals to calculate.
+#'  (Default: "norm". Select "none" to avoid calculating bootstrap CIs.)
+#' @param num_bootstrap Set the number of bootstraps to calculate for generating
+#'  confidence intervals. (Default: 1000)
+#' @inheritParams calc_ci
 #' @noRd
 calc_ci.spec_occ <- function(x,
                              indicator,
@@ -456,6 +539,12 @@ calc_ci.spec_occ <- function(x,
 
 }
 
+#' @describeIn calc_ci Calculate confidence intervals for species range
+#' @param ci_type Type of bootstrap confidence intervals to calculate.
+#'  (Default: "norm". Select "none" to avoid calculating bootstrap CIs.)
+#' @param num_bootstrap Set the number of bootstraps to calculate for generating
+#'  confidence intervals. (Default: 1000)
+#' @inheritParams calc_ci
 #' @noRd
 calc_ci.spec_range <- function(x,
                                indicator,
@@ -476,13 +565,15 @@ calc_ci.spec_range <- function(x,
   # Bootstrap species range values
   bootstraps <-
     x %>%
-    dplyr::summarize(observed = sum(obs >= 1), .by = c(taxonKey, year, cellCode)) %>%
+    dplyr::summarize(observed = sum(obs >= 1),
+                     .by = c(taxonKey, year, cellCode)) %>%
     dplyr::group_by(taxonKey) %>%
     dplyr::group_split() %>%
     purrr::map(. %>%
                  dplyr::select(year,observed,cellCode) %>%
                  dplyr::arrange(year) %>%
-                 tidyr::pivot_wider(names_from = year, values_from = observed) %>%
+                 tidyr::pivot_wider(names_from = year,
+                                    values_from = observed) %>%
                  replace(is.na(.),0) %>%
                  tibble::column_to_rownames("cellCode") %>%
                  as.list() %>%
@@ -524,6 +615,15 @@ calc_ci.spec_range <- function(x,
 
 }
 
+#' @describeIn calc_ci Calculate confidence intervals for taxonomic distinctness
+#' @param ci_type Type of bootstrap confidence intervals to calculate.
+#'  (Default: "norm". Select "none" to avoid calculating bootstrap CIs.)
+#' @param num_bootstrap Set the number of bootstraps to calculate for generating
+#'  confidence intervals. (Default: 1000)
+#' @param set_rows Automatically select which taxonomic information to keep when
+#'  there are multiple options. Default value of 1 keeps the first option, which
+#'  is usually the best.
+#' @inheritParams calc_ci
 #' @noRd
 calc_ci.tax_distinct <- function(x,
                                  indicator,
@@ -559,7 +659,6 @@ calc_ci.tax_distinct <- function(x,
     a <- y$year[1]
   })
 
-
   # Bootstrap indicator value
   bootstraps <-
     x3 %>%
@@ -591,9 +690,12 @@ calc_ci.tax_distinct <- function(x,
 
   } else {
 
-    warning("Unable to calculate confidence intervals. There may be insufficient data.")
-
+    warning(
+      paste0(
+        "Unable to calculate confidence intervals. ",
+        "There may be insufficient data."
+      )
+    )
   }
-
 }
 
