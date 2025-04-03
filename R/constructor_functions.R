@@ -100,9 +100,7 @@ new_sim_cube <- function(x, grid_type) {
                    kingdoms = ifelse("kingdom" %in% colnames(x), c(unique(x$kingdom)), "Data not present"),
                    num_families = ifelse("family" %in% colnames(x), length(unique(x$family)), "Data not present"),
                    grid_type = grid_type,
-                   if ("resolution" %in% colnames(x)) {
-                     resolutions = unique(x$resolution)
-                   },
+                   resolutions = ifelse("resolution" %in% colnames(x), unique(x$resolution), NA),
                    data = x),
               class = "sim_cube")
 }
