@@ -1,14 +1,14 @@
-# --------------------------------------------
-# CITATION file created with {cffr} R package
+# -----------------------------------------------------------
+# CITATION file created with {cffr} R package, v0.5.0
 # See also: https://docs.ropensci.org/cffr/
-# --------------------------------------------
+# -----------------------------------------------------------
  
 cff-version: 1.2.0
 message: 'To cite package "b3gbi" in publications use:'
 type: software
 license: MIT
 title: 'b3gbi: General Biodiversity Indicators for Biodiversity Data Cubes'
-version: 0.5.3
+version: 0.5.4
 abstract: Calculate general biodiversity indicators from GBIF data cubes. Includes
   many common indicators such as species richness and evenness, which can be calculated
   over time (trends) or space (maps).
@@ -34,10 +34,11 @@ references:
   url: https://www.R-project.org/
   authors:
   - name: R Core Team
+  location:
+    name: Vienna, Austria
+  year: '2025'
   institution:
     name: R Foundation for Statistical Computing
-    address: Vienna, Austria
-  year: '2025'
   version: '>= 3.5.0'
 - type: software
   title: boot
@@ -52,7 +53,6 @@ references:
     given-names: Brian
     email: ripley@stats.ox.ac.uk
   year: '2025'
-  doi: 10.32614/CRAN.package.boot
 - type: software
   title: dplyr
   abstract: 'dplyr: A Grammar of Data Manipulation'
@@ -77,7 +77,6 @@ references:
     email: davis@posit.co
     orcid: https://orcid.org/0000-0003-4777-038X
   year: '2025'
-  doi: 10.32614/CRAN.package.dplyr
 - type: software
   title: ggplot2
   abstract: 'ggplot2: Create Elegant Data Visualisations Using the Grammar of Graphics'
@@ -112,8 +111,10 @@ references:
   - family-names: Dunnington
     given-names: Dewey
     orcid: https://orcid.org/0000-0002-9415-4582
+  - family-names: van den Brand
+    given-names: Teun
+    orcid: https://orcid.org/0000-0002-9335-7468
   year: '2025'
-  doi: 10.32614/CRAN.package.ggplot2
 - type: software
   title: iNEXT
   abstract: 'iNEXT: Interpolation and Extrapolation for Species Diversity'
@@ -128,17 +129,15 @@ references:
   - family-names: Chao
     given-names: Anne
   year: '2025'
-  doi: 10.32614/CRAN.package.iNEXT
 - type: software
   title: labeling
   abstract: 'labeling: Axis Labeling'
   notes: Imports
   repository: https://CRAN.R-project.org/package=labeling
   authors:
-  - family-names: Talbot
+  - family-names: Talbot,
     given-names: Justin
   year: '2025'
-  doi: 10.32614/CRAN.package.labeling
 - type: software
   title: magrittr
   abstract: 'magrittr: A Forward-Pipe Operator for R'
@@ -153,7 +152,6 @@ references:
     given-names: Hadley
     email: hadley@rstudio.com
   year: '2025'
-  doi: 10.32614/CRAN.package.magrittr
 - type: software
   title: mgrs
   abstract: 'mgrs: Convert ''MGRS'' (''Military Grid Reference System'') Coordinates
@@ -179,7 +177,6 @@ references:
     email: thomasp85@gmail.com
     orcid: https://orcid.org/0000-0002-5147-4711
   year: '2025'
-  doi: 10.32614/CRAN.package.patchwork
 - type: software
   title: permute
   abstract: 'permute: Functions for Generating Restricted Permutations of Data'
@@ -192,7 +189,6 @@ references:
     email: ucfagls@gmail.com
     orcid: https://orcid.org/0000-0002-9084-8413
   year: '2025'
-  doi: 10.32614/CRAN.package.permute
 - type: software
   title: purrr
   abstract: 'purrr: Functional Programming Tools'
@@ -208,7 +204,6 @@ references:
     given-names: Lionel
     email: lionel@rstudio.com
   year: '2025'
-  doi: 10.32614/CRAN.package.purrr
 - type: software
   title: readr
   abstract: 'readr: Read Rectangular Text Data'
@@ -226,7 +221,6 @@ references:
     email: jenny@posit.co
     orcid: https://orcid.org/0000-0002-6983-2759
   year: '2025'
-  doi: 10.32614/CRAN.package.readr
 - type: software
   title: rlang
   abstract: 'rlang: Functions for Base Types and Core R and ''Tidyverse'' Features'
@@ -241,7 +235,6 @@ references:
     given-names: Hadley
     email: hadley@posit.co
   year: '2025'
-  doi: 10.32614/CRAN.package.rlang
 - type: software
   title: rnaturalearth
   abstract: 'rnaturalearth: World Map Data from Natural Earth'
@@ -257,7 +250,6 @@ references:
     given-names: Andy
     email: southandy@gmail.com
   year: '2025'
-  doi: 10.32614/CRAN.package.rnaturalearth
 - type: software
   title: scales
   abstract: 'scales: Scale Functions for Visualization'
@@ -267,11 +259,14 @@ references:
   authors:
   - family-names: Wickham
     given-names: Hadley
-    email: hadley@rstudio.com
+    email: hadley@posit.co
+  - family-names: Pedersen
+    given-names: Thomas Lin
+    email: thomas.pedersen@posit.co
+    orcid: https://orcid.org/0000-0002-5147-4711
   - family-names: Seidel
     given-names: Dana
   year: '2025'
-  doi: 10.32614/CRAN.package.scales
 - type: software
   title: sf
   abstract: 'sf: Simple Features for R'
@@ -284,7 +279,6 @@ references:
     email: edzer.pebesma@uni-muenster.de
     orcid: https://orcid.org/0000-0001-8049-7069
   year: '2025'
-  doi: 10.32614/CRAN.package.sf
 - type: software
   title: stringr
   abstract: 'stringr: Simple, Consistent Wrappers for Common String Operations'
@@ -294,9 +288,8 @@ references:
   authors:
   - family-names: Wickham
     given-names: Hadley
-    email: hadley@rstudio.com
+    email: hadley@posit.co
   year: '2025'
-  doi: 10.32614/CRAN.package.stringr
 - type: software
   title: tibble
   abstract: 'tibble: Simple Data Frames'
@@ -312,7 +305,6 @@ references:
     given-names: Hadley
     email: hadley@rstudio.com
   year: '2025'
-  doi: 10.32614/CRAN.package.tibble
 - type: software
   title: tidyr
   abstract: 'tidyr: Tidy Messy Data'
@@ -329,7 +321,6 @@ references:
   - family-names: Girlich
     given-names: Maximilian
   year: '2025'
-  doi: 10.32614/CRAN.package.tidyr
 - type: software
   title: units
   abstract: 'units: Measurement Units for R Vectors'
@@ -351,7 +342,6 @@ references:
     email: iucar@fedoraproject.org
     orcid: https://orcid.org/0000-0001-6403-5550
   year: '2025'
-  doi: 10.32614/CRAN.package.units
 - type: software
   title: bold
   abstract: 'bold: Interface to Bold Systems API'
@@ -380,7 +370,17 @@ references:
     email: xie@yihui.name
     orcid: https://orcid.org/0000-0003-0645-5666
   year: '2025'
-  doi: 10.32614/CRAN.package.knitr
+- type: software
+  title: mockr
+  abstract: 'mockr: Mocking in R'
+  notes: Suggests
+  url: https://krlmlr.github.io/mockr/
+  repository: https://CRAN.R-project.org/package=mockr
+  authors:
+  - family-names: Müller
+    given-names: Kirill
+    email: kirill@cynkra.com
+  year: '2025'
 - type: software
   title: rmarkdown
   abstract: 'rmarkdown: Dynamic Documents for R'
@@ -424,7 +424,6 @@ references:
     email: rich@posit.co
     orcid: https://orcid.org/0000-0003-3925-190X
   year: '2025'
-  doi: 10.32614/CRAN.package.rmarkdown
 - type: software
   title: rnaturalearthdata
   abstract: 'rnaturalearthdata: World Vector Map Data from Natural Earth Used in ''rnaturalearth'''
@@ -436,7 +435,6 @@ references:
     given-names: Andy
     email: southandy@gmail.com
   year: '2025'
-  doi: 10.32614/CRAN.package.rnaturalearthdata
 - type: software
   title: taxize
   abstract: 'taxize: Taxonomic Information from Around the Web'
@@ -456,7 +454,6 @@ references:
   - family-names: Arendsee
     given-names: Zebulun
   year: '2025'
-  doi: 10.32614/CRAN.package.taxize
   version: '>= 0.9.99'
 - type: software
   title: testthat
@@ -469,6 +466,4 @@ references:
     given-names: Hadley
     email: hadley@posit.co
   year: '2025'
-  doi: 10.32614/CRAN.package.testthat
   version: '>= 3.0.0'
-
