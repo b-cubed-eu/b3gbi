@@ -639,7 +639,7 @@ calc_ci.tax_distinct <- function(x,
   year <- . <- NULL
 
   # read data saved during the initial indicator calculation
-  tax_hier <- readRDS("taxonomic_hierarchy.RDS")
+  tax_hier <- my_readRDS("taxonomic_hierarchy.RDS")
 
   x <-
     x %>%
