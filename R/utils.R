@@ -596,3 +596,9 @@ meters_to_decdeg <- function(occs_df, lat_col = "latitude",
                         lat_uncertainty = lat_uncertainty)
   return(dist_dd)
 }
+
+# Copy of function readRDS from base. This is for mocking in testthat tests.
+#' @noRd
+my_readRDS <- function(file, ...) {
+  readRDS(file, ...)
+}
