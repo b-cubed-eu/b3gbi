@@ -36,6 +36,36 @@ calc_ci.default <- function(x, ...){
 }
 
 #' @noRd
+calc_ci.core <- function(bootstraps,
+                         indicator,
+                         ci_type,
+                         ...) {
+
+  # Calculate confidence intervals
+  ci_df <- get_bootstrap_ci(bootstraps, type = ci_type, ...)
+
+  if (length(ci_df) > 0) {
+
+    # Convert negative values to zero as rarity cannot be less than zero
+    ci_df$ll <- ifelse(ci_df$ll > 0, ci_df$ll, 0)
+
+    # Join confidence intervals to indicator values by year
+    indicator <- indicator %>%
+      dplyr::full_join(ci_df,
+                       by = dplyr::join_by(year),
+                       relationship = "many-to-many")
+
+  } else {
+
+    warning("Unable to calculate confidence intervals. There may be insufficient data.")
+
+  }
+
+  return(indicator)
+
+}
+
+#' @noRd
 calc_ci.hill0 <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
@@ -99,8 +129,7 @@ calc_ci.hill_core <- function(x,
 
 }
 
-#' @export
-#' @rdname calc_ci
+#' @noRd
 calc_ci.total_occ <- function(x,
                               indicator,
                               num_bootstrap = 1000,
@@ -128,22 +157,12 @@ calc_ci.total_occ <- function(x,
       statistic = boot_statistic_sum,
       R = num_bootstrap))
 
-  # Calculate confidence intervals
-  ci_df <- get_bootstrap_ci(bootstraps, type = ci_type, ...)
-
-  # Convert negative values to zero as evenness cannot be below zero
-  ci_df$ll <- ifelse(ci_df$ll > 0, ci_df$ll, 0)
-
-  # Join confidence intervals to indicator values
-  indicator <- indicator %>%
-    dplyr::full_join(ci_df,
-                     by = dplyr::join_by(year),
-                     relationship = "many-to-many")
+  # Calculate confidence intervals and add to indicator values
+  ci <- calc_ci.core(bootstraps, indicator, ci_type, ...)
 
 }
 
-#' @export
-#' @rdname calc_ci
+#' @noRd
 calc_ci.occ_density <- function(x,
                                 indicator,
                                 num_bootstrap = 1000,
@@ -159,7 +178,8 @@ calc_ci.occ_density <- function(x,
   x <-
     x %>%
     dplyr::arrange(year, cellid) %>%
-    dplyr::reframe(diversity_val = sum(obs) / area,
+    dplyr::reframe(diversity_val = sum(obs) / area
+                   ,
                    .by = c("year", "cellid"))
 
   # Put individual observations into a list organized by year
@@ -173,22 +193,12 @@ calc_ci.occ_density <- function(x,
       statistic = boot_statistic_mean,
       R = num_bootstrap))
 
-  # Calculate confidence intervals
-  ci_df <- get_bootstrap_ci(bootstraps, type = ci_type, ...)
-
-  # Convert negative values to zero as evenness cannot be below zero
-  ci_df$ll <- ifelse(ci_df$ll > 0, ci_df$ll, 0)
-
-  # Join confidence intervals to indicator values
-  indicator <- indicator %>%
-    dplyr::full_join(ci_df,
-                     by = dplyr::join_by(year),
-                     relationship = "many-to-many")
+  # Calculate confidence intervals and add to indicator values
+  ci <- calc_ci.core(bootstraps, indicator, ci_type, ...)
 
 }
 
-#' @export
-#' @rdname calc_ci
+#' @noRd
 calc_ci.newness <- function(x,
                             indicator,
                             num_bootstrap = 1000,
@@ -217,22 +227,12 @@ calc_ci.newness <- function(x,
       statistic = boot_statistic_newness,
       R = num_bootstrap))
 
-  # Calculate confidence intervals
-  ci_df <- get_bootstrap_ci(bootstraps, type = ci_type, ...)
-
-  # Convert negative values to zero as evenness cannot be below zero
-  ci_df$ll <- ifelse(ci_df$ll > 0, ci_df$ll, 0)
-
-  # Join confidence intervals to indicator values
-  indicator <- indicator %>%
-    dplyr::full_join(ci_df,
-                     by = dplyr::join_by(year),
-                     relationship = "many-to-many")
+  # Calculate confidence intervals and add to indicator values
+  ci <- calc_ci.core(bootstraps, indicator, ci_type, ...)
 
 }
 
-#' @export
-#' @rdname calc_ci
+#' @noRd
 calc_ci.williams_evenness <- function(x,
                                       ...) {
 
@@ -247,8 +247,7 @@ calc_ci.williams_evenness <- function(x,
 
 }
 
-#' @export
-#' @rdname calc_ci
+#' @noRd
 calc_ci.pielou_evenness <- function(x,
                                     ...) {
 
@@ -308,22 +307,12 @@ calc_ci.evenness_core <- function(x,
 
   names(bootstraps) <- unique(indicator$year)
 
-  # Calculate confidence intervals
-  ci_df <- get_bootstrap_ci(bootstraps, type = ci_type, ...)
-
-  # Convert negative values to zero as evenness cannot be below zero
-  ci_df$ll <- ifelse(ci_df$ll > 0, ci_df$ll, 0)
-
-  # Join confidence intervals to indicator values
-  indicator <- indicator %>%
-    dplyr::full_join(ci_df,
-                     by = dplyr::join_by(year),
-                     relationship = "many-to-many")
+  # Calculate confidence intervals and add to indicator values
+  ci <- calc_ci.core(bootstraps, indicator, ci_type, ...)
 
 }
 
-#' @export
-#' @rdname calc_ci
+#' @noRd
 calc_ci.ab_rarity <- function(x,
                               indicator,
                               num_bootstrap = 1000,
@@ -353,22 +342,12 @@ calc_ci.ab_rarity <- function(x,
         statistic = boot_statistic_sum,
         R = num_bootstrap))
 
-    # Calculate confidence intervals
-    ci_df <- get_bootstrap_ci(bootstraps, type = ci_type, ...)
-
-    # Convert negative values to zero as rarity cannot be less than zero
-    ci_df$ll <- ifelse(ci_df$ll > 0, ci_df$ll, 0)
-
-    # Join confidence intervals to indicator values by year
-    indicator <- indicator %>%
-      dplyr::full_join(ci_df,
-                       by = dplyr::join_by(year),
-                       relationship = "many-to-many")
+    # Calculate confidence intervals and add to indicator values
+    ci <- calc_ci.core(bootstraps, indicator, ci_type, ...)
 
 }
 
-#' @export
-#' @rdname calc_ci
+#' @noRd
 calc_ci.area_rarity <- function(x,
                                 indicator,
                                 num_bootstrap = 1000,
@@ -402,22 +381,12 @@ calc_ci.area_rarity <- function(x,
       statistic = boot_statistic_mean,
       R = num_bootstrap))
 
-  # Calculate confidence intervals
-  ci_df <- get_bootstrap_ci(bootstraps, type = ci_type, ...)
-
-  # Convert negative values to zero as rarity cannot be less than zero
-  ci_df$ll <- ifelse(ci_df$ll > 0, ci_df$ll, 0)
-
-  # Join confidence intervals to indicator values by year
-  indicator <- indicator %>%
-    dplyr::full_join(ci_df,
-                     by = dplyr::join_by(year),
-                     relationship = "many-to-many")
+  # Calculate confidence intervals and add to indicator values
+  ci <- calc_ci.core(bootstraps, indicator, ci_type, ...)
 
 }
 
-#' @export
-#' @rdname calc_ci
+#' @noRd
 calc_ci.spec_occ <- function(x,
                              indicator,
                              num_bootstrap = 1000,
@@ -485,8 +454,7 @@ calc_ci.spec_occ <- function(x,
 
 }
 
-#' @export
-#' @rdname calc_ci
+#' @noRd
 calc_ci.spec_range <- function(x,
                                indicator,
                                num_bootstrap = 1000,
@@ -554,8 +522,7 @@ calc_ci.spec_range <- function(x,
 
 }
 
-#' @export
-#' @rdname calc_ci
+#' @noRd
 calc_ci.tax_distinct <- function(x,
                                  indicator,
                                  num_bootstrap = 1000,
