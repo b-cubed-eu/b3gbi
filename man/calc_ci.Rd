@@ -2,46 +2,9 @@
 % Please edit documentation in R/calc_ci_methods.R
 \name{calc_ci}
 \alias{calc_ci}
-\alias{calc_ci.total_occ}
-\alias{calc_ci.occ_density}
-\alias{calc_ci.newness}
-\alias{calc_ci.williams_evenness}
-\alias{calc_ci.pielou_evenness}
-\alias{calc_ci.ab_rarity}
-\alias{calc_ci.area_rarity}
-\alias{calc_ci.spec_occ}
-\alias{calc_ci.spec_range}
-\alias{calc_ci.tax_distinct}
 \title{Calculate Confidence Intervals for a Biodiversity Indicator}
 \usage{
 calc_ci(x, indicator, ...)
-
-\method{calc_ci}{total_occ}(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
-
-\method{calc_ci}{occ_density}(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
-
-\method{calc_ci}{newness}(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
-
-\method{calc_ci}{williams_evenness}(x, ...)
-
-\method{calc_ci}{pielou_evenness}(x, ...)
-
-\method{calc_ci}{ab_rarity}(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
-
-\method{calc_ci}{area_rarity}(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
-
-\method{calc_ci}{spec_occ}(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
-
-\method{calc_ci}{spec_range}(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
-
-\method{calc_ci}{tax_distinct}(
-  x,
-  indicator,
-  num_bootstrap = 1000,
-  ci_type = ci_type,
-  set_rows = 1,
-  ...
-)
 }
 \arguments{
 \item{x}{A data cube object}
@@ -52,11 +15,11 @@ the 'compute_indicator_workflow' function.}
 
 \item{...}{Additional arguments passed to specific indicator calculation functions.}
 
-\item{num_bootstrap}{Set the number of bootstraps to calculate for generating
-confidence intervals. (Default: 1000)}
-
 \item{ci_type}{Type of bootstrap confidence intervals to calculate. (Default: "norm".
 Select "none" to avoid calculating bootstrap CIs.)}
+
+\item{num_bootstrap}{Set the number of bootstraps to calculate for generating
+confidence intervals. (Default: 1000)}
 
 \item{set_rows}{Automatically select which taxonomic information to keep when
 there are multiple options. Default value of 1 keeps the first option, which
