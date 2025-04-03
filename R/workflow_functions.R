@@ -341,7 +341,8 @@ compute_indicator_workflow <- function(data,
 
   geometry <- area <- cellid <- NULL
 
-  # List of indicators for which bootstrapped confidence intervals should not be calculated
+  # List of indicators for which bootstrapped confidence intervals should not
+  # be calculated
   noci_list <- c("obs_richness",
                  "cum_richness",
                  "occ_turnover")
@@ -356,6 +357,9 @@ compute_indicator_workflow <- function(data,
   ne_scale <- match.arg(ne_scale)
 
   level <- match.arg(level)
+
+  # Store the current spherical geometry setting
+  original_s2_setting <- sf::sf_use_s2()
 
   if (!is.null(first_year) && !is.null(last_year) && first_year > last_year) {
     stop("First year must be less than or equal to last year.")
@@ -398,15 +402,8 @@ compute_indicator_workflow <- function(data,
     coord_range <- data$coord_range
 
     if (spherical_geometry==FALSE){
-
-      # Store the current spherical geometry setting
-      original_s2_setting <- sf::sf_use_s2()
-
-      # if spherical geometry is on, turn it off
-      if (original_s2_setting == TRUE) {
-        sf::sf_use_s2(FALSE)
-      }
-
+      # Temporarily disable spherical geometry
+      sf::sf_use_s2(FALSE)
     }
 
     if (dim_type == "ts") {
@@ -420,8 +417,6 @@ compute_indicator_workflow <- function(data,
     }
 
     kingdoms <- data$kingdoms
-
-    #  if (is.null(cube_crs)) {
 
     if (data$grid_type == "eea") {
 
@@ -440,8 +435,6 @@ compute_indicator_workflow <- function(data,
       stop("Grid reference system not found.")
 
     }
-
-    #  }
 
     if (is.null(output_crs)) {
 
@@ -509,8 +502,8 @@ compute_indicator_workflow <- function(data,
                              coords = c("xcoord", "ycoord"),
                              crs = cube_crs)
 
-      df_sf_output <- sf::st_transform(df_sf_input,
-                                       crs = output_crs)
+      df_sf_output <- sf::st_transform(df_sf_input, crs = output_crs)
+
 
       if (crs_unit_convert == TRUE &&
           input_units != output_units &&
@@ -548,14 +541,11 @@ compute_indicator_workflow <- function(data,
 
       }
 
-
       # Format spatial data and merge with grid
       df <- prepare_spatial_data(df,
                                  grid,
                                  cube_crs,
                                  output_crs)
-
-    #  sf::sf_use_s2(FALSE)
 
       # Download Natural Earth data
       map_data <- get_NE_data(region,
@@ -575,9 +565,6 @@ compute_indicator_workflow <- function(data,
       # Therefore when invalid geometries are encountered, it will retry the
       # operation with spherical geometry turned off. This often succeeds.
 
-      # Store the current spherical geometry setting
-      original_s2_setting <- sf::sf_use_s2()
-
       result <- NULL  # Initialize to capture result of intersection
 
       tryCatch({
@@ -587,8 +574,12 @@ compute_indicator_workflow <- function(data,
           dplyr::select(cellid, area, geometry)
       }, error = function(e) {
         if (grepl("Error in wk_handle.wk_wkb", e)) {
-          message(paste("Encountered a geometry error during intersection. This may be due",
-                        "to invalid polygons in the grid."))
+          message(
+            paste0(
+              "Encountered a geometry error during intersection. This may be ",
+              "due to invalid polygons in the grid."
+            )
+          )
         } else {
           stop(e)
         }
@@ -607,6 +598,9 @@ compute_indicator_workflow <- function(data,
         # Notify success after retry
         message("Intersection succeeded with spherical geometry turned off.")
 
+      }
+
+      if (spherical_geometry == TRUE) {
         # Restore original spherical setting
         sf::sf_use_s2(original_s2_setting)
       }
@@ -644,9 +638,6 @@ compute_indicator_workflow <- function(data,
         }
       }
 
-      # Restore original spherical setting
-    #  sf::sf_use_s2(TRUE)
-
     } else {
 
       level <- "unknown"
@@ -680,10 +671,13 @@ compute_indicator_workflow <- function(data,
                                 ne_type,
                                 ne_scale)
 
-        df_sf <- sf::st_as_sf(df, coords = c("xcoord", "ycoord"), crs = cube_crs)
+        df_sf <- sf::st_as_sf(df,
+                              coords = c("xcoord", "ycoord"),
+                              crs = cube_crs)
 
         if (sf::st_crs(df_sf) != sf::st_crs(map_data)) {
-          map_data <- sf::st_transform(map_data, crs = sf::st_crs(df_sf))
+          map_data <- sf::st_transform(map_data,
+                                       crs = sf::st_crs(df_sf))
         }
 
         map_data <- sf::st_make_valid(map_data)
@@ -692,7 +686,8 @@ compute_indicator_workflow <- function(data,
         sf::st_agr(map_data) <- "constant"
         sf::st_agr(df_sf) <- "constant"
 
-        # Initialize filtered_sf as NULL to capture the result of the intersection
+        # Initialize filtered_sf as NULL to capture the result of the
+        # intersection
         filtered_sf <- NULL
 
         tryCatch({
@@ -701,8 +696,8 @@ compute_indicator_workflow <- function(data,
           filtered_sf <- sf::st_intersection(df_sf, sf::st_union(map_data))
         }, error = function(e) {
           if (grepl("Error in wk_handle.wk_wkb", e)) {
-            message(paste("Encountered a geometry error during intersection. This may be due",
-                          "to invalid polygons in the grid."))
+            message(paste("Encountered a geometry error during intersection. ",
+                          "This may be due to invalid polygons in the grid."))
           } else {
             stop(e)
           }
@@ -710,7 +705,9 @@ compute_indicator_workflow <- function(data,
 
         if (is.null(filtered_sf)) {
           # If intersection failed, turn off spherical geometry
-          message("Retrying the intersection with spherical geometry turned off.")
+          message(
+            "Retrying the intersection with spherical geometry turned off."
+          )
           sf::sf_use_s2(FALSE)
 
           # Retry the intersection operation
@@ -719,6 +716,9 @@ compute_indicator_workflow <- function(data,
           # Notify success after retry
           message("Intersection succeeded with spherical geometry turned off.")
 
+        }
+
+        if (spherical_geometry == TRUE) {
           # Restore original spherical setting
           sf::sf_use_s2(original_s2_setting)
         }
@@ -737,21 +737,64 @@ compute_indicator_workflow <- function(data,
       if (!is.null(shapefile_path)) {
         shapefile <- sf::read_sf(shapefile_path)
 
-        df_sf <- sf::st_as_sf(df, coords = c("xcoord", "ycoord"), crs = cube_crs)
+        df_sf <- sf::st_as_sf(df,
+                              coords = c("xcoord", "ycoord"),
+                              crs = cube_crs)
 
         # Set attributes as spatially constant to avoid warnings when clipping
         sf::st_agr(df_sf) <- "constant"
         sf::st_agr(shapefile) <- "constant"
 
         if (sf::st_crs(df_sf) != sf::st_crs(shapefile)) {
-          shapefile <- sf::st_transform(shapefile, crs = sf::st_crs(df_sf))
+          shapefile <- sf::st_transform(shapefile,
+                                        crs = sf::st_crs(df_sf))
         }
 
-        if (invert) {
-          filtered_df <- sf::st_difference(df_sf, sf::st_union(shapefile))
-        } else {
-          filtered_df <- sf::st_filter(df_sf, shapefile)
+        # Union the shapefile, handle any errors
+        shapefile_union <- tryCatch({
+          sf::st_union(shapefile)
+        }, error = function(e) {
+          stop(paste("Error unioning shapefile:", e$message))
+        })
+
+        # Check for validity of the unioned shapefile
+        if (!sf::st_is_valid(shapefile_union)) {
+          message("Unioned shapefile is invalid. Attempting to make it valid.")
+          shapefile_union <- sf::st_make_valid(shapefile_union)
+          if (!sf::st_is_valid(shapefile_union)) {
+            stop("Could not make unioned shapefile valid.")
+          }
         }
+
+        tryCatch({
+          if (invert) {
+            filtered_df <- sf::st_difference(df_sf, shapefile_union)
+          } else {
+            filtered_df <- sf::st_filter(df_sf, shapefile)
+          }
+        }, error = function(e) {
+          if (grepl("Error in wk_handle.wk_wkb", e)) {
+            message(
+              paste0(
+                "Geometry error during st_difference/st_filter. Retrying ",
+                "with spherical geometry off."
+              )
+            )
+            sf::sf_use_s2(FALSE)
+            if (invert) {
+              filtered_df <- sf::st_difference(df_sf, shapefile_union)
+            } else {
+              filtered_df <- sf::st_filter(df_sf, shapefile)
+            }
+          } else {
+            stop(e)
+          }
+        }, finally = {
+          if (spherical_geometry == TRUE) {
+            # Restore original spherical setting
+            sf::sf_use_s2(original_s2_setting)
+          }
+        })
 
         # Filter the original data frame
         df <- df[df$cellid %in% filtered_df$cellid, ]
@@ -776,7 +819,12 @@ compute_indicator_workflow <- function(data,
 
         } else {
 
-          warning("Bootstrapped confidence intervals cannot be calculated for the chosen indicator.")
+          warning(
+            paste0(
+              "Bootstrapped confidence intervals cannot be calculated for the ",
+              "chosen indicator."
+            )
+          )
 
         }
 
@@ -796,8 +844,8 @@ compute_indicator_workflow <- function(data,
     if (dim_type=="map") {
 
       stop(paste("You have provided an object of class 'sim_cube' as input.",
-                 "As these objects do not contain grid information they can only",
-                 "be used to calculate indicators of dim_type 'ts'."))
+                 "As these objects do not contain grid information they can ",
+                 "only be used to calculate indicators of dim_type 'ts'."))
 
     } else {
 
@@ -833,7 +881,12 @@ compute_indicator_workflow <- function(data,
 
         } else {
 
-          warning("Bootstrapped confidence intervals cannot be calculated for the chosen indicator.")
+          warning(
+            paste0(
+              "Bootstrapped confidence intervals cannot be calculated for the ",
+              "chosen indicator."
+            )
+          )
         }
 
 
