@@ -41,6 +41,8 @@ calc_ci.core <- function(bootstraps,
                          ci_type,
                          ...) {
 
+  year <- NULL
+
   # Calculate confidence intervals
   ci_df <- get_bootstrap_ci(bootstraps, type = ci_type, ...)
 
