@@ -9,8 +9,8 @@
 #' tryCatch({
 #'   print(check_crs_units(4326)) # EPSG:4326 (degrees)
 #'   print(check_crs_units(25832)) # EPSG:25832 (meters)
-#'   print(check_crs_units("+proj=longlat +datum=WGS84 +no_defs")) # PROJ.4 (degrees)
-#'   print(check_crs_units("+proj=utm +zone=32 +datum=WGS84 +units=m +no_defs")) # PROJ.4 (meters)
+#'   print(check_crs_units("+proj=longlat +datum=WGS84 +no_defs"))
+#'   print(check_crs_units("+proj=utm +zone=32 +datum=WGS84 +units=m +no_defs"))
 #'   print(check_crs_units("+proj=somerc +lat_0=0 +lon_0=0 +k=1 +x_0=0 +y_0=0
 #'         +ellps=WGS84 +units=km +no_defs")) # Invalid CRS
 #'   print(check_crs_units("not a crs")) # Invalid CRS
@@ -22,13 +22,16 @@
 #'
 check_crs_units <- function(crs_input) {
 
+  # Get CRS info
   crs_info <- st_crs(crs_input)
 
+  # Check if the CRS is valid
   if (is.na(crs_info)) {
     stop(paste("Error: Invalid CRS input. Please provide a valid EPSG code, ",
     "WKT string, or PROJ.4 string."))
   }
 
+  # Check if the CRS is in meters or degrees
   if (crs_info$units_gdal == "degree") {
     return("degrees")
   } else if (crs_info$units_gdal == "metre") {
