@@ -552,3 +552,70 @@ test_that("compute_indicator_workflow handles sim_cube objects", {
     "No occurrences found in the data."
   )
 })
+
+# Mock get_NE_data function
+mock_get_NE_data <- function(region,
+                             output_crs,
+                             level,
+                             ne_type,
+                             ne_scale) {
+  sf::st_sf(
+    geometry = sf::st_sfc(
+      sf::st_polygon(
+        list(
+          matrix(
+            c(0, 0, 0, 10, 10, 10, 10, 0, 0, 0),
+            ncol = 2,
+            byrow = TRUE
+          )
+        )
+      )
+    ),
+    crs = output_crs
+  )
+}
+
+test_that(
+  "compute_indicator_workflow leaves the sf::sf_use_s2() setting as it was", {
+  # Create a mock processed_cube object
+    mock_cube <- list(
+      data = data.frame(
+        xcoord = 5,
+        ycoord = 5,
+        cellid = 1,
+        year = 2000,
+        scientificName = "A",
+        obs = 1
+      ),
+      first_year = 2000,
+      last_year = 2000,
+      num_species = 1,
+      resolutions = "10km",
+      grid_type = "eea"
+    )
+  class(mock_cube) <- c("processed_cube", "list")
+
+  sf::sf_use_s2(TRUE)
+
+  with_mocked_bindings(
+    `get_NE_data` = mock_get_NE_data,
+    {
+      # Test spherical geometry setting
+      result <- compute_indicator_workflow(
+        data = mock_cube,
+        type = "obs_richness",
+        dim_type = "map",
+        spherical_geometry = TRUE
+      )
+      expect_true(sf::sf_use_s2())
+
+      # Test spherical geometry setting
+      result <- compute_indicator_workflow(
+        data = mock_cube,
+        type = "obs_richness",
+        dim_type = "map",
+        spherical_geometry = FALSE
+      )
+      expect_true(sf::sf_use_s2())
+    })
+})
