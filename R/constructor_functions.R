@@ -217,7 +217,7 @@ new_indicator_map <- function(x,
   stopifnot(inherits(x, c("sf", "data.frame")),
             all(c("cellid",
                   "geometry") %in% names(x)))
-  coord_range = sf::st_bbox(x)
+  coord_range = sf::st_bbox(x)[c("xmin", "ymin", "xmax", "ymax")]
  # names(coord_range) = c("xmin", "ymin", "xmax", "ymax")
   if (cell_size_units == "km") { cell_size_units <- "km^2" }
   cell_size = paste(cell_size, cell_size_units)
