@@ -37,6 +37,7 @@ Imports:
 Suggests: 
     bold (>= 1.3.0),
     knitr,
+    mockr,
     rmarkdown,
     rnaturalearthdata,
     taxize (>= 0.9.99),
