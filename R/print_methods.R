@@ -152,7 +152,7 @@ print.processed_cube_dsinfo <- function(x, n = 10, ...) {
 print.sim_cube <- function(x, n = 10, ...) {
   cat("\nSimulated data cube for calculating biodiversity indicators\n\n")
   cat("Date Range:", x$first_year, "-", x$last_year, "\n")
-  if (!is.null(x$resolutions)) {
+  if (!is.na(x$resolutions)) {
     cat("Single-resolution cube with cell size", x$resolutions, "^2\n")
   }
   cat("Number of cells:", x$num_cells, "\n")
