@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -30,7 +30,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Check if a given CRS is in meters or degrees.</h1>
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.5.3/R/check_crs_units.R" class="external-link"><code>R/check_crs_units.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/R/check_crs_units.R" class="external-link"><code>R/check_crs_units.R</code></a></small>
       <div class="d-none name"><code>check_crs_units.Rd</code></div>
     </div>
 
@@ -62,8 +62,8 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/conditions.html" class="external-link">tryCatch</a></span><span class="op">(</span><span class="op">{</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu">check_crs_units</span><span class="op">(</span><span class="fl">4326</span><span class="op">)</span><span class="op">)</span> <span class="co"># EPSG:4326 (degrees)</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu">check_crs_units</span><span class="op">(</span><span class="fl">25832</span><span class="op">)</span><span class="op">)</span> <span class="co"># EPSG:25832 (meters)</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu">check_crs_units</span><span class="op">(</span><span class="st">"+proj=longlat +datum=WGS84 +no_defs"</span><span class="op">)</span><span class="op">)</span> <span class="co"># PROJ.4 (degrees)</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu">check_crs_units</span><span class="op">(</span><span class="st">"+proj=utm +zone=32 +datum=WGS84 +units=m +no_defs"</span><span class="op">)</span><span class="op">)</span> <span class="co"># PROJ.4 (meters)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu">check_crs_units</span><span class="op">(</span><span class="st">"+proj=longlat +datum=WGS84 +no_defs"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu">check_crs_units</span><span class="op">(</span><span class="st">"+proj=utm +zone=32 +datum=WGS84 +units=m +no_defs"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu">check_crs_units</span><span class="op">(</span><span class="st">"+proj=somerc +lat_0=0 +lon_0=0 +k=1 +x_0=0 +y_0=0</span></span></span>
 <span class="r-in"><span><span class="st">        +ellps=WGS84 +units=km +no_defs"</span><span class="op">)</span><span class="op">)</span> <span class="co"># Invalid CRS</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu">check_crs_units</span><span class="op">(</span><span class="st">"not a crs"</span><span class="op">)</span><span class="op">)</span> <span class="co"># Invalid CRS</span></span></span>
