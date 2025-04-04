@@ -1,3 +1,11 @@
+# b3gbi 0.5.4 - Minor update:
+
+* Fixed an error where spherical geometry was being turned off without a good reason. Spherical geometry is now only turned off to retry failed st_intersection() or st_difference() operations or when the user explicitly sets it to FALSE.
+* Additional error handling was added to many functions.
+* process_cube() now checks for contamination in the grid code column and throws an error if any false grid codes are found.
+* Some code was cleaned up and made more efficient.
+* Unit tests were added to the package for some functions to prevent breakage in future updates.
+
 # b3gbi 0.5.3 - Minor update:
 
 * Updated old and non-working example in process_cube() documentation.

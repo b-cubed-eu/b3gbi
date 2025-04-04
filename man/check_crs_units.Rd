@@ -20,8 +20,8 @@ Check if a given CRS is in meters or degrees.
 tryCatch({
   print(check_crs_units(4326)) # EPSG:4326 (degrees)
   print(check_crs_units(25832)) # EPSG:25832 (meters)
-  print(check_crs_units("+proj=longlat +datum=WGS84 +no_defs")) # PROJ.4 (degrees)
-  print(check_crs_units("+proj=utm +zone=32 +datum=WGS84 +units=m +no_defs")) # PROJ.4 (meters)
+  print(check_crs_units("+proj=longlat +datum=WGS84 +no_defs"))
+  print(check_crs_units("+proj=utm +zone=32 +datum=WGS84 +units=m +no_defs"))
   print(check_crs_units("+proj=somerc +lat_0=0 +lon_0=0 +k=1 +x_0=0 +y_0=0
         +ellps=WGS84 +units=km +no_defs")) # Invalid CRS
   print(check_crs_units("not a crs")) # Invalid CRS

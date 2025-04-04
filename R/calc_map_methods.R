@@ -432,7 +432,7 @@ calc_map.tax_distinct <- function(x, ...) {
   # Save data
   #  saveRDS(tax_hier, file = "taxonomic_hierarchy.RDS")
 
-  #  tax_hier <- readRDS("taxonomic_hierarchy.RDS")
+  #  tax_hier <- my_readRDS("taxonomic_hierarchy.RDS")
 
   # Calculate taxonomic distinctness
   indicator <-

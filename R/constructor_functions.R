@@ -100,9 +100,7 @@ new_sim_cube <- function(x, grid_type) {
                    kingdoms = ifelse("kingdom" %in% colnames(x), c(unique(x$kingdom)), "Data not present"),
                    num_families = ifelse("family" %in% colnames(x), length(unique(x$family)), "Data not present"),
                    grid_type = grid_type,
-                   if ("resolution" %in% colnames(x)) {
-                     resolutions = unique(x$resolution)
-                   },
+                   resolutions = ifelse("resolution" %in% colnames(x), unique(x$resolution), NA),
                    data = x),
               class = "sim_cube")
 }
@@ -217,7 +215,7 @@ new_indicator_map <- function(x,
   stopifnot(inherits(x, c("sf", "data.frame")),
             all(c("cellid",
                   "geometry") %in% names(x)))
-  coord_range = sf::st_bbox(x)
+  coord_range = sf::st_bbox(x)[c("xmin", "ymin", "xmax", "ymax")]
  # names(coord_range) = c("xmin", "ymin", "xmax", "ymax")
   if (cell_size_units == "km") { cell_size_units <- "km^2" }
   cell_size = paste(cell_size, cell_size_units)

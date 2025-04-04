@@ -29,6 +29,7 @@ print.indicator_ts <- function(x, n = 10, ...) {
   print(x$data, n = n, ...)
 }
 
+
 #' @title Print an Indicator Map Object
 #'
 #' @description Provides a summary representation of an indicator_map object,
@@ -151,7 +152,7 @@ print.processed_cube_dsinfo <- function(x, n = 10, ...) {
 print.sim_cube <- function(x, n = 10, ...) {
   cat("\nSimulated data cube for calculating biodiversity indicators\n\n")
   cat("Date Range:", x$first_year, "-", x$last_year, "\n")
-  if (!is.null(x$resolutions)) {
+  if (!is.na(x$resolutions)) {
     cat("Single-resolution cube with cell size", x$resolutions, "^2\n")
   }
   cat("Number of cells:", x$num_cells, "\n")
@@ -177,36 +178,39 @@ print.sim_cube <- function(x, n = 10, ...) {
 #'
 #' @export
 print.available_indicators <- function(x, n = 30, ...) {
-  if (n > length(names(x))) n <- length(names(x))
+  num_indicators <- length(x) # Use length(x) directly
+  if (n > num_indicators) n <- num_indicators
   cat("\n\nAvailable Indicators\n")
   for (i in 1:n) {
-    cat(paste0("\n\n", i, ". \033[0;31m", x[[i]]$indicator_name, "\033[0m"), sep="")
-    cat("\n     Class: ", x[[i]]$indicator_class, sep="")
+    cat(paste0("\n\n", i, ". \033[0;31m", x[[i]]$indicator_name, "\033[0m"), sep = "")
+    cat("\n    Class: ", x[[i]]$indicator_class, sep = "")
     if (!is.null(x[[i]]$map_wrapper)) {
-      cat("\n     Calculate map: yes, e.g. ", x[[i]]$map_wrapper, "(my_data_cube)", sep="")
+      cat("\n    Calculate map: yes, e.g. ", x[[i]]$map_wrapper, "(my_data_cube)", sep = "")
     } else {
-      cat("\n     Calculate map: no", sep="")
+      cat("\n    Calculate map: no", sep = "")
     }
     if (!is.null(x[[i]]$ts_wrapper)) {
-      cat("\n     Calculate time series: yes, e.g. ", x[[i]]$ts_wrapper, "(my_data_cube)", sep="")
+      cat("\n    Calculate time series: yes, e.g. ", x[[i]]$ts_wrapper, "(my_data_cube)", sep = "")
     } else {
-      cat("\n     Calculate time series: no", sep="")
+      cat("\n    Calculate time series: no", sep = "")
     }
-    if (!is.null(x[[i]]$map_function_arguments)){
-      cat("\n     Additional map function arguments: ", paste(x[[i]]$map_function_arguments, collapse= ", "), sep="")
+    if (!is.null(x[[i]]$map_function_arguments)) {
+      cat("\n    Additional map function arguments: ", paste(x[[i]]$map_function_arguments, collapse = ", "), sep = "")
     } else {
-      cat("\n     Additional map function arguments: none", sep="")
+      cat("\n    Additional map function arguments: none", sep = "")
     }
-    if (!is.null(x[[i]]$ts_function_arguments)){
-      cat("\n     Additional time series function arguments: ", paste(x[[i]]$ts_function_arguments, collapse = ", "), sep="")
+    if (!is.null(x[[i]]$ts_function_arguments)) {
+      cat("\n    Additional time series function arguments: ", paste(x[[i]]$ts_function_arguments, collapse = ", "), sep = "")
     } else {
-      cat("\n     Additional time series function arguments: none", sep="")
+      cat("\n    Additional time series function arguments: none", sep = "")
     }
   }
-  if (n < length(names(x))) {
-    cat("\n*Note: There are ", length(names(x)) - n,
+  if (n < num_indicators) {
+    cat("\n*Note: There are ", num_indicators - n,
         " additional indicator(s). To see more, increase n (e.g. n = ",
-        length(names(x)), ").", sep = "")
+        num_indicators, ").",
+        sep = ""
+    )
   } else {
     cat("\n")
   }
