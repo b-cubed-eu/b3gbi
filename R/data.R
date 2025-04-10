@@ -53,6 +53,19 @@
 #' @source \url{https://doi.org/10.15468/dl.qk4f2z}
 "example_indicator_ts2"
 
+#' Map of Observed Species Richness for Mammals in Denmark
+#'
+#' Example indicator containing a map of observed species richness for mammal occurrences in Denmark (occurrences from GBIF: 16.03.2024).
+#'
+#' @format An 'indicator_map' object containing a tibble with 374 rows and 3 variables, as well as metadata
+#' \describe{
+#'  \item{cellid}{id of a map cell the indicator was calculated for}
+#'  \item{diversity_val}{calculated richness value for the cell}
+#'  \item{geometry}{geometry of the map cell}
+#' }
+#' @source \url{https://doi.org/10.15468/dl.qk4f2z}
+"example_indicator_map1"
+
 #' Indicators Available for Use in the Package
 #'
 #' A list of all biodiversity indicators available within the package, along with the dimensions they can be calculated across, the functions to access them, and any special arguments
