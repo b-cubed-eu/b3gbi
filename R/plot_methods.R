@@ -44,63 +44,57 @@ plot.occ_by_dataset <- function(x,
                                 ...){
 
   stopifnot_error("Incorrect object class. Must be class 'occ_by_dataset'.", inherits(x, "occ_by_dataset"))
-
   if (!inherits(x, "indicator_ts")) stop("Incorrect object class. Must be class 'indicator_ts'.")
-
-  n <- type <- numrows <- diversity_val <- type <- totalocc <- diversity_val <- NULL
 
   # Set defaults
   y_label_default <- "Occurrences"
   auto_title <- "Total Occurrences (Segregated by Dataset)"
 
-  # Set type as a factor and remove any types with only 1 occurrence
-  x$data$type <- factor(x$data$type,
-                        levels = unique(x$data$type))
+  # Filter datasets
+  x$data$type <- factor(x$data$type, levels = unique(x$data$type))
 
-  # Filter out datasets with no occurrences or too few to plot
-  x$data <-
-    x$data %>%
-    dplyr::mutate(numrows = ifelse(n() > 0, n(), 0), .by = type) %>%
-    dplyr::filter(numrows >= 2) %>%
-    dplyr::select(-numrows)
+  # Filter out datasets with insufficient data
+  x$data <- x$data %>%
+    dplyr::group_by(type) %>%
+    dplyr::filter(dplyr::n() >= 2) %>%
+    dplyr::ungroup()
 
   if (!is.null(min_occurrences)) {
-  # Filter out datasets with fewer than the minimum occurrences, if min_occurrences parameter set
-    x$data <-
-      x$data %>%
-      dplyr::mutate(totalocc = sum(diversity_val), .by = type) %>%
+    # Filter out datasets with fewer than the minimum occurrences
+    x$data <- x$data %>%
+      dplyr::group_by(type) %>%
+      dplyr::mutate(totalocc = sum(diversity_val)) %>%
       dplyr::filter(totalocc >= min_occurrences) %>%
+      dplyr::ungroup() %>%
       dplyr::select(-totalocc)
   }
 
-  # Keep only n datasets with the most occurrences, where n is determined by the max_datasets parameter
-  datasets <-
-    x$data %>%
-    dplyr::summarize(totalocc = sum(diversity_val), .by = type) %>%
+  # Select top datasets
+  datasets <- x$data %>%
+    dplyr::group_by(type) %>%
+    dplyr::summarize(totalocc = sum(diversity_val), .groups = 'drop') %>%
     dplyr::slice_max(order_by = totalocc, n = max_datasets)
 
-  x$data <-
-    x$data %>%
+  x$data <- x$data %>%
     dplyr::filter(type %in% datasets$type)
 
-  # Call generalized plot_map function
+  # Call the plot_ts function
   trend_plot <- plot_ts(x,
                         y_label_default = y_label_default,
                         auto_title = auto_title,
                         x_breaks = x_breaks,
                         ...)
 
-    # Use facets to separate multiple species trends
-    trend_plot <- trend_plot +
-      facet_wrap(vars(type),
-                 scales = facet_scales,
-                 nrow = facet_rows,
-                 ncol = facet_cols,
-                 labeller = label_wrap_gen(width = facet_label_width)) +
-      theme(legend.position = "none")
+  # Facet the plot according to dataset type
+  trend_plot <- trend_plot +
+    facet_wrap(vars(type),
+               scales = facet_scales,
+               nrow = facet_rows,
+               ncol = facet_cols,
+               labeller = label_wrap_gen(width = facet_label_width)) +
+    theme(legend.position = "none")
 
-  # Show plot
-  trend_plot
+  return(trend_plot)
 }
 
 #' @title Plot Occurrences Segregated by Type
@@ -138,44 +132,38 @@ plot.occ_by_type <- function(x,
                              ...){
 
   stopifnot_error("Incorrect object class. Must be class 'occ_by_type'.", inherits(x, "occ_by_type"))
-
   if (!inherits(x, "indicator_ts")) {stop("Incorrect object class. Must be class 'indicator_ts'.")}
 
-  n <- type <- numrows <- NULL
+  # Set defaults
+  y_label_default <- "Occurrences"
+  auto_title <- "Total Occurrences (Segregated by Type)"
 
-    # Set defaults
-    y_label_default <- "Occurrences"
-    auto_title <- "Total Occurrences (Segregated by Type)"
+  # Filter types
+  x$data$type <- factor(x$data$type, levels = unique(x$data$type))
 
-    # Set type as a factor and remove any types with only 1 occurrence
-    x$data$type <- factor(x$data$type,
-                          levels = unique(x$data$type))
+  # Filter out types with insufficient data
+  x$data <- x$data %>%
+    dplyr::group_by(type) %>%
+    dplyr::filter(dplyr::n() >= 2) %>%
+    dplyr::ungroup()
 
-    # Filter out types with too few or no occurrences
-    x$data <-
-      x$data %>%
-      dplyr::mutate(numrows = ifelse(n() > 0, n(), 0), .by = type) %>%
-      dplyr::filter(numrows >= 2) %>%
-      dplyr::select(-numrows)
+  # Call the plot_ts function
+  trend_plot <- plot_ts(x,
+                        y_label_default = y_label_default,
+                        auto_title = auto_title,
+                        x_breaks = x_breaks,
+                        ...)
 
-    # Call generalized plot_map function
-    trend_plot <- plot_ts(x,
-                          y_label_default = y_label_default,
-                          auto_title = auto_title,
-                          x_breaks = x_breaks,
-                          ...)
+  # Facet the plot according to type
+  trend_plot <- trend_plot +
+    facet_wrap(vars(type),
+               scales = facet_scales,
+               nrow = facet_rows,
+               ncol = facet_cols,
+               labeller = label_wrap_gen(width = facet_label_width)) +
+    theme(legend.position = "none")
 
-      # Use facets to separate multiple species trends
-      trend_plot <- trend_plot +
-        facet_wrap(vars(type),
-                   scales = facet_scales,
-                   nrow = facet_rows,
-                   ncol = facet_cols,
-                   labeller = label_wrap_gen(width = facet_label_width)) +
-        theme(legend.position = "none")
-
-    # Show plot
-    trend_plot
+  return(trend_plot)
 }
 
 #' @export
@@ -773,6 +761,11 @@ plot_map <- function(x,
 
   diversity_val <- geometry <- NULL
 
+
+  if (!inherits(x, "indicator_map")) {
+    stop("Incorrect object class. Must be class 'indicator_map'.")
+  }
+
   # Get map limits
   map_lims <- x$coord_range
 
@@ -910,22 +903,33 @@ plot_map <- function(x,
     } else {
 
       # If crop to grid is TRUE get bounding box with map limits
-      bbox <- sf::st_as_sfc(sf::st_bbox(map_lims), crs = x$projection)
+      bbox <- sf::st_as_sfc(sf::st_bbox(map_lims))
+      sf::st_crs(bbox) <- sf::st_crs(x$projection)
 
     }
 
-    # Crop map_surround to bounding box
+    sf::st_agr(map_surround) = "constant"
+
     map_surround <- sf::st_intersection(map_surround, bbox)
 
     # Plot map_surround as plot as layer
-    diversity_plot$layers <- c(ggplot2::geom_sf(data = map_surround, fill = land_fill_colour, aes(geometry = geometry))[[1]], diversity_plot$layers)
+    diversity_plot$layers <- c(
+      ggplot2::geom_sf(
+        data = map_surround,
+        fill = land_fill_colour,
+        aes(geometry = geometry)
+      )[[1]],
+      diversity_plot$layers
+    )
   }
 
   # Check for custom x and y limits and adjust map if found
   if(any(!is.null(xlims)) & any(!is.null(ylims))) {
     diversity_plot <-
-      diversity_plot + coord_sf(xlim = xlims,
-                                ylim = ylims)
+      suppressMessages(
+        diversity_plot + coord_sf(xlim = xlims,
+                                  ylim = ylims)
+      )
 
   }
 
@@ -1072,14 +1076,23 @@ plot_ts <- function(x,
   ci_type <- match.arg(ci_type)
   smooth_linetype <- match.arg(smooth_linetype)
 
+  if (!inherits(x, "indicator_ts")) {
+    stop("Incorrect object class. Must be class 'indicator_ts'.")
+  }
+
   # Filter by min and max year if set
-  if (!is.null(min_year) | !is.null(max_year)) {
+  if (!is.null(min_year) || !is.null(max_year)) {
+    # Set min and max year
     min_year <- ifelse(is.null(min_year), x$first_year, min_year)
     max_year <- ifelse(is.null(max_year), x$last_year, max_year)
     x$data <-
       x$data %>%
       dplyr::filter(year >= min_year) %>%
       dplyr::filter(year <= max_year)
+
+    if (length(x$data$year) < 1) {
+      stop("No data available for the selected years. Please check your input.")
+    }
   } else {
     min_year <- x$first_year
     max_year <- x$last_year
@@ -1373,14 +1386,24 @@ plot_species_ts <- function(x,
   ci_type <- match.arg(ci_type)
   smooth_linetype <- match.arg(smooth_linetype)
 
+
+  if (!inherits(x, "indicator_ts")) {
+    stop("Incorrect object class. Must be class 'indicator_ts'.")
+  }
+
   # Filter by min and max year if set
-  if (!is.null(min_year) | !is.null(max_year)) {
-    min_year <- ifelse(is.null(min_year), x$first_year, min_year)
-    max_year <- ifelse(is.null(max_year), x$last_year, max_year)
-    x$data <-
-      x$data %>%
-      dplyr::filter(year >= min_year) %>%
-      dplyr::filter(year <= max_year)
+  if (!is.null(min_year) || !is.null(max_year)) {
+      # Set min and max year
+      min_year <- ifelse(is.null(min_year), x$first_year, min_year)
+      max_year <- ifelse(is.null(max_year), x$last_year, max_year)
+      x$data <-
+        x$data %>%
+        dplyr::filter(year >= min_year) %>%
+        dplyr::filter(year <= max_year)
+
+      if (length(x$data$year) < 1) {
+        stop("No data available for the selected years. Please check your input.")
+      }
   } else {
     min_year <- x$first_year
     max_year <- x$last_year
@@ -1570,14 +1593,23 @@ plot_species_ts <- function(x,
                     labs(x = x_label, y = y_label,
                          title = title) +
                     theme_minimal() +
-                    theme(plot.title = element_text(hjust = 0.5, face = "italic"),
+                    theme(plot.title = element_text(hjust = 0.5),
                           text = element_text(size = 14),
-                          if (gridoff == TRUE) { panel.grid.major = element_blank() },
+                          panel.grid.major = if (gridoff == TRUE) {
+                            element_blank()
+                          } else {
+                            element_line()
+                          },
                           panel.grid.minor = element_blank(),
-                          if (suppress_y==TRUE) { axis.text.y = element_blank() },
+                          axis.text.y = if (suppress_y==TRUE) {
+                            element_blank()
+                          } else {
+                            element_text()
+                          },
                           strip.text = element_text(face = "italic")
                     ) +
                     labs(title = y) +
+                    #theme_elements +
                     smoothing +
                     ci_ribbon
 
@@ -1681,6 +1713,11 @@ plot_species_map <- function(x,
 
   taxonKey <- . <- scientificName <- geometry <- diversity_val <- NULL
 
+
+  if (!inherits(x, "indicator_map")) {
+    stop("Incorrect object class. Must be class 'indicator_map'.")
+  }
+
   if (is.null(species)) {
 
     stop("Please enter either the species names or the numeric taxonKeys for the species you want to plot.")
@@ -1751,9 +1788,11 @@ plot_species_map <- function(x,
     map_surround <- rnaturalearth::ne_countries(scale = "medium",
                                                 returnclass = "sf") %>%
       sf::st_as_sf() %>%
-      sf::st_transform(crs = "EPSG:3035")
+      sf::st_transform(crs = x$projection) %>%
+      sf::st_make_valid()
 
-  # Otherwise make the surroundings ocean blue (unless another colour is specified)
+    # Otherwise make all the surroundings ocean blue (unless a different
+    # colour is specified)
   } else {
     if (is.null(panel_bg)) { panel_bg = "#92c5f0" }
   }
@@ -1841,11 +1880,69 @@ plot_species_map <- function(x,
 
   # If surround flag is set, add surrounding countries to the map
   if (surround == TRUE) {
-    for (i in 1:length(diversity_plot)) {
-      diversity_plot[[i]]$layers <- c(geom_sf(data = map_surround,
-                                              fill = land_fill_colour)[[1]],
-                                      diversity_plot[[i]]$layers)
+
+    map_surround <- sf::st_transform(map_surround, crs = x$projection)
+    map_surround <- sf::st_make_valid(map_surround)
+
+    # If crop to grid is set to FALSE
+    if (!crop_to_grid) {
+      # Define percentage for expansion
+      expand_percent <- 0.1  # 10% expansion
+
+      # Calculate the amount to expand
+      x_range <- map_lims["xmax"] - map_lims["xmin"]
+      y_range <- map_lims["ymax"] - map_lims["ymin"]
+
+      # Compute new expanded limits
+      expanded_lims <- sf::st_bbox(c(
+        map_lims["xmin"] - (expand_percent * x_range),
+        map_lims["ymin"] - (expand_percent * y_range),
+        map_lims["xmax"] + (expand_percent * x_range),
+        map_lims["ymax"] + (expand_percent * y_range)
+      ))
+
+      # Assign CRS
+      attributes(expanded_lims)$crs <- sf::st_crs(map_surround)
+
+      # Get bounding box with expanded limits
+      bbox <- sf::st_as_sfc(sf::st_bbox(expanded_lims), crs = x$projection)
+
+    } else {
+
+      # If crop to grid is TRUE get bounding box with map limits
+      bbox <- sf::st_as_sfc(sf::st_bbox(map_lims))
+      sf::st_crs(bbox) <- sf::st_crs(x$projection)
+
     }
+
+    sf::st_agr(map_surround) = "constant"
+
+    map_surround <- sf::st_intersection(map_surround, bbox)
+
+
+    for (i in 1:length(diversity_plot)) {
+
+      # Plot map_surround as plot as layer
+      diversity_plot[[i]]$layers <- c(
+        ggplot2::geom_sf(
+          data = map_surround,
+          fill = land_fill_colour,
+          aes(geometry = geometry)
+          )[[1]],
+        diversity_plot[[i]]$layers)
+
+    }
+  }
+
+  # Check for custom x and y limits and adjust map if found
+  if(any(!is.null(xlims)) & any(!is.null(ylims))) {
+    for (i in 1:length(diversity_plot)) {
+    diversity_plot[[i]] <-
+      suppressMessages(diversity_plot[[i]] + coord_sf(xlim = xlims,
+                                ylim = ylims))
+
+    }
+
   }
 
   names(diversity_plot) <- sci_names
