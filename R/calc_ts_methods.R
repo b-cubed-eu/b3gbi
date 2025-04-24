@@ -121,7 +121,7 @@ calc_ts.hill_core <- function(x,
 
 
   coverage_rare <- species_records_raw2 %>%
-    iNEXT::estimateD(base = "coverage", level = coverage, datatype="incidence_raw", q=qval)
+    my_estimateD(base = "coverage", level = coverage, datatype="incidence_raw", q=qval)
 
   # Extract estimated relative species richness
   indicator <-
@@ -307,6 +307,11 @@ calc_ts.evenness_core <- function(x,
    type <- match.arg(type,
                      names(available_indicators))
 
+  # Check if the data is empty
+  if (nrow(x) == 0) {
+    return(tibble::tibble(year = integer(), diversity_val = numeric()))
+  }
+
   # Calculate number of records for each species by grid cell
   x <-
     x %>%
@@ -389,7 +394,7 @@ calc_ts.spec_occ <- function(x,
 
   year <- scientificName <- taxonKey <- obs <- diversity_val <- NULL
 
-  # Calculate total occurrences for each species by grid cell
+  # Calculate total occurrences for each species by year
   indicator <-
     x %>%
     dplyr::mutate(diversity_val = sum(obs), .by = c(taxonKey, year)) %>%
@@ -414,7 +419,7 @@ calc_ts.spec_range <- function(x,
     x %>%
     dplyr::arrange(taxonKey, year, cellCode)
 
-  # Flatten occurrences for each species by grid cell
+  # Flatten occurrences for each species by year
   indicator <-
     x %>%
     dplyr::mutate(diversity_val = sum(obs >= 1), .by = c(taxonKey, year)) %>%
@@ -440,10 +445,15 @@ calc_ts.tax_distinct <- function(x,
 
   year <- . <- diversity_val <- NULL
 
+  # Early return for empty input
+  if (nrow(x) == 0) {
+    return(tibble::tibble(year = integer(), diversity_val = numeric()))
+  }
+
   if (requireNamespace("taxize", quietly = TRUE)) {
 
     # Retrieve taxonomic data from GBIF
-    tax_hier <- taxize::classification(unique(x$scientificName),
+    tax_hier <- my_classification(unique(x$scientificName),
                                        db = "gbif",
                                        ...)
   } else {
@@ -483,6 +493,11 @@ calc_ts.occ_turnover <- function(x,
                   inherits(x, "occ_turnover"))
 
   year <- NULL
+
+  # Handle empty input
+  if (nrow(x) == 0) {
+    return(tibble::tibble(year = integer(), diversity_val = numeric()))
+  }
 
   x <- x %>%
     dplyr::arrange(year)
