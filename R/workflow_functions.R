@@ -449,7 +449,7 @@ compute_indicator_workflow <- function(data,
       } else if (data$grid_type == "mgrs") {
 
         #output_crs <- get_crs_for_mgrs(df$cellCode)
-        output_crs <- "EPSG:9822"
+        output_crs <- "EPSG:4326"
 
       } else {
 
