@@ -51,7 +51,7 @@ compute_tax_distinct_formula <- function(x, y) {
   print(length(tax_hier_temp))
   n_spec <- length(tax_hier_temp)
 
-  if (length(tax_hier_temp) < 3) {
+  if (n_spec < 3) {
 
     tax_distinct <- NA
     return(tax_distinct)
