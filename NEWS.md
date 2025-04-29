@@ -1,3 +1,9 @@
+# b3gbi 0.5.5 - Minor update:
+
+* Fixed bugs in ab_rarity_map() and area_rarity_map() that caused incorrect calculations.
+* Added more unit tests.
+* Improved error handling in some functions.
+
 # b3gbi 0.5.4 - Minor update:
 
 * Fixed an error where spherical geometry was being turned off without a good reason. Spherical geometry is now only turned off to retry failed st_intersection() or st_difference() operations or when the user explicitly sets it to FALSE.
