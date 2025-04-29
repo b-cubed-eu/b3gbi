@@ -48,107 +48,68 @@ calc_map.hill2 <- function(x, ...) {
   return(indicator)
 }
 
-#' @importFrom iNEXT estimateD
-#'
 #' @noRd
 calc_map.hill_core <- function(x,
                                type = c("hill0", "hill1", "hill2"),
-                               ...)
-{
+                               ...) {
+  stopifnot_error(
+    paste0(
+    "Please check the class and structure of your data. This is an internal ",
+    "function, not meant to be called directly."),
+    inherits(x, c("data.frame", "sf")) &
+      rlang::inherits_any(x, c("hill0", "hill1", "hill2"))
+  )
 
-  stopifnot_error("Please check the class and structure of your data. This is an internal function, not meant to be called directly.",
-                  inherits(x, c("data.frame", "sf")) & rlang::inherits_any(x, c("hill0", "hill1", "hill2")))
-
-  obs <- cellid <- . <- taxonKey <-scientificName <- kingdom <- geometry <- NULL
-  resolution <- xcoord <- ycoord <- year <- area <- variable <- value <- NULL
-  rowname <- Assemblage <- qD <- NULL
-
-  type <- match.arg(type)
-
-  # Extract qvalue from hill diversity type
-  qval <- as.numeric(gsub("hill", "", type))
-
-  # Create list of occurrence matrices by grid cell, with species as rows
-  spec_rec_raw_cell <-
-    x %>%
-    dplyr::group_split(cellid) %>%
-    purrr::map(. %>%
-                 dplyr::group_by(taxonKey) %>%
-                 tidyr::pivot_wider(names_from = taxonKey,
-                                    values_from = obs) %>%
-                 dplyr::ungroup() %>%
-                 dplyr::select(-scientificName,
-                               -kingdom,
-                            #   -rank,
-                               -geometry,
-                               -resolution,
-                               -xcoord,
-                               -ycoord,
-                               -year,
-                               -area) %>%
-                 dplyr::select(-any_of(c("basisOfRecord",
-                                         "datasetKey"))) %>%
-                 replace(is.na(.), 0) %>%
-                 dplyr::mutate_if(is.numeric,
-                                  as.integer) %>%
-                 dplyr::select(-cellid) %>%
-                 tibble::rownames_to_column() %>%
-                 tidyr::gather(variable,
-                               value,
-                               -rowname) %>%
-                 tidyr::spread(rowname, value) %>%
-                 'row.names<-'(., NULL) %>%
-                 tibble::column_to_rownames(var = "variable") %>%
-                 as.matrix() %>%
-                 replace(. > 1, as.integer(1))
-    )
-
-  # name list elements
-  names(spec_rec_raw_cell) <- unique(x$cellid)
-
+  qval <- as.numeric(gsub("hill", "", match.arg(type)))
   temp_opts <- list(...)
-
   cutoff_length <- temp_opts$cutoff_length
-
   coverage <- temp_opts$coverage
 
-  # remove all cells with too little data to avoid errors from iNEXT
-  spec_rec_raw_cell2 <-
-    purrr::keep(spec_rec_raw_cell, function(x) {
-      # Check if the element is a matrix or data frame
-      if (!is.null(x) && (is.data.frame(x) || is.matrix(x))) {
-        # Check if the number of columns is greater than or equal to the cutoff
-        return(ncol(x) >= cutoff_length)
-      } else {
-        # Return FALSE for any list elements that are not appropriately structured
-        return(FALSE)
-      }
+  # Create list of incidence matrices by cell
+  incidence_list <- x %>%
+    dplyr::select(taxonKey, obs, cellid) %>%
+    dplyr::group_by(cellid) %>%
+    dplyr::group_split() %>%
+    purrr::map(function(cell_data) {
+      cell_data %>%
+        dplyr::distinct(taxonKey, .keep_all = TRUE) %>%
+        dplyr::select(taxonKey, obs) %>%
+        tibble::deframe() %>%
+        as.matrix()
     })
 
-  # Convert list elements to numeric presence-absence matrices
-  spec_rec_raw_cell2 <- lapply(spec_rec_raw_cell2, function(x) {
-    # Attempt to convert all elements to numeric, assuming proper encoding of presence-absence
-    x <- apply(x, 2, as.numeric)
+  # Name the list elements by cellid
+  names(incidence_list) <- unique(x$cellid)
 
-    # Ensure all presence are converted to 1 (assuming all non-zero are present as original message suggests setting them as 1)
-    x[x != 0] <- 1
-
-    return(x)
+  # Filter cells based on cutoff length (number of species >= cutoff)
+  incidence_list_filtered <- purrr::keep(incidence_list,
+                                         function(matrix) {
+    if (!is.null(matrix) && is.matrix(matrix)) {
+      return(nrow(matrix) >= cutoff_length)
+    }
+    return(FALSE)
   })
 
-  # Compute hill diversity
-  coverage_rare_cell <- spec_rec_raw_cell2 %>%
-    iNEXT::estimateD(datatype="incidence_raw",
-                     base = "coverage",
-                     level = coverage,
-                     q=qval)
+  # Ensure presence-absence (assuming obs > 0 is presence) and
+  # convert to numeric
+  incidence_list_processed <- lapply(incidence_list_filtered,
+                                     function(matrix) {
+    numeric_matrix <- matrix(as.numeric(matrix),
+                             nrow = nrow(matrix),
+                             dimnames = dimnames(matrix))
+    numeric_matrix[numeric_matrix > 0] <- 1
+    return(numeric_matrix)
+  })
 
-  # Extract estimated relative diversity
-  indicator <-
-    coverage_rare_cell %>%
-    #coverage_rare_cell$iNextEst$coverage_based %>%
-    #dplyr::filter(abs(SC-coverage) == min(abs(SC-coverage)),
-    #              .by = Assemblage) %>%
+  # Compute Hill diversity using a wrapper for iNEXT::estimateD
+  diversity_estimates <- incidence_list_processed %>%
+    my_estimateD(datatype = "incidence_raw",
+                 base = "coverage",
+                 level = coverage,
+                 q = qval)
+
+  # Extract and format the results
+  indicator <- diversity_estimates %>%
     dplyr::select(Assemblage, qD, t) %>%
     dplyr::rename(cellid = Assemblage,
                   diversity_val = qD,
@@ -156,15 +117,18 @@ calc_map.hill_core <- function(x,
     dplyr::mutate(cellid = as.integer(cellid), .keep = "unused")
 
   return(indicator)
-
 }
 
 #' @export
 #' @rdname calc_map
 calc_map.obs_richness <- function(x, ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
-                  inherits(x, "obs_richness"))
+  stopifnot_error(
+    paste0(
+      "Wrong data class. This is an internal function and is not meant to be ",
+      "called directly."
+    ),
+    inherits(x, "obs_richness"))
 
   taxonKey <- NULL
 
@@ -190,7 +154,7 @@ calc_map.total_occ <- function(x, ...) {
   # Calculate total number of occurrences over the grid
   indicator <-
     x %>%
-    dplyr::summarize(diversity_val = sum(obs),
+    dplyr::summarize(diversity_val = sum(obs, na.rm = TRUE),
                      .by = "cellid")
 
   return(indicator)
@@ -215,7 +179,7 @@ calc_map.newness <- function(x,
   # Calculate mean year of occurrence over the grid
   indicator <-
     x %>%
-    dplyr::summarize(diversity_val = round(mean(year)),
+    dplyr::summarize(diversity_val = round(mean(year, na.rm = TRUE)),
                      .by = "cellid")
 
   if (!is.null(newness_min_year)) {
@@ -247,7 +211,7 @@ calc_map.occ_density <- function(x, ...) {
   # Calculate density of occurrences over the grid (per square km)
   indicator <-
     x %>%
-    dplyr::reframe(diversity_val = sum(obs) / area,
+    dplyr::reframe(diversity_val = sum(obs, na.rm = TRUE) / area,
                    .by = "cellid") %>%
     dplyr::distinct(cellid, diversity_val) %>%
     dplyr::mutate(diversity_val = as.numeric(diversity_val))
@@ -293,8 +257,12 @@ calc_map.evenness_core <- function(x,
                                    type,
                                    ...) {
 
-  stopifnot_error("Please check the class and structure of your data. This is an internal function, not meant to be called directly.",
-                  inherits(x, c("data.frame", "sf")))
+  stopifnot_error(
+    paste0(
+      "Please check the class and structure of your data. This is an ",
+      "internal function, not meant to be called directly."
+    ),
+    inherits(x, c("data.frame", "sf")))
 
   available_indicators <- NULL; rm(available_indicators)
 
@@ -303,10 +271,14 @@ calc_map.evenness_core <- function(x,
   type <- match.arg(type,
                     names(available_indicators))
 
+  if (nrow(x) == 0) {
+    return(tibble::tibble(cellid = integer(0), diversity_val = numeric(0)))
+  }
+
   # Calculate adjusted evenness fo r each grid cell
   indicator <-
     x %>%
-    dplyr::summarize(num_occ = sum(obs),
+    dplyr::summarize(num_occ = sum(obs, na.rm = TRUE),
                      .by = c(cellid, taxonKey)) %>%
     dplyr::arrange(cellid) %>%
     tidyr::pivot_wider(names_from = cellid,
@@ -333,13 +305,28 @@ calc_map.ab_rarity <- function(x, ...) {
 
   obs <- taxonKey <- cellid <- records_taxon <- rarity <- NULL
 
+  # Select relevant columns
+  x <- x %>%
+    dplyr::select(cellid, taxonKey, obs)
+
+  # Remove invalid rows
+  x <- x[complete.cases(x), ]
+
 # Calculate total summed rarity (in terms of abundance) for each grid cell
-indicator <-
-  x %>%
-  dplyr::mutate(records_taxon = sum(obs), .by = taxonKey) %>%
-  dplyr::mutate(rarity = 1 / (records_taxon / sum(obs))) %>%
-  dplyr::summarise(diversity_val = sum(rarity), .by = "cellid") %>%
-  dplyr::arrange(cellid)
+  indicator <-
+    x %>%
+    # calculate number of records for each species
+    dplyr::summarise(obs_taxon = sum(obs, na.rm = TRUE),
+                     .by = c(cellid, taxonKey)) %>%
+    # calculate number of records for each grid cell
+    dplyr::mutate(obs_cell = sum(obs_taxon, na.rm = TRUE),
+                  .by = cellid) %>%
+    # calculate rarity for each species
+    dplyr::mutate(rarity = 1 / (obs_taxon / obs_cell)) %>%
+    # calculate total rarity for each grid cell
+    dplyr::summarise(diversity_val = sum(rarity), .by = cellid) %>%
+    # arrange by cellid
+    dplyr::arrange(cellid)
 
 }
 
@@ -352,16 +339,30 @@ calc_map.area_rarity <- function(x, ...) {
 
   rec_tax_cell <- cellid <- taxonKey <- rarity <- NULL
 
+  # Select relevant columns
+  x <- x %>%
+    select(cellid, taxonKey)
+
+  # Remove invalid rows
+  x <- x[complete.cases(x), ]
+
   # Calculate rarity as the sum (per grid cell) of the inverse of occupancy
   # frequency for each species
   indicator <-
     x %>%
-    dplyr::mutate(rec_tax_cell = sum(dplyr::n_distinct(cellid)),
+    # calculate number of cells each species occurs in
+    dplyr::mutate(occ_by_taxa = sum(dplyr::n_distinct(cellid)),
                   .by = c(taxonKey)) %>%
-    dplyr::mutate(rarity = 1 / (rec_tax_cell / sum(dplyr::n_distinct(cellid)))) %>%
-    dplyr::summarise(diversity_val = sum(rarity), .by = cellid)
-
-  return(indicator)
+    # remove duplicates
+    unique() %>%
+    # calculate total number of cells
+    dplyr::mutate(total_cells = sum(dplyr::n_distinct(cellid))) %>%
+    # calculate rarity for each species
+    dplyr::mutate(rarity = 1 / (occ_by_taxa / total_cells)) %>%
+    # calculate total rarity for each grid cell
+    dplyr::summarise(diversity_val = sum(rarity), .by = cellid) %>%
+    # arrange by cellid
+    dplyr::arrange(cellid)
 
 }
 
@@ -382,8 +383,6 @@ calc_map.spec_occ <- function(x, ...) {
     dplyr::arrange(cellid) %>%
     dplyr::select(cellid, taxonKey, scientificName, diversity_val)
 
-  return(indicator)
-
 }
 
 #' @export
@@ -403,8 +402,6 @@ calc_map.spec_range <- function(x, ...) {
     dplyr::arrange(cellid) %>%
     dplyr::select(cellid, taxonKey, scientificName, diversity_val)
 
-  return(indicator)
-
 }
 
 #' @export
@@ -416,10 +413,16 @@ calc_map.tax_distinct <- function(x, ...) {
 
   cellid <- . <- diversity_val <- NULL
 
+  # Early check for empty input
+  if (nrow(x) == 0) {
+    return(tibble::tibble(cellid = character(),
+                          diversity_val = numeric()))
+  }
+
   if (requireNamespace("taxize", quietly = TRUE)) {
 
     # Retrieve taxonomic data from GBIF
-    tax_hier <- taxize::classification(unique(x$scientificName),
+    tax_hier <- my_classification(unique(x$scientificName),
                                        db = "gbif",
                                        ...)
 
@@ -439,11 +442,14 @@ calc_map.tax_distinct <- function(x, ...) {
     x %>%
     tibble::add_column(diversity_val = NA) %>%
     dplyr::group_split(cellid) %>%
-    purrr::map(. %>%
-                 dplyr::mutate(diversity_val =
-                                 compute_tax_distinct_formula(.,
-                                                              tax_hier))) %>%
+    purrr::discard(~ nrow(.) == 0) %>%
+    purrr::map(~{
+                   dplyr::mutate(.,
+                     diversity_val = compute_tax_distinct_formula(., tax_hier)
+                   ) }
+    ) %>%
     dplyr::bind_rows() %>%
+    dplyr::filter(.data$diversity_val != 0) %>%
     dplyr::distinct(cellid, diversity_val, .keep_all = TRUE) %>%
     dplyr::select(cellid, diversity_val)
 

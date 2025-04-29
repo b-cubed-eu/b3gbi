@@ -127,6 +127,100 @@ process_cube <- function(cube_name,
 
   grid_type = match.arg(grid_type)
 
+  # check that the cube is not empty
+  if (nrow(occurrence_data) == 0) {
+
+    stop("The data cube is empty. Please check the file.")
+
+  }
+
+  # check that user-provided column names are valid
+  user_provided_cols <- list(
+    "year" = cols_year,
+    "yearMonth" = cols_yearMonth,
+    "cellCode" = cols_cellCode,
+    "occurrences" = cols_occurrences,
+    "scientificName" = cols_scientificName,
+    "minCoordinateUncertaintyInMeters" = cols_minCoordinateUncertaintyInMeters,
+    "minTemporalUncertainty" = cols_minTemporalUncertainty,
+    "kingdom" = cols_kingdom,
+    "family" = cols_family,
+    "species" = cols_species,
+    "kingdomKey" = cols_kingdomKey,
+    "familyKey" = cols_familyKey,
+    "speciesKey" = cols_speciesKey,
+    "familyCount" = cols_familyCount,
+    "sex" = cols_sex,
+    "lifeStage" = cols_lifeStage
+  )
+
+  incorrect_cols <- character(0)
+
+  for (default_name in names(user_provided_cols)) {
+    user_name <- user_provided_cols[[default_name]]
+    if (!is.null(user_name) && !user_name %in% names(occurrence_data)) {
+      incorrect_cols <- c(incorrect_cols,
+                          paste0("'",
+                                 user_name,
+                                 "' (for '", default_name, "')")
+      )
+    }
+  }
+
+  if (length(incorrect_cols) > 0) {
+    stop(
+      paste0(
+        "The following user-provided column names were not found in the data: ",
+        paste(
+          incorrect_cols, collapse = ", "
+        ),
+        ". Please check the spelling and case of your column names."
+      )
+    )
+  }
+
+  # check that years provided for filtering by year are valid
+  if (!is.null(first_year)) {
+
+    if (!is.numeric(first_year)) {
+
+      stop("`first_year` should be a number.")
+
+    }
+
+    if (first_year >= max(occurrence_data$year, na.rm = TRUE)) {
+
+      stop("`first_year` should be less than the max year in the data cube.")
+
+    }
+  }
+
+  if (!is.null(last_year)) {
+
+    if (!is.numeric(last_year)) {
+
+      stop("`last_year` should be a number.")
+
+    }
+
+    if (last_year <= min(occurrence_data$year, na.rm = TRUE)) {
+
+      stop("`last_year` should be greater than the min year in the data cube.")
+
+    }
+  }
+
+  if (!is.null(first_year) & !is.null(last_year)) {
+
+    if (last_year < first_year) {
+
+      stop("`last_year` should not be less than `first_year`.")
+
+    }
+
+  }
+
+
   if (grid_type == "automatic") {
 
     # check if the user has provided a name for the column containing grid cell codes
@@ -332,7 +426,8 @@ process_cube <- function(cube_name,
 
     occurrence_data <-
       occurrence_data %>%
-      dplyr::mutate(year = as.numeric(stringr::str_extract(yearMonth, "(\\d{4})")))
+      dplyr::mutate(year = as.numeric(stringr::str_extract(yearMonth, "(\\d{4})"))) %>%
+      dplyr::select(-yearMonth)
 
   }
 

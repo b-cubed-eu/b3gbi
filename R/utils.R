@@ -597,8 +597,21 @@ meters_to_decdeg <- function(occs_df, lat_col = "latitude",
   return(dist_dd)
 }
 
-# Copy of function readRDS from base. This is for mocking in testthat tests.
+# Wrapper of function readRDS from base. This is for mocking in testthat tests.
 #' @noRd
 my_readRDS <- function(file, ...) {
   readRDS(file, ...)
+}
+
+# Wrapper of function taxize::classification from base. This is for mocking in
+# testthat tests.
+#' @noRd
+my_classification <- function(x, ...) {
+  taxize::classification(x, ...)
+}
+
+# Wrapper of function iNext::estimateD. This is for mocking in testthat tests.
+#' @noRd
+my_estimateD <- function(...) {
+  iNEXT::estimateD(...)
 }
