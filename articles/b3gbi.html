@@ -6,18 +6,23 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Tutorial • b3gbi</title>
-<!-- favicons --><link rel="icon" type="image/png" sizes="16x16" href="../favicon-16x16.png">
-<link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
-<link rel="apple-touch-icon" type="image/png" sizes="180x180" href="../apple-touch-icon.png">
-<link rel="apple-touch-icon" type="image/png" sizes="120x120" href="../apple-touch-icon-120x120.png">
-<link rel="apple-touch-icon" type="image/png" sizes="76x76" href="../apple-touch-icon-76x76.png">
-<link rel="apple-touch-icon" type="image/png" sizes="60x60" href="../apple-touch-icon-60x60.png">
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
+<link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
+<link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
+<link rel="icon" sizes="any" href="../favicon.ico">
+<link rel="manifest" href="../site.webmanifest">
+<!-- mathjax math --><script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js" integrity="sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI=" crossorigin="anonymous"></script><script>
+  window.MathJax = {
+    chtml: {
+      fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
+    }
+  };
+</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/PT_Sans-0.4.10/font.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><script src="../deps/MathJax-3.2.2/tex-chtml.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
 <meta property="og:title" content="Tutorial">
 </head>
 <body>
@@ -28,7 +33,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.5</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.5.6</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -63,7 +68,7 @@
                         <h4 data-toc-skip class="author">Shawn Dove</h4>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.5.5/vignettes/b3gbi.Rmd" class="external-link"><code>vignettes/b3gbi.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/vignettes/b3gbi.Rmd" class="external-link"><code>vignettes/b3gbi.Rmd</code></a></small>
       <div class="d-none name"><code>b3gbi.Rmd</code></div>
     </div>
 
@@ -184,7 +189,7 @@ with both the old and new cubes. The old ones come with an additional
 <span><span class="co">#&gt; Grid reference system: eqdgc </span></span>
 <span><span class="co">#&gt; Coordinate range:</span></span>
 <span><span class="co">#&gt;   xmin   xmax   ymin   ymax </span></span>
-<span><span class="co">#&gt;  3.375 15.625 54.375 58.125 </span></span>
+<span><span class="co">#&gt;  3.375 15.625 54.125 58.875 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Total number of observations: 207342 </span></span>
 <span><span class="co">#&gt; Number of species represented: 106 </span></span>
@@ -222,8 +227,8 @@ structure using str().</p>
 <span><span class="co">#&gt;  $ coord_range :List of 4</span></span>
 <span><span class="co">#&gt;   ..$ xmin: num 3.38</span></span>
 <span><span class="co">#&gt;   ..$ xmax: num 15.6</span></span>
-<span><span class="co">#&gt;   ..$ ymin: num 54.4</span></span>
-<span><span class="co">#&gt;   ..$ ymax: num 58.1</span></span>
+<span><span class="co">#&gt;   ..$ ymin: num 54.1</span></span>
+<span><span class="co">#&gt;   ..$ ymax: num 58.9</span></span>
 <span><span class="co">#&gt;  $ num_cells   : int 323</span></span>
 <span><span class="co">#&gt;  $ num_species : int 106</span></span>
 <span><span class="co">#&gt;  $ num_obs     : num 207342</span></span>
@@ -245,7 +250,7 @@ structure using str().</p>
 <span><span class="co">#&gt;   ..$ minTemporalUncertainty          : num [1:31632] 86400 86400 86400 86400 86400 ...</span></span>
 <span><span class="co">#&gt;   ..$ familyCount                     : num [1:31632] 4493 4493 16848 16848 16848 ...</span></span>
 <span><span class="co">#&gt;   ..$ xcoord                          : num [1:31632] 9.88 9.88 9.88 9.88 9.88 ...</span></span>
-<span><span class="co">#&gt;   ..$ ycoord                          : num [1:31632] 57.1 57.1 57.1 57.1 57.4 ...</span></span>
+<span><span class="co">#&gt;   ..$ ycoord                          : num [1:31632] 57.9 57.9 57.9 57.9 57.6 ...</span></span>
 <span><span class="co">#&gt;   ..$ resolution                      : chr [1:31632] "0.25degrees" "0.25degrees" "0.25degrees" "0.25degrees" ...</span></span>
 <span><span class="co">#&gt;  - attr(*, "class")= chr "processed_cube"</span></span></code></pre></div>
 <p>The cube itself is contained in a tibble (tidyverse version of data
@@ -655,7 +660,7 @@ so further customization is quite easy.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
 </div>
 
     </footer>
