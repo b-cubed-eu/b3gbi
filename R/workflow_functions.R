@@ -120,15 +120,25 @@ create_grid <- function(data,
   # Check that cell_size is appropriate
   if (grid_units == "km") {
     if (cell_size < 1000) {
-      stop("Cell size must be at least 1 km.")
+      message(
+        paste(
+          "Warning: High resolution grids can take a while.",
+          "Consider increasing cell size using the 'cell_size' parameter."
+        )
+      )
     }
     if (cell_size > 100000) {
       stop("Cell size must not be more than 1000 km.")
     }
   } else if (grid_units == "degrees") {
-    if (cell_size < 0.25) {
-      stop("Cell size must be at least 0.25 degrees.")
-    }
+     if (cell_size < 0.125) {
+       message(
+         paste(
+           "Warning: High resolution grids can take a while.",
+           "Consider increasing cell size using the 'cell_size' parameter."
+         )
+       )
+     }
     if (cell_size > 10) {
       stop("Cell size must not be more than 10 degrees.")
     }

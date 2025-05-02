@@ -89,12 +89,6 @@ test_that("create_grid handles errors", {
                            grid_units = "invalid",
                            make_valid = FALSE))
 
-  # Test with too small cell_size in km
-  expect_error(create_grid(germany_map,
-                           cell_size = 100,
-                           grid_units = "km",
-                           make_valid = FALSE))
-
   # Test with too large cell_size in km
   expect_error(create_grid(germany_map,
                            cell_size = 1000000,
@@ -104,13 +98,7 @@ test_that("create_grid handles errors", {
   # Convert to degrees
   germany_map_deg <- sf::st_transform(germany_map, crs = "EPSG:4326")
 
-  # Test with too small cell_size in degrees
-  expect_error(create_grid(germany_map,
-                           cell_size = 0.1,
-                           grid_units = "degrees",
-                           make_valid = FALSE))
-
-  # Test with too large cell_size in degrees
+   # Test with too large cell_size in degrees
   expect_error(create_grid(germany_map,
                            cell_size = 100,
                            grid_units = "degrees",

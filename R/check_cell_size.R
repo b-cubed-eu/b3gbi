@@ -45,8 +45,11 @@ check_cell_size <- function(cell_size, resolution, level) {
       } else {
         cont_res_size <- res_size
       }
-      cell_size <- ifelse(level == "world", 1,
-                          ifelse(level == "continent", cont_res_size, 0.25))
+      # if (res_size < 0.125) {
+      #   res_size <- 0.125
+      # }
+      cell_size <- ifelse((level == "world" || level == "continent"),
+                          cont_res_size, res_size)
     }
   }
   return(cell_size)
