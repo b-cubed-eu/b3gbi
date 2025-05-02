@@ -1,3 +1,8 @@
+# b3gbi 0.5.6 - Minor update:
+
+* Fixed a bug in that caused quarter-degree grid codes to be translated incorrectly.
+* Removed minimum size limitation for degree-based grids.
+
 # b3gbi 0.5.5 - Minor update:
 
 * Fixed bugs in ab_rarity_map() and area_rarity_map() that caused incorrect calculations.
