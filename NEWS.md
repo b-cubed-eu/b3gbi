@@ -1,7 +1,7 @@
 # b3gbi 0.5.6 - Minor update:
 
 * Fixed a bug in that caused quarter-degree grid codes to be translated incorrectly.
-* Removed minimum size limitation for degree-based grids.
+* Removed minimum size limitation for grid cells. Very high resolution grids now just give a message warning the user that it could take a while and suggesting a larger cell size.
 
 # b3gbi 0.5.5 - Minor update:
 
