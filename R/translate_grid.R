@@ -36,32 +36,6 @@ convert_eqdgc_latlong <- function(cellCode) {
   return(cbind(lat, long))
 }
 
-#' #' @noRd
-#' convert_eqdgc_latlong <- function(cellCode) {
-#'
-#'   long_base = as.numeric(stringr::str_extract(cellCode, "(?<=[EW])-?\\d+"))
-#'   lat_base = as.numeric(stringr::str_extract(cellCode, "(?<=[NS])-?\\d+"))
-#'   long_dir = ifelse(stringr::str_extract(cellCode, "[EW]")=="W", -1, 1)
-#'   lat_dir = ifelse(stringr::str_extract(cellCode, "[NS]")=="S", -1, 1)
-#'   position_codes = stringr::str_replace_all(cellCode, "(E\\d+)|(N\\d+)|(W-\\d+)|(S-\\d+)", "")
-#'   grid_level <- nchar(position_codes[1])
-#'   ff <- c((0.25), (0.25/2), (0.25/4), (0.25/8), (0.25/16), (0.25/32))
-#'   sign_long_m <- matrix("NA", nrow = length(long_base), ncol = grid_level)
-#'   sign_lat_m <- matrix("NA", nrow = length(long_base), ncol = grid_level)
-#'   for (i in 1:grid_level) {
-#'     sign_long_m[,i] <- c(-1, 1, -1, 1, substr(position_codes, i, i))[match(substr(position_codes, i, i), c("A", "B", "C", "D"))]
-#'     sign_lat_m[,i] <- c(1, 1, -1, -1, substr(position_codes, i, i))[match(substr(position_codes, i, i), c("A", "B", "C", "D"))]
-#'   }
-#'   sign_long <- apply(sign_long_m, 2, as.numeric)
-#'   sign_lat <- apply(sign_lat_m, 2, as.numeric)
-#'   ff_cut <- ff[1:grid_level]
-#'   long_ext <- t(t(sign_long)*ff_cut)
-#'   lat_ext <- t(t(sign_lat)*ff_cut)
-#'   long <- rowSums(cbind(long_ext*long_dir, long_base+0.5))
-#'   lat <- rowSums(cbind(lat_ext*lat_dir, lat_base+0.5))
-#'   return(cbind(lat, long))
-#'
-#' }
 
 #' @noRd
 get_crs_for_mgrs <- function(cellcodes) {
@@ -89,6 +63,79 @@ get_crs_for_mgrs <- function(cellcodes) {
   } else {
     epsg_code <- paste0("EPSG: 327", dominant_utm)
   }
+}
 
 
+
+#' @noRd
+#' @title Guess EPSG Code for MGRS Grid
+#'
+#' @description This function attempts to guess the appropriate EPSG code for a
+#'   biodiversity cube known to use the MGRS grid system.
+#'
+#' @param data A data cube object (class 'processed_cube' or similar). It is
+#'   expected to have a `$grid_type` element.
+#' @param df A data frame containing the data, expected to have a `cellCode`
+#'   column for MGRS references and potentially `xcoord` and `ycoord`.
+#' @param coord_range A numeric vector of length 4 representing the coordinate
+#'   range (xmin, ymin, xmax, ymax) in longitude and latitude, if available
+#'   in `data$coord_range`.
+#'
+#' @return A character string representing the likely EPSG code for the MGRS grid.
+#'   Returns NULL if the grid type is not 'mgrs' or if insufficient information
+#'   is available.
+#'
+#' @examples
+#' # Assuming you have a 'data' object and a 'df' data frame
+#' # guessed_crs <- guess_mgrs_epsg(data, df, data$coord_range)
+#' # print(guessed_crs)
+#'
+guess_mgrs_epsg <- function(data, df, coord_range = NULL) {
+  if (is.null(data$grid_type) || data$grid_type != "mgrs") {
+    return(NULL)
+  }
+
+  # 1. Try to infer from a sample MGRS cellCode
+  if (!is.null(df$cellCode) && nrow(df) > 0) {
+    first_mgrs <- as.character(df$cellCode[1])
+    if (nchar(first_mgrs) >= 5) {
+      utm_zone_str <- substr(first_mgrs, 1, 2)
+      lat_band_char <- toupper(substr(first_mgrs, 3, 3))
+
+      # Check if the first two characters are a valid UTM zone
+      utm_zone <- as.numeric(utm_zone_str)
+      if (!is.na(utm_zone) && utm_zone >= 1 && utm_zone <= 60) {
+        hemisphere <- ifelse(lat_band_char %in% LETTERS[1:13], "South", "North")
+        if (hemisphere == "North") {
+          return(paste0("EPSG:326", sprintf("%02d", utm_zone)))
+        } else if (hemisphere == "South") {
+          return(paste0("EPSG:327", sprintf("%02d", utm_zone)))
+        }
+      }
+    }
+  }
+
+  # 2. If no MGRS code is available or parsing failed, try using coord_range
+  if (!is.null(coord_range) && length(coord_range) == 4) {
+    lon_center <- mean(c(coord_range[1], coord_range[3]))
+    lat_center <- mean(c(coord_range[2], coord_range[4]))
+
+    utm_zone <- floor((lon_center + 180) / 6) + 1
+    if (lat_center >= 0) {
+      return(paste0("EPSG:326", sprintf("%02d", utm_zone)))
+    } else {
+      return(paste0("EPSG:327", sprintf("%02d", utm_zone)))
+    }
+  }
+
+  # 3. If no coord_range, and no usable MGRS code, return a generic default
+  # (WGS 84 UTM Zone 1 North) as a fallback - user MUST verify
+  warning(
+    paste(
+      "Could not automatically determine MGRS zone. Defaulting to EPSG:32601 ",
+      "(WGS 84 / UTM zone 1N). Please verify this is correct and override if ",
+      "necessary."
+    )
+  )
+  return("EPSG:32601")
 }
