@@ -30,7 +30,8 @@ get_NE_data <- function(region,
                         output_crs,
                         level = "cube",
                         ne_type = "countries",
-                        ne_scale = "medium") {
+                        ne_scale = "medium",
+                        cube_cell_codes = NULL) {
 
   if (ne_scale == "large" & ne_type == "tiny_countries") {
     stop("tiny_countries are only available for medium (50 km) or small (110 km)
@@ -75,10 +76,37 @@ get_NE_data <- function(region,
          sovereignty, world, or cube.")
   }
 
-  # transform map crs
-  map_data <- map_data %>%
-    sf::st_as_sf() %>%
-    sf::st_transform(crs = output_crs)
+  if (level == "cube" && !is.null(cube_cell_codes)) {
+    # Convert MGRS to Lat/Long
+    latlong_coords <- mgrs::mgrs_to_latlng(cube_cell_codes)
+
+    # Find bounding box
+    min_lon <- min(latlong_coords$lng) # Add a small buffer
+    max_lon <- max(latlong_coords$lng)
+    min_lat <- min(latlong_coords$lat)
+    max_lat <- max(latlong_coords$lat)
+
+    map_data <- sf::st_make_valid(map_data)
+
+    # Crop the world map
+    map_data_cropped <- sf::st_crop(map_data,
+                                    xmin = min_lon,
+                                    xmax = max_lon,
+                                    ymin = min_lat,
+                                    ymax = max_lat)
+
+    # Project the cropped map
+    map_data <- sf::st_transform(map_data_cropped,
+                                 crs = output_crs)
+
+  } else {
+
+    # transform map crs
+    map_data <- map_data %>%
+      sf::st_as_sf() %>%
+      sf::st_transform(crs = output_crs)
+
+  }
 
   return(map_data)
 
@@ -128,7 +156,7 @@ create_grid <- function(data,
       )
     }
     if (cell_size > 100000) {
-      stop("Cell size must not be more than 1000 km.")
+      stop("Cell size must not be more than 100 km.")
     }
   } else if (grid_units == "degrees") {
      if (cell_size < 0.125) {
@@ -438,7 +466,8 @@ compute_indicator_workflow <- function(data,
 
     } else if (data$grid_type == "mgrs") {
 
-      cube_crs <- "EPSG:4326"
+      #cube_crs <- "EPSG:4326"
+      cube_crs <- guess_mgrs_epsg(data, df, data$coord_range)
 
     } else {
 
@@ -459,7 +488,8 @@ compute_indicator_workflow <- function(data,
       } else if (data$grid_type == "mgrs") {
 
         #output_crs <- get_crs_for_mgrs(df$cellCode)
-        output_crs <- "EPSG:4326"
+        output_crs <- guess_mgrs_epsg(data, df, data$coord_range)
+        #output_crs <- "EPSG:4326"
 
       } else {
 
@@ -557,12 +587,26 @@ compute_indicator_workflow <- function(data,
                                  cube_crs,
                                  output_crs)
 
-      # Download Natural Earth data
-      map_data <- get_NE_data(region,
-                              output_crs,
-                              level,
-                              ne_type,
-                              ne_scale)
+      if (data$grid_type == "mgrs") {
+
+        # Download Natural Earth data
+        map_data <- get_NE_data(region,
+                                output_crs,
+                                level,
+                                ne_type,
+                                ne_scale,
+                                cube_cell_codes = df$cellCode)
+
+      } else {
+
+        # Download Natural Earth data
+        map_data <- get_NE_data(region,
+                                output_crs,
+                                level,
+                                ne_type,
+                                ne_scale)
+
+      }
 
       map_data <- sf::st_make_valid(map_data)
 
