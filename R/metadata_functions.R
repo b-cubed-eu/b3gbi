@@ -63,7 +63,8 @@ get_legend_title <- function(x) {
 #'      for each year (`TRUE` if present, `FALSE` if absent).
 #'
 #' @examples
-#' total_occ_mammals_denmark <- total_occ_map(example_cube_1, level = "country", region = "Denmark")
+#' total_occ_mammals_denmark <- total_occ_map(example_cube_1, level = "country",
+#'                                            region = "Denmark")
 #' get_observed_years(total_occ_mammals_denmark)
 #' @export
 get_observed_years <- function(x) {
@@ -74,6 +75,8 @@ get_observed_years <- function(x) {
   } else if (inherits(x, "indicator_ts") | inherits(x, "processed_cube")) {
     obs <- unique(x$data$year)
     years <- min(obs):max(obs)
+  } else {
+    stop("Object class not recognized.")
   }
 
   observed <- ifelse(years %in% obs, TRUE, FALSE)
@@ -98,18 +101,24 @@ get_observed_years <- function(x) {
 #' @examples
 #' list_species(example_cube_1)
 #' @export
-list_species <- function(object) {
+list_species <- function(x) {
 
   taxonKey <- scientificName <- NULL
 
-  if(length(object$species_names) > 0) {
+  if(!(inherits(x, "processed_cube") ||
+       inherits(x, "indicator_map") ||
+       inherits(x, "indicator_ts"))) {
+    stop("Object class not recognized.")
+  }
 
-    return(object$species_names)
+  if(length(x$species_names) > 0) {
+
+    return(x$species_names)
 
   } else {
 
     species_df <-
-      object$data %>%
+      x$data %>%
       dplyr::select(taxonKey, scientificName) %>%
       dplyr::distinct(taxonKey, scientificName)
 
