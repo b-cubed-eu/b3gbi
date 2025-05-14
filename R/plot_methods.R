@@ -874,43 +874,121 @@ plot_map <- function(x,
   # If surround flag set, add surrounding countries to map
   if (surround == TRUE) {
 
-    map_surround <- sf::st_transform(map_surround, crs = x$projection)
-    map_surround <- sf::st_make_valid(map_surround)
+    if (check_crs_units(x$projection) == "km" &&
+        sf::st_crs(x$projection)$epsg != 3035) {
 
-    # If crop to grid is set to FALSE
-    if (!crop_to_grid) {
-      # Define percentage for expansion
-      expand_percent <- 0.1  # 10% expansion
+      # Get bounding box of the indicator map data in UTM
+      utm_bbox <- sf::st_bbox(x$data)
+      utm_crs <- sf::st_crs(x$data)
 
-      # Calculate the amount to expand
-      x_range <- map_lims["xmax"] - map_lims["xmin"]
-      y_range <- map_lims["ymax"] - map_lims["ymin"]
+      # Define a lat/long CRS (WGS84)
+      latlong_crs <- sf::st_crs(4326)
 
-      # Compute new expanded limits
-      expanded_lims <- sf::st_bbox(c(
-        map_lims["xmin"] - (expand_percent * x_range),
-        map_lims["ymin"] - (expand_percent * y_range),
-        map_lims["xmax"] + (expand_percent * x_range),
-        map_lims["ymax"] + (expand_percent * y_range)
-      ))
+      # Create a bounding box polygon in UTM
+      bbox_polygon_utm <- sf::st_as_sfc(utm_bbox, crs = utm_crs)
 
-      # Assign CRS
-      attributes(expanded_lims)$crs <- sf::st_crs(map_surround)
+      # Transform the bounding box to lat/long
+      bbox_latlong <- sf::st_transform(bbox_polygon_utm, crs = latlong_crs)
+      latlong_extent <- sf::st_bbox(bbox_latlong)
 
-      # Get bounding box with expanded limits
-      bbox <- sf::st_as_sfc(sf::st_bbox(expanded_lims), crs = x$projection)
+      # Conditionally expand the lat/long bounding box
+      if (!crop_to_grid) {
+        expand_percent <- 0.1
+        lon_range <- latlong_extent["xmax"] - latlong_extent["xmin"]
+        lat_range <- latlong_extent["ymax"] - latlong_extent["ymin"]
+        expanded_latlong_bbox <- sf::st_bbox(c(
+          latlong_extent["xmin"] - (expand_percent * lon_range),
+          latlong_extent["ymin"] - (expand_percent * lat_range),
+          latlong_extent["xmax"] + (expand_percent * lon_range),
+          latlong_extent["ymax"] + (expand_percent * lat_range)
+        ), crs = latlong_crs)
+
+        # Crop the world map in lat/long to the expanded extent
+        surrounding_countries_latlong <- rnaturalearth::ne_countries(scale = "medium",
+                                                                     returnclass = "sf") %>%
+          sf::st_as_sf() %>%
+          sf::st_make_valid() %>%
+          sf::st_crop(expanded_latlong_bbox)
+      } else {
+        # Crop to the original extent if not expanding
+        surrounding_countries_latlong <- rnaturalearth::ne_countries(scale = "medium",
+                                                                     returnclass = "sf") %>%
+          sf::st_as_sf() %>%
+          sf::st_make_valid() %>%
+          sf::st_crop(latlong_extent)
+      }
+
+      # # Expand the lat/long bounding box
+      # expand_percent <- 0.1
+      # lon_range <- latlong_extent["xmax"] - latlong_extent["xmin"]
+      # lat_range <- latlong_extent["ymax"] - latlong_extent["ymin"]
+      # expanded_latlong_bbox <- sf::st_bbox(c(
+      #   latlong_extent["xmin"] - (expand_percent * lon_range),
+      #   latlong_extent["ymin"] - (expand_percent * lat_range),
+      #   latlong_extent["xmax"] + (expand_percent * lon_range),
+      #   latlong_extent["ymax"] + (expand_percent * lat_range)
+      # ), crs = latlong_crs)
+      #
+      # # Get world data in lat/long
+      # world_map_latlong <- rnaturalearth::ne_countries(scale = "medium",
+      #                                                  returnclass = "sf") %>%
+      #   sf::st_as_sf()
+      #
+      # # Crop the world map in lat/long to the expanded extent
+      # surrounding_countries_latlong <- world_map_latlong %>%
+      #   sf::st_make_valid() %>%
+      #   sf::st_crop(expanded_latlong_bbox)
+
+      # Transform the cropped surrounding countries to the UTM CRS
+      surrounding_countries_utm <-
+        sf::st_transform(surrounding_countries_latlong, crs = utm_crs)
+
+      map_surround <- surrounding_countries_utm
 
     } else {
 
-      # If crop to grid is TRUE get bounding box with map limits
-      bbox <- sf::st_as_sfc(sf::st_bbox(map_lims))
-      sf::st_crs(bbox) <- sf::st_crs(x$projection)
+      map_surround <- sf::st_transform(map_surround, crs = x$projection)
+      map_surround <- sf::st_make_valid(map_surround)
+
+      # If crop to grid is set to FALSE
+      if (!crop_to_grid) {
+        # Define percentage for expansion
+        expand_percent <- 0.1  # 10% expansion
+
+        # Calculate the amount to expand
+        x_range <- map_lims["xmax"] - map_lims["xmin"]
+        y_range <- map_lims["ymax"] - map_lims["ymin"]
+
+        # Compute new expanded limits
+        expanded_lims <- sf::st_as_sfc(sf::st_bbox(c(
+          map_lims["xmin"] - (expand_percent * x_range),
+          map_lims["ymin"] - (expand_percent * y_range),
+          map_lims["xmax"] + (expand_percent * x_range),
+          map_lims["ymax"] + (expand_percent * y_range)
+        )))
+
+        # Assign CRS
+        attributes(expanded_lims)$crs <- sf::st_crs(map_surround)
+
+        # Get bounding box with expanded limits
+        bbox <- sf::st_as_sfc(sf::st_bbox(expanded_lims),
+                              crs = x$projection)
+
+      } else {
+
+        # If crop to grid is TRUE get bounding box with map limits
+        bbox <- sf::st_as_sfc(sf::st_bbox(map_lims),
+                              crs = x$projection)
+
+        attributes(bbox)$crs <- sf::st_crs(map_surround)
+
+      }
+
+      sf::st_agr(map_surround) = "constant"
+
+      map_surround <- sf::st_intersection(map_surround, bbox)
 
     }
-
-    sf::st_agr(map_surround) = "constant"
-
-    map_surround <- sf::st_intersection(map_surround, bbox)
 
     # Plot map_surround as plot as layer
     diversity_plot$layers <- c(
@@ -921,6 +999,7 @@ plot_map <- function(x,
       )[[1]],
       diversity_plot$layers
     )
+
   }
 
   # Check for custom x and y limits and adjust map if found

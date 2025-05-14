@@ -519,12 +519,14 @@ process_cube <- function(cube_name,
 
     }
 
-    #utm <- mgrs::mgrs_to_utm(occurrence_data$cellCode)
-    #occurrence_data$xcoord <- utm$easting
-    #occurrence_data$ycoord <- utm$northing
-    latlong <- mgrs::mgrs_to_latlng(occurrence_data$cellCode)
-    occurrence_data$xcoord <- latlong$lng
-    occurrence_data$ycoord <- latlong$lat
+    utm <- mgrs::mgrs_to_utm(occurrence_data$cellCode)
+    occurrence_data$xcoord <- utm$easting
+    occurrence_data$ycoord <- utm$northing
+    occurrence_data$utmzone <- utm$zone
+    occurrence_data$hemisphere <- utm$hemisphere
+    #latlong <- mgrs::mgrs_to_latlng(occurrence_data$cellCode)
+    #occurrence_data$xcoord <- latlong$lng
+    #occurrence_data$ycoord <- latlong$lat
 
     # this will not work properly if there is a - symbol in the code
     occurrence_data$resolution <- paste0(10^((9 - nchar(occurrence_data$cellCode[1])) / 2), "km")
