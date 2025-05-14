@@ -522,6 +522,8 @@ process_cube <- function(cube_name,
     utm <- mgrs::mgrs_to_utm(occurrence_data$cellCode)
     occurrence_data$xcoord <- utm$easting
     occurrence_data$ycoord <- utm$northing
+    occurrence_data$utmzone <- utm$zone
+    occurrence_data$hemisphere <- utm$hemisphere
     #latlong <- mgrs::mgrs_to_latlng(occurrence_data$cellCode)
     #occurrence_data$xcoord <- latlong$lng
     #occurrence_data$ycoord <- latlong$lat
