@@ -1,3 +1,7 @@
+# b3gbi 0.6.0 - Major update:
+
+* Fixed the way that MGRS grid codes are processed. Previously they were converted to lat/long and a global CRS was used. The package instead now converts to UTM codes and chooses the most appropriate local CRS.
+
 # b3gbi 0.5.6 - Minor update:
 
 * Fixed a bug in that caused quarter-degree grid codes to be translated incorrectly.
