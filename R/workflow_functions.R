@@ -80,11 +80,15 @@ get_NE_data <- function(region,
     # Convert MGRS to Lat/Long
     latlong_coords <- mgrs::mgrs_to_latlng(cube_cell_codes)
 
+    expand_percent <- 0.1 # 10% buffer
+    lng_range <- (max(latlong_coords$lng) - min(latlong_coords$lng))
+    lat_range <- (max(latlong_coords$lat) - min(latlong_coords$lat))
+
     # Find bounding box
-    min_lon <- min(latlong_coords$lng) # Add a small buffer
-    max_lon <- max(latlong_coords$lng)
-    min_lat <- min(latlong_coords$lat)
-    max_lat <- max(latlong_coords$lat)
+    min_lon <- min(latlong_coords$lng) - (expand_percent * lng_range)
+    max_lon <- max(latlong_coords$lng) + (expand_percent * lng_range)
+    min_lat <- min(latlong_coords$lat) - (expand_percent * lat_range)
+    max_lat <- max(latlong_coords$lat) + (expand_percent * lat_range)
 
     map_data <- sf::st_make_valid(map_data)
 
@@ -143,7 +147,8 @@ get_NE_data <- function(region,
 create_grid <- function(data,
                         cell_size,
                         grid_units,
-                        make_valid) {
+                        utm_crs = NULL,
+                        make_valid = FALSE) {
 
   # Check that cell_size is appropriate
   if (grid_units == "km") {
@@ -174,6 +179,63 @@ create_grid <- function(data,
     stop("Grid units not recognized. Must be km or degrees.")
   }
 
+  # Handle UTM zones (if present)
+  if ("utmzone" %in% names(data)) {
+    # Get unique UTM zones
+    unique_utm_zones <- unique(data$utmzone)
+    grid_list <- list() # Initialize an empty list to store the grids
+
+    # Iterate over each UTM zone
+    # for (i in seq_along(unique_utm_zones)) {
+    #   zone <- unique_utm_zones[i]
+    #   zone_data <- data %>%
+    #     dplyr::filter(utmzone == zone)  # Filter data for the current zone
+
+     # zone_data <- sf::st_transform(zone_data, crs = utm_crs)
+      zone_data <- sf::st_transform(data, crs = utm_crs)
+      offset_x <- sf::st_bbox(zone_data)$xmin #- (0.5 * cell_size)
+      offset_y <- sf::st_bbox(zone_data)$ymin #- (0.5 * cell_size)
+
+        zone_grid <- sf::st_make_grid(
+          zone_data,
+          cellsize = c(cell_size, cell_size),
+          offset = c(offset_x, offset_y),
+          crs = sf::st_crs(zone_data)
+        )
+
+      zone_grid_sf <- sf::st_sf(geometry = zone_grid) %>%
+        dplyr::mutate(cellid = dplyr::row_number())
+
+        zone_grid_sf <- sf::st_make_valid(zone_grid_sf)
+
+        zone_grid_sf$area <- sf::st_area(zone_grid_sf)
+        if (grid_units == "km") {
+          zone_grid_sf$area <- units::set_units(zone_grid_sf$area, "km^2")
+        }
+        else{
+          zone_grid_sf$area <- units::set_units(zone_grid_sf$area, "m^2")
+        }
+   #   grid_list[[i]] <- zone_grid_sf # Store the grid in the list
+    # }
+    # Combine grids, transforming to a common CRS (e.g., first UTM zone)
+    # if (length(grid_list) > 0) {
+    #   combined_grid <- grid_list[[1]]  # Start with the first grid
+    #   if (length(grid_list) > 1) {
+    #     for (i in 2:length(grid_list)) {
+    #       # Transform each subsequent grid to the CRS of the first grid
+    #      # grid_list[[i]] <- sf::st_transform(grid_list[[i]], crs = sf::st_crs(grid_list[[1]]))
+    #       combined_grid <- rbind(combined_grid, grid_list[[i]])
+    #     }
+    #   }
+    #   grid <- combined_grid
+    # }
+    # else{
+    #   grid <- st_sf(geometry = st_sfc()) # Return empty if no grids.
+    # }
+        grid <- zone_grid_sf
+
+  } else {
+
   # Calculate the offset for the grid
   offset_x <- sf::st_bbox(data)$xmin - (0.5 * cell_size)
   offset_y <- sf::st_bbox(data)$ymin - (0.5 * cell_size)
@@ -202,6 +264,8 @@ create_grid <- function(data,
 
   }
 
+  }
+
   return(grid)
 
 }
@@ -220,24 +284,25 @@ create_grid <- function(data,
 #'
 #' @noRd
 prepare_spatial_data <- function(data,
+                                 df,
                                  grid,
                                  cube_crs,
                                  output_crs) {
 
   cellid <- NULL
 
-  # Convert the x and y columns to the correct format for plotting with sf
-  occ_sf <- sf::st_as_sf(data,
-                         coords = c("xcoord", "ycoord"),
-                         crs = cube_crs) %>%
-    sf::st_transform(crs = output_crs)
+  # # Convert the x and y columns to the correct format for plotting with sf
+  # occ_sf <- sf::st_as_sf(data,
+  #                        coords = c("xcoord", "ycoord"),
+  #                        crs = cube_crs) %>%
+  #   sf::st_transform(crs = output_crs)
 
   # Set attributes as spatially constant to avoid warnings
   sf::st_agr(grid) <- "constant"
-  sf::st_agr(occ_sf) <- "constant"
+  sf::st_agr(df) <- "constant"
 
   # Calculate intersection between occurrences and grid cells
-   occ_grid_int <- occ_sf[sf::st_intersects(occ_sf, grid) %>%
+   occ_grid_int <- df[sf::st_intersects(df, grid) %>%
                             lengths > 0,] %>%
      sf::st_join(grid)
 
@@ -538,11 +603,19 @@ compute_indicator_workflow <- function(data,
 
     if (dim_type == "map" | (!is.null(level) & !is.null(region))) {
 
+      if (data$grid_type == "mgrs") {
+
+        df_sf_output <- create_sf_from_utm(df, output_crs)
+
+      } else {
+
       df_sf_input <- sf::st_as_sf(df,
                              coords = c("xcoord", "ycoord"),
                              crs = cube_crs)
 
       df_sf_output <- sf::st_transform(df_sf_input, crs = output_crs)
+
+      }
 
 
       if (crs_unit_convert == TRUE &&
@@ -577,12 +650,14 @@ compute_indicator_workflow <- function(data,
         grid <- create_grid(df_sf_output,
                             cell_size,
                             output_units,
+                            output_crs,
                             make_valid)
 
       }
 
       # Format spatial data and merge with grid
       df <- prepare_spatial_data(df,
+                                 df_sf_output,
                                  grid,
                                  cube_crs,
                                  output_crs)
@@ -725,9 +800,18 @@ compute_indicator_workflow <- function(data,
                                 ne_type,
                                 ne_scale)
 
+        if (data$grid_type == "mgrs") {
+
+          df_sf_output <- create_sf_from_utm(df, output_crs)
+
+        } else {
+
         df_sf <- sf::st_as_sf(df,
                               coords = c("xcoord", "ycoord"),
                               crs = cube_crs)
+        df_sf <- sf::st_transform(df_sf, crs = output_crs)
+
+        }
 
         if (sf::st_crs(df_sf) != sf::st_crs(map_data)) {
           map_data <- sf::st_transform(map_data,
@@ -791,9 +875,9 @@ compute_indicator_workflow <- function(data,
       if (!is.null(shapefile_path)) {
         shapefile <- sf::read_sf(shapefile_path)
 
-        df_sf <- sf::st_as_sf(df,
-                              coords = c("xcoord", "ycoord"),
-                              crs = cube_crs)
+        # df_sf <- sf::st_as_sf(df,
+        #                       coords = c("xcoord", "ycoord"),
+        #                       crs = cube_crs)
 
         # Set attributes as spatially constant to avoid warnings when clipping
         sf::st_agr(df_sf) <- "constant"
