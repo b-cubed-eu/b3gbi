@@ -54,7 +54,7 @@ b3gbi empowers biodiversity analysis with:
 Install **b3gbi** in R:
 
 ``` r
-install.packages("b3gbi", repos = "https://b-cubed-eu.r-universe.dev")
+install.packages("b3gbi", repos = c("https://b-cubed-eu.r-universe.dev", "https://cloud.r-project.org"))
 ```
 
 You can install the development version from
