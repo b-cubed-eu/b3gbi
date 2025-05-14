@@ -278,6 +278,7 @@ create_grid <- function(data,
 #'
 #' @param data An object provided by compute_indicate_workflow containing
 #' occurrence data from a processed data cube.
+#' @param df An sf object containing the occurrence data.
 #' @param grid An sf object containing the grid polygons.
 #' @param cube_crs The CRS of the data cube.
 #' @param output_crs The CRS you want for your calculated indicator.
