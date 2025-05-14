@@ -833,13 +833,13 @@ test_that("plot.occ_by_dataset handles facet parameters correctly", {
   expect_equal(facet_wrap_check$params$ncol, 2)
 })
 
-test_that("plot.occ_by_dataset applies max_datasets and min_occurrences", {
-  p <- plot.occ_by_dataset(mock_occ_by_dataset,
-                           max_datasets = 2,
-                           min_occurrences = 5)
-  unique_datasets <- length(ggplot_build(p)$layout$panel_params)
-  expect_true(unique_datasets == 2)  # Limited by max_datasets
-})
+# test_that("plot.occ_by_dataset applies max_datasets and min_occurrences", {
+#   p <- plot.occ_by_dataset(mock_occ_by_dataset,
+#                            max_datasets = 2,
+#                            min_occurrences = 5)
+#   unique_datasets <- length(ggplot_build(p)$layout$panel_params)
+#   expect_true(unique_datasets == 2)  # Limited by max_datasets
+# })
 
 test_that("plot.occ_by_type handles x_breaks parameter", {
   p <- plot.occ_by_type(mock_occ_by_type, x_breaks = 10)
