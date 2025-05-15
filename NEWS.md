@@ -1,3 +1,7 @@
+# b3gbi 0.6.2 - Minor update:
+
+* Fixed a bug related to MGRS grids that caused southern hemisphere MGRS codes to be associated northern hemisphere EPSG codes.
+
 # b3gbi 0.6.1 - Minor update:
 
 * Fixed a bug that caused an error when calculating time series from MGRS cube.

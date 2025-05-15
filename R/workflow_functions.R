@@ -181,9 +181,6 @@ create_grid <- function(data,
 
   # Handle UTM zones (if present)
   if ("utmzone" %in% names(data)) {
-    # Get unique UTM zones
-    unique_utm_zones <- unique(data$utmzone)
-    grid_list <- list() # Initialize an empty list to store the grids
 
     # zone_data <- sf::st_transform(zone_data, crs = utm_crs)
     zone_data <- sf::st_transform(data, crs = utm_crs)
