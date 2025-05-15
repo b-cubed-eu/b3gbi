@@ -27,7 +27,9 @@ create_sf_from_utm <- function(df, output_crs = NULL) {
   sf_list <- lapply(df_list, function(zone_df) {
     zone <- unique(zone_df$utmzone)
     #  northern hemisphere assumption.
-    sf_zone <- sf::st_as_sf(zone_df, coords = c("xcoord", "ycoord"), crs = paste0("EPSG:326", zone))
+    sf_zone <- sf::st_as_sf(zone_df, coords = c("xcoord", "ycoord"),
+                            crs = paste0("EPSG:326", zone))
+    sf::st_agr(sf_zone) <- "constant" # Set attribute to constant
     return(sf_zone)
   })
 
@@ -39,15 +41,18 @@ create_sf_from_utm <- function(df, output_crs = NULL) {
   # 5. Transform to a common CRS and combine
   if (length(sf_list) > 0){
     combined_sf <- sf::st_transform(sf_list[[1]], crs = output_crs)
+    sf::st_agr(combined_sf) <- "constant" # Set attribute to constant
     if (length(sf_list) > 1){
       for (i in 2:length(sf_list)){
         sf_list[[i]] <- sf::st_transform(sf_list[[i]], crs = output_crs)
+        sf::st_agr(sf_list[[i]]) <- "constant" # Set attribute to constant
         combined_sf <- rbind(combined_sf, sf_list[[i]])
       }
     }
   }
   else{
     combined_sf <- sf::st_sf(geometry = sf::st_sfc())
+    sf::st_agr(combined_sf) <- "constant" # Set attribute to constant
   }
   return(combined_sf)
 }
