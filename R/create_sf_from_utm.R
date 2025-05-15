@@ -26,9 +26,14 @@ create_sf_from_utm <- function(df, output_crs = NULL) {
   # 3. Create sf objects for each zone
   sf_list <- lapply(df_list, function(zone_df) {
     zone <- unique(zone_df$utmzone)
-    #  northern hemisphere assumption.
-    sf_zone <- sf::st_as_sf(zone_df, coords = c("xcoord", "ycoord"),
-                            crs = paste0("EPSG:326", zone))
+    if (any("S" %in% zone_df$hemisphere)) {
+      sf_zone <- sf::st_as_sf(zone_df, coords = c("xcoord", "ycoord"),
+                              crs = paste0("EPSG:327", zone))
+    } else {
+      sf_zone <- sf::st_as_sf(zone_df, coords = c("xcoord", "ycoord"),
+                              crs = paste0("EPSG:326", zone))
+    }
+
     sf::st_agr(sf_zone) <- "constant" # Set attribute to constant
     return(sf_zone)
   })
