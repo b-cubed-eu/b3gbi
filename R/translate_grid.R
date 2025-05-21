@@ -3,7 +3,7 @@ convert_eqdgc_latlong <- function(cellCode) {
   # Extract base longitude and direction
   long_match <- stringr::str_match(cellCode, "([EW])(-?\\d+)")
   long_dir_char <- long_match[, 2]
-  long_base <- as.numeric(long_match[, 3])
+  long_base <- abs(as.numeric(long_match[, 3]))
   long_dir <- ifelse(long_dir_char == "W", -1, 1)
 
   # Extract base latitude and direction
@@ -16,22 +16,35 @@ convert_eqdgc_latlong <- function(cellCode) {
   position_codes <- stringr::str_replace_all(cellCode, "([EW]-?\\d+)|([NS]-?\\d+)", "")
 
   grid_level <- nchar(position_codes[1])
-  ff <- c(0.25, 0.25/2, 0.25/4, 0.25/8, 0.25/16, 0.25/32)
+  ff <- c(0.5, 0.25, 0.25/2, 0.25/4, 0.25/8, 0.25/16, 0.25/32)
   ff_cut <- ff[1:grid_level]
+  ff_final <- ff[grid_level + 1]
 
   long_ext <- numeric(length(long_base))
   lat_ext <- numeric(length(lat_base))
 
+  lat_add <- vector(length = length(cellCode))
+  long_add <- vector(length = length(cellCode))
   for (i in 1:grid_level) {
     sub_codes <- substr(position_codes, i, i)
-    long_signs <- ifelse(sub_codes %in% c("B", "D"), 1, -1)
-    lat_signs <- ifelse(sub_codes %in% c("A", "B"), -1, 1)
-    long_ext <- long_ext + long_signs * ff_cut[i]
-    lat_ext <- lat_ext + lat_signs * ff_cut[i]
+    for (j in 1:length(cellCode)) {
+      lat_add[j] <- ifelse(lat_dir_char[j] == "S",
+                        ifelse(sub_codes[j] %in% c("C", "D"), ff_cut[i], 0),
+                        ifelse(sub_codes[j] %in% c("A", "B"), ff_cut[i], 0)
+      )
+      long_add[j] <- ifelse(long_dir_char[j] == "E",
+                            ifelse(sub_codes[j] %in% c("B", "D"), ff_cut[i], 0),
+                            ifelse(sub_codes[j] %in% c("A", "C"), ff_cut[i], 0)
+      )
+    }
+    long_ext <- long_ext + long_add
+    lat_ext <- lat_ext + lat_add
   }
 
-  long <- long_dir * (long_base + 0.5 + long_ext)
-  lat <- lat_dir * (lat_base + 0.5 + lat_ext)
+
+
+  long <- long_dir * (long_base + long_ext + ff_final)
+  lat <- lat_dir * (lat_base + lat_ext + ff_final)
 
   return(cbind(lat, long))
 }
@@ -68,7 +81,6 @@ get_crs_for_mgrs <- function(cellcodes) {
 
 
 #' @noRd
-#' @title Guess EPSG Code for MGRS Grid
 #'
 #' @description This function attempts to guess the appropriate EPSG code for a
 #'   biodiversity cube known to use the MGRS grid system.
