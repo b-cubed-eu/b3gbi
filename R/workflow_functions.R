@@ -181,64 +181,88 @@ create_grid <- function(data,
 
   # Handle UTM zones (if present)
   if ("utmzone" %in% names(data)) {
+    # Get unique UTM zones
+    unique_utm_zones <- unique(data$utmzone)
+    grid_list <- list() # Initialize an empty list to store the grids
 
-    # zone_data <- sf::st_transform(zone_data, crs = utm_crs)
-    zone_data <- sf::st_transform(data, crs = utm_crs)
-    offset_x <- sf::st_bbox(zone_data)$xmin #- (0.5 * cell_size)
-    offset_y <- sf::st_bbox(zone_data)$ymin #- (0.5 * cell_size)
+    # Iterate over each UTM zone
+    # for (i in seq_along(unique_utm_zones)) {
+    #   zone <- unique_utm_zones[i]
+    #   zone_data <- data %>%
+    #     dplyr::filter(utmzone == zone)  # Filter data for the current zone
 
-    zone_grid <- sf::st_make_grid(
-      zone_data,
-      cellsize = c(cell_size, cell_size),
-      offset = c(offset_x, offset_y),
-      crs = sf::st_crs(zone_data)
-    )
+     # zone_data <- sf::st_transform(zone_data, crs = utm_crs)
+      zone_data <- sf::st_transform(data, crs = utm_crs)
+      offset_x <- sf::st_bbox(zone_data)$xmin #- (0.5 * cell_size)
+      offset_y <- sf::st_bbox(zone_data)$ymin #- (0.5 * cell_size)
 
-    zone_grid_sf <- sf::st_sf(geometry = zone_grid) %>%
-      dplyr::mutate(cellid = dplyr::row_number())
+        zone_grid <- sf::st_make_grid(
+          zone_data,
+          cellsize = c(cell_size, cell_size),
+          offset = c(offset_x, offset_y),
+          crs = sf::st_crs(zone_data)
+        )
 
-    zone_grid_sf <- sf::st_make_valid(zone_grid_sf)
+      zone_grid_sf <- sf::st_sf(geometry = zone_grid) %>%
+        dplyr::mutate(cellid = dplyr::row_number())
 
-    zone_grid_sf$area <- sf::st_area(zone_grid_sf)
-    if (grid_units == "km") {
-      zone_grid_sf$area <- units::set_units(zone_grid_sf$area, "km^2")
-    }
-    else{
-      zone_grid_sf$area <- units::set_units(zone_grid_sf$area, "m^2")
-    }
+        zone_grid_sf <- sf::st_make_valid(zone_grid_sf)
 
-    grid <- zone_grid_sf
+        zone_grid_sf$area <- sf::st_area(zone_grid_sf)
+        if (grid_units == "km") {
+          zone_grid_sf$area <- units::set_units(zone_grid_sf$area, "km^2")
+        }
+        else{
+          zone_grid_sf$area <- units::set_units(zone_grid_sf$area, "m^2")
+        }
+   #   grid_list[[i]] <- zone_grid_sf # Store the grid in the list
+    # }
+    # Combine grids, transforming to a common CRS (e.g., first UTM zone)
+    # if (length(grid_list) > 0) {
+    #   combined_grid <- grid_list[[1]]  # Start with the first grid
+    #   if (length(grid_list) > 1) {
+    #     for (i in 2:length(grid_list)) {
+    #       # Transform each subsequent grid to the CRS of the first grid
+    #      # grid_list[[i]] <- sf::st_transform(grid_list[[i]], crs = sf::st_crs(grid_list[[1]]))
+    #       combined_grid <- rbind(combined_grid, grid_list[[i]])
+    #     }
+    #   }
+    #   grid <- combined_grid
+    # }
+    # else{
+    #   grid <- st_sf(geometry = st_sfc()) # Return empty if no grids.
+    # }
+        grid <- zone_grid_sf
 
   } else {
 
-    # Calculate the offset for the grid
-    offset_x <- sf::st_bbox(data)$xmin - (0.5 * cell_size)
-    offset_y <- sf::st_bbox(data)$ymin - (0.5 * cell_size)
+  # Calculate the offset for the grid
+  offset_x <- sf::st_bbox(data)$xmin - (0.5 * cell_size)
+  offset_y <- sf::st_bbox(data)$ymin - (0.5 * cell_size)
 
-    # Make a grid across the cube
-    grid <- data %>%
-      sf::st_make_grid(cellsize = c(cell_size, cell_size),
-                       offset = c(offset_x, offset_y)) %>%
-      sf::st_sf() %>%
-      dplyr::mutate(cellid = dplyr::row_number())
+  # Make a grid across the cube
+  grid <- data %>%
+    sf::st_make_grid(cellsize = c(cell_size, cell_size),
+                     offset = c(offset_x, offset_y)) %>%
+   # sf::st_cast("MULTIPOLYGON") %>%
+    sf::st_sf() %>%
+    dplyr::mutate(cellid = dplyr::row_number())
 
-    if (make_valid==TRUE) {
+  if (make_valid==TRUE) {
 
-      grid <- sf::st_make_valid(grid)
+    grid <- sf::st_make_valid(grid)
 
-    }
+  }
 
-    if (grid_units == "km") {
+  if (grid_units == "km") {
 
-      # Add area column to grid
-      grid$area <-
-        grid %>%
-        sf::st_area() %>%
-        units::set_units("km^2")
+    # Add area column to grid
+    grid$area <-
+      grid %>%
+      sf::st_area() %>%
+      units::set_units("km^2")
 
-    }
-
-    sf::st_agr(grid) <- "constant"
+  }
 
   }
 
@@ -254,7 +278,6 @@ create_grid <- function(data,
 #'
 #' @param data An object provided by compute_indicate_workflow containing
 #' occurrence data from a processed data cube.
-#' @param df An sf object containing the occurrence data.
 #' @param grid An sf object containing the grid polygons.
 #' @param cube_crs The CRS of the data cube.
 #' @param output_crs The CRS you want for your calculated indicator.
@@ -730,9 +753,6 @@ compute_indicator_workflow <- function(data,
           shapefile <- sf::st_transform(shapefile, crs = sf::st_crs(grid))
         }
 
-        grid <- sf::st_set_agr(grid, "constant")
-        shapefile <- sf::st_set_agr(shapefile, "constant")
-
         if (invert) {
           grid <- sf::st_difference(grid, sf::st_union(shapefile))
         } else {
@@ -782,7 +802,7 @@ compute_indicator_workflow <- function(data,
 
         if (data$grid_type == "mgrs") {
 
-          df_sf <- create_sf_from_utm(df, output_crs)
+          df_sf_output <- create_sf_from_utm(df, output_crs)
 
         } else {
 
@@ -811,7 +831,7 @@ compute_indicator_workflow <- function(data,
         tryCatch({
 
           # Attempt without altering the spherical geometry setting
-          filtered_sf <- sf::st_intersection(df_sf, sf::st_union(map_data))
+          filtered_sf <- sf::st_filter(df_sf, sf::st_union(map_data))
         }, error = function(e) {
           if (grepl("Error in wk_handle.wk_wkb", e)) {
             message(paste("Encountered a geometry error during intersection. ",
