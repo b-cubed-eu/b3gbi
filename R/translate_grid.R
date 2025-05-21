@@ -1,9 +1,112 @@
+#' #' @noRd
+#' convert_eqdgc_latlong <- function(cellCode) {
+#'   # --- Error handling for invalid cellCode format ---
+#'   if (!all(grepl("^[EW]-?\\d+[NS]-?\\d+[ABCD]*$", cellCode))) {
+#'     stop("Invalid EQDGC cellCode format.")
+#'   }
+#'
+#'   # Extract base longitude and direction
+#'   long_match <- stringr::str_match(cellCode, "([EW])(-?\\d+)")
+#'   long_dir_char <- long_match[, 2]
+#'   long_base_val <- as.numeric(long_match[, 3])
+#'   long_dir <- ifelse(long_dir_char == "W", -1, 1)
+#'
+#'   # Extract base latitude and direction
+#'   lat_match <- stringr::str_match(cellCode, "([NS])(-?\\d+)")
+#'   lat_dir_char <- lat_match[, 2]
+#'   lat_base_val <- as.numeric(lat_match[, 3])
+#'   lat_dir <- ifelse(lat_dir_char == "S", -1, 1)
+#'
+#'   # Extract position codes (subdivision details)
+#'   position_codes <- stringr::str_replace_all(cellCode, "([EW]-?\\d+)|([NS]-?\\d+)", "")
+#'
+#'   # Ensure grid_level is calculated for each element if cellCode is a vector
+#'   grid_levels <- nchar(position_codes)
+#'
+#'   # Define fractional factors. These are half the size of the square at each level.
+#'   # ff_half_cell_size[k] = 0.5 / (2^k) where k is the number of subdivisions (grid_level)
+#'   ff_half_cell_size <- 0.5 / (2^(1:max(grid_levels)))
+#'
+#'   # Initialize current_x and current_y as the *bottom-left* corner of the initial cell
+#'   current_long_bl_initial <- long_base_val
+#'   current_lat_bl_initial <- lat_base_val
+#'
+#'   # Initialize longitude and latitude for each cell code
+#'   final_long <- numeric(length(cellCode))
+#'   final_lat <- numeric(length(cellCode))
+#'
+#'   for (k in seq_along(cellCode)) { # Iterate through each cellCode
+#'     pc <- position_codes[k]
+#'     gl <- grid_levels[k]
+#'
+#'     # Start with the bottom-left of the initial 1-degree cell for this specific cellCode
+#'     temp_long_bl <- current_long_bl_initial[k]
+#'     temp_lat_bl <- current_lat_bl_initial[k]
+#'
+#'     # Determine hemisphere based on the *initial* latitude of the base cell.
+#'     # We use lat_dir * lat_base_val to get the signed base latitude.
+#'     is_southern_hemisphere <- (lat_dir[k] * lat_base_val[k]) < 0
+#'
+#'     # Loop through each subdivision level
+#'     for (i in 1:gl) {
+#'       sub_code <- substr(pc, i, i)
+#'       # Half size of the cell *at this current level of subdivision*.
+#'       current_half_cell_size <- ff_half_cell_size[i]
+#'       full_cell_size <- current_half_cell_size * 2
+#'
+#'       # Determine quadrant and update temp_long_bl, temp_lat_bl
+#'       # The logic for A, B, C, D changes based on the hemisphere
+#'       if (!is_southern_hemisphere) {
+#'         # Northern Hemisphere (original assumption: A=NW, B=NE, C=SW, D=SE)
+#'         if (sub_code == "A") { # NW
+#'           temp_lat_bl <- temp_lat_bl + full_cell_size
+#'         } else if (sub_code == "B") { # NE
+#'           temp_lat_bl <- temp_lat_bl + full_cell_size
+#'           temp_long_bl <- temp_long_bl + full_cell_size
+#'         } else if (sub_code == "C") { # SW (no shift)
+#'           # No change to temp_long_bl, temp_lat_bl for SW
+#'         } else if (sub_code == "D") { # SE
+#'           temp_long_bl <- temp_long_bl + full_cell_size
+#'         } else {
+#'           stop(paste("Unknown subdivision code:", sub_code, "in cellCode", cellCode[k], "(Northern Hemisphere logic)"))
+#'         }
+#'       } else {
+#'         # Southern Hemisphere (new assumption: A=SW, B=SE, C=NW, D=NE)
+#'         # Note: This is an inversion of the Northern Hemisphere logic for A/C and B/D
+#'         if (sub_code == "A") { # SW (no shift)
+#'           # No change to temp_long_bl, temp_lat_bl for SW
+#'         } else if (sub_code == "B") { # SE
+#'           temp_long_bl <- temp_long_bl + full_cell_size
+#'         } else if (sub_code == "C") { # NW
+#'           temp_lat_bl <- temp_lat_bl + full_cell_size
+#'         } else if (sub_code == "D") { # NE
+#'           temp_lat_bl <- temp_lat_bl + full_cell_size
+#'           temp_long_bl <- temp_long_bl + full_cell_size
+#'         } else {
+#'           stop(paste("Unknown subdivision code:", sub_code, "in cellCode", cellCode[k], "(Southern Hemisphere logic)"))
+#'         }
+#'       }
+#'     }
+#'     # After the loop, temp_long_bl and temp_lat_bl are the bottom-left of the smallest cell.
+#'     # To get the center of this smallest cell, add half its width/height.
+#'     final_cell_half_size <- ff_half_cell_size[gl] # Half size of the *final* cell
+#'     final_long[k] <- temp_long_bl + final_cell_half_size
+#'     final_lat[k] <- temp_lat_bl + final_cell_half_size
+#'   }
+#'
+#'   # Apply overall direction to final coordinates (E/W, N/S from original code)
+#'   long <- long_dir * final_long
+#'   lat <- lat_dir * final_lat
+#'
+#'   return(cbind(lat, long))
+#' }
+
 #' @noRd
 convert_eqdgc_latlong <- function(cellCode) {
   # Extract base longitude and direction
   long_match <- stringr::str_match(cellCode, "([EW])(-?\\d+)")
   long_dir_char <- long_match[, 2]
-  long_base <- as.numeric(long_match[, 3])
+  long_base <- abs(as.numeric(long_match[, 3]))
   long_dir <- ifelse(long_dir_char == "W", -1, 1)
 
   # Extract base latitude and direction
@@ -16,22 +119,53 @@ convert_eqdgc_latlong <- function(cellCode) {
   position_codes <- stringr::str_replace_all(cellCode, "([EW]-?\\d+)|([NS]-?\\d+)", "")
 
   grid_level <- nchar(position_codes[1])
-  ff <- c(0.25, 0.25/2, 0.25/4, 0.25/8, 0.25/16, 0.25/32)
+  ff <- c(0.5, 0.25, 0.25/2, 0.25/4, 0.25/8, 0.25/16, 0.25/32)
   ff_cut <- ff[1:grid_level]
+  ff_final <- ff[grid_level + 1]
 
   long_ext <- numeric(length(long_base))
   lat_ext <- numeric(length(lat_base))
 
+  # if (lat_dir_char[1] == "S") {
+  #   for (i in 1:grid_level) {
+  #     sub_codes <- substr(position_codes, i, i)
+  #     long_signs <- ifelse(sub_codes %in% c("B", "D"), -1, 1)
+  #     lat_signs <- ifelse(sub_codes %in% c("A", "B"), 1, -1)
+  #     long_ext <- long_ext + long_signs * ff_cut[i]
+  #     lat_ext <- lat_ext + lat_signs * ff_cut[i]
+  #   }
+  # } else {
+  #   for (i in 1:grid_level) {
+  #     sub_codes <- substr(position_codes, i, i)
+  #     long_signs <- ifelse(sub_codes %in% c("B", "D"), -1, 1)
+  #     lat_signs <- ifelse(sub_codes %in% c("A", "B"), 1, -1)
+  #     long_ext <- long_ext + long_signs * ff_cut[i]
+  #     lat_ext <- lat_ext + lat_signs * ff_cut[i]
+  #   }
+  # }
+
+  lat_add <- vector(length = length(cellCode))
+  long_add <- vector(length = length(cellCode))
   for (i in 1:grid_level) {
     sub_codes <- substr(position_codes, i, i)
-    long_signs <- ifelse(sub_codes %in% c("B", "D"), 1, -1)
-    lat_signs <- ifelse(sub_codes %in% c("A", "B"), -1, 1)
-    long_ext <- long_ext + long_signs * ff_cut[i]
-    lat_ext <- lat_ext + lat_signs * ff_cut[i]
+    for (j in 1:length(cellCode)) {
+      lat_add[j] <- ifelse(lat_dir_char[j] == "S",
+                        ifelse(sub_codes[j] %in% c("C", "D"), ff_cut[i], 0),
+                        ifelse(sub_codes[j] %in% c("A", "B"), ff_cut[i], 0)
+      )
+      long_add[j] <- ifelse(long_dir_char[j] == "E",
+                            ifelse(sub_codes[j] %in% c("B", "D"), ff_cut[i], 0),
+                            ifelse(sub_codes[j] %in% c("A", "C"), ff_cut[i], 0)
+      )
+    }
+    long_ext <- long_ext + long_add
+    lat_ext <- lat_ext + lat_add
   }
 
-  long <- long_dir * (long_base + 0.5 + long_ext)
-  lat <- lat_dir * (lat_base + 0.5 + lat_ext)
+
+
+  long <- long_dir * (long_base + long_ext + ff_final)
+  lat <- lat_dir * (lat_base + lat_ext + ff_final)
 
   return(cbind(lat, long))
 }
