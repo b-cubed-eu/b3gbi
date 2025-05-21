@@ -1,3 +1,7 @@
+# b3gbi 0.6.3 - Minor update:
+
+* Fixed a bug that caused quarter-degree grid codes to be translated incorrectly for some geographic locations. They should now work correctly in all cases.
+
 # b3gbi 0.6.2 - Minor update:
 
 * Fixed a bug related to MGRS grids that caused southern hemisphere MGRS codes to be associated northern hemisphere EPSG codes.
