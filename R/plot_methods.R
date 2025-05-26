@@ -750,13 +750,14 @@ plot_map <- function(x,
                      labels = NULL,
                      Europe_crop_EEA = TRUE,
                      crop_to_grid = FALSE,
-                     surround = TRUE,
+                    # surround = TRUE,
                      panel_bg = NULL,
                      land_fill_colour = NULL,
                      legend_title = NULL,
                      legend_limits = NULL,
                      legend_title_wrap_length = 10,
-                     title_wrap_length = 60
+                     title_wrap_length = 60,
+                     transparent_gridlines = FALSE
                      ) {
 
   diversity_val <- geometry <- NULL
@@ -791,16 +792,16 @@ plot_map <- function(x,
 
 
   # Get world data to plot surrounding land if surround flag is set
-  if (surround == TRUE) {
+#  if (surround == TRUE) {
     map_surround <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf") %>%
       sf::st_as_sf() %>%
       sf::st_transform(crs = x$projection) %>%
       sf::st_make_valid()
 
   # Otherwise make all the surroundings ocean blue (unless a different colour is specified)
-  } else {
-    if (is.null(panel_bg)) { panel_bg = "#92c5f0" }
-  }
+#  } else {
+#    if (is.null(panel_bg)) { panel_bg = "#92c5f0" }
+#  }
 
   # Define function to wrap title and legend title if too long
   wrapper <- function(x, ...)
@@ -828,7 +829,7 @@ plot_map <- function(x,
   # Define function to modify legend
   cust_leg <- function(scale.params = list()) {
     do.call("scale_fill_gradient", modifyList(
-      list(low = "gold", high = "firebrick4", na.value = "grey95"),
+      list(low = "gold", high = "firebrick4", na.value = "transparent"),
       scale.params)
     )
   }
@@ -837,7 +838,7 @@ plot_map <- function(x,
   diversity_plot <- ggplot2::ggplot(x$data) +
     geom_sf(aes(fill = diversity_val,
                 geometry = geometry),
-            colour = "black") +
+            colour = "transparent") +
     cust_leg(list(trans = trans,
                   breaks = breaks,
                   labels = labels,
@@ -868,11 +869,17 @@ plot_map <- function(x,
          else wrapper(leg_label_default,
                       legend_title_wrap_length))
 
-
   land_fill_colour <- ifelse(is.null(land_fill_colour), "grey85", land_fill_colour)
 
+  if (transparent_gridlines == FALSE) {
+    diversity_plot$layers <- c(
+      diversity_plot$layers,
+      ggplot2::geom_sf(aes(geometry = geometry), colour = "black", fill = "transparent")[[1]]
+    )
+  }
+
   # If surround flag set, add surrounding countries to map
-  if (surround == TRUE) {
+#  if (surround == TRUE) {
 
     if (check_crs_units(x$projection) == "km" &&
         sf::st_crs(x$projection)$epsg != 3035) {
@@ -1000,7 +1007,17 @@ plot_map <- function(x,
       diversity_plot$layers
     )
 
-  }
+    diversity_plot$layers <- c(
+      diversity_plot$layers,
+      ggplot2::geom_sf(
+        data = map_surround,
+        fill = "transparent",
+        colour = "black",
+        aes(geometry = geometry)
+      )[[1]]
+    )
+
+#  }
 
   # Check for custom x and y limits and adjust map if found
   if(any(!is.null(xlims)) & any(!is.null(ylims))) {
