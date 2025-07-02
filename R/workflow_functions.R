@@ -311,6 +311,10 @@ prepare_spatial_data <- function(data,
      stop("No spatial intersection between occurrence data and grid.")
    }
 
+   if ("geometry" %in% names(data)) {
+     data <- select(data, -geometry)
+   }
+
   # Add cell numbers to occurrence data
   data <-
     data %>%
@@ -591,10 +595,10 @@ compute_indicator_workflow <- function(data,
 
     if (stringr::str_detect(data$resolution, "degrees")) {
       input_cell_size <- as.numeric(stringr::str_extract(data$resolution,
-                                                  "[0-9,.]*(?=degrees)"))
+                                                  "[0-9.]+(?=degrees)"))
     } else if (stringr::str_detect(data$resolution, "km")) {
       input_cell_size <- as.numeric(stringr::str_extract(data$resolution,
-                                                  "[0-9]*(?=km)"))
+                                                  "[0-9.]+(?=km)"))
     } else {
       stop("Resolution units not recognized. Must be km or degrees.")
     }
@@ -802,7 +806,7 @@ compute_indicator_workflow <- function(data,
 
         if (data$grid_type == "mgrs") {
 
-          df_sf_output <- create_sf_from_utm(df, output_crs)
+          df_sf <- create_sf_from_utm(df, output_crs)
 
         } else {
 
@@ -1051,7 +1055,8 @@ compute_indicator_workflow <- function(data,
                                        last_year = last_year,
                                        num_years = num_years,
                                        species_names = species_names,
-                                       years_with_obs = years_with_obs)
+                                       years_with_obs = years_with_obs,
+                                       map_lims = sf::st_bbox(map_data))
 
   } else {
 
