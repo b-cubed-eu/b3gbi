@@ -766,8 +766,14 @@ plot_map <- function(x,
     stop("Incorrect object class. Must be class 'indicator_map'.")
   }
 
-  # Get map limits
-  map_lims <- x$coord_range
+  if (is.null(x$map_lims)) {
+    # Get map limits
+    map_lims <- x$coord_range
+
+  } else {
+
+    map_lims <- x$map_lims[c("xmin", "ymin", "xmax", "ymax")]
+  }
 
   # Crop map of Europe to leave out far-lying islands (if flag set)
   # (conditional on there being only one map region to plot)
@@ -877,20 +883,47 @@ plot_map <- function(x,
     if (check_crs_units(x$projection) == "km" &&
         sf::st_crs(x$projection)$epsg != 3035) {
 
-      # Get bounding box of the indicator map data in UTM
-      utm_bbox <- sf::st_bbox(x$data)
-      utm_crs <- sf::st_crs(x$data)
+      if (!is.null(map_lims)) {
+        utm_bbox <- sf::st_bbox(map_lims)
+        # Define a lat/long CRS (WGS84)
+        latlong_crs <- sf::st_crs(4326)
+        utm_crs <- sf::st_crs(x$data)
 
-      # Define a lat/long CRS (WGS84)
-      latlong_crs <- sf::st_crs(4326)
+        # Create a bounding box polygon in UTM
+        bbox_polygon_utm <- sf::st_as_sfc(utm_bbox, crs = utm_crs)
+        bbox_polygon_utm <- sf::st_set_crs(bbox_polygon_utm, utm_crs)
 
-      # Create a bounding box polygon in UTM
-      bbox_polygon_utm <- sf::st_as_sfc(utm_bbox, crs = utm_crs)
+        # Transform the bounding box to lat/long
+        bbox_latlong <- sf::st_transform(bbox_polygon_utm, crs = latlong_crs)
+        latlong_extent <- sf::st_bbox(bbox_latlong)
 
-      # Transform the bounding box to lat/long
-      bbox_latlong <- sf::st_transform(bbox_polygon_utm, crs = latlong_crs)
-      latlong_extent <- sf::st_bbox(bbox_latlong)
+      } else {
 
+        # Get bounding box of the indicator map data in UTM
+        utm_bbox <- sf::st_bbox(x$data)
+        utm_crs <- sf::st_crs(x$data)
+
+        # Define a lat/long CRS (WGS84)
+        latlong_crs <- sf::st_crs(4326)
+
+        # Create a bounding box polygon in UTM
+        bbox_polygon_utm <- sf::st_as_sfc(utm_bbox, crs = utm_crs)
+
+        # Transform the bounding box to lat/long
+        bbox_latlong <- sf::st_transform(bbox_polygon_utm, crs = latlong_crs)
+        latlong_extent <- sf::st_bbox(bbox_latlong)
+
+      }
+
+      if (!is.null(xlims) && !is.null(ylims)) {
+        xylims <- c(xlims[1], ylims[1], xlims[2], ylims[2])
+        names(xylims) <- c("xmin", "ymin", "xmax", "ymax")
+        latlong_extent <- sf::st_bbox(xylims)
+        #names(latlong_extent) <- c("xmin", "ymin", "xmax", "ymax")
+        latlong_extent <- sf::st_set_crs(latlong_extent, latlong_crs)
+      }
+
+      sf::sf_use_s2(FALSE)
       # Conditionally expand the lat/long bounding box
       if (!crop_to_grid) {
         expand_percent <- 0.1
@@ -909,6 +942,7 @@ plot_map <- function(x,
           sf::st_as_sf() %>%
           sf::st_make_valid() %>%
           sf::st_crop(expanded_latlong_bbox)
+
       } else {
         # Crop to the original extent if not expanding
         surrounding_countries_latlong <- rnaturalearth::ne_countries(scale = "medium",
@@ -917,27 +951,7 @@ plot_map <- function(x,
           sf::st_make_valid() %>%
           sf::st_crop(latlong_extent)
       }
-
-      # # Expand the lat/long bounding box
-      # expand_percent <- 0.1
-      # lon_range <- latlong_extent["xmax"] - latlong_extent["xmin"]
-      # lat_range <- latlong_extent["ymax"] - latlong_extent["ymin"]
-      # expanded_latlong_bbox <- sf::st_bbox(c(
-      #   latlong_extent["xmin"] - (expand_percent * lon_range),
-      #   latlong_extent["ymin"] - (expand_percent * lat_range),
-      #   latlong_extent["xmax"] + (expand_percent * lon_range),
-      #   latlong_extent["ymax"] + (expand_percent * lat_range)
-      # ), crs = latlong_crs)
-      #
-      # # Get world data in lat/long
-      # world_map_latlong <- rnaturalearth::ne_countries(scale = "medium",
-      #                                                  returnclass = "sf") %>%
-      #   sf::st_as_sf()
-      #
-      # # Crop the world map in lat/long to the expanded extent
-      # surrounding_countries_latlong <- world_map_latlong %>%
-      #   sf::st_make_valid() %>%
-      #   sf::st_crop(expanded_latlong_bbox)
+      sf::sf_use_s2(TRUE)
 
       # Transform the cropped surrounding countries to the UTM CRS
       surrounding_countries_utm <-
@@ -1000,6 +1014,12 @@ plot_map <- function(x,
       diversity_plot$layers
     )
 
+  }
+
+  if (surround == TRUE) {
+    bbox_utm <- sf::st_bbox(map_surround)
+    xlims = c(bbox_utm[1], bbox_utm[3])
+    ylims = c(bbox_utm[2], bbox_utm[4])
   }
 
   # Check for custom x and y limits and adjust map if found
