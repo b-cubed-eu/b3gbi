@@ -209,14 +209,14 @@ new_indicator_map <- function(x,
                           last_year,
                           num_years,
                           species_names,
-                          years_with_obs) {
+                          years_with_obs,
+                          map_lims = NULL) {
   # check that x is both a data frame and sf object
   # and all necessary columns are present
   stopifnot(inherits(x, c("sf", "data.frame")),
             all(c("cellid",
                   "geometry") %in% names(x)))
-  coord_range = sf::st_bbox(x)[c("xmin", "ymin", "xmax", "ymax")]
- # names(coord_range) = c("xmin", "ymin", "xmax", "ymax")
+    coord_range = sf::st_bbox(x)[c("xmin", "ymin", "xmax", "ymax")]
   if (cell_size_units == "km") { cell_size_units <- "km^2" }
   cell_size = paste(cell_size, cell_size_units)
   id = div_type
@@ -237,6 +237,7 @@ new_indicator_map <- function(x,
                  num_families = num_families,
                  species_names = species_names,
                  years_with_obs = years_with_obs,
+                 map_lims = map_lims,
                  data = x),
             class = c("indicator_map", div_type),
             indicator_id = id,
