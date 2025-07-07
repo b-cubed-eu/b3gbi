@@ -751,7 +751,18 @@ compute_indicator_workflow <- function(data,
 
       # Shapefile Filtering
       if (!is.null(shapefile_path)) {
-        shapefile <- sf::read_sf(shapefile_path)
+
+        is_wkt_file <- grepl("\\.wkt$", tolower(shapefile_path))
+
+        if (is_wkt_file) {
+
+          shapefile <- sf::st_as_sfc(readLines(shapefile_path), crs = 4326)
+
+        } else {
+
+          shapefile <- sf::read_sf(shapefile_path)
+
+        }
 
         if (sf::st_crs(grid) != sf::st_crs(shapefile)) {
           shapefile <- sf::st_transform(shapefile, crs = sf::st_crs(grid))
