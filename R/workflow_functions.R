@@ -31,7 +31,10 @@ get_NE_data <- function(region,
                         level = "cube",
                         ne_type = "countries",
                         ne_scale = "medium",
-                        cube_cell_codes = NULL) {
+                        cube_cell_codes = NULL,
+                        include_water = FALSE,
+                        buffer_dist_km = NULL,
+                        data = NULL) {
 
   if (ne_scale == "large" & ne_type == "tiny_countries") {
     stop("tiny_countries are only available for medium (50 km) or small (110 km)
@@ -78,7 +81,8 @@ get_NE_data <- function(region,
 
   if (level == "cube" && !is.null(cube_cell_codes)) {
     # Convert MGRS to Lat/Long
-    latlong_coords <- mgrs::mgrs_to_latlng(cube_cell_codes)
+    # latlong_coords <- mgrs::mgrs_to_latlng(cube_cell_codes)
+    latlong_coords <- data.frame(lng = data$xcoord, lat = data$ycoord)
 
     expand_percent <- 0.1 # 10% buffer
     lng_range <- (max(latlong_coords$lng) - min(latlong_coords$lng))
@@ -99,16 +103,85 @@ get_NE_data <- function(region,
                                     ymin = min_lat,
                                     ymax = max_lat)
 
-    # Project the cropped map
-    map_data <- sf::st_transform(map_data_cropped,
+    map_data <- map_data_cropped
+
+  }
+
+  if (include_water == TRUE) {
+    map_data_water <- rnaturalearth::ne_download(scale = ne_scale,
+                                                 type = "ocean",
+                                                 category = "physical",
+                                                 returnclass = "sf")
+
+    get_s2_status <- sf_use_s2()
+    sf_use_s2(FALSE)
+
+    # Validate oceans
+    map_data_water <- sf::st_make_valid(map_data_water)
+
+    # Crop the oceans
+    map_data_water_cropped <- sf::st_crop(map_data_water,
+                                          xmin = min_lon,
+                                          xmax = max_lon,
+                                          ymin = min_lat,
+                                          ymax = max_lat)
+
+    # Merge the land with the oceans
+    map_data_merged <- sf::st_union(map_data,
+                                    map_data_water_cropped)
+
+    # Project the merged and cropped map
+    map_data <- sf::st_transform(map_data_merged,
                                  crs = output_crs)
+
+    if (get_s2_status == TRUE){
+      sf_use_s2(TRUE)
+    }
+
+  } else if (is.character(include_water) &&
+             include_water == "buffered_coast") {
+
+    if (level %in% c("country", "continent", "sovereignty", "geounit")) {
+
+      message(
+        paste0(
+          "Buffering land by ",
+          buffer_dist_km,
+          " km to include coastal water areas."
+        )
+      )
+
+      map_data_water <- sf::st_buffer(map_data, dist = buffer_dist_km * 1000)
+
+      # Validate oceans
+      map_data_water <- sf::st_make_valid(map_data_water)
+
+      # Merge the land with the oceans
+      map_data_merged <- sf::st_union(map_data,
+                                      map_data_water)
+
+      # Project the merged and cropped map
+      map_data <- sf::st_transform(map_data_merged,
+                                   crs = output_crs)
+
+    } else {
+
+      warning(
+        paste0(
+          "Buffered coast option is best used with 'country', 'continent',",
+          "'sovereignty', or 'geounit' levels. Ignoring for 'world' or ",
+          "'cube' and defaulting to land only if include_water is TRUE, or ",
+          "skipping if FALSE."
+        )
+      )
+
+    }
 
   } else {
 
-    # transform map crs
-    map_data <- map_data %>%
-      sf::st_as_sf() %>%
-      sf::st_transform(crs = output_crs)
+    # Project the cropped map
+    map_data <- sf::st_transform(map_data,
+                                 crs = output_crs)
 
   }
 
@@ -422,6 +495,8 @@ compute_indicator_workflow <- function(data,
                                        crs_unit_convert = FALSE,
                                        shapefile_path = NULL,
                                        invert = FALSE,
+                                       include_water = FALSE,
+                                       buffer_dist_km = 50,
                                        ...) {
 
   stopifnot_error("Object class not recognized.",
@@ -674,7 +749,10 @@ compute_indicator_workflow <- function(data,
                                 level,
                                 ne_type,
                                 ne_scale,
-                                cube_cell_codes = df$cellCode)
+                                cube_cell_codes = df$cellCode,
+                                include_water,
+                                buffer_dist_km,
+                                df)
 
       } else {
 
@@ -683,7 +761,11 @@ compute_indicator_workflow <- function(data,
                                 output_crs,
                                 level,
                                 ne_type,
-                                ne_scale)
+                                ne_scale,
+                                cube_cell_codes = NULL,
+                                include_water,
+                                buffer_dist_km,
+                                df)
 
       }
 
@@ -813,7 +895,11 @@ compute_indicator_workflow <- function(data,
                                 output_crs,
                                 level,
                                 ne_type,
-                                ne_scale)
+                                ne_scale,
+                                cube_cell_codes = NULL,
+                                include_water,
+                                buffer_dist_km,
+                                df)
 
         if (data$grid_type == "mgrs") {
 
