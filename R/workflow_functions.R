@@ -79,12 +79,19 @@ get_NE_data <- function(region,
          sovereignty, world, or cube.")
   }
 
-  if (level == "cube" && !is.null(cube_cell_codes)) {
-    # Convert MGRS to Lat/Long
-    # latlong_coords <- mgrs::mgrs_to_latlng(cube_cell_codes)
-    latlong_coords <- data.frame(lng = data$xcoord, lat = data$ycoord)
+  if (level == "cube") {
+    if (!is.null(cube_cell_codes)) {
 
-    expand_percent <- 0.1 # 10% buffer
+    # Convert MGRS to Lat/Long
+    latlong_coords <- mgrs::mgrs_to_latlng(cube_cell_codes)
+
+    } else {
+
+      latlong_coords <- data.frame(lng = data$xcoord, lat = data$ycoord)
+
+    }
+
+    expand_percent <- 0.5 # 10% buffer
     lng_range <- (max(latlong_coords$lng) - min(latlong_coords$lng))
     lat_range <- (max(latlong_coords$lat) - min(latlong_coords$lat))
 
@@ -105,41 +112,43 @@ get_NE_data <- function(region,
 
     map_data <- map_data_cropped
 
-  }
+    if (include_water == TRUE) {
+      map_data_water <- rnaturalearth::ne_download(scale = ne_scale,
+                                                   type = "ocean",
+                                                   category = "physical",
+                                                   returnclass = "sf")
 
-  if (include_water == TRUE) {
-    map_data_water <- rnaturalearth::ne_download(scale = ne_scale,
-                                                 type = "ocean",
-                                                 category = "physical",
-                                                 returnclass = "sf")
+      get_s2_status <- sf_use_s2()
+      sf_use_s2(FALSE)
 
-    get_s2_status <- sf_use_s2()
-    sf_use_s2(FALSE)
+      # Validate oceans
+      map_data_water <- sf::st_make_valid(map_data_water)
 
-    # Validate oceans
-    map_data_water <- sf::st_make_valid(map_data_water)
+      # Crop the oceans
+      map_data_water_cropped <- sf::st_crop(map_data_water,
+                                            xmin = min_lon,
+                                            xmax = max_lon,
+                                            ymin = min_lat,
+                                            ymax = max_lat)
 
-    # Crop the oceans
-    map_data_water_cropped <- sf::st_crop(map_data_water,
-                                          xmin = min_lon,
-                                          xmax = max_lon,
-                                          ymin = min_lat,
-                                          ymax = max_lat)
+      # Merge the land with the oceans
+      map_data_merged <- sf::st_union(map_data,
+                                      map_data_water_cropped)
 
-    # Merge the land with the oceans
-    map_data_merged <- sf::st_union(map_data,
-                                    map_data_water_cropped)
+      # Project the merged and cropped map
+      map_data <- sf::st_transform(map_data_merged,
+                                   crs = output_crs)
 
-    # Project the merged and cropped map
-    map_data <- sf::st_transform(map_data_merged,
-                                 crs = output_crs)
+      if (get_s2_status == TRUE){
+        sf_use_s2(TRUE)
+      }
 
-    if (get_s2_status == TRUE){
-      sf_use_s2(TRUE)
     }
 
-  } else if (is.character(include_water) &&
-             include_water == "buffered_coast") {
+  }
+
+  if (is.character(include_water) &&
+        include_water == "buffered_coast") {
 
     if (level %in% c("country", "continent", "sovereignty", "geounit")) {
 
