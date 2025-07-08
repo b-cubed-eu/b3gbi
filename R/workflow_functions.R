@@ -31,7 +31,10 @@ get_NE_data <- function(region,
                         level = "cube",
                         ne_type = "countries",
                         ne_scale = "medium",
-                        cube_cell_codes = NULL) {
+                        cube_cell_codes = NULL,
+                        include_water = FALSE,
+                        buffer_dist_km = NULL,
+                        data = NULL) {
 
   if (ne_scale == "large" & ne_type == "tiny_countries") {
     stop("tiny_countries are only available for medium (50 km) or small (110 km)
@@ -76,9 +79,10 @@ get_NE_data <- function(region,
          sovereignty, world, or cube.")
   }
 
-  if (level == "cube" && !is.null(cube_cell_codes)) {
+ # if (level == "cube" && !is.null(cube_cell_codes)) {
     # Convert MGRS to Lat/Long
-    latlong_coords <- mgrs::mgrs_to_latlng(cube_cell_codes)
+    #latlong_coords <- mgrs::mgrs_to_latlng(cube_cell_codes)
+  latlong_coords <- data.frame(lng = data$xcoord, lat = data$ycoord)
 
     expand_percent <- 0.1 # 10% buffer
     lng_range <- (max(latlong_coords$lng) - min(latlong_coords$lng))
@@ -99,22 +103,406 @@ get_NE_data <- function(region,
                                     ymin = min_lat,
                                     ymax = max_lat)
 
-    # Project the cropped map
-    map_data <- sf::st_transform(map_data_cropped,
-                                 crs = output_crs)
+    if (include_water == TRUE) {
 
-  } else {
+      map_data_water <- rnaturalearth::ne_download(scale = ne_scale,
+                                                   type = "ocean",
+                                                   category = "physical",
+                                                   returnclass = "sf")
 
-    # transform map crs
-    map_data <- map_data %>%
-      sf::st_as_sf() %>%
-      sf::st_transform(crs = output_crs)
+      get_s2_status <- sf_use_s2()
+      sf_use_s2(FALSE)
 
-  }
+      # Crop the oceans
+      map_data_water_cropped <- sf::st_crop(map_data_water,
+                                            xmin = min_lon,
+                                            xmax = max_lon,
+                                            ymin = min_lat,
+                                            ymax = max_lat)
+
+      # Validate oceans
+      map_data_water <- sf::st_make_valid(map_data_water)
+
+      # Merge the land with the oceans
+      map_data_merged <- sf::st_union(map_data_cropped,
+                                      map_data_water_cropped)
+
+      # Project the merged and cropped map
+      map_data <- sf::st_transform(map_data_merged,
+                                   crs = output_crs)
+
+      if (get_s2_status == TRUE){
+        sf_use_s2(TRUE)
+      }
+
+    } else if (is.character(include_water) &&
+               include_water == "buffered_coast") {
+
+      if (level %in% c("country", "continent", "sovereignty", "geounit")) {
+
+        message(
+          paste0(
+            "Buffering land by ",
+            buffer_dist_km,
+            " km to include coastal water areas."
+          )
+        )
+
+        map_data_water <- sf::st_buffer(map_data, dist = buffer_dist_km * 1000)
+
+        # Validate oceans
+        map_data_water <- sf::st_make_valid(map_data_water)
+
+        # Merge the land with the oceans
+        map_data_merged <- sf::st_union(map_data,
+                                        map_data_water)
+
+        # Project the merged and cropped map
+        map_data <- sf::st_transform(map_data_merged,
+                                     crs = output_crs)
+
+      } else {
+
+        warning(
+          paste0(
+            "Buffered coast option is best used with 'country', 'continent',",
+            "'sovereignty', or 'geounit' levels. Ignoring for 'world' or ",
+            "'cube' and defaulting to land only if include_water is TRUE, or ",
+            "skipping if FALSE."
+          )
+        )
+
+      }
+
+    } else {
+
+      # Project the cropped map
+      map_data <- sf::st_transform(map_data_cropped,
+                                   crs = output_crs)
+
+    }
+
+    map_data <- sf::st_make_valid(map_data)
+
+  # } else {
+  #
+  #   # transform map crs
+  #   map_data <- map_data %>%
+  #     sf::st_as_sf() %>%
+  #     sf::st_transform(crs = output_crs)
+  #
+  # }
 
   return(map_data)
 
 }
+
+# get_NE_data <- function(region,
+#                         output_crs,
+#                         level = "cube",
+#                         ne_type = "countries",
+#                         ne_scale = "medium",
+#                         cube_cell_codes = NULL,
+#                         include_water = FALSE, # NEW ARGUMENT: TRUE to include general ocean, or "buffered_coast"
+#                         buffer_dist_km = 50 # NEW ARGUMENT: Distance for buffered_coast in kilometers
+# ) {
+#
+#   if (ne_scale == "large" & ne_type == "tiny_countries") {
+#     stop("tiny_countries are only available for medium (50 km) or small (110 km) scale maps")
+#   }
+#
+#   # --- 1. Get Land Data (Current Logic) ---
+#   if (level == "country") {
+#     map_data_land <- rnaturalearth::ne_countries(scale = ne_scale,
+#                                                  country = region,
+#                                                  type = ne_type,
+#                                                  returnclass = "sf")
+#   } else if (level == "continent") {
+#     map_data_land <- rnaturalearth::ne_countries(scale = ne_scale,
+#                                                  continent = region,
+#                                                  returnclass = "sf")
+#   } else if (level == "sovereignty") {
+#     map_data_land <- rnaturalearth::ne_countries(scale = ne_scale,
+#                                                  type = ne_type,
+#                                                  sovereignty = region,
+#                                                  returnclass = "sf")
+#   } else if (level == "geounit") {
+#     map_data_land <- rnaturalearth::ne_countries(scale = ne_scale,
+#                                                  type = ne_type,
+#                                                  geounit = region,
+#                                                  returnclass = "sf")
+#   } else if (level == "world" || level == "cube") {
+#     map_data_land <- rnaturalearth::ne_countries(scale = ne_scale,
+#                                                  returnclass = "sf")
+#   } else {
+#     stop("Level not recognized. Must be country, continent, geounit, sovereignty, world, or cube.")
+#   }
+#
+#   # Make land data valid to avoid issues during union operations later
+#   map_data_land <- sf::st_make_valid(map_data_land)
+#
+#   # --- 2. Handle Water Inclusion ---
+#   map_data_water <- NULL # Initialize water data as NULL
+#
+#   if (isTRUE(include_water)) { # Using isTRUE() for logical TRUE
+#     message("Including global ocean data.")
+#     # For global ocean data, you'd typically download the physical ocean polygons
+#     # Note: ne_download can be slow the first time.
+#     map_data_water <- rnaturalearth::ne_download(scale = ne_scale,
+#                                                  type = "ocean",
+#                                                  category = "physical",
+#                                                  returnclass = "sf")
+#     map_data_water <- sf::st_make_valid(map_data_water)
+#
+#   } else if (is.character(include_water) && include_water == "buffered_coast") {
+#     if (level %in% c("country", "continent", "sovereignty", "geounit")) {
+#       message(paste0("Buffering land by ", buffer_dist_km, " km to include coastal water areas."))
+#
+#       # Reproject for accurate buffering (assuming geographic CRS for map_data_land)
+#       # Choose a suitable projected CRS (e.g., a UTM zone relevant to the region)
+#       # This is a simplification; for a truly robust solution, you might need a
+#       # more dynamic CRS selection or reproject after union.
+#       # For now, let's pick a global equal-area projection or assume the input is suitable.
+#       # A better approach might be to buffer in geographic CRS with units "km"
+#       # if st_buffer supports it for the current sf version, or reproject locally.
+#       # For simplicity and general applicability, let's use a common projected CRS like EPSG:3857 (Web Mercator)
+#       # or just buffer in geographic if the distance is small and accuracy less critical for initial filter
+#       # Let's stick with geographic buffering if the output_crs is geographic, for simplicity and robustness.
+#       # If output_crs is projected, we can buffer in that.
+#
+#       # Check if map_data_land's CRS is geographic (degrees)
+#       if (sf::st_is_longlat(map_data_land)) {
+#         # Transform to a suitable projected CRS for buffering (e.g., Web Mercator for general use)
+#         # or a specific UTM zone if the region is known.
+#         # For simplicity, let's transform to a projected CRS and then buffer.
+#         # A more robust solution might require dynamic CRS selection.
+#         # For Denmark example, EPSG:25832 (ETRS89 / UTM zone 32N) would be good.
+#         # Let's try buffering directly with units for convenience if possible, or reproject.
+#         # sf::st_buffer with units="km" is a relatively new feature but useful.
+#
+#         # Reproject to a suitable projected CRS for accurate buffering (e.g., a relevant UTM zone if single country, or global equal area if multi-country)
+#         # A simple approach for a *single country* like Denmark is to find its centroid and determine a UTM zone.
+#         # For a general solution across different 'regions' (country, continent etc), picking a single projection for buffering is tricky.
+#         # Option A: Universal Transverse Mercator (UTM) zones. This is complex to automate.
+#         # Option B: A global equal-area or equidistant projection, then reproject back. e.g., EPSG:6933 (Equal Earth) or EPSG:3857 (Web Mercator)
+#         # For `buffer_dist_km`, projecting to a meter-based CRS is best. Let's use 3857 for simplicity across regions.
+#         temp_proj_crs <- 3857 # WGS 84 / Pseudo-Mercator (meters)
+#
+#         map_data_land_proj <- sf::st_transform(map_data_land, crs = temp_proj_crs)
+#         buffered_shape <- sf::st_buffer(map_data_land_proj, dist = buffer_dist_km * 1000) # Convert km to meters
+#         map_data_water <- sf::st_transform(buffered_shape, crs = sf::st_crs(map_data_land)) # Transform back to original CRS
+#         map_data_water <- sf::st_make_valid(map_data_water)
+#       } else {
+#         # If the input map_data_land is already in a projected CRS with meters, buffer directly
+#         buffered_shape <- sf::st_buffer(map_data_land, dist = buffer_dist_km * 1000) # Convert km to meters
+#         map_data_water <- sf::st_make_valid(buffered_shape)
+#       }
+#     } else {
+#       warning("Buffered coast option is best used with 'country', 'continent', 'sovereignty', or 'geounit' levels. Ignoring for 'world' or 'cube' and defaulting to land only if include_water is TRUE, or skipping if FALSE.")
+#       # If `include_water` was "buffered_coast" but level is "world" or "cube", we don't have a single region to buffer from.
+#       # In this case, either warn and revert to no water, or ask the user to specify global ocean.
+#       # For now, let's treat it as no water for "world" or "cube" if "buffered_coast" is selected.
+#       map_data_water <- NULL # Ensure no water is added
+#     }
+#   }
+#
+#   # --- 3. Combine Land and Water Data if water_data exists ---
+#   if (!is.null(map_data_water)) {
+#     # Union land and water. If water_data is a buffer of land, it will likely encompass the land.
+#     # We want a single polygon for filtering.
+#     # For "buffered_coast", the buffer usually includes the original land, so unioning with land might be redundant,
+#     # but it's safe. For "ocean", we definitely want to union.
+#     map_data_combined <- sf::st_union(map_data_land, map_data_water)
+#   } else {
+#     map_data_combined <- map_data_land
+#   }
+#
+#   # Make sure the combined geometry is valid before cropping/transforming
+#   map_data_combined <- sf::st_make_valid(map_data_combined)
+#
+#
+#   # --- 4. Apply Cube-Specific Cropping Logic (to combined data) ---
+#   if (level == "cube" && !is.null(cube_cell_codes)) {
+#     # Convert MGRS to Lat/Long
+#     latlong_coords <- mgrs::mgrs_to_latlng(cube_cell_codes)
+#
+#     expand_percent <- 0.1 # 10% buffer
+#     lng_range <- (max(latlong_coords$lng) - min(latlong_coords$lng))
+#     lat_range <- (max(latlong_coords$lat) - min(latlong_coords$lat))
+#
+#     # Find bounding box
+#     min_lon <- min(latlong_coords$lng) - (expand_percent * lng_range)
+#     max_lon <- max(latlong_coords$lng) + (expand_percent * lng_range)
+#     min_lat <- min(latlong_coords$lat) - (expand_percent * lat_range)
+#     max_lat <- max(latlong_coords$lat) + (expand_percent * lat_range)
+#
+#     # Crop the combined map (land + potentially water)
+#     map_data_final <- sf::st_crop(map_data_combined,
+#                                   xmin = min_lon,
+#                                   xmax = max_lon,
+#                                   ymin = min_lat,
+#                                   ymax = max_lat)
+#
+#     # Project the cropped map
+#     map_data_final <- sf::st_transform(map_data_final, crs = output_crs)
+#
+#   } else {
+#     # transform map crs (for non-cube levels or if cube_cell_codes is NULL)
+#     map_data_final <- map_data_combined %>%
+#       sf::st_as_sf() %>%
+#       sf::st_transform(crs = output_crs)
+#   }
+#
+#   return(map_data_final)
+# }
+
+# get_NE_data <- function(region,
+#                         output_crs,
+#                         level = "cube",
+#                         ne_type = "countries",
+#                         ne_scale = "medium",
+#                         cube_cell_codes = NULL,
+#                         include_water = FALSE, # TRUE for global ocean, "buffered_coast" for regional buffer
+#                         buffer_dist_km = 50,
+#                         simplify_tolerance_km = NULL # Tolerance for sf::st_simplify (e.g., 0.1 for 100m, 1 for 1km)
+# ) {
+#
+#   if (ne_scale == "large" & ne_type == "tiny_countries") {
+#     stop("tiny_countries are only available for medium (50 km) or small (110 km) scale maps")
+#   }
+#
+#   message(paste0("Getting Natural Earth data for level: '", level, "', region: '", region, "' (scale: ", ne_scale, ")"))
+#
+#   # Define common projected CRS for simplification/buffering
+#   # EPSG:3857 (Web Mercator) is a pragmatic choice for global operations,
+#   # though not equal-area. For precise buffering on a specific country,
+#   # a relevant UTM zone would be better.
+#   proj_crs_for_ops <- 3857
+#
+#   # --- 1. Get Land Data ---
+#   if (level == "country") {
+#     map_data_land <- rnaturalearth::ne_countries(scale = ne_scale, country = region, type = ne_type, returnclass = "sf")
+#   } else if (level == "continent") {
+#     map_data_land <- rnaturalearth::ne_countries(scale = ne_scale, continent = region, returnclass = "sf")
+#   } else if (level == "sovereignty") {
+#     map_data_land <- rnaturalearth::ne_countries(scale = ne_scale, type = ne_type, sovereignty = region, returnclass = "sf")
+#   } else if (level == "geounit") {
+#     map_data_land <- rnaturalearth::ne_countries(scale = ne_scale, type = ne_type, geounit = region, returnclass = "sf")
+#   } else if (level == "world" || level == "cube") {
+#     map_data_land <- rnaturalearth::ne_countries(scale = ne_scale, returnclass = "sf")
+#   } else {
+#     stop("Level not recognized. Must be country, continent, geounit, sovereignty, world, or cube.")
+#   }
+#
+#   # --- Apply Simplification and Validation to Land Data (CRITICAL ORDER) ---
+#   message("Processing land geometries...")
+#   if (!is.null(simplify_tolerance_km)) {
+#     message(paste0("  Simplifying land geometries with tolerance ", simplify_tolerance_km, " km."))
+#     original_crs_land <- sf::st_crs(map_data_land)
+#     map_data_land <- sf::st_transform(map_data_land, crs = proj_crs_for_ops)
+#     map_data_land <- sf::st_simplify(map_data_land, preserveTopology = TRUE,
+#                                      dTolerance = simplify_tolerance_km * 1000)
+#     map_data_land <- sf::st_transform(map_data_land, crs = original_crs_land)
+#   }
+#   message("  Validating land geometries...")
+#   map_data_land <- sf::st_make_valid(map_data_land)
+#
+#
+#   # --- 2. Handle Water Inclusion ---
+#   map_data_water <- NULL # Initialize water data as NULL
+#
+#   if (isTRUE(include_water)) { # Using isTRUE() for logical TRUE
+#     message("Including global ocean data.")
+#     map_data_water <- rnaturalearth::ne_download(scale = ne_scale,
+#                                                  type = "ocean",
+#                                                  category = "physical",
+#                                                  returnclass = "sf")
+#
+#     # --- Apply Simplification and Validation to Water Data ---
+#     message("  Processing ocean geometries...")
+#     if (!is.null(simplify_tolerance_km)) {
+#       message(paste0("  Simplifying ocean geometries with tolerance ", simplify_tolerance_km, " km."))
+#       original_crs_water <- sf::st_crs(map_data_water)
+#       map_data_water <- sf::st_transform(map_data_water, crs = proj_crs_for_ops)
+#       map_data_water <- sf::st_simplify(map_data_water, preserveTopology = TRUE,
+#                                         dTolerance = simplify_tolerance_km * 1000)
+#       map_data_water <- sf::st_transform(map_data_water, crs = original_crs_water)
+#     }
+#     message("  Validating ocean geometries...")
+#    # map_data_water <- sf::st_make_valid(map_data_water)
+#
+#
+#   } else if (is.character(include_water) && include_water == "buffered_coast") {
+#     if (level %in% c("country", "continent", "sovereignty", "geounit")) {
+#       message(paste0("Buffering land by ", buffer_dist_km, " km to include coastal water areas."))
+#
+#       map_data_land_proj <- sf::st_transform(map_data_land, crs = proj_crs_for_ops)
+#       buffered_shape <- sf::st_buffer(map_data_land_proj, dist = buffer_dist_km * 1000) # Convert km to meters
+#       map_data_water <- sf::st_transform(buffered_shape, crs = sf::st_crs(map_data_land)) # Transform back to original CRS
+#       # For buffered shapes, validity is usually preserved, but a quick check won't hurt.
+#       message("  Validating buffered coastal geometries...")
+#       map_data_water <- sf::st_make_valid(map_data_water)
+#
+#     } else {
+#       warning("Buffered coast option is best used with 'country', 'continent', 'sovereignty', or 'geounit' levels. Ignoring for 'world' or 'cube' and defaulting to land only.")
+#       include_water <- FALSE # Reset to effectively exclude water
+#     }
+#   }
+#
+#   # --- 3. Combine Land and Water Data if water_data exists ---
+#   map_data_final <- NULL # Initialize final map data
+#
+#   if (!is.null(map_data_water)) {
+#     message("Attempting to union (simplified and validated) land and water polygons.")
+#     # Attempt union. If it's still too slow, consider alternative strategies below.
+#     # Suppress verbose GEOS messages during union
+#     map_data_final <- suppressMessages(sf::st_union(map_data_land, map_data_water))
+#     message("  Union complete.")
+#   } else {
+#     map_data_final <- map_data_land
+#   }
+#
+#   # Last validation for the combined map. This should be faster if individual components were valid.
+#   message("Final validation of combined map data...")
+#   map_data_final <- sf::st_make_valid(map_data_final)
+#
+#
+#   # --- 4. Apply Cube-Specific Cropping Logic (to combined data) ---
+#   if (level == "cube" && !is.null(cube_cell_codes)) {
+#     message("Cropping map data to cube cell extent.")
+#     latlong_coords <- mgrs::mgrs_to_latlng(cube_cell_codes)
+#
+#     expand_percent <- 0.1
+#     lng_range <- (max(latlong_coords$lng) - min(latlong_coords$lng))
+#     lat_range <- (max(latlong_coords$lat) - min(latlong_coords$lat))
+#
+#     min_lon <- max(min(latlong_coords$lng) - (expand_percent * lng_range), -180)
+#     max_lon <- min(max(latlong_coords$lng) + (expand_percent * lng_range), 180)
+#     min_lat <- max(min(latlong_coords$lat) - (expand_percent * lat_range), -90)
+#     max_lat <- min(max(latlong_coords$lat) + (expand_percent * lat_range), 90)
+#
+#     # Ensure map_data_final is in geographic CRS before cropping by lon/lat bounds
+#     map_data_final <- sf::st_transform(map_data_final, crs = 4326) # WGS84 for lat/lon cropping
+#
+#     map_data_final <- sf::st_crop(map_data_final,
+#                                   xmin = min_lon,
+#                                   xmax = max_lon,
+#                                   ymin = min_lat,
+#                                   ymax = max_lat)
+#
+#     # Project the cropped map to final output_crs
+#     map_data_final <- sf::st_transform(map_data_final, crs = output_crs)
+#
+#   } else {
+#     # Transform map to final output_crs
+#     map_data_final <- map_data_final %>%
+#       sf::st_as_sf() %>% # Ensure it's sf just in case (though it should be)
+#       sf::st_transform(crs = output_crs)
+#   }
+#
+#   message("Map data processing complete.")
+#   return(map_data_final)
+# }
 
 
 #' Create a Spatial Grid for Mapping
@@ -385,6 +773,703 @@ prepare_spatial_data <- function(data,
 #' diversity_map
 #'
 #' @export
+# compute_indicator_workflow <- function(data,
+#                                        type,
+#                                        dim_type = c("map",
+#                                                     "ts"),
+#                                        ci_type = c("norm",
+#                                                    "basic",
+#                                                    "perc",
+#                                                    "bca",
+#                                                    "none"),
+#                                        cell_size = NULL,
+#                                        level = c("cube",
+#                                                  "continent",
+#                                                  "country",
+#                                                  "world",
+#                                                  "sovereignty",
+#                                                  "geounit"),
+#                                        region = "Europe",
+#                                        ne_type = c("countries",
+#                                                    "map_units",
+#                                                    "sovereignty",
+#                                                    "tiny_countries"),
+#                                        ne_scale = c("medium",
+#                                                     "small",
+#                                                     "large"),
+#                                        output_crs = NULL,
+#                                        first_year = NULL,
+#                                        last_year = NULL,
+#                                        spherical_geometry = TRUE,
+#                                        make_valid = FALSE,
+#                                        num_bootstrap = 1000,
+#                                        crs_unit_convert = FALSE,
+#                                        shapefile_path = NULL,
+#                                        invert = FALSE,
+#                                        include_water = FALSE,
+#                                        buffer_dist_km = 50,
+#                                        ...) {
+#
+#   stopifnot_error("Object class not recognized.",
+#                   inherits(data, "processed_cube") |
+#                     inherits(data, "processed_cube_dsinfo") |
+#                     inherits(data, "sim_cube"))
+#
+#   # Early shapefile path check
+#   if (!is.null(shapefile_path) && !file.exists(shapefile_path)) {
+#     stop("Shapefile not found at the specified path.")
+#   }
+#
+#   # Check for empty cube
+#   if (nrow(data$data) == 0) {
+#     stop("No data found in the cube.")
+#   }
+#
+#   # Check that obs column exists
+#   if (!"obs" %in% colnames(data$data)) {
+#     stop("No occurrences found in the data.")
+#   }
+#
+#   available_indicators <- NULL; rm(available_indicators)
+#
+#   geometry <- area <- cellid <- NULL
+#
+#   # List of indicators for which bootstrapped confidence intervals should not
+#   # be calculated
+#   noci_list <- c("obs_richness",
+#                  "cum_richness",
+#                  "occ_turnover")
+#
+#   type <- match.arg(type,
+#                     names(available_indicators))
+#
+#   ci_type <- match.arg(ci_type)
+#
+#   ne_type <- match.arg(ne_type)
+#
+#   ne_scale <- match.arg(ne_scale)
+#
+#   level <- match.arg(level)
+#
+#   # Store the current spherical geometry setting
+#   original_s2_setting <- sf::sf_use_s2()
+#
+#   if (!is.null(first_year) && !is.null(last_year) && first_year > last_year) {
+#     stop("First year must be less than or equal to last year.")
+#   }
+#
+#   if (!is.null(first_year)) {
+#     first_year <- ifelse(first_year > data$first_year,
+#                          first_year,
+#                          data$first_year)
+#   } else {
+#     first_year <- data$first_year
+#   }
+#
+#   if (!is.null(last_year)) {
+#     last_year <- ifelse(last_year < data$last_year, last_year, data$last_year)
+#   } else {
+#     last_year <- data$last_year
+#   }
+#
+#   df <- data$data[(data$data$year >= first_year) &
+#                     (data$data$year <= last_year),]
+#
+#   # Collect information to add to final object
+#   num_species <- data$num_species
+#   num_years <- length(unique(df$year))
+#   species_names <- unique(df$scientificName)
+#   years_with_obs <- unique(df$year)
+#
+#   if (!inherits(data, "sim_cube")) {
+#
+#     dim_type <- match.arg(dim_type)
+#
+#     level <- match.arg(level)
+#
+#     # input_units <- stringr::str_extract(data$resolutions,
+#     #                                     "(?<=[0-9,.]{1,6})[a-z]*$")
+#
+#     num_families <- data$num_families
+#
+#     coord_range <- data$coord_range
+#
+#     if (spherical_geometry==FALSE){
+#       # Temporarily disable spherical geometry
+#       sf::sf_use_s2(FALSE)
+#     }
+#
+#     if (dim_type == "ts") {
+#
+#       year_names <- unique(df$year)
+#       map_lims <- unlist(list("xmin" = min(df$xcoord),
+#                               "ymin" = min(df$ycoord),
+#                               "xmax" = max(df$xcoord),
+#                               "ymax" = max(df$ycoord)))
+#
+#     }
+#
+#     kingdoms <- data$kingdoms
+#
+#     if (data$grid_type == "eea") {
+#
+#       cube_crs <- "EPSG:3035"
+#
+#     } else if (data$grid_type == "eqdgc") {
+#
+#       cube_crs <- "EPSG:4326"
+#
+#     } else if (data$grid_type == "mgrs") {
+#
+#       #cube_crs <- "EPSG:4326"
+#       cube_crs <- guess_mgrs_epsg(data, df, data$coord_range)
+#
+#     } else {
+#
+#       stop("Grid reference system not found.")
+#
+#     }
+#
+#     if (is.null(output_crs)) {
+#
+#       if (data$grid_type == "eea") {
+#
+#         output_crs <- "EPSG:3035"
+#
+#       } else if (data$grid_type == "eqdgc") {
+#
+#         output_crs <- "EPSG:4326"
+#
+#       } else if (data$grid_type == "mgrs") {
+#
+#         #output_crs <- get_crs_for_mgrs(df$cellCode)
+#         output_crs <- guess_mgrs_epsg(data, df, data$coord_range)
+#         #output_crs <- "EPSG:4326"
+#
+#       } else {
+#
+#         stop("Grid reference system not found.")
+#
+#       }
+#
+#     }
+#
+#     input_units <- check_crs_units(cube_crs)
+#
+#     output_units <- check_crs_units(output_crs)
+#
+#     if (crs_unit_convert == FALSE && input_units != output_units) {
+#
+#       stop(
+#         paste0(
+#           "Cube CRS units are ", input_units, " while output CRS ",
+#           "units are ", output_units, ".\n The conversion could increase ",
+#           "processing time and lead to invalid output.\n If you are certain ",
+#           "you want to proceed you can force it with 'crs_unit_convert = TRUE'."
+#         )
+#       )
+#
+#     } else if (crs_unit_convert == TRUE && input_units != output_units) {
+#       warning(
+#         paste0(
+#           "Cube CRS units are ", input_units, " while output CRS ",
+#           "units are ", output_units, ".\n The conversion could lead ",
+#           "to invalid output."
+#         )
+#       )
+#     }
+#
+#     if (stringr::str_detect(data$resolution, "degrees")) {
+#       input_cell_size <- as.numeric(stringr::str_extract(data$resolution,
+#                                                   "[0-9,.]*(?=degrees)"))
+#     } else if (stringr::str_detect(data$resolution, "km")) {
+#       input_cell_size <- as.numeric(stringr::str_extract(data$resolution,
+#                                                   "[0-9]*(?=km)"))
+#     } else {
+#       stop("Resolution units not recognized. Must be km or degrees.")
+#     }
+#
+#     cell_size <- check_cell_size(cell_size, data$resolution, level)
+#
+#     if (dim_type == "map" | (!is.null(level) & !is.null(region))) {
+#
+#       if (data$grid_type == "mgrs") {
+#
+#         df_sf_output <- create_sf_from_utm(df, output_crs)
+#
+#       } else {
+#
+#       df_sf_input <- sf::st_as_sf(df,
+#                              coords = c("xcoord", "ycoord"),
+#                              crs = cube_crs)
+#
+#       df_sf_output <- sf::st_transform(df_sf_input, crs = output_crs)
+#
+#       }
+#
+#
+#       if (crs_unit_convert == TRUE &&
+#           input_units != output_units &&
+#           output_units != "degrees") {
+#
+#         output_units <- "m"
+#         grid <- reproject_and_create_grid(df_sf_input,
+#                                           c(input_cell_size, input_cell_size),
+#                                           output_crs,
+#                                           c((cell_size * 1000),
+#                                             (cell_size * 1000)),
+#                                           input_units = input_units,
+#                                           target_units = output_units)
+#         output_units <- "km"
+#
+#       } else if (crs_unit_convert == TRUE &&
+#                  input_units != output_units &&
+#                  output_units == "degrees") {
+#
+#         grid <- reproject_and_create_grid(df_sf_input,
+#                                           c(input_cell_size, input_cell_size),
+#                                           output_crs,
+#                                           c((cell_size),
+#                                             (cell_size)),
+#                                           input_units = input_units,
+#                                           target_units = output_units)
+#
+#       } else {
+#
+#         # Create grid
+#         grid <- create_grid(df_sf_output,
+#                             cell_size,
+#                             output_units,
+#                             output_crs,
+#                             make_valid)
+#
+#       }
+#
+#       # Format spatial data and merge with grid
+#       df <- prepare_spatial_data(df,
+#                                  df_sf_output,
+#                                  grid,
+#                                  cube_crs,
+#                                  output_crs)
+#
+#       if (data$grid_type == "mgrs") {
+#
+#         # Download Natural Earth data
+#         map_data <- get_NE_data(region,
+#                                 output_crs,
+#                                 level,
+#                                 ne_type,
+#                                 ne_scale,
+#                                 cube_cell_codes = df$cellCode,
+#                                 include_water,
+#                                 buffer_dist_km)
+#
+#       } else {
+#
+#         # Download Natural Earth data
+#         map_data <- get_NE_data(region,
+#                                 output_crs,
+#                                 level,
+#                                 ne_type,
+#                                 ne_scale,
+#                                 cube_cell_codes = NULL,
+#                                 include_water,
+#                                 buffer_dist_km)
+#
+#       }
+#
+#       map_data <- sf::st_make_valid(map_data)
+#
+#       # Set attributes as spatially constant to avoid warnings when clipping
+#       sf::st_agr(grid) <- "constant"
+#       sf::st_agr(map_data) <- "constant"
+#
+#       # The following intersection operation requires special error handling
+#       # because it fails when the grid contains invalid geometries.
+#       # Therefore when invalid geometries are encountered, it will retry the
+#       # operation with spherical geometry turned off. This often succeeds.
+#
+#       result <- NULL  # Initialize to capture result of intersection
+#
+#       tryCatch({
+#         # Attempt without altering the spherical geometry setting
+#         result <- grid %>%
+#           sf::st_intersection(map_data) %>%
+#           dplyr::select(cellid, area, geometry)
+#       }, error = function(e) {
+#         if (grepl("Error in wk_handle.wk_wkb", e)) {
+#           message(
+#             paste0(
+#               "Encountered a geometry error during intersection. This may be ",
+#               "due to invalid polygons in the grid."
+#             )
+#           )
+#         } else {
+#           stop(e)
+#         }
+#       })
+#
+#       if (is.null(result)) {
+#         # If intersection failed, turn off spherical geometry
+#         message("Retrying the intersection with spherical geometry turned off.")
+#         sf::sf_use_s2(FALSE)
+#
+#         # Retry the intersection operation
+#         result <- grid %>%
+#           sf::st_intersection(map_data) %>%
+#           dplyr::select(cellid, area, geometry)
+#
+#         # Notify success after retry
+#         message("Intersection succeeded with spherical geometry turned off.")
+#
+#       }
+#
+#       if (spherical_geometry == TRUE) {
+#         # Restore original spherical setting
+#         sf::sf_use_s2(original_s2_setting)
+#       }
+#
+#       # Check if there is any spatial intersection
+#       if (nrow(result) == 0) {
+#         stop("No spatial intersection between map data and grid.")
+#       }
+#
+#       # Set grid to result
+#       grid <- result
+#
+#       # Set attributes as spatially constant to avoid warnings when clipping
+#       sf::st_agr(grid) <- "constant"
+#
+#       # Shapefile Filtering
+#       if (!is.null(shapefile_path)) {
+#         shapefile <- sf::read_sf(shapefile_path)
+#
+#         if (sf::st_crs(grid) != sf::st_crs(shapefile)) {
+#           shapefile <- sf::st_transform(shapefile, crs = sf::st_crs(grid))
+#         }
+#
+#         if (invert) {
+#           grid <- sf::st_difference(grid, sf::st_union(shapefile))
+#         } else {
+#           grid <- sf::st_filter(grid, shapefile)
+#         }
+#
+#         # Handle empty geometries after spatial operations
+#         grid <- grid[!sf::st_is_empty(grid), ]
+#
+#         if (nrow(grid) == 0) {
+#           stop("No grid cells remain after shapefile filtering.")
+#         }
+#       }
+#
+#     } else {
+#
+#       level <- "unknown"
+#       region <- "unknown"
+#
+#     }
+#
+#     # Assign classes to send data to correct calculator function
+#     subtype <- paste0(type, "_", dim_type)
+#     class(df) <- append(type, class(df))
+#     class(df) <- append(subtype, class(df))
+#
+#     if (dim_type == "map") {
+#
+#       # Calculate indicator
+#       indicator <- calc_map(df, ...)
+#
+#       # Add indicator values to grid
+#       diversity_grid <-
+#         grid %>%
+#         dplyr::left_join(indicator, by = "cellid")
+#
+#     } else {
+#
+#       # Spatial Filtering for Time Series using rnaturalearth
+#       if (!is.null(level) && !is.null(region)) {
+#
+#         map_data <- get_NE_data(region,
+#                                 output_crs,
+#                                 level,
+#                                 ne_type,
+#                                 ne_scale,
+#                                 cube_cell_codes = NULL,
+#                                 include_water,
+#                                 buffer_dist_km)
+#
+#         if (data$grid_type == "mgrs") {
+#
+#           df_sf_output <- create_sf_from_utm(df, output_crs)
+#
+#         } else {
+#
+#         df_sf <- sf::st_as_sf(df,
+#                               coords = c("xcoord", "ycoord"),
+#                               crs = cube_crs)
+#         df_sf <- sf::st_transform(df_sf, crs = output_crs)
+#
+#         }
+#
+#         if (sf::st_crs(df_sf) != sf::st_crs(map_data)) {
+#           map_data <- sf::st_transform(map_data,
+#                                        crs = sf::st_crs(df_sf))
+#         }
+#
+#         map_data <- sf::st_make_valid(map_data)
+#
+#         # Set attributes as spatially constant to avoid warnings when clipping
+#         sf::st_agr(map_data) <- "constant"
+#         sf::st_agr(df_sf) <- "constant"
+#
+#         # Initialize filtered_sf as NULL to capture the result of the
+#         # intersection
+#         filtered_sf <- NULL
+#
+#         tryCatch({
+#
+#           # Attempt without altering the spherical geometry setting
+#           filtered_sf <- sf::st_filter(df_sf, sf::st_union(map_data))
+#         }, error = function(e) {
+#           if (grepl("Error in wk_handle.wk_wkb", e)) {
+#             message(paste("Encountered a geometry error during intersection. ",
+#                           "This may be due to invalid polygons in the grid."))
+#           } else {
+#             stop(e)
+#           }
+#         })
+#
+#         if (is.null(filtered_sf)) {
+#           # If intersection failed, turn off spherical geometry
+#           message(
+#             "Retrying the intersection with spherical geometry turned off."
+#           )
+#           sf::sf_use_s2(FALSE)
+#
+#           # Retry the intersection operation
+#           filtered_sf <- sf::st_intersection(df_sf, sf::st_union(map_data))
+#
+#           # Notify success after retry
+#           message("Intersection succeeded with spherical geometry turned off.")
+#
+#         }
+#
+#         if (spherical_geometry == TRUE) {
+#           # Restore original spherical setting
+#           sf::sf_use_s2(original_s2_setting)
+#         }
+#
+#        # filtered_sf <- sf::st_intersection(df_sf, sf::st_union(map_data))
+#
+#         # Filter the original data frame
+#         df <- df[df$cellid %in% filtered_sf$cellid, ]
+#
+#         if (nrow(df) == 0) {
+#           stop("No data points remain after spatial filtering.")
+#         }
+#       }
+#
+#       # Shapefile Filtering
+#       if (!is.null(shapefile_path)) {
+#         shapefile <- sf::read_sf(shapefile_path)
+#
+#         # df_sf <- sf::st_as_sf(df,
+#         #                       coords = c("xcoord", "ycoord"),
+#         #                       crs = cube_crs)
+#
+#         # Set attributes as spatially constant to avoid warnings when clipping
+#         sf::st_agr(df_sf) <- "constant"
+#         sf::st_agr(shapefile) <- "constant"
+#
+#         if (sf::st_crs(df_sf) != sf::st_crs(shapefile)) {
+#           shapefile <- sf::st_transform(shapefile,
+#                                         crs = sf::st_crs(df_sf))
+#         }
+#
+#         # Union the shapefile, handle any errors
+#         shapefile_union <- tryCatch({
+#           sf::st_union(shapefile)
+#         }, error = function(e) {
+#           stop(paste("Error unioning shapefile:", e$message))
+#         })
+#
+#         # Check for validity of the unioned shapefile
+#         if (!sf::st_is_valid(shapefile_union)) {
+#           message("Unioned shapefile is invalid. Attempting to make it valid.")
+#           shapefile_union <- sf::st_make_valid(shapefile_union)
+#           if (!sf::st_is_valid(shapefile_union)) {
+#             stop("Could not make unioned shapefile valid.")
+#           }
+#         }
+#
+#         tryCatch({
+#           if (invert) {
+#             filtered_df <- sf::st_difference(df_sf, shapefile_union)
+#           } else {
+#             filtered_df <- sf::st_filter(df_sf, shapefile)
+#           }
+#         }, error = function(e) {
+#           if (grepl("Error in wk_handle.wk_wkb", e)) {
+#             message(
+#               paste0(
+#                 "Geometry error during st_difference/st_filter. Retrying ",
+#                 "with spherical geometry off."
+#               )
+#             )
+#             sf::sf_use_s2(FALSE)
+#             if (invert) {
+#               filtered_df <- sf::st_difference(df_sf, shapefile_union)
+#             } else {
+#               filtered_df <- sf::st_filter(df_sf, shapefile)
+#             }
+#           } else {
+#             stop(e)
+#           }
+#         }, finally = {
+#           if (spherical_geometry == TRUE) {
+#             # Restore original spherical setting
+#             sf::sf_use_s2(original_s2_setting)
+#           }
+#         })
+#
+#         # Filter the original data frame
+#         df <- df[df$cellid %in% filtered_df$cellid, ]
+#
+#         if (nrow(df) == 0) {
+#           stop("No data points remain after shapefile filtering.")
+#         }
+#       }
+#
+#       # Calculate indicator
+#       indicator <- calc_ts(df, ...)
+#
+#       if (ci_type!="none") {
+#
+#         if (!type %in% noci_list) {
+#
+#           indicator <- calc_ci(df,
+#                                indicator = indicator,
+#                                num_bootstrap=num_bootstrap,
+#                                ci_type = ci_type,
+#                                ...)
+#
+#         } else {
+#
+#           warning(
+#             paste0(
+#               "Bootstrapped confidence intervals cannot be calculated for the ",
+#               "chosen indicator."
+#             )
+#           )
+#
+#         }
+#
+#       }
+#
+#     }
+#
+#     if (spherical_geometry==FALSE) {
+#       # restore the original spherical geometry setting
+#       sf::sf_use_s2(original_s2_setting)
+#     }
+#
+#     # if the object is of the class sim_cube it contains no grid information, so
+#     # bypass the usual workflow and deal with it here
+#   } else {
+#
+#     if (dim_type=="map") {
+#
+#       stop(paste("You have provided an object of class 'sim_cube' as input.",
+#                  "As these objects do not contain grid information they can ",
+#                  "only be used to calculate indicators of dim_type 'ts'."))
+#
+#     } else {
+#
+#       year_names <- unique(df$year)
+#       level <- "unknown"
+#       region <- "unknown"
+#       if (is.numeric(data$coord_range)) {
+#         map_lims <- data$coord_range
+#       } else {
+#           map_lims <- "Coordinates not provided"
+#       }
+#
+#       kingdoms <- data$kingdoms
+#       num_families <- data$num_families
+#
+#       # Assign classes to send data to correct calculator function
+#       subtype <- paste0(type, "_", dim_type)
+#       class(df) <- append(type, class(df))
+#       class(df) <- append(subtype, class(df))
+#
+#       # Calculate indicator
+#       indicator <- calc_ts(df, ...)
+#
+#       if (ci_type!="none") {
+#
+#         if (!type %in% noci_list) {
+#
+#           indicator <- calc_ci(df,
+#                                indicator = indicator,
+#                                num_bootstrap = 1000,
+#                                ci_type = ci_type,
+#                                ...)
+#
+#         } else {
+#
+#           warning(
+#             paste0(
+#               "Bootstrapped confidence intervals cannot be calculated for the ",
+#               "chosen indicator."
+#             )
+#           )
+#         }
+#
+#
+#       }
+#
+#     }
+#
+#   }
+#
+#   # Create indicator object
+#
+#   if (dim_type == "map") {
+#
+#     diversity_obj <- new_indicator_map(diversity_grid,
+#                                        div_type = type,
+#                                        cell_size = cell_size,
+#                                        cell_size_units = output_units,
+#                                        map_level = level,
+#                                        map_region = region,
+#                                        kingdoms = kingdoms,
+#                                        num_families = num_families,
+#                                        num_species = num_species,
+#                                        first_year = first_year,
+#                                        last_year = last_year,
+#                                        num_years = num_years,
+#                                        species_names = species_names,
+#                                        years_with_obs = years_with_obs)
+#
+#   } else {
+#
+#     diversity_obj <- new_indicator_ts(dplyr::as_tibble(indicator),
+#                                       div_type = type,
+#                                       map_level = level,
+#                                       map_region = region,
+#                                       kingdoms = kingdoms,
+#                                       num_families = num_families,
+#                                       num_species = num_species,
+#                                       num_years = num_years,
+#                                       species_names = species_names,
+#                                       coord_range = map_lims)
+#
+#   }
+#
+#   return(diversity_obj)
+#
+# }
+
 compute_indicator_workflow <- function(data,
                                        type,
                                        dim_type = c("map",
@@ -418,6 +1503,8 @@ compute_indicator_workflow <- function(data,
                                        crs_unit_convert = FALSE,
                                        shapefile_path = NULL,
                                        invert = FALSE,
+                                       include_water = FALSE,
+                                       buffer_dist_km = 50,
                                        ...) {
 
   stopifnot_error("Object class not recognized.",
@@ -591,10 +1678,10 @@ compute_indicator_workflow <- function(data,
 
     if (stringr::str_detect(data$resolution, "degrees")) {
       input_cell_size <- as.numeric(stringr::str_extract(data$resolution,
-                                                  "[0-9,.]*(?=degrees)"))
+                                                         "[0-9,.]*(?=degrees)"))
     } else if (stringr::str_detect(data$resolution, "km")) {
       input_cell_size <- as.numeric(stringr::str_extract(data$resolution,
-                                                  "[0-9]*(?=km)"))
+                                                         "[0-9]*(?=km)"))
     } else {
       stop("Resolution units not recognized. Must be km or degrees.")
     }
@@ -609,11 +1696,11 @@ compute_indicator_workflow <- function(data,
 
       } else {
 
-      df_sf_input <- sf::st_as_sf(df,
-                             coords = c("xcoord", "ycoord"),
-                             crs = cube_crs)
+        df_sf_input <- sf::st_as_sf(df,
+                                    coords = c("xcoord", "ycoord"),
+                                    crs = cube_crs)
 
-      df_sf_output <- sf::st_transform(df_sf_input, crs = output_crs)
+        df_sf_output <- sf::st_transform(df_sf_input, crs = output_crs)
 
       }
 
@@ -670,7 +1757,10 @@ compute_indicator_workflow <- function(data,
                                 level,
                                 ne_type,
                                 ne_scale,
-                                cube_cell_codes = df$cellCode)
+                                cube_cell_codes = df$cellCode,
+                                include_water,
+                                buffer_dist_km,
+                                df)
 
       } else {
 
@@ -679,7 +1769,11 @@ compute_indicator_workflow <- function(data,
                                 output_crs,
                                 level,
                                 ne_type,
-                                ne_scale)
+                                ne_scale,
+                                cube_cell_codes = NULL,
+                                include_water,
+                                buffer_dist_km,
+                                df)
 
       }
 
@@ -693,7 +1787,6 @@ compute_indicator_workflow <- function(data,
       # because it fails when the grid contains invalid geometries.
       # Therefore when invalid geometries are encountered, it will retry the
       # operation with spherical geometry turned off. This often succeeds.
-
       result <- NULL  # Initialize to capture result of intersection
 
       tryCatch({
@@ -794,11 +1887,14 @@ compute_indicator_workflow <- function(data,
       # Spatial Filtering for Time Series using rnaturalearth
       if (!is.null(level) && !is.null(region)) {
 
-        map_data <- get_NE_data(region,
-                                output_crs,
-                                level,
-                                ne_type,
-                                ne_scale)
+        # map_data <- get_NE_data(region,
+        #                         output_crs,
+        #                         level,
+        #                         ne_type,
+        #                         ne_scale,
+        #                         cube_cell_codes = NULL,
+        #                         include_water,
+        #                         df)
 
         if (data$grid_type == "mgrs") {
 
@@ -806,10 +1902,10 @@ compute_indicator_workflow <- function(data,
 
         } else {
 
-        df_sf <- sf::st_as_sf(df,
-                              coords = c("xcoord", "ycoord"),
-                              crs = cube_crs)
-        df_sf <- sf::st_transform(df_sf, crs = output_crs)
+          df_sf <- sf::st_as_sf(df,
+                                coords = c("xcoord", "ycoord"),
+                                crs = cube_crs)
+          df_sf <- sf::st_transform(df_sf, crs = output_crs)
 
         }
 
@@ -861,7 +1957,7 @@ compute_indicator_workflow <- function(data,
           sf::sf_use_s2(original_s2_setting)
         }
 
-       # filtered_sf <- sf::st_intersection(df_sf, sf::st_union(map_data))
+        # filtered_sf <- sf::st_intersection(df_sf, sf::st_union(map_data))
 
         # Filter the original data frame
         df <- df[df$cellid %in% filtered_sf$cellid, ]
@@ -993,7 +2089,7 @@ compute_indicator_workflow <- function(data,
       if (is.numeric(data$coord_range)) {
         map_lims <- data$coord_range
       } else {
-          map_lims <- "Coordinates not provided"
+        map_lims <- "Coordinates not provided"
       }
 
       kingdoms <- data$kingdoms
@@ -1071,5 +2167,4 @@ compute_indicator_workflow <- function(data,
   return(diversity_obj)
 
 }
-
 
