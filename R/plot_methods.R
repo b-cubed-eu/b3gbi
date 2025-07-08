@@ -1014,6 +1014,16 @@ plot_map <- function(x,
       diversity_plot$layers
     )
 
+    diversity_plot$layers <- c(
+      diversity_plot$layers,
+      ggplot2::geom_sf(
+        data = map_surround,
+        fill = "transparent",
+        colour = "black",
+        aes(geometry = geometry)
+      )[[1]]
+    )
+
   }
 
   if (surround == TRUE) {
