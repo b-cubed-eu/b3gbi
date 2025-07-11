@@ -3,7 +3,7 @@ maindir <- "output/ramsar_metric_results_100m/asia"
 shapefiledir <- "inst/extdata/ramsar_sites_wkt"
 continent <- substring(inputdir, 36, nchar(inputdir))
 
-countrylist <- list.files(inputdir)[2]
+countrylist <- list.files(inputdir)[6]
 for (i in 1:length(countrylist)) {
 
   countrydir <- paste0(maindir, "/", countrylist[i])
@@ -20,23 +20,39 @@ for (i in 1:length(countrylist)) {
     dir.create(ormapsdir, recursive = TRUE)
     message(paste("Created ", sitelist[j], " observed richness maps directory:", ormapsdir))
   }
+for (j in 3:3) {
+#  for (j in 1:length(sitelist)) {
 
-  for (j in 1:length(sitelist)) {
+    tryCatch({
 
-    sitename <- substring(sitelist[j], 1, nchar(sitelist[j]) - 9)
-    # sitedir <- paste0(countrydir, "/", sitename)
-    # if (!dir.exists(sitedir)) {
-    #   dir.create(sitedir, recursive = TRUE)
-    #   message(paste("Created ", sitelist[j], " output directory:", sitedir))
-    # }
+      sitename <- substring(sitelist[j], 1, nchar(sitelist[j]) - 9)
+      # sitedir <- paste0(countrydir, "/", sitename)
+      # if (!dir.exists(sitedir)) {
+      #   dir.create(sitedir, recursive = TRUE)
+      #   message(paste("Created ", sitelist[j], " output directory:", sitedir))
+      # }
 
-    shapefilepath <- paste0(shapefiledir, "/", countrylist[i], "/", sitename, ".wkt")
+      shapefilepath <- paste0(shapefiledir, "/", countrylist[i], "/", sitename, ".wkt")
 
-    temp <- process_cube(paste0(inputdir, "/", countrylist[i], "/", sitelist[j]), separator = ",")
-    temp_obsrich_map <- obs_richness_map(temp, cell_size = 0.1, shapefile_path = shapefilepath, ne_scale = "medium", region = continent)
-    temp_orm_plot <- plot(temp_obsrich_map, crop_to_grid = TRUE)
+      temp <- process_cube(paste0(inputdir, "/", countrylist[i], "/", sitelist[j]), separator = ",")
+      temp_obsrich_map <- obs_richness_map(temp, cell_size = 0.1, shapefile_path = shapefilepath, ne_scale = "large", region = continent)
+      temp_orm_plot <- plot(temp_obsrich_map, crop_to_grid = TRUE)
 
-    ggsave(filename = paste0(ormapsdir, "/", sitename, ".png"), temp_orm_plot, device = "png", height = 8000, width = 8000, units = "px")
+      ggsave(filename = paste0(ormapsdir, "/", sitename, ".png"), temp_orm_plot, device = "png", height = 12000, width = 12000, units = "px")
+
+    }, error = function(e) {
+      if (grepl("No spatial intersection between map data and grid.", e) ||
+          grepl("Error in FUN", e)) {
+        message(
+          paste0(
+            "Encountered a geometry error during intersection. This may be ",
+            "due to coordinate mismatches."
+          )
+        )
+      } else {
+        stop(e)
+      }
+    })
 
   }
 }
