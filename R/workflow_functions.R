@@ -113,32 +113,94 @@ get_NE_data <- function(region,
     map_data <- map_data_cropped
 
     if (include_water == TRUE) {
-      map_data_water <- rnaturalearth::ne_download(scale = ne_scale,
+
+      # Get oceans data
+      map_data_oceans <- rnaturalearth::ne_download(scale = ne_scale,
                                                    type = "ocean",
                                                    category = "physical",
                                                    returnclass = "sf")
 
+      # Crop oceans
+      map_data_oceans <- sf::st_crop(map_data_oceans,
+                                    xmin = min_lon,
+                                    xmax = max_lon,
+                                    ymin = min_lat,
+                                    ymax = max_lat)
+
+      # Validate oceans
+      map_data_oceans <- sf::st_make_valid(map_data_oceans)
+
+      # Get lakes data
+      map_data_lakes <- rnaturalearth::ne_download(scale = ne_scale,
+                                                   type = "lakes",
+                                                   category = "physical",
+                                                   returnclass = "sf")
+
+      # Crop lakes
+      map_data_lakes <- sf::st_crop(map_data_lakes,
+                                    xmin = min_lon,
+                                    xmax = max_lon,
+                                    ymin = min_lat,
+                                    ymax = max_lat)
+
+      # Validate lakes
+      map_data_lakes <- sf::st_make_valid(map_data_lakes)
+
+      # Get rivers data
+      map_data_rivers <- rnaturalearth::ne_download(scale = ne_scale,
+                                                    type = "rivers_lake_centerlines",
+                                                    category = "physical",
+                                                    returnclass = "sf")
+
+      # Crop rivers
+      map_data_rivers <- sf::st_crop(map_data_rivers,
+                                     xmin = min_lon,
+                                     xmax = max_lon,
+                                     ymin = min_lat,
+                                     ymax = max_lat)
+
+      # Validate rivers
+      map_data_rivers <- sf::st_make_valid(map_data_rivers)
+
+      # Get coastlines data
+      map_data_coastlines <- rnaturalearth::ne_download(scale = ne_scale,
+                                                        type = "coastline",
+                                                        category = "physical",
+                                                        returnclass = "sf")
+
+      # Crop coastlines
+      map_data_coastlines <- sf::st_crop(map_data_coastlines,
+                                         xmin = min_lon,
+                                         xmax = max_lon,
+                                         ymin = min_lat,
+                                         ymax = max_lat)
+
+      # Validate coastlines
+      map_data_coastlines <- sf::st_make_valid(map_data_coastlines)
+
+      # Turn off spherical geometry
       get_s2_status <- sf_use_s2()
       sf_use_s2(FALSE)
 
-      # Validate oceans
-      map_data_water <- sf::st_make_valid(map_data_water)
+      # Combine water regions
+      map_data_water <- sf::st_union(map_data_oceans,
+                                     map_data_lakes)
 
-      # Crop the oceans
-      map_data_water_cropped <- sf::st_crop(map_data_water,
-                                            xmin = min_lon,
-                                            xmax = max_lon,
-                                            ymin = min_lat,
-                                            ymax = max_lat)
+      map_data_water <- sf::st_union(map_data_water,
+                                     map_data_rivers)
 
-      # Merge the land with the oceans
+      map_data_water <- sf::st_union(map_data_water,
+                                     map_data_coastlines)
+
+      # Merge the land with the water
       map_data_merged <- sf::st_union(map_data,
-                                      map_data_water_cropped)
+                                      map_data_water)
 
       # Project the merged and cropped map
       map_data <- sf::st_transform(map_data_merged,
                                    crs = output_crs)
 
+      # Return spherical geometry to previous status
       if (get_s2_status == TRUE){
         sf_use_s2(TRUE)
       }
@@ -1150,7 +1212,7 @@ compute_indicator_workflow <- function(data,
 
     diversity_obj <- new_indicator_map(diversity_grid,
                                        div_type = type,
-                                       cell_size = cell_size,
+                                       cell_size = cell_size / 1000,
                                        cell_size_units = output_units,
                                        map_level = level,
                                        map_region = region,
