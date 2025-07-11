@@ -12,7 +12,8 @@ jobs:
   test-coverage:
     runs-on: ubuntu-latest
     env:
-      GITHUB_PAT: ${{ secrets.CODECOV_TOKEN }}
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
     steps:
       - uses: actions/checkout@v4
@@ -48,3 +49,4 @@ jobs:
         with:
           name: coverage-test-failures
           path: ${{ runner.temp }}/package
+          
