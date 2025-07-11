@@ -725,6 +725,7 @@ plot.occ_turnover <- function(x,
 #' @param legend_limits (Optional) Limits for the legend scale.
 #' @param legend_title_wrap_length Maximum legend title length before wrapping to a new line.
 #' @param title_wrap_length Maximum title length before wrapping to a new line.
+#' @param transparent_gridlines Make gridlines invisible. Default is FALSE.
 #'
 #' @return A ggplot object representing the biodiversity indicator map.
 #' Can be customized using ggplot2 functions.
@@ -756,7 +757,8 @@ plot_map <- function(x,
                      legend_title = NULL,
                      legend_limits = NULL,
                      legend_title_wrap_length = 10,
-                     title_wrap_length = 60
+                     title_wrap_length = 60,
+                     transparent_gridlines = FALSE
                      ) {
 
   diversity_val <- geometry <- NULL
@@ -798,7 +800,7 @@ plot_map <- function(x,
 
   # Get world data to plot surrounding land if surround flag is set
   if (surround == TRUE) {
-    map_surround <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf") %>%
+    map_surround <- rnaturalearth::ne_countries(scale = "large", returnclass = "sf") %>%
       sf::st_as_sf() %>%
       sf::st_transform(crs = x$projection) %>%
       sf::st_make_valid()
@@ -834,7 +836,7 @@ plot_map <- function(x,
   # Define function to modify legend
   cust_leg <- function(scale.params = list()) {
     do.call("scale_fill_gradient", modifyList(
-      list(low = "gold", high = "firebrick4", na.value = "grey95"),
+      list(low = "gold", high = "firebrick4", na.value = "transparent"),
       scale.params)
     )
   }
@@ -843,7 +845,7 @@ plot_map <- function(x,
   diversity_plot <- ggplot2::ggplot(x$data) +
     geom_sf(aes(fill = diversity_val,
                 geometry = geometry),
-            colour = "black") +
+            colour = "transparent") +
     cust_leg(list(trans = trans,
                   breaks = breaks,
                   labels = labels,
@@ -937,19 +939,131 @@ plot_map <- function(x,
         ), crs = latlong_crs)
 
         # Crop the world map in lat/long to the expanded extent
-        surrounding_countries_latlong <- rnaturalearth::ne_countries(scale = "medium",
+        surrounding_countries_latlong <- rnaturalearth::ne_countries(scale = "large",
                                                                      returnclass = "sf") %>%
           sf::st_as_sf() %>%
           sf::st_make_valid() %>%
           sf::st_crop(expanded_latlong_bbox)
 
+        tryCatch({
+          lakes <- rnaturalearth::ne_load(scale = "large",
+                                          returnclass = "sf",
+                                          type = "lakes",
+                                          category = "physical")
+        }, error = function(e) if (grepl("the file ne_10m_lakes seems not to exist", e)) {
+          lakes <- rnaturalearth::ne_download(scale = "large",
+                                              returnclass = "sf",
+                                              type = "lakes",
+                                              category = "physical")
+        } else {
+          stop(e)
+        }
+        ) %>%
+          sf::st_as_sf() %>%
+          sf::st_make_valid() %>%
+          sf::st_crop(expanded_latlong_bbox)
+
+        tryCatch({
+          rivers <- rnaturalearth::ne_load(scale = "large",
+                                           returnclass = "sf",
+                                           type = "rivers_lake_centerlines",
+                                           category = "physical")
+        }, error = function(e) if (grepl("the file ne_10m_rivers_lake_centerlines seems not to exist", e)) {
+          rivers <- rnaturalearth::ne_download(scale = "large",
+                                               returnclass = "sf",
+                                               type = "rivers_lake_centerlines",
+                                               category = "physical")
+        } else {
+          stop(e)
+        }
+        ) %>%
+          sf::st_as_sf() %>%
+          sf::st_make_valid() %>%
+          sf::st_crop(expanded_latlong_bbox)
+
+
+        tryCatch({
+          coastline <- rnaturalearth::ne_load(scale = "large",
+                                              returnclass = "sf",
+                                              type = "coastline",
+                                              category = "physical")
+        }, error = function(e) if (grepl("the file ne_10m_coastline seems not to exist", e)) {
+          coastline <- rnaturalearth::ne_download(scale = "large",
+                                                  returnclass = "sf",
+                                                  type = "coastline",
+                                                  category = "physical")
+        } else {
+          stop(e)
+        }
+        ) %>%
+          sf::st_as_sf() %>%
+          sf::st_make_valid() %>%
+          sf::st_crop(expanded_latlong_bbox)
+
+
       } else {
         # Crop to the original extent if not expanding
-        surrounding_countries_latlong <- rnaturalearth::ne_countries(scale = "medium",
+        surrounding_countries_latlong <- rnaturalearth::ne_countries(scale = "large",
                                                                      returnclass = "sf") %>%
           sf::st_as_sf() %>%
           sf::st_make_valid() %>%
           sf::st_crop(latlong_extent)
+
+        tryCatch({
+          lakes <- rnaturalearth::ne_load(scale = "large",
+                                           returnclass = "sf",
+                                           type = "lakes",
+                                           category = "physical")
+        }, error = function(e) if (grepl("the file ne_10m_lakes seems not to exist", e)) {
+          lakes <- rnaturalearth::ne_download(scale = "large",
+                                               returnclass = "sf",
+                                               type = "lakes",
+                                               category = "physical")
+        } else {
+          stop(e)
+        }
+        ) %>%
+          sf::st_as_sf() %>%
+          sf::st_make_valid() %>%
+          sf::st_crop(latlong_extent)
+
+        tryCatch({
+          rivers <- rnaturalearth::ne_load(scale = "large",
+                                           returnclass = "sf",
+                                           type = "rivers_lake_centerlines",
+                                           category = "physical")
+        }, error = function(e) if (grepl("the file ne_10m_rivers_lake_centerlines seems not to exist", e)) {
+          rivers <- rnaturalearth::ne_download(scale = "large",
+                                               returnclass = "sf",
+                                               type = "rivers_lake_centerlines",
+                                               category = "physical")
+        } else {
+          stop(e)
+        }
+        ) %>%
+          sf::st_as_sf() %>%
+          sf::st_make_valid() %>%
+          sf::st_crop(latlong_extent)
+
+
+        tryCatch({
+          coastline <- rnaturalearth::ne_load(scale = "large",
+                                         returnclass = "sf",
+                                         type = "coastline",
+                                         category = "physical")
+        }, error = function(e) if (grepl("the file ne_10m_coastline seems not to exist", e)) {
+          coastline <- rnaturalearth::ne_download(scale = "large",
+                                              returnclass = "sf",
+                                              type = "coastline",
+                                              category = "physical")
+        } else {
+          stop(e)
+        }
+        ) %>%
+          sf::st_as_sf() %>%
+          sf::st_make_valid() %>%
+          sf::st_crop(latlong_extent)
+
       }
       sf::sf_use_s2(TRUE)
 
@@ -1004,7 +1118,26 @@ plot_map <- function(x,
 
     }
 
-    # Plot map_surround as plot as layer
+    # Plot lakes
+    diversity_plot <- diversity_plot + ggplot2::geom_sf(data = lakes,
+                                                        fill = if(!is.null(panel_bg)) panel_bg
+                                                        else "#92c5f0",
+                                                        aes(geometry = geometry))
+
+    # Plot rivers
+    diversity_plot <- diversity_plot + ggplot2::geom_sf(data = rivers,
+                                                        fill = if(!is.null(panel_bg)) panel_bg
+                                                        else "#92c5f0",
+                                                        aes(geometry = geometry))
+
+    # Plot coastlines
+    diversity_plot <- diversity_plot + ggplot2::geom_sf(data = coastline,
+                                                        fill = if(!is.null(panel_bg)) panel_bg
+                                                        else "#92c5f0",
+                                                        aes(geometry = geometry))
+
+
+    # Plot map_surround as layer
     diversity_plot$layers <- c(
       ggplot2::geom_sf(
         data = map_surround,
@@ -1024,10 +1157,23 @@ plot_map <- function(x,
       )[[1]]
     )
 
+    if (transparent_gridlines == FALSE) {
+      # plot gridlines
+      diversity_plot$layers <- c(
+        diversity_plot$layers,
+        ggplot2::geom_sf(aes(geometry = geometry),
+                         colour = "black",
+                         linewidth = 0.1,
+                         fill = "transparent"
+        )[[1]]
+      )
+    }
+
   }
 
   if (surround == TRUE) {
-    bbox_utm <- sf::st_bbox(map_surround)
+    bbox_utm <- sf::st_as_sfc(latlong_extent)
+    bbox_utm <- sf::st_bbox(sf::st_transform(bbox_utm, crs = sf::st_crs(x$data)))
     xlims = c(bbox_utm[1], bbox_utm[3])
     ylims = c(bbox_utm[2], bbox_utm[4])
   }
@@ -1053,7 +1199,230 @@ plot_map <- function(x,
   return(diversity_plot)
 
 }
-
+# plot_map <- function(x,
+#                      title = "auto",
+#                      auto_title = NULL,
+#                      leg_label_default = NULL,
+#                      xlims = NULL,
+#                      ylims = NULL,
+#                      trans = NULL,
+#                      bcpower = NULL,
+#                      breaks = NULL,
+#                      labels = NULL,
+#                      Europe_crop_EEA = TRUE,
+#                      crop_to_grid = FALSE,
+#                      surround = TRUE,
+#                      panel_bg = NULL,
+#                      land_fill_colour = "grey85", # Set default here
+#                      legend_title = NULL,
+#                      legend_limits = NULL,
+#                      legend_title_wrap_length = 10,
+#                      title_wrap_length = 60,
+#                      transparent_gridlines = FALSE) {
+#
+#   # Internal function to wrap text
+#   wrapper <- function(text_to_wrap, wrap_length) {
+#     paste(strwrap(text_to_wrap, width = wrap_length), collapse = "\n")
+#   }
+#
+#   if (!inherits(x, "indicator_map")) {
+#     stop("Incorrect object class. Must be class 'indicator_map'.")
+#   }
+#
+#   if (anyNA(x$coord_range) || (!is.null(x$map_lims) && anyNA(x$map_lims))) {
+#     stop("`x$coord_range` or `x$map_lims` contains NA values. Ensure your 'indicator_map' object has valid coordinate ranges.")
+#   }
+#
+#   # Determine map limits
+#   map_lims <- if (is.null(x$map_lims)) x$coord_range else x$map_lims[c("xmin", "ymin", "xmax", "ymax")]
+#
+#   # Apply Europe crop if conditions met
+#   if (length(x$map_region) == 1 &&
+#       Europe_crop_EEA &&
+#       # x$map_level == "continent" && # This line was commented out in original, kept it that way
+#       x$map_region == "Europe" &&
+#       x$projection == "EPSG:3035" &&
+#       !crop_to_grid) {
+#     sf::st_agr(x$data) <- "constant" # Set attributes as spatially constant to avoid warnings
+#     map_lims <- c(xmin = 2600000, ymin = 1600000, xmax = 7000000, ymax = 6000000) # Manually set cropped limits
+#   }
+#
+#   # Set panel background color
+#   if (is.null(panel_bg)) {
+#     panel_bg <- "#92c5f0" # Ocean blue default
+#   }
+#
+#   # Get plot title
+#   if (title == "auto") {
+#     title_final <- auto_title
+#   } else {
+#     title_final <- title
+#   }
+#
+#   # Apply transformations if specified
+#   gradient_trans <- NULL
+#   if (!is.null(trans)) {
+#     gradient_trans <- switch(trans,
+#                              "boxcox" = scales::transform_boxcox(p = bcpower),
+#                              "modulus" = scales::transform_modulus(p = bcpower),
+#                              "yj" = scales::transform_yj(p = bcpower),
+#                              trans # Fallback for other valid 'trans' strings like 'log', 'sqrt'
+#     )
+#   }
+#
+#   # Define custom legend function (scale_fill_gradient setup)
+#   cust_leg <- function(scale.params = list()) {
+#     do.call("scale_fill_gradient", modifyList(
+#       list(low = "gold", high = "firebrick4", na.value = "transparent"),
+#       scale.params)
+#     )
+#   }
+#
+#   # Initialize plot
+#   diversity_plot <- ggplot2::ggplot()
+#
+#   # Add surrounding land area if 'surround' is TRUE
+#   if (surround) {
+#     # Load world data and transform to map projection
+#     map_surround <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf") %>%
+#       sf::st_transform(crs = x$projection) %>%
+#       sf::st_make_valid()
+#     sf::st_agr(map_surround) <- "constant"
+#
+#     if (anyNA(sf::st_bbox(x$data))) {
+#       warning("Initial indicator map data bounding box contains NA values. This might lead to errors.")
+#       # Consider stopping or handling this case
+#     }
+#
+#     # Handle different CRS units for cropping surrounding countries
+#     if (sf::st_crs(x$projection)$units == "km" && sf::st_crs(x$projection)$epsg != 3035) {
+#       current_bbox <- sf::st_bbox(x$data)
+#       if (!is.null(xlims) && !is.null(ylims)) { # If custom limits are provided, use them for bbox creation
+#         current_bbox <- sf::st_bbox(c(xmin = xlims[1], ymin = ylims[1], xmax = xlims[2], ymax = ylims[2]), crs = sf::st_crs(x$data))
+#       } else if (!is.null(map_lims)) { # Otherwise use derived map_lims
+#         current_bbox <- sf::st_bbox(c(xmin = map_lims["xmin"], ymin = map_lims["ymin"], xmax = map_lims["xmax"], ymax = map_lims["ymax"]), crs = sf::st_crs(x$data))
+#       }
+#
+#       # Convert UTM bbox to Lat/Long for rnaturalearth cropping
+#       latlong_crs <- sf::st_crs(4326)
+#       bbox_polygon_utm <- sf::st_as_sfc(current_bbox, crs = sf::st_crs(x$data))
+#       bbox_latlong <- sf::st_transform(bbox_polygon_utm, crs = latlong_crs)
+#       latlong_extent <- sf::st_bbox(bbox_latlong)
+#       if (anyNA(latlong_extent)) {
+#         stop("Transformed bounding box (latlong_extent) contains NA values. Cannot proceed with cropping.")
+#       }
+#
+#       sf::sf_use_s2(FALSE) # Disable S2 for cropping operations
+#       if (!crop_to_grid) {
+#         expand_percent <- 0.1
+#         lon_range <- latlong_extent["xmax"] - latlong_extent["xmin"]
+#         lat_range <- latlong_extent["ymax"] - latlong_extent["ymin"]
+#         expanded_latlong_bbox <- sf::st_bbox(c(
+#           latlong_extent["xmin"] - (expand_percent * lon_range),
+#           latlong_extent["ymin"] - (expand_percent * lat_range),
+#           latlong_extent["xmax"] + (expand_percent * lon_range),
+#           latlong_extent["ymax"] + (expand_percent * lat_range)
+#         ), crs = latlong_crs)
+#         crop_bbox_ll <- expanded_latlong_bbox
+#       } else {
+#         crop_bbox_ll <- latlong_extent
+#       }
+#
+#       surrounding_countries_latlong <- rnaturalearth::ne_countries(scale = "large", returnclass = "sf") %>%
+#         sf::st_as_sf() %>%
+#         sf::st_make_valid() %>%
+#         sf::st_crop(crop_bbox_ll)
+#
+#       map_surround <- sf::st_transform(surrounding_countries_latlong, crs = sf::st_crs(x$data))
+#       sf::sf_use_s2(TRUE) # Re-enable S2
+#     } else {
+#       # For other projections or if not cropping to grid, use direct bbox intersection
+#       if (!crop_to_grid) {
+#         expand_percent <- 0.1
+#         x_range <- map_lims["xmax"] - map_lims["xmin"]
+#         y_range <- map_lims["ymax"] - map_lims["ymin"]
+#         expanded_lims_bbox <- sf::st_bbox(c(
+#           xmin = map_lims["xmin"] - (expand_percent * x_range),
+#           ymin = map_lims["ymin"] - (expand_percent * y_range),
+#           xmax = map_lims["xmax"] + (expand_percent * x_range),
+#           ymax = map_lims["ymax"] + (expand_percent * y_range)
+#         ), crs = sf::st_crs(map_surround))
+#       } else {
+#         expanded_lims_bbox <- sf::st_bbox(map_lims, crs = sf::st_crs(map_surround))
+#       }
+#       map_surround <- sf::st_intersection(map_surround, sf::st_as_sfc(expanded_lims_bbox))
+#     }
+#
+#     diversity_plot <- diversity_plot +
+#       ggplot2::geom_sf(data = map_surround,
+#                        fill = land_fill_colour,
+#                        aes(geometry = geometry),
+#                        inherit.aes = FALSE) + # Important to prevent inheriting aesthetics from x$data
+#       ggplot2::geom_sf(data = map_surround,
+#                        fill = "transparent",
+#                        colour = "black",
+#                        aes(geometry = geometry),
+#                        inherit.aes = FALSE) # Add borders for surrounding land
+#   }
+#
+#   # Add the main indicator map layer
+#   diversity_plot <- diversity_plot +
+#     ggplot2::geom_sf(data = x$data,
+#                      aes(fill = diversity_val,
+#                          geometry = geometry),
+#                      colour = "transparent") +
+#     cust_leg(list(trans = gradient_trans,
+#                   breaks = breaks,
+#                   labels = labels,
+#                   limits = legend_limits))
+#
+#   # Set coordinate limits (using map_lims or custom xlims/ylims)
+#   final_xlims <- if (!is.null(xlims)) xlims else c(map_lims["xmin"], map_lims["xmax"])
+#   final_ylims <- if (!is.null(ylims)) ylims else c(map_lims["ymin"], map_lims["ymax"])
+#
+#   diversity_plot <- diversity_plot +
+#     ggplot2::coord_sf(xlim = final_xlims,
+#                       ylim = final_ylims,
+#                       expand = !crop_to_grid) + # Expand only if not cropping to grid
+#     theme_bw() +
+#     theme(
+#       panel.background = ggplot2::element_rect(fill = panel_bg),
+#       panel.grid.major = if (x$map_level == "country" || transparent_gridlines) ggplot2::element_blank() else NULL,
+#       panel.grid.minor = if (x$map_level == "country" || transparent_gridlines) ggplot2::element_blank() else NULL
+#     )
+#
+#   # Add transparent gridlines if explicitly requested and not country level
+#   if (transparent_gridlines && x$map_level != "country") {
+#     # If transparent_gridlines is TRUE, panel.grid.major/minor will already be element_blank().
+#     # If the intention was to keep the *main* grid lines transparent but still have them,
+#     # this would require a different approach (e.g., geom_sf_grid or custom grid lines).
+#     # Given the original code, `transparent_gridlines` acts like `panel.grid.major = element_blank()`.
+#     # The original code's `if (transparent_gridlines == FALSE)` block to add black gridlines
+#     # suggests that if it's TRUE, no gridlines should be plotted.
+#   }
+#
+#   # Add borders to the main grid cells if not transparent
+#   if (!transparent_gridlines) {
+#     diversity_plot <- diversity_plot +
+#       ggplot2::geom_sf(data = x$data,
+#                        aes(geometry = geometry),
+#                        colour = "black",
+#                        fill = "transparent",
+#                        inherit.aes = FALSE) # Ensure this layer doesn't inherit fill
+#   }
+#
+#
+#   # Set labels (legend title and plot title)
+#   diversity_plot <- diversity_plot +
+#     labs(fill = wrapper(legend_title %||% leg_label_default, legend_title_wrap_length)) # Use %||% for concise NULL handling
+#
+#   if (!is.null(title_final)) {
+#     diversity_plot <- diversity_plot +
+#       labs(title = wrapper(title_final, title_wrap_length))
+#   }
+#
+#   return(diversity_plot)
+# }
 
 #' @title Plot Biodiversity Indicator Trend
 #'
