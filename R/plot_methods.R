@@ -943,7 +943,9 @@ plot_map <- function(x,
                                                                      returnclass = "sf") %>%
           sf::st_as_sf() %>%
           sf::st_make_valid() %>%
-          sf::st_crop(expanded_latlong_bbox)
+          sf::st_crop(expanded_latlong_bbox) %>%
+          dplyr::filter(!sf::st_is_empty(geometry)) %>% # Filter out empty geometries
+          sf::st_make_valid()
 
         tryCatch({
           lakes <- rnaturalearth::ne_load(scale = "large",
@@ -958,10 +960,13 @@ plot_map <- function(x,
         } else {
           stop(e)
         }
-        ) %>%
+        )
+
+        lakes <- lakes %>%
           sf::st_as_sf() %>%
           sf::st_make_valid() %>%
-          sf::st_crop(expanded_latlong_bbox)
+          sf::st_crop(expanded_latlong_bbox) %>%
+          dplyr::filter(!sf::st_is_empty(geometry)) # Filter out empty geometries
 
         tryCatch({
           rivers <- rnaturalearth::ne_load(scale = "large",
@@ -976,11 +981,13 @@ plot_map <- function(x,
         } else {
           stop(e)
         }
-        ) %>%
+        )
+
+        rivers <- rivers %>%
           sf::st_as_sf() %>%
           sf::st_make_valid() %>%
-          sf::st_crop(expanded_latlong_bbox)
-
+          sf::st_crop(expanded_latlong_bbox) %>%
+          dplyr::filter(!sf::st_is_empty(geometry)) # Filter out empty geometries
 
         tryCatch({
           coastline <- rnaturalearth::ne_load(scale = "large",
@@ -995,10 +1002,13 @@ plot_map <- function(x,
         } else {
           stop(e)
         }
-        ) %>%
+        )
+
+        coastline <- coastline %>%
           sf::st_as_sf() %>%
           sf::st_make_valid() %>%
-          sf::st_crop(expanded_latlong_bbox)
+          sf::st_crop(expanded_latlong_bbox) %>%
+          dplyr::filter(!sf::st_is_empty(geometry)) # Filter out empty geometries
 
 
       } else {
@@ -1007,7 +1017,8 @@ plot_map <- function(x,
                                                                      returnclass = "sf") %>%
           sf::st_as_sf() %>%
           sf::st_make_valid() %>%
-          sf::st_crop(latlong_extent)
+          sf::st_crop(latlong_extent) %>%
+          dplyr::filter(!sf::st_is_empty(geometry)) # Filter out empty geometries
 
         tryCatch({
           lakes <- rnaturalearth::ne_load(scale = "large",
@@ -1022,10 +1033,12 @@ plot_map <- function(x,
         } else {
           stop(e)
         }
-        ) %>%
+        )
+        lakes <- lakes %>%
           sf::st_as_sf() %>%
           sf::st_make_valid() %>%
-          sf::st_crop(latlong_extent)
+          sf::st_crop(latlong_extent) %>%
+          dplyr::filter(!sf::st_is_empty(geometry)) # Filter out empty geometries
 
         tryCatch({
           rivers <- rnaturalearth::ne_load(scale = "large",
@@ -1040,10 +1053,12 @@ plot_map <- function(x,
         } else {
           stop(e)
         }
-        ) %>%
+        )
+        rivers <- rivers %>%
           sf::st_as_sf() %>%
           sf::st_make_valid() %>%
-          sf::st_crop(latlong_extent)
+          sf::st_crop(latlong_extent) %>%
+          dplyr::filter(!sf::st_is_empty(geometry)) # Filter out empty geometries
 
 
         tryCatch({
@@ -1059,10 +1074,13 @@ plot_map <- function(x,
         } else {
           stop(e)
         }
-        ) %>%
+        )
+
+        coastline <- coastline %>%
           sf::st_as_sf() %>%
           sf::st_make_valid() %>%
-          sf::st_crop(latlong_extent)
+          sf::st_crop(latlong_extent) %>%
+          dplyr::filter(!sf::st_is_empty(geometry)) # Filter out empty geometries
 
       }
       sf::sf_use_s2(TRUE)
@@ -1118,23 +1136,17 @@ plot_map <- function(x,
 
     }
 
-    # Plot lakes
-    diversity_plot <- diversity_plot + ggplot2::geom_sf(data = lakes,
-                                                        fill = if(!is.null(panel_bg)) panel_bg
-                                                        else "#92c5f0",
-                                                        aes(geometry = geometry))
 
-    # Plot rivers
-    diversity_plot <- diversity_plot + ggplot2::geom_sf(data = rivers,
-                                                        fill = if(!is.null(panel_bg)) panel_bg
-                                                        else "#92c5f0",
-                                                        aes(geometry = geometry))
-
-    # Plot coastlines
-    diversity_plot <- diversity_plot + ggplot2::geom_sf(data = coastline,
-                                                        fill = if(!is.null(panel_bg)) panel_bg
-                                                        else "#92c5f0",
-                                                        aes(geometry = geometry))
+    # Plot lakes, rivers, and coastlines if they are not empty
+    if (!is.null(lakes) && nrow(lakes) > 0) {
+      diversity_plot <- diversity_plot + ggplot2::geom_sf(data = lakes, fill = "#92c5f0", aes(geometry = geometry), inherit.aes = FALSE)
+    }
+    if (!is.null(rivers) && nrow(rivers) > 0) {
+      diversity_plot <- diversity_plot + ggplot2::geom_sf(data = rivers, color = "#92c5f0", aes(geometry = geometry), inherit.aes = FALSE) # Rivers are lines, so use color, not fill
+    }
+    if (!is.null(coastline) && nrow(coastline) > 0) {
+      diversity_plot <- diversity_plot + ggplot2::geom_sf(data = coastline, color = "black", aes(geometry = geometry), fill = "transparent", inherit.aes = FALSE) # Coastline as black border
+    }
 
 
     # Plot map_surround as layer
@@ -1142,7 +1154,8 @@ plot_map <- function(x,
       ggplot2::geom_sf(
         data = map_surround,
         fill = land_fill_colour,
-        aes(geometry = geometry)
+        aes(geometry = geometry),
+        inherit.aes = FALSE
       )[[1]],
       diversity_plot$layers
     )
@@ -1153,7 +1166,8 @@ plot_map <- function(x,
         data = map_surround,
         fill = "transparent",
         colour = "black",
-        aes(geometry = geometry)
+        aes(geometry = geometry),
+        inherit.aes = FALSE
       )[[1]]
     )
 
