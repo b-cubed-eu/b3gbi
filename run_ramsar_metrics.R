@@ -35,7 +35,7 @@ for (j in 3:3) {
       shapefilepath <- paste0(shapefiledir, "/", countrylist[i], "/", sitename, ".wkt")
 
       temp <- process_cube(paste0(inputdir, "/", countrylist[i], "/", sitelist[j]), separator = ",")
-      temp_obsrich_map <- obs_richness_map(temp, cell_size = 0.1, shapefile_path = shapefilepath, ne_scale = "large", region = continent)
+      temp_obsrich_map <- obs_richness_map(temp, cell_size = 1, shapefile_path = shapefilepath, ne_scale = "large", region = continent)
       temp_orm_plot <- plot(temp_obsrich_map, crop_to_grid = TRUE)
 
       ggsave(filename = paste0(ormapsdir, "/", sitename, ".png"), temp_orm_plot, device = "png", height = 12000, width = 12000, units = "px")
