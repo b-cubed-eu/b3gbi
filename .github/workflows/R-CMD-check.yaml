@@ -44,6 +44,24 @@ jobs:
           extra-packages: any::rcmdcheck
           needs: check
 
+      # --- START OF NEW DIAGNOSTIC CODE ---
+      - name: Diagnostic for rnaturalearth
+        run: |
+          install.packages("rnaturalearth")
+          result <- try(rnaturalearth::ne_download(scale = "medium", type = "countries", returnclass = "sf", load = TRUE), silent = TRUE)
+          if (inherits(result, "try-error")) {
+            stop("rnaturalearth::ne_download failed with an error.")
+          }
+          if (is.null(result)) {
+            stop("rnaturalearth::ne_download returned NULL.")
+          }
+          if (!is.data.frame(result) || nrow(result) == 0) {
+            stop("rnaturalearth::ne_download returned an empty or invalid object.")
+          }
+          print(result)
+        shell: Rscript {0}
+      # --- END OF NEW DIAGNOSTIC CODE ---
+
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
