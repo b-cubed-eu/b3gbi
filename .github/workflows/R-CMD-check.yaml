@@ -44,6 +44,20 @@ jobs:
           extra-packages: any::rcmdcheck
           needs: check
 
+      # Install the rnaturalearth package if it wasn't already installed
+      # by the setup-r-dependencies step (it should be, but this is a failsafe)
+      - name: Install rnaturalearth
+        run: |
+          install.packages("rnaturalearth")
+        shell: Rscript {0}
+
+      # Download the medium-scale natural earth data
+      # This explicitly prepares the environment for the vignette build.
+      - name: Download medium-scale rnaturalearth data
+        run: |
+          rnaturalearth::ne_download(scale = "medium", type = "countries")
+        shell: Rscript {0}
+
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
