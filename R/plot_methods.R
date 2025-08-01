@@ -848,7 +848,7 @@ plot_map <- function(x,
 #       sf::st_transform(crs = x$projection) %>%
 #       sf::st_make_valid()
 #   })
-  map_surround <- add_NE_layer("land",
+  map_surround <- add_NE_layer("admin_0_countries",
                                scale,
                                sf::st_bbox(x$data))
 
@@ -947,7 +947,7 @@ plot_map <- function(x,
         # Crop the world map in lat/long to the expanded extent
         # surrounding_countries_latlong <- rnaturalearth::ne_countries(scale = scale,
         #                                                              returnclass = "sf") %>%
-        surround_countries_latlong <- add_NE_layer("land",
+        surround_countries_latlong <- add_NE_layer("admin_0_countries",
                                                    scale,
                                                    expanded_latlong_bbox) %>%
           sf::st_as_sf() %>%
@@ -971,7 +971,7 @@ plot_map <- function(x,
         # Crop to the original extent if not expanding
         # surrounding_countries_latlong <- rnaturalearth::ne_countries(scale = scale,
         #                                                              returnclass = "sf") %>%
-        surrounding_countries_latlong <- add_NE_layer("land",
+        surrounding_countries_latlong <- add_NE_layer("admin_0_countries",
                                                       scale,
                                                       latlong_extent) %>%
           sf::st_as_sf() %>%

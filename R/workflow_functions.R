@@ -1198,9 +1198,9 @@ compute_indicator_workflow <- function(data,
 
     if (include_water == TRUE) {
       water_layers <- c("ocean", "lakes", "rivers_lake_centerlines")
-      layers <- c("land", water_layers, layers)
+      layers <- c("admin_0_countries", water_layers, layers)
     } else {
-      layers <- c("land", layers)
+      layers <- c("admin_0_countries", layers)
     }
 
     diversity_obj <- new_indicator_map(diversity_grid,
