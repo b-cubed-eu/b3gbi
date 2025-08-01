@@ -983,7 +983,7 @@ plot_map <- function(x,
         layer_list <- list()
         for (i in 1:length(layers)) {
           layer_data <- add_NE_layer(layers[i],
-                                     "large",
+                                     scale,
                                      expanded_latlong_bbox)
 
           if (!is.null(layer_data) && nrow(layer_data) > 0) {
@@ -1003,7 +1003,7 @@ plot_map <- function(x,
         layer_list <- list()
         for (i in 1:length(layers)) {
           layer_data <- add_NE_layer(layers[i],
-                                     "large",
+                                     scale,
                                      latlong_extent)
 
           if (!is.null(layer_data) && nrow(layer_data) > 0) {
@@ -1053,7 +1053,7 @@ plot_map <- function(x,
         layer_list <- list()
         for (i in 1:length(layers)) {
           layer_data <- add_NE_layer(layers[i],
-                                     "large",
+                                     scale,
                                      bbox)
 
           if (!is.null(layer_data) && nrow(layer_data) > 0) {
@@ -1072,7 +1072,7 @@ plot_map <- function(x,
         layer_list <- list()
         for (i in 1:length(layers)) {
           layer_data <- add_NE_layer(layers[i],
-                                     "large",
+                                     scale,
                                      bbox)
 
           if (!is.null(layer_data) && nrow(layer_data) > 0) {
