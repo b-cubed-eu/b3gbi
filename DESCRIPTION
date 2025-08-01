@@ -55,3 +55,4 @@ Remotes:
     github::hrbrmstr/mgrs,
     github::ropensci/bold,
     github::ropensci/taxize
+    github::ropensci/rnaturalearthhires
