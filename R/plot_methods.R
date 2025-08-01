@@ -830,24 +830,27 @@ plot_map <- function(x,
     }
   }
 
-
-  # Get world data to plot surrounding land
-  map_surround <- tryCatch({
-    rnaturalearth::ne_countries(scale = scale, returnclass = "sf") %>%
-      sf::st_as_sf() %>%
-      sf::st_transform(crs = x$projection) %>%
-      sf::st_make_valid()
-  }, error = function(e) {
-    # This part of the tryCatch is to make the CI environment happy.
-    # The ne_countries function should handle this, but the CI environment seems
-    # to be failing in a specific way.
-    message(paste0("rnaturalearth::ne_countries failed to load data. Attempting download."))
-    rnaturalearth::ne_download(scale = scale, type = "countries", destdir = tempdir())
-    rnaturalearth::ne_countries(scale = scale, returnclass = "sf") %>%
-      sf::st_as_sf() %>%
-      sf::st_transform(crs = x$projection) %>%
-      sf::st_make_valid()
-  })
+#
+#   # Get world data to plot surrounding land
+#   map_surround <- tryCatch({
+#     rnaturalearth::ne_countries(scale = scale, returnclass = "sf") %>%
+#       sf::st_as_sf() %>%
+#       sf::st_transform(crs = x$projection) %>%
+#       sf::st_make_valid()
+#   }, error = function(e) {
+#     # This part of the tryCatch is to make the CI environment happy.
+#     # The ne_countries function should handle this, but the CI environment seems
+#     # to be failing in a specific way.
+#     message(paste0("rnaturalearth::ne_countries failed to load data. Attempting download."))
+#     rnaturalearth::ne_download(scale = scale, type = "countries", destdir = tempdir())
+#     rnaturalearth::ne_countries(scale = scale, returnclass = "sf") %>%
+#       sf::st_as_sf() %>%
+#       sf::st_transform(crs = x$projection) %>%
+#       sf::st_make_valid()
+#   })
+  map_surround <- add_NE_layer("land",
+                               scale,
+                               sf::st_bbox(x$data))
 
   # Define function to wrap title and legend title if too long
   wrapper <- function(x, ...)
@@ -942,8 +945,11 @@ plot_map <- function(x,
         ), crs = latlong_crs)
 
         # Crop the world map in lat/long to the expanded extent
-        surrounding_countries_latlong <- rnaturalearth::ne_countries(scale = scale,
-                                                                     returnclass = "sf") %>%
+        # surrounding_countries_latlong <- rnaturalearth::ne_countries(scale = scale,
+        #                                                              returnclass = "sf") %>%
+        surround_countries_latlong <- add_NE_layer("land",
+                                                   scale,
+                                                   expanded_latlong_bbox) %>%
           sf::st_as_sf() %>%
           sf::st_make_valid() %>%
           sf::st_crop(expanded_latlong_bbox) %>%
@@ -963,8 +969,11 @@ plot_map <- function(x,
 
       } else {
         # Crop to the original extent if not expanding
-        surrounding_countries_latlong <- rnaturalearth::ne_countries(scale = scale,
-                                                                     returnclass = "sf") %>%
+        # surrounding_countries_latlong <- rnaturalearth::ne_countries(scale = scale,
+        #                                                              returnclass = "sf") %>%
+        surrounding_countries_latlong <- add_NE_layer("land",
+                                                      scale,
+                                                      latlong_extent) %>%
           sf::st_as_sf() %>%
           sf::st_make_valid() %>%
           sf::st_crop(latlong_extent) %>%
