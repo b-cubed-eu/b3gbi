@@ -12,7 +12,7 @@
 #'
 #' @noRd
 #'
-check_cell_size <- function(cell_size, resolution, level) {
+check_cell_size <- function(cell_size, resolution, level, area = NULL) {
 
   if (!is.null(cell_size)) {
     if (stringr::str_detect(resolution, "km")) {
@@ -34,10 +34,20 @@ check_cell_size <- function(cell_size, resolution, level) {
     }
   } else {
     if (stringr::str_detect(resolution, "km")) {
-      cell_size <- ifelse(level == "world", 100,
-                          ifelse(level == "continent", 100, 10))
-      # convert to meters
-      cell_size <- cell_size * 1000
+      if (level == "cube") {
+        if (!is.null(area)) {
+          cell_size <- ifelse(as.numeric(area) >= 1000, 1, 0.1)
+          # convert to meters
+          cell_size <- cell_size * 1000
+        } else {
+          stop("Unable to determine area of cube for automated cell size determination. Please enter cell size manually.")
+        }
+      } else {
+        cell_size <- ifelse(level == "world", 100,
+                            ifelse(level == "continent", 100, 10))
+        # convert to meters
+        cell_size <- cell_size * 1000
+      }
     } else if (stringr::str_detect(resolution, "degrees")) {
       res_size <- as.numeric(stringr::str_extract(resolution, "[0-9.]+(?=degrees)"))
       if (res_size < 1) {
