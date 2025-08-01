@@ -44,19 +44,19 @@ jobs:
           extra-packages: any::rcmdcheck
           needs: check
 
-      # Install the rnaturalearth package if it wasn't already installed
-      # by the setup-r-dependencies step (it should be, but this is a failsafe)
-      - name: Install rnaturalearth
+      - name: Create and set up rnaturalearth cache
         run: |
-          install.packages("rnaturalearth")
-        shell: Rscript {0}
+          mkdir -p rnaturalearth_cache
+          echo "R_NATURALEARTH_CACHE_DIR=rnaturalearth_cache" >> $GITHUB_ENV
+          Rscript -e 'options(rnaturalearth.cache_dir = Sys.getenv("R_NATURALEARTH_CACHE_DIR"))'
+        shell: bash
 
-      # Download the medium-scale natural earth data
-      # This explicitly prepares the environment for the vignette build.
       - name: Download medium-scale rnaturalearth data
         run: |
-          rnaturalearth::ne_download(scale = "medium", type = "countries")
-        shell: Rscript {0}
+          # Explicitly use the new cache directory
+          Rscript -e 'rnaturalearth::ne_download(scale = "medium", type = "countries", category = "cultural", destdir = Sys.getenv("R_NATURALEARTH_CACHE_DIR"))'
+          Rscript -e 'rnaturalearth::ne_download(scale = "medium", type = "coastline", category = "physical", destdir = Sys.getenv("R_NATURALEARTH_CACHE_DIR"))'
+          Rscript -e 'rnaturalearth::ne_download(scale = "medium", type = "sovereignty", category = "cultural", destdir = Sys.getenv("R_NATURALEARTH_CACHE_DIR"))'
 
       - uses: r-lib/actions/check-r-package@v2
         with:
