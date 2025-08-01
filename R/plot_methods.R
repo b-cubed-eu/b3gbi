@@ -760,7 +760,8 @@ plot_map <- function(x,
                      legend_title_wrap_length = 10,
                      title_wrap_length = 60,
                      transparent_gridlines = FALSE,
-                     layers = NULL
+                     layers = NULL,
+                     scale = "medium"
                      ) {
 
   diversity_val <- geometry <- NULL
@@ -832,7 +833,7 @@ plot_map <- function(x,
 
   # Get world data to plot surrounding land if surround flag is set
   #if (surround == TRUE) {
-    map_surround <- rnaturalearth::ne_countries(scale = "large", returnclass = "sf") %>%
+    map_surround <- rnaturalearth::ne_countries(scale = scale, returnclass = "sf") %>%
       sf::st_as_sf() %>%
       sf::st_transform(crs = x$projection) %>%
       sf::st_make_valid()
@@ -971,7 +972,7 @@ plot_map <- function(x,
         ), crs = latlong_crs)
 
         # Crop the world map in lat/long to the expanded extent
-        surrounding_countries_latlong <- rnaturalearth::ne_countries(scale = "large",
+        surrounding_countries_latlong <- rnaturalearth::ne_countries(scale = scale,
                                                                      returnclass = "sf") %>%
           sf::st_as_sf() %>%
           sf::st_make_valid() %>%
@@ -992,7 +993,7 @@ plot_map <- function(x,
 
       } else {
         # Crop to the original extent if not expanding
-        surrounding_countries_latlong <- rnaturalearth::ne_countries(scale = "large",
+        surrounding_countries_latlong <- rnaturalearth::ne_countries(scale = scale,
                                                                      returnclass = "sf") %>%
           sf::st_as_sf() %>%
           sf::st_make_valid() %>%
@@ -1330,7 +1331,7 @@ plot_map <- function(x,
 #         crop_bbox_ll <- latlong_extent
 #       }
 #
-#       surrounding_countries_latlong <- rnaturalearth::ne_countries(scale = "large", returnclass = "sf") %>%
+#       surrounding_countries_latlong <- rnaturalearth::ne_countries(scale = "medium", returnclass = "sf") %>%
 #         sf::st_as_sf() %>%
 #         sf::st_make_valid() %>%
 #         sf::st_crop(crop_bbox_ll)
