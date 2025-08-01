@@ -44,20 +44,6 @@ jobs:
           extra-packages: any::rcmdcheck
           needs: check
 
-      - name: Create and set up rnaturalearth cache
-        run: |
-          mkdir -p rnaturalearth_cache
-          echo "R_NATURALEARTH_CACHE_DIR=rnaturalearth_cache" >> $GITHUB_ENV
-          Rscript -e 'options(rnaturalearth.cache_dir = Sys.getenv("R_NATURALEARTH_CACHE_DIR"))'
-        shell: bash
-
-      - name: Download medium-scale rnaturalearth data
-        run: |
-          # Explicitly use the new cache directory
-          Rscript -e 'rnaturalearth::ne_download(scale = "medium", type = "countries", category = "cultural", destdir = Sys.getenv("R_NATURALEARTH_CACHE_DIR"))'
-          Rscript -e 'rnaturalearth::ne_download(scale = "medium", type = "coastline", category = "physical", destdir = Sys.getenv("R_NATURALEARTH_CACHE_DIR"))'
-          Rscript -e 'rnaturalearth::ne_download(scale = "medium", type = "sovereignty", category = "cultural", destdir = Sys.getenv("R_NATURALEARTH_CACHE_DIR"))'
-
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
