@@ -27,7 +27,14 @@ test_that("get_NE_data retrieves map data correctly", {
   expect_equal(sf::st_crs(world_map), sf::st_crs("EPSG:3857"))
 
   # Test cube level (default)
-  cube_map <- get_NE_data(region = NULL, output_crs = "EPSG:3857")
+  mock_data <- data.frame(resolution = c("10km", "10km"),
+                          xcoord = c("5", "3"),
+                          ycoord = c("5", "6"))
+  cube_map <- suppressWarnings(get_NE_data(region = NULL,
+                          output_crs = "EPSG:3857",
+                          data = mock_data,
+                          include_water = FALSE,
+                          layers = NULL))
   expect_s3_class(cube_map, "sf")
   expect_equal(sf::st_crs(cube_map), sf::st_crs("EPSG:3857"))
 
