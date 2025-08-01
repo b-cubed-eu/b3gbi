@@ -40,6 +40,7 @@ Suggests:
     mockr,
     rmarkdown,
     rnaturalearthdata,
+    rnaturalearthhires,
     taxize (>= 0.9.99),
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
@@ -53,4 +54,5 @@ Additional_repositories: https://b-cubed-eu.r-universe.dev,
 Remotes: 
     github::hrbrmstr/mgrs,
     github::ropensci/bold,
-    github::ropensci/taxize
+    github::ropensci/taxize,
+    github::ropensci/rnaturalearthhires
