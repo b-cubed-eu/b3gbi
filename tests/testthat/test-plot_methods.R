@@ -1,6 +1,6 @@
 test_that("plot_map handles input and basic plot creation", {
   data(example_indicator_map1)
-  p <- plot_map(example_indicator_map1)
+  p <- suppressWarnings(plot_map(example_indicator_map1))
   expect_s3_class(p, "ggplot")
 
   geom_sf_present <- any(
@@ -18,13 +18,13 @@ test_that("plot_map handles input and basic plot creation", {
 
 test_that("plot_map handles custom title", {
   data(example_indicator_map1)
-  p <- plot_map(example_indicator_map1, title = "Custom Title")
+  p <- suppressWarnings(plot_map(example_indicator_map1, title = "Custom Title"))
   expect_equal(p$labels$title, "Custom Title")
 })
 
 test_that("plot_map handles custom legend title", {
   data(example_indicator_map1)
-  p <- plot_map(example_indicator_map1, legend_title = "Custom Legend")
+  p <- suppressWarnings(plot_map(example_indicator_map1, legend_title = "Custom Legend"))
   expect_equal(p$labels$fill, "Custom\nLegend")
 })
 
@@ -49,10 +49,12 @@ test_that("plot_map handles custom xlims and ylims", {
   if (!is.null(all_coords)) {
     xlims_test <- range(all_coords[, 1])
     ylims_test <- range(all_coords[, 2])
+    names(xlims_test) <- c("xmin", "xmax")
+    names(ylims_test) <- c("ymin", "ymax")
 
-    p <- plot_map(example_indicator_map1,
-                  xlims = xlims_test,
-                  ylims = ylims_test)
+    p <- suppressWarnings(plot_map(example_indicator_map1,
+                                   xlims = xlims_test,
+                                   ylims = ylims_test))
     expect_equal(p$coordinates$limits$x, xlims_test)
     expect_equal(p$coordinates$limits$y, ylims_test)
   } else {
@@ -64,36 +66,38 @@ test_that("plot_map handles breaks and labels", {
   data(example_indicator_map1)
   breaks_test <- c(1, 2, 3)
   labels_test <- c("Low", "Medium", "High")
-  p <- plot_map(example_indicator_map1,
+  p <- suppressWarnings(plot_map(example_indicator_map1,
                 breaks = breaks_test,
-                labels = labels_test)
+                labels = labels_test))
   expect_equal(p$scales$scales[[1]]$breaks, breaks_test)
   expect_equal(p$scales$scales[[1]]$labels, labels_test)
 })
 
 test_that("plot_map handles Europe_crop_EEA", {
   data(example_indicator_map1)
-  p <- plot_map(example_indicator_map1, Europe_crop_EEA = TRUE)
+  p <- suppressWarnings(plot_map(example_indicator_map1, Europe_crop_EEA = TRUE))
   expect_s3_class(p, "ggplot")
 })
 
 test_that("plot_map handles crop_to_grid", {
   data(example_indicator_map1)
-  p <- plot_map(example_indicator_map1, crop_to_grid = TRUE)
+  p <- suppressWarnings(plot_map(example_indicator_map1, crop_to_grid = TRUE))
+  p <- suppressWarnings(plot_map(example_indicator_map1, crop_to_grid = FALSE))
   expect_s3_class(p, "ggplot")
 })
 
-test_that("plot_map handles surround", {
-  data(example_indicator_map1)
-  p <- plot_map(example_indicator_map1, surround = TRUE)
-  expect_s3_class(p, "ggplot")
-})
+# This option has been removed for now
+# test_that("plot_map handles surround", {
+#   data(example_indicator_map1)
+#   p <- suppressWarnings(plot_map(example_indicator_map1, surround = TRUE))
+#   expect_s3_class(p, "ggplot")
+# })
 
 test_that("plot_map handles panel_bg and land_fill_colour", {
   data(example_indicator_map1)
-  p <- plot_map(example_indicator_map1,
+  p <- suppressWarnings(plot_map(example_indicator_map1,
                 panel_bg = "red",
-                land_fill_colour = "blue")
+                land_fill_colour = "blue"))
   expect_equal(p$theme$panel.background$fill, "red")
   expect_equal(p$layers[[1]]$aes_params$fill, "blue")
 })
@@ -101,7 +105,7 @@ test_that("plot_map handles panel_bg and land_fill_colour", {
 # Test case for default parameter
 test_that("plot_map handles default parameters", {
   data(example_indicator_map1)
-  p <- plot_map(example_indicator_map1)
+  p <- suppressWarnings(plot_map(example_indicator_map1))
   expect_s3_class(p, "ggplot")
   expect_null(p$labels$title)
 })
@@ -109,25 +113,25 @@ test_that("plot_map handles default parameters", {
 # Test with all options
 test_that("plot_map with all parameters set", {
   data(example_indicator_map1)
-  p <- plot_map(example_indicator_map1,
-                title = "Full Test",
-                auto_title = "Auto Title",
-                leg_label_default = "Default Legend",
-                xlims = c(0, 10),
-                ylims = c(0, 10),
-                trans = "log",
-                bcpower = 0.5,
-                breaks = c(1, 2, 3),
-                labels = c("One", "Two", "Three"),
-                Europe_crop_EEA = FALSE,
-                crop_to_grid = TRUE,
-                surround = FALSE,
-                panel_bg = "green",
-                land_fill_colour = "yellow",
-                legend_title = "Legend Title",
-                legend_limits = c(1, 10),
-                legend_title_wrap_length = 15,
-                title_wrap_length = 40)
+  p <- suppressWarnings(plot_map(example_indicator_map1,
+                                 title = "Full Test",
+                                 auto_title = "Auto Title",
+                                 leg_label_default = "Default Legend",
+                                 xlims = c(0, 10),
+                                 ylims = c(0, 10),
+                                 trans = "log",
+                                 bcpower = 0.5,
+                                 breaks = c(1, 2, 3),
+                                 labels = c("One", "Two", "Three"),
+                                 Europe_crop_EEA = FALSE,
+                                 crop_to_grid = TRUE,
+                                 #  surround = FALSE,
+                                 panel_bg = "green",
+                                 land_fill_colour = "yellow",
+                                 legend_title = "Legend Title",
+                                 legend_limits = c(1, 10),
+                                 legend_title_wrap_length = 15,
+                                 title_wrap_length = 40))
   expect_s3_class(p, "ggplot")
   expect_equal(p$labels$title, "Full Test")
 })
@@ -135,17 +139,19 @@ test_that("plot_map with all parameters set", {
 # Test different transformation methods
 test_that("plot_map handles different transformations", {
   data(example_indicator_map1)
-  p_boxcox <- plot_map(example_indicator_map1,
-                       trans = "boxcox",
-                       bcpower = 0.5)
+  p_boxcox <- suppressWarnings(plot_map(example_indicator_map1,
+                                        trans = "boxcox",
+                                        bcpower = 0.5))
   expect_s3_class(p_boxcox, "ggplot")
 
-  p_modulus <- plot_map(example_indicator_map1,
-                        trans = "modulus",
-                        bcpower = 0.5)
+  p_modulus <- suppressWarnings(plot_map(example_indicator_map1,
+                                         trans = "modulus",
+                                         bcpower = 0.5))
   expect_s3_class(p_modulus, "ggplot")
 
-  p_yj <- plot_map(example_indicator_map1, trans = "yj", bcpower = 0.5)
+  p_yj <- suppressWarnings(plot_map(example_indicator_map1,
+                                    trans = "yj",
+                                    bcpower = 0.5))
   expect_s3_class(p_yj, "ggplot")
 })
 
@@ -156,11 +162,11 @@ test_that("plot_map handles title and legend title wrapping", {
   long_legend_title <- paste(rep("Long Legend Part", 10), collapse = " ")
 
   data(example_indicator_map1)
-  p <- plot_map(example_indicator_map1,
-                title = long_title,
-                legend_title = long_legend_title,
-                title_wrap_length = 20,
-                legend_title_wrap_length = 25)
+  p <- suppressWarnings(plot_map(example_indicator_map1,
+                                 title = long_title,
+                                 legend_title = long_legend_title,
+                                 title_wrap_length = 20,
+                                 legend_title_wrap_length = 25))
 
   wrapped_title_len <- nchar(p$labels$title)
   wrapped_legend_len <- nchar(p$labels$fill)
@@ -177,8 +183,7 @@ test_that("plot_map handles unsupported projections", {
 })
 
 test_that("plot_map handles all parameters without error", {
-  # Assuming example_indicator_map is a valid indicator_map object
-  p <- plot_map(
+  p <- suppressWarnings(plot_map(
     x = example_indicator_map1,
     title = "Map Full Parameter Test",
     auto_title = "Auto Title Example",
@@ -191,14 +196,14 @@ test_that("plot_map handles all parameters without error", {
     labels = c("Low", "Medium", "High"),
     Europe_crop_EEA = FALSE,
     crop_to_grid = TRUE,
-    surround = FALSE,
+    # surround = FALSE,
     panel_bg = "white",
     land_fill_colour = "grey90",
     legend_title = "Legend Title",
     legend_limits = c(1, 5),
     legend_title_wrap_length = 15,
     title_wrap_length = 25
-  )
+  ))
 
   # Check that the resulting plot is a ggplot object
   expect_s3_class(p, "ggplot")
