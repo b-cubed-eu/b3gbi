@@ -726,6 +726,7 @@ plot.occ_turnover <- function(x,
 #' @param legend_title_wrap_length Maximum legend title length before wrapping to a new line.
 #' @param title_wrap_length Maximum title length before wrapping to a new line.
 #' @param transparent_gridlines Make gridlines invisible. Default is FALSE.
+#' @param layers Additional rnaturalearth layers to plot, e.g. c("reefs", "playas").
 #'
 #' @return A ggplot object representing the biodiversity indicator map.
 #' Can be customized using ggplot2 functions.
@@ -750,15 +751,16 @@ plot_map <- function(x,
                      breaks = NULL,
                      labels = NULL,
                      Europe_crop_EEA = TRUE,
-                     crop_to_grid = FALSE,
-                     surround = TRUE,
+                     crop_to_grid = TRUE,
+                   #  surround = TRUE,
                      panel_bg = NULL,
                      land_fill_colour = NULL,
                      legend_title = NULL,
                      legend_limits = NULL,
                      legend_title_wrap_length = 10,
                      title_wrap_length = 60,
-                     transparent_gridlines = FALSE
+                     transparent_gridlines = FALSE,
+                     layers = NULL
                      ) {
 
   diversity_val <- geometry <- NULL
@@ -775,7 +777,37 @@ plot_map <- function(x,
   } else {
 
     map_lims <- x$map_lims[c("xmin", "ymin", "xmax", "ymax")]
+
   }
+
+  if (!is.null(xlims)) {
+    if (is.vector(xlims) && length(xlims)==2) {
+      map_lims["xmin"] <- xlims[1]
+      map_lims["xmax"] <- xlims[2]
+    } else {
+      stop("Please provide numeric xlims values in the form of c(1,2)")
+    }
+  }
+
+  if (!is.null(ylims)) {
+    if (is.vector(ylims) && length(ylims)==2) {
+      map_lims["ymin"] <- ylims[1]
+      map_lims["ymax"] <- ylims[2]
+    } else {
+      stop("Please provide numeric ylims values in the form of c(1,2)")
+    }
+  }
+
+  if (!is.null(x$map_layers)) {
+
+    existing_layers <- x$map_layers
+
+  } else {
+
+    existing_layers <- c("land")
+  }
+
+  layers <- c(existing_layers, layers)
 
   # Crop map of Europe to leave out far-lying islands (if flag set)
   # (conditional on there being only one map region to plot)
@@ -799,16 +831,16 @@ plot_map <- function(x,
 
 
   # Get world data to plot surrounding land if surround flag is set
-  if (surround == TRUE) {
+  #if (surround == TRUE) {
     map_surround <- rnaturalearth::ne_countries(scale = "large", returnclass = "sf") %>%
       sf::st_as_sf() %>%
       sf::st_transform(crs = x$projection) %>%
       sf::st_make_valid()
 
   # Otherwise make all the surroundings ocean blue (unless a different colour is specified)
-  } else {
-    if (is.null(panel_bg)) { panel_bg = "#92c5f0" }
-  }
+  # } else {
+  #   if (is.null(panel_bg)) { panel_bg = "#92c5f0" }
+  # }
 
   # Define function to wrap title and legend title if too long
   wrapper <- function(x, ...)
@@ -841,46 +873,46 @@ plot_map <- function(x,
     )
   }
 
-  # Plot map
-  diversity_plot <- ggplot2::ggplot(x$data) +
-    geom_sf(aes(fill = diversity_val,
-                geometry = geometry),
-            colour = "transparent") +
-    cust_leg(list(trans = trans,
-                  breaks = breaks,
-                  labels = labels,
-                  limits = legend_limits)) +
-    coord_sf(
-      xlim = c(map_lims["xmin"],
-               map_lims["xmax"]),
-      ylim = c(map_lims["ymin"],
-               map_lims["ymax"]),
-      if(crop_to_grid == TRUE) {
-        expand = FALSE
-      } else {
-        expand = TRUE
-      }
-    ) +
-    theme_bw() +
-    theme(
-      panel.background = element_rect(fill = if(!is.null(panel_bg)) panel_bg
-                                      else "#92c5f0"),
-      if(x$map_level == "country") {
-        panel.grid.major = element_blank()
-        panel.grid.minor = element_blank()
-      }
-    ) +
-    # Wrap legend title if longer than user-specified wrap length
-    labs(fill = if(!is.null(legend_title)) wrapper(legend_title,
-                                                   legend_title_wrap_length)
-         else wrapper(leg_label_default,
-                      legend_title_wrap_length))
+  # # Plot map
+  # diversity_plot <- ggplot2::ggplot(x$data) +
+  #   geom_sf(aes(fill = diversity_val,
+  #               geometry = geometry),
+  #           colour = "transparent") +
+  #   cust_leg(list(trans = trans,
+  #                 breaks = breaks,
+  #                 labels = labels,
+  #                 limits = legend_limits)) +
+  #   coord_sf(
+  #     xlim = c(map_lims["xmin"],
+  #              map_lims["xmax"]),
+  #     ylim = c(map_lims["ymin"],
+  #              map_lims["ymax"]),
+  #     if(crop_to_grid == TRUE) {
+  #       expand = FALSE
+  #     } else {
+  #       expand = TRUE
+  #     }
+  #   ) +
+  #   theme_bw() +
+  #   theme(
+  #     panel.background = element_rect(fill = if(!is.null(panel_bg)) panel_bg
+  #                                     else "#92c5f0"),
+  #     if(x$map_level == "country") {
+  #       panel.grid.major = element_blank()
+  #       panel.grid.minor = element_blank()
+  #     }
+  #   ) +
+  #   # Wrap legend title if longer than user-specified wrap length
+  #   labs(fill = if(!is.null(legend_title)) wrapper(legend_title,
+  #                                                  legend_title_wrap_length)
+  #        else wrapper(leg_label_default,
+  #                     legend_title_wrap_length))
 
 
   land_fill_colour <- ifelse(is.null(land_fill_colour), "grey85", land_fill_colour)
 
   # If surround flag set, add surrounding countries to map
-  if (surround == TRUE) {
+  # if (surround == TRUE) {
 
     if (check_crs_units(x$projection) == "km" &&
         sf::st_crs(x$projection)$epsg != 3035) {
@@ -947,69 +979,16 @@ plot_map <- function(x,
           dplyr::filter(!sf::st_is_empty(geometry)) %>% # Filter out empty geometries
           sf::st_make_valid()
 
-        tryCatch({
-          lakes <- rnaturalearth::ne_load(scale = "large",
-                                          returnclass = "sf",
-                                          type = "lakes",
-                                          category = "physical")
-        }, error = function(e) if (grepl("the file ne_10m_lakes seems not to exist", e)) {
-          lakes <- rnaturalearth::ne_download(scale = "large",
-                                              returnclass = "sf",
-                                              type = "lakes",
-                                              category = "physical")
-        } else {
-          stop(e)
+        layer_list <- list()
+        for (i in 1:length(layers)) {
+          layer_data <- add_NE_layer(layers[i],
+                                     "large",
+                                     expanded_latlong_bbox)
+
+          if (!is.null(layer_data) && nrow(layer_data) > 0) {
+            layer_list[[i]] <- layer_data
+          }
         }
-        )
-
-        lakes <- lakes %>%
-          sf::st_as_sf() %>%
-          sf::st_make_valid() %>%
-          sf::st_crop(expanded_latlong_bbox) %>%
-          dplyr::filter(!sf::st_is_empty(geometry)) # Filter out empty geometries
-
-        tryCatch({
-          rivers <- rnaturalearth::ne_load(scale = "large",
-                                           returnclass = "sf",
-                                           type = "rivers_lake_centerlines",
-                                           category = "physical")
-        }, error = function(e) if (grepl("the file ne_10m_rivers_lake_centerlines seems not to exist", e)) {
-          rivers <- rnaturalearth::ne_download(scale = "large",
-                                               returnclass = "sf",
-                                               type = "rivers_lake_centerlines",
-                                               category = "physical")
-        } else {
-          stop(e)
-        }
-        )
-
-        rivers <- rivers %>%
-          sf::st_as_sf() %>%
-          sf::st_make_valid() %>%
-          sf::st_crop(expanded_latlong_bbox) %>%
-          dplyr::filter(!sf::st_is_empty(geometry)) # Filter out empty geometries
-
-        tryCatch({
-          coastline <- rnaturalearth::ne_load(scale = "large",
-                                              returnclass = "sf",
-                                              type = "coastline",
-                                              category = "physical")
-        }, error = function(e) if (grepl("the file ne_10m_coastline seems not to exist", e)) {
-          coastline <- rnaturalearth::ne_download(scale = "large",
-                                                  returnclass = "sf",
-                                                  type = "coastline",
-                                                  category = "physical")
-        } else {
-          stop(e)
-        }
-        )
-
-        coastline <- coastline %>%
-          sf::st_as_sf() %>%
-          sf::st_make_valid() %>%
-          sf::st_crop(expanded_latlong_bbox) %>%
-          dplyr::filter(!sf::st_is_empty(geometry)) # Filter out empty geometries
-
 
       } else {
         # Crop to the original extent if not expanding
@@ -1020,69 +999,19 @@ plot_map <- function(x,
           sf::st_crop(latlong_extent) %>%
           dplyr::filter(!sf::st_is_empty(geometry)) # Filter out empty geometries
 
-        tryCatch({
-          lakes <- rnaturalearth::ne_load(scale = "large",
-                                           returnclass = "sf",
-                                           type = "lakes",
-                                           category = "physical")
-        }, error = function(e) if (grepl("the file ne_10m_lakes seems not to exist", e)) {
-          lakes <- rnaturalearth::ne_download(scale = "large",
-                                               returnclass = "sf",
-                                               type = "lakes",
-                                               category = "physical")
-        } else {
-          stop(e)
+        layer_list <- list()
+        for (i in 1:length(layers)) {
+          layer_data <- add_NE_layer(layers[i],
+                                     "large",
+                                     latlong_extent)
+
+          if (!is.null(layer_data) && nrow(layer_data) > 0) {
+            layer_list[[i]] <- layer_data
+          }
         }
-        )
-        lakes <- lakes %>%
-          sf::st_as_sf() %>%
-          sf::st_make_valid() %>%
-          sf::st_crop(latlong_extent) %>%
-          dplyr::filter(!sf::st_is_empty(geometry)) # Filter out empty geometries
-
-        tryCatch({
-          rivers <- rnaturalearth::ne_load(scale = "large",
-                                           returnclass = "sf",
-                                           type = "rivers_lake_centerlines",
-                                           category = "physical")
-        }, error = function(e) if (grepl("the file ne_10m_rivers_lake_centerlines seems not to exist", e)) {
-          rivers <- rnaturalearth::ne_download(scale = "large",
-                                               returnclass = "sf",
-                                               type = "rivers_lake_centerlines",
-                                               category = "physical")
-        } else {
-          stop(e)
-        }
-        )
-        rivers <- rivers %>%
-          sf::st_as_sf() %>%
-          sf::st_make_valid() %>%
-          sf::st_crop(latlong_extent) %>%
-          dplyr::filter(!sf::st_is_empty(geometry)) # Filter out empty geometries
-
-
-        tryCatch({
-          coastline <- rnaturalearth::ne_load(scale = "large",
-                                         returnclass = "sf",
-                                         type = "coastline",
-                                         category = "physical")
-        }, error = function(e) if (grepl("the file ne_10m_coastline seems not to exist", e)) {
-          coastline <- rnaturalearth::ne_download(scale = "large",
-                                              returnclass = "sf",
-                                              type = "coastline",
-                                              category = "physical")
-        } else {
-          stop(e)
-        }
-        )
-
-        coastline <- coastline %>%
-          sf::st_as_sf() %>%
-          sf::st_make_valid() %>%
-          sf::st_crop(latlong_extent) %>%
-          dplyr::filter(!sf::st_is_empty(geometry)) # Filter out empty geometries
 
       }
+
       sf::sf_use_s2(TRUE)
 
       # Transform the cropped surrounding countries to the UTM CRS
@@ -1120,6 +1049,17 @@ plot_map <- function(x,
         bbox <- sf::st_as_sfc(sf::st_bbox(expanded_lims),
                               crs = x$projection)
 
+        layer_list <- list()
+        for (i in 1:length(layers)) {
+          layer_data <- add_NE_layer(layers[i],
+                                     "large",
+                                     bbox)
+
+          if (!is.null(layer_data) && nrow(layer_data) > 0) {
+            layer_list[[i]] <- layer_data
+          }
+        }
+
       } else {
 
         # If crop to grid is TRUE get bounding box with map limits
@@ -1127,6 +1067,17 @@ plot_map <- function(x,
                               crs = x$projection)
 
         attributes(bbox)$crs <- sf::st_crs(map_surround)
+
+        layer_list <- list()
+        for (i in 1:length(layers)) {
+          layer_data <- add_NE_layer(layers[i],
+                                     "large",
+                                     bbox)
+
+          if (!is.null(layer_data) && nrow(layer_data) > 0) {
+            layer_list[[i]] <- layer_data
+          }
+        }
 
       }
 
@@ -1136,18 +1087,49 @@ plot_map <- function(x,
 
     }
 
+    diversity_plot <- ggplot2::ggplot(x$data)
 
-    # Plot lakes, rivers, and coastlines if they are not empty
-    if (!is.null(lakes) && nrow(lakes) > 0) {
-      diversity_plot <- diversity_plot + ggplot2::geom_sf(data = lakes, fill = "#92c5f0", aes(geometry = geometry), inherit.aes = FALSE)
-    }
-    if (!is.null(rivers) && nrow(rivers) > 0) {
-      diversity_plot <- diversity_plot + ggplot2::geom_sf(data = rivers, color = "#92c5f0", aes(geometry = geometry), inherit.aes = FALSE) # Rivers are lines, so use color, not fill
-    }
-    if (!is.null(coastline) && nrow(coastline) > 0) {
-      diversity_plot <- diversity_plot + ggplot2::geom_sf(data = coastline, color = "black", aes(geometry = geometry), fill = "transparent", inherit.aes = FALSE) # Coastline as black border
-    }
+      for (layer in layer_list) {
+        diversity_plot <- diversity_plot +
+          ggplot2::geom_sf(data = layer,
+                           aes(geometry = geometry),
+                           inherit.aes = FALSE)
+      }
 
+    # Plot map
+    diversity_plot <- diversity_plot +
+      geom_sf(aes(fill = diversity_val,
+                  geometry = geometry),
+              colour = "transparent") +
+      cust_leg(list(trans = trans,
+                    breaks = breaks,
+                    labels = labels,
+                    limits = legend_limits)) +
+      coord_sf(
+        xlim = c(map_lims["xmin"],
+                 map_lims["xmax"]),
+        ylim = c(map_lims["ymin"],
+                 map_lims["ymax"]),
+        if(crop_to_grid == TRUE) {
+          expand = FALSE
+        } else {
+          expand = TRUE
+        }
+      ) +
+      theme_bw() +
+      theme(
+        panel.background = element_rect(fill = if(!is.null(panel_bg)) panel_bg
+                                        else "#92c5f0"),
+        if(x$map_level == "country") {
+          panel.grid.major = element_blank()
+          panel.grid.minor = element_blank()
+        }
+      ) +
+      # Wrap legend title if longer than user-specified wrap length
+      labs(fill = if(!is.null(legend_title)) wrapper(legend_title,
+                                                     legend_title_wrap_length)
+           else wrapper(leg_label_default,
+                        legend_title_wrap_length))
 
     # Plot map_surround as layer
     diversity_plot$layers <- c(
@@ -1183,24 +1165,30 @@ plot_map <- function(x,
       )
     }
 
-  }
+#  }
 
-  if (surround == TRUE) {
-    bbox_utm <- sf::st_as_sfc(latlong_extent)
-    bbox_utm <- sf::st_bbox(sf::st_transform(bbox_utm, crs = sf::st_crs(x$data)))
-    xlims = c(bbox_utm[1], bbox_utm[3])
-    ylims = c(bbox_utm[2], bbox_utm[4])
-  }
+  # if (surround == TRUE) {
+  #   if (exists("latlong_extent")) {
+  #     bbox_utm <- sf::st_as_sfc(latlong_extent)
+  #   } else if (exists("expanded_lims")) {
+  #     bbox_utm <- expanded_lims
+  #   } else {
+  #     bbox_utm <- map_lims
+  #   }
+  #   bbox_utm <- sf::st_bbox(sf::st_transform(bbox_utm, crs = sf::st_crs(x$data)))
+  #   xlims = c(bbox_utm[1], bbox_utm[3])
+  #   ylims = c(bbox_utm[2], bbox_utm[4])
+  # }
 
-  # Check for custom x and y limits and adjust map if found
-  if(any(!is.null(xlims)) & any(!is.null(ylims))) {
-    diversity_plot <-
-      suppressMessages(
-        diversity_plot + coord_sf(xlim = xlims,
-                                  ylim = ylims)
-      )
-
-  }
+  # # Check for custom x and y limits and adjust map if found
+  # if(any(!is.null(xlims)) & any(!is.null(ylims))) {
+  #   diversity_plot <-
+  #     suppressMessages(
+  #       diversity_plot + coord_sf(xlim = xlims,
+  #                                 ylim = ylims)
+  #     )
+  #
+  # }
 
   # Wrap title if longer than user-specified wrap length
   if(!is.null(title)) {
@@ -1648,7 +1636,7 @@ plot_ts <- function(x,
         se = FALSE)
 
     # Add smooth trends for confidence limits if available
-    if ("ll" %in% colnames(x$data) & "ul" %in% colnames(x$data)) {
+    if ("ll" %in% colnames(x$data) && "ul" %in% colnames(x$data)) {
       trend_plot <- trend_plot +
         geom_smooth(aes(y = ul),
                     colour = alpha(envelopecolour, smooth_cialpha),
@@ -1672,7 +1660,7 @@ plot_ts <- function(x,
   }
 
   # If upper and lower limits are present, add errorbars
-  if ("ll" %in% colnames(x$data) & "ul" %in% colnames(x$data)) {
+  if ("ll" %in% colnames(x$data) && "ul" %in% colnames(x$data)) {
     if (ci_type == "error_bars") {
       trend_plot <- trend_plot +
         geom_errorbar(aes(ymin = ll, ymax = ul),
