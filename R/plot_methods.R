@@ -849,11 +849,6 @@ plot_map <- function(x,
       sf::st_make_valid()
   })
 
-  # Otherwise make all the surroundings ocean blue (unless a different colour is specified)
-  # } else {
-  #   if (is.null(panel_bg)) { panel_bg = "#92c5f0" }
-  # }
-
   # Define function to wrap title and legend title if too long
   wrapper <- function(x, ...)
   {
