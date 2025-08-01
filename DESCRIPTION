@@ -54,5 +54,5 @@ Additional_repositories: https://b-cubed-eu.r-universe.dev,
 Remotes: 
     github::hrbrmstr/mgrs,
     github::ropensci/bold,
-    github::ropensci/taxize
+    github::ropensci/taxize,
     github::ropensci/rnaturalearthhires
