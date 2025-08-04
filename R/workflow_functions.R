@@ -161,7 +161,7 @@ get_NE_data <- function(region,
 
       # Project and validate the map
       map_data <- map_data %>%
-        sf::st_transform(crs = output_crs) %>%
+        sf::st_transform(crs = "+proj=eck4 +datum=WGS84") %>%
         sf::st_make_valid()
 
       for (layer in water_layers) {
@@ -172,11 +172,12 @@ get_NE_data <- function(region,
         if (!is.null(layer_data) && nrow(layer_data) > 0) {
           # Project the layer
           layer_data <- layer_data %>%
-            sf::st_transform(crs = output_crs) %>%
+            sf::st_transform(crs = "+proj=eck4 +datum=WGS84") %>%
             sf::st_make_valid()
           map_data <- layer_data %>%
-            group_by(scalerank, featurecla) %>%
-            dplyr::summarize(geometry = sf::st_union(geometry, map_data$geometry))
+            dplyr::group_by(scalerank, featurecla) %>%
+            dplyr::summarize(geometry = sf::st_union(geometry, map_data$geometry)) %>%
+            sf::st_transform(crs = sf::st_crs(latlong_extent))
         }
       }
 
@@ -226,14 +227,19 @@ get_NE_data <- function(region,
                                  ne_scale,
                                  latlong_extent)
 
+      map_data <- map_data %>%
+        sf::st_transform(crs = "+proj=eck4 +datum=WGS84") %>%
+        sf::st_make_valid()
+
       if (!is.null(layer_data) && nrow(layer_data) > 0) {
         # Project the layer
         layer_data <- layer_data %>%
-          sf::st_transform(crs = output_crs) %>%
+          sf::st_transform(crs = "+proj=eck4 +datum=WGS84") %>%
           sf::st_make_valid()
         map_data <- layer_data %>%
           group_by(scalerank, featurecla) %>%
-          dplyr::summarize(geometry = sf::st_union(geometry, map_data$geometry))
+          dplyr::summarize(geometry = sf::st_union(geometry, map_data$geometry)) %>%
+          sf::st_transform(crs = sf::st_crs(latlong_extent))
       }
     }
 
@@ -512,7 +518,7 @@ prepare_spatial_data <- function(data,
 #' @param invert Calculate an indicator over the inverse of the shapefile (e.g.
 #'  if you have a protected areas shapefile this would calculate an indicator over
 #'  all non protected areas)
-#' @param include_water Include rnaturalearth oceans, rivers, and lakes layers.
+#' @param include_water Include rnaturalearth oceans and lakes layers.
 #'  Default is TRUE. Set as "buffered_coast" to include a set buffer size around
 #'  the land area.
 #' @param buffer_dist_km The distance to buffer around the land if include_water
@@ -873,7 +879,8 @@ compute_indicator_workflow <- function(data,
           sf::st_intersection(map_data) %>%
           dplyr::select(all_of(c("cellid", "geometry")), any_of("area"))
       }, error = function(e) {
-        if (grepl("Error in wk_handle.wk_wkb", e)) {
+        if (grepl("Error in wk_handle.wk_wkb", e) ||
+            grepl("TopologyException", e)) {
           message(
             paste0(
               "Encountered a geometry error during intersection. This may be ",

@@ -16,7 +16,7 @@ plot_map(
   breaks = NULL,
   labels = NULL,
   Europe_crop_EEA = TRUE,
-  crop_to_grid = TRUE,
+  crop_to_grid = FALSE,
   panel_bg = NULL,
   land_fill_colour = NULL,
   legend_title = NULL,
