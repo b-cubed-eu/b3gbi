@@ -571,7 +571,7 @@ compute_indicator_workflow <- function(data,
                                        crs_unit_convert = FALSE,
                                        shapefile_path = NULL,
                                        invert = FALSE,
-                                       include_water = TRUE,
+                                       include_water = FALSE,
                                        buffer_dist_km = 50,
                                        layers = NULL,
                                        ...) {
