@@ -945,17 +945,19 @@ plot_map <- function(x,
           sf::st_transform(crs = sf::st_crs(expanded_latlong_bbox))
 
         layer_list <- list()
-        for (i in 1:length(layers)) {
-          layer_data <- add_NE_layer(layers[i],
-                                     scale,
-                                     expanded_latlong_bbox)
-          # Project the layer
-          layer_data <- sf::st_transform(layer_data,
-                                         crs = x$projection)
+        if(!is.null(layers)) {
+          for (i in 1:length(layers)) {
+            layer_data <- add_NE_layer(layers[i],
+                                       scale,
+                                       expanded_latlong_bbox)
+            # Project the layer
+            layer_data <- sf::st_transform(layer_data,
+                                           crs = x$projection)
 
-          if (!is.null(layer_data) && nrow(layer_data) > 0) {
-            layer_list[[i]] <- layer_data
-            names(layer_list)[[i]] <- layers[i]
+            if (!is.null(layer_data) && nrow(layer_data) > 0) {
+              layer_list[[i]] <- layer_data
+              names(layer_list)[[i]] <- layers[i]
+            }
           }
         }
 
@@ -978,17 +980,19 @@ plot_map <- function(x,
           sf::st_transform(crs = sf::st_crs(latlong_extent))
 
         layer_list <- list()
-        for (i in 1:length(layers)) {
-          layer_data <- add_NE_layer(layers[i],
-                                     scale,
-                                     latlong_extent)
-          # Project the layer
-          layer_data <- sf::st_transform(layer_data,
-                                         crs = x$projection)
+        if (!is.null(layers)) {
+          for (i in 1:length(layers)) {
+            layer_data <- add_NE_layer(layers[i],
+                                       scale,
+                                       latlong_extent)
+            # Project the layer
+            layer_data <- sf::st_transform(layer_data,
+                                           crs = x$projection)
 
-          if (!is.null(layer_data) && nrow(layer_data) > 0) {
-            layer_list[[i]] <- layer_data
-            names(layer_list)[[i]] <- layers[i]
+            if (!is.null(layer_data) && nrow(layer_data) > 0) {
+              layer_list[[i]] <- layer_data
+              names(layer_list)[[i]] <- layers[i]
+            }
           }
         }
 
@@ -1034,14 +1038,16 @@ plot_map <- function(x,
         bbox_lims <- sf::st_bbox(bbox)
 
         layer_list <- list()
-        for (i in 1:length(layers)) {
-          layer_data <- add_NE_layer(layers[i],
-                                     scale,
-                                     bbox_lims)
+        if (!is.null(layers)) {
+          for (i in 1:length(layers)) {
+            layer_data <- add_NE_layer(layers[i],
+                                       scale,
+                                       bbox_lims)
 
-          if (!is.null(layer_data) && nrow(layer_data) > 0) {
-            layer_list[[i]] <- layer_data
-            names(layer_list)[[i]] <- layers[i]
+            if (!is.null(layer_data) && nrow(layer_data) > 0) {
+              layer_list[[i]] <- layer_data
+              names(layer_list)[[i]] <- layers[i]
+            }
           }
         }
 
@@ -1056,14 +1062,16 @@ plot_map <- function(x,
         bbox_lims <- sf::st_bbox(bbox)
 
         layer_list <- list()
-        for (i in 1:length(layers)) {
-          layer_data <- add_NE_layer(layers[i],
-                                     scale,
-                                     bbox_lims)
+        if (!is.null(layers)) {
+          for (i in 1:length(layers)) {
+            layer_data <- add_NE_layer(layers[i],
+                                       scale,
+                                       bbox_lims)
 
-          if (!is.null(layer_data) && nrow(layer_data) > 0) {
-            layer_list[[i]] <- layer_data
-            names(layer_list)[[i]] <- layers[i]
+            if (!is.null(layer_data) && nrow(layer_data) > 0) {
+              layer_list[[i]] <- layer_data
+              names(layer_list)[[i]] <- layers[i]
+            }
           }
         }
 
