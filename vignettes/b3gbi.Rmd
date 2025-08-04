@@ -177,7 +177,7 @@ Each indicator comes with its own wrapper functions, and these should be used ra
 #                  use for cropping your data
 #   * Argument 18: invert, invert the shapefile
 #   * Argument 19: include_water, include ocean and lake layers from 
-#                  rnaturalearth. Defaults to TRUE. Alternatively you can set it
+#                  rnaturalearth. Defaults to FALSE. Alternatively you can set it
 #                  to "buffered_coast" for to set a buffer distance around land.
 #   * Argument 20: buffer_dist_km, Distance to buffer around the land if
 #                  include_water set to "buffered_coast".
@@ -225,8 +225,7 @@ library(b3gbi)
 Denmark_observed_richness_map <- obs_richness_map(example_cube_1, 
                                                   first_year = 1980, 
                                                   level = "country", 
-                                                  region = "Denmark",
-                                                  include_water = FALSE) 
+                                                  region = "Denmark") 
 Denmark_observed_richness_map
 
 ```
@@ -319,8 +318,7 @@ Denmark_observed_richness_ts <- obs_richness_ts(example_cube_1,
                                                 first_year = 1980, 
                                                 level = "country", 
                                                 region = "Denmark", 
-                                                ci_type = "none",
-                                                include_water = FALSE) 
+                                                ci_type = "none") 
 plot(Denmark_observed_richness_ts)
 
 ```
@@ -376,8 +374,7 @@ plot(Denmark_observed_richness_ts)
 library(b3gbi)
 Denmark_observed_richness_map <- obs_richness_map(example_cube_1, 
                                                   level = "country", 
-                                                  region = "Denmark",
-                                                  include_water = FALSE) 
+                                                  region = "Denmark") 
 plot(Denmark_observed_richness_map)
 
 ```
