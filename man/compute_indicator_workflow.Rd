@@ -23,6 +23,9 @@ compute_indicator_workflow(
   crs_unit_convert = FALSE,
   shapefile_path = NULL,
   invert = FALSE,
+  include_water = TRUE,
+  buffer_dist_km = 50,
+  layers = NULL,
   ...
 )
 }
@@ -90,6 +93,16 @@ if you want to calculate your indicator particular features such as protected ar
 \item{invert}{Calculate an indicator over the inverse of the shapefile (e.g.
 if you have a protected areas shapefile this would calculate an indicator over
 all non protected areas)}
+
+\item{include_water}{Include rnaturalearth oceans, rivers, and lakes layers.
+Default is TRUE. Set as "buffered_coast" to include a set buffer size around
+the land area.}
+
+\item{buffer_dist_km}{The distance to buffer around the land if include_water
+is set to "buffered_coast".}
+
+\item{layers}{Names of additional rnaturalearth layers you want to add to your map.
+E.g. c("reefs", "playas", "admin_0_boundary_lines_land")}
 
 \item{...}{Additional arguments passed to specific indicator calculation functions.}
 }

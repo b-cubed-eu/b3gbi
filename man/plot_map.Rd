@@ -16,14 +16,16 @@ plot_map(
   breaks = NULL,
   labels = NULL,
   Europe_crop_EEA = TRUE,
-  crop_to_grid = FALSE,
-  surround = TRUE,
+  crop_to_grid = TRUE,
   panel_bg = NULL,
   land_fill_colour = NULL,
   legend_title = NULL,
   legend_limits = NULL,
   legend_title_wrap_length = 10,
-  title_wrap_length = 60
+  title_wrap_length = 60,
+  transparent_gridlines = FALSE,
+  layers = NULL,
+  scale = "medium"
 )
 }
 \arguments{
@@ -60,10 +62,6 @@ or projections). Will not work if crop_to_grid is set to TRUE.}
 \item{crop_to_grid}{If TRUE, the grid will determine the edges of the map.Overrides
 Europe_crop_EEA. Default is FALSE.}
 
-\item{surround}{If TRUE, includes surrounding land area in gray when plotting
-at the country or continent level. If FALSE, all surrounding area will be colored
-ocean blue (or whatever colour you set manually using panel_bg). Default is TRUE.}
-
 \item{panel_bg}{(Optional) Background colour for the map panel.}
 
 \item{land_fill_colour}{(Optional) Colour for the land area outside of the grid
@@ -76,6 +74,14 @@ ocean blue (or whatever colour you set manually using panel_bg). Default is TRUE
 \item{legend_title_wrap_length}{Maximum legend title length before wrapping to a new line.}
 
 \item{title_wrap_length}{Maximum title length before wrapping to a new line.}
+
+\item{transparent_gridlines}{Make gridlines invisible. Default is FALSE.}
+
+\item{layers}{Additional rnaturalearth layers to plot, e.g. c("reefs", "playas").}
+
+\item{surround}{If TRUE, includes surrounding land area in gray when plotting
+at the country or continent level. If FALSE, all surrounding area will be colored
+ocean blue (or whatever colour you set manually using panel_bg). Default is TRUE.}
 }
 \value{
 A ggplot object representing the biodiversity indicator map.

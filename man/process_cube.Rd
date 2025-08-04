@@ -25,7 +25,8 @@ process_cube(
   cols_speciesKey = NULL,
   cols_familyCount = NULL,
   cols_sex = NULL,
-  cols_lifeStage = NULL
+  cols_lifeStage = NULL,
+  separator = "\\t"
 )
 }
 \arguments{
@@ -103,6 +104,9 @@ individuals. This column is optional.}
 
 \item{cols_lifeStage}{the name of the column containing the life stage of the
 observed individuals. This column is optional.}
+
+\item{separator}{The column-separating character in your csv file. Default is
+white space.}
 }
 \value{
 A tibble containing the processed GBIF occurrence data.

@@ -46,6 +46,13 @@ if you want to calculate your indicator particular features such as protected ar
     \item{\code{invert}}{Calculate an indicator over the inverse of the shapefile (e.g.
 if you have a protected areas shapefile this would calculate an indicator over
 all non protected areas)}
+    \item{\code{include_water}}{Include rnaturalearth oceans, rivers, and lakes layers.
+Default is TRUE. Set as "buffered_coast" to include a set buffer size around
+the land area.}
+    \item{\code{buffer_dist_km}}{The distance to buffer around the land if include_water
+is set to "buffered_coast".}
+    \item{\code{layers}}{Names of additional rnaturalearth layers you want to add to your map.
+E.g. c("reefs", "playas", "admin_0_boundary_lines_land")}
   }}
 }
 \value{
