@@ -13,10 +13,12 @@
 #' @param ne_scale The scale of Natural Earth data to download: 'small' - 110m,
 #'   'medium' - 50m, or 'large' - 10m. (Default: 'medium')
 #' @param output_crs The CRS you want for your map data.
-#' @param cube_cell_codes
-#' @param include_water
-#' @param buffer_dist_km
-#' @param data
+#' @param cube_cell_codes The cell codes from the data cube.
+#' @param include_water Include oceans, lakes, and rivers if TRUE. Set to
+#'   "buffered_coast" to instead create a buffer around the land area.
+#' @param buffer_dist_km Distance to buffer around the land if you choose
+#'   "buffered_coast" for the include_water parameter.
+#' @param data The data frame to match the map to.
 #' @param layers The rnaturalearth layers you want to add to your map
 #' @return An sf object containing the map data, transformed to the
 #'   appropriate projection.
@@ -143,9 +145,24 @@ get_NE_data <- function(region,
 
     map_data <- sf::st_make_valid(map_data)
 
+    latlong_extent <- sf::st_bbox(map_data)
+
+  } else {
+
+    latlong_extent <- sf::st_bbox(map_data)
+
+    map_data <- sf::st_make_valid(map_data)
+
+  }
+
     if (include_water == TRUE) {
 
-      water_layers <- c("ocean", "lakes", "rivers_lake_centerlines")
+      water_layers <- c("ocean", "lakes")
+
+      # Project and validate the map
+      map_data <- map_data %>%
+        sf::st_transform(crs = output_crs) %>%
+        sf::st_make_valid()
 
       for (layer in water_layers) {
         layer_data <- add_NE_layer(layer,
@@ -153,7 +170,13 @@ get_NE_data <- function(region,
                                    latlong_extent)
 
         if (!is.null(layer_data) && nrow(layer_data) > 0) {
-          map_data <- sf::st_union(map_data, layer_data)
+          # Project the layer
+          layer_data <- layer_data %>%
+            sf::st_transform(crs = output_crs) %>%
+            sf::st_make_valid()
+          map_data <- layer_data %>%
+            group_by(scalerank, featurecla) %>%
+            dplyr::summarize(geometry = sf::st_union(geometry, map_data$geometry))
         }
       }
 
@@ -204,11 +227,17 @@ get_NE_data <- function(region,
                                  latlong_extent)
 
       if (!is.null(layer_data) && nrow(layer_data) > 0) {
-        map_data <- sf::st_union(map_data, layer_data)
+        # Project the layer
+        layer_data <- layer_data %>%
+          sf::st_transform(crs = output_crs) %>%
+          sf::st_make_valid()
+        map_data <- layer_data %>%
+          group_by(scalerank, featurecla) %>%
+          dplyr::summarize(geometry = sf::st_union(geometry, map_data$geometry))
       }
     }
 
-  }
+ # }
 
   # Project the merged and cropped map
   map_data <- sf::st_transform(map_data,
@@ -1197,10 +1226,10 @@ compute_indicator_workflow <- function(data,
   if (dim_type == "map") {
 
     if (include_water == TRUE) {
-      water_layers <- c("ocean", "lakes", "rivers_lake_centerlines")
-      layers <- c("admin_0_countries", water_layers, layers)
+      water_layers <- c("ocean", "lakes")
+      layers <- c(water_layers, layers)
     } else {
-      layers <- c("admin_0_countries", layers)
+      layers <- c(layers)
     }
 
     diversity_obj <- new_indicator_map(diversity_grid,

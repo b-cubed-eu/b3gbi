@@ -5,7 +5,7 @@ add_NE_layer <- function(layer_name, scale, latlong_extent) {
   if (!requireNamespace("dplyr", quietly = TRUE)) stop("dplyr package required.")
   if (!requireNamespace("rlang", quietly = TRUE)) stop("rlang package required for dynamic filtering.") # Added rlang
 
-  if (layer_name == "land") {
+  if (layer_name == "admin_0_countries") {
     # Use the robust ne_countries function for the base layer
     # The ne_countries function handles downloading the data if it doesn't exist
     layer_raw <- rnaturalearth::ne_countries(scale = scale,
@@ -68,12 +68,28 @@ add_NE_layer <- function(layer_name, scale, latlong_extent) {
 
   }
 
-  # Perform cropping for efficiency FIRST
-  processed_layer <- sf::st_crop(layer_raw, latlong_extent)
+  le_projected <- sf::st_transform(sf::st_as_sfc(latlong_extent), crs = "+proj=eck4 +datum=WGS84")
+
+  # Attempt to perform cropping for efficiency FIRST
+  # If it fails, validate first
+  processed_layer <- tryCatch({
+    layer_raw %>%
+      sf::st_transform(crs = "+proj=eck4 +datum=WGS84") %>%
+      group_by(scalerank, featurecla, min_zoom) %>%
+      dplyr::summarize(geometry = sf::st_crop(geometry, le_projected)) %>%
+      sf::st_transform(crs = sf::st_crs(latlong_extent))
+  }, error = function(e) {
+    layer_raw %>%
+      sf::st_make_valid() %>%
+      sf::st_transform(crs = "+proj=eck4 +datum=WGS84") %>%
+      group_by(scalerank, featurecla, min_zoom) %>%
+      dplyr::summarize(geometry = sf::st_crop(geometry, le_projected)) %>%
+      sf::st_transform(crs = sf::st_crs(latlong_extent))
+  })
 
   # Then validate and filter (on the now smaller dataset)
   processed_layer <- processed_layer %>%
-    sf::st_make_valid() %>% # Validate after crop
+    sf::st_make_valid() %>%
     dplyr::filter(!sf::st_is_empty(geometry)) # Filter out empty geometries
 
   return(processed_layer)
