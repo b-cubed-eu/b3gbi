@@ -168,9 +168,20 @@ Each indicator comes with its own wrapper functions, and these should be used ra
 #                  off spherical geometry when calculating indicator.
 #   * Argument 14: make_valid (optional), call st_make_valid from the sf 
 #                  package to fix geometry issues if you are getting errors.
-#   * Argument 15: num_bootstraps (optional), set the number of bootstraps to 
+#   * Argument 15: num_bootstrap (optional), set the number of bootstraps to 
 #                  calculate for generating confidence intervals. Uses 1000 by 
 #                  default.
+#   * Argument 16: crs_unit_convert, force an output crs with different units
+#                  than the input crs. FALSE by default.
+#   * Argument 17: shapefile_path, path to an external shapefile you want to
+#                  use for cropping your data
+#   * Argument 18: invert, invert the shapefile
+#   * Argument 19: include_water, include ocean and lake layers from 
+#                  rnaturalearth. Defaults to TRUE. Alternatively you can set it
+#                  to "buffered_coast" for to set a buffer distance around land.
+#   * Argument 20: buffer_dist_km, Distance to buffer around the land if
+#                  include_water set to "buffered_coast".
+#   * Argument 21: layers, names of additional rnaturalearth layers to include
 #
 # Outputs:
 #   * indicator_ts or indicator_map object containing a data frame of indicator 
@@ -214,7 +225,8 @@ library(b3gbi)
 Denmark_observed_richness_map <- obs_richness_map(example_cube_1, 
                                                   first_year = 1980, 
                                                   level = "country", 
-                                                  region = "Denmark") 
+                                                  region = "Denmark",
+                                                  include_water = FALSE) 
 Denmark_observed_richness_map
 
 ```
@@ -359,7 +371,8 @@ plot(Denmark_observed_richness_ts)
 library(b3gbi)
 Denmark_observed_richness_map <- obs_richness_map(example_cube_1, 
                                                   level = "country", 
-                                                  region = "Denmark") 
+                                                  region = "Denmark",
+                                                  include_water = FALSE) 
 plot(Denmark_observed_richness_map)
 
 ```
