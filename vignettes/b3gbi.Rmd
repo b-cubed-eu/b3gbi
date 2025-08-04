@@ -315,7 +315,12 @@ The plot functions offer quite a few arguments to customize the output, but the 
 
 # Example:
 library(b3gbi)
-Denmark_observed_richness_ts <- obs_richness_ts(example_cube_1, first_year = 1980, level = "country", region = "Denmark", ci_type = "none") 
+Denmark_observed_richness_ts <- obs_richness_ts(example_cube_1, 
+                                                first_year = 1980, 
+                                                level = "country", 
+                                                region = "Denmark", 
+                                                ci_type = "none",
+                                                include_water = FALSE) 
 plot(Denmark_observed_richness_ts)
 
 ```
