@@ -50,10 +50,10 @@ plot.occ_by_dataset <- function(x,
   y_label_default <- "Occurrences"
   auto_title <- "Total Occurrences (Segregated by Dataset)"
 
-  # Filter datasets
+  # Filter data sets
   x$data$type <- factor(x$data$type, levels = unique(x$data$type))
 
-  # Filter out datasets with insufficient data
+  # Filter out data sets with insufficient data
   x$data <- x$data %>%
     dplyr::group_by(type) %>%
     dplyr::filter(dplyr::n() >= 2) %>%
@@ -1350,6 +1350,11 @@ plot_ts <- function(x,
     max_year <- x$last_year
   }
 
+  if ((max_year - min_year) < 2 && smoothed_trend == TRUE) {
+    smoothed_trend <- FALSE
+    message("Could not perform loess smooth due to insufficient time points.")
+  }
+
   # Create plot title if title is set to "auto"
   if (!is.null(title)) {
     if (title == "auto") {
@@ -1389,6 +1394,9 @@ plot_ts <- function(x,
     x$data$ul <- ifelse(is.na(x$data$ul), x$data$diversity_val, x$data$ul)
 
   }
+
+  # Convert years to factor
+  x$data$year <- as.factor(x$data$year)
 
   # Create basis of plot
   trend_plot <-
@@ -1456,13 +1464,14 @@ plot_ts <- function(x,
                  size = pointsize)
   } else {
     trend_plot <- trend_plot +
-      geom_line(colour = linecolour,
+      geom_line(aes(group = 1),
+                colour = linecolour,
                 alpha = linealpha,
                 lwd = linewidth)
   }
 
   trend_plot <- trend_plot +
-    scale_x_continuous(breaks = breaks_pretty_int(n = x_breaks),
+    scale_x_discrete(breaks = breaks_pretty_int(n = x_breaks),
                        expand = expansion(mult = x_expand)) +
     scale_y_continuous(breaks = breaks_pretty_int(n = y_breaks),
                        expand = expansion(mult = y_expand)) +
