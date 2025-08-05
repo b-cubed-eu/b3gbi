@@ -33,7 +33,6 @@ test_that("get_NE_data retrieves map data correctly", {
   cube_map <- suppressWarnings(get_NE_data(region = NULL,
                           output_crs = "EPSG:3857",
                           data = mock_data,
-                          include_water = FALSE,
                           layers = NULL))
   expect_s3_class(cube_map, "sf")
   expect_equal(sf::st_crs(cube_map), sf::st_crs("EPSG:3857"))

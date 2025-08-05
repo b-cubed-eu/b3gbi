@@ -194,37 +194,21 @@ mock_get_NE_data <- function(region,
 
 test_that(
   "compute_indicator_workflow creates grids and performs spatial operations", {
-  # Create a mock processed_cube object
-  # mock_cube <- list(
-  #   data = data.frame(
-  #     xcoord = rep(1:10, 10),
-  #     ycoord = rep(1:10, each = 10),
-  #     cellid = 1:100,
-  #     year = rep(2000:2009, each = 10),
-  #     scientificName = "A",
-  #     obs = rep(1:10, each = 10)
-  #   ),
-  #   first_year = 2000,
-  #   last_year = 2009,
-  #   num_species = 1,
-  #   resolutions = "10km",
-  #   grid_type = "eea"
-  # )
   mock_cube <- list(
     data = data.frame(
-      xcoord = 5,
-      ycoord = 5,
-      cellid = 1,
-      year = 2000,
-      scientificName = "A",
-      obs = 1
+      xcoord = c(9,1),
+      ycoord = c(1,9),
+      cellid = c(1,2),
+      year = c(2000,2000),
+      scientificName = c("A","A"),
+      obs = c(1,1)
     ),
     first_year = 2000,
     last_year = 2000,
-    coord_range = list("xmin" = 5,
-                       "xmax" = 5,
-                       "ymin" = 5,
-                       "ymax" = 5),
+    coord_range = list("xmin" = 1,
+                       "xmax" = 9,
+                       "ymin" = 1,
+                       "ymax" = 9),
     num_species = 1,
     resolutions = "10km",
     grid_type = "eea"
@@ -359,6 +343,7 @@ test_that(
   # Create a mock processed_cube object
     mock_cube <- list(
       data = data.frame(
+        cellCode <- rep(seq(1000, 1100, length.out = 10), 10),
         xcoord = rep(seq(4000000, 4100000, length.out = 10), 10),
         ycoord = rep(seq(3000000, 3100000, length.out = 10), 10),
         year = rep(2000:2009, 10),
@@ -433,6 +418,7 @@ test_that("compute_indicator_workflow creates output objects correctly", {
   # Create a mock processed_cube object
   mock_cube <- list(
     data = data.frame(
+      cellCode = seq(1000, 1100, length.out = 10),
       xcoord = seq(xmin, xmax, length.out = 10),
       ycoord = seq(ymin, ymax, length.out = 10),
       obs = 1:10,
@@ -452,10 +438,10 @@ test_that("compute_indicator_workflow creates output objects correctly", {
   )
   class(mock_cube) <- c("processed_cube", "list")
 
-  xminmap <- xmin - (0.5 * 10000)
-  yminmap <- ymin - (0.5 * 10000)
-  xmaxmap <- xmax + (0.5 * 10000)
-  ymaxmap <- ymax + (0.5 * 10000)
+  xminmap <- xmin - (0.1 * 10000)
+  yminmap <- ymin - (0.1 * 10000)
+  xmaxmap <- xmax + (0.1 * 10000)
+  ymaxmap <- ymax + (0.1 * 10000)
 
   # Test indicator_map object creation
   result_map <- suppressWarnings(compute_indicator_workflow(
@@ -473,8 +459,8 @@ test_that("compute_indicator_workflow creates output objects correctly", {
   expect_equal(result_map$species_names,
                c("A", "B", "C", "D", "E", "F", "G", "H", "I", "J"))
   expect_equal(result_map$div_name, "Observed Species Richness")
-  #expect_equal(unname(result_map$coord_range),
-  #             c(xminmap, yminmap, xmaxmap, ymaxmap))
+  expect_equal(as.numeric(result_map$coord_range),
+               c(xmin, ymin, xmax, ymax))
   expect_equal(names(result_map$coord_range),
                c("xmin", "ymin", "xmax", "ymax"))
 
@@ -489,7 +475,7 @@ test_that("compute_indicator_workflow creates output objects correctly", {
   expect_s3_class(result_ts$data, "data.frame")
   expect_equal(result_ts$div_type, "total_occ")
   expect_equal(result_ts$div_name, "Total Occurrences")
-  expect_equal(unname(result_ts$coord_range),
+  expect_equal(as.numeric(result_ts$coord_range),
                c(xmin, ymin, xmax, ymax))
   expect_equal(names(result_ts$coord_range),
                c("xmin", "ymin", "xmax", "ymax"))
@@ -603,18 +589,18 @@ test_that(
   # Create a mock processed_cube object
     mock_cube <- list(
       data = data.frame(
-        xcoord = 5,
-        ycoord = 5,
-        cellid = 1,
-        year = 2000,
-        scientificName = "A",
-        obs = 1
+        xcoord = c(1,5),
+        ycoord = c(5,1),
+        cellid = c(1,2),
+        year = c(2000,2000),
+        scientificName = c("A","A"),
+        obs = c(1,1)
       ),
       first_year = 2000,
       last_year = 2000,
-      coord_range = list("xmin" = 5,
+      coord_range = list("xmin" = 1,
                           "xmax" = 5,
-                          "ymin" = 5,
+                          "ymin" = 1,
                           "ymax" = 5),
       num_species = 1,
       resolutions = "10km",
