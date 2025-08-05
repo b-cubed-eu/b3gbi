@@ -2,9 +2,48 @@
 % Please edit documentation in R/calc_ci_methods.R
 \name{calc_ci}
 \alias{calc_ci}
+\alias{calc_ci.core}
+\alias{calc_ci.hill0}
+\alias{calc_ci.hill1}
+\alias{calc_ci.hill2}
+\alias{calc_ci.total_occ}
+\alias{calc_ci.occ_density}
+\alias{calc_ci.newness}
+\alias{calc_ci.williams_evenness}
+\alias{calc_ci.pielou_evenness}
+\alias{calc_ci.ab_rarity}
+\alias{calc_ci.area_rarity}
+\alias{calc_ci.spec_occ}
+\alias{calc_ci.spec_range}
 \title{Calculate Confidence Intervals for a Biodiversity Indicator}
 \usage{
 calc_ci(x, indicator, ...)
+
+\method{calc_ci}{core}(bootstraps, indicator, ci_type, ...)
+
+\method{calc_ci}{hill0}(x, ...)
+
+\method{calc_ci}{hill1}(x, ...)
+
+\method{calc_ci}{hill2}(x, ...)
+
+\method{calc_ci}{total_occ}(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
+
+\method{calc_ci}{occ_density}(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
+
+\method{calc_ci}{newness}(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
+
+\method{calc_ci}{williams_evenness}(x, ...)
+
+\method{calc_ci}{pielou_evenness}(x, ...)
+
+\method{calc_ci}{ab_rarity}(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
+
+\method{calc_ci}{area_rarity}(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
+
+\method{calc_ci}{spec_occ}(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
+
+\method{calc_ci}{spec_range}(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
 }
 \arguments{
 \item{x}{A data cube object}
@@ -15,9 +54,42 @@ be called by the 'compute_indicator_workflow' function.}
 
 \item{...}{Additional arguments passed to specific indicator calculation
 functions.}
+
+\item{ci_type}{Type of bootstrap confidence intervals to calculate.
+(Default: "norm". Select "none" to avoid calculating bootstrap CIs.)}
+
+\item{num_bootstrap}{Set the number of bootstraps to calculate for generating
+confidence intervals. (Default: 1000)}
 }
 \description{
 This function calculates bootstrap confidence intervals for a
 biodiversity indicator. It is called automatically when calculating a
 biodiversity indicator over time unless you choose 'none' for ci_type.
 }
+\section{Methods (by class)}{
+\itemize{
+\item \code{calc_ci(hill0)}: Calculate confidence intervals for Hill richness
+
+\item \code{calc_ci(hill1)}: Calculate confidence intervals for Simpson-Hill diversity
+
+\item \code{calc_ci(hill2)}: Calculate confidence intervals for Shannon-Hill diversity
+
+\item \code{calc_ci(total_occ)}: Calculate confidence intervals for total occurrences
+
+\item \code{calc_ci(occ_density)}: Calculate confidence intervals for occurrence density
+
+\item \code{calc_ci(newness)}: Calculate confidence intervals for newness
+
+\item \code{calc_ci(williams_evenness)}: Calculate confidence intervals for Williams' evenness
+
+\item \code{calc_ci(pielou_evenness)}: Calculate confidence intervals for Pielou's evenness
+
+\item \code{calc_ci(ab_rarity)}: Calculate confidence intervals for abundance-based rarity
+
+\item \code{calc_ci(area_rarity)}: Calculate confidence intervals for area-based rarity
+
+\item \code{calc_ci(spec_occ)}: Calculate confidence intervals for species occurrence
+
+\item \code{calc_ci(spec_range)}: Calculate confidence intervals for species range
+
+}}
