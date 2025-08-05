@@ -1,4 +1,5 @@
 #' @export
+#' @rdname calc_ts
 calc_ts.default <- function(x, ...){
 
   warning(paste("calc_ts does not know how to handle object of class ",
@@ -39,7 +40,8 @@ calc_ts.hill1 <- function(x, ...) {
 
 }
 
-#' @noRd
+#' @export
+#' @rdname calc_ts
 calc_ts.hill2 <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not

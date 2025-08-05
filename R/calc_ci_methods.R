@@ -8,8 +8,6 @@
 #' @param indicator An indicator calculated over time, in the form of a data
 #'  frame. *Note: this should NOT be an 'indicator_ts' object as it is meant to
 #'  be called by the 'compute_indicator_workflow' function.
-#' @param ... Additional arguments passed to specific indicator calculation
-#'  functions.
 #'
 #' @export
 calc_ci <- function(x,
@@ -20,7 +18,8 @@ calc_ci <- function(x,
 
 }
 
-#' @noRd
+#' @export
+#' @rdname calc_ci
 calc_ci.default <- function(x, ...){
 
   warning(
@@ -36,6 +35,9 @@ calc_ci.default <- function(x, ...){
 #' Core function for handling the confidence interval calculations for different
 #'  indicator types. This function is called by the calc_ci functions for each
 #'  indicator type.
+#' @inheritParams calc_ci
+#' @param bootstraps Bootstrapped indicator values
+#' @param ci_type Type of confidence interval to calculate
 #' @export
 #' @rdname calc_ci
 calc_ci.core <- function(bootstraps,
@@ -157,11 +159,11 @@ calc_ci.hill_core <- function(x,
 }
 
 #' @describeIn calc_ci Calculate confidence intervals for total occurrences
+#' @inheritParams calc_ci
 #' @param ci_type Type of bootstrap confidence intervals to calculate.
 #'  (Default: "norm". Select "none" to avoid calculating bootstrap CIs.)
 #' @param num_bootstrap Set the number of bootstraps to calculate for generating
 #'  confidence intervals. (Default: 1000)
-#' @inheritParams calc_ci
 #' @export
 calc_ci.total_occ <- function(x,
                               indicator,
@@ -196,11 +198,11 @@ calc_ci.total_occ <- function(x,
 }
 
 #' @describeIn calc_ci Calculate confidence intervals for occurrence density
+#' @inheritParams calc_ci
 #' @param ci_type Type of bootstrap confidence intervals to calculate.
 #'  (Default: "norm". Select "none" to avoid calculating bootstrap CIs.)
 #' @param num_bootstrap Set the number of bootstraps to calculate for generating
 #'  confidence intervals. (Default: 1000)
-#' @inheritParams calc_ci
 #' @export
 calc_ci.occ_density <- function(x,
                                 indicator,
@@ -326,6 +328,7 @@ calc_ci.pielou_evenness <- function(x,
 #'  (Default: "norm". Select "none" to avoid calculating bootstrap CIs.)
 #' @param num_bootstrap Set the number of bootstraps to calculate for generating
 #'  confidence intervals. (Default: 1000)
+#' @param type Evenness measure ("pielou_evenness" or "williams_evenness)
 #' @inheritParams calc_ci
 #' @export
 calc_ci.evenness_core <- function(x,

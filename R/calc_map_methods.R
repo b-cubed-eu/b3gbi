@@ -51,6 +51,7 @@ calc_map.hill2 <- function(x, ...) {
   return(indicator)
 }
 
+#' @param type Which Hill diversity to calculate ("hill0", "hill1", "hill2")
 #' @export
 #' @rdname calc_map
 calc_map.hill_core <- function(x,
@@ -258,7 +259,8 @@ calc_map.pielou_evenness <- function(x, ...) {
 
 }
 
-#' @noRd
+#' @export
+#' @rdname calc_map
 calc_map.evenness_core <- function(x,
                                    type,
                                    ...) {
