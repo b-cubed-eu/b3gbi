@@ -20,7 +20,7 @@ for (i in 1:length(countrylist)) {
     dir.create(ormapsdir, recursive = TRUE)
     message(paste("Created ", sitelist[i], " observed richness maps directory:", ormapsdir))
   }
- for (j in 41:length(sitelist)) {
+ for (j in 42) {
 #  for (j in 1:length(sitelist)) {
 
     tryCatch({
@@ -36,15 +36,18 @@ for (i in 1:length(countrylist)) {
 
       temp <- process_cube(paste0(inputdir, "/", countrylist[i], "/", sitelist[j]),
                            separator = ",")
-      temp_obsrich_map <- obs_richness_map(temp,
-                                           shapefile_path = shapefilepath,
-                                           ne_scale = "large",
-                                           region = continent,
-                                           layers = c("ocean", "lakes", "rivers_lake_centerlines")
+      temp_obsrich_ts <- obs_richness_ts(temp,
+                                         shapefile_path = shapefilepath,
+                                         ne_scale = "large",
+                                         region = continent,
+                                         include_water = TRUE,
+                                         shapefile_crs = 4326
                                            )
-      temp_orm_plot <- plot(temp_obsrich_map)
 
-      ggsave(filename = paste0(ormapsdir, "/", sitename, ".png"), temp_orm_plot, device = "png", height = 4000, width = 4000, units = "px")
+      temp_orm_plot <- plot(temp_obsrich_ts, x_expand = 0.1, y_expand = 0.1)
+      #temp_orm_plot <- plot(temp_obsrich_map, layers = c("lakes"))
+
+      ggsave(filename = paste0(ormapsdir, "/", sitename, "_ts.png"), temp_orm_plot, device = "png", height = 4000, width = 4000, units = "px")
 
     }, error = function(e) {
       if (grepl("No spatial intersection between map data and grid.", e) ||
