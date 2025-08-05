@@ -49,6 +49,8 @@ get_NE_data <- function(region,
           scale maps")
   }
 
+  scalerank <- featurecla <- geometry <- . <- NULL
+
   # Turn off spherical geometry
   get_s2_status <- sf_use_s2()
   sf_use_s2(FALSE)
@@ -411,7 +413,7 @@ prepare_spatial_data <- function(data,
                                  cube_crs,
                                  output_crs) {
 
-  cellid <- NULL
+  cellid <- geometry <- NULL
 
   # # Convert the x and y columns to the correct format for plotting with sf
   # occ_sf <- sf::st_as_sf(data,
@@ -864,7 +866,8 @@ compute_indicator_workflow <- function(data,
         # Attempt without altering the spherical geometry setting
         result <- grid %>%
           sf::st_intersection(map_data) %>%
-          dplyr::select(all_of(c("cellid", "geometry")), any_of("area"))
+          dplyr::select(dplyr::all_of(c("cellid", "geometry")),
+                        dplyr::any_of("area"))
       }, error = function(e) {
         if (grepl("Error in wk_handle.wk_wkb", e) ||
             grepl("TopologyException", e)) {
@@ -887,7 +890,8 @@ compute_indicator_workflow <- function(data,
         # Retry the intersection operation
         result <- grid %>%
           sf::st_intersection(map_data) %>%
-          dplyr::select(all_of(c("cellid", "geometry")), any_of("area"))
+          dplyr::select(dplyr::all_of(c("cellid", "geometry")),
+                        dplyr::any_of("area"))
 
         # Notify success after retry
         message("Intersection succeeded with spherical geometry turned off.")

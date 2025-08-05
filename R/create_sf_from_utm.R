@@ -10,6 +10,9 @@
 #'
 #' @export
 create_sf_from_utm <- function(df, output_crs = NULL) {
+
+  utmzone <- NULL
+
   # 1. Input Validation
   required_cols <- c("xcoord", "ycoord", "utmzone")
   if (!all(required_cols %in% names(df))) {

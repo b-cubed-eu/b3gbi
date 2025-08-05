@@ -60,6 +60,8 @@ calc_map.hill_core <- function(x,
       rlang::inherits_any(x, c("hill0", "hill1", "hill2"))
   )
 
+  qD <- cellid <- Assemblage <- taxonKey <- obs <- NULL
+
   qval <- as.numeric(gsub("hill", "", match.arg(type)))
   temp_opts <- list(...)
   cutoff_length <- temp_opts$cutoff_length
@@ -303,14 +305,15 @@ calc_map.ab_rarity <- function(x, ...) {
   stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
                   inherits(x, "ab_rarity"))
 
-  obs <- taxonKey <- cellid <- records_taxon <- rarity <- NULL
+  obs <- taxonKey <- cellid <- records_taxon <- obs_taxon <- rarity <- NULL
+  obs_cell <- NULL
 
   # Select relevant columns
   x <- x %>%
     dplyr::select(cellid, taxonKey, obs)
 
   # Remove invalid rows
-  x <- x[complete.cases(x), ]
+  x <- x[stats::complete.cases(x), ]
 
 # Calculate total summed rarity (in terms of abundance) for each grid cell
   indicator <-
@@ -338,13 +341,14 @@ calc_map.area_rarity <- function(x, ...) {
                   inherits(x, "area_rarity"))
 
   rec_tax_cell <- cellid <- taxonKey <- rarity <- NULL
+  occ_by_tax <- total_cells <- NULL
 
   # Select relevant columns
   x <- x %>%
     select(cellid, taxonKey)
 
   # Remove invalid rows
-  x <- x[complete.cases(x), ]
+  x <- x[stats::complete.cases(x), ]
 
   # Calculate rarity as the sum (per grid cell) of the inverse of occupancy
   # frequency for each species

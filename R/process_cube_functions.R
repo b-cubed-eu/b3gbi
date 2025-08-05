@@ -243,7 +243,8 @@ process_cube <- function(cube_name,
       # if successful rename the user-specified column to the default
       occurrence_data <-
         occurrence_data %>%
-        dplyr::rename_with(.fn = ~"cellCode", .cols = all_of(cols_cellCode))
+        dplyr::rename_with(.fn = ~"cellCode",
+                           .cols = dplyr::all_of(cols_cellCode))
 
     } else {
 
@@ -259,7 +260,7 @@ process_cube <- function(cube_name,
           # if successful rename the found column to the default for grid cell codes
           occurrence_data <-
             occurrence_data %>%
-            dplyr::rename_with(.fn = ~"cellCode", .cols = all_of(col))
+            dplyr::rename_with(.fn = ~"cellCode", .cols = dplyr::all_of(col))
 
           # then end the loop
           break
@@ -298,7 +299,8 @@ process_cube <- function(cube_name,
     # rename it to the default
     occurrence_data <-
       occurrence_data %>%
-      dplyr::rename_with(.fn = ~"cellCode", .cols = all_of(cols_cellCode))
+      dplyr::rename_with(.fn = ~"cellCode",
+                         .cols = dplyr::all_of(cols_cellCode))
 
     # if the user has chosen 'none' as a grid type...
   } else if (grid_type == "none") {
@@ -346,7 +348,8 @@ process_cube <- function(cube_name,
     # rename it to the default
     occurrence_data <-
       occurrence_data %>%
-      dplyr::rename_with(.fn = ~"cellCode", .cols = all_of(cols_cellCode))
+      dplyr::rename_with(.fn = ~"cellCode",
+                         .cols = dplyr::all_of(cols_cellCode))
 
   }
 
@@ -418,7 +421,7 @@ process_cube <- function(cube_name,
       old_name <- colnames(occurrence_data)[grepl(new_name, colnames(occurrence_data), ignore.case=TRUE)]
       occurrence_data <-
         occurrence_data %>%
-        dplyr::rename_with(.fn = ~new_name, .cols = all_of(old_name))
+        dplyr::rename_with(.fn = ~new_name, .cols = dplyr::all_of(old_name))
 
     }
 

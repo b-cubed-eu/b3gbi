@@ -5,6 +5,8 @@ add_NE_layer <- function(layer_name, scale, latlong_extent) {
   if (!requireNamespace("dplyr", quietly = TRUE)) stop("dplyr package required.")
   if (!requireNamespace("rlang", quietly = TRUE)) stop("rlang package required for dynamic filtering.") # Added rlang
 
+  geometry <- featurecla <- scalerank <- min_zoom <- NULL
+
   if (layer_name == "admin_0_countries") {
     # Use the robust ne_countries function for the base layer
     # The ne_countries function handles downloading the data if it doesn't exist

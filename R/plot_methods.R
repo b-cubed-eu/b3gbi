@@ -46,6 +46,8 @@ plot.occ_by_dataset <- function(x,
   stopifnot_error("Incorrect object class. Must be class 'occ_by_dataset'.", inherits(x, "occ_by_dataset"))
   if (!inherits(x, "indicator_ts")) stop("Incorrect object class. Must be class 'indicator_ts'.")
 
+  type <- diversity_val <- totalocc <- NULL
+
   # Set defaults
   y_label_default <- "Occurrences"
   auto_title <- "Total Occurrences (Segregated by Dataset)"
@@ -133,6 +135,8 @@ plot.occ_by_type <- function(x,
 
   stopifnot_error("Incorrect object class. Must be class 'occ_by_type'.", inherits(x, "occ_by_type"))
   if (!inherits(x, "indicator_ts")) {stop("Incorrect object class. Must be class 'indicator_ts'.")}
+
+  type <- NULL
 
   # Set defaults
   y_label_default <- "Occurrences"
@@ -715,9 +719,6 @@ plot.occ_turnover <- function(x,
 #'    or projections). Will not work if crop_to_grid is set to TRUE.
 #' @param crop_to_grid If TRUE, the grid will determine the edges of the map.Overrides
 #'    Europe_crop_EEA. Default is FALSE.
-#' @param surround If TRUE, includes surrounding land area in gray when plotting
-#'    at the country or continent level. If FALSE, all surrounding area will be colored
-#'    ocean blue (or whatever colour you set manually using panel_bg). Default is TRUE.
 #' @param panel_bg (Optional) Background colour for the map panel.
 #' @param land_fill_colour (Optional) Colour for the land area outside of the grid
 #'    (if surround = TRUE). Default is "grey85".
@@ -727,6 +728,7 @@ plot.occ_turnover <- function(x,
 #' @param title_wrap_length Maximum title length before wrapping to a new line.
 #' @param transparent_gridlines Make gridlines invisible. Default is FALSE.
 #' @param layers Additional rnaturalearth layers to plot, e.g. c("reefs", "playas").
+#' @param scale Scale of Natural Earth data ("small", "medium", or "large"). Default is 'medium'.
 #'
 #' @return A ggplot object representing the biodiversity indicator map.
 #' Can be customized using ggplot2 functions.
@@ -763,7 +765,7 @@ plot_map <- function(x,
                      scale = "medium"
                      ) {
 
-  diversity_val <- geometry <- NULL
+  diversity_val <- geometry <- scalerank <- featurecla <- NULL
 
 
   if (!inherits(x, "indicator_map")) {
