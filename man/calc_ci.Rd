@@ -2,6 +2,7 @@
 % Please edit documentation in R/calc_ci_methods.R
 \name{calc_ci}
 \alias{calc_ci}
+\alias{calc_ci.default}
 \alias{calc_ci.core}
 \alias{calc_ci.hill0}
 \alias{calc_ci.hill1}
@@ -18,6 +19,8 @@
 \title{Calculate Confidence Intervals for a Biodiversity Indicator}
 \usage{
 calc_ci(x, indicator, ...)
+
+\method{calc_ci}{default}(x, ...)
 
 \method{calc_ci}{core}(bootstraps, indicator, ci_type, ...)
 
@@ -52,8 +55,7 @@ calc_ci(x, indicator, ...)
 frame. *Note: this should NOT be an 'indicator_ts' object as it is meant to
 be called by the 'compute_indicator_workflow' function.}
 
-\item{...}{Additional arguments passed to specific indicator calculation
-functions.}
+\item{bootstraps}{Bootstrapped indicator values}
 
 \item{ci_type}{Type of bootstrap confidence intervals to calculate.
 (Default: "norm". Select "none" to avoid calculating bootstrap CIs.)}

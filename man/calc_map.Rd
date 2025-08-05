@@ -11,6 +11,7 @@
 \alias{calc_map.occ_density}
 \alias{calc_map.williams_evenness}
 \alias{calc_map.pielou_evenness}
+\alias{calc_map.evenness_core}
 \alias{calc_map.ab_rarity}
 \alias{calc_map.area_rarity}
 \alias{calc_map.spec_occ}
@@ -39,6 +40,8 @@
 
 \method{calc_map}{pielou_evenness}(x, ...)
 
+\method{calc_map}{evenness_core}(x, type, ...)
+
 \method{calc_map}{ab_rarity}(x, ...)
 
 \method{calc_map}{area_rarity}(x, ...)
@@ -55,6 +58,8 @@ calc_map(x, ...)
 \item{x}{A data cube object ('processed_cube').}
 
 \item{...}{Additional arguments passed to specific indicator calculation functions.}
+
+\item{type}{Which Hill diversity to calculate ("hill0", "hill1", "hill2")}
 
 \item{newness_min_year}{If set, only shows values above this (e.g. 1970). Values
 below the minimum will be replaced with NA. This can be useful e.g. if you have

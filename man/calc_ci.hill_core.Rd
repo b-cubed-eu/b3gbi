@@ -18,9 +18,6 @@ be called by the 'compute_indicator_workflow' function.}
 \item{type}{Type of Hill diversity function to calculate confidence
 intervals for. Options are "hill0" for richness, "hill1" for Simpson-Hill
 diversity, or "hill2" for Shannon-Hill diversity.}
-
-\item{...}{Additional arguments passed to specific indicator calculation
-functions.}
 }
 \description{
 Core function for handling the confidence interval calculations for Hill
