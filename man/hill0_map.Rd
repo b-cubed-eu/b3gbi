@@ -57,6 +57,10 @@ confidence intervals. (Default: 1000)}
 different units than the input CRS. (Default: FALSE)}
     \item{\code{shapefile_path}}{Path of an external shapefile to merge into the workflow. For example,
 if you want to calculate your indicator particular features such as protected areas or wetlands.}
+    \item{\code{shapefile_crs}}{CRS of a .wkt shapefile. If your shapefile is .wkt and you do
+NOT use this parameter, the CRS will be assumed to be EPSG:4326 and the
+coordinates will be read in as lat/long. If your shape is NOT a .wkt the CRS
+will be determined automatically.}
     \item{\code{invert}}{Calculate an indicator over the inverse of the shapefile (e.g.
 if you have a protected areas shapefile this would calculate an indicator over
 all non protected areas)}

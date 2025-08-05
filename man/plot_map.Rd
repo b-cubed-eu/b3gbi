@@ -79,9 +79,7 @@ Europe_crop_EEA. Default is FALSE.}
 
 \item{layers}{Additional rnaturalearth layers to plot, e.g. c("reefs", "playas").}
 
-\item{surround}{If TRUE, includes surrounding land area in gray when plotting
-at the country or continent level. If FALSE, all surrounding area will be colored
-ocean blue (or whatever colour you set manually using panel_bg). Default is TRUE.}
+\item{scale}{Scale of Natural Earth data ("small", "medium", or "large"). Default is 'medium'.}
 }
 \value{
 A ggplot object representing the biodiversity indicator map.
