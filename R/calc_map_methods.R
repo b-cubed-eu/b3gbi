@@ -341,7 +341,7 @@ calc_map.area_rarity <- function(x, ...) {
                   inherits(x, "area_rarity"))
 
   rec_tax_cell <- cellid <- taxonKey <- rarity <- NULL
-  occ_by_tax <- total_cells <- NULL
+  occ_by_taxa <- total_cells <- NULL
 
   # Select relevant columns
   x <- x %>%

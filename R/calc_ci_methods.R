@@ -11,7 +11,7 @@
 #' @param ... Additional arguments passed to specific indicator calculation
 #'  functions.
 #'
-#' @noRd
+#' @export
 calc_ci <- function(x,
                     indicator,
                     ...) {
