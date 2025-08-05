@@ -68,7 +68,8 @@ add_NE_layer <- function(layer_name, scale, latlong_extent) {
 
   }
 
-  le_projected <- sf::st_transform(sf::st_as_sfc(latlong_extent), crs = "+proj=eck4 +datum=WGS84")
+  le_projected <- sf::st_transform(sf::st_as_sfc(latlong_extent),
+                                   crs = "+proj=eck4 +datum=WGS84")
 
   # Attempt to perform cropping for efficiency FIRST
   # If it fails, validate first
