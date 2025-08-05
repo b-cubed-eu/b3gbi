@@ -39,10 +39,10 @@ get_NE_data <- function(region,
                         ne_type = "countries",
                         ne_scale = "medium",
                         cube_cell_codes = NULL,
-                        include_water = TRUE,
+                        include_water = FALSE,
                         buffer_dist_km = NULL,
                         data = NULL,
-                        layers = layers) {
+                        layers = NULL) {
 
   if (ne_scale == "large" & ne_type == "tiny_countries") {
     stop("tiny_countries are only available for medium (50 km) or small (110 km)
@@ -333,8 +333,8 @@ create_grid <- function(data,
     grid_list <- list() # Initialize an empty list to store the grids
 
     zone_data <- sf::st_transform(data, crs = utm_crs)
-    offset_x <- sf::st_bbox(zone_data)$xmin #- (0.5 * cell_size)
-    offset_y <- sf::st_bbox(zone_data)$ymin #- (0.5 * cell_size)
+    offset_x <- sf::st_bbox(zone_data)$xmin
+    offset_y <- sf::st_bbox(zone_data)$ymin
 
     zone_grid <- sf::st_make_grid(
       zone_data,
@@ -361,14 +361,13 @@ create_grid <- function(data,
   } else {
 
   # Calculate the offset for the grid
-  offset_x <- sf::st_bbox(data)$xmin - (0.5 * cell_size)
-  offset_y <- sf::st_bbox(data)$ymin - (0.5 * cell_size)
+  offset_x <- sf::st_bbox(data)$xmin
+  offset_y <- sf::st_bbox(data)$ymin
 
   # Make a grid across the cube
   grid <- data %>%
     sf::st_make_grid(cellsize = c(cell_size, cell_size),
                      offset = c(offset_x, offset_y)) %>%
-   # sf::st_cast("MULTIPOLYGON") %>%
     sf::st_sf() %>%
     dplyr::mutate(cellid = dplyr::row_number())
 
@@ -414,12 +413,6 @@ prepare_spatial_data <- function(data,
                                  output_crs) {
 
   cellid <- geometry <- NULL
-
-  # # Convert the x and y columns to the correct format for plotting with sf
-  # occ_sf <- sf::st_as_sf(data,
-  #                        coords = c("xcoord", "ycoord"),
-  #                        crs = cube_crs) %>%
-  #   sf::st_transform(crs = output_crs)
 
   # Set attributes as spatially constant to avoid warnings
   sf::st_agr(grid) <- "constant"
@@ -777,18 +770,21 @@ compute_indicator_workflow <- function(data,
       }
       if (data$grid_type == "eqdgc") {
         shapefile <- sf::st_transform(shapefile, crs = "+proj=eck4 +datum=WGS84")
-        data_bbox <- sf::st_transform(data_bbox, crs = "+proj=eck4 +datum=WGS84")
+        data_polygon <- sf::st_transform(data_polygon, crs = "+proj=eck4 +datum=WGS84")
       }
       if (invert) {
         shapefile_merge <- sf::st_difference(data_polygon,
-                                             sf::st_union(data_polygon,
-                                                          shapefile))
+                                             sf::st_union(shapefile))
       } else {
         shapefile_merge <- sf::st_union(data_polygon, shapefile)
       }
 
       # Handle empty geometries after spatial operations
-      is_empty <- sf::st_is_empty(shapefile_merge)
+      if (length(shapefile_merge) == 0) {
+        is_empty <- TRUE
+      } else {
+        is_empty <- sf::st_is_empty(shapefile_merge)
+      }
 
       if (is_empty) {
         stop("Shapefile does not seem to be within the area of the cube.")
@@ -851,9 +847,19 @@ compute_indicator_workflow <- function(data,
                                  cube_crs,
                                  output_crs)
 
+      if (is.null(shapefile)) {
+        if (sf::st_crs(df_sf_output) != sf::st_crs(map_data)) {
+          map_data <- sf::st_transform(map_data,
+                                       crs = sf::st_crs(df_sf_output))
+        }
+        polygon_to_intersect <- sf::st_make_valid(map_data)
+      } else {
+        polygon_to_intersect <- shapefile_merge
+      }
+
       # Set attributes as spatially constant to avoid warnings when clipping
       sf::st_agr(grid) <- "constant"
-      sf::st_agr(map_data) <- "constant"
+    #  sf::st_agr(polygon_to_intersect) <- "constant"
 
       # The following intersection operation requires special error handling
       # because it fails when the grid contains invalid geometries.
@@ -865,7 +871,7 @@ compute_indicator_workflow <- function(data,
       tryCatch({
         # Attempt without altering the spherical geometry setting
         result <- grid %>%
-          sf::st_intersection(map_data) %>%
+          sf::st_intersection(polygon_to_intersect) %>%
           dplyr::select(dplyr::all_of(c("cellid", "geometry")),
                         dplyr::any_of("area"))
       }, error = function(e) {
@@ -889,7 +895,7 @@ compute_indicator_workflow <- function(data,
 
         # Retry the intersection operation
         result <- grid %>%
-          sf::st_intersection(map_data) %>%
+          sf::st_intersection(polygon_to_intersect) %>%
           dplyr::select(dplyr::all_of(c("cellid", "geometry")),
                         dplyr::any_of("area"))
 
@@ -914,39 +920,6 @@ compute_indicator_workflow <- function(data,
       # Set attributes as spatially constant to avoid warnings when clipping
       sf::st_agr(grid) <- "constant"
 
-      # Shapefile Filtering
-      if (!is.null(shapefile_path)) {
-
-        is_wkt_file <- grepl("\\.wkt$", tolower(shapefile_path))
-
-        if (is_wkt_file) {
-
-          shapefile <- sf::st_as_sfc(readLines(shapefile_path), crs = 4326)
-
-        } else {
-
-          shapefile <- sf::read_sf(shapefile_path)
-
-        }
-
-        if (sf::st_crs(grid) != sf::st_crs(shapefile)) {
-          shapefile <- sf::st_transform(shapefile, crs = sf::st_crs(grid))
-        }
-
-        if (invert) {
-          grid <- sf::st_difference(grid, sf::st_union(shapefile))
-        } else {
-          grid <- sf::st_filter(grid, shapefile)
-        }
-
-        # Handle empty geometries after spatial operations
-        grid <- grid[!sf::st_is_empty(grid), ]
-
-        if (nrow(grid) == 0) {
-          stop("No grid cells remain after shapefile filtering.")
-        }
-      }
-
     }
 
     # Assign classes to send data to correct calculator function
@@ -963,6 +936,8 @@ compute_indicator_workflow <- function(data,
       diversity_grid <-
         grid %>%
         dplyr::left_join(indicator, by = "cellid")
+
+      map_lims <- sf::st_bbox(grid)
 
     } else {
 
@@ -992,7 +967,8 @@ compute_indicator_workflow <- function(data,
 
           # Attempt without altering the spherical geometry setting
           filtered_sf <- sf::st_filter(df_sf_output,
-                                       sf::st_union(polygon_to_intersect))
+                                       sf::st_union(df_sf_output,
+                                                    polygon_to_intersect))
         }, error = function(e) {
           if (grepl("Error in wk_handle.wk_wkb", e)) {
             message(paste("Encountered a geometry error during intersection. ",
@@ -1011,7 +987,8 @@ compute_indicator_workflow <- function(data,
 
           # Retry the intersection operation
           filtered_sf <- sf::st_filter(df_sf_output,
-                                       sf::st_union(polygon_to_intersect))
+                                       sf::st_union(df_sf_output,
+                                                    polygon_to_intersect))
 
           # Notify success after retry
           message("Intersection succeeded with spherical geometry turned off.")
@@ -1058,7 +1035,7 @@ compute_indicator_workflow <- function(data,
       }
 
       year_names <- unique(df$year)
-      map_lims <- sf::st_bbox(polygon_to_intersect)
+      map_lims <- sf::st_bbox(filtered_sf)
 
     }
 
@@ -1151,7 +1128,7 @@ compute_indicator_workflow <- function(data,
                                        num_years = num_years,
                                        species_names = species_names,
                                        years_with_obs = years_with_obs,
-                                       map_lims = sf::st_bbox(map_data),
+                                       map_lims = map_lims,
                                        map_layers = layers)
 
   } else {
