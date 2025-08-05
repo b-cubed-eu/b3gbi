@@ -7,7 +7,8 @@ calc_map.default <- function(x, ...){
 
 }
 
-#' @noRd
+#' @export
+#' @rdname calc_map
 calc_map.hill0 <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
@@ -21,7 +22,8 @@ calc_map.hill0 <- function(x, ...) {
 
 }
 
-#' @noRd
+#' @export
+#' @rdname calc_map
 calc_map.hill1 <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
@@ -35,7 +37,8 @@ calc_map.hill1 <- function(x, ...) {
 
 }
 
-#' @noRd
+#' @export
+#' @rdname calc_map
 calc_map.hill2 <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
@@ -48,7 +51,8 @@ calc_map.hill2 <- function(x, ...) {
   return(indicator)
 }
 
-#' @noRd
+#' @export
+#' @rdname calc_map
 calc_map.hill_core <- function(x,
                                type = c("hill0", "hill1", "hill2"),
                                ...) {

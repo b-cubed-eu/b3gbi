@@ -7,7 +7,8 @@ calc_ts.default <- function(x, ...){
 
 }
 
-#' @noRd
+#' @export
+#' @rdname calc_ts
 calc_ts.hill0 <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
@@ -22,7 +23,8 @@ calc_ts.hill0 <- function(x, ...) {
 
 }
 
-#' @noRd
+#' @export
+#' @rdname calc_ts
 calc_ts.hill1 <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
@@ -57,7 +59,8 @@ calc_ts.hill2 <- function(x, ...) {
 #'
 #' @importFrom iNEXT estimateD
 #'
-#' @noRd
+#' @export
+#' @rdname calc_ts
 calc_ts.hill_core <- function(x,
                               type = c("hill0", "hill1", "hill2"),
                               ...)
@@ -291,7 +294,8 @@ calc_ts.pielou_evenness <- function(x,
 
 }
 
-#' @noRd
+#' @export
+#' @rdname calc_ts
 calc_ts.evenness_core <- function(x,
                                   type,
                                   ...) {
