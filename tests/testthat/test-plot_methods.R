@@ -643,40 +643,74 @@ mock_data <- data.frame(
 )
 
 # Mock objects for each class
-mock_spec_range <- structure(list(data = mock_data),
+mock_spec_range <- structure(list(data = mock_data,
+                                  first_year = 2001,
+                                  last_year = 2005),
                              class = c("indicator_ts", "spec_range"))
-mock_spec_occ <- structure(list(data = mock_data),
+mock_spec_occ <- structure(list(data = mock_data,
+                                first_year = 2001,
+                                last_year = 2005),
                            class = c("indicator_ts", "spec_occ"))
-mock_cum_richness <- structure(list(data = mock_data),
+mock_cum_richness <- structure(list(data = mock_data,
+                                    first_year = 2001,
+                                    last_year = 2005),
                                class = c("indicator_ts", "cum_richness"))
-mock_pielou_evenness <- structure(list(data = mock_data),
+mock_pielou_evenness <- structure(list(data = mock_data,
+                                       first_year = 2001,
+                                       last_year = 2005),
                                   class = c("indicator_ts", "pielou_evenness"))
-mock_williams_evenness <- structure(list(data = mock_data),
+mock_williams_evenness <- structure(list(data = mock_data,
+                                         first_year = 2001,
+                                         last_year = 2005),
                                     class = c("indicator_ts",
                                               "williams_evenness"))
-mock_tax_distinct <- structure(list(data = mock_data),
+mock_tax_distinct <- structure(list(data = mock_data,
+                                    first_year = 2001,
+                                    last_year = 2005),
                                class = c("indicator_ts", "tax_distinct"))
-mock_occ_density <- structure(list(data = mock_data),
+mock_occ_density <- structure(list(data = mock_data,
+                                   first_year = 2001,
+                                   last_year = 2005),
                               class = c("indicator_ts", "occ_density"))
-mock_newness <- structure(list(data = mock_data),
+mock_newness <- structure(list(data = mock_data,
+                               first_year = 2001,
+                               last_year = 2005),
                           class = c("indicator_ts", "newness"))
-mock_total_occ <- structure(list(data = mock_data),
+mock_total_occ <- structure(list(data = mock_data,
+                                 first_year = 2001,
+                                 last_year = 2005),
                             class = c("indicator_ts", "total_occ"))
-mock_area_rarity <- structure(list(data = mock_data),
+mock_area_rarity <- structure(list(data = mock_data,
+                                   first_year = 2001,
+                                   last_year = 2005),
                               class = c("indicator_ts", "area_rarity"))
-mock_ab_rarity <- structure(list(data = mock_data),
+mock_ab_rarity <- structure(list(data = mock_data,
+                                 first_year = 2001,
+                                 last_year = 2005),
                             class = c("indicator_ts", "ab_rarity"))
-mock_rarefied <- structure(list(data = mock_data),
+mock_rarefied <- structure(list(data = mock_data,
+                                first_year = 2001,
+                                last_year = 2005),
                            class = c("indicator_ts", "rarefied"))
-mock_hill2 <- structure(list(data = mock_data),
+mock_hill2 <- structure(list(data = mock_data,
+                             first_year = 2001,
+                             last_year = 2005),
                         class = c("indicator_ts", "hill2"))
-mock_hill1 <- structure(list(data = mock_data),
+mock_hill1 <- structure(list(data = mock_data,
+                             first_year = 2001,
+                             last_year = 2005),
                         class = c("indicator_ts", "hill1"))
-mock_hill0 <- structure(list(data = mock_data),
+mock_hill0 <- structure(list(data = mock_data,
+                             first_year = 2001,
+                             last_year = 2005),
                         class = c("indicator_ts", "hill0"))
-mock_obs_richness <- structure(list(data = mock_data),
+mock_obs_richness <- structure(list(data = mock_data,
+                                    first_year = 2001,
+                                    last_year = 2005),
                                class = c("indicator_ts", "obs_richness"))
-mock_occ_turnover <- structure(list(data = mock_data),
+mock_occ_turnover <- structure(list(data = mock_data,
+                                    first_year = 2001,
+                                    last_year = 2005),
                                class = c("indicator_ts", "occ_turnover"))
 
 # Same invalid mock object for all error tests
@@ -799,9 +833,13 @@ mock_data_by_type <- data.frame(
   type = rep(c("Type A", "Type B", "Type C"), each = 15)
 )
 
-mock_occ_by_dataset <- structure(list(data = mock_data_by_dataset),
+mock_occ_by_dataset <- structure(list(data = mock_data_by_dataset,
+                                      first_year = 2001,
+                                      last_year = 2005),
                                  class = c("indicator_ts", "occ_by_dataset"))
-mock_occ_by_type <- structure(list(data = mock_data_by_type),
+mock_occ_by_type <- structure(list(data = mock_data_by_type,
+                                   first_year = 2001,
+                                   last_year = 2005),
                               class = c("indicator_ts", "occ_by_type"))
 
 mock_invalid_object <- list(a = 1, b = 2) # Invalid class
@@ -838,13 +876,13 @@ test_that("plot.occ_by_dataset handles facet parameters correctly", {
   expect_equal(facet_wrap_check$params$ncol, 2)
 })
 
-# test_that("plot.occ_by_dataset applies max_datasets and min_occurrences", {
-#   p <- plot.occ_by_dataset(mock_occ_by_dataset,
-#                            max_datasets = 2,
-#                            min_occurrences = 5)
-#   unique_datasets <- length(ggplot_build(p)$layout$panel_params)
-#   expect_true(unique_datasets == 2)  # Limited by max_datasets
-# })
+test_that("plot.occ_by_dataset applies max_datasets and min_occurrences", {
+  p <- plot.occ_by_dataset(mock_occ_by_dataset,
+                           max_datasets = 2,
+                           min_occurrences = 5)
+  unique_datasets <- length(ggplot_build(p)$layout$panel_params)
+  expect_true(unique_datasets == 2)  # Limited by max_datasets
+})
 
 test_that("plot.occ_by_type handles x_breaks parameter", {
   p <- plot.occ_by_type(mock_occ_by_type, x_breaks = 10)
