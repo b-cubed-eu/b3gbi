@@ -52,8 +52,8 @@ get_NE_data <- function(region,
   scalerank <- featurecla <- geometry <- . <- NULL
 
   # Turn off spherical geometry
-  get_s2_status <- sf_use_s2()
-  sf_use_s2(FALSE)
+#  get_s2_status <- sf::sf_use_s2()
+#  sf::sf_use_s2(FALSE)
 
   # Download and prepare Natural Earth map data
   if (level == "country") {
@@ -255,9 +255,9 @@ get_NE_data <- function(region,
                                crs = output_crs)
 
   # Return spherical geometry to previous status
-  if (get_s2_status == TRUE){
-    sf_use_s2(TRUE)
-  }
+ # if (get_s2_status == TRUE){
+ #   sf_use_s2(TRUE)
+ # }
 
   return(map_data)
 
@@ -414,14 +414,26 @@ prepare_spatial_data <- function(data,
 
   cellid <- geometry <- NULL
 
+  # Remove cellid column if present in df
+  # (should only be present in fake test data)
+  df <- df %>%
+    dplyr::select(-dplyr::any_of("cellid"))
+
   # Set attributes as spatially constant to avoid warnings
   sf::st_agr(grid) <- "constant"
   sf::st_agr(df) <- "constant"
 
+  if (cube_crs == "EPSG:4326" || cube_crs == "EPSG:3035") {
+    # Project grid and df to avoid messages about planar assumptions
+    df <- sf::st_transform(df, crs = "+proj=eck4 +datum=WGS84")
+    grid <- sf::st_transform(grid, crs = "+proj=eck4 +datum=WGS84")
+  }
+
   # Calculate intersection between occurrences and grid cells
    occ_grid_int <- df[sf::st_intersects(df, grid) %>%
                             lengths > 0,] %>%
-     sf::st_join(grid)
+     sf::st_join(grid) %>%
+     sf::st_transform(occ_grid_int, crs = cube_crs)
 
    # Check if there is any spatial intersection
    if (nrow(occ_grid_int) == 0) {
@@ -859,7 +871,10 @@ compute_indicator_workflow <- function(data,
 
       # Set attributes as spatially constant to avoid warnings when clipping
       sf::st_agr(grid) <- "constant"
-    #  sf::st_agr(polygon_to_intersect) <- "constant"
+      if (!inherits(polygon_to_intersect, "sf")) {
+        polygon_to_intersect <- sf::st_sf(geometry = polygon_to_intersect)
+      }
+      sf::st_agr(polygon_to_intersect) <- "constant"
 
       # The following intersection operation requires special error handling
       # because it fails when the grid contains invalid geometries.
