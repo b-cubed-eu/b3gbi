@@ -967,8 +967,7 @@ compute_indicator_workflow <- function(data,
 
           # Attempt without altering the spherical geometry setting
           filtered_sf <- sf::st_filter(df_sf_output,
-                                       sf::st_union(df_sf_output,
-                                                    polygon_to_intersect))
+                                       sf::st_union(polygon_to_intersect))
         }, error = function(e) {
           if (grepl("Error in wk_handle.wk_wkb", e)) {
             message(paste("Encountered a geometry error during intersection. ",
@@ -987,8 +986,7 @@ compute_indicator_workflow <- function(data,
 
           # Retry the intersection operation
           filtered_sf <- sf::st_filter(df_sf_output,
-                                       sf::st_union(df_sf_output,
-                                                    polygon_to_intersect))
+                                       sf::st_union(polygon_to_intersect))
 
           # Notify success after retry
           message("Intersection succeeded with spherical geometry turned off.")
