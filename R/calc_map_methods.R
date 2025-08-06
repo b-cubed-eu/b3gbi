@@ -14,7 +14,7 @@ calc_map.hill0 <- function(x, ...) {
   stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
                   inherits(x, "hill0"))
 
-  indicator <- calc_map.hill_core(x = x,
+  indicator <- calc_map_hill_core(x = x,
                                   type = "hill0",
                                   ...)
 
@@ -29,7 +29,7 @@ calc_map.hill1 <- function(x, ...) {
   stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
                   inherits(x, "hill1"))
 
-  indicator <- calc_map.hill_core(x = x,
+  indicator <- calc_map_hill_core(x = x,
                                   type = "hill1",
                                   ...)
 
@@ -44,7 +44,7 @@ calc_map.hill2 <- function(x, ...) {
   stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
                   inherits(x, "hill2"))
 
-  indicator <- calc_map.hill_core(x = x,
+  indicator <- calc_map_hill_core(x = x,
                                   type = "hill2",
                                   ...)
 
@@ -52,9 +52,8 @@ calc_map.hill2 <- function(x, ...) {
 }
 
 #' @param type Which Hill diversity to calculate ("hill0", "hill1", "hill2")
-#' @export
-#' @rdname calc_map
-calc_map.hill_core <- function(x,
+#' @noRd
+calc_map_hill_core <- function(x,
                                type = c("hill0", "hill1", "hill2"),
                                ...) {
   stopifnot_error(
@@ -235,7 +234,7 @@ calc_map.williams_evenness <- function(x, ...) {
                   inherits(x, "williams_evenness"))
 
   # Call function to calculate evenness over a grid
-  indicator <- calc_map.evenness_core(x = x,
+  indicator <- calc_map_evenness_core(x = x,
                                       type = "williams_evenness",
                                       ...)
 
@@ -251,7 +250,7 @@ calc_map.pielou_evenness <- function(x, ...) {
                   inherits(x, "pielou_evenness"))
 
   # Call function to calculate evenness over a grid
-  indicator <- calc_map.evenness_core(x = x,
+  indicator <- calc_map_evenness_core(x = x,
                                       type = "pielou_evenness",
                                       ...)
 
@@ -259,9 +258,8 @@ calc_map.pielou_evenness <- function(x, ...) {
 
 }
 
-#' @export
-#' @rdname calc_map
-calc_map.evenness_core <- function(x,
+#' @noRd
+calc_map_evenness_core <- function(x,
                                    type,
                                    ...) {
 

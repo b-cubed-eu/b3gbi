@@ -16,7 +16,7 @@ calc_ts.hill0 <- function(x, ...) {
                   meant to be called directly.",
                   inherits(x, "hill0"))
 
-  indicator <- calc_ts.hill_core(x = x,
+  indicator <- calc_ts_hill_core(x = x,
                                   type = "hill0",
                                   ...)
 
@@ -32,7 +32,7 @@ calc_ts.hill1 <- function(x, ...) {
                   meant to be called directly.",
                   inherits(x, "hill1"))
 
-  indicator <- calc_ts.hill_core(x = x,
+  indicator <- calc_ts_hill_core(x = x,
                                   type = "hill1",
                                   ...)
 
@@ -48,7 +48,7 @@ calc_ts.hill2 <- function(x, ...) {
                   meant to be called directly.",
                   inherits(x, "hill2"))
 
-  indicator <- calc_ts.hill_core(x = x,
+  indicator <- calc_ts_hill_core(x = x,
                                   type = "hill2",
                                   ...)
 
@@ -61,9 +61,8 @@ calc_ts.hill2 <- function(x, ...) {
 #'
 #' @importFrom iNEXT estimateD
 #'
-#' @export
-#' @rdname calc_ts
-calc_ts.hill_core <- function(x,
+#' @noRd
+calc_ts_hill_core <- function(x,
                               type = c("hill0", "hill1", "hill2"),
                               ...)
 {
@@ -274,7 +273,7 @@ calc_ts.williams_evenness <- function(x,
                   inherits(x, "williams_evenness"))
 
   # Call function to calculate evenness over a grid
-  indicator <- calc_ts.evenness_core(x = x,
+  indicator <- calc_ts_evenness_core(x = x,
                                       type = "williams_evenness",
                                       ...)
 
@@ -290,15 +289,14 @@ calc_ts.pielou_evenness <- function(x,
                   inherits(x, "pielou_evenness"))
 
   # Call function to calculate evenness over a grid
-  indicator <- calc_ts.evenness_core(x = x,
+  indicator <- calc_ts_evenness_core(x = x,
                                       type = "pielou_evenness",
                                       ...)
 
 }
 
-#' @export
-#' @rdname calc_ts
-calc_ts.evenness_core <- function(x,
+#' @noRd
+calc_ts_evenness_core <- function(x,
                                   type,
                                   ...) {
 
