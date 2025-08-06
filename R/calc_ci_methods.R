@@ -8,19 +8,19 @@
 #' @param indicator An indicator calculated over time, in the form of a data
 #'  frame. *Note: this should NOT be an 'indicator_ts' object as it is meant to
 #'  be called by the 'compute_indicator_workflow' function.
-#'
+#' @param ... Additional arguments passed to specific calc_ci functions.
 #' @export
 calc_ci <- function(x,
                     indicator,
                     ...) {
-
   UseMethod("calc_ci")
-
 }
 
 #' @export
 #' @rdname calc_ci
-calc_ci.default <- function(x, ...){
+calc_ci.default <- function(x,
+                            indicator,
+                            ...){
 
   warning(
     paste(
@@ -35,12 +35,14 @@ calc_ci.default <- function(x, ...){
 #' Core function for handling the confidence interval calculations for different
 #'  indicator types. This function is called by the calc_ci functions for each
 #'  indicator type.
-#' @inheritParams calc_ci
+#' @param indicator An indicator calculated over time, in the form of a data
+#'  frame. *Note: this should NOT be an 'indicator_ts' object as it is meant to
+#'  be called by the 'compute_indicator_workflow' function.
 #' @param bootstraps Bootstrapped indicator values
 #' @param ci_type Type of confidence interval to calculate
-#' @export
-#' @rdname calc_ci
-calc_ci.core <- function(bootstraps,
+#' @param ... Additional arguments
+#' @noRd
+calc_ci_core <- function(bootstraps,
                          indicator,
                          ci_type,
                          ...) {
@@ -76,45 +78,51 @@ calc_ci.core <- function(bootstraps,
 }
 
 #' @describeIn calc_ci Calculate confidence intervals for Hill richness
-#' @inheritParams calc_ci
 #' @export
-calc_ci.hill0 <- function(x, ...) {
+calc_ci.hill0 <- function(x,
+                          indicator,
+                          ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
                   inherits(x, "hill0"))
 
-  indicator <- calc_ci.hill_core(x = x,
+  indicator <- calc_ci_hill_core(x = x,
+                                 indicator,
                                  type = "hill0",
                                  ...)
 
 }
 
 #' @describeIn calc_ci Calculate confidence intervals for Simpson-Hill diversity
-#' @inheritParams calc_ci
 #' @export
-calc_ci.hill1 <- function(x, ...) {
+calc_ci.hill1 <- function(x,
+                          indicator,
+                          ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
                   inherits(x, "hill1"))
 
-  indicator <- calc_ci.hill_core(x = x,
+  indicator <- calc_ci_hill_core(x = x,
+                                 indicator,
                                  type = "hill1",
                                  ...)
 
 }
 
 #' @describeIn calc_ci Calculate confidence intervals for Shannon-Hill diversity
-#' @inheritParams calc_ci
 #' @export
-calc_ci.hill2 <- function(x, ...) {
+calc_ci.hill2 <- function(x,
+                          indicator,
+                          ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
                   inherits(x, "hill2"))
 
-  indicator <- calc_ci.hill_core(x = x,
+  indicator <- calc_ci_hill_core(x = x,
+                                 indicator,
                                  type = "hill2",
                                  ...)
 
@@ -123,12 +131,16 @@ calc_ci.hill2 <- function(x, ...) {
 #' Core function for handling the confidence interval calculations for Hill
 #' diversity. This function is called by the calc_ci.hill0, calc_ci.hill1,
 #' calc_ci.hill2 functions.
-#' @inheritParams calc_ci
+#' @param x A data cube object
+#' @param indicator An indicator calculated over time, in the form of a data
+#'  frame. *Note: this should NOT be an 'indicator_ts' object as it is meant to
+#'  be called by the 'compute_indicator_workflow' function.
 #' @param type Type of Hill diversity function to calculate confidence
 #'  intervals for. Options are "hill0" for richness, "hill1" for Simpson-Hill
 #'  diversity, or "hill2" for Shannon-Hill diversity.
-#' @export
-calc_ci.hill_core <- function(x,
+#' @param ... Additional arguments.
+#' @noRd
+calc_ci_hill_core <- function(x,
                               indicator,
                               type = c("hill0", "hill1", "hill2"),
                               ...)
@@ -159,7 +171,6 @@ calc_ci.hill_core <- function(x,
 }
 
 #' @describeIn calc_ci Calculate confidence intervals for total occurrences
-#' @inheritParams calc_ci
 #' @param ci_type Type of bootstrap confidence intervals to calculate.
 #'  (Default: "norm". Select "none" to avoid calculating bootstrap CIs.)
 #' @param num_bootstrap Set the number of bootstraps to calculate for generating
@@ -193,12 +204,11 @@ calc_ci.total_occ <- function(x,
       R = num_bootstrap))
 
   # Calculate confidence intervals and add to indicator values
-  ci <- calc_ci.core(bootstraps, indicator, ci_type, ...)
+  ci <- calc_ci_core(bootstraps, indicator, ci_type, ...)
 
 }
 
 #' @describeIn calc_ci Calculate confidence intervals for occurrence density
-#' @inheritParams calc_ci
 #' @param ci_type Type of bootstrap confidence intervals to calculate.
 #'  (Default: "norm". Select "none" to avoid calculating bootstrap CIs.)
 #' @param num_bootstrap Set the number of bootstraps to calculate for generating
@@ -235,7 +245,7 @@ calc_ci.occ_density <- function(x,
       R = num_bootstrap))
 
   # Calculate confidence intervals and add to indicator values
-  ci <- calc_ci.core(bootstraps, indicator, ci_type, ...)
+  ci <- calc_ci_core(bootstraps, indicator, ci_type, ...)
 
 }
 
@@ -244,7 +254,6 @@ calc_ci.occ_density <- function(x,
 #'  (Default: "norm". Select "none" to avoid calculating bootstrap CIs.)
 #' @param num_bootstrap Set the number of bootstraps to calculate for generating
 #'  confidence intervals. (Default: 1000)
-#' @inheritParams calc_ci
 #' @export
 calc_ci.newness <- function(x,
                             indicator,
@@ -276,7 +285,7 @@ calc_ci.newness <- function(x,
       R = num_bootstrap))
 
   # Calculate confidence intervals and add to indicator values
-  ci <- calc_ci.core(bootstraps, indicator, ci_type, ...)
+  ci <- calc_ci_core(bootstraps, indicator, ci_type, ...)
 
 }
 
@@ -285,7 +294,6 @@ calc_ci.newness <- function(x,
 #'  (Default: "norm". Select "none" to avoid calculating bootstrap CIs.)
 #' @param num_bootstrap Set the number of bootstraps to calculate for generating
 #'  confidence intervals. (Default: 1000)
-#' @inheritParams calc_ci
 #' @export
 calc_ci.williams_evenness <- function(x,
                                       ...) {
@@ -295,7 +303,7 @@ calc_ci.williams_evenness <- function(x,
                   inherits(x, "williams_evenness"))
 
   # Call function to calculate evenness over a grid
-  indicator <- calc_ci.evenness_core(x = x,
+  indicator <- calc_ci_evenness_core(x = x,
                                      type = "williams_evenness",
                                      ...)
 
@@ -306,7 +314,6 @@ calc_ci.williams_evenness <- function(x,
 #'  (Default: "norm". Select "none" to avoid calculating bootstrap CIs.)
 #' @param num_bootstrap Set the number of bootstraps to calculate for generating
 #'  confidence intervals. (Default: 1000)
-#' @inheritParams calc_ci
 #' @export
 calc_ci.pielou_evenness <- function(x,
                                     ...) {
@@ -316,7 +323,7 @@ calc_ci.pielou_evenness <- function(x,
                   inherits(x, "pielou_evenness"))
 
   # Call function to calculate evenness over a grid
-  indicator <- calc_ci.evenness_core(x = x,
+  indicator <- calc_ci_evenness_core(x = x,
                                      type = "pielou_evenness",
                                      ...)
 
@@ -324,14 +331,18 @@ calc_ci.pielou_evenness <- function(x,
 
 #' Core function to calculate confidence intervals for evenness. This is called
 #'  by the calc_ci.pielou_evenness and calc_ci.williams_evenness functions.
+#' @param x A data cube object.
+#' @param type Evenness measure ("pielou_evenness" or "williams_evenness)
+#' @param indicator An indicator calculated over time, in the form of a data
+#'  frame. *Note: this should NOT be an 'indicator_ts' object as it is meant to
+#'  be called by the 'compute_indicator_workflow' function.
 #' @param ci_type Type of bootstrap confidence intervals to calculate.
 #'  (Default: "norm". Select "none" to avoid calculating bootstrap CIs.)
 #' @param num_bootstrap Set the number of bootstraps to calculate for generating
 #'  confidence intervals. (Default: 1000)
-#' @param type Evenness measure ("pielou_evenness" or "williams_evenness)
-#' @inheritParams calc_ci
-#' @export
-calc_ci.evenness_core <- function(x,
+#' @param ... Additional arguments
+#' @noRd
+calc_ci_evenness_core <- function(x,
                                   type,
                                   indicator,
                                   num_bootstrap = 1000,
@@ -378,7 +389,7 @@ calc_ci.evenness_core <- function(x,
   names(bootstraps) <- unique(indicator$year)
 
   # Calculate confidence intervals and add to indicator values
-  ci <- calc_ci.core(bootstraps, indicator, ci_type, ...)
+  ci <- calc_ci_core(bootstraps, indicator, ci_type, ...)
 
 }
 
@@ -387,7 +398,6 @@ calc_ci.evenness_core <- function(x,
 #'  (Default: "norm". Select "none" to avoid calculating bootstrap CIs.)
 #' @param num_bootstrap Set the number of bootstraps to calculate for generating
 #'  confidence intervals. (Default: 1000)
-#' @inheritParams calc_ci
 #' @export
 calc_ci.ab_rarity <- function(x,
                               indicator,
@@ -419,7 +429,7 @@ calc_ci.ab_rarity <- function(x,
         R = num_bootstrap))
 
     # Calculate confidence intervals and add to indicator values
-    ci <- calc_ci.core(bootstraps, indicator, ci_type, ...)
+    ci <- calc_ci_core(bootstraps, indicator, ci_type, ...)
 
 }
 
@@ -428,7 +438,6 @@ calc_ci.ab_rarity <- function(x,
 #'  (Default: "norm". Select "none" to avoid calculating bootstrap CIs.)
 #' @param num_bootstrap Set the number of bootstraps to calculate for generating
 #'  confidence intervals. (Default: 1000)
-#' @inheritParams calc_ci
 #' @export
 calc_ci.area_rarity <- function(x,
                                 indicator,
@@ -465,16 +474,15 @@ calc_ci.area_rarity <- function(x,
       R = num_bootstrap))
 
   # Calculate confidence intervals and add to indicator values
-  ci <- calc_ci.core(bootstraps, indicator, ci_type, ...)
+  ci <- calc_ci_core(bootstraps, indicator, ci_type, ...)
 
 }
 
-#' @describeIn calc_ci Calculate confidence intervals for species occurrence
+#' @describeIn calc_ci Calculate confidence intervals for species occurrences
 #' @param ci_type Type of bootstrap confidence intervals to calculate.
 #'  (Default: "norm". Select "none" to avoid calculating bootstrap CIs.)
 #' @param num_bootstrap Set the number of bootstraps to calculate for generating
 #'  confidence intervals. (Default: 1000)
-#' @inheritParams calc_ci
 #' @export
 calc_ci.spec_occ <- function(x,
                              indicator,
@@ -548,7 +556,6 @@ calc_ci.spec_occ <- function(x,
 #'  (Default: "norm". Select "none" to avoid calculating bootstrap CIs.)
 #' @param num_bootstrap Set the number of bootstraps to calculate for generating
 #'  confidence intervals. (Default: 1000)
-#' @inheritParams calc_ci
 #' @export
 calc_ci.spec_range <- function(x,
                                indicator,
@@ -627,7 +634,6 @@ calc_ci.spec_range <- function(x,
 # #' @param set_rows Automatically select which taxonomic information to keep when
 # #'  there are multiple options. Default value of 1 keeps the first option, which
 # #'  is usually the best.
-# #' @inheritParams calc_ci
 # #' @export
 # calc_ci.tax_distinct <- function(x,
 #                                  indicator,
