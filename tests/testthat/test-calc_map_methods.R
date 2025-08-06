@@ -676,7 +676,7 @@ test_that("calc_map.pielou_evenness calculates correctly", {
   )
 })
 
-test_that("calc_map.evenness_core handles cases with no occurrences", {
+test_that("calc_map_evenness_core handles cases with no occurrences", {
   mock_evenness_empty <- data.frame(
     cellid = integer(0),
     taxonKey = character(0),
@@ -701,7 +701,7 @@ test_that("calc_map.evenness_core handles cases with no occurrences", {
   )
 })
 
-test_that("calc_map.evenness_core handles NA values in obs correctly", {
+test_that("calc_map_evenness_core handles NA values in obs correctly", {
   mock_evenness_core_na <- data.frame(
     cellid = c(1, 1, 2, 2),
     taxonKey = c("spA", "spB", "spA", "spC"),
@@ -714,7 +714,7 @@ test_that("calc_map.evenness_core handles NA values in obs correctly", {
       # Williams' Evenness Calculation (based on species across cells)
       # Cell 1: Species A (2), Species B (0). Total abundance = 2, Num Species = 1. Evenness = 2 / 1 = 2
       # Cell 2: Species A (1), Species B (0), Species C (1). Total abundance = 2, Num Species = 2. Evenness = 2 / 2 = 1
-      result_williams <- calc_map.evenness_core(mock_evenness_core_na, type = "williams_evenness")
+      result_williams <- calc_map_evenness_core(mock_evenness_core_na, type = "williams_evenness")
       expected_result_williams <- data.frame(
         cellid = c(1, 2),
         diversity_val = c(2, 1)
@@ -724,7 +724,7 @@ test_that("calc_map.evenness_core handles NA values in obs correctly", {
       # Pielou's Evenness Calculation (based on species across cells)
       # Cell 1: Num Species = 1, Total Abundance = 2. Evenness = 1 / log(2) ≈ 1.44
       # Cell 2: Num Species = 2, Total Abundance = 2. Evenness = 2 / log(2) ≈ 2.89
-      result_pielou <- calc_map.evenness_core(mock_evenness_core_na, type = "pielou_evenness")
+      result_pielou <- calc_map_evenness_core(mock_evenness_core_na, type = "pielou_evenness")
       expected_result_pielou <- data.frame(
         cellid = c(1, 2),
         diversity_val = c(1 / log(2), 2 / log(2))

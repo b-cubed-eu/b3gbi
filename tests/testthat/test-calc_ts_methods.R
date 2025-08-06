@@ -728,7 +728,7 @@ test_that("calc_ts.pielou_evenness throws error on wrong class", {
   )
 })
 
-test_that("calc_ts.evenness_core handles empty input", {
+test_that("calc_ts_evenness_core handles empty input", {
   empty_input <- structure(data.frame(year = integer(), taxonKey = integer(), obs = integer()), class = c("data.frame", "sf"))
 
   expected_result <- tibble::tibble(
@@ -736,7 +736,7 @@ test_that("calc_ts.evenness_core handles empty input", {
     diversity_val = double()  # Consistent with the empty sequence
   )
 
-  result <- calc_ts.evenness_core(empty_input, type = "williams_evenness")
+  result <- calc_ts_evenness_core(empty_input, type = "williams_evenness")
   expect_equal(result, expected_result)
 })
 
