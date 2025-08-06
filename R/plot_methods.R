@@ -1398,11 +1398,11 @@ plot_ts <- function(x,
   }
 
   # Convert years to factor
-  x$data$year <- as.factor(x$data$year)
+ # x$data$year <- as.factor(x$data$year)
 
   # Create basis of plot
   trend_plot <-
-    ggplot2::ggplot(x$data, aes(x = year,
+    ggplot2::ggplot(x$data, aes(x = as.factor(year),
                                 y = diversity_val))
 
   # Add smooth trends (LOESS) if specified
