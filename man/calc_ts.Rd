@@ -5,7 +5,6 @@
 \alias{calc_ts.hill0}
 \alias{calc_ts.hill1}
 \alias{calc_ts.hill2}
-\alias{calc_ts.hill_core}
 \alias{calc_ts.obs_richness}
 \alias{calc_ts.cum_richness}
 \alias{calc_ts.total_occ}
@@ -13,7 +12,6 @@
 \alias{calc_ts.newness}
 \alias{calc_ts.williams_evenness}
 \alias{calc_ts.pielou_evenness}
-\alias{calc_ts.evenness_core}
 \alias{calc_ts.ab_rarity}
 \alias{calc_ts.area_rarity}
 \alias{calc_ts.spec_occ}
@@ -31,8 +29,6 @@
 
 \method{calc_ts}{hill2}(x, ...)
 
-\method{calc_ts}{hill_core}(x, type = c("hill0", "hill1", "hill2"), ...)
-
 \method{calc_ts}{obs_richness}(x, ...)
 
 \method{calc_ts}{cum_richness}(x, ...)
@@ -46,8 +42,6 @@
 \method{calc_ts}{williams_evenness}(x, ...)
 
 \method{calc_ts}{pielou_evenness}(x, ...)
-
-\method{calc_ts}{evenness_core}(x, type, ...)
 
 \method{calc_ts}{ab_rarity}(x, ...)
 
@@ -67,10 +61,6 @@ calc_ts(x, ...)
 \item{x}{A data cube object ('processed_cube').}
 
 \item{...}{Additional arguments passed to specific indicator calculation functions.}
-
-\item{type}{Choose which Hill number, or q, to calculate. Choose 'hill0' (q = 0)
-for estimated species richness, 'hill1' for Hill-Shannon diversity, or 'hill2'
-for Hill-Simpson diversity.}
 
 \item{set_rows}{Automatically select which taxonomic information to keep when
 there are multiple options. Default value of 1 keeps the first option, which

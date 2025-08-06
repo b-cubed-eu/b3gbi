@@ -3,7 +3,6 @@
 \name{calc_ci}
 \alias{calc_ci}
 \alias{calc_ci.default}
-\alias{calc_ci.core}
 \alias{calc_ci.hill0}
 \alias{calc_ci.hill1}
 \alias{calc_ci.hill2}
@@ -20,15 +19,13 @@
 \usage{
 calc_ci(x, indicator, ...)
 
-\method{calc_ci}{default}(x, ...)
+\method{calc_ci}{default}(x, indicator, ...)
 
-\method{calc_ci}{core}(bootstraps, indicator, ci_type, ...)
+\method{calc_ci}{hill0}(x, indicator, ...)
 
-\method{calc_ci}{hill0}(x, ...)
+\method{calc_ci}{hill1}(x, indicator, ...)
 
-\method{calc_ci}{hill1}(x, ...)
-
-\method{calc_ci}{hill2}(x, ...)
+\method{calc_ci}{hill2}(x, indicator, ...)
 
 \method{calc_ci}{total_occ}(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
 
@@ -55,13 +52,13 @@ calc_ci(x, indicator, ...)
 frame. *Note: this should NOT be an 'indicator_ts' object as it is meant to
 be called by the 'compute_indicator_workflow' function.}
 
-\item{bootstraps}{Bootstrapped indicator values}
-
-\item{ci_type}{Type of bootstrap confidence intervals to calculate.
-(Default: "norm". Select "none" to avoid calculating bootstrap CIs.)}
+\item{...}{Additional arguments passed to specific calc_ci functions.}
 
 \item{num_bootstrap}{Set the number of bootstraps to calculate for generating
 confidence intervals. (Default: 1000)}
+
+\item{ci_type}{Type of bootstrap confidence intervals to calculate.
+(Default: "norm". Select "none" to avoid calculating bootstrap CIs.)}
 }
 \description{
 This function calculates bootstrap confidence intervals for a
@@ -90,7 +87,7 @@ biodiversity indicator over time unless you choose 'none' for ci_type.
 
 \item \code{calc_ci(area_rarity)}: Calculate confidence intervals for area-based rarity
 
-\item \code{calc_ci(spec_occ)}: Calculate confidence intervals for species occurrence
+\item \code{calc_ci(spec_occ)}: Calculate confidence intervals for species occurrences
 
 \item \code{calc_ci(spec_range)}: Calculate confidence intervals for species range
 
