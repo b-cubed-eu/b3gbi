@@ -877,7 +877,7 @@ plot_map <- function(x,
   # If surround flag set, add surrounding countries to map
 
     if (check_crs_units(x$projection) == "km" &&
-        sf::st_crs(x$projection)$epsg != 3035) {
+        sf::st_crs(x$projection)$input != "EPSG:3035") {
 
       if (!is.null(map_lims)) {
         utm_bbox <- sf::st_bbox(map_lims)
