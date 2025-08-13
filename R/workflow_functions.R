@@ -3,23 +3,22 @@
 #' Downloads and prepares map data from the rnaturalearth package at
 #' different geographic scales (country, continent, or world).
 #'
+#' @param latlong_bbox A bbox object in latitude and longitude ("EPSG:4326") to
+#'   use for cropping the downloaded map data (required if level = 'cube').
+#' @param region The specific region to retrieve data for (required unless
+#'   level = 'cube' or 'world').
 #' @param level The desired geographic scale: 'country', 'continent', 'geounit',
 #'   'sovereignty', 'world', or 'cube'. Cube refers to the geographic extent of
 #'   the data cube.
-#' @param region The specific region to retrieve data for (required when
-#'   level = 'country' or level = 'continent').
 #' @param ne_type The type of Natural Earth data to download: 'countries',
 #'   'map_units', 'sovereignty', or 'tiny_countries'. (Default: 'countries')
 #' @param ne_scale The scale of Natural Earth data to download: 'small' - 110m,
 #'   'medium' - 50m, or 'large' - 10m. (Default: 'medium')
-#' @param output_crs The CRS you want for your map data.
-#' @param cube_cell_codes The cell codes from the data cube.
-#' @param include_water Include oceans, lakes, and rivers if TRUE. Set to
-#'   "buffered_coast" to instead create a buffer around the land area.
+#' @param include_water Include oceans if TRUE. Set to "buffered_coast" to
+#'   instead create a buffer around the land area. If set to FALSE occurrences
+#'   that fall outside of land boundaries will not be included in the analysis.
 #' @param buffer_dist_km Distance to buffer around the land if you choose
 #'   "buffered_coast" for the include_water parameter.
-#' @param data The data frame to match the map to.
-#' @param layers The rnaturalearth layers you want to add to your map
 #' @return An sf object containing the map data, transformed to the
 #'   appropriate projection.
 #'
@@ -33,27 +32,31 @@
 #' # Retrieve a map of the entire world
 #' world_map <- get_NE_data(level = "world")
 #' @noRd
-get_NE_data <- function(region,
-                        output_crs,
+get_NE_data <- function(latlong_bbox = NULL,
+                        region = NULL,
                         level = "cube",
                         ne_type = "countries",
                         ne_scale = "medium",
-                        cube_cell_codes = NULL,
+                     #   cube_cell_codes = NULL,
                         include_water = FALSE,
-                        buffer_dist_km = NULL,
-                        data = NULL,
-                        layers = NULL) {
+                        buffer_dist_km = NULL
+                        ) {
 
-  if (ne_scale == "large" & ne_type == "tiny_countries") {
+  scalerank <- featurecla <- geometry <- . <- NULL
+
+  if (ne_scale == "large" && ne_type == "tiny_countries") {
     stop("tiny_countries are only available for medium (50 km) or small (110 km)
           scale maps")
   }
 
-  scalerank <- featurecla <- geometry <- . <- NULL
+  if (level == "cube" && is.null(latlong_bbox)) {
+    stop("A bounding box in EPSG:4326 (latitude and longitude) is required when
+         level = 'cube'.")
+  }
 
-  # Turn off spherical geometry
-#  get_s2_status <- sf::sf_use_s2()
-#  sf::sf_use_s2(FALSE)
+  if (!(level == "cube" || level == "world") && is.null(region)) {
+    stop("You must provide a region unless level is set to 'cube' or 'world'.")
+  }
 
   # Download and prepare Natural Earth map data
   if (level == "country") {
@@ -94,101 +97,86 @@ get_NE_data <- function(region,
   }
 
   # Project and validate the map
-  map_data <- map_data %>%
-    sf::st_transform(crs = "+proj=eck4 +datum=WGS84") %>%
+  map_data_projected <-
+    map_data %>%
+    sf::st_transform(crs = "ESRI:54012") %>%
     sf::st_make_valid()
 
   if (level == "cube") {
-    if (!is.null(cube_cell_codes)) {
 
-      # Convert MGRS to Lat/Long
-      latlong_coords <- mgrs::mgrs_to_latlng(cube_cell_codes)
-
-    } else {
-
-      if (!is.null(data)) {
-
-        if (stringr::str_detect(data$resolution[1], "km")) {
-
-          latlong_coords <- data %>%
-            sf::st_as_sf(coords = c("xcoord", "ycoord"),
-                         crs = 3035) %>%
-            sf::st_transform(crs = 4326) %>%
-            sf::st_coordinates() %>%
-            data.frame(lng = .[, "X"], lat = .[, "Y"]) %>%
-            select(-c("X", "Y"))
-
-        } else {
-
-          latlong_coords <- data.frame(lng = data$xcoord, lat = data$ycoord)
-
-        }
-
-      } else {
-
-        stop("Missing data frame.")
-
-      }
-    }
-
+    # if (!is.null(cube_cell_codes)) {
+    #   # Convert MGRS to Lat/Long
+    #   latlong_coords <- mgrs::mgrs_to_latlng(cube_cell_codes)
+    # } else {
+    #   if (!is.null(data)) {
+    #     if (stringr::str_detect(data$resolution[1], "km")) {
+    #       latlong_coords <- data %>%
+    #         sf::st_as_sf(coords = c("xcoord", "ycoord"),
+    #                      crs = 3035) %>%
+    #         sf::st_transform(crs = 4326) %>%
+    #         sf::st_coordinates() %>%
+    #         data.frame(lng = .[, "X"], lat = .[, "Y"]) %>%
+    #         select(-c("X", "Y"))
+    #     } else {
+    #       latlong_coords <- data.frame(lng = data$xcoord, lat = data$ycoord)
+    #     }
+    #   } else {
+    #     stop("Missing data frame.")
+    #   }
+    # }
 
     expand_percent <- 0.5 # 10% buffer
-    lng_range <- (max(latlong_coords$lng) - min(latlong_coords$lng))
-    lat_range <- (max(latlong_coords$lat) - min(latlong_coords$lat))
+    lng_range <- unname(latlong_bbox["xmax"] - latlong_bbox["xmin"])
+    lat_range <- unname(latlong_bbox["ymax"] - latlong_bbox["ymin"])
 
     # Find bounding box
-    min_lon <- min(latlong_coords$lng) - (expand_percent * lng_range)
-    max_lon <- max(latlong_coords$lng) + (expand_percent * lng_range)
-    min_lat <- min(latlong_coords$lat) - (expand_percent * lat_range)
-    max_lat <- max(latlong_coords$lat) + (expand_percent * lat_range)
+    min_lon <- unname(latlong_bbox["xmin"] - (expand_percent * lng_range))
+    max_lon <- unname(latlong_bbox["xmax"] + (expand_percent * lng_range))
+    min_lat <- unname(latlong_bbox["ymin"] - (expand_percent * lat_range))
+    max_lat <- unname(latlong_bbox["ymax"] + (expand_percent * lat_range))
 
-    latlong_extent <- c(xmin = min_lon, xmax = max_lon, ymin = min_lat, ymax = max_lat)
+    latlong_extent <- c("xmin" = min_lon,
+                        "xmax" = max_lon,
+                        "ymin" = min_lat,
+                        "ymax" = max_lat)
 
     # Project the extent
-    latlong_extent <- sf::st_bbox(latlong_extent, crs = "EPSG:4326")
-    latlong_extent <- sf::st_transform(sf::st_as_sfc(latlong_extent),
-                                       crs = "+proj=eck4 +datum=WGS84")
+    extent_projected <-
+      sf::st_bbox(latlong_extent, crs = "EPSG:4326") %>%
+      sf::st_as_sfc() %>%
+      sf::st_transform(crs = "ESRI:54012")
 
     # Set attributes as spatially constant to avoid warnings when clipping
-    sf::st_agr(map_data) <- "constant"
+    sf::st_agr(map_data_projected) <- "constant"
 
     # Crop the world map
-    map_data_cropped <- sf::st_crop(map_data, latlong_extent)
+    map_data_projected <- sf::st_crop(map_data_projected,
+                                      extent_projected) %>%
+      sf::st_make_valid()
 
-    map_data <- map_data_cropped
-
-    map_data <- sf::st_make_valid(map_data)
-
-    latlong_extent <- sf::st_bbox(map_data)
+    extent_projected <- sf::st_bbox(map_data_projected)
 
   } else {
 
-    latlong_extent <- sf::st_bbox(map_data)
+    extent_projected <- sf::st_bbox(map_data_projected)
 
-    map_data <- sf::st_make_valid(map_data)
+    map_data_projected <- sf::st_make_valid(map_data_projected)
 
   }
 
     if (include_water == TRUE) {
 
-      water_layers <- c("ocean")
-
-      for (layer in water_layers) {
-        layer_data <- add_NE_layer(layer,
+        layer_data <- add_NE_layer("ocean",
                                    ne_scale,
-                                   latlong_extent)
+                                   extent_projected)
 
         if (!is.null(layer_data) && nrow(layer_data) > 0) {
-          # Project and validate the layer
-          layer_data <- layer_data %>%
-            sf::st_transform(crs = "+proj=eck4 +datum=WGS84") %>%
-            sf::st_make_valid()
-          map_data <- layer_data %>%
+          map_data_projected <- layer_data %>%
             dplyr::group_by(scalerank, featurecla) %>%
-            dplyr::summarize(geometry = sf::st_union(geometry, map_data$geometry)) %>%
-            sf::st_transform(crs = sf::st_crs(latlong_extent))
+            dplyr::summarize(
+              geometry = sf::st_union(geometry,
+                                      map_data_projected$geometry))
         }
-      }
 
     } else if (is.character(include_water) &&
                include_water == "buffered_coast") {
@@ -203,18 +191,15 @@ get_NE_data <- function(region,
           )
         )
 
-        map_data_water <- sf::st_buffer(map_data, dist = buffer_dist_km * 1000)
+        map_data_water <- sf::st_buffer(map_data_projected,
+                                        dist = buffer_dist_km * 1000)
 
         # Validate oceans
         map_data_water <- sf::st_make_valid(map_data_water)
 
         # Merge the land with the oceans
-        map_data_merged <- sf::st_union(map_data,
-                                        map_data_water)
-
-        # Project the merged and cropped map
-        map_data <- sf::st_transform(map_data_merged,
-                                     crs = output_crs)
+        map_data_projected <- sf::st_union(map_data_projected,
+                                           map_data_water)
 
       } else {
 
@@ -231,35 +216,7 @@ get_NE_data <- function(region,
 
     }
 
-    for (layer in layers) {
-      layer_data <- add_NE_layer(layer,
-                                 ne_scale,
-                                 latlong_extent)
-
-      if (!is.null(layer_data) && nrow(layer_data) > 0) {
-        # Project and validate the layer
-        layer_data <- layer_data %>%
-          sf::st_transform(crs = "+proj=eck4 +datum=WGS84") %>%
-          sf::st_make_valid()
-        map_data <- layer_data %>%
-          group_by(scalerank, featurecla) %>%
-          dplyr::summarize(geometry = sf::st_union(geometry, map_data$geometry)) %>%
-          sf::st_transform(crs = sf::st_crs(latlong_extent))
-      }
-    }
-
- # }
-
-  # Project the merged and cropped map
-  map_data <- sf::st_transform(map_data,
-                               crs = output_crs)
-
-  # Return spherical geometry to previous status
- # if (get_s2_status == TRUE){
- #   sf_use_s2(TRUE)
- # }
-
-  return(map_data)
+  return(map_data_projected)
 
 }
 
@@ -269,10 +226,10 @@ get_NE_data <- function(region,
 #' Generates a grid of polygons covering a specified geographic area,
 #' suitable for mapping data retrieved with the rnaturalearth package.
 #'
-#' @param data An object provided by compute_indicate_workflow containing
-#'  occurrence data from a processed data cube.
+#' @param bbox An sf bbox object provided by compute_indicate_workflow.
 #' @param cell_size Cell length in kilometers.
-#' @param grid_units Cell size unit type: "km" or "degrees".
+# #' @param grid_units Cell size unit type: "km" or "degrees".
+#' @param projected_crs The projected CRS the grid should be converted to.
 #' @param make_valid Run sf::st_make_valid() on grid. TRUE or FALSE.
 #' @return An sf object containing the grid polygons, with attributes:
 #'   * `cellid`: A unique ID for each grid cell.
@@ -291,169 +248,143 @@ get_NE_data <- function(region,
 #'                             cell_size = 10)
 #' plot(germany_grid)
 #' @noRd
-create_grid <- function(data,
+create_grid <- function(bbox,
                         cell_size,
-                        grid_units,
-                        utm_crs = NULL,
+                        projected_crs,
                         make_valid = FALSE) {
 
   # Check that cell_size is appropriate
-  if (grid_units == "km") {
-    if (cell_size < 1000) {
-      message(
-        paste(
-          "Warning: High resolution grids can take a while.",
-          "Consider increasing cell size using the 'cell_size' parameter."
-        )
+  if (cell_size < 1000) {
+    message(
+      paste(
+        "Warning: High resolution grids can take a while.",
+        "Consider increasing cell size using the 'cell_size' parameter."
       )
-    }
-    if (cell_size > 100000) {
-      stop("Cell size must not be more than 100 km.")
-    }
-  } else if (grid_units == "degrees") {
-     if (cell_size < 0.125) {
-       message(
-         paste(
-           "Warning: High resolution grids can take a while.",
-           "Consider increasing cell size using the 'cell_size' parameter."
-         )
-       )
-     }
-    if (cell_size > 10) {
-      stop("Cell size must not be more than 10 degrees.")
-    }
-  } else {
-    stop("Grid units not recognized. Must be km or degrees.")
+    )
+  }
+  if (cell_size > 100000) {
+    stop("Cell size must not be more than 100 km.")
   }
 
-  # Handle UTM zones (if present)
-  if ("utmzone" %in% names(data)) {
-    # Get unique UTM zones
-    unique_utm_zones <- unique(data$utmzone)
-    grid_list <- list() # Initialize an empty list to store the grids
+  # # Handle UTM zones (if present)
+  # if ("utmzone" %in% names(data)) {
+  #   # Get unique UTM zones
+  #   unique_utm_zones <- unique(data$utmzone)
+  #   grid_list <- list() # Initialize an empty list to store the grids
+  #
+  #   zone_data <- sf::st_transform(data, crs = utm_crs)
+  #   offset_x <- sf::st_bbox(zone_data)$xmin
+  #   offset_y <- sf::st_bbox(zone_data)$ymin
+  #
+  #   zone_grid <- sf::st_make_grid(
+  #     zone_data,
+  #     cellsize = c(cell_size, cell_size),
+  #     offset = c(offset_x, offset_y),
+  #     crs = sf::st_crs(zone_data)
+  #   )
+  #
+  #   zone_grid_sf <- sf::st_sf(geometry = zone_grid) %>%
+  #     dplyr::mutate(cellid = dplyr::row_number())
+  #
+  #   zone_grid_sf <- sf::st_make_valid(zone_grid_sf)
+  #
+  #   zone_grid_sf$area <- sf::st_area(zone_grid_sf)
+  #   if (grid_units == "km") {
+  #     zone_grid_sf$area <- units::set_units(zone_grid_sf$area, "km^2")
+  #   }
+  #   else{
+  #     zone_grid_sf$area <- units::set_units(zone_grid_sf$area, "m^2")
+  #   }
+  #
+  #   grid <- zone_grid_sf
+  #
+  # } else {
 
-    zone_data <- sf::st_transform(data, crs = utm_crs)
-    offset_x <- sf::st_bbox(zone_data)$xmin
-    offset_y <- sf::st_bbox(zone_data)$ymin
-
-    zone_grid <- sf::st_make_grid(
-      zone_data,
-      cellsize = c(cell_size, cell_size),
-      offset = c(offset_x, offset_y),
-      crs = sf::st_crs(zone_data)
-    )
-
-    zone_grid_sf <- sf::st_sf(geometry = zone_grid) %>%
-      dplyr::mutate(cellid = dplyr::row_number())
-
-    zone_grid_sf <- sf::st_make_valid(zone_grid_sf)
-
-    zone_grid_sf$area <- sf::st_area(zone_grid_sf)
-    if (grid_units == "km") {
-      zone_grid_sf$area <- units::set_units(zone_grid_sf$area, "km^2")
-    }
-    else{
-      zone_grid_sf$area <- units::set_units(zone_grid_sf$area, "m^2")
-    }
-
-    grid <- zone_grid_sf
-
-  } else {
-
-  # Calculate the offset for the grid
-  offset_x <- sf::st_bbox(data)$xmin
-  offset_y <- sf::st_bbox(data)$ymin
+  # bbox <- sf::st_bbox(data)
 
   # Make a grid across the cube
-  grid <- data %>%
+  grid <- bbox %>%
     sf::st_make_grid(cellsize = c(cell_size, cell_size),
-                     offset = c(offset_x, offset_y)) %>%
+                     offset = c(bbox["xmin"], bbox["ymin"])) %>%
     sf::st_sf() %>%
     dplyr::mutate(cellid = dplyr::row_number())
 
   if (make_valid==TRUE) {
-
     grid <- sf::st_make_valid(grid)
-
   }
 
-  if (grid_units == "km") {
+  grid <- sf::st_transform(grid, projected_crs)
 
-    # Add area column to grid
-    grid$area <-
-      grid %>%
-      sf::st_area() %>%
-      units::set_units("km^2")
-
-  }
-
-  }
-
+  # Add area column to grid
+  grid$area <-
+    grid %>%
+    sf::st_area() %>%
+    units::set_units("km^2")
+  # }
   return(grid)
-
 }
 
-#' Intersect Occurrences with Grid Cells
-#'
-#' This function takes occurrence data, a grid, and CRS information, and it
-#' returns the occurrence data with cell IDs added based on spatial
-#' intersection.
-#'
-#' @param data An object provided by compute_indicate_workflow containing
-#' occurrence data from a processed data cube.
-#' @param grid An sf object containing the grid polygons.
-#' @param cube_crs The CRS of the data cube.
-#' @param output_crs The CRS you want for your calculated indicator.
-#'
-#' @noRd
-prepare_spatial_data <- function(data,
-                                 df,
-                                 grid,
-                                 cube_crs,
-                                 output_crs) {
-
-  cellid <- geometry <- NULL
-
-  # Remove cellid column if present in df
-  # (should only be present in fake test data)
-  df <- df %>%
-    dplyr::select(-dplyr::any_of("cellid"))
-
-  # Set attributes as spatially constant to avoid warnings
-  sf::st_agr(grid) <- "constant"
-  sf::st_agr(df) <- "constant"
-
-  if (cube_crs == "EPSG:4326" || cube_crs == "EPSG:3035") {
-    # Project grid and df to avoid messages about planar assumptions
-    df <- sf::st_transform(df, crs = "+proj=eck4 +datum=WGS84")
-    grid <- sf::st_transform(grid, crs = "+proj=eck4 +datum=WGS84")
-  }
-
-  # Calculate intersection between occurrences and grid cells
-   occ_grid_int <- df[sf::st_intersects(df, grid) %>%
-                            lengths > 0,] %>%
-     sf::st_join(grid) %>%
-     sf::st_transform(occ_grid_int, crs = cube_crs)
-
-   # Check if there is any spatial intersection
-   if (nrow(occ_grid_int) == 0) {
-     stop("No spatial intersection between occurrence data and grid.")
-   }
-
-   if ("geometry" %in% names(data)) {
-     data <- select(data, -geometry)
-   }
-
-  # Add cell numbers to occurrence data
-  data <-
-    data %>%
-    dplyr::inner_join(occ_grid_int) %>%
-    suppressMessages() %>%
-    dplyr::arrange(cellid)
-
-  return(data)
-
-}
+# #' Intersect Occurrences with Grid Cells
+# #'
+# #' This function takes occurrence data, a grid, and CRS information, and it
+# #' returns the occurrence data with cell IDs added based on spatial
+# #' intersection.
+# #'
+# #' @param data An object provided by compute_indicate_workflow containing
+# #' occurrence data from a processed data cube.
+# #' @param grid An sf object containing the grid polygons.
+# #' @param cube_crs The CRS of the data cube.
+# #' @param output_crs The CRS you want for your calculated indicator.
+# #'
+# #' @noRd
+# prepare_spatial_data <- function(data,
+#                                  df,
+#                                  grid,
+#                                  cube_crs,
+#                                  output_crs) {
+#
+#   cellid <- geometry <- NULL
+#
+#   # Remove cellid column if present in df
+#   # (should only be present in fake test data)
+#   df <- df %>%
+#     dplyr::select(-dplyr::any_of("cellid"))
+#
+#   # Set attributes as spatially constant to avoid warnings
+#   sf::st_agr(grid) <- "constant"
+#   sf::st_agr(df) <- "constant"
+#
+#   if (cube_crs == "EPSG:4326" || cube_crs == "EPSG:3035") {
+#     # Project grid and df to avoid messages about planar assumptions
+#     df <- sf::st_transform(df, crs = "+proj=eck4 +datum=WGS84")
+#     grid <- sf::st_transform(grid, crs = "+proj=eck4 +datum=WGS84")
+#   }
+#
+#   # Calculate intersection between occurrences and grid cells
+#    occ_grid_int <- df[sf::st_intersects(df, grid) %>%
+#                             lengths > 0,] %>%
+#      sf::st_join(grid) %>%
+#      sf::st_transform(occ_grid_int, crs = cube_crs)
+#
+#    # Check if there is any spatial intersection
+#    if (nrow(occ_grid_int) == 0) {
+#      stop("No spatial intersection between occurrence data and grid.")
+#    }
+#
+#    if ("geometry" %in% names(data)) {
+#      data <- select(data, -geometry)
+#    }
+#
+#   # Add cell numbers to occurrence data
+#   data <-
+#     data %>%
+#     dplyr::inner_join(occ_grid_int) %>%
+#     suppressMessages() %>%
+#     dplyr::arrange(cellid)
+#
+#   return(data)
+#
+# }
 
 #' @title Calculate Biodiversity Indicators Over Space or Time
 #'
@@ -514,8 +445,6 @@ prepare_spatial_data <- function(data,
 #'  the land area.
 #' @param buffer_dist_km The distance to buffer around the land if include_water
 #'  is set to "buffered_coast".
-#' @param layers Names of additional rnaturalearth layers you want to add to your map.
-#'  E.g. c("reefs", "playas", "admin_0_boundary_lines_land")
 #' @param ... Additional arguments passed to specific indicator calculation functions.
 #'
 #' @return An S3 object containing the calculated indicator values and metadata.
@@ -565,7 +494,6 @@ compute_indicator_workflow <- function(data,
                                        invert = FALSE,
                                        include_water = FALSE,
                                        buffer_dist_km = 50,
-                                       layers = NULL,
                                        ...) {
 
   stopifnot_error("Object class not recognized.",
@@ -585,29 +513,6 @@ compute_indicator_workflow <- function(data,
   # Check that obs column exists
   if (!"obs" %in% colnames(data$data)) {
     stop("No occurrences found in the data.")
-  }
-
-  # Check shapefile path and load if found
-  if (!is.null(shapefile_path)) {
-    if (!file.exists(shapefile_path)) {
-      stop("Shapefile not found at the specified path.")
-    } else {
-      is_wkt_file <- grepl("\\.wkt$", tolower(shapefile_path))
-      if (is_wkt_file) {
-        if (is.null(shapefile_crs)) {
-          shapefile_crs <- "EPSG:4326"
-          warning(paste(
-            "You have provided the location to a .wkt shapefile without",
-            "specifying the CRS. Assuming CRS to be EPSG:4326."))
-        }
-        shapefile <- sf::st_as_sfc(readLines(shapefile_path),
-                                   crs = shapefile_crs)
-      } else {
-        shapefile <- sf::read_sf(shapefile_path)
-      }
-    }
-  } else {
-    shapefile <- NULL
   }
 
   # List of indicators for which bootstrapped confidence intervals should not
@@ -630,10 +535,13 @@ compute_indicator_workflow <- function(data,
   # Store the current spherical geometry setting
   original_s2_setting <- sf::sf_use_s2()
 
+  # Ensure user has entered reasonable first and last years, then filter the
+  # data accordingly. If user-chosen first and/or last years are outside the
+  # range of the data, the actual first and last years of the data will be used.
   if (!is.null(first_year) && !is.null(last_year) && first_year > last_year) {
     stop("First year must be less than or equal to last year.")
   }
-
+  # set first year
   if (!is.null(first_year)) {
     first_year <- ifelse(first_year > data$first_year,
                          first_year,
@@ -641,13 +549,13 @@ compute_indicator_workflow <- function(data,
   } else {
     first_year <- data$first_year
   }
-
+  # set last year
   if (!is.null(last_year)) {
     last_year <- ifelse(last_year < data$last_year, last_year, data$last_year)
   } else {
     last_year <- data$last_year
   }
-
+  # filter
   df <- data$data[(data$data$year >= first_year) &
                     (data$data$year <= last_year),]
 
@@ -660,24 +568,40 @@ compute_indicator_workflow <- function(data,
   if (!inherits(data, "sim_cube")) {
 
     dim_type <- match.arg(dim_type)
-
     level <- match.arg(level)
-
     num_families <- data$num_families
-
     coord_range <- data$coord_range
+    kingdoms <- data$kingdoms
 
     if (spherical_geometry==FALSE){
       # Temporarily disable spherical geometry
       sf::sf_use_s2(FALSE)
     }
 
-    if (dim_type == "ts") {
-      layers <- NULL
+    # Check shapefile path and load if found
+    if (!is.null(shapefile_path)) {
+      if (!file.exists(shapefile_path)) {
+        stop("Shapefile not found at the specified path.")
+      } else {
+        is_wkt_file <- grepl("\\.wkt$", tolower(shapefile_path))
+        if (is_wkt_file) {
+          if (is.null(shapefile_crs)) {
+            shapefile_crs <- "EPSG:4326"
+            warning(paste(
+              "You have provided the location to a .wkt shapefile without",
+              "specifying the CRS. Assuming CRS to be EPSG:4326."))
+          }
+          shapefile <- sf::st_as_sfc(readLines(shapefile_path),
+                                     crs = shapefile_crs)
+        } else {
+          shapefile <- sf::read_sf(shapefile_path)
+        }
+      }
+    } else {
+      shapefile <- NULL
     }
 
-    kingdoms <- data$kingdoms
-
+    # Determine cube CRS
     if (data$grid_type == "eea") {
       cube_crs <- "EPSG:3035"
     } else if (data$grid_type == "eqdgc") {
@@ -688,71 +612,94 @@ compute_indicator_workflow <- function(data,
       stop("Grid reference system not found.")
     }
 
+    # Determine projection to use for internal processing
+    # Get cube extent in lat/long
+    cube_bbox <- sf::st_bbox(c(xmin = coord_range[[1]],
+                               xmax = coord_range[[2]],
+                               ymin = coord_range[[3]],
+                               ymax = coord_range[[4]]),
+                             crs = cube_crs)
+    cube_bbox_latlong <- sf::st_as_sfc(cube_bbox) %>%
+      sf::st_transform(crs = "EPSG:4326") %>%
+      sf::st_bbox()
+    # Choose appropriate projection CRS
+    if (data$grid_type == "eea") {
+      projected_crs <- "EPSG:3035"
+    } else if (data$grid_type == "mgrs") {
+      projected_crs <- guess_utm_epsg(data)
+    } else if (data$grid_type == "eqdgc") {
+      projected_crs <- guess_utm_epsg(cube_bbox_latlong)
+    } else {
+      stop("Grid reference system not found.")
+    }
+
+    # Get cube extent in projected crs
+    cube_bbox_projected <- sf::st_as_sfc(cube_bbox_latlong) %>%
+      sf::st_transform(crs = projected_crs) %>%
+      sf::st_bbox()
+    cube_polygon_projected <- sf::st_as_sfc(cube_bbox_projected)
+
+    # Determine output CRS if not provided
     if (is.null(output_crs)) {
-      if (data$grid_type == "eea") {
-        output_crs <- "EPSG:3035"
+      if (data$grid_type == "eea" || data$grid_type == "mgrs") {
+        output_crs <- projected_crs
       } else if (data$grid_type == "eqdgc") {
         output_crs <- "EPSG:4326"
-      } else if (data$grid_type == "mgrs") {
-        output_crs <- guess_mgrs_epsg(data, df, data$coord_range)
       } else {
         stop("Grid reference system not found.")
       }
     }
 
-    # Get input and output units based on the current CRS and output CRS
-    input_units <- check_crs_units(cube_crs)
+    # # Get units based on CRS
+    # input_units <- check_crs_units(cube_crs)
+    # projection_units <- check_crs_units(projection_crs)
     output_units <- check_crs_units(output_crs)
-
-    # Check if input and output units match, and if not, stop with an error
-    # or issue a warning if the user has explicitly set crs_unit_convert to TRUE
-    if (crs_unit_convert == FALSE && input_units != output_units) {
-      stop(
-        paste0(
-          "Cube CRS units are ", input_units, " while output CRS ",
-          "units are ", output_units, ".\n The conversion could increase ",
-          "processing time and lead to invalid output.\n If you are certain ",
-          "you want to proceed you can force it with 'crs_unit_convert = TRUE'."
-        )
-      )
-    } else if (crs_unit_convert == TRUE && input_units != output_units) {
-      warning(
-        paste0(
-          "Cube CRS units are ", input_units, " while output CRS ",
-          "units are ", output_units, ".\n The conversion could lead ",
-          "to invalid output."
-        )
-      )
-    }
+    #
+    # # Check if input and output units match, and if not, stop with an error
+    # # or issue a warning if the user has explicitly set crs_unit_convert to TRUE
+    # if (crs_unit_convert == FALSE && input_units != output_units) {
+    #   stop(
+    #     paste0(
+    #       "Cube CRS units are ", input_units, " while output CRS ",
+    #       "units are ", output_units, ".\n The conversion could increase ",
+    #       "processing time and lead to invalid output.\n If you are certain ",
+    #       "you want to proceed you can force it with 'crs_unit_convert = TRUE'."
+    #     )
+    #   )
+    # } else if (crs_unit_convert == TRUE && input_units != output_units) {
+    #   warning(
+    #     paste0(
+    #       "Cube CRS units are ", input_units, " while output CRS ",
+    #       "units are ", output_units, ".\n The conversion could lead ",
+    #       "to invalid output."
+    #     )
+    #   )
+    # }
 
     # Get current cell size
     if (stringr::str_detect(data$resolution, "degrees")) {
       input_cell_size <- as.numeric(stringr::str_extract(data$resolution,
-                                                  "[0-9.]+(?=degrees)"))
+                                                         "[0-9.]+(?=degrees)"))
     } else if (stringr::str_detect(data$resolution, "km")) {
       input_cell_size <- as.numeric(stringr::str_extract(data$resolution,
-                                                  "[0-9.]+(?=km)"))
+                                                         "[0-9.]+(?=km)"))
     } else {
       stop("Resolution units not recognized. Must be km or degrees.")
     }
 
     # Get cube area
-    cube_area_sqkm <- sf::st_bbox(c(xmin = coord_range[[1]],
-                                    xmax = coord_range[[2]],
-                                    ymin = coord_range[[3]],
-                                    ymax = coord_range[[4]]),
-                                  crs = cube_crs) %>%
-      sf::st_as_sfc() %>%
+    cube_area_sqkm <-
+      cube_polygon_projected %>%
       sf::st_area() %>%
       units::set_units("km^2")
 
-    # Get cube cell codes for mgrs data, or set to NULL if not mgrs
-    # This is for transforming map data, as mgrs requires a localized CRS
-    if (data$grid_type == "mgrs") {
-      cube_cell_codes <- df$cellCode
-    } else {
-      cube_cell_codes <- NULL
-    }
+    # # Get cube cell codes for mgrs data, or set to NULL if not mgrs
+    # # This is for transforming map data, as mgrs requires a localized CRS
+    # if (data$grid_type == "mgrs") {
+    #   cube_cell_codes <- df$cellCode
+    # } else {
+    #   cube_cell_codes <- NULL
+    # }
 
     # Set output cell size (or if user provided one, check that it makes sense)
     cell_size <- check_cell_size(cell_size,
@@ -760,35 +707,41 @@ compute_indicator_workflow <- function(data,
                                  level,
                                  cube_area_sqkm)
 
-    # Create an sf object from mgrs data
+    # Create an sf object from cube data
     if (data$grid_type == "mgrs") {
-      df_sf_output <- create_sf_from_utm(df, output_crs)
+      df_sf_input <- create_sf_from_utm(df, "EPSG:4326")
     } else {
       # Create an sf object from quarter-degree or EEA data
       df_sf_input <- sf::st_as_sf(df,
                                   coords = c("xcoord", "ycoord"),
                                   crs = cube_crs)
-      df_sf_output <- sf::st_transform(df_sf_input, crs = output_crs)
     }
 
-    # Get data extent and convert to a polygon
-    data_bbox <- sf::st_bbox(df_sf_output)
-    data_polygon <- sf::st_as_sfc(data_bbox)
+    df_sf_projected <- sf::st_transform(df_sf_input, crs = projected_crs)
 
-    # If shape file provided, intersect with cube to get new bounding box
+    # If shape file provided, check whether its bounding box intersects the
+    # bounding box of the cube. We first convert to lat/long for consistency.
     if (!is.null(shapefile)) {
-      if (sf::st_crs(df_sf_output) != sf::st_crs(shapefile)) {
-        shapefile <- sf::st_transform(shapefile, crs = sf::st_crs(df_sf_output))
+      shapefile_latlong <- sf::st_transform(shapefile, crs = "EPSG:4326")
+      shapefile_bbox_latlong <- sf::st_bbox(shapefile_latlong)
+      if (sf::st_intersects(shapefile_bbox_latlong,
+                            cube_bbox_latlong,
+                            sparse = FALSE)[1, 1] == FALSE) {
+        stop("Shapefile bounding box does not intersect the cube's area.")
       }
-      if (data$grid_type == "eqdgc") {
-        shapefile <- sf::st_transform(shapefile, crs = "+proj=eck4 +datum=WGS84")
-        data_polygon <- sf::st_transform(data_polygon, crs = "+proj=eck4 +datum=WGS84")
+
+      # If there is an intersection of the latlong bounding boxes, we can
+      # proceed with full intersection of the shapefile and the cube. But first
+      # we match projections.
+      if (sf::st_crs(shapefile) != projected_crs) {
+        shapefile_projected <- sf::st_transform(shapefile, crs = projected_crs)
       }
       if (invert) {
-        shapefile_merge <- sf::st_difference(data_polygon,
-                                             sf::st_union(shapefile))
+        shapefile_merge <- sf::st_difference(cube_polygon_projected,
+                                             sf::st_union(shapefile_projected))
       } else {
-        shapefile_merge <- sf::st_union(data_polygon, shapefile)
+        shapefile_merge <- sf::st_union(cube_polygon_projected,
+                                        shapefile_projected)
       }
 
       # Handle empty geometries after spatial operations
@@ -801,92 +754,145 @@ compute_indicator_workflow <- function(data,
       if (is_empty) {
         stop("Shapefile does not seem to be within the area of the cube.")
       }
-      shapefile_bbox <- sf::st_bbox(shapefile_merge)
+      # Get bounding box of new object
+      merged_bbox <- sf::st_bbox(shapefile_merge)
+
+      # Filter data frame based on shapefile polygon
+      # Initialize filtered_sf as NULL to capture the result of the
+      # intersection
+      filtered_sf <- NULL
+      tryCatch({
+        # Attempt without altering the spherical geometry setting
+        filtered_sf <- sf::st_filter(df_sf_projected,
+                                     sf::st_union(shapefile_merge))
+      }, error = function(e) {
+        if (grepl("Error in wk_handle.wk_wkb", e)) {
+          message(paste("Encountered a geometry error during intersection. ",
+                        "This may be due to invalid polygons in the grid."))
+        } else {
+          stop(e)
+        }
+      })
+      if (is.null(filtered_sf)) {
+        # If intersection failed, turn off spherical geometry
+        message(
+          "Retrying the intersection with spherical geometry turned off."
+        )
+        sf::sf_use_s2(FALSE)
+        # Retry the intersection operation
+        filtered_sf <- sf::st_filter(df_sf_projected,
+                                     sf::st_union(shapefile_merge))
+        # Notify success after retry
+        message("Intersection succeeded with spherical geometry turned off.")
+      }
+      if (spherical_geometry == TRUE) {
+        # Restore original spherical setting
+        sf::sf_use_s2(original_s2_setting)
+      }
+      # Filter the original data frame
+      df <- df[df$cellCode %in% filtered_sf$cellCode, ]
+      if (nrow(df) == 0) {
+        stop("No data points remain after spatial filtering.")
+      }
+    }
+    # }
+
+    # Unify object names
+    if (!is.null(shapefile)) {
+      bbox_latlong <- merged_bbox %>%
+        sf::st_transform(crs = "EPSG:4326")
+      bbox_projected <- merged_bbox
+      data_projected <- filtered_sf
+    } else {
+      bbox_latlong <- cube_bbox_latlong
+      bbox_projected <- cube_bbox_projected
+      data_projected <- df_sf_projected
+    }
+
+    # Select appropriate bbox for grid creation
+    if (data$grid_type == "eqdgc") {
+      bbox_for_grid <- bbox_latlong
+    } else {
+      bbox_for_grid <- bbox_projected
     }
 
     # Retrieve and validate Natural Earth data
-    map_data <- get_NE_data(region,
-                            output_crs,
+    map_data <- get_NE_data(bbox_latlong,
+                            region,
                             level,
                             ne_type,
                             ne_scale,
-                            cube_cell_codes = cube_cell_codes,
                             include_water,
-                            buffer_dist_km,
-                            df,
-                            layers)
-    map_data <- sf::st_make_valid(map_data)
-
+                            buffer_dist_km) %>%
+      sf::st_make_valid()
 
     if (dim_type == "map") {
-
       # Create grid if input and output units do not match
-      if (crs_unit_convert == TRUE &&
-          input_units != output_units &&
-          output_units != "degrees") {
-        output_units <- "m"
-        grid <- reproject_and_create_grid(df_sf_input,
-                                          c(input_cell_size, input_cell_size),
-                                          output_crs,
-                                          c((cell_size * 1000),
-                                            (cell_size * 1000)),
-                                          input_units = input_units,
-                                          target_units = output_units)
-        output_units <- "km"
-      } else if (crs_unit_convert == TRUE &&
-                 input_units != output_units &&
-                 output_units == "degrees") {
-        grid <- reproject_and_create_grid(df_sf_input,
-                                          c(input_cell_size, input_cell_size),
-                                          output_crs,
-                                          c((cell_size),
-                                            (cell_size)),
-                                          input_units = input_units,
-                                          target_units = output_units)
-      } else {
-        # Create grid if input and output units do match
-        grid <- create_grid(df_sf_output,
-                            cell_size,
-                            output_units,
-                            output_crs,
-                            make_valid)
-      }
+      # if (crs_unit_convert == TRUE &&
+      #     input_units != output_units &&
+      #     output_units != "degrees") {
+      #   output_units <- "m"
+      #   grid <- reproject_and_create_grid(df_sf_input,
+      #                                     c(input_cell_size, input_cell_size),
+      #                                     output_crs,
+      #                                     c((cell_size * 1000),
+      #                                       (cell_size * 1000)),
+      #                                     input_units = input_units,
+      #                                     target_units = output_units)
+      #   output_units <- "km"
+      # } else if (crs_unit_convert == TRUE &&
+      #            input_units != output_units &&
+      #            output_units == "degrees") {
+      #   grid <- reproject_and_create_grid(df_sf_input,
+      #                                     c(input_cell_size, input_cell_size),
+      #                                     output_crs,
+      #                                     c((cell_size),
+      #                                       (cell_size)),
+      #                                     input_units = input_units,
+      #                                     target_units = output_units)
+      # } else {
+      # Create grid if input and output units do match
+      grid <- create_grid(bbox_for_grid,
+                          cell_size,
+                          projected_crs,
+                          # output_units,
+                          # output_crs,
+                          make_valid)
+      # }
 
       # Format spatial data and merge with grid
-      df <- prepare_spatial_data(df,
-                                 df_sf_output,
-                                 grid,
-                                 cube_crs,
-                                 output_crs)
+      # df <- prepare_spatial_data(df,
+      #                            df_sf_projected,
+      #                            grid,
+      #                            cube_crs,
+      #                            output_crs)
 
-      if (is.null(shapefile)) {
-        if (sf::st_crs(df_sf_output) != sf::st_crs(map_data)) {
-          map_data <- sf::st_transform(map_data,
-                                       crs = sf::st_crs(df_sf_output))
-        }
-        polygon_to_intersect <- sf::st_make_valid(map_data)
-      } else {
-        polygon_to_intersect <- shapefile_merge
-      }
+      # if (is.null(shapefile)) {
+      #   if (sf::st_crs(df_sf_output) != sf::st_crs(map_data)) {
+      #     map_data <- sf::st_transform(map_data,
+      #                                  crs = sf::st_crs(df_sf_output))
+      #   }
+      #   polygon_to_intersect <- sf::st_make_valid(map_data)
+      # } else {
+      #   polygon_to_intersect <- shapefile_merge
+      # }
 
-      # Set attributes as spatially constant to avoid warnings when clipping
-      sf::st_agr(grid) <- "constant"
-      if (!inherits(polygon_to_intersect, "sf")) {
-        polygon_to_intersect <- sf::st_sf(geometry = polygon_to_intersect)
-      }
-      sf::st_agr(polygon_to_intersect) <- "constant"
+      #       # Set attributes as spatially constant to avoid warnings when clipping
+      #       sf::st_agr(grid) <- "constant"
+      #       if (!inherits(polygon_to_intersect, "sf")) {
+      #         polygon_to_intersect <- sf::st_sf(geometry = polygon_to_intersect)
+      #       }
+      #       sf::st_agr(polygon_to_intersect) <- "constant"
 
       # The following intersection operation requires special error handling
       # because it fails when the grid contains invalid geometries.
       # Therefore when invalid geometries are encountered, it will retry the
       # operation with spherical geometry turned off. This often succeeds.
-
       result <- NULL  # Initialize to capture result of intersection
-
       tryCatch({
         # Attempt without altering the spherical geometry setting
         result <- grid %>%
-          sf::st_intersection(polygon_to_intersect) %>%
+          sf::st_intersection(map_data) %>%
           dplyr::select(dplyr::all_of(c("cellid", "geometry")),
                         dplyr::any_of("area"))
       }, error = function(e) {
@@ -902,164 +908,87 @@ compute_indicator_workflow <- function(data,
           stop(e)
         }
       })
-
       if (is.null(result)) {
         # If intersection failed, turn off spherical geometry
         message("Retrying the intersection with spherical geometry turned off.")
         sf::sf_use_s2(FALSE)
-
         # Retry the intersection operation
         result <- grid %>%
-          sf::st_intersection(polygon_to_intersect) %>%
+          sf::st_intersection(map_data) %>%
           dplyr::select(dplyr::all_of(c("cellid", "geometry")),
                         dplyr::any_of("area"))
-
         # Notify success after retry
         message("Intersection succeeded with spherical geometry turned off.")
-
       }
-
       if (spherical_geometry == TRUE) {
         # Restore original spherical setting
         sf::sf_use_s2(original_s2_setting)
       }
-
       # Check if there is any spatial intersection
       if (nrow(result) == 0) {
         stop("No spatial intersection between map data and grid.")
       }
-
       # Set grid to result
-      grid <- result
-
+      clipped_grid <- result
+      map_lims <- sf::st_bbox(clipped_grid)
       # Set attributes as spatially constant to avoid warnings when clipping
-      sf::st_agr(grid) <- "constant"
+      sf::st_agr(clipped_grid) <- "constant"
+      sf::st_agr(data_projected) <- "constant"
 
-    }
+      # Assign data to grid
+      data_gridded <- sf::st_join(data_projected, clipped_grid)
+      data_gridded_nogeom <- sf::st_drop_geometry(data_gridded)
 
-    # Assign classes to send data to correct calculator function
-    subtype <- paste0(type, "_", dim_type)
-    class(df) <- append(type, class(df))
-    class(df) <- append(subtype, class(df))
-
-    if (dim_type == "map") {
+      # Assign classes to send data to correct calculator function
+      subtype <- paste0(type, "_", dim_type)
+      class(data_gridded_nogeom) <- append(type, class(data_gridded_nogeom))
+      class(data_gridded_nogeom) <- append(subtype, class(data_gridded_nogeom))
 
       # Calculate indicator
-      indicator <- calc_map(df, ...)
+      indicator <- calc_map(data_gridded_nogeom, ...)
 
       # Add indicator values to grid
       diversity_grid <-
-        grid %>%
+        data_gridded %>%
         dplyr::left_join(indicator, by = "cellid")
 
-      map_lims <- sf::st_bbox(grid)
+      diversity_grid <- sf::st_transform(diversity_grid, crs = output_crs)
 
     } else {
 
-      # Spatial Filtering for Time Series using rnaturalearth
-      if (!is.null(level) && !is.null(region)) {
+      # Set attributes as spatially constant to avoid warnings when clipping
+      sf::st_agr(map_data) <- "constant"
+      sf::st_agr(data_projected) <- "constant"
 
-        if (is.null(shapefile)) {
-          if (sf::st_crs(df_sf_output) != sf::st_crs(map_data)) {
-            map_data <- sf::st_transform(map_data,
-                                         crs = sf::st_crs(df_sf_output))
-          }
-          polygon_to_intersect <- sf::st_make_valid(map_data)
-        } else {
-          polygon_to_intersect <- shapefile_merge
-        }
-
-
-        # Set attributes as spatially constant to avoid warnings when clipping
-        sf::st_agr(map_data) <- "constant"
-        sf::st_agr(df_sf_output) <- "constant"
-
-        # Initialize filtered_sf as NULL to capture the result of the
-        # intersection
-        filtered_sf <- NULL
-
-        tryCatch({
-
-          # Attempt without altering the spherical geometry setting
-          filtered_sf <- sf::st_filter(df_sf_output,
-                                       sf::st_union(polygon_to_intersect))
-        }, error = function(e) {
-          if (grepl("Error in wk_handle.wk_wkb", e)) {
-            message(paste("Encountered a geometry error during intersection. ",
-                          "This may be due to invalid polygons in the grid."))
-          } else {
-            stop(e)
-          }
-        })
-
-        if (is.null(filtered_sf)) {
-          # If intersection failed, turn off spherical geometry
-          message(
-            "Retrying the intersection with spherical geometry turned off."
-          )
-          sf::sf_use_s2(FALSE)
-
-          # Retry the intersection operation
-          filtered_sf <- sf::st_filter(df_sf_output,
-                                       sf::st_union(polygon_to_intersect))
-
-          # Notify success after retry
-          message("Intersection succeeded with spherical geometry turned off.")
-
-        }
-
-        if (spherical_geometry == TRUE) {
-          # Restore original spherical setting
-          sf::sf_use_s2(original_s2_setting)
-        }
-
-        # Filter the original data frame
-        df <- df[df$cellCode %in% filtered_sf$cellCode, ]
-
-        if (nrow(df) == 0) {
-          stop("No data points remain after spatial filtering.")
-        }
-      }
+      data_clipped <- sf::st_join(data_projected, map_data) %>%
+        sf::st_drop_geometry()
 
       # Calculate indicator
-      indicator <- calc_ts(df, ...)
-
+      indicator <- calc_ts(data_clipped, ...)
+      # Calculate confidence intervals
       if (ci_type!="none") {
-
         if (!type %in% noci_list) {
-
-          indicator <- calc_ci(df,
+          indicator <- calc_ci(data_clipped,
                                indicator = indicator,
                                num_bootstrap=num_bootstrap,
                                ci_type = ci_type,
                                ...)
-
         } else {
-
           warning(
             paste0(
               "Bootstrapped confidence intervals cannot be calculated for the ",
               "chosen indicator."
             )
           )
-
         }
-
       }
-
       year_names <- unique(df$year)
-      map_lims <- sf::st_bbox(filtered_sf)
-
+      map_lims <- sf::st_bbox(data_clipped)
     }
 
-    if (spherical_geometry==FALSE) {
-      # restore the original spherical geometry setting
-      sf::sf_use_s2(original_s2_setting)
-    }
-
+  } else {
     # if the object is of the class sim_cube it contains no grid information, so
     # bypass the usual workflow and deal with it here
-  } else {
 
     if (dim_type=="map") {
 
@@ -1075,7 +1004,7 @@ compute_indicator_workflow <- function(data,
       if (is.numeric(data$coord_range)) {
         map_lims <- data$coord_range
       } else {
-          map_lims <- "Coordinates not provided"
+        map_lims <- "Coordinates not provided"
       }
 
       kingdoms <- data$kingdoms
@@ -1088,19 +1017,15 @@ compute_indicator_workflow <- function(data,
 
       # Calculate indicator
       indicator <- calc_ts(df, ...)
-
+      # Calculate confidence intervals
       if (ci_type!="none") {
-
         if (!type %in% noci_list) {
-
           indicator <- calc_ci(df,
                                indicator = indicator,
                                num_bootstrap = 1000,
                                ci_type = ci_type,
                                ...)
-
         } else {
-
           warning(
             paste0(
               "Bootstrapped confidence intervals cannot be calculated for the ",
@@ -1108,28 +1033,30 @@ compute_indicator_workflow <- function(data,
             )
           )
         }
-
-
       }
-
     }
+  }
 
+  if (spherical_geometry==FALSE) {
+    # restore the original spherical geometry setting
+    sf::sf_use_s2(original_s2_setting)
   }
 
   # Create indicator object
-
   if (dim_type == "map") {
-
+    # Set layers for plotting
     if (include_water == TRUE) {
-      water_layers <- c("ocean")
-      layers <- c(water_layers, layers)
+      layers <- c("admin_0_countries", "ocean")
     } else {
-      layers <- c(layers)
+      layers <- "admin_0_countries"
     }
-
+    if (data$grid_type != "eqdgc") {
+      cell_size <- cell_size / 1000
+    }
+    # Build indicator_map object
     diversity_obj <- new_indicator_map(diversity_grid,
                                        div_type = type,
-                                       cell_size = cell_size / 1000,
+                                       cell_size = cell_size,
                                        cell_size_units = output_units,
                                        map_level = level,
                                        map_region = region,
@@ -1143,9 +1070,8 @@ compute_indicator_workflow <- function(data,
                                        years_with_obs = years_with_obs,
                                        map_lims = map_lims,
                                        map_layers = layers)
-
   } else {
-
+    # Build indicator_ts object
     diversity_obj <- new_indicator_ts(dplyr::as_tibble(indicator),
                                       div_type = type,
                                       map_level = level,
@@ -1156,11 +1082,6 @@ compute_indicator_workflow <- function(data,
                                       num_years = num_years,
                                       species_names = species_names,
                                       coord_range = map_lims)
-
   }
-
   return(diversity_obj)
-
 }
-
-
