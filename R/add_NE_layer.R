@@ -70,8 +70,8 @@ add_NE_layer <- function(layer_name, scale, extent_projected) {
 
   }
 
-  # le_projected <- sf::st_transform(sf::st_as_sfc(latlong_extent),
-  #                                  crs = "ESRI:54012")
+  extent_projected <- sf::st_transform(sf::st_as_sfc(extent_projected),
+                                   crs = "ESRI:54012")
 
   # Attempt to perform cropping for efficiency FIRST
   # If it fails, validate first
