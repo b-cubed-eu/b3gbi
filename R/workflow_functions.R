@@ -960,15 +960,15 @@ compute_indicator_workflow <- function(data,
       sf::st_agr(map_data) <- "constant"
       sf::st_agr(data_projected) <- "constant"
 
-      data_clipped <- sf::st_join(data_projected, map_data) %>%
-        sf::st_drop_geometry()
+      data_clipped <- sf::st_join(data_projected, map_data)
+      data_clipped_nogeom <- sf::st_drop_geometry(data_clipped)
 
       # Calculate indicator
-      indicator <- calc_ts(data_clipped, ...)
+      indicator <- calc_ts(data_clipped_nogeom, ...)
       # Calculate confidence intervals
       if (ci_type!="none") {
         if (!type %in% noci_list) {
-          indicator <- calc_ci(data_clipped,
+          indicator <- calc_ci(data_clipped_nogeom,
                                indicator = indicator,
                                num_bootstrap=num_bootstrap,
                                ci_type = ci_type,
