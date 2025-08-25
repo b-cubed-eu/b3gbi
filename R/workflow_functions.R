@@ -963,6 +963,11 @@ compute_indicator_workflow <- function(data,
       data_clipped <- sf::st_join(data_projected, map_data)
       data_clipped_nogeom <- sf::st_drop_geometry(data_clipped)
 
+      # Assign classes to send data to correct calculator function
+      subtype <- paste0(type, "_", dim_type)
+      class(data_clipped_nogeom) <- append(type, class(data_clipped_nogeom))
+      class(data_clipped_nogeom) <- append(subtype, class(data_clipped_nogeom))
+
       # Calculate indicator
       indicator <- calc_ts(data_clipped_nogeom, ...)
       # Calculate confidence intervals
