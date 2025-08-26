@@ -607,7 +607,7 @@ compute_indicator_workflow <- function(data,
     } else if (data$grid_type == "eqdgc") {
       cube_crs <- "EPSG:4326"
     } else if (data$grid_type == "mgrs") {
-      cube_crs <- guess_mgrs_epsg(data, df, data$coord_range)
+      cube_crs <- guess_utm_epsg(data)
     } else {
       stop("Grid reference system not found.")
     }
