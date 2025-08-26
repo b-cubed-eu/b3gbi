@@ -930,7 +930,7 @@ compute_indicator_workflow <- function(data,
       }
       # Set grid to result
       clipped_grid <- result
-      map_lims <- sf::st_bbox(clipped_grid)
+     # map_lims <- sf::st_bbox(clipped_grid)
       # Set attributes as spatially constant to avoid warnings when clipping
       sf::st_agr(clipped_grid) <- "constant"
       sf::st_agr(data_projected) <- "constant"
@@ -949,10 +949,11 @@ compute_indicator_workflow <- function(data,
 
       # Add indicator values to grid
       diversity_grid <-
-        data_gridded %>%
+        clipped_grid %>%
         dplyr::left_join(indicator, by = "cellid")
 
       diversity_grid <- sf::st_transform(diversity_grid, crs = output_crs)
+     # map_lims <- sf::st_bbox(diversity_grid)
 
     } else {
 
@@ -988,7 +989,7 @@ compute_indicator_workflow <- function(data,
         }
       }
       year_names <- unique(df$year)
-      map_lims <- sf::st_bbox(data_clipped)
+    #  map_lims <- sf::st_bbox(data_clipped)
     }
 
   } else {
@@ -1073,7 +1074,7 @@ compute_indicator_workflow <- function(data,
                                        num_years = num_years,
                                        species_names = species_names,
                                        years_with_obs = years_with_obs,
-                                       map_lims = map_lims,
+                                     #  map_lims = map_lims,
                                        map_layers = layers)
   } else {
     # Build indicator_ts object
