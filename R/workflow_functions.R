@@ -59,6 +59,10 @@ get_NE_data <- function(latlong_bbox = NULL,
     stop("You must provide a region unless level is set to 'cube' or 'world'.")
   }
 
+  if (is.null(projected_crs)) {
+    stop("No projected CRS provided.")
+  }
+
   # Download and prepare Natural Earth map data
   if (level == "country") {
 
