@@ -26,7 +26,6 @@ compute_indicator_workflow(
   invert = FALSE,
   include_water = FALSE,
   buffer_dist_km = 50,
-  layers = NULL,
   ...
 )
 }
@@ -106,9 +105,6 @@ the land area.}
 
 \item{buffer_dist_km}{The distance to buffer around the land if include_water
 is set to "buffered_coast".}
-
-\item{layers}{Names of additional rnaturalearth layers you want to add to your map.
-E.g. c("reefs", "playas", "admin_0_boundary_lines_land")}
 
 \item{...}{Additional arguments passed to specific indicator calculation functions.}
 }

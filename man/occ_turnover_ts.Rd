@@ -48,8 +48,6 @@ Default is TRUE. Set as "buffered_coast" to include a set buffer size around
 the land area.}
     \item{\code{buffer_dist_km}}{The distance to buffer around the land if include_water
 is set to "buffered_coast".}
-    \item{\code{layers}}{Names of additional rnaturalearth layers you want to add to your map.
-E.g. c("reefs", "playas", "admin_0_boundary_lines_land")}
   }}
 }
 \value{
