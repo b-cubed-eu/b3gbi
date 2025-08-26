@@ -772,15 +772,15 @@ plot_map <- function(x,
     stop("Incorrect object class. Must be class 'indicator_map'.")
   }
 
-  if (is.null(x$map_lims)) {
+ # if (is.null(x$map_lims)) {
     # Get map limits
     map_lims <- x$coord_range
 
-  } else {
+ # } else {
 
-    map_lims <- x$map_lims[c("xmin", "ymin", "xmax", "ymax")]
+ #   map_lims <- x$map_lims[c("xmin", "ymin", "xmax", "ymax")]
 
-  }
+ # }
 
   if (!is.null(xlims)) {
     if (is.vector(xlims) && length(xlims)==2) {
