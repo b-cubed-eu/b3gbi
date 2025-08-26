@@ -20,7 +20,6 @@ Imports:
     ggplot2,
     iNEXT,
     labeling,
-    lwgeom,
     magrittr,
     mgrs (>= 0.2.4),
     patchwork,
