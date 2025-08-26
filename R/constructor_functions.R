@@ -210,7 +210,7 @@ new_indicator_map <- function(x,
                           num_years,
                           species_names,
                           years_with_obs,
-                          map_lims = NULL,
+                         # map_lims = NULL,
                           map_layers) {
   # check that x is both a data frame and sf object
   # and all necessary columns are present
