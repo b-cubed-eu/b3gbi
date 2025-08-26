@@ -171,17 +171,16 @@ Each indicator comes with its own wrapper functions, and these should be used ra
 #   * Argument 15: num_bootstrap (optional), set the number of bootstraps to 
 #                  calculate for generating confidence intervals. Uses 1000 by 
 #                  default.
-#   * Argument 16: crs_unit_convert, force an output crs with different units
-#                  than the input crs. FALSE by default.
-#   * Argument 17: shapefile_path, path to an external shapefile you want to
+#   * Argument 16: shapefile_path, path to an external shapefile you want to
 #                  use for cropping your data
+#   * Argument 17: shapefile_crs (optional), CRS of your shapefile if it is 
+#                  .wkt format and is not EPSG:4326
 #   * Argument 18: invert, invert the shapefile
 #   * Argument 19: include_water, include ocean and lake layers from 
 #                  rnaturalearth. Defaults to FALSE. Alternatively you can set it
 #                  to "buffered_coast" for to set a buffer distance around land.
 #   * Argument 20: buffer_dist_km, Distance to buffer around the land if
 #                  include_water set to "buffered_coast".
-#   * Argument 21: layers, names of additional rnaturalearth layers to include
 #
 # Outputs:
 #   * indicator_ts or indicator_map object containing a data frame of indicator 
