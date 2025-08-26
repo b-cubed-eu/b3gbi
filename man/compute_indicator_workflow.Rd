@@ -20,7 +20,6 @@ compute_indicator_workflow(
   spherical_geometry = TRUE,
   make_valid = FALSE,
   num_bootstrap = 1000,
-  crs_unit_convert = FALSE,
   shapefile_path = NULL,
   shapefile_crs = NULL,
   invert = FALSE,
@@ -83,9 +82,6 @@ time but may help if you are getting polygon errors. (Default is FALSE).}
 
 \item{num_bootstrap}{Set the number of bootstraps to calculate for generating
 confidence intervals. (Default: 1000)}
-
-\item{crs_unit_convert}{Force a particular output CRS even when it has
-different units than the input CRS. (Default: FALSE)}
 
 \item{shapefile_path}{Path of an external shapefile to merge into the workflow. For example,
 if you want to calculate your indicator particular features such as protected areas or wetlands.}

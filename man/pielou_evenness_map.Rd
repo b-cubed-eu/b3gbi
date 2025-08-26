@@ -41,8 +41,6 @@ while the function runs. Should only be used to solve specific issues. (Default 
 time but may help if you are getting polygon errors. (Default is FALSE).}
     \item{\code{num_bootstrap}}{Set the number of bootstraps to calculate for generating
 confidence intervals. (Default: 1000)}
-    \item{\code{crs_unit_convert}}{Force a particular output CRS even when it has
-different units than the input CRS. (Default: FALSE)}
     \item{\code{shapefile_path}}{Path of an external shapefile to merge into the workflow. For example,
 if you want to calculate your indicator particular features such as protected areas or wetlands.}
     \item{\code{shapefile_crs}}{CRS of a .wkt shapefile. If your shapefile is .wkt and you do
