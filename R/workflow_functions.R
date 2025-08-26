@@ -5,6 +5,7 @@
 #'
 #' @param latlong_bbox A bbox object in latitude and longitude ("EPSG:4326") to
 #'   use for cropping the downloaded map data (required if level = 'cube').
+#' @param projected_crs The projected CRS to convert the cropped map to.
 #' @param region The specific region to retrieve data for (required unless
 #'   level = 'cube' or 'world').
 #' @param level The desired geographic scale: 'country', 'continent', 'geounit',
@@ -33,11 +34,11 @@
 #' world_map <- get_NE_data(level = "world")
 #' @noRd
 get_NE_data <- function(latlong_bbox = NULL,
+                        projected_crs,
                         region = NULL,
                         level = "cube",
                         ne_type = "countries",
                         ne_scale = "medium",
-                     #   cube_cell_codes = NULL,
                         include_water = FALSE,
                         buffer_dist_km = NULL
                         ) {
@@ -216,6 +217,9 @@ get_NE_data <- function(latlong_bbox = NULL,
 
     }
 
+  map_data_projected <- sf::st_transform(map_data_projected,
+                                         crs = projected_crs)
+
   return(map_data_projected)
 
 }
@@ -266,42 +270,6 @@ create_grid <- function(bbox,
     stop("Cell size must not be more than 100 km.")
   }
 
-  # # Handle UTM zones (if present)
-  # if ("utmzone" %in% names(data)) {
-  #   # Get unique UTM zones
-  #   unique_utm_zones <- unique(data$utmzone)
-  #   grid_list <- list() # Initialize an empty list to store the grids
-  #
-  #   zone_data <- sf::st_transform(data, crs = utm_crs)
-  #   offset_x <- sf::st_bbox(zone_data)$xmin
-  #   offset_y <- sf::st_bbox(zone_data)$ymin
-  #
-  #   zone_grid <- sf::st_make_grid(
-  #     zone_data,
-  #     cellsize = c(cell_size, cell_size),
-  #     offset = c(offset_x, offset_y),
-  #     crs = sf::st_crs(zone_data)
-  #   )
-  #
-  #   zone_grid_sf <- sf::st_sf(geometry = zone_grid) %>%
-  #     dplyr::mutate(cellid = dplyr::row_number())
-  #
-  #   zone_grid_sf <- sf::st_make_valid(zone_grid_sf)
-  #
-  #   zone_grid_sf$area <- sf::st_area(zone_grid_sf)
-  #   if (grid_units == "km") {
-  #     zone_grid_sf$area <- units::set_units(zone_grid_sf$area, "km^2")
-  #   }
-  #   else{
-  #     zone_grid_sf$area <- units::set_units(zone_grid_sf$area, "m^2")
-  #   }
-  #
-  #   grid <- zone_grid_sf
-  #
-  # } else {
-
-  # bbox <- sf::st_bbox(data)
-
   # Make a grid across the cube
   grid <- bbox %>%
     sf::st_make_grid(cellsize = c(cell_size, cell_size),
@@ -324,67 +292,6 @@ create_grid <- function(bbox,
   return(grid)
 }
 
-# #' Intersect Occurrences with Grid Cells
-# #'
-# #' This function takes occurrence data, a grid, and CRS information, and it
-# #' returns the occurrence data with cell IDs added based on spatial
-# #' intersection.
-# #'
-# #' @param data An object provided by compute_indicate_workflow containing
-# #' occurrence data from a processed data cube.
-# #' @param grid An sf object containing the grid polygons.
-# #' @param cube_crs The CRS of the data cube.
-# #' @param output_crs The CRS you want for your calculated indicator.
-# #'
-# #' @noRd
-# prepare_spatial_data <- function(data,
-#                                  df,
-#                                  grid,
-#                                  cube_crs,
-#                                  output_crs) {
-#
-#   cellid <- geometry <- NULL
-#
-#   # Remove cellid column if present in df
-#   # (should only be present in fake test data)
-#   df <- df %>%
-#     dplyr::select(-dplyr::any_of("cellid"))
-#
-#   # Set attributes as spatially constant to avoid warnings
-#   sf::st_agr(grid) <- "constant"
-#   sf::st_agr(df) <- "constant"
-#
-#   if (cube_crs == "EPSG:4326" || cube_crs == "EPSG:3035") {
-#     # Project grid and df to avoid messages about planar assumptions
-#     df <- sf::st_transform(df, crs = "+proj=eck4 +datum=WGS84")
-#     grid <- sf::st_transform(grid, crs = "+proj=eck4 +datum=WGS84")
-#   }
-#
-#   # Calculate intersection between occurrences and grid cells
-#    occ_grid_int <- df[sf::st_intersects(df, grid) %>%
-#                             lengths > 0,] %>%
-#      sf::st_join(grid) %>%
-#      sf::st_transform(occ_grid_int, crs = cube_crs)
-#
-#    # Check if there is any spatial intersection
-#    if (nrow(occ_grid_int) == 0) {
-#      stop("No spatial intersection between occurrence data and grid.")
-#    }
-#
-#    if ("geometry" %in% names(data)) {
-#      data <- select(data, -geometry)
-#    }
-#
-#   # Add cell numbers to occurrence data
-#   data <-
-#     data %>%
-#     dplyr::inner_join(occ_grid_int) %>%
-#     suppressMessages() %>%
-#     dplyr::arrange(cellid)
-#
-#   return(data)
-#
-# }
 
 #' @title Calculate Biodiversity Indicators Over Space or Time
 #'
@@ -429,8 +336,6 @@ create_grid <- function(bbox,
 #'  time but may help if you are getting polygon errors. (Default is FALSE).
 #' @param num_bootstrap Set the number of bootstraps to calculate for generating
 #'  confidence intervals. (Default: 1000)
-#' @param crs_unit_convert Force a particular output CRS even when it has
-#'  different units than the input CRS. (Default: FALSE)
 #' @param shapefile_path Path of an external shapefile to merge into the workflow. For example,
 #'  if you want to calculate your indicator particular features such as protected areas or wetlands.
 #' @param shapefile_crs CRS of a .wkt shapefile. If your shapefile is .wkt and you do
@@ -488,7 +393,6 @@ compute_indicator_workflow <- function(data,
                                        spherical_geometry = TRUE,
                                        make_valid = FALSE,
                                        num_bootstrap = 1000,
-                                       crs_unit_convert = FALSE,
                                        shapefile_path = NULL,
                                        shapefile_crs = NULL,
                                        invert = FALSE,
@@ -634,7 +538,7 @@ compute_indicator_workflow <- function(data,
     }
 
     # Get cube extent in projected crs
-    cube_bbox_projected <- sf::st_as_sfc(cube_bbox_latlong) %>%
+    cube_bbox_projected <- sf::st_as_sfc(cube_bbox) %>%
       sf::st_transform(crs = projected_crs) %>%
       sf::st_bbox()
     cube_polygon_projected <- sf::st_as_sfc(cube_bbox_projected)
@@ -648,7 +552,12 @@ compute_indicator_workflow <- function(data,
       } else {
         stop("Grid reference system not found.")
       }
+    } else {
+    # If output CRS is provided, check if it is valid
+      check_crs_units(output_crs)
     }
+
+
 
     # # Get units based on CRS
     # input_units <- check_crs_units(cube_crs)
@@ -722,10 +631,14 @@ compute_indicator_workflow <- function(data,
     # If shape file provided, check whether its bounding box intersects the
     # bounding box of the cube. We first convert to lat/long for consistency.
     if (!is.null(shapefile)) {
+      # Get shapefile bounding box
       shapefile_latlong <- sf::st_transform(shapefile, crs = "EPSG:4326")
       shapefile_bbox_latlong <- sf::st_bbox(shapefile_latlong)
-      if (sf::st_intersects(shapefile_bbox_latlong,
-                            cube_bbox_latlong,
+      # Convert bounding boxes to polygon geometries (sfc objects)
+      shapefile_bbox_latlong_sfc <- sf::st_as_sfc(shapefile_bbox_latlong)
+      cube_bbox_latlong_sfc <- sf::st_as_sfc(cube_bbox_latlong)
+      if (sf::st_intersects(shapefile_bbox_latlong_sfc,
+                            cube_bbox_latlong_sfc,
                             sparse = FALSE)[1, 1] == FALSE) {
         stop("Shapefile bounding box does not intersect the cube's area.")
       }
@@ -800,7 +713,9 @@ compute_indicator_workflow <- function(data,
     # Unify object names
     if (!is.null(shapefile)) {
       bbox_latlong <- merged_bbox %>%
-        sf::st_transform(crs = "EPSG:4326")
+        sf::st_as_sfc() %>%
+        sf::st_transform(crs = "EPSG:4326") %>%
+        sf::st_bbox()
       bbox_projected <- merged_bbox
       data_projected <- filtered_sf
     } else {
@@ -818,6 +733,7 @@ compute_indicator_workflow <- function(data,
 
     # Retrieve and validate Natural Earth data
     map_data <- get_NE_data(bbox_latlong,
+                            projected_crs,
                             region,
                             level,
                             ne_type,
@@ -826,63 +742,22 @@ compute_indicator_workflow <- function(data,
                             buffer_dist_km) %>%
       sf::st_make_valid()
 
+    if (data$grid_type == "eea") {
+      map_data <- sf::st_transform(map_data, crs = projected_crs)
+    }
+
     if (dim_type == "map") {
-      # Create grid if input and output units do not match
-      # if (crs_unit_convert == TRUE &&
-      #     input_units != output_units &&
-      #     output_units != "degrees") {
-      #   output_units <- "m"
-      #   grid <- reproject_and_create_grid(df_sf_input,
-      #                                     c(input_cell_size, input_cell_size),
-      #                                     output_crs,
-      #                                     c((cell_size * 1000),
-      #                                       (cell_size * 1000)),
-      #                                     input_units = input_units,
-      #                                     target_units = output_units)
-      #   output_units <- "km"
-      # } else if (crs_unit_convert == TRUE &&
-      #            input_units != output_units &&
-      #            output_units == "degrees") {
-      #   grid <- reproject_and_create_grid(df_sf_input,
-      #                                     c(input_cell_size, input_cell_size),
-      #                                     output_crs,
-      #                                     c((cell_size),
-      #                                       (cell_size)),
-      #                                     input_units = input_units,
-      #                                     target_units = output_units)
-      # } else {
-      # Create grid if input and output units do match
+
+      # Create grid
       grid <- create_grid(bbox_for_grid,
                           cell_size,
                           projected_crs,
                           # output_units,
                           # output_crs,
                           make_valid)
-      # }
 
-      # Format spatial data and merge with grid
-      # df <- prepare_spatial_data(df,
-      #                            df_sf_projected,
-      #                            grid,
-      #                            cube_crs,
-      #                            output_crs)
-
-      # if (is.null(shapefile)) {
-      #   if (sf::st_crs(df_sf_output) != sf::st_crs(map_data)) {
-      #     map_data <- sf::st_transform(map_data,
-      #                                  crs = sf::st_crs(df_sf_output))
-      #   }
-      #   polygon_to_intersect <- sf::st_make_valid(map_data)
-      # } else {
-      #   polygon_to_intersect <- shapefile_merge
-      # }
-
-      #       # Set attributes as spatially constant to avoid warnings when clipping
-      #       sf::st_agr(grid) <- "constant"
-      #       if (!inherits(polygon_to_intersect, "sf")) {
-      #         polygon_to_intersect <- sf::st_sf(geometry = polygon_to_intersect)
-      #       }
-      #       sf::st_agr(polygon_to_intersect) <- "constant"
+      sf::st_agr(map_data) <- "constant"
+      sf::st_agr(grid) <- "constant"
 
       # The following intersection operation requires special error handling
       # because it fails when the grid contains invalid geometries.
