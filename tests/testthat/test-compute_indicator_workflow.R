@@ -12,8 +12,10 @@ test_that("compute_indicator_workflow handles input validation", {
     last_year = 2009,
     num_species = 1,
     resolution = "10km",
-    grid_type = "eqdgc"
+    grid_type = "eqdgc",
+    coord_range = c(1, 10, 1, 10)
   )
+  names(mock_cube$coord_range) <- c("xmin", "xmax", "ymin", "ymax")
   class(mock_cube) <- c("processed_cube", "list")
 
   # Invalid data class
@@ -101,17 +103,6 @@ test_that("compute_indicator_workflow handles input validation", {
     "Shapefile not found at the specified path."
   )
 
-  # Test crs_unit_convert = FALSE when units do not match
-  expect_error(
-    compute_indicator_workflow(
-      data = mock_cube,
-      type = "obs_richness",
-      dim_type = "map",
-      output_crs = "EPSG:3857"
-    ),
-    "The conversion could increase processing time and lead to invalid output."
-  )
-
   # Invalid first_year greater than last_year
   expect_error(
     compute_indicator_workflow(
@@ -166,42 +157,52 @@ test_that("compute_indicator_workflow handles input validation", {
 
 
 # Mock get_NE_data function
-mock_get_NE_data <- function(region,
-                             output_crs,
+mock_get_NE_data <- function(latlong_bbox,
+                             projected_crs,
+                             region,
                              level,
                              ne_type,
                              ne_scale,
-                             cube_cell_codes = NULL,
                              include_water = TRUE,
-                             buffer_dist_km = NULL,
-                             data = NULL,
-                             layers = NULL) {
+                             buffer_dist_km = NULL) {
   sf::st_sf(
     geometry = sf::st_sfc(
       sf::st_polygon(
         list(
           matrix(
             c(0, 0, 0, 10, 10, 10, 10, 0, 0, 0),
+            # c(unname(latlong_bbox["xmin"])-1,
+            #   unname(latlong_bbox["ymin"])-1,
+            #   unname(latlong_bbox["xmin"])-1,
+            #   unname(latlong_bbox["ymax"])+1,
+            #   unname(latlong_bbox["xmax"])+1,
+            #   unname(latlong_bbox["ymax"])+1,
+            #   unname(latlong_bbox["xmax"])+1,
+            #   unname(latlong_bbox["ymin"])-1,
+            #   unname(latlong_bbox["xmin"])-1,
+            #   unname(latlong_bbox["ymin"])-1
+            #   ),
             ncol = 2,
             byrow = TRUE
           )
         )
       )
     ),
-    crs = output_crs
+    crs = projected_crs
   )
+
 }
 
 test_that(
   "compute_indicator_workflow creates grids and performs spatial operations", {
   mock_cube <- list(
     data = data.frame(
-      xcoord = c(9,1),
-      ycoord = c(1,9),
-      cellid = c(1,2),
-      year = c(2000,2000),
-      scientificName = c("A","A"),
-      obs = c(1,1)
+      xcoord = c(9,1,5),
+      ycoord = c(1,9,5),
+      cellCode = c(1,2,3),
+      year = c(2000,2000,2000),
+      scientificName = c("A","A","A"),
+      obs = c(1,1,1)
     ),
     first_year = 2000,
     last_year = 2000,
@@ -438,11 +439,6 @@ test_that("compute_indicator_workflow creates output objects correctly", {
   )
   class(mock_cube) <- c("processed_cube", "list")
 
-  xminmap <- xmin - (0.1 * 10000)
-  yminmap <- ymin - (0.1 * 10000)
-  xmaxmap <- xmax + (0.1 * 10000)
-  ymaxmap <- ymax + (0.1 * 10000)
-
   # Test indicator_map object creation
   result_map <- suppressWarnings(compute_indicator_workflow(
     data = mock_cube,
@@ -591,7 +587,7 @@ test_that(
       data = data.frame(
         xcoord = c(1,5),
         ycoord = c(5,1),
-        cellid = c(1,2),
+        cellCode = c(1,2),
         year = c(2000,2000),
         scientificName = c("A","A"),
         obs = c(1,1)
