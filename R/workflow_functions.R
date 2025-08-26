@@ -989,7 +989,8 @@ compute_indicator_workflow <- function(data,
         }
       }
       year_names <- unique(df$year)
-    #  map_lims <- sf::st_bbox(data_clipped)
+      map_lims <- sf::st_transform(data_clipped, crs = output_crs) %>%
+        sf::st_bbox()
     }
 
   } else {
