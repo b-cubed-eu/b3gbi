@@ -1,3 +1,17 @@
+# b3gbi 0.7.0 - Major update:
+
+* Ocean occurrences are now included by default when calculating indicators (previously they were ignored entirely). They can be turned off using include_ocean = FALSE. Alternatively, you can set include_ocean = "buffered_coast" to include only occurrences within a set distance from the coast, measured in km (e.g., buffer_dist = 50).
+* Shape files can now be .wkt format. The CRS cannot be automatically determined from .wkt files, so it is assumed to be EPSG:4326 unless specified using the parameter shapefile_crs.
+* All geometry processing within the workflow is now done using a projected CRS, and conversion to the user-specified output_crs happens at the end. This allows for a simplified workflow and ensures more accurate calculations.
+* The user now has the option to add any rnaturalearth layer(s) to map plots using the layers parameter.
+* Automatic cell_size determination now takes total cube area into account instead of just the level ('country', 'continent', etc). Note, however, that the user still has the ability to manually set cell_size.
+* Warnings from the sf package should no longer appear due to improvements in the way geometry operations are handled by b3gbi.
+* The scale (resolution) of rnaturalearth data is now user-selectable when plotting (using the 'scale' parameter). The default is 'medium'.
+* Indicators are now calculated much faster as geometric operations have been simplified and reduced and code has been reorganized and simplified to improve efficiency.
+* Grid offsets are now correct.
+* Additional error checking included.
+* Many minor bug fixes.
+
 # b3gbi 0.6.3 - Minor update:
 
 * Fixed a bug that caused quarter-degree grid codes to be translated incorrectly for some geographic locations. They should now work correctly in all cases.
