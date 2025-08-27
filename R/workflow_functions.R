@@ -15,11 +15,11 @@
 #'   'map_units', 'sovereignty', or 'tiny_countries'. (Default: 'countries')
 #' @param ne_scale The scale of Natural Earth data to download: 'small' - 110m,
 #'   'medium' - 50m, or 'large' - 10m. (Default: 'medium')
-#' @param include_water Include oceans if TRUE. Set to "buffered_coast" to
+#' @param include_ocean Include oceans if TRUE. Set to "buffered_coast" to
 #'   instead create a buffer around the land area. If set to FALSE occurrences
 #'   that fall outside of land boundaries will not be included in the analysis.
 #' @param buffer_dist_km Distance to buffer around the land if you choose
-#'   "buffered_coast" for the include_water parameter.
+#'   "buffered_coast" for the include_ocean parameter.
 #' @return An sf object containing the map data, transformed to the
 #'   appropriate projection.
 #'
@@ -39,7 +39,7 @@ get_NE_data <- function(latlong_bbox = NULL,
                         level = "cube",
                         ne_type = "countries",
                         ne_scale = "medium",
-                        include_water = FALSE,
+                        include_ocean = TRUE,
                         buffer_dist_km = NULL
                         ) {
 
@@ -109,27 +109,6 @@ get_NE_data <- function(latlong_bbox = NULL,
 
   if (level == "cube") {
 
-    # if (!is.null(cube_cell_codes)) {
-    #   # Convert MGRS to Lat/Long
-    #   latlong_coords <- mgrs::mgrs_to_latlng(cube_cell_codes)
-    # } else {
-    #   if (!is.null(data)) {
-    #     if (stringr::str_detect(data$resolution[1], "km")) {
-    #       latlong_coords <- data %>%
-    #         sf::st_as_sf(coords = c("xcoord", "ycoord"),
-    #                      crs = 3035) %>%
-    #         sf::st_transform(crs = 4326) %>%
-    #         sf::st_coordinates() %>%
-    #         data.frame(lng = .[, "X"], lat = .[, "Y"]) %>%
-    #         select(-c("X", "Y"))
-    #     } else {
-    #       latlong_coords <- data.frame(lng = data$xcoord, lat = data$ycoord)
-    #     }
-    #   } else {
-    #     stop("Missing data frame.")
-    #   }
-    # }
-
     expand_percent <- 0.5 # 10% buffer
     lng_range <- unname(latlong_bbox["xmax"] - latlong_bbox["xmin"])
     lat_range <- unname(latlong_bbox["ymax"] - latlong_bbox["ymin"])
@@ -157,7 +136,9 @@ get_NE_data <- function(latlong_bbox = NULL,
     # Crop the world map
     map_data_projected <- sf::st_crop(map_data_projected,
                                       extent_projected) %>%
-      sf::st_make_valid()
+      sf::st_make_valid() %>%
+      sf::st_union() %>%
+      sf::st_as_sf()
 
     extent_projected <- sf::st_bbox(map_data_projected)
 
@@ -165,28 +146,27 @@ get_NE_data <- function(latlong_bbox = NULL,
 
     extent_projected <- sf::st_bbox(map_data_projected)
 
-    map_data_projected <- sf::st_make_valid(map_data_projected)
+    map_data_projected <- sf::st_make_valid(map_data_projected) %>%
+      sf::st_union() %>%
+      sf::st_as_sf()
 
   }
 
-    if (include_water == TRUE) {
+    if (include_ocean == TRUE) {
 
-        layer_data <- add_NE_layer("ocean",
-                                   ne_scale,
-                                   extent_projected)
+      extent_projected_polygon <- sf::st_as_sfc(extent_projected)
 
-        if (!is.null(layer_data) && nrow(layer_data) > 0) {
-          map_data_projected <- layer_data %>%
-            dplyr::group_by(scalerank, featurecla) %>%
-            dplyr::summarize(
-              geometry = sf::st_union(geometry,
-                                      map_data_projected$geometry))
-        }
+      map_data_ocean <- sf::st_difference(extent_projected_polygon,
+                                          map_data_projected)
 
-    } else if (is.character(include_water) &&
-               include_water == "buffered_coast") {
+      # Validate oceans
+      map_data_ocean <- sf::st_make_valid(map_data_ocean)
 
-      if (level %in% c("country", "continent", "sovereignty", "geounit")) {
+      # Merge the land with the oceans
+      map_data_projected <- sf::st_union(map_data_projected, map_data_ocean)
+
+    } else if (is.character(include_ocean) &&
+               include_ocean == "buffered_coast") {
 
         message(
           paste0(
@@ -196,28 +176,29 @@ get_NE_data <- function(latlong_bbox = NULL,
           )
         )
 
-        map_data_water <- sf::st_buffer(map_data_projected,
+      if (!level %in% c("country", "sovereignty", "geounit") ||
+          length(region) > 1) {
+        warning(
+          paste0(
+            "Buffering the coastal areas may produce unexpected results when ",
+            "used with level = 'cube' (default) or with areas encompassing ",
+            "multiple countries, as it may create overlapping buffers or ",
+            "buffer areas that you did not intend. These undesirable effects ",
+            "might be mitigated by reducing the buffer distance and/or ",
+            "setting visible_gridlines = FALSE when plotting."
+          )
+        )
+      }
+
+        map_data_ocean <- sf::st_buffer(map_data_projected,
                                         dist = buffer_dist_km * 1000)
 
         # Validate oceans
-        map_data_water <- sf::st_make_valid(map_data_water)
+        map_data_ocean <- sf::st_make_valid(map_data_ocean)
 
         # Merge the land with the oceans
         map_data_projected <- sf::st_union(map_data_projected,
-                                           map_data_water)
-
-      } else {
-
-        warning(
-          paste0(
-            "Buffered coast option is best used with 'country', 'continent',",
-            "'sovereignty', or 'geounit' levels. Ignoring for 'world' or ",
-            "'cube' and defaulting to land only if include_water is TRUE, or ",
-            "skipping if FALSE."
-          )
-        )
-
-      }
+                                           map_data_ocean)
 
     }
 
@@ -261,19 +242,6 @@ create_grid <- function(bbox,
                         projected_crs,
                         make_valid = FALSE) {
 
-  # Check that cell_size is appropriate
-  if (cell_size < 1000) {
-    message(
-      paste(
-        "Warning: High resolution grids can take a while.",
-        "Consider increasing cell size using the 'cell_size' parameter."
-      )
-    )
-  }
-  if (cell_size > 100000) {
-    stop("Cell size must not be more than 100 km.")
-  }
-
   # Make a grid across the cube
   grid <- bbox %>%
     sf::st_make_grid(cellsize = c(cell_size, cell_size),
@@ -281,10 +249,12 @@ create_grid <- function(bbox,
     sf::st_sf() %>%
     dplyr::mutate(cellid = dplyr::row_number())
 
+  # Validate grid if make_valid set to TRUE
   if (make_valid==TRUE) {
     grid <- sf::st_make_valid(grid)
   }
 
+  # Transform grid to projected crs
   grid <- sf::st_transform(grid, projected_crs)
 
   # Add area column to grid
@@ -292,7 +262,7 @@ create_grid <- function(bbox,
     grid %>%
     sf::st_area() %>%
     units::set_units("km^2")
-  # }
+
   return(grid)
 }
 
@@ -349,10 +319,10 @@ create_grid <- function(bbox,
 #' @param invert Calculate an indicator over the inverse of the shapefile (e.g.
 #'  if you have a protected areas shapefile this would calculate an indicator over
 #'  all non protected areas)
-#' @param include_water Include rnaturalearth oceans and lakes layers.
+#' @param include_ocean Include rnaturalearth ocean layer.
 #'  Default is TRUE. Set as "buffered_coast" to include a set buffer size around
 #'  the land area.
-#' @param buffer_dist_km The distance to buffer around the land if include_water
+#' @param buffer_dist_km The distance to buffer around the land if include_ocean
 #'  is set to "buffered_coast".
 #' @param ... Additional arguments passed to specific indicator calculation functions.
 #'
@@ -400,7 +370,7 @@ compute_indicator_workflow <- function(data,
                                        shapefile_path = NULL,
                                        shapefile_crs = NULL,
                                        invert = FALSE,
-                                       include_water = FALSE,
+                                       include_ocean = TRUE,
                                        buffer_dist_km = 50,
                                        ...) {
 
@@ -522,14 +492,19 @@ compute_indicator_workflow <- function(data,
 
     # Determine projection to use for internal processing
     # Get cube extent in lat/long
-    cube_bbox <- sf::st_bbox(c(xmin = coord_range[[1]],
-                               xmax = coord_range[[2]],
-                               ymin = coord_range[[3]],
-                               ymax = coord_range[[4]]),
-                             crs = cube_crs)
-    cube_bbox_latlong <- sf::st_as_sfc(cube_bbox) %>%
-      sf::st_transform(crs = "EPSG:4326") %>%
-      sf::st_bbox()
+    if (data$grid_type == "mgrs") {
+      cube_bbox_latlong <- mgrs_to_latlong_bbox(df)
+    } else {
+      cube_bbox <- sf::st_bbox(c(xmin = coord_range[[1]],
+                                 xmax = coord_range[[2]],
+                                 ymin = coord_range[[3]],
+                                 ymax = coord_range[[4]]),
+                               crs = cube_crs)
+      cube_bbox_latlong <- sf::st_as_sfc(cube_bbox) %>%
+        sf::st_transform(crs = "EPSG:4326") %>%
+        sf::st_bbox()
+    }
+
     # Choose appropriate projection CRS
     if (data$grid_type == "eea") {
       projected_crs <- "EPSG:3035"
@@ -542,9 +517,15 @@ compute_indicator_workflow <- function(data,
     }
 
     # Get cube extent in projected crs
-    cube_bbox_projected <- sf::st_as_sfc(cube_bbox) %>%
-      sf::st_transform(crs = projected_crs) %>%
-      sf::st_bbox()
+    if (data$grid_type == "mgrs") {
+      cube_bbox_projected <- sf::st_as_sfc(cube_bbox_latlong) %>%
+        sf::st_transform(crs = projected_crs) %>%
+        sf::st_bbox()
+    } else {
+      cube_bbox_projected <- sf::st_as_sfc(cube_bbox) %>%
+        sf::st_transform(crs = projected_crs) %>%
+        sf::st_bbox()
+    }
     cube_polygon_projected <- sf::st_as_sfc(cube_bbox_projected)
 
     # Determine output CRS if not provided
@@ -742,7 +723,7 @@ compute_indicator_workflow <- function(data,
                             level,
                             ne_type,
                             ne_scale,
-                            include_water,
+                            include_ocean,
                             buffer_dist_km) %>%
       sf::st_make_valid()
 
@@ -760,7 +741,6 @@ compute_indicator_workflow <- function(data,
                           # output_crs,
                           make_valid)
 
-      sf::st_agr(map_data) <- "constant"
       sf::st_agr(grid) <- "constant"
 
       # The following intersection operation requires special error handling
@@ -809,10 +789,6 @@ compute_indicator_workflow <- function(data,
       }
       # Set grid to result
       clipped_grid <- result
-     # map_lims <- sf::st_bbox(clipped_grid)
-      # Set attributes as spatially constant to avoid warnings when clipping
-      sf::st_agr(clipped_grid) <- "constant"
-      sf::st_agr(data_projected) <- "constant"
 
       # Assign data to grid
       data_gridded <- sf::st_join(data_projected, clipped_grid)
@@ -832,28 +808,23 @@ compute_indicator_workflow <- function(data,
         dplyr::left_join(indicator, by = "cellid")
 
       diversity_grid <- sf::st_transform(diversity_grid, crs = output_crs)
-     # map_lims <- sf::st_bbox(diversity_grid)
 
     } else {
 
-      # Set attributes as spatially constant to avoid warnings when clipping
-      sf::st_agr(map_data) <- "constant"
-      sf::st_agr(data_projected) <- "constant"
-
-      data_clipped <- sf::st_join(data_projected, map_data)
-      data_clipped_nogeom <- sf::st_drop_geometry(data_clipped)
+      data_filtered <- sf::st_filter(data_projected, map_data)
+      data_filtered_nogeom <- sf::st_drop_geometry(data_filtered)
 
       # Assign classes to send data to correct calculator function
       subtype <- paste0(type, "_", dim_type)
-      class(data_clipped_nogeom) <- append(type, class(data_clipped_nogeom))
-      class(data_clipped_nogeom) <- append(subtype, class(data_clipped_nogeom))
+      class(data_filtered_nogeom) <- append(type, class(data_filtered_nogeom))
+      class(data_filtered_nogeom) <- append(subtype, class(data_filtered_nogeom))
 
       # Calculate indicator
-      indicator <- calc_ts(data_clipped_nogeom, ...)
+      indicator <- calc_ts(data_filtered_nogeom, ...)
       # Calculate confidence intervals
       if (ci_type!="none") {
         if (!type %in% noci_list) {
-          indicator <- calc_ci(data_clipped_nogeom,
+          indicator <- calc_ci(data_filtered_nogeom,
                                indicator = indicator,
                                num_bootstrap=num_bootstrap,
                                ci_type = ci_type,
@@ -868,7 +839,7 @@ compute_indicator_workflow <- function(data,
         }
       }
       year_names <- unique(df$year)
-      map_lims <- sf::st_transform(data_clipped, crs = output_crs) %>%
+      map_lims <- sf::st_transform(data_filtered, crs = output_crs) %>%
         sf::st_bbox()
     }
 
@@ -931,11 +902,8 @@ compute_indicator_workflow <- function(data,
   # Create indicator object
   if (dim_type == "map") {
     # Set layers for plotting
-    if (include_water == TRUE) {
-      layers <- c("admin_0_countries", "ocean")
-    } else {
-      layers <- "admin_0_countries"
-    }
+    layers <- "admin_0_countries"
+
     if (data$grid_type != "eqdgc") {
       cell_size <- cell_size / 1000
     }
