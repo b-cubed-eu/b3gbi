@@ -367,12 +367,12 @@ test_that(
     class(mock_cube) <- c("processed_cube", "list")
 
     # Test map calculation
-    result_map <- suppressWarnings(compute_indicator_workflow(
+    result_map <- compute_indicator_workflow(
       data = mock_cube,
       type = "obs_richness",
       dim_type = "map",
       include_water = TRUE
-    ))
+    )
     expect_equal(names(result_map$data), c("cellid",
                                            "area",
                                            "diversity_val",
@@ -380,21 +380,21 @@ test_that(
     )
 
     # Test time series calculations without confidence intervals
-    result_ts <- suppressWarnings(compute_indicator_workflow(
+    result_ts <- compute_indicator_workflow(
       data = mock_cube,
       type = "total_occ",
       dim_type = "ts",
       ci_type = "none"
-    ))
+    )
     expect_equal(names(result_ts$data), c("year", "diversity_val"))
 
     # Test time series calculations with confidence intervals
-    result_ci <- suppressWarnings(compute_indicator_workflow(
+    result_ci <- compute_indicator_workflow(
       data = mock_cube,
       type = "total_occ",
       dim_type = "ts",
       ci_type = "norm"
-    ))
+    )
     expect_true(
       all(
         c(
