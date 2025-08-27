@@ -23,7 +23,7 @@ plot_map(
   legend_limits = NULL,
   legend_title_wrap_length = 10,
   title_wrap_length = 60,
-  transparent_gridlines = FALSE,
+  visible_gridlines = TRUE,
   layers = NULL,
   scale = "medium"
 )
@@ -75,7 +75,7 @@ Europe_crop_EEA. Default is FALSE.}
 
 \item{title_wrap_length}{Maximum title length before wrapping to a new line.}
 
-\item{transparent_gridlines}{Make gridlines invisible. Default is FALSE.}
+\item{visible_gridlines}{Show gridlines between cells. Default is TRUE.}
 
 \item{layers}{Additional rnaturalearth layers to plot, e.g. c("reefs", "playas").}
 

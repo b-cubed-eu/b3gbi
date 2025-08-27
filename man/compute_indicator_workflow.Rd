@@ -23,7 +23,7 @@ compute_indicator_workflow(
   shapefile_path = NULL,
   shapefile_crs = NULL,
   invert = FALSE,
-  include_water = FALSE,
+  include_ocean = TRUE,
   buffer_dist_km = 50,
   ...
 )
@@ -95,11 +95,11 @@ will be determined automatically.}
 if you have a protected areas shapefile this would calculate an indicator over
 all non protected areas)}
 
-\item{include_water}{Include rnaturalearth oceans and lakes layers.
+\item{include_ocean}{Include rnaturalearth ocean layer.
 Default is TRUE. Set as "buffered_coast" to include a set buffer size around
 the land area.}
 
-\item{buffer_dist_km}{The distance to buffer around the land if include_water
+\item{buffer_dist_km}{The distance to buffer around the land if include_ocean
 is set to "buffered_coast".}
 
 \item{...}{Additional arguments passed to specific indicator calculation functions.}
