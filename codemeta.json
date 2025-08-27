@@ -7,7 +7,7 @@
   "relatedLink": "https://b-cubed-eu.github.io/b3gbi/",
   "codeRepository": "https://github.com/b-cubed-eu/b3gbi",
   "license": "https://spdx.org/licenses/MIT",
-  "version": "0.6.3",
+  "version": "0.7.0",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
