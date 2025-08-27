@@ -9,19 +9,8 @@
 #'
 #' @export
 mgrs_to_latlong_bbox <- function(df) {
-  # Check if required packages are available
-  if (!requireNamespace("sf", quietly = TRUE)) {
-    stop("Package 'sf' is required but not installed.")
-  }
-  if (!requireNamespace("stringr", quietly = TRUE)) {
-    stop("Package 'stringr' is required but not installed.")
-  }
-  if (!requireNamespace("dplyr", quietly = TRUE)) {
-    stop("Package 'dplyr' is required but not installed.")
-  }
-  if (!requireNamespace("purrr", quietly = TRUE)) {
-    stop("Package 'purrr' is required but not installed.")
-  }
+
+  hemisphere <- utmzone <- NULL
 
   # Check if the specified columns exist
   if (!"xcoord" %in% names(df) || !"ycoord" %in% names(df)) {
