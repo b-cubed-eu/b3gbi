@@ -726,7 +726,7 @@ plot.occ_turnover <- function(x,
 #' @param legend_limits (Optional) Limits for the legend scale.
 #' @param legend_title_wrap_length Maximum legend title length before wrapping to a new line.
 #' @param title_wrap_length Maximum title length before wrapping to a new line.
-#' @param transparent_gridlines Make gridlines invisible. Default is FALSE.
+#' @param visible_gridlines Show gridlines between cells. Default is TRUE.
 #' @param layers Additional rnaturalearth layers to plot, e.g. c("reefs", "playas").
 #' @param scale Scale of Natural Earth data ("small", "medium", or "large"). Default is 'medium'.
 #'
@@ -760,7 +760,7 @@ plot_map <- function(x,
                      legend_limits = NULL,
                      legend_title_wrap_length = 10,
                      title_wrap_length = 60,
-                     transparent_gridlines = FALSE,
+                     visible_gridlines = TRUE,
                      layers = NULL,
                      scale = "medium"
                      ) {
@@ -1162,7 +1162,7 @@ plot_map <- function(x,
                          inherit.aes = FALSE)
     }
 
-    if (transparent_gridlines == FALSE) {
+    if (visible_gridlines == TRUE) {
       # plot gridlines
       diversity_plot$layers <- c(
         diversity_plot$layers,
