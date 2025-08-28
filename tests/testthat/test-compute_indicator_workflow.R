@@ -440,11 +440,11 @@ test_that("compute_indicator_workflow creates output objects correctly", {
   class(mock_cube) <- c("processed_cube", "list")
 
   # Test indicator_map object creation
-  result_map <- suppressWarnings(compute_indicator_workflow(
+  result_map <- compute_indicator_workflow(
     data = mock_cube,
     type = "obs_richness",
     dim_type = "map"
-  ))
+  )
   expect_s3_class(result_map, "indicator_map")
   expect_s3_class(result_map$data, "sf")
   expect_equal(result_map$div_type, "obs_richness")
@@ -461,12 +461,12 @@ test_that("compute_indicator_workflow creates output objects correctly", {
                c("xmin", "ymin", "xmax", "ymax"))
 
   # Test indicator_ts object creation
-  result_ts <- suppressWarnings(compute_indicator_workflow(
+  result_ts <- compute_indicator_workflow(
     data = mock_cube,
     type = "total_occ",
     dim_type = "ts",
     ci_type = "none"
-  ))
+  )
   expect_s3_class(result_ts, "indicator_ts")
   expect_s3_class(result_ts$data, "data.frame")
   expect_equal(result_ts$div_type, "total_occ")
