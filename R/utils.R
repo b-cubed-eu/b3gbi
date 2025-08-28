@@ -1,3 +1,10 @@
+# Define function to wrap title and legend title if too long
+#' @noRd
+wrapper <- function(x, ...)
+{
+  paste(strwrap(x, ...), collapse = "\n")
+}
+
 # copy of function boot.return from boot package
 #' @noRd
 boot.return_int <- function (sim, t0, t, strata, R, data, stat, stype, call, seed,
