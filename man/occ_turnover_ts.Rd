@@ -41,9 +41,9 @@ will be determined automatically.}
     \item{\code{invert}}{Calculate an indicator over the inverse of the shapefile (e.g.
 if you have a protected areas shapefile this would calculate an indicator over
 all non protected areas)}
-    \item{\code{include_ocean}}{Include rnaturalearth ocean layer.
+    \item{\code{include_ocean}}{Include occurrences which fall outside the land area.
 Default is TRUE. Set as "buffered_coast" to include a set buffer size around
-the land area.}
+the land area rather than the entire ocean area.}
     \item{\code{buffer_dist_km}}{The distance to buffer around the land if include_ocean
 is set to "buffered_coast".}
   }}
