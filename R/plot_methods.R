@@ -767,20 +767,14 @@ plot_map <- function(x,
 
   diversity_val <- geometry <- scalerank <- featurecla <- NULL
 
-
   if (!inherits(x, "indicator_map")) {
     stop("Incorrect object class. Must be class 'indicator_map'.")
   }
 
- # if (is.null(x$map_lims)) {
-    # Get map limits
-    map_lims <- x$coord_range
+  layers <- c("admin_0_countries", layers)
 
- # } else {
-
- #   map_lims <- x$map_lims[c("xmin", "ymin", "xmax", "ymax")]
-
- # }
+  # Get map limits
+  map_lims <- x$coord_range
 
   if (!is.null(xlims)) {
     if (is.vector(xlims) && length(xlims)==2) {
@@ -800,17 +794,6 @@ plot_map <- function(x,
     }
   }
 
-  if (!is.null(x$map_layers)) {
-
-    existing_layers <- x$map_layers
-
-  } else {
-
-    existing_layers <- NULL
-  }
-
-  layers <- c(existing_layers, layers)
-
   # Crop map of Europe to leave out far-lying islands (if flag set)
   # (conditional on there being only one map region to plot)
   if (length(x$map_region)==1) {
@@ -820,39 +803,29 @@ plot_map <- function(x,
         x$projection == "EPSG:3035" &
         crop_to_grid == FALSE)
     {
-
       # Set attributes as spatially constant to avoid warnings
       sf::st_agr(x$data) <- "constant"
 
       # Manually set cropped limits
       map_lims <- c(2600000, 1600000, 7000000, 6000000)
       names(map_lims) <- c("xmin", "ymin", "xmax", "ymax")
-
     }
   }
 
-#
-#   # Get world data to plot surrounding land
-  # map_surround <- add_NE_layer("admin_0_countries",
-  #                              scale,
-  #                              sf::st_bbox(x$data))
-  map_surround <- rnaturalearth::ne_countries(scale = scale, returnclass = "sf") %>%
-    sf::st_as_sf() %>%
+  # Get world data to plot surrounding land
+  map_data_sf <- rnaturalearth::ne_countries(scale = scale, returnclass = "sf") %>%
+    sf::st_as_sf()
+  map_surround <- map_data_sf %>%
     sf::st_transform(crs = x$projection) %>%
     sf::st_make_valid()
 
-  # Define function to wrap title and legend title if too long
-  wrapper <- function(x, ...)
-  {
-    paste(strwrap(x, ...), collapse = "\n")
-  }
-
   # Get plot title (if set to "auto")
-  if (!is.null(title)) {
-    if (title == "auto") {
-      title <- auto_title
-    }
-  }
+  title <- if (title == "auto") auto_title else title
+  # if (!is.null(title)) {
+  #   if (title == "auto") {
+  #     title <- auto_title
+  #   }
+  # }
 
   if (!is.null(trans)) {
     if (trans == "boxcox") {
@@ -872,320 +845,295 @@ plot_map <- function(x,
     )
   }
 
-  land_fill_colour <- ifelse(is.null(land_fill_colour), "grey85", land_fill_colour)
+  # Set default value for land_fill_colour if NULL
+  land_fill_colour <- dplyr::coalesce(land_fill_colour, "grey85")
 
-  # If surround flag set, add surrounding countries to map
 
-    if (check_crs_units(x$projection) == "km" &&
-        sf::st_crs(x$projection)$input != "EPSG:3035") {
+  if (check_crs_units(x$projection) == "km" &&
+      sf::st_crs(x$projection)$input != "EPSG:3035") {
 
-      if (!is.null(map_lims)) {
-        utm_bbox <- sf::st_bbox(map_lims)
-        # Define a lat/long CRS (WGS84)
-        latlong_crs <- sf::st_crs(4326)
-        utm_crs <- sf::st_crs(x$data)
+    # if (!is.null(map_lims)) {
+    #   utm_bbox <- sf::st_bbox(map_lims)
+    #   # Define a lat/long CRS (WGS84)
+    #   latlong_crs <- sf::st_crs(4326)
+    #   utm_crs <- sf::st_crs(x$data)
+    #
+    #   # Create a bounding box polygon in UTM
+    #   bbox_polygon_utm <- sf::st_as_sfc(utm_bbox, crs = utm_crs)
+    #   bbox_polygon_utm <- sf::st_set_crs(bbox_polygon_utm, utm_crs)
+    #
+    #   # Transform the bounding box to lat/long
+    #   bbox_latlong <- sf::st_transform(bbox_polygon_utm, crs = latlong_crs)
+    #   latlong_extent <- sf::st_bbox(bbox_latlong)
+    #
+    # } else {
 
-        # Create a bounding box polygon in UTM
-        bbox_polygon_utm <- sf::st_as_sfc(utm_bbox, crs = utm_crs)
-        bbox_polygon_utm <- sf::st_set_crs(bbox_polygon_utm, utm_crs)
+      # Get bounding box of the indicator map data in UTM
+      utm_bbox <- sf::st_bbox(x$data)
+      utm_crs <- sf::st_crs(x$data)
 
-        # Transform the bounding box to lat/long
-        bbox_latlong <- sf::st_transform(bbox_polygon_utm, crs = latlong_crs)
-        latlong_extent <- sf::st_bbox(bbox_latlong)
+      # Define a lat/long CRS (WGS84)
+      latlong_crs <- sf::st_crs(4326)
 
-      } else {
+      # Create a bounding box polygon in UTM
+      bbox_polygon_utm <- sf::st_as_sfc(utm_bbox, crs = utm_crs)
 
-        # Get bounding box of the indicator map data in UTM
-        utm_bbox <- sf::st_bbox(x$data)
-        utm_crs <- sf::st_crs(x$data)
+      # Transform the bounding box to lat/long
+      bbox_latlong <- sf::st_transform(bbox_polygon_utm, crs = latlong_crs)
+      latlong_extent <- sf::st_bbox(bbox_latlong)
 
-        # Define a lat/long CRS (WGS84)
-        latlong_crs <- sf::st_crs(4326)
+   # }
 
-        # Create a bounding box polygon in UTM
-        bbox_polygon_utm <- sf::st_as_sfc(utm_bbox, crs = utm_crs)
+    if (!is.null(xlims) && !is.null(ylims)) {
+      xylims <- c(xlims[1], ylims[1], xlims[2], ylims[2])
+      names(xylims) <- c("xmin", "ymin", "xmax", "ymax")
+      latlong_extent <- sf::st_bbox(xylims)
+      latlong_extent <- sf::st_set_crs(latlong_extent, latlong_crs)
+    }
 
-        # Transform the bounding box to lat/long
-        bbox_latlong <- sf::st_transform(bbox_polygon_utm, crs = latlong_crs)
-        latlong_extent <- sf::st_bbox(bbox_latlong)
+    # Conditionally expand the lat/long bounding box
+    if (!crop_to_grid && is.null(xlims) && is.null(ylims)) {
+      expand_percent <- 0.1
+      lon_range <- latlong_extent["xmax"] - latlong_extent["xmin"]
+      lat_range <- latlong_extent["ymax"] - latlong_extent["ymin"]
+      expanded_latlong_bbox <- sf::st_bbox(c(
+        latlong_extent["xmin"] - (expand_percent * lon_range),
+        latlong_extent["ymin"] - (expand_percent * lat_range),
+        latlong_extent["xmax"] + (expand_percent * lon_range),
+        latlong_extent["ymax"] + (expand_percent * lat_range)
+      ), crs = latlong_crs)
 
-      }
+      latlongbbox_transformed <- sf::st_transform(sf::st_as_sfc(expanded_latlong_bbox),
+                                                  crs = "ESRI:54012")
+      # Crop the world map in lat/long to the expanded extent
+      surrounding_countries_latlong <- map_data_sf %>%
+        sf::st_make_valid() %>%
+        sf::st_transform(crs = "ESRI:54012") %>%
+        dplyr::group_by(scalerank, featurecla) %>%
+        dplyr::summarize(geometry = sf::st_crop(geometry, latlongbbox_transformed)) %>%
+        dplyr::filter(!sf::st_is_empty(geometry)) %>% # Filter out empty geometries
+        sf::st_make_valid() %>%
+        sf::st_transform(crs = sf::st_crs(expanded_latlong_bbox))
 
-      if (!is.null(xlims) && !is.null(ylims)) {
-        xylims <- c(xlims[1], ylims[1], xlims[2], ylims[2])
-        names(xylims) <- c("xmin", "ymin", "xmax", "ymax")
-        latlong_extent <- sf::st_bbox(xylims)
-        #names(latlong_extent) <- c("xmin", "ymin", "xmax", "ymax")
-        latlong_extent <- sf::st_set_crs(latlong_extent, latlong_crs)
-      }
+      layer_list <- list()
+      if(!is.null(layers)) {
+        for (i in 1:length(layers)) {
+          layer_data <- add_NE_layer(layers[i],
+                                     scale,
+                                     expanded_latlong_bbox)
+          # Project the layer
+          layer_data <- sf::st_transform(layer_data,
+                                         crs = x$projection)
 
-     # sf::sf_use_s2(FALSE)
-      # Conditionally expand the lat/long bounding box
-      if (!crop_to_grid && is.null(xlims) && is.null(ylims)) {
-        expand_percent <- 0.1
-        lon_range <- latlong_extent["xmax"] - latlong_extent["xmin"]
-        lat_range <- latlong_extent["ymax"] - latlong_extent["ymin"]
-        expanded_latlong_bbox <- sf::st_bbox(c(
-          latlong_extent["xmin"] - (expand_percent * lon_range),
-          latlong_extent["ymin"] - (expand_percent * lat_range),
-          latlong_extent["xmax"] + (expand_percent * lon_range),
-          latlong_extent["ymax"] + (expand_percent * lat_range)
-        ), crs = latlong_crs)
-
-        latlongbbox_transformed <- sf::st_transform(sf::st_as_sfc(expanded_latlong_bbox),
-                                                    crs = "+proj=eck4 +datum=WGS84")
-        # Crop the world map in lat/long to the expanded extent
-        surrounding_countries_latlong <- rnaturalearth::ne_countries(scale = scale,
-                                                                      returnclass = "sf") %>%
-          sf::st_as_sf() %>%
-          sf::st_make_valid() %>%
-          sf::st_transform(crs = "+proj=eck4 +datum=WGS84") %>%
-          dplyr::group_by(scalerank, featurecla) %>%
-          dplyr::summarize(geometry = sf::st_crop(geometry, latlongbbox_transformed)) %>%
-          dplyr::filter(!sf::st_is_empty(geometry)) %>% # Filter out empty geometries
-          sf::st_make_valid() %>%
-          sf::st_transform(crs = sf::st_crs(expanded_latlong_bbox))
-
-        layer_list <- list()
-        if(!is.null(layers)) {
-          for (i in 1:length(layers)) {
-            layer_data <- add_NE_layer(layers[i],
-                                       scale,
-                                       expanded_latlong_bbox)
-            # Project the layer
-            layer_data <- sf::st_transform(layer_data,
-                                           crs = x$projection)
-
-            if (!is.null(layer_data) && nrow(layer_data) > 0) {
-              layer_list[[i]] <- layer_data
-              names(layer_list)[[i]] <- layers[i]
-            }
+          if (!is.null(layer_data) && nrow(layer_data) > 0) {
+            layer_list[[i]] <- layer_data
+            names(layer_list)[[i]] <- layers[i]
           }
         }
-
-      } else {
-
-        # Project latlong extent for cropping
-        latlong_extent_transformed <- sf::st_transform(sf::st_as_sfc(latlong_extent),
-                                                    crs = "+proj=eck4 +datum=WGS84")
-
-        # Crop to the original extent if not expanding
-        surrounding_countries_latlong <- rnaturalearth::ne_countries(scale = scale,
-                                                                      returnclass = "sf") %>%
-          sf::st_as_sf() %>%
-          sf::st_make_valid() %>%
-          sf::st_transform(crs = "+proj=eck4 +datum=WGS84") %>%
-          dplyr::group_by(scalerank, featurecla) %>%
-          dplyr::summarize(geometry = sf::st_crop(geometry, latlong_extent_transformed)) %>%
-          dplyr::filter(!sf::st_is_empty(geometry)) %>% # Filter out empty geometries
-          sf::st_make_valid() %>%
-          sf::st_transform(crs = sf::st_crs(latlong_extent))
-
-        layer_list <- list()
-        if (!is.null(layers)) {
-          for (i in 1:length(layers)) {
-            layer_data <- add_NE_layer(layers[i],
-                                       scale,
-                                       latlong_extent)
-            # Project the layer
-            layer_data <- sf::st_transform(layer_data,
-                                           crs = x$projection)
-
-            if (!is.null(layer_data) && nrow(layer_data) > 0) {
-              layer_list[[i]] <- layer_data
-              names(layer_list)[[i]] <- layers[i]
-            }
-          }
-        }
-
       }
-
-     # sf::sf_use_s2(TRUE)
-
-      # Transform the cropped surrounding countries to the UTM CRS
-      surrounding_countries_utm <-
-        sf::st_transform(surrounding_countries_latlong, crs = utm_crs)
-
-      map_surround <- surrounding_countries_utm
 
     } else {
 
-      map_surround <- sf::st_transform(map_surround, crs = x$projection)
-      map_surround <- sf::st_make_valid(map_surround)
+      # Project latlong extent for cropping
+      latlong_extent_transformed <- sf::st_transform(sf::st_as_sfc(latlong_extent),
+                                                     crs = "ESRI:54012")
 
-      # If crop to grid is set to FALSE
-      if (!crop_to_grid && is.null(xlims) && is.null(ylims)) {
-        # Define percentage for expansion
-        expand_percent <- 0.1  # 10% expansion
+      # Crop to the original extent if not expanding
+      surrounding_countries_latlong <- map_data_sf %>%
+        sf::st_make_valid() %>%
+        sf::st_transform(crs = "+proj=eck4 +datum=WGS84") %>%
+        dplyr::group_by(scalerank, featurecla) %>%
+        dplyr::summarize(geometry = sf::st_crop(geometry, latlong_extent_transformed)) %>%
+        dplyr::filter(!sf::st_is_empty(geometry)) %>% # Filter out empty geometries
+        sf::st_make_valid() %>%
+        sf::st_transform(crs = sf::st_crs(latlong_extent))
 
-        # Calculate the amount to expand
-        x_range <- map_lims["xmax"] - map_lims["xmin"]
-        y_range <- map_lims["ymax"] - map_lims["ymin"]
+      layer_list <- list()
+      if (!is.null(layers)) {
+        for (i in 1:length(layers)) {
+          layer_data <- add_NE_layer(layers[i],
+                                     scale,
+                                     latlong_extent)
+          # Project the layer
+          layer_data <- sf::st_transform(layer_data,
+                                         crs = x$projection)
 
-        # Compute new expanded limits
-        expanded_lims <- sf::st_as_sfc(sf::st_bbox(c(
-          map_lims["xmin"] - (expand_percent * x_range),
-          map_lims["ymin"] - (expand_percent * y_range),
-          map_lims["xmax"] + (expand_percent * x_range),
-          map_lims["ymax"] + (expand_percent * y_range)
-        )))
-
-        # Get bounding box with expanded limits
-        bbox <- sf::st_as_sfc(sf::st_bbox(expanded_lims),
-                              crs = x$projection)
-
-        # Assign CRS
-        attributes(bbox)$crs <- sf::st_crs(map_surround)
-
-        bbox_lims <- sf::st_bbox(bbox)
-
-        layer_list <- list()
-        if (!is.null(layers)) {
-          for (i in 1:length(layers)) {
-            layer_data <- add_NE_layer(layers[i],
-                                       scale,
-                                       bbox_lims)
-
-            if (!is.null(layer_data) && nrow(layer_data) > 0) {
-              layer_list[[i]] <- layer_data
-              names(layer_list)[[i]] <- layers[i]
-            }
+          if (!is.null(layer_data) && nrow(layer_data) > 0) {
+            layer_list[[i]] <- layer_data
+            names(layer_list)[[i]] <- layers[i]
           }
         }
+      }
+    }
 
-      } else {
+    # Transform the cropped surrounding countries to the UTM CRS
+    surrounding_countries_utm <-
+      sf::st_transform(surrounding_countries_latlong, crs = utm_crs)
 
-        # If crop to grid is TRUE get bounding box with map limits
-        bbox <- sf::st_as_sfc(sf::st_bbox(map_lims),
-                              crs = x$projection)
+    map_surround <- surrounding_countries_utm
 
-        attributes(bbox)$crs <- sf::st_crs(map_surround)
+  } else {
 
-        bbox_lims <- sf::st_bbox(bbox)
+    map_surround <- sf::st_transform(map_surround, crs = x$projection)
+    map_surround <- sf::st_make_valid(map_surround)
 
-        layer_list <- list()
-        if (!is.null(layers)) {
-          for (i in 1:length(layers)) {
-            layer_data <- add_NE_layer(layers[i],
-                                       scale,
-                                       bbox_lims)
+    # If crop to grid is set to FALSE
+    if (!crop_to_grid && is.null(xlims) && is.null(ylims)) {
+      # Define percentage for expansion
+      expand_percent <- 0.1  # 10% expansion
 
-            if (!is.null(layer_data) && nrow(layer_data) > 0) {
-              layer_list[[i]] <- layer_data
-              names(layer_list)[[i]] <- layers[i]
-            }
+      # Calculate the amount to expand
+      x_range <- map_lims["xmax"] - map_lims["xmin"]
+      y_range <- map_lims["ymax"] - map_lims["ymin"]
+
+      # Compute new expanded limits
+      expanded_lims <- sf::st_as_sfc(sf::st_bbox(c(
+        map_lims["xmin"] - (expand_percent * x_range),
+        map_lims["ymin"] - (expand_percent * y_range),
+        map_lims["xmax"] + (expand_percent * x_range),
+        map_lims["ymax"] + (expand_percent * y_range)
+      )))
+
+      # Get bounding box with expanded limits
+      bbox <- sf::st_as_sfc(sf::st_bbox(expanded_lims))
+
+      # Assign CRS
+      bbox <- sf::st_set_crs(bbox, sf::st_crs(map_surround))
+
+      bbox_lims <- sf::st_bbox(bbox)
+
+      layer_list <- list()
+      if (!is.null(layers)) {
+        for (i in 1:length(layers)) {
+          layer_data <- add_NE_layer(layers[i],
+                                     scale,
+                                     bbox_lims)
+
+          if (!is.null(layer_data) && nrow(layer_data) > 0) {
+            layer_list[[i]] <- layer_data
+            names(layer_list)[[i]] <- layers[i]
           }
         }
-
       }
 
-      sf::st_agr(map_surround) = "constant"
+    } else {
 
-      map_surround <- sf::st_transform(map_surround, crs = "+proj=eck4 +datum=WGS84")
-      bbox_t <- sf::st_transform(bbox, crs = "+proj=eck4 +datum=WGS84")
-      map_surround <- sf::st_intersection(map_surround, bbox_t)
-      map_surround <- sf::st_transform(map_surround, crs = x$projection)
+      # If crop to grid is TRUE get bounding box with map limits
+      bbox <- sf::st_as_sfc(sf::st_bbox(map_lims),
+                            crs = x$projection)
 
-    }
+      attributes(bbox)$crs <- sf::st_crs(map_surround)
 
-    diversity_plot <- ggplot2::ggplot(x$data)
+      bbox_lims <- sf::st_bbox(bbox)
 
+      layer_list <- list()
+      if (!is.null(layers)) {
+        for (i in 1:length(layers)) {
+          layer_data <- add_NE_layer(layers[i],
+                                     scale,
+                                     bbox_lims)
 
-    # # Plot map_surround as layer
-    # diversity_plot$layers <- c(
-    #   ggplot2::geom_sf(
-    #     data = map_surround,
-    #     fill = land_fill_colour,
-    #     colour = "black",
-    #     aes(geometry = geometry),
-    #     inherit.aes = FALSE
-    #   )[[1]],
-    #   diversity_plot$layers
-    # )
-
-    diversity_plot <- diversity_plot +
-      ggplot2::geom_sf(
-        data = map_surround,
-        fill = land_fill_colour,
-        colour = "black",
-        aes(geometry = geometry),
-        inherit.aes = FALSE
-      )
-
-
-    for (i in names(layer_list)) {
-      layer_data <- layer_list[[i]]
-      if (i == "ocean" || i == "lakes") {
-        fill_colour <- "#92c5f0"
-      } else {
-        fill_colour <- "transparent"
-      }
-      diversity_plot <- diversity_plot +
-        ggplot2::geom_sf(data = layer_data,
-                         aes(geometry = geometry),
-                         fill = fill_colour,
-                         colour = "black",
-                         inherit.aes = FALSE)
-    }
-
-    # Plot map
-    diversity_plot <- diversity_plot +
-      geom_sf(aes(fill = diversity_val,
-                  geometry = geometry),
-              colour = "transparent") +
-      cust_leg(list(trans = trans,
-                    breaks = breaks,
-                    labels = labels,
-                    limits = legend_limits)) +
-      theme_bw() +
-      theme(
-        panel.background = element_rect(fill = if(!is.null(panel_bg)) panel_bg
-                                        else "#92c5f0"),
-        if(x$map_level == "country") {
-          panel.grid.major = element_blank()
-          panel.grid.minor = element_blank()
+          if (!is.null(layer_data) && nrow(layer_data) > 0) {
+            layer_list[[i]] <- layer_data
+            names(layer_list)[[i]] <- layers[i]
+          }
         }
-      ) +
-      # Wrap legend title if longer than user-specified wrap length
-      labs(fill = if(!is.null(legend_title)) wrapper(legend_title,
-                                                     legend_title_wrap_length)
-           else wrapper(leg_label_default,
-                        legend_title_wrap_length))
+      }
 
-    for (i in names(layer_list)) {
-      layer_data <- layer_list[[i]]
-      diversity_plot <- diversity_plot +
-        ggplot2::geom_sf(data = layer_data,
-                         aes(geometry = geometry),
-                         fill = "transparent",
-                         colour = "black",
-                         inherit.aes = FALSE)
     }
 
-    if (visible_gridlines == TRUE) {
-      # plot gridlines
-      diversity_plot$layers <- c(
-        diversity_plot$layers,
-        ggplot2::geom_sf(aes(geometry = geometry),
-                         colour = "black",
-                         linewidth = 0.1,
-                         fill = "transparent"
-        )[[1]]
-      )
-    }
+    sf::st_agr(map_surround) = "constant"
 
+    map_surround <- sf::st_transform(map_surround, crs = "ESRI:54012")
+    bbox_t <- sf::st_transform(bbox, crs = "ESRI:54012")
+    map_surround <- sf::st_intersection(map_surround, bbox_t)
+    map_surround <- sf::st_transform(map_surround, crs = x$projection)
+
+  }
+
+  diversity_plot <- ggplot2::ggplot(x$data)
+
+  diversity_plot <- diversity_plot +
+    ggplot2::geom_sf(
+      data = map_surround,
+      fill = land_fill_colour,
+      colour = "black",
+      aes(geometry = geometry),
+      inherit.aes = FALSE
+    )
+
+  for (i in names(layer_list)) {
+    layer_data <- layer_list[[i]]
+    if (i %in% c("ocean", "lakes")) {
+      fill_colour <- "#92c5f0"
+    } else {
+      fill_colour <- "transparent"
+    }
     diversity_plot <- diversity_plot +
-      coord_sf(
-        crs = x$projection,
-        xlim = c(map_lims["xmin"],
-                 map_lims["xmax"]),
-        ylim = c(map_lims["ymin"],
-                 map_lims["ymax"]),
-        if(crop_to_grid == TRUE) {
-          expand = FALSE
-        } else {
-          expand = TRUE
-        })
+      ggplot2::geom_sf(data = layer_data,
+                       aes(geometry = geometry),
+                       fill = fill_colour,
+                       colour = "black",
+                       inherit.aes = FALSE)
+  }
+
+  # Plot map
+  diversity_plot <- diversity_plot +
+    geom_sf(aes(fill = diversity_val,
+                geometry = geometry),
+            colour = "transparent") +
+    cust_leg(list(trans = trans,
+                  breaks = breaks,
+                  labels = labels,
+                  limits = legend_limits)) +
+    theme_bw() +
+    theme(
+      panel.background = element_rect(fill = dplyr::coalesce(panel_bg,
+                                                             "#92c5f0")),
+      if(x$map_level == "country") {
+        panel.grid.major = element_blank()
+        panel.grid.minor = element_blank()
+      }
+    ) +
+    # Wrap legend title if longer than user-specified wrap length
+    labs(fill = if(!is.null(legend_title)) wrapper(legend_title,
+                                                   legend_title_wrap_length)
+         else wrapper(leg_label_default,
+                      legend_title_wrap_length))
+
+  for (i in names(layer_list)) {
+    layer_data <- layer_list[[i]]
+    diversity_plot <- diversity_plot +
+      ggplot2::geom_sf(data = layer_data,
+                       aes(geometry = geometry),
+                       fill = "transparent",
+                       colour = "black",
+                       inherit.aes = FALSE)
+  }
+
+  if (visible_gridlines == TRUE) {
+    # plot gridlines
+    diversity_plot$layers <- c(
+      diversity_plot$layers,
+      ggplot2::geom_sf(aes(geometry = geometry),
+                       colour = "black",
+                       linewidth = 0.1,
+                       fill = "transparent"
+      )[[1]]
+    )
+  }
+
+  # set expand_val to expand the plot if crop_to_grid is not set
+  expand_val <- if (crop_to_grid) FALSE else TRUE
+
+  diversity_plot <- diversity_plot +
+    coord_sf(
+      crs = x$projection,
+      xlim = c(map_lims["xmin"],
+               map_lims["xmax"]),
+      ylim = c(map_lims["ymin"],
+               map_lims["ymax"]),
+      expand = expand_val)
 
   # Wrap title if longer than user-specified wrap length
   if(!is.null(title)) {
@@ -1498,10 +1446,10 @@ plot_ts <- function(x,
 
   # Wrap title if longer than wrap_length
   if(!is.null(title)) {
-    wrapper <- function(x, ...)
-    {
-      paste(strwrap(x, ...), collapse = "\n")
-    }
+    # wrapper <- function(x, ...)
+    # {
+    #   paste(strwrap(x, ...), collapse = "\n")
+    # }
     trend_plot <-
       trend_plot +
       labs(title = wrapper(title, wrap_length))
@@ -2048,9 +1996,10 @@ plot_species_map <- function(x,
 
   # Get world data to plot surrounding land if surround flag is set
   if (surround == TRUE) {
-    map_surround <- rnaturalearth::ne_countries(scale = "medium",
+    map_data_sf <- rnaturalearth::ne_countries(scale = "medium",
                                                 returnclass = "sf") %>%
-      sf::st_as_sf() %>%
+      sf::st_as_sf()
+    map_surround <- map_data_sf %>%
       sf::st_transform(crs = x$projection) %>%
       sf::st_make_valid()
 
@@ -2061,10 +2010,10 @@ plot_species_map <- function(x,
   }
 
   # Define function to wrap title and legend title if too long
-  wrapper <- function(x, ...)
-  {
-    paste(strwrap(x, ...), collapse = "\n")
-  }
+  # wrapper <- function(x, ...)
+  # {
+  #   paste(strwrap(x, ...), collapse = "\n")
+  # }
 
   # Get plot title (if set to "auto")
   if (!is.null(title)) {
@@ -2173,8 +2122,8 @@ plot_species_map <- function(x,
     } else {
 
       # If crop to grid is TRUE get bounding box with map limits
-      bbox <- sf::st_as_sfc(sf::st_bbox(map_lims))
-      sf::st_crs(bbox) <- sf::st_crs(x$projection)
+      bbox <- sf::st_as_sfc(sf::st_bbox(map_lims), crs = x$projection)
+     # sf::st_crs(bbox) <- sf::st_crs(x$projection)
 
     }
 
