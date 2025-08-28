@@ -319,9 +319,9 @@ create_grid <- function(bbox,
 #' @param invert Calculate an indicator over the inverse of the shapefile (e.g.
 #'  if you have a protected areas shapefile this would calculate an indicator over
 #'  all non protected areas)
-#' @param include_ocean Include rnaturalearth ocean layer.
+#' @param include_ocean Include occurrences which fall outside the land area.
 #'  Default is TRUE. Set as "buffered_coast" to include a set buffer size around
-#'  the land area.
+#'  the land area rather than the entire ocean area.
 #' @param buffer_dist_km The distance to buffer around the land if include_ocean
 #'  is set to "buffered_coast".
 #' @param ... Additional arguments passed to specific indicator calculation functions.
@@ -901,8 +901,6 @@ compute_indicator_workflow <- function(data,
 
   # Create indicator object
   if (dim_type == "map") {
-    # Set layers for plotting
-    layers <- "admin_0_countries"
 
     if (data$grid_type != "eqdgc") {
       cell_size <- cell_size / 1000
@@ -921,9 +919,7 @@ compute_indicator_workflow <- function(data,
                                        last_year = last_year,
                                        num_years = num_years,
                                        species_names = species_names,
-                                       years_with_obs = years_with_obs,
-                                     #  map_lims = map_lims,
-                                       map_layers = layers)
+                                       years_with_obs = years_with_obs)
   } else {
     # Build indicator_ts object
     diversity_obj <- new_indicator_ts(dplyr::as_tibble(indicator),
