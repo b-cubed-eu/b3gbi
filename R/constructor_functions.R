@@ -209,9 +209,7 @@ new_indicator_map <- function(x,
                           last_year,
                           num_years,
                           species_names,
-                          years_with_obs,
-                         # map_lims = NULL,
-                          map_layers) {
+                          years_with_obs) {
   # check that x is both a data frame and sf object
   # and all necessary columns are present
   stopifnot(inherits(x, c("sf", "data.frame")),
@@ -238,8 +236,6 @@ new_indicator_map <- function(x,
                  num_families = num_families,
                  species_names = species_names,
                  years_with_obs = years_with_obs,
-               #  map_lims = map_lims,
-                 map_layers = map_layers,
                  data = x),
             class = c("indicator_map", div_type),
             indicator_id = id,
