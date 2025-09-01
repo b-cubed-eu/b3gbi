@@ -162,6 +162,11 @@ get_NE_data <- function(latlong_bbox = NULL,
       # Validate oceans
       map_data_ocean <- sf::st_make_valid(map_data_ocean)
 
+      # Remove empty geometries
+      map_data_projected <- map_data_projected %>%
+        dplyr::filter(!is.na(sf::st_geometry(.))) %>%
+        dplyr::filter(!sf::st_is_empty(.))
+
       # Check if the land data is empty before performing the union
       if (nrow(map_data_projected) == 0) {
         # If there's no land in the bounding box, return just the ocean layer
