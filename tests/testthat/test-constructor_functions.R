@@ -155,8 +155,7 @@ test_that("new_indicator_map creates indicator_map object correctly", {
     last_year = 2010,
     num_years = 11,
     species_names = NULL,
-    years_with_obs = 11,
-    map_layers = NULL
+    years_with_obs = 11
   )
   expect_s3_class(im, c("indicator_map", "obs_richness"))
   expect_equal(im$div_type, "obs_richness")
