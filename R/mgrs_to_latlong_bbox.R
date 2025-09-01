@@ -10,7 +10,7 @@
 #' @export
 mgrs_to_latlong_bbox <- function(df) {
 
-  hemisphere <- utmzone <- NULL
+  hemisphere <- utm_zone <- NULL
 
   # Check if the specified columns exist
   if (!"xcoord" %in% names(df) || !"ycoord" %in% names(df)) {
