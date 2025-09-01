@@ -1350,7 +1350,7 @@ plot_ts <- function(x,
 
   # Create basis of plot
   trend_plot <-
-    ggplot2::ggplot(x$data, aes(x = as.factor(year),
+    ggplot2::ggplot(x$data, aes(x = year,
                                 y = diversity_val))
 
   # Add smooth trends (LOESS) if specified
@@ -1421,7 +1421,7 @@ plot_ts <- function(x,
   }
 
   trend_plot <- trend_plot +
-    scale_x_discrete(breaks = breaks_pretty_int(n = x_breaks),
+    scale_x_continuous(breaks = breaks_pretty_int(n = x_breaks),
                        expand = expansion(mult = x_expand)) +
     scale_y_continuous(breaks = breaks_pretty_int(n = y_breaks),
                        expand = expansion(mult = y_expand)) +
@@ -1441,7 +1441,9 @@ plot_ts <- function(x,
           } else {
             element_text()
           },
-          strip.text = element_text(face = "italic")
+          strip.text = element_text(face = "italic"),
+          plot.background = element_rect(fill = "white", color = NA),
+          panel.background = element_rect(fill = "white", color = NA)
     )
 
   # Wrap title if longer than wrap_length
