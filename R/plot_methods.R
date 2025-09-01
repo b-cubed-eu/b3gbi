@@ -2124,7 +2124,8 @@ plot_species_map <- function(x,
     } else {
 
       # If crop to grid is TRUE get bounding box with map limits
-      bbox <- sf::st_as_sfc(sf::st_bbox(map_lims), crs = x$projection)
+      bbox <- sf::st_as_sfc(sf::st_bbox(map_lims))
+      bbox <- sf::st_set_crs(bbox, sf::st_crs(x$projection))
      # sf::st_crs(bbox) <- sf::st_crs(x$projection)
 
     }
