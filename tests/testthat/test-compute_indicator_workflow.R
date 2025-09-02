@@ -371,7 +371,7 @@ test_that(
       data = mock_cube,
       type = "obs_richness",
       dim_type = "map",
-      include_ocean = FALSE
+      include_ocean = TRUE
     )
     expect_equal(names(result_map$data), c("cellid",
                                            "area",
