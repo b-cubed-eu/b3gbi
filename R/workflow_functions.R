@@ -175,9 +175,12 @@ get_NE_data <- function(latlong_bbox = NULL,
         # Otherwise, perform the union as normal
         #map_data_projected <- sf::st_union(map_data_projected, map_data_ocean)
         map_data_ocean_ <- sf::st_as_sf(map_data_ocean)
+        map_data_projected <- dplyr::bind_rows(map_data_projected,
+                                               map_data_ocean_)
         map_data_projected <- map_data_projected %>%
           dplyr::group_by() %>%
-          dplyr::summarize(geometry = sf::st_union(map_data_ocean_))
+          dplyr::reframe(geometry = sf::st_union(geometry)) %>%
+          dplyr::ungroup()
 
       }
 
