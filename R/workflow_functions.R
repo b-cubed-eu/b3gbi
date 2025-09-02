@@ -160,13 +160,13 @@ get_NE_data <- function(latlong_bbox = NULL,
                                           map_data_projected)
 
       # Validate oceans
-      map_data_ocean <- sanitize_geometries(map_data_ocean)
       map_data_ocean <- map_data_ocean %>%
+        sanitize_geometries() %>%
         sf::st_make_valid()
 
       # Remove empty geometries
-      map_data_projected <- sanitize_geometries(map_data_projected)
       map_data_projected <- map_data_projected %>%
+        santize_geometries() %>%
         sf::st_make_valid() %>%
         dplyr::filter(!is.na(sf::st_geometry(.))) %>%
         dplyr::filter(!sf::st_is_empty(.))
