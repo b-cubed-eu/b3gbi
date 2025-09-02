@@ -164,6 +164,7 @@ get_NE_data <- function(latlong_bbox = NULL,
 
       # Remove empty geometries
       map_data_projected <- map_data_projected %>%
+        sf::st_cast("MULTIPOLYGON") %>%
         dplyr::filter(!is.na(sf::st_geometry(.))) %>%
         dplyr::filter(!sf::st_is_empty(.))
 
@@ -179,8 +180,9 @@ get_NE_data <- function(latlong_bbox = NULL,
                                                map_data_ocean_)
         map_data_projected <- map_data_projected %>%
           dplyr::group_by() %>%
-          dplyr::reframe(geometry = sf::st_union(geometry)) %>%
-          dplyr::ungroup()
+          dplyr::reframe(geometry = sf::st_union(x)) %>%
+          dplyr::ungroup() %>%
+          sf::st_as_sf()
 
       }
 
