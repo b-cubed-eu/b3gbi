@@ -7,7 +7,7 @@ test_that("get_NE_data retrieves map data correctly", {
                             ne_type = "countries",
                             ne_scale = "medium")
   expect_s3_class(france_map, "sf")
-  expect_equal(sf::st_crs(france_map), sf::st_crs("ESRI:54012"))
+  expect_equal(sf::st_crs(france_map), sf::st_crs("EPSG:3857"))
 
   # Test continent level
   africa_map <- get_NE_data(latlong_bbox = NULL,
@@ -17,7 +17,7 @@ test_that("get_NE_data retrieves map data correctly", {
                             ne_type = "countries",
                             ne_scale = "medium")
   expect_s3_class(africa_map, "sf")
-  expect_equal(sf::st_crs(africa_map), sf::st_crs("ESRI:54012"))
+  expect_equal(sf::st_crs(africa_map), sf::st_crs("EPSG:3857"))
 
   # Test world level
   world_map <- get_NE_data(latlong_bbox = NULL,
@@ -27,7 +27,7 @@ test_that("get_NE_data retrieves map data correctly", {
                            ne_type = "countries",
                            ne_scale = "medium")
   expect_s3_class(world_map, "sf")
-  expect_equal(sf::st_crs(world_map), sf::st_crs("ESRI:54012"))
+  expect_equal(sf::st_crs(world_map), sf::st_crs("EPSG:3857"))
 
   # # Test cube level (default)
   # mock_data <- data.frame(resolution = c("10km", "10km"),
