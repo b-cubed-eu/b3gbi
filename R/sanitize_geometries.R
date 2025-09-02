@@ -1,0 +1,29 @@
+#' @noRd
+sanitize_geometries <- function(sf_object) {
+
+  geom_type <- sf::st_geometry_type(sf_object)
+
+  if (geom_type == "POINT" | geom_type == "MULTIPOINT") {
+    # Cast to POLYGON by first creating a small buffer around the point(s)
+    # The buffer distance (e.g., 0.01) depends on your CRS and scale
+    sf_object <- sf_object %>%
+      sf::st_buffer(dist = 0.01)
+
+  } else if (geom_type == "LINESTRING" | geom_type == "MULTILINESTRING") {
+    # Cast to POLYGON by closing the line(s)
+    sf_object <- sf_object %>%
+      sf::st_cast("POLYGON")
+
+  } else if (geom_type == "GEOMETRYCOLLECTION") {
+    # Cast to MULTIPOLYGON to extract polygons from the collection
+    sf_object <- sf_object %>%
+      sf::st_cast("MULTIPOLYGON")
+  }
+
+  # Ensure the final output is a MULTIPOLYGON for consistency
+  if (sf::st_geometry_type(sf_object) != "MULTIPOLYGON") {
+    sf_object <- sf_object %>% sf::st_cast("MULTIPOLYGON")
+  }
+
+  return(sf_object)
+}
