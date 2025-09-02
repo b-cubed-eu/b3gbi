@@ -384,7 +384,8 @@ test_that(
       data = mock_cube,
       type = "total_occ",
       dim_type = "ts",
-      ci_type = "none"
+      ci_type = "none",
+      include_ocean = FALSE
     )
     expect_equal(names(result_ts$data), c("year", "diversity_val"))
 
@@ -393,7 +394,8 @@ test_that(
       data = mock_cube,
       type = "total_occ",
       dim_type = "ts",
-      ci_type = "norm"
+      ci_type = "norm",
+      include_ocean = FALSE
     )
     expect_true(
       all(
