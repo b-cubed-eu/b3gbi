@@ -43,7 +43,7 @@ get_NE_data <- function(latlong_bbox = NULL,
                         buffer_dist_km = NULL
                         ) {
 
-  scalerank <- featurecla <- geometry <- . <- NULL
+  scalerank <- featurecla <- geometry <- x <- . <- NULL
 
   if (ne_scale == "large" && ne_type == "tiny_countries") {
     stop("tiny_countries are only available for medium (50 km) or small (110 km)
