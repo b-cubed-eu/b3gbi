@@ -173,12 +173,12 @@ get_NE_data <- function(latlong_bbox = NULL,
         return(map_data_ocean)
       } else {
         # Otherwise, perform the union as normal
-        map_data_unified <- sf::st_union(map_data_projected, map_data_ocean)
+        map_data_projected <- sf::st_union(map_data_projected, map_data_ocean)
         return(map_data_unified)
       }
 
       # Merge the land with the oceans
-      map_data_projected <- sf::st_union(map_data_projected, map_data_ocean)
+    #  map_data_projected <- sf::st_union(map_data_projected, map_data_ocean)
 
     } else if (is.character(include_ocean) &&
                include_ocean == "buffered_coast") {
