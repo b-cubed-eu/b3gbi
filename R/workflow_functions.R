@@ -160,11 +160,16 @@ get_NE_data <- function(latlong_bbox = NULL,
                                           map_data_projected)
 
       # Validate oceans
-      map_data_ocean <- sf::st_make_valid(map_data_ocean)
+      map_data_ocean <- sanitize_geometries(map_data_ocean)
+      map_data_ocean <- map_data_ocean %>%
+        sf::st_cast("MULTIPOLYGON") %>%
+        sf::st_make_valid()
 
       # Remove empty geometries
+      map_data_projected <- sanitize_geometries(map_data_projected)
       map_data_projected <- map_data_projected %>%
         sf::st_cast("MULTIPOLYGON") %>%
+        sf::st_make_valid() %>%
         dplyr::filter(!is.na(sf::st_geometry(.))) %>%
         dplyr::filter(!sf::st_is_empty(.))
 
@@ -176,7 +181,7 @@ get_NE_data <- function(latlong_bbox = NULL,
         # Otherwise, perform the union as normal
         #map_data_projected <- sf::st_union(map_data_projected, map_data_ocean)
         map_data_ocean_ <- sf::st_as_sf(map_data_ocean)
-        map_data_projected <- dplyr::bind_rows(map_data_projected,
+        map_data_projected <- bind_rows(map_data_projected,
                                                map_data_ocean_)
         map_data_projected <- map_data_projected %>%
           dplyr::group_by() %>%
