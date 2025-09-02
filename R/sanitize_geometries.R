@@ -1,6 +1,12 @@
 #' @noRd
 sanitize_geometries <- function(sf_object) {
 
+  # Handle empty sf objects
+  if (nrow(sf_object) == 0) {
+    return(sf_object)
+  }
+
+  # Determine geometry type
   geom_type <- sf::st_geometry_type(sf_object)
 
   if (geom_type == "POINT" | geom_type == "MULTIPOINT") {
