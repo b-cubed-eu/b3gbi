@@ -173,7 +173,12 @@ get_NE_data <- function(latlong_bbox = NULL,
         map_data_projected <- map_data_ocean
       } else {
         # Otherwise, perform the union as normal
-        map_data_projected <- sf::st_union(map_data_projected, map_data_ocean)
+        #map_data_projected <- sf::st_union(map_data_projected, map_data_ocean)
+        map_data_ocean_ <- sf::st_as_sf(map_data_ocean)
+        map_data_projected <- map_data_projected %>%
+          dplyr::group_by() %>%
+          dplyr::summarize(geometry = sf::st_union(map_data_ocean_))
+
       }
 
       # Merge the land with the oceans
