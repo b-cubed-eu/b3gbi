@@ -166,7 +166,7 @@ get_NE_data <- function(latlong_bbox = NULL,
 
       # Remove empty geometries
       map_data_projected <- map_data_projected %>%
-        santize_geometries() %>%
+        sanitize_geometries() %>%
         sf::st_make_valid() %>%
         dplyr::filter(!is.na(sf::st_geometry(.))) %>%
         dplyr::filter(!sf::st_is_empty(.))
