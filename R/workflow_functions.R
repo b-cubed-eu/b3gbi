@@ -170,11 +170,10 @@ get_NE_data <- function(latlong_bbox = NULL,
       # Check if the land data is empty before performing the union
       if (nrow(map_data_projected) == 0) {
         # If there's no land in the bounding box, return just the ocean layer
-        return(map_data_ocean)
+        map_data_projected <- map_data_ocean
       } else {
         # Otherwise, perform the union as normal
         map_data_projected <- sf::st_union(map_data_projected, map_data_ocean)
-        return(map_data_unified)
       }
 
       # Merge the land with the oceans
