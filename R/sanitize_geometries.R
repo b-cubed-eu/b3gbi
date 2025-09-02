@@ -1,6 +1,16 @@
 #' @noRd
 sanitize_geometries <- function(sf_object) {
 
+  # Check for null object
+  if (is.null(sf_object)) {
+    return(sf_object)
+  }
+
+  # Check if object is sf and if not (e.g. sfc) convert to sf
+  if (!inherits(sf_object, "sf")) {
+    sf_object <- sf::st_as_sf(sf_object)
+  }
+
   # Handle empty sf objects
   if (nrow(sf_object) == 0) {
     return(sf_object)
