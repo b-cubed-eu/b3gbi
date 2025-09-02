@@ -162,13 +162,11 @@ get_NE_data <- function(latlong_bbox = NULL,
       # Validate oceans
       map_data_ocean <- sanitize_geometries(map_data_ocean)
       map_data_ocean <- map_data_ocean %>%
-        sf::st_cast("MULTIPOLYGON") %>%
         sf::st_make_valid()
 
       # Remove empty geometries
       map_data_projected <- sanitize_geometries(map_data_projected)
       map_data_projected <- map_data_projected %>%
-        sf::st_cast("MULTIPOLYGON") %>%
         sf::st_make_valid() %>%
         dplyr::filter(!is.na(sf::st_geometry(.))) %>%
         dplyr::filter(!sf::st_is_empty(.))
