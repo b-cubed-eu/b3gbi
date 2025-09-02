@@ -370,8 +370,7 @@ test_that(
     result_map <- compute_indicator_workflow(
       data = mock_cube,
       type = "obs_richness",
-      dim_type = "map",
-      include_ocean = TRUE
+      dim_type = "map"
     )
     expect_equal(names(result_map$data), c("cellid",
                                            "area",
@@ -384,8 +383,7 @@ test_that(
       data = mock_cube,
       type = "total_occ",
       dim_type = "ts",
-      ci_type = "none",
-      include_ocean = FALSE
+      ci_type = "none"
     )
     expect_equal(names(result_ts$data), c("year", "diversity_val"))
 
@@ -394,8 +392,7 @@ test_that(
       data = mock_cube,
       type = "total_occ",
       dim_type = "ts",
-      ci_type = "norm",
-      include_ocean = FALSE
+      ci_type = "norm"
     )
     expect_true(
       all(
