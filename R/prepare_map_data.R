@@ -1,3 +1,4 @@
+#' @noRd
 prepare_map_data <- function(data,
                              projection,
                              map_lims,
@@ -7,6 +8,9 @@ prepare_map_data <- function(data,
                              layers,
                              scale,
                              crop_to_grid) {
+
+  # Set variables to NULL
+  scalerank <- featurecla <- geometry <- . <- NULL
 
   map_surround <- map_data_sf %>%
     sf::st_transform(crs = projection) %>%
