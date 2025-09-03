@@ -79,15 +79,16 @@ add_NE_layer <- function(layer_name, scale, extent_projected) {
     layer_raw %>%
       sf::st_transform(crs = "ESRI:54012") %>%
       dplyr::group_by(scalerank, featurecla) %>%
-      dplyr::reframe(geometry = sf::st_crop(geometry, extent_projected))# %>%
+      dplyr::reframe(geometry = sf::st_crop(geometry, extent_projected)) %>%
+      sf::st_as_sf()
     #  sf::st_transform(crs = sf::st_crs(latlong_extent))
   }, error = function(e) {
     layer_raw %>%
-      sf::st_as_sf() %>%
       sf::st_make_valid() %>%
       sf::st_transform(crs = "ESRI:54012") %>%
       dplyr::group_by(scalerank, featurecla) %>%
-      dplyr::reframe(geometry = sf::st_crop(geometry, extent_projected))# %>%
+      dplyr::reframe(geometry = sf::st_crop(geometry, extent_projected)) %>%
+      sf::st_as_sf()
      # sf::st_transform(crs = sf::st_crs(latlong_extent))
   })
 
