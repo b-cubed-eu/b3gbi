@@ -73,25 +73,12 @@ test_that("plot_map handles breaks and labels", {
   expect_equal(p$scales$scales[[1]]$labels, labels_test)
 })
 
-test_that("plot_map handles Europe_crop_EEA", {
-  data(example_indicator_map1)
-  p <- suppressWarnings(plot_map(example_indicator_map1, Europe_crop_EEA = TRUE))
-  expect_s3_class(p, "ggplot")
-})
-
 test_that("plot_map handles crop_to_grid", {
   data(example_indicator_map1)
   p <- suppressWarnings(plot_map(example_indicator_map1, crop_to_grid = TRUE))
   p <- suppressWarnings(plot_map(example_indicator_map1, crop_to_grid = FALSE))
   expect_s3_class(p, "ggplot")
 })
-
-# This option has been removed for now
-# test_that("plot_map handles surround", {
-#   data(example_indicator_map1)
-#   p <- suppressWarnings(plot_map(example_indicator_map1, surround = TRUE))
-#   expect_s3_class(p, "ggplot")
-# })
 
 test_that("plot_map handles panel_bg and land_fill_colour", {
   data(example_indicator_map1)
@@ -123,15 +110,15 @@ test_that("plot_map with all parameters set", {
                                  bcpower = 0.5,
                                  breaks = c(1, 2, 3),
                                  labels = c("One", "Two", "Three"),
-                                 Europe_crop_EEA = FALSE,
                                  crop_to_grid = TRUE,
-                                 #  surround = FALSE,
                                  panel_bg = "green",
                                  land_fill_colour = "yellow",
                                  legend_title = "Legend Title",
                                  legend_limits = c(1, 10),
                                  legend_title_wrap_length = 15,
-                                 title_wrap_length = 40))
+                                 title_wrap_length = 40,
+                                 layers = NULL,
+                                 scale = "medium"))
   expect_s3_class(p, "ggplot")
   expect_equal(p$labels$title, "Full Test")
 })
@@ -194,22 +181,20 @@ test_that("plot_map handles all parameters without error", {
     bcpower = 0.5,
     breaks = c(1, 2, 3),
     labels = c("Low", "Medium", "High"),
-    Europe_crop_EEA = FALSE,
     crop_to_grid = TRUE,
-    # surround = FALSE,
     panel_bg = "white",
     land_fill_colour = "grey90",
     legend_title = "Legend Title",
     legend_limits = c(1, 5),
     legend_title_wrap_length = 15,
-    title_wrap_length = 25
+    title_wrap_length = 25,
+    layers = NULL,
+    scale = "medium"
   ))
 
   # Check that the resulting plot is a ggplot object
   expect_s3_class(p, "ggplot")
 })
-
-
 
 spec_occ_mammals_denmark <- spec_occ_map(example_cube_1,
                                          level = "country",
@@ -275,16 +260,14 @@ test_that("plot_species_map accommodates geographic limits", {
   )
 
   # Check custom limits using plot data
-  expect_equal(p$coordinates$limits$x, c(13, 15))
-  expect_equal(p$coordinates$limits$y, c(56, 57))
+  expect_equal(unname(p$coordinates$limits$x), c(13, 15))
+  expect_equal(unname(p$coordinates$limits$y), c(56, 57))
 })
 
 test_that("plot_species_map responds to geographic and contextual parameters", {
   p1 <- plot_species_map(
     x = spec_occ_mammals_denmark,
-    species = c(2440728),
-    Europe_crop_EEA = TRUE,
-    surround = FALSE
+    species = c(2440728)
   )
 
   expect_s3_class(p1, "ggplot")
@@ -328,16 +311,16 @@ test_that("plot_species_map handles all parameters without error", {
     bcpower = 0.5,
     breaks = c(1, 2, 3),
     labels = c("Low", "Medium", "High"),
-    Europe_crop_EEA = FALSE,
     crop_to_grid = TRUE,
-    surround = FALSE,
     single_plot = TRUE,
     panel_bg = "white",
     land_fill_colour = "grey90",
     legend_title = "Legend Title",
     legend_limits = c(1, 5),
     legend_title_wrap_length = 15,
-    title_wrap_length = 25
+    title_wrap_length = 25,
+    layers = NULL,
+    scale = "medium"
   )
 
   # Check that the resulting plot is a ggplot object or patchwork
