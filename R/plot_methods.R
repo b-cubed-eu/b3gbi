@@ -714,9 +714,6 @@ plot.occ_turnover <- function(x,
 #'   Yeo-Johnson transformations.
 #' @param breaks (Optional) Break points for the legend scale.
 #' @param labels (Optional) Labels for legend scale break points.
-#' @param Europe_crop_EEA If TRUE, crops maps of Europe using the EPSG:3035 CRS
-#'    to exclude far-lying islands (default is TRUE, but does not affect other maps
-#'    or projections). Will not work if crop_to_grid is set to TRUE.
 #' @param crop_to_grid If TRUE, the grid will determine the edges of the map.Overrides
 #'    Europe_crop_EEA. Default is FALSE.
 #' @param panel_bg (Optional) Background colour for the map panel.
@@ -752,7 +749,6 @@ plot_map <- function(x,
                      bcpower = NULL,
                      breaks = NULL,
                      labels = NULL,
-                     Europe_crop_EEA = TRUE,
                      crop_to_grid = FALSE,
                      panel_bg = NULL,
                      land_fill_colour = NULL,
@@ -770,6 +766,7 @@ plot_map <- function(x,
   if (!inherits(x, "indicator_map")) {
     stop("Incorrect object class. Must be class 'indicator_map'.")
   }
+
 
   layers <- c("admin_0_countries", layers)
 
@@ -791,24 +788,6 @@ plot_map <- function(x,
       map_lims["ymax"] <- ylims[2]
     } else {
       stop("Please provide numeric ylims values in the form of c(1,2)")
-    }
-  }
-
-  # Crop map of Europe to leave out far-lying islands (if flag set)
-  # (conditional on there being only one map region to plot)
-  if (length(x$map_region)==1) {
-    if (Europe_crop_EEA == TRUE &
-      #  x$map_level == "continent" &
-        x$map_region == "Europe" &
-        x$projection == "EPSG:3035" &
-        crop_to_grid == FALSE)
-    {
-      # Set attributes as spatially constant to avoid warnings
-      sf::st_agr(x$data) <- "constant"
-
-      # Manually set cropped limits
-      map_lims <- c(2600000, 1600000, 7000000, 6000000)
-      names(map_lims) <- c("xmin", "ymin", "xmax", "ymax")
     }
   }
 
@@ -1860,10 +1839,10 @@ plot_species_ts <- function(x,
 #'   custom title or if calling the function manually.
 #' @param auto_title Text for automatic title generation, provided by an
 #'   appropriate S3 method (if calling the function manually, leave as NULL).
-#' @param suppress_legend Do not show legend. This should be set to true when
-#'   plotting species ranges, as all cell values are 1.
 #' @param leg_label_default Default label for the legend, provided by an
 #'   appropriate S3 method (if calling the function manually, leave as NULL).
+#' @param suppress_legend Do not show legend. This should be set to true when
+#'   plotting species ranges, as all cell values are 1.
 #' @param xlims  (Optional) Custom x-axis limits.
 #' @param ylims (Optional) Custom y-axis limits.
 #' @param trans (Optional) Scale transformation for the fill gradient
@@ -1872,14 +1851,10 @@ plot_species_ts <- function(x,
 #'   Yeo-Johnson transformations.
 #' @param breaks (Optional) Break points for the legend scale.
 #' @param labels (Optional) Labels for legend scale break points.
-#' @param Europe_crop_EEA If TRUE, crops maps of Europe using the EPSG:3035 CRS
-#'    to exclude far-lying islands (default is TRUE, but does not affect other maps
-#'    or projections).
 #' @param crop_to_grid If TRUE, the grid will determine the edges of the map.Overrides
 #'    Europe_crop_EEA. Default is FALSE.
-#' @param surround  If TRUE, includes surrounding land area in gray when plotting
-#'    at the country or continent level. If FALSE, all surrounding area will be coloured
-#'    ocean blue (or whatever colour you set manually using panel_bg). Default is TRUE.
+#' @param single_plot By default all species occurrence time series will be combined
+#'    into a single multi-panel plot. Set this to FALSE to plot each species separately.
 #' @param panel_bg  (Optional) Background colour for the map panel.
 #' @param land_fill_colour (Optional) Colour for the land area outside of the grid
 #'    (if surround = TRUE). Default is "grey85".
@@ -1887,8 +1862,10 @@ plot_species_ts <- function(x,
 #' @param legend_limits (Optional) Limits for the legend scale.
 #' @param legend_title_wrap_length Maximum legend title length before wrapping to a new line.
 #' @param title_wrap_length Maximum title length before wrapping to a new line.
-#' @param single_plot By default all species occurrence time series will be combined
-#'    into a single multi-panel plot. Set this to FALSE to plot each species separately.
+#' @param spec_name_wrap_length Maximum species name length before wrapping to a new line.
+#' @param visible_gridlines Show gridlines between cells. Default is TRUE.
+#' @param layers Additional rnaturalearth layers to plot, e.g. c("reefs", "playas").
+#' @param scale Scale of Natural Earth data ("small", "medium", or "large"). Default is 'medium'.
 #'
 #' @return A ggplot object representing the map of species range or occurrences.
 #' Can be customized using ggplot2 functions.
@@ -1902,27 +1879,29 @@ plot_species_ts <- function(x,
 #' @export
 plot_species_map <- function(x,
                              species = NULL,
-                             leg_label_default = NULL,
-                             auto_title = NULL,
-                             suppress_legend = FALSE,
                              title = "auto",
+                             auto_title = NULL,
+                             leg_label_default = NULL,
+                             suppress_legend = FALSE,
                              xlims = NULL,
                              ylims = NULL,
                              trans = NULL,
                              bcpower = NULL,
                              breaks = NULL,
                              labels = NULL,
-                             Europe_crop_EEA = TRUE,
                              crop_to_grid = FALSE,
-                             surround = TRUE,
                              single_plot = TRUE,
                              panel_bg = NULL,
                              land_fill_colour = NULL,
                              legend_title = NULL,
                              legend_limits = NULL,
                              legend_title_wrap_length = 10,
-                             title_wrap_length = 60
-                             ) {
+                             title_wrap_length = 60,
+                             spec_name_wrap_length = 40,
+                             visible_gridlines = TRUE,
+                             layers = NULL,
+                             scale = "medium"
+) {
 
   taxonKey <- . <- scientificName <- geometry <- diversity_val <- NULL
 
@@ -1973,56 +1952,37 @@ plot_species_map <- function(x,
     split_so %>%
     purrr::map(~unique(.$scientificName))
 
+  # Add country borders to user supplied layers, as they are mandatory
+  layers <- c("admin_0_countries", layers)
+
   # Get map limits
   map_lims <- x$coord_range
 
-  # Crop map of Europe to leave out far-lying islands (if flag set)
-  # (conditional on there being only one map region to plot)
-  if(length(x$map_region==1)){
-    if (Europe_crop_EEA == TRUE &
-      #  x$map_level == "continent" &
-        x$map_region == "Europe" &
-        x$projection == "EPSG:3035" &
-        crop_to_grid == TRUE)
-    {
+  if (!is.null(xlims)) {
+    if (is.vector(xlims) && length(xlims)==2) {
+      map_lims["xmin"] <- xlims[1]
+      map_lims["xmax"] <- xlims[2]
+    } else {
+      stop("Please provide numeric xlims values in the form of c(1,2)")
+    }
+  }
 
-      # Set attributes as spatially constant to avoid warnings
-      sf::st_agr(x$data) <- "constant"
-
-      # Manually set cropped limits
-      map_lims <- c(2600000, 1600000, 7000000, 6000000)
-      names(map_lims) <- c("xmin", "ymin", "xmax", "ymax")
-
+  if (!is.null(ylims)) {
+    if (is.vector(ylims) && length(ylims)==2) {
+      map_lims["ymin"] <- ylims[1]
+      map_lims["ymax"] <- ylims[2]
+    } else {
+      stop("Please provide numeric ylims values in the form of c(1,2)")
     }
   }
 
   # Get world data to plot surrounding land if surround flag is set
-  if (surround == TRUE) {
-    map_data_sf <- rnaturalearth::ne_countries(scale = "medium",
-                                                returnclass = "sf") %>%
-      sf::st_as_sf()
-    map_surround <- map_data_sf %>%
-      sf::st_transform(crs = x$projection) %>%
-      sf::st_make_valid()
-
-    # Otherwise make all the surroundings ocean blue (unless a different
-    # colour is specified)
-  } else {
-    if (is.null(panel_bg)) { panel_bg = "#92c5f0" }
-  }
-
-  # Define function to wrap title and legend title if too long
-  # wrapper <- function(x, ...)
-  # {
-  #   paste(strwrap(x, ...), collapse = "\n")
-  # }
+  map_data_sf <- rnaturalearth::ne_countries(scale = "medium",
+                                             returnclass = "sf") %>%
+    sf::st_as_sf()
 
   # Get plot title (if set to "auto")
-  if (!is.null(title)) {
-    if (title == "auto") {
-      title <- auto_title
-    }
-  }
+  title <- if (title == "auto") auto_title else title
 
   if (!is.null(trans)) {
     if (trans == "boxcox") {
@@ -2042,123 +2002,124 @@ plot_species_map <- function(x,
     )
   }
 
-  # Plot on map
-  diversity_plot <-
-    purrr::map2(split_so,
-                sci_names,
-                function(x., y) {
-                  ggplot2::ggplot(x.) +
-                    geom_sf(data = x$data,
-                            aes(geometry = geometry),
-                            fill = "grey95") +
-                    geom_sf(aes(fill = diversity_val,
-                                geometry = geometry)) +
-                    cust_leg(list(trans = trans,
-                                  breaks = breaks,
-                                  labels = labels,
-                                  limits = legend_limits)) +
-                    coord_sf(
-                      xlim = c(map_lims["xmin"],
-                               map_lims["xmax"]),
-                      ylim = c(map_lims["ymin"],
-                               map_lims["ymax"]),
-                      if (crop_to_grid == TRUE) {
-                        expand = FALSE
-                      } else {
-                        expand = TRUE
-                      }
-                    ) +
-                    #scale_x_continuous() +
-                    theme_bw()+
-                    theme(
-                      panel.background = element_rect(fill = panel_bg),
-                      if(x$map_level == "country") {
-                        panel.grid.major = element_blank()
-                        panel.grid.minor = element_blank()
-                      },
-                      legend.text = element_text(),
-                      strip.text = element_text(face = "italic"),
-                      plot.title = element_text(face = "italic")
-                    ) +
-                    labs(title = y,
-                         fill = if(!is.null(legend_title)) wrapper(legend_title,
-                                                                   legend_title_wrap_length)
-                         else wrapper(leg_label_default,
-                                      legend_title_wrap_length)) +
-                    if(suppress_legend==TRUE) {
-                      theme(legend.position = "none")
-                    }
-                })
+  # Set default value for land_fill_colour if NULL
+  land_fill_colour <- dplyr::coalesce(land_fill_colour, "grey85")
 
-  land_fill_colour <- ifelse(is.null(land_fill_colour), "grey85", land_fill_colour)
+  map_data_list <- prepare_map_data(data = x$data,
+                                   projection = x$projection,
+                                   map_lims = map_lims,
+                                   xlims = xlims,
+                                   ylims = ylims,
+                                   map_data_sf = map_data_sf,
+                                   layers = layers,
+                                   scale = scale,
+                                   crop_to_grid = crop_to_grid)
 
-  # If surround flag is set, add surrounding countries to the map
-  if (surround == TRUE) {
+  map_surround <- map_data_list$map_surround
+  layer_list <- map_data_list$layer_list
 
-    map_surround <- sf::st_transform(map_surround, crs = x$projection)
-    map_surround <- sf::st_make_valid(map_surround)
+  diversity_plot <- list()
+  for (i in 1:length(sci_names)) {
 
-    # If crop to grid is set to FALSE
-    if (!crop_to_grid) {
-      # Define percentage for expansion
-      expand_percent <- 0.1  # 10% expansion
+    diversity_plot[[i]] <- ggplot2::ggplot(x$data)
 
-      # Calculate the amount to expand
-      x_range <- map_lims["xmax"] - map_lims["xmin"]
-      y_range <- map_lims["ymax"] - map_lims["ymin"]
+    diversity_plot[[i]] <- diversity_plot[[i]] +
+      ggplot2::geom_sf(
+        data = map_surround,
+        fill = land_fill_colour,
+        colour = "black",
+        aes(geometry = geometry),
+        inherit.aes = FALSE
+      )
 
-      # Compute new expanded limits
-      expanded_lims <- sf::st_bbox(c(
-        map_lims["xmin"] - (expand_percent * x_range),
-        map_lims["ymin"] - (expand_percent * y_range),
-        map_lims["xmax"] + (expand_percent * x_range),
-        map_lims["ymax"] + (expand_percent * y_range)
-      ))
+    for (j in names(layer_list)) {
+      layer_data <- layer_list[[j]]
+      if (j %in% c("ocean", "lakes")) {
+        fill_colour <- "#92c5f0"
+      } else {
+        fill_colour <- "transparent"
+      }
+      diversity_plot[[i]] <- diversity_plot[[i]] +
+        ggplot2::geom_sf(data = layer_data,
+                         aes(geometry = geometry),
+                         fill = fill_colour,
+                         colour = "black",
+                         inherit.aes = FALSE)
 
-      # Assign CRS
-      attributes(expanded_lims)$crs <- sf::st_crs(map_surround)
+      ## Here goes the main function ##
+      diversity_plot[[i]] <- diversity_plot[[i]] +
+        ggplot2::geom_sf(data = split_so[[i]],
+                         aes(fill = diversity_val,
+                             geometry = geometry),
+                         colour = "transparent") +
+        cust_leg(list(trans = trans,
+                      breaks = breaks,
+                      labels = labels,
+                      limits = legend_limits)) +
+        theme_bw() +
+        theme(
+          panel.background = element_rect(fill = dplyr::coalesce(panel_bg,
+                                                                 "#92c5f0")),
+          if(x$map_level == "country") {
+            panel.grid.major = element_blank()
+            panel.grid.minor = element_blank()
+          },
+          legend.text = element_text(),
+          strip.text = element_text(face = "italic"),
+          plot.title = element_text(face = "italic")
+        ) +
+        labs(title = wrapper(sci_names[[i]], spec_name_wrap_length),
+             fill = if(!is.null(legend_title)) wrapper(legend_title,
+                                                       legend_title_wrap_length)
+             else wrapper(leg_label_default, legend_title_wrap_length)) +
+        if(suppress_legend==TRUE) {
+          theme(legend.position = "none")
+        }
 
-      # Get bounding box with expanded limits
-      bbox <- sf::st_as_sfc(sf::st_bbox(expanded_lims), crs = x$projection)
+      for (j in names(layer_list)) {
+        layer_data <- layer_list[[j]]
+        diversity_plot[[i]] <- diversity_plot[[i]] +
+          ggplot2::geom_sf(data = layer_data,
+                           aes(geometry = geometry),
+                           fill = "transparent",
+                           colour = "black",
+                           inherit.aes = FALSE)
+      }
 
-    } else {
+      if (visible_gridlines == TRUE) {
+        # plot gridlines
+        diversity_plot[[i]]$layers <- c(
+          diversity_plot[[i]]$layers,
+          ggplot2::geom_sf(aes(geometry = geometry),
+                           colour = "black",
+                           linewidth = 0.1,
+                           fill = "transparent"
+          )[[1]]
+        )
+      }
 
-      # If crop to grid is TRUE get bounding box with map limits
-      bbox <- sf::st_as_sfc(sf::st_bbox(map_lims))
-      bbox <- sf::st_set_crs(bbox, sf::st_crs(x$projection))
-     # sf::st_crs(bbox) <- sf::st_crs(x$projection)
+      # set expand_val to expand the plot if crop_to_grid is not set
+      expand_val <- if (crop_to_grid) FALSE else TRUE
 
-    }
-
-    sf::st_agr(map_surround) = "constant"
-
-    map_surround <- sf::st_intersection(map_surround, bbox)
-
-
-    for (i in 1:length(diversity_plot)) {
-
-      # Plot map_surround as plot as layer
-      diversity_plot[[i]]$layers <- c(
-        ggplot2::geom_sf(
-          data = map_surround,
-          fill = land_fill_colour,
-          aes(geometry = geometry)
-          )[[1]],
-        diversity_plot[[i]]$layers)
-
+      diversity_plot[[i]] <- diversity_plot[[i]] +
+        coord_sf(
+          crs = x$projection,
+          xlim = c(map_lims["xmin"],
+                   map_lims["xmax"]),
+          ylim = c(map_lims["ymin"],
+                   map_lims["ymax"]),
+          expand = expand_val)
     }
   }
 
-  # Check for custom x and y limits and adjust map if found
-  if(any(!is.null(xlims)) & any(!is.null(ylims))) {
-    for (i in 1:length(diversity_plot)) {
-    diversity_plot[[i]] <-
-      suppressMessages(diversity_plot[[i]] + coord_sf(xlim = xlims,
-                                ylim = ylims))
-
-    }
-
-  }
+  # # Check for custom x and y limits and adjust map if found
+  # if(any(!is.null(xlims)) & any(!is.null(ylims))) {
+  #   for (i in 1:length(diversity_plot)) {
+  #     diversity_plot[[i]] <-
+  #       suppressMessages(diversity_plot[[i]] + coord_sf(xlim = xlims,
+  #                                                       ylim = ylims))
+  #   }
+  # }
 
   names(diversity_plot) <- sci_names
 
@@ -2166,15 +2127,12 @@ plot_species_map <- function(x,
   if ((length(diversity_plot) > 0 && single_plot == TRUE) ||
       length(diversity_plot) == 0) {
     diversity_plot <- patchwork::wrap_plots(diversity_plot) +
-      plot_annotation_int(title = title,
+      plot_annotation_int(title = wrapper(title, title_wrap_length),
                           theme = theme(plot.title = element_text(size = 20)))
   } else if (length(diversity_plot) > 1 & single_plot == FALSE) {
     cat("Option single_plot set to false. Creating separate plot for each species.\n\n")
   }
 
-
   # Exit function
   return(diversity_plot)
-
 }
-
