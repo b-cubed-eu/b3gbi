@@ -15,7 +15,6 @@ plot_map(
   bcpower = NULL,
   breaks = NULL,
   labels = NULL,
-  Europe_crop_EEA = TRUE,
   crop_to_grid = FALSE,
   panel_bg = NULL,
   land_fill_colour = NULL,
@@ -54,10 +53,6 @@ Yeo-Johnson transformations.}
 \item{breaks}{(Optional) Break points for the legend scale.}
 
 \item{labels}{(Optional) Labels for legend scale break points.}
-
-\item{Europe_crop_EEA}{If TRUE, crops maps of Europe using the EPSG:3035 CRS
-to exclude far-lying islands (default is TRUE, but does not affect other maps
-or projections). Will not work if crop_to_grid is set to TRUE.}
 
 \item{crop_to_grid}{If TRUE, the grid will determine the edges of the map.Overrides
 Europe_crop_EEA. Default is FALSE.}
