@@ -1,6 +1,6 @@
 #' @export
 #' @rdname calc_ts
-calc_ts.default <- function(x){
+calc_ts.default <- function(x, ...){
 
   warning(
     paste(
@@ -219,7 +219,7 @@ calc_ts_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
 
 #' @export
 #' @rdname calc_ts
-calc_ts.obs_richness <- function(x) {
+calc_ts.obs_richness <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
@@ -237,7 +237,7 @@ calc_ts.obs_richness <- function(x) {
 
 #' @export
 #' @rdname calc_ts
-calc_ts.cum_richness <- function(x) {
+calc_ts.cum_richness <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.", inherits(x, "cum_richness"))
@@ -256,7 +256,7 @@ calc_ts.cum_richness <- function(x) {
 
 #' @export
 #' @rdname calc_ts
-calc_ts.total_occ <- function(x) {
+calc_ts.total_occ <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.", inherits(x, "total_occ"))
@@ -269,7 +269,7 @@ calc_ts.total_occ <- function(x) {
 
 #' @export
 #' @rdname calc_ts
-calc_ts.occ_density <- function(x) {
+calc_ts.occ_density <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.", inherits(x, "occ_density"))
@@ -294,10 +294,12 @@ calc_ts.occ_density <- function(x) {
 
 #' @export
 #' @rdname calc_ts
-calc_ts.newness <- function(x) {
+calc_ts.newness <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.", inherits(x, "newness"))
+
+  year <- taxonKey <- cum_obs <- cum_year_sum <- NULL
 
   # Prepare the data with cumulative sums and counts
   cum_data <- x %>%
@@ -374,7 +376,7 @@ calc_ts_evenness_core <- function(x, type, ...) {
 
 #' @export
 #' @rdname calc_ts
-calc_ts.ab_rarity <- function(x) {
+calc_ts.ab_rarity <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
@@ -392,13 +394,14 @@ calc_ts.ab_rarity <- function(x) {
 
 #' @export
 #' @rdname calc_ts
-calc_ts.area_rarity <- function(x) {
+calc_ts.area_rarity <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
                   inherits(x, "area_rarity"))
 
-  year <- cellid <- taxonKey <- rec_tax_cell <- rarity <- diversity_val <- NULL
+  year <- cellid <- taxonKey <- occupied_cells <- rarity <- NULL
+  diversity_val <- NULL
 
   # Calculate rarity as the sum (per grid cell) of the inverse of occupancy
   # frequency for each species
@@ -414,7 +417,7 @@ calc_ts.area_rarity <- function(x) {
 
 #' @export
 #' @rdname calc_ts
-calc_ts.spec_occ <- function(x) {
+calc_ts.spec_occ <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
@@ -432,7 +435,7 @@ calc_ts.spec_occ <- function(x) {
 
 #' @export
 #' @rdname calc_ts
-calc_ts.spec_range <- function(x) {
+calc_ts.spec_range <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
@@ -496,13 +499,14 @@ calc_ts.tax_distinct <- function(x, set_rows = 1, ...) {
 
 #' @export
 #' @rdname calc_ts
-calc_ts.occ_turnover <- function(x) {
+calc_ts.occ_turnover <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.",
                   inherits(x, "occ_turnover"))
 
-  year <- taxonKey <- NULL
+  year <- taxonKey <- species <- prev_species <- gains <- losses <- NULL
+  diversity_val <- shared <- NULL
 
   # Get a list of unique species for each year
   species_by_year <- x %>%
