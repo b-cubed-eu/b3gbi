@@ -366,6 +366,7 @@ area_rarity_ts <- function(data, ...) {
   compute_indicator_workflow(data,
                              type = "area_rarity",
                              dim_type = "ts",
+                             force_grid = TRUE,
                              ...)
 }
 
@@ -573,6 +574,7 @@ hill0_ts <- function(data,
                              dim_type = "ts",
                              cutoff_length = cutoff_length,
                              coverage = coverage,
+                             force_grid = TRUE,
                              ...)
 }
 
@@ -615,6 +617,7 @@ hill1_ts <- function(data,
                              dim_type = "ts",
                              cutoff_length = cutoff_length,
                              coverage = coverage,
+                             force_grid = TRUE,
                              ...)
 }
 
@@ -656,6 +659,7 @@ hill2_ts <- function(data,
                              dim_type = "ts",
                              cutoff_length = cutoff_length,
                              coverage = coverage,
+                             force_grid = TRUE,
                              ...)
 }
 

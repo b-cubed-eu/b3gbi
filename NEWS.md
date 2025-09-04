@@ -1,3 +1,10 @@
+# b3gbi 0.7.1 - Minor update:
+
+* Reorganized code in some indicator calculations to improve efficiency.
+* Fixed area_rarity_ts() that was broken by the previous update.
+
+* Note that the Hill functions are not working properly. This will hopefully be fixed in the next update.
+
 # b3gbi 0.7.0 - Major update:
 
 * Ocean occurrences are now included by default when calculating indicators (previously they were ignored entirely). They can be turned off using include_ocean = FALSE. Alternatively, you can set include_ocean = "buffered_coast" to include only occurrences within a set distance from the coast, measured in km (e.g., buffer_dist = 50).

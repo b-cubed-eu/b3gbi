@@ -63,8 +63,8 @@ calc_ts(x, ...)
 \item{...}{Additional arguments passed to specific indicator calculation functions.}
 
 \item{set_rows}{Automatically select which taxonomic information to keep when
-there are multiple options. Default value of 1 keeps the first option, which
-is usually the best.}
+there are multiple options. Default value of 1 keeps the first option,
+which is usually the best.}
 }
 \value{
 An S3 object of the class 'indicator_ts' containing the calculated indicator values and metadata.
