@@ -301,6 +301,11 @@ calc_ts.newness <- function(x, ...) {
 
   year <- taxonKey <- cum_obs <- cum_year_sum <- NULL
 
+  # Handle empty input data
+  if (nrow(x) == 0) {
+    return(tibble::tibble(year = numeric(), diversity_val = numeric()))
+  }
+
   # Prepare the data with cumulative sums and counts
   cum_data <- x %>%
     dplyr::arrange(year) %>%
@@ -309,7 +314,7 @@ calc_ts.newness <- function(x, ...) {
   # Extract the final cumulative mean for each year
   indicator <- cum_data %>%
     dplyr::group_by(year) %>%
-    dplyr::summarise(diversity_val = dplyr::last(cum_year_sum / cum_obs),
+    dplyr::summarise(diversity_val = dplyr::last(round(cum_year_sum / cum_obs)),
                      .groups = "drop")
 }
 
@@ -431,6 +436,11 @@ calc_ts.spec_occ <- function(x, ...) {
                      .by = c(taxonKey, year)) %>%
     dplyr::arrange(year) %>%
     dplyr::select(year, taxonKey, scientificName, diversity_val)
+
+  # Add the 'spec_occ' class back to the object
+  class(indicator) <- c("spec_occ", class(indicator))
+
+  return(indicator)
 }
 
 #' @export
@@ -450,6 +460,11 @@ calc_ts.spec_range <- function(x, ...) {
                      .by = c(taxonKey, year)) %>%
     dplyr::arrange(taxonKey) %>%
     dplyr::select(year, taxonKey, scientificName, diversity_val)
+
+  # Add the 'spec_range' class back to the object
+  class(indicator) <- c("spec_range", class(indicator))
+
+  return(indicator)
 }
 
 #' @param set_rows Automatically select which taxonomic information to keep when
@@ -525,9 +540,18 @@ calc_ts.occ_turnover <- function(x, ...) {
       losses = purrr::map2_dbl(species, prev_species,
                                ~length(setdiff(.y, .x))),
       shared = purrr::map2_dbl(species, prev_species,
-                               ~length(intersect(.x, .y))),
+                               ~length(intersect(.x, .y)))
+      ) %>%
+    dplyr::mutate(
+      # Calculate diversity_val using a conditional statement
+      diversity_val = ifelse(
+        dplyr::row_number() == 1,
+        NA_real_,
+        (gains + losses) / (gains + losses + shared)
+      )
+    ) %>%#,
       # The turnover formula: (gains + losses) / (gains + losses + shared)
-      diversity_val = (gains + losses) / (gains + losses + shared)
-    ) %>%
+     # diversity_val = (gains + losses) / (gains + losses + shared)
+   # ) %>%
     dplyr::select(year, diversity_val)
 }
