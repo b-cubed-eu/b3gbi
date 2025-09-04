@@ -351,6 +351,10 @@ create_grid <- function(bbox,
 #'  the land area rather than the entire ocean area.
 #' @param buffer_dist_km The distance to buffer around the land if include_ocean
 #'  is set to "buffered_coast".
+#' @param force_grid Forces the calculation of a grid even if this would not
+#'  normally be part of the pipeline, e.g. for time series. This setting is
+#'  required for the calculation of rarity, and is turned on by the ab_rarity_ts
+#'  and area_rarity_ts wrappers. (Default: FALSE)
 #' @param ... Additional arguments passed to specific indicator calculation functions.
 #'
 #' @return An S3 object containing the calculated indicator values and metadata.
@@ -399,6 +403,7 @@ compute_indicator_workflow <- function(data,
                                        invert = FALSE,
                                        include_ocean = TRUE,
                                        buffer_dist_km = 50,
+                                       force_grid = FALSE,
                                        ...) {
 
   stopifnot_error("Object class not recognized.",
@@ -565,37 +570,12 @@ compute_indicator_workflow <- function(data,
         stop("Grid reference system not found.")
       }
     } else {
-    # If output CRS is provided, check if it is valid
+      # If output CRS is provided, check if it is valid
       check_crs_units(output_crs)
     }
 
-
-
     # # Get units based on CRS
-    # input_units <- check_crs_units(cube_crs)
-    # projection_units <- check_crs_units(projection_crs)
     output_units <- check_crs_units(output_crs)
-    #
-    # # Check if input and output units match, and if not, stop with an error
-    # # or issue a warning if the user has explicitly set crs_unit_convert to TRUE
-    # if (crs_unit_convert == FALSE && input_units != output_units) {
-    #   stop(
-    #     paste0(
-    #       "Cube CRS units are ", input_units, " while output CRS ",
-    #       "units are ", output_units, ".\n The conversion could increase ",
-    #       "processing time and lead to invalid output.\n If you are certain ",
-    #       "you want to proceed you can force it with 'crs_unit_convert = TRUE'."
-    #     )
-    #   )
-    # } else if (crs_unit_convert == TRUE && input_units != output_units) {
-    #   warning(
-    #     paste0(
-    #       "Cube CRS units are ", input_units, " while output CRS ",
-    #       "units are ", output_units, ".\n The conversion could lead ",
-    #       "to invalid output."
-    #     )
-    #   )
-    # }
 
     # Get current cell size
     if (stringr::str_detect(data$resolution, "degrees")) {
@@ -613,14 +593,6 @@ compute_indicator_workflow <- function(data,
       cube_polygon_projected %>%
       sf::st_area() %>%
       units::set_units("km^2")
-
-    # # Get cube cell codes for mgrs data, or set to NULL if not mgrs
-    # # This is for transforming map data, as mgrs requires a localized CRS
-    # if (data$grid_type == "mgrs") {
-    #   cube_cell_codes <- df$cellCode
-    # } else {
-    #   cube_cell_codes <- NULL
-    # }
 
     # Set output cell size (or if user provided one, check that it makes sense)
     cell_size <- check_cell_size(cell_size,
@@ -720,7 +692,6 @@ compute_indicator_workflow <- function(data,
         stop("No data points remain after spatial filtering.")
       }
     }
-    # }
 
     # Unify object names
     if (!is.null(shapefile)) {
@@ -758,14 +729,12 @@ compute_indicator_workflow <- function(data,
       map_data <- sf::st_transform(map_data, crs = projected_crs)
     }
 
-    if (dim_type == "map") {
+    if (dim_type == "map" || force_grid == TRUE) {
 
       # Create grid
       grid <- create_grid(bbox_for_grid,
                           cell_size,
                           projected_crs,
-                          # output_units,
-                          # output_crs,
                           make_valid)
 
       sf::st_agr(grid) <- "constant"
@@ -821,6 +790,10 @@ compute_indicator_workflow <- function(data,
       data_gridded <- sf::st_join(data_projected, clipped_grid)
       data_gridded_nogeom <- sf::st_drop_geometry(data_gridded)
 
+    }
+
+    if (dim_type == "map") {
+
       # Assign classes to send data to correct calculator function
       subtype <- paste0(type, "_", dim_type)
       class(data_gridded_nogeom) <- append(type, class(data_gridded_nogeom))
@@ -838,8 +811,13 @@ compute_indicator_workflow <- function(data,
 
     } else {
 
-      data_filtered <- sf::st_filter(data_projected, map_data)
-      data_filtered_nogeom <- sf::st_drop_geometry(data_filtered)
+      if (force_grid == TRUE) {
+        data_filtered <- data_gridded
+        data_filtered_nogeom <- data_gridded_nogeom
+      } else {
+        data_filtered <- sf::st_filter(data_projected, map_data)
+        data_filtered_nogeom <- sf::st_drop_geometry(data_filtered)
+      }
 
       # Assign classes to send data to correct calculator function
       subtype <- paste0(type, "_", dim_type)
