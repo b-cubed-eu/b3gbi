@@ -21,7 +21,7 @@
 \alias{calc_ts}
 \title{Calculate Biodiversity Indicators Over Time}
 \usage{
-\method{calc_ts}{default}(x)
+\method{calc_ts}{default}(x, ...)
 
 \method{calc_ts}{hill0}(x, ...)
 
@@ -29,31 +29,31 @@
 
 \method{calc_ts}{hill2}(x, ...)
 
-\method{calc_ts}{obs_richness}(x)
+\method{calc_ts}{obs_richness}(x, ...)
 
-\method{calc_ts}{cum_richness}(x)
+\method{calc_ts}{cum_richness}(x, ...)
 
-\method{calc_ts}{total_occ}(x)
+\method{calc_ts}{total_occ}(x, ...)
 
-\method{calc_ts}{occ_density}(x)
+\method{calc_ts}{occ_density}(x, ...)
 
-\method{calc_ts}{newness}(x)
+\method{calc_ts}{newness}(x, ...)
 
 \method{calc_ts}{williams_evenness}(x, ...)
 
 \method{calc_ts}{pielou_evenness}(x, ...)
 
-\method{calc_ts}{ab_rarity}(x)
+\method{calc_ts}{ab_rarity}(x, ...)
 
-\method{calc_ts}{area_rarity}(x)
+\method{calc_ts}{area_rarity}(x, ...)
 
-\method{calc_ts}{spec_occ}(x)
+\method{calc_ts}{spec_occ}(x, ...)
 
-\method{calc_ts}{spec_range}(x)
+\method{calc_ts}{spec_range}(x, ...)
 
 \method{calc_ts}{tax_distinct}(x, set_rows = 1, ...)
 
-\method{calc_ts}{occ_turnover}(x)
+\method{calc_ts}{occ_turnover}(x, ...)
 
 calc_ts(x, ...)
 }
