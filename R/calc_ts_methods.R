@@ -419,55 +419,28 @@ calc_ts.occ_turnover <- function(x) {
                   meant to be called directly.",
                   inherits(x, "occ_turnover"))
 
-  year <- NULL
+  year <- taxonKey <- NULL
 
-  # Handle empty input
-  if (nrow(x) == 0) {
-    return(tibble::tibble(year = integer(), diversity_val = numeric()))
-  }
+  # Get a list of unique species for each year
+  species_by_year <- x %>%
+    dplyr::group_by(year) %>%
+    dplyr::summarise(species = list(unique(taxonKey)), .groups = "drop") %>%
+    dplyr::arrange(year) %>%
+    dplyr::mutate(
+      prev_species = dplyr::lag(species, n = 1, default = list(c()))
+    )
 
-  x <- x %>%
-    dplyr::arrange(year)
-
-  # Determine the species present each year
-  ind_list <- list_org_by_year(x, "taxonKey")
-
-  # Determine the new species added each year
-  tax_added <- list()
-  tax_added[[1]] <- ind_list[[1]]
-  tax_added[2:length(ind_list)] <-
-    lapply(2:length(unique(x$year)), function(y){
-      a <- setdiff(ind_list[[y]], ind_list[[y-1]])
-      return(a)
-    })
-
-  # Determine the species lost each year
-  tax_lost <- list()
-  tax_lost[[1]] <- NULL
-  tax_lost[2:length(ind_list)] <-
-    lapply(2:length(unique(x$year)), function(y){
-      a <- setdiff(ind_list[[y-1]], ind_list[[y]])
-    })
-
-  # Combine the species present in the current with those present in the
-  # previous year
-  tax_present <- list()
-  tax_present[[1]] <- ind_list[[1]]
-  tax_present[2:length(ind_list)] <-
-    lapply(2:length(unique(x$year)), function(y){
-      a <- intersect(ind_list[[y-1]], ind_list[[y]])
-    })
-
-  # Calculate occupancy turnover as the sum of the number of species added and
-  # the number of species lost divided by the total number of species present in
-  # the current and previous year combined
-  occ_turnover <- sapply(1:length(unique(x$year)), function(y){
-    a <- (length(tax_added[[y]]) + length(tax_lost[[y]])) /
-      (length(tax_present[[y]]) + length(tax_added[[y]]) +
-         length(tax_lost[[y]]))
-  })
-  occ_turnover[[1]] <- NA
-
-  indicator <- tibble::tibble(year = unique(x$year),
-                              diversity_val = occ_turnover)
+  # Calculate gains, losses, and shared species between years
+  indicator <- species_by_year %>%
+    dplyr::mutate(
+      gains = purrr::map2_dbl(species, prev_species,
+                              ~length(setdiff(.x, .y))),
+      losses = purrr::map2_dbl(species, prev_species,
+                               ~length(setdiff(.y, .x))),
+      shared = purrr::map2_dbl(species, prev_species,
+                               ~length(intersect(.x, .y))),
+      # The turnover formula: (gains + losses) / (gains + losses + shared)
+      diversity_val = (gains + losses) / (gains + losses + shared)
+    ) %>%
+    dplyr::select(year, diversity_val)
 }
