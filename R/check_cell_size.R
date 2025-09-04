@@ -12,20 +12,20 @@
 #'
 #' @noRd
 #'
-check_cell_size <- function(cell_size, resolution, level) {
+check_cell_size <- function(cell_size, resolution, level, area = NULL) {
 
   if (!is.null(cell_size)) {
     if (stringr::str_detect(resolution, "km")) {
-      res_size <- as.numeric(stringr::str_extract(resolution, "[0-9]*(?=km)"))
-      if (cell_size %% res_size != 0) {
+      res_size <- as.numeric(stringr::str_extract(resolution, "[0-9.]+(?=km)"))
+      if (!isTRUE(all.equal(cell_size/res_size, round(cell_size/res_size)))) {
         stop("cell_size must be a whole number multiple of the resolution.
              For example, if resolution is 1 km, cell_size can be 1, 2, 3,.. 10,.. 100, etc.")
       }
       # convert to meters
       cell_size <- cell_size * 1000
     } else if (stringr::str_detect(resolution, "degrees")) {
-      res_size <- as.numeric(stringr::str_extract(resolution, "[0-9,.]*(?=degrees)"))
-      if (cell_size %% res_size != 0) {
+      res_size <- as.numeric(stringr::str_extract(resolution, "[0-9.]+(?=degrees)"))
+      if (!isTRUE(all.equal(cell_size/res_size, round(cell_size/res_size)))) {
         stop("cell_size must be a whole number multiple of the resolution.
              For example, if resolution is 0.25 degrees, cell_size can be 0.25, 0.5, 0.75, 1, etc.")
       }
@@ -34,20 +34,27 @@ check_cell_size <- function(cell_size, resolution, level) {
     }
   } else {
     if (stringr::str_detect(resolution, "km")) {
-      cell_size <- ifelse(level == "world", 100,
-                          ifelse(level == "continent", 100, 10))
-      # convert to meters
-      cell_size <- cell_size * 1000
+      if (level == "cube") {
+        if (!is.null(area)) {
+          cell_size <- ifelse(as.numeric(area) >= 1000, 1, 0.1)
+          # convert to meters
+          cell_size <- cell_size * 1000
+        } else {
+          stop("Unable to determine area of cube for automated cell size determination. Please enter cell size manually.")
+        }
+      } else {
+        cell_size <- ifelse(level == "world", 100,
+                            ifelse(level == "continent", 100, 10))
+        # convert to meters
+        cell_size <- cell_size * 1000
+      }
     } else if (stringr::str_detect(resolution, "degrees")) {
-      res_size <- as.numeric(stringr::str_extract(resolution, "[0-9,.]*(?=degrees)"))
+      res_size <- as.numeric(stringr::str_extract(resolution, "[0-9.]+(?=degrees)"))
       if (res_size < 1) {
         cont_res_size <- 1
       } else {
         cont_res_size <- res_size
       }
-      # if (res_size < 0.125) {
-      #   res_size <- 0.125
-      # }
       cell_size <- ifelse((level == "world" || level == "continent"),
                           cont_res_size, res_size)
     }

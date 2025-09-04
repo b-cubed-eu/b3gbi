@@ -67,6 +67,8 @@
 #'  individuals. This column is optional.
 #' @param cols_lifeStage the name of the column containing the life stage of the
 #'  observed individuals. This column is optional.
+#' @param separator The column-separating character in your csv file. Default is
+#'  white space.
 #'
 #' @return A tibble containing the processed GBIF occurrence data.
 #'
@@ -97,7 +99,8 @@ process_cube <- function(cube_name,
                          cols_speciesKey = NULL,
                          cols_familyCount = NULL,
                          cols_sex = NULL,
-                         cols_lifeStage = NULL) {
+                         cols_lifeStage = NULL,
+                         separator = "\t") {
 
   yearMonth <- species <- occurrences <- speciesKey <- cellCode <- NULL
   year <- . <- max_year <- NULL
@@ -109,7 +112,7 @@ process_cube <- function(cube_name,
     # Read in data cube
     occurrence_data <- readr::read_delim(
       file = cube_name,
-      delim = "\t",
+      delim = separator,
       na = "",
       show_col_types = FALSE
     )
@@ -240,7 +243,8 @@ process_cube <- function(cube_name,
       # if successful rename the user-specified column to the default
       occurrence_data <-
         occurrence_data %>%
-        dplyr::rename(cellCode = cols_cellCode)
+        dplyr::rename_with(.fn = ~"cellCode",
+                           .cols = dplyr::all_of(cols_cellCode))
 
     } else {
 
@@ -256,7 +260,7 @@ process_cube <- function(cube_name,
           # if successful rename the found column to the default for grid cell codes
           occurrence_data <-
             occurrence_data %>%
-            dplyr::rename(cellCode = col)
+            dplyr::rename_with(.fn = ~"cellCode", .cols = dplyr::all_of(col))
 
           # then end the loop
           break
@@ -295,7 +299,8 @@ process_cube <- function(cube_name,
     # rename it to the default
     occurrence_data <-
       occurrence_data %>%
-      dplyr::rename(cellCode = cols_cellCode)
+      dplyr::rename_with(.fn = ~"cellCode",
+                         .cols = dplyr::all_of(cols_cellCode))
 
     # if the user has chosen 'none' as a grid type...
   } else if (grid_type == "none") {
@@ -343,7 +348,8 @@ process_cube <- function(cube_name,
     # rename it to the default
     occurrence_data <-
       occurrence_data %>%
-      dplyr::rename(cellCode = cols_cellCode)
+      dplyr::rename_with(.fn = ~"cellCode",
+                         .cols = dplyr::all_of(cols_cellCode))
 
   }
 
@@ -415,7 +421,7 @@ process_cube <- function(cube_name,
       old_name <- colnames(occurrence_data)[grepl(new_name, colnames(occurrence_data), ignore.case=TRUE)]
       occurrence_data <-
         occurrence_data %>%
-        dplyr::rename(!!new_name := old_name)
+        dplyr::rename_with(.fn = ~new_name, .cols = dplyr::all_of(old_name))
 
     }
 

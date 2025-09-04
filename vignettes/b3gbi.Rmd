@@ -168,9 +168,19 @@ Each indicator comes with its own wrapper functions, and these should be used ra
 #                  off spherical geometry when calculating indicator.
 #   * Argument 14: make_valid (optional), call st_make_valid from the sf 
 #                  package to fix geometry issues if you are getting errors.
-#   * Argument 15: num_bootstraps (optional), set the number of bootstraps to 
+#   * Argument 15: num_bootstrap (optional), set the number of bootstraps to 
 #                  calculate for generating confidence intervals. Uses 1000 by 
 #                  default.
+#   * Argument 16: shapefile_path, path to an external shapefile you want to
+#                  use for cropping your data
+#   * Argument 17: shapefile_crs (optional), CRS of your shapefile if it is 
+#                  .wkt format and is not EPSG:4326
+#   * Argument 18: invert, invert the shapefile
+#   * Argument 19: include_water, include ocean and lake layers from 
+#                  rnaturalearth. Defaults to FALSE. Alternatively you can set it
+#                  to "buffered_coast" for to set a buffer distance around land.
+#   * Argument 20: buffer_dist_km, Distance to buffer around the land if
+#                  include_water set to "buffered_coast".
 #
 # Outputs:
 #   * indicator_ts or indicator_map object containing a data frame of indicator 
@@ -303,7 +313,11 @@ The plot functions offer quite a few arguments to customize the output, but the 
 
 # Example:
 library(b3gbi)
-Denmark_observed_richness_ts <- obs_richness_ts(example_cube_1, first_year = 1980, level = "country", region = "Denmark", ci_type = "none") 
+Denmark_observed_richness_ts <- obs_richness_ts(example_cube_1, 
+                                                first_year = 1980, 
+                                                level = "country", 
+                                                region = "Denmark", 
+                                                ci_type = "none") 
 plot(Denmark_observed_richness_ts)
 
 ```

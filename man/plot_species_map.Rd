@@ -7,26 +7,28 @@
 plot_species_map(
   x,
   species = NULL,
-  leg_label_default = NULL,
-  auto_title = NULL,
-  suppress_legend = FALSE,
   title = "auto",
+  auto_title = NULL,
+  leg_label_default = NULL,
+  suppress_legend = FALSE,
   xlims = NULL,
   ylims = NULL,
   trans = NULL,
   bcpower = NULL,
   breaks = NULL,
   labels = NULL,
-  Europe_crop_EEA = TRUE,
   crop_to_grid = FALSE,
-  surround = TRUE,
   single_plot = TRUE,
   panel_bg = NULL,
   land_fill_colour = NULL,
   legend_title = NULL,
   legend_limits = NULL,
   legend_title_wrap_length = 10,
-  title_wrap_length = 60
+  title_wrap_length = 60,
+  spec_name_wrap_length = 40,
+  visible_gridlines = TRUE,
+  layers = NULL,
+  scale = "medium"
 )
 }
 \arguments{
@@ -37,17 +39,17 @@ map grid cells.}
 taxonKeys or species names. Partial species names can be used (the function
 will try to match them).}
 
-\item{leg_label_default}{Default label for the legend, provided by an
-appropriate S3 method (if calling the function manually, leave as NULL).}
+\item{title}{Plot title. Replace "auto" with your own title if you want a
+custom title or if calling the function manually.}
 
 \item{auto_title}{Text for automatic title generation, provided by an
 appropriate S3 method (if calling the function manually, leave as NULL).}
 
+\item{leg_label_default}{Default label for the legend, provided by an
+appropriate S3 method (if calling the function manually, leave as NULL).}
+
 \item{suppress_legend}{Do not show legend. This should be set to true when
 plotting species ranges, as all cell values are 1.}
-
-\item{title}{Plot title. Replace "auto" with your own title if you want a
-custom title or if calling the function manually.}
 
 \item{xlims}{(Optional) Custom x-axis limits.}
 
@@ -63,16 +65,8 @@ Yeo-Johnson transformations.}
 
 \item{labels}{(Optional) Labels for legend scale break points.}
 
-\item{Europe_crop_EEA}{If TRUE, crops maps of Europe using the EPSG:3035 CRS
-to exclude far-lying islands (default is TRUE, but does not affect other maps
-or projections).}
-
 \item{crop_to_grid}{If TRUE, the grid will determine the edges of the map.Overrides
 Europe_crop_EEA. Default is FALSE.}
-
-\item{surround}{If TRUE, includes surrounding land area in gray when plotting
-at the country or continent level. If FALSE, all surrounding area will be coloured
-ocean blue (or whatever colour you set manually using panel_bg). Default is TRUE.}
 
 \item{single_plot}{By default all species occurrence time series will be combined
 into a single multi-panel plot. Set this to FALSE to plot each species separately.}
@@ -89,6 +83,14 @@ into a single multi-panel plot. Set this to FALSE to plot each species separatel
 \item{legend_title_wrap_length}{Maximum legend title length before wrapping to a new line.}
 
 \item{title_wrap_length}{Maximum title length before wrapping to a new line.}
+
+\item{spec_name_wrap_length}{Maximum species name length before wrapping to a new line.}
+
+\item{visible_gridlines}{Show gridlines between cells. Default is TRUE.}
+
+\item{layers}{Additional rnaturalearth layers to plot, e.g. c("reefs", "playas").}
+
+\item{scale}{Scale of Natural Earth data ("small", "medium", or "large"). Default is 'medium'.}
 }
 \value{
 A ggplot object representing the map of species range or occurrences.

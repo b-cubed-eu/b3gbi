@@ -63,6 +63,7 @@ print.indicator_map <- function(x, n = 10, ...) {
   cat("Number of species represented:", x$num_species, "\n")
   cat("Number of families represented:", paste(x$num_families, collapse = ", "), "\n\n")
   cat("Kingdoms represented:", paste(x$kingdoms, collapse = ", "), "\n\n")
+  cat("Map layers:", paste(x$map_layers, collapse = ", "), "\n\n")
   cat("First", n, "rows of data (use n = to show more):\n\n")
   tibble::as_tibble(x$data) %>%
     dplyr::select(-geometry) %>%

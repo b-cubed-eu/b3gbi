@@ -1,6 +1,6 @@
 test_that("plot_map handles input and basic plot creation", {
   data(example_indicator_map1)
-  p <- plot_map(example_indicator_map1)
+  p <- suppressWarnings(plot_map(example_indicator_map1))
   expect_s3_class(p, "ggplot")
 
   geom_sf_present <- any(
@@ -18,13 +18,13 @@ test_that("plot_map handles input and basic plot creation", {
 
 test_that("plot_map handles custom title", {
   data(example_indicator_map1)
-  p <- plot_map(example_indicator_map1, title = "Custom Title")
+  p <- suppressWarnings(plot_map(example_indicator_map1, title = "Custom Title"))
   expect_equal(p$labels$title, "Custom Title")
 })
 
 test_that("plot_map handles custom legend title", {
   data(example_indicator_map1)
-  p <- plot_map(example_indicator_map1, legend_title = "Custom Legend")
+  p <- suppressWarnings(plot_map(example_indicator_map1, legend_title = "Custom Legend"))
   expect_equal(p$labels$fill, "Custom\nLegend")
 })
 
@@ -49,10 +49,12 @@ test_that("plot_map handles custom xlims and ylims", {
   if (!is.null(all_coords)) {
     xlims_test <- range(all_coords[, 1])
     ylims_test <- range(all_coords[, 2])
+    names(xlims_test) <- c("xmin", "xmax")
+    names(ylims_test) <- c("ymin", "ymax")
 
-    p <- plot_map(example_indicator_map1,
-                  xlims = xlims_test,
-                  ylims = ylims_test)
+    p <- suppressWarnings(plot_map(example_indicator_map1,
+                                   xlims = xlims_test,
+                                   ylims = ylims_test))
     expect_equal(p$coordinates$limits$x, xlims_test)
     expect_equal(p$coordinates$limits$y, ylims_test)
   } else {
@@ -64,36 +66,25 @@ test_that("plot_map handles breaks and labels", {
   data(example_indicator_map1)
   breaks_test <- c(1, 2, 3)
   labels_test <- c("Low", "Medium", "High")
-  p <- plot_map(example_indicator_map1,
+  p <- suppressWarnings(plot_map(example_indicator_map1,
                 breaks = breaks_test,
-                labels = labels_test)
+                labels = labels_test))
   expect_equal(p$scales$scales[[1]]$breaks, breaks_test)
   expect_equal(p$scales$scales[[1]]$labels, labels_test)
 })
 
-test_that("plot_map handles Europe_crop_EEA", {
-  data(example_indicator_map1)
-  p <- plot_map(example_indicator_map1, Europe_crop_EEA = TRUE)
-  expect_s3_class(p, "ggplot")
-})
-
 test_that("plot_map handles crop_to_grid", {
   data(example_indicator_map1)
-  p <- plot_map(example_indicator_map1, crop_to_grid = TRUE)
-  expect_s3_class(p, "ggplot")
-})
-
-test_that("plot_map handles surround", {
-  data(example_indicator_map1)
-  p <- plot_map(example_indicator_map1, surround = TRUE)
+  p <- suppressWarnings(plot_map(example_indicator_map1, crop_to_grid = TRUE))
+  p <- suppressWarnings(plot_map(example_indicator_map1, crop_to_grid = FALSE))
   expect_s3_class(p, "ggplot")
 })
 
 test_that("plot_map handles panel_bg and land_fill_colour", {
   data(example_indicator_map1)
-  p <- plot_map(example_indicator_map1,
+  p <- suppressWarnings(plot_map(example_indicator_map1,
                 panel_bg = "red",
-                land_fill_colour = "blue")
+                land_fill_colour = "blue"))
   expect_equal(p$theme$panel.background$fill, "red")
   expect_equal(p$layers[[1]]$aes_params$fill, "blue")
 })
@@ -101,7 +92,7 @@ test_that("plot_map handles panel_bg and land_fill_colour", {
 # Test case for default parameter
 test_that("plot_map handles default parameters", {
   data(example_indicator_map1)
-  p <- plot_map(example_indicator_map1)
+  p <- suppressWarnings(plot_map(example_indicator_map1))
   expect_s3_class(p, "ggplot")
   expect_null(p$labels$title)
 })
@@ -109,25 +100,25 @@ test_that("plot_map handles default parameters", {
 # Test with all options
 test_that("plot_map with all parameters set", {
   data(example_indicator_map1)
-  p <- plot_map(example_indicator_map1,
-                title = "Full Test",
-                auto_title = "Auto Title",
-                leg_label_default = "Default Legend",
-                xlims = c(0, 10),
-                ylims = c(0, 10),
-                trans = "log",
-                bcpower = 0.5,
-                breaks = c(1, 2, 3),
-                labels = c("One", "Two", "Three"),
-                Europe_crop_EEA = FALSE,
-                crop_to_grid = TRUE,
-                surround = FALSE,
-                panel_bg = "green",
-                land_fill_colour = "yellow",
-                legend_title = "Legend Title",
-                legend_limits = c(1, 10),
-                legend_title_wrap_length = 15,
-                title_wrap_length = 40)
+  p <- suppressWarnings(plot_map(example_indicator_map1,
+                                 title = "Full Test",
+                                 auto_title = "Auto Title",
+                                 leg_label_default = "Default Legend",
+                                 xlims = c(0, 10),
+                                 ylims = c(0, 10),
+                                 trans = "log",
+                                 bcpower = 0.5,
+                                 breaks = c(1, 2, 3),
+                                 labels = c("One", "Two", "Three"),
+                                 crop_to_grid = TRUE,
+                                 panel_bg = "green",
+                                 land_fill_colour = "yellow",
+                                 legend_title = "Legend Title",
+                                 legend_limits = c(1, 10),
+                                 legend_title_wrap_length = 15,
+                                 title_wrap_length = 40,
+                                 layers = NULL,
+                                 scale = "medium"))
   expect_s3_class(p, "ggplot")
   expect_equal(p$labels$title, "Full Test")
 })
@@ -135,17 +126,19 @@ test_that("plot_map with all parameters set", {
 # Test different transformation methods
 test_that("plot_map handles different transformations", {
   data(example_indicator_map1)
-  p_boxcox <- plot_map(example_indicator_map1,
-                       trans = "boxcox",
-                       bcpower = 0.5)
+  p_boxcox <- suppressWarnings(plot_map(example_indicator_map1,
+                                        trans = "boxcox",
+                                        bcpower = 0.5))
   expect_s3_class(p_boxcox, "ggplot")
 
-  p_modulus <- plot_map(example_indicator_map1,
-                        trans = "modulus",
-                        bcpower = 0.5)
+  p_modulus <- suppressWarnings(plot_map(example_indicator_map1,
+                                         trans = "modulus",
+                                         bcpower = 0.5))
   expect_s3_class(p_modulus, "ggplot")
 
-  p_yj <- plot_map(example_indicator_map1, trans = "yj", bcpower = 0.5)
+  p_yj <- suppressWarnings(plot_map(example_indicator_map1,
+                                    trans = "yj",
+                                    bcpower = 0.5))
   expect_s3_class(p_yj, "ggplot")
 })
 
@@ -156,11 +149,11 @@ test_that("plot_map handles title and legend title wrapping", {
   long_legend_title <- paste(rep("Long Legend Part", 10), collapse = " ")
 
   data(example_indicator_map1)
-  p <- plot_map(example_indicator_map1,
-                title = long_title,
-                legend_title = long_legend_title,
-                title_wrap_length = 20,
-                legend_title_wrap_length = 25)
+  p <- suppressWarnings(plot_map(example_indicator_map1,
+                                 title = long_title,
+                                 legend_title = long_legend_title,
+                                 title_wrap_length = 20,
+                                 legend_title_wrap_length = 25))
 
   wrapped_title_len <- nchar(p$labels$title)
   wrapped_legend_len <- nchar(p$labels$fill)
@@ -177,8 +170,7 @@ test_that("plot_map handles unsupported projections", {
 })
 
 test_that("plot_map handles all parameters without error", {
-  # Assuming example_indicator_map is a valid indicator_map object
-  p <- plot_map(
+  p <- suppressWarnings(plot_map(
     x = example_indicator_map1,
     title = "Map Full Parameter Test",
     auto_title = "Auto Title Example",
@@ -189,22 +181,20 @@ test_that("plot_map handles all parameters without error", {
     bcpower = 0.5,
     breaks = c(1, 2, 3),
     labels = c("Low", "Medium", "High"),
-    Europe_crop_EEA = FALSE,
     crop_to_grid = TRUE,
-    surround = FALSE,
     panel_bg = "white",
     land_fill_colour = "grey90",
     legend_title = "Legend Title",
     legend_limits = c(1, 5),
     legend_title_wrap_length = 15,
-    title_wrap_length = 25
-  )
+    title_wrap_length = 25,
+    layers = NULL,
+    scale = "medium"
+  ))
 
   # Check that the resulting plot is a ggplot object
   expect_s3_class(p, "ggplot")
 })
-
-
 
 spec_occ_mammals_denmark <- spec_occ_map(example_cube_1,
                                          level = "country",
@@ -270,16 +260,14 @@ test_that("plot_species_map accommodates geographic limits", {
   )
 
   # Check custom limits using plot data
-  expect_equal(p$coordinates$limits$x, c(13, 15))
-  expect_equal(p$coordinates$limits$y, c(56, 57))
+  expect_equal(unname(p$coordinates$limits$x), c(13, 15))
+  expect_equal(unname(p$coordinates$limits$y), c(56, 57))
 })
 
 test_that("plot_species_map responds to geographic and contextual parameters", {
   p1 <- plot_species_map(
     x = spec_occ_mammals_denmark,
-    species = c(2440728),
-    Europe_crop_EEA = TRUE,
-    surround = FALSE
+    species = c(2440728)
   )
 
   expect_s3_class(p1, "ggplot")
@@ -323,16 +311,16 @@ test_that("plot_species_map handles all parameters without error", {
     bcpower = 0.5,
     breaks = c(1, 2, 3),
     labels = c("Low", "Medium", "High"),
-    Europe_crop_EEA = FALSE,
     crop_to_grid = TRUE,
-    surround = FALSE,
     single_plot = TRUE,
     panel_bg = "white",
     land_fill_colour = "grey90",
     legend_title = "Legend Title",
     legend_limits = c(1, 5),
     legend_title_wrap_length = 15,
-    title_wrap_length = 25
+    title_wrap_length = 25,
+    layers = NULL,
+    scale = "medium"
   )
 
   # Check that the resulting plot is a ggplot object or patchwork
@@ -638,40 +626,74 @@ mock_data <- data.frame(
 )
 
 # Mock objects for each class
-mock_spec_range <- structure(list(data = mock_data),
+mock_spec_range <- structure(list(data = mock_data,
+                                  first_year = 2001,
+                                  last_year = 2005),
                              class = c("indicator_ts", "spec_range"))
-mock_spec_occ <- structure(list(data = mock_data),
+mock_spec_occ <- structure(list(data = mock_data,
+                                first_year = 2001,
+                                last_year = 2005),
                            class = c("indicator_ts", "spec_occ"))
-mock_cum_richness <- structure(list(data = mock_data),
+mock_cum_richness <- structure(list(data = mock_data,
+                                    first_year = 2001,
+                                    last_year = 2005),
                                class = c("indicator_ts", "cum_richness"))
-mock_pielou_evenness <- structure(list(data = mock_data),
+mock_pielou_evenness <- structure(list(data = mock_data,
+                                       first_year = 2001,
+                                       last_year = 2005),
                                   class = c("indicator_ts", "pielou_evenness"))
-mock_williams_evenness <- structure(list(data = mock_data),
+mock_williams_evenness <- structure(list(data = mock_data,
+                                         first_year = 2001,
+                                         last_year = 2005),
                                     class = c("indicator_ts",
                                               "williams_evenness"))
-mock_tax_distinct <- structure(list(data = mock_data),
+mock_tax_distinct <- structure(list(data = mock_data,
+                                    first_year = 2001,
+                                    last_year = 2005),
                                class = c("indicator_ts", "tax_distinct"))
-mock_occ_density <- structure(list(data = mock_data),
+mock_occ_density <- structure(list(data = mock_data,
+                                   first_year = 2001,
+                                   last_year = 2005),
                               class = c("indicator_ts", "occ_density"))
-mock_newness <- structure(list(data = mock_data),
+mock_newness <- structure(list(data = mock_data,
+                               first_year = 2001,
+                               last_year = 2005),
                           class = c("indicator_ts", "newness"))
-mock_total_occ <- structure(list(data = mock_data),
+mock_total_occ <- structure(list(data = mock_data,
+                                 first_year = 2001,
+                                 last_year = 2005),
                             class = c("indicator_ts", "total_occ"))
-mock_area_rarity <- structure(list(data = mock_data),
+mock_area_rarity <- structure(list(data = mock_data,
+                                   first_year = 2001,
+                                   last_year = 2005),
                               class = c("indicator_ts", "area_rarity"))
-mock_ab_rarity <- structure(list(data = mock_data),
+mock_ab_rarity <- structure(list(data = mock_data,
+                                 first_year = 2001,
+                                 last_year = 2005),
                             class = c("indicator_ts", "ab_rarity"))
-mock_rarefied <- structure(list(data = mock_data),
+mock_rarefied <- structure(list(data = mock_data,
+                                first_year = 2001,
+                                last_year = 2005),
                            class = c("indicator_ts", "rarefied"))
-mock_hill2 <- structure(list(data = mock_data),
+mock_hill2 <- structure(list(data = mock_data,
+                             first_year = 2001,
+                             last_year = 2005),
                         class = c("indicator_ts", "hill2"))
-mock_hill1 <- structure(list(data = mock_data),
+mock_hill1 <- structure(list(data = mock_data,
+                             first_year = 2001,
+                             last_year = 2005),
                         class = c("indicator_ts", "hill1"))
-mock_hill0 <- structure(list(data = mock_data),
+mock_hill0 <- structure(list(data = mock_data,
+                             first_year = 2001,
+                             last_year = 2005),
                         class = c("indicator_ts", "hill0"))
-mock_obs_richness <- structure(list(data = mock_data),
+mock_obs_richness <- structure(list(data = mock_data,
+                                    first_year = 2001,
+                                    last_year = 2005),
                                class = c("indicator_ts", "obs_richness"))
-mock_occ_turnover <- structure(list(data = mock_data),
+mock_occ_turnover <- structure(list(data = mock_data,
+                                    first_year = 2001,
+                                    last_year = 2005),
                                class = c("indicator_ts", "occ_turnover"))
 
 # Same invalid mock object for all error tests
@@ -794,9 +816,13 @@ mock_data_by_type <- data.frame(
   type = rep(c("Type A", "Type B", "Type C"), each = 15)
 )
 
-mock_occ_by_dataset <- structure(list(data = mock_data_by_dataset),
+mock_occ_by_dataset <- structure(list(data = mock_data_by_dataset,
+                                      first_year = 2001,
+                                      last_year = 2005),
                                  class = c("indicator_ts", "occ_by_dataset"))
-mock_occ_by_type <- structure(list(data = mock_data_by_type),
+mock_occ_by_type <- structure(list(data = mock_data_by_type,
+                                   first_year = 2001,
+                                   last_year = 2005),
                               class = c("indicator_ts", "occ_by_type"))
 
 mock_invalid_object <- list(a = 1, b = 2) # Invalid class
@@ -833,13 +859,13 @@ test_that("plot.occ_by_dataset handles facet parameters correctly", {
   expect_equal(facet_wrap_check$params$ncol, 2)
 })
 
-# test_that("plot.occ_by_dataset applies max_datasets and min_occurrences", {
-#   p <- plot.occ_by_dataset(mock_occ_by_dataset,
-#                            max_datasets = 2,
-#                            min_occurrences = 5)
-#   unique_datasets <- length(ggplot_build(p)$layout$panel_params)
-#   expect_true(unique_datasets == 2)  # Limited by max_datasets
-# })
+test_that("plot.occ_by_dataset applies max_datasets and min_occurrences", {
+  p <- plot.occ_by_dataset(mock_occ_by_dataset,
+                           max_datasets = 2,
+                           min_occurrences = 5)
+  unique_datasets <- length(ggplot_build(p)$layout$panel_params)
+  expect_true(unique_datasets == 2)  # Limited by max_datasets
+})
 
 test_that("plot.occ_by_type handles x_breaks parameter", {
   p <- plot.occ_by_type(mock_occ_by_type, x_breaks = 10)

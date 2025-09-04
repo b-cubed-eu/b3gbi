@@ -10,8 +10,11 @@
 #'
 #' @export
 create_sf_from_utm <- function(df, output_crs = NULL) {
+
+  utmzone <- NULL
+
   # 1. Input Validation
-  required_cols <- c("xcoord", "ycoord", "utmzone")
+  required_cols <- c("xcoord", "ycoord", "utmzone", "hemisphere")
   if (!all(required_cols %in% names(df))) {
     stop(paste("Input data frame must contain columns:", paste(required_cols, collapse = ", ")))
   }

@@ -7,13 +7,14 @@ calc_map.default <- function(x, ...){
 
 }
 
-#' @noRd
+#' @export
+#' @rdname calc_map
 calc_map.hill0 <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
                   inherits(x, "hill0"))
 
-  indicator <- calc_map.hill_core(x = x,
+  indicator <- calc_map_hill_core(x = x,
                                   type = "hill0",
                                   ...)
 
@@ -21,13 +22,14 @@ calc_map.hill0 <- function(x, ...) {
 
 }
 
-#' @noRd
+#' @export
+#' @rdname calc_map
 calc_map.hill1 <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
                   inherits(x, "hill1"))
 
-  indicator <- calc_map.hill_core(x = x,
+  indicator <- calc_map_hill_core(x = x,
                                   type = "hill1",
                                   ...)
 
@@ -35,21 +37,23 @@ calc_map.hill1 <- function(x, ...) {
 
 }
 
-#' @noRd
+#' @export
+#' @rdname calc_map
 calc_map.hill2 <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
                   inherits(x, "hill2"))
 
-  indicator <- calc_map.hill_core(x = x,
+  indicator <- calc_map_hill_core(x = x,
                                   type = "hill2",
                                   ...)
 
   return(indicator)
 }
 
+#' @param type Which Hill diversity to calculate ("hill0", "hill1", "hill2")
 #' @noRd
-calc_map.hill_core <- function(x,
+calc_map_hill_core <- function(x,
                                type = c("hill0", "hill1", "hill2"),
                                ...) {
   stopifnot_error(
@@ -59,6 +63,8 @@ calc_map.hill_core <- function(x,
     inherits(x, c("data.frame", "sf")) &
       rlang::inherits_any(x, c("hill0", "hill1", "hill2"))
   )
+
+  qD <- cellid <- Assemblage <- taxonKey <- obs <- NULL
 
   qval <- as.numeric(gsub("hill", "", match.arg(type)))
   temp_opts <- list(...)
@@ -228,7 +234,7 @@ calc_map.williams_evenness <- function(x, ...) {
                   inherits(x, "williams_evenness"))
 
   # Call function to calculate evenness over a grid
-  indicator <- calc_map.evenness_core(x = x,
+  indicator <- calc_map_evenness_core(x = x,
                                       type = "williams_evenness",
                                       ...)
 
@@ -244,7 +250,7 @@ calc_map.pielou_evenness <- function(x, ...) {
                   inherits(x, "pielou_evenness"))
 
   # Call function to calculate evenness over a grid
-  indicator <- calc_map.evenness_core(x = x,
+  indicator <- calc_map_evenness_core(x = x,
                                       type = "pielou_evenness",
                                       ...)
 
@@ -253,7 +259,7 @@ calc_map.pielou_evenness <- function(x, ...) {
 }
 
 #' @noRd
-calc_map.evenness_core <- function(x,
+calc_map_evenness_core <- function(x,
                                    type,
                                    ...) {
 
@@ -303,14 +309,15 @@ calc_map.ab_rarity <- function(x, ...) {
   stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
                   inherits(x, "ab_rarity"))
 
-  obs <- taxonKey <- cellid <- records_taxon <- rarity <- NULL
+  obs <- taxonKey <- cellid <- records_taxon <- obs_taxon <- rarity <- NULL
+  obs_cell <- NULL
 
   # Select relevant columns
   x <- x %>%
     dplyr::select(cellid, taxonKey, obs)
 
   # Remove invalid rows
-  x <- x[complete.cases(x), ]
+  x <- x[stats::complete.cases(x), ]
 
 # Calculate total summed rarity (in terms of abundance) for each grid cell
   indicator <-
@@ -338,13 +345,14 @@ calc_map.area_rarity <- function(x, ...) {
                   inherits(x, "area_rarity"))
 
   rec_tax_cell <- cellid <- taxonKey <- rarity <- NULL
+  occ_by_taxa <- total_cells <- NULL
 
   # Select relevant columns
   x <- x %>%
     select(cellid, taxonKey)
 
   # Remove invalid rows
-  x <- x[complete.cases(x), ]
+  x <- x[stats::complete.cases(x), ]
 
   # Calculate rarity as the sum (per grid cell) of the inverse of occupancy
   # frequency for each species

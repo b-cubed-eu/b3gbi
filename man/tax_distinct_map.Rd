@@ -39,13 +39,20 @@ while the function runs. Should only be used to solve specific issues. (Default 
 time but may help if you are getting polygon errors. (Default is FALSE).}
     \item{\code{num_bootstrap}}{Set the number of bootstraps to calculate for generating
 confidence intervals. (Default: 1000)}
-    \item{\code{crs_unit_convert}}{Force a particular output CRS even when it has
-different units than the input CRS. (Default: FALSE)}
     \item{\code{shapefile_path}}{Path of an external shapefile to merge into the workflow. For example,
 if you want to calculate your indicator particular features such as protected areas or wetlands.}
+    \item{\code{shapefile_crs}}{CRS of a .wkt shapefile. If your shapefile is .wkt and you do
+NOT use this parameter, the CRS will be assumed to be EPSG:4326 and the
+coordinates will be read in as lat/long. If your shape is NOT a .wkt the CRS
+will be determined automatically.}
     \item{\code{invert}}{Calculate an indicator over the inverse of the shapefile (e.g.
 if you have a protected areas shapefile this would calculate an indicator over
 all non protected areas)}
+    \item{\code{include_ocean}}{Include occurrences which fall outside the land area.
+Default is TRUE. Set as "buffered_coast" to include a set buffer size around
+the land area rather than the entire ocean area.}
+    \item{\code{buffer_dist_km}}{The distance to buffer around the land if include_ocean
+is set to "buffered_coast".}
   }}
 }
 \value{
