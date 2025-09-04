@@ -366,6 +366,7 @@ area_rarity_ts <- function(data, ...) {
   compute_indicator_workflow(data,
                              type = "area_rarity",
                              dim_type = "ts",
+                             force_grid = TRUE,
                              ...)
 }
 
