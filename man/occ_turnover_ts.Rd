@@ -46,6 +46,10 @@ Default is TRUE. Set as "buffered_coast" to include a set buffer size around
 the land area rather than the entire ocean area.}
     \item{\code{buffer_dist_km}}{The distance to buffer around the land if include_ocean
 is set to "buffered_coast".}
+    \item{\code{force_grid}}{Forces the calculation of a grid even if this would not
+normally be part of the pipeline, e.g. for time series. This setting is
+required for the calculation of rarity, and is turned on by the ab_rarity_ts
+and area_rarity_ts wrappers. (Default: FALSE)}
   }}
 }
 \value{

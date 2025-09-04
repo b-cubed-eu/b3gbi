@@ -25,6 +25,7 @@ compute_indicator_workflow(
   invert = FALSE,
   include_ocean = TRUE,
   buffer_dist_km = 50,
+  force_grid = FALSE,
   ...
 )
 }
@@ -101,6 +102,11 @@ the land area rather than the entire ocean area.}
 
 \item{buffer_dist_km}{The distance to buffer around the land if include_ocean
 is set to "buffered_coast".}
+
+\item{force_grid}{Forces the calculation of a grid even if this would not
+normally be part of the pipeline, e.g. for time series. This setting is
+required for the calculation of rarity, and is turned on by the ab_rarity_ts
+and area_rarity_ts wrappers. (Default: FALSE)}
 
 \item{...}{Additional arguments passed to specific indicator calculation functions.}
 }
