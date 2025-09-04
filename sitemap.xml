@@ -12,10 +12,12 @@
 <url><loc>https://b-cubed-eu.github.io/b3gbi/reference/area_rarity_map.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/b3gbi/reference/available_indicators.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/b3gbi/reference/b3gbi-package.html</loc></url>
+<url><loc>https://b-cubed-eu.github.io/b3gbi/reference/calc_ci.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/b3gbi/reference/calc_map.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/b3gbi/reference/calc_ts.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/b3gbi/reference/check_crs_units.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/b3gbi/reference/compute_indicator_workflow.html</loc></url>
+<url><loc>https://b-cubed-eu.github.io/b3gbi/reference/convert_eqdgc_latlong.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/b3gbi/reference/create_sf_from_utm.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/b3gbi/reference/cum_richness_ts.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/b3gbi/reference/example_cube_1.html</loc></url>
@@ -23,10 +25,12 @@
 <url><loc>https://b-cubed-eu.github.io/b3gbi/reference/example_indicator_ts1.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/b3gbi/reference/example_indicator_ts2.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/b3gbi/reference/get_bootstrap_ci.html</loc></url>
+<url><loc>https://b-cubed-eu.github.io/b3gbi/reference/get_crs_for_mgrs.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/b3gbi/reference/get_observed_years.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/b3gbi/reference/hill0_map.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/b3gbi/reference/index.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/b3gbi/reference/list_species.html</loc></url>
+<url><loc>https://b-cubed-eu.github.io/b3gbi/reference/mgrs_to_latlong_bbox.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/b3gbi/reference/newness_map.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/b3gbi/reference/obs_richness_map.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/b3gbi/reference/occ_density_map.html</loc></url>

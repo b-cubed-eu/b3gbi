@@ -33,7 +33,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -417,9 +417,19 @@ convenience.</p>
 <span><span class="co">#                  off spherical geometry when calculating indicator.</span></span>
 <span><span class="co">#   * Argument 14: make_valid (optional), call st_make_valid from the sf </span></span>
 <span><span class="co">#                  package to fix geometry issues if you are getting errors.</span></span>
-<span><span class="co">#   * Argument 15: num_bootstraps (optional), set the number of bootstraps to </span></span>
+<span><span class="co">#   * Argument 15: num_bootstrap (optional), set the number of bootstraps to </span></span>
 <span><span class="co">#                  calculate for generating confidence intervals. Uses 1000 by </span></span>
 <span><span class="co">#                  default.</span></span>
+<span><span class="co">#   * Argument 16: shapefile_path, path to an external shapefile you want to</span></span>
+<span><span class="co">#                  use for cropping your data</span></span>
+<span><span class="co">#   * Argument 17: shapefile_crs (optional), CRS of your shapefile if it is </span></span>
+<span><span class="co">#                  .wkt format and is not EPSG:4326</span></span>
+<span><span class="co">#   * Argument 18: invert, invert the shapefile</span></span>
+<span><span class="co">#   * Argument 19: include_water, include ocean and lake layers from </span></span>
+<span><span class="co">#                  rnaturalearth. Defaults to FALSE. Alternatively you can set it</span></span>
+<span><span class="co">#                  to "buffered_coast" for to set a buffer distance around land.</span></span>
+<span><span class="co">#   * Argument 20: buffer_dist_km, Distance to buffer around the land if</span></span>
+<span><span class="co">#                  include_water set to "buffered_coast".</span></span>
 <span><span class="co">#</span></span>
 <span><span class="co"># Outputs:</span></span>
 <span><span class="co">#   * indicator_ts or indicator_map object containing a data frame of indicator </span></span>
@@ -475,10 +485,10 @@ convenience.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Coordinate range:</span></span>
 <span><span class="co">#&gt;      xmin      ymin      xmax      ymax </span></span>
-<span><span class="co">#&gt;  8.121484 54.628857 15.137109 57.736914 </span></span>
+<span><span class="co">#&gt;  8.016236 54.628857 15.483170 57.736914 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Grid cell size: 0.25 degrees </span></span>
-<span><span class="co">#&gt; Number of cells: 168 </span></span>
+<span><span class="co">#&gt; Number of cells: 387 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Observation years: 1980 - 2023 </span></span>
 <span><span class="co">#&gt; Total years with observations: 44 </span></span>
@@ -488,22 +498,24 @@ convenience.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Kingdoms represented: Animalia </span></span>
 <span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Map layers:  </span></span>
+<span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; First 10 rows of data (use n = to show more):</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 168 × 2</span></span></span>
-<span><span class="co">#&gt;    cellid diversity_val</span></span>
-<span><span class="co">#&gt;     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>     80            21</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>     82             7</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>     83            30</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>     84            40</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>     85            43</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>    122            20</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>    123            29</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>    124            17</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>    125            32</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>    126            40</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 158 more rows</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 387 × 3</span></span></span>
+<span><span class="co">#&gt;    cellid   area diversity_val</span></span>
+<span><span class="co">#&gt;     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494;">[km^2]</span>         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>     68   447.            <span style="color: #BB0000;">NA</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>     69   447.            <span style="color: #BB0000;">NA</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>     70   447.            20</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>     71   447.            34</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>     72   447.            32</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>     73   447.            34</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>     74   447.            47</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>     75   447.            48</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>     76   447.            37</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>     77   447.            21</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 377 more rows</span></span></span></code></pre></div>
 <p>When you type the name of the indicator object, you will again see
 that it is plotted by an internal function of the package. As with the
 cube objects, indicator objects contain a tibble called data. In the
@@ -592,7 +604,11 @@ so further customization is quite easy.</p>
 <span></span>
 <span><span class="co"># Example:</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/b-cubed-eu/b3gbi" class="external-link">b3gbi</a></span><span class="op">)</span></span>
-<span><span class="va">Denmark_observed_richness_ts</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/obs_richness_map.html">obs_richness_ts</a></span><span class="op">(</span><span class="va">example_cube_1</span>, first_year <span class="op">=</span> <span class="fl">1980</span>, level <span class="op">=</span> <span class="st">"country"</span>, region <span class="op">=</span> <span class="st">"Denmark"</span>, ci_type <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> </span>
+<span><span class="va">Denmark_observed_richness_ts</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/obs_richness_map.html">obs_richness_ts</a></span><span class="op">(</span><span class="va">example_cube_1</span>, </span>
+<span>                                                first_year <span class="op">=</span> <span class="fl">1980</span>, </span>
+<span>                                                level <span class="op">=</span> <span class="st">"country"</span>, </span>
+<span>                                                region <span class="op">=</span> <span class="st">"Denmark"</span>, </span>
+<span>                                                ci_type <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> </span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">Denmark_observed_richness_ts</span><span class="op">)</span></span></code></pre></div>
 <p><img src="b3gbi_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">

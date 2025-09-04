@@ -17,7 +17,7 @@ a time series (see 'Details' for more information)."><meta property="og:image" c
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -110,18 +110,29 @@ time but may help if you are getting polygon errors. (Default is FALSE).</p></dd
 <dd><p>Set the number of bootstraps to calculate for generating
 confidence intervals. (Default: 1000)</p></dd>
 
-    <dt><code>crs_unit_convert</code></dt>
-<dd><p>Force a particular output CRS even when it has
-different units than the input CRS. (Default: FALSE)</p></dd>
-
     <dt><code>shapefile_path</code></dt>
 <dd><p>Path of an external shapefile to merge into the workflow. For example,
 if you want to calculate your indicator particular features such as protected areas or wetlands.</p></dd>
+
+    <dt><code>shapefile_crs</code></dt>
+<dd><p>CRS of a .wkt shapefile. If your shapefile is .wkt and you do
+NOT use this parameter, the CRS will be assumed to be EPSG:4326 and the
+coordinates will be read in as lat/long. If your shape is NOT a .wkt the CRS
+will be determined automatically.</p></dd>
 
     <dt><code>invert</code></dt>
 <dd><p>Calculate an indicator over the inverse of the shapefile (e.g.
 if you have a protected areas shapefile this would calculate an indicator over
 all non protected areas)</p></dd>
+
+    <dt><code>include_ocean</code></dt>
+<dd><p>Include occurrences which fall outside the land area.
+Default is TRUE. Set as "buffered_coast" to include a set buffer size around
+the land area rather than the entire ocean area.</p></dd>
+
+    <dt><code>buffer_dist_km</code></dt>
+<dd><p>The distance to buffer around the land if include_ocean
+is set to "buffered_coast".</p></dd>
 
 
 </dl></dd>
