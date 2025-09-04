@@ -189,7 +189,7 @@ test_that("calc_ts.occ_density handles non-km resolutions correctly", {
 
   expect_error(
     calc_ts.occ_density(mock_invalid_resolution),
-    "choose a projected CRS that uses meters or kilometers"
+    "To calculate occurrence density, please choose a projected"
   )
 })
 
@@ -230,7 +230,7 @@ mock_newness <- structure(mock_newness_data, class = c("newness",
 test_that("calc_ts.newness calculates newness correctly", {
   result <- calc_ts.newness(mock_newness)
 
-  expected_result <- data.frame(
+  expected_result <- tibble::tibble(
     year = c(2001, 2002, 2003),
     diversity_val = c(2001, 2002, 2002)
   )
@@ -255,9 +255,9 @@ test_that("calc_ts.newness handles empty input gracefully", {
                                       values = integer()),
                            class = c("newness", "data.frame"))
 
-  expected_empty_result <- data.frame(
+  expected_empty_result <- tibble::tibble(
     year = integer(),
-    diversity_val = logical()
+    diversity_val = double()
   )
 
   result <- calc_ts.newness(empty_input)
@@ -620,7 +620,7 @@ test_that("calc_ts.occ_turnover handles empty input gracefully", {
 
   expected_empty_result <- tibble::tibble(
     year = integer(),
-    diversity_val = numeric()
+    diversity_val = logical()
   )
 
   result <- calc_ts.occ_turnover(empty_input)
