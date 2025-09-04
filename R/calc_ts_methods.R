@@ -358,16 +358,10 @@ calc_ts.spec_range <- function(x) {
   year <- taxonKey <- cellCode <- obs <- diversity_val <- scientificName <- NULL
 
   # Flatten occurrences for each species by year
-  # indicator <- x %>%
-  #   dplyr::summarize(diversity_val = sum(obs >= 1),
-  #                    scientificName = scientificName[1],
-  #                    .by = c(taxonKey, year)) %>%
-  #   dplyr::arrange(taxonKey) %>%
-  #   dplyr::select(year, taxonKey, scientificName, diversity_val)
-
   indicator <- x %>%
-    dplyr::mutate(diversity_val = sum(obs >= 1), .by = c(taxonKey, year)) %>%
-    dplyr::distinct(year, scientificName, .keep_all = TRUE) %>%
+    dplyr::summarize(diversity_val = sum(obs >= 1),
+                     scientificName = scientificName[1],
+                     .by = c(taxonKey, year)) %>%
     dplyr::arrange(taxonKey) %>%
     dplyr::select(year, taxonKey, scientificName, diversity_val)
 }
