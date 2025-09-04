@@ -15,7 +15,7 @@ over a gridded map or as a time series (see 'Details' for more information)."><m
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,7 +38,7 @@ over a gridded map or as a time series (see 'Details' for more information)."><m
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Calculate Taxonomic Distinctness Over Space or Time</h1>
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.7.0/R/indicator_wrappers.R" class="external-link"><code>R/indicator_wrappers.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.7.1/R/indicator_wrappers.R" class="external-link"><code>R/indicator_wrappers.R</code></a></small>
       <div class="d-none name"><code>tax_distinct_map.Rd</code></div>
     </div>
 
@@ -136,6 +136,12 @@ the land area rather than the entire ocean area.</p></dd>
     <dt><code>buffer_dist_km</code></dt>
 <dd><p>The distance to buffer around the land if include_ocean
 is set to "buffered_coast".</p></dd>
+
+    <dt><code>force_grid</code></dt>
+<dd><p>Forces the calculation of a grid even if this would not
+normally be part of the pipeline, e.g. for time series. This setting is
+required for the calculation of rarity, and is turned on by the ab_rarity_ts
+and area_rarity_ts wrappers. (Default: FALSE)</p></dd>
 
 
 </dl></dd>
