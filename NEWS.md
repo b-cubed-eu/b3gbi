@@ -1,6 +1,9 @@
 # b3gbi 0.7.1 - Minor update:
 
 * Reorganized code in some indicator calculations to improve efficiency.
+* Fixed area_rarity_ts() that was broken by the previous update.
+
+* Note that the Hill functions are not working properly. This will hopefully be fixed in the next update.
 
 # b3gbi 0.7.0 - Major update:
 
