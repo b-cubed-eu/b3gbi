@@ -11,39 +11,15 @@
 \usage{
 hill0_map(data, coverage = 0.95, cutoff_length = 5, ...)
 
-hill0_ts(
-  data,
-  coverage = 0.95,
-  cutoff_length = 5,
-  num_bootstrap = 100,
-  conf_level = 0.95,
-  ci_type = "perc",
-  ...
-)
+hill0_ts(data, coverage = 0.95, cutoff_length = 5, conf_level = 0.95, ...)
 
 hill1_map(data, cutoff_length = 5, coverage = 0.95, ...)
 
-hill1_ts(
-  data,
-  cutoff_length = 5,
-  coverage = 0.95,
-  num_bootstrap = 100,
-  conf_level = 0.95,
-  ci_type = "perc",
-  ...
-)
+hill1_ts(data, cutoff_length = 5, coverage = 0.95, conf_level = 0.95, ...)
 
 hill2_map(data, cutoff_length = 5, coverage = 0.95, ...)
 
-hill2_ts(
-  data,
-  cutoff_length = 5,
-  coverage = 0.95,
-  num_bootstrap = 100,
-  conf_level = 0.95,
-  ci_type = "perc",
-  ...
-)
+hill2_ts(data, cutoff_length = 5, coverage = 0.95, conf_level = 0.95, ...)
 }
 \arguments{
 \item{data}{A data cube object (class 'processed_cube').}
