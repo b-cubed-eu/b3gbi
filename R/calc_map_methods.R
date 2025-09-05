@@ -14,9 +14,7 @@ calc_map.hill0 <- function(x, ...) {
   stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
                   inherits(x, "hill0"))
 
-  indicator <- calc_map_hill_core(x = x,
-                                  type = "hill0",
-                                  ...)
+  indicator <- calc_map_hill_core(x = x, type = "hill0", ...)
 
   return(indicator)
 
@@ -29,9 +27,7 @@ calc_map.hill1 <- function(x, ...) {
   stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
                   inherits(x, "hill1"))
 
-  indicator <- calc_map_hill_core(x = x,
-                                  type = "hill1",
-                                  ...)
+  indicator <- calc_map_hill_core(x = x, type = "hill1", ...)
 
   return(indicator)
 
@@ -44,48 +40,56 @@ calc_map.hill2 <- function(x, ...) {
   stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
                   inherits(x, "hill2"))
 
-  indicator <- calc_map_hill_core(x = x,
-                                  type = "hill2",
-                                  ...)
+  indicator <- calc_map_hill_core(x = x, type = "hill2", ...)
 
   return(indicator)
 }
 
 #' @param type Which Hill diversity to calculate ("hill0", "hill1", "hill2")
 #' @noRd
-calc_map_hill_core <- function(x,
-                               type = c("hill0", "hill1", "hill2"),
-                               ...) {
-  stopifnot_error(
-    paste0(
-    "Please check the class and structure of your data. This is an internal ",
-    "function, not meant to be called directly."),
-    inherits(x, c("data.frame", "sf")) &
-      rlang::inherits_any(x, c("hill0", "hill1", "hill2"))
-  )
+calc_map_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
+
+  stopifnot_error("Please check the class and structure of your data. This is an
+                  internal function, not meant to be called directly.",
+                  inherits(x, c("data.frame", "sf")) &
+                    rlang::inherits_any(x, c("hill0", "hill1", "hill2")))
 
   qD <- cellid <- Assemblage <- taxonKey <- obs <- NULL
 
-  qval <- as.numeric(gsub("hill", "", match.arg(type)))
-  temp_opts <- list(...)
-  cutoff_length <- temp_opts$cutoff_length
-  coverage <- temp_opts$coverage
+  type <- match.arg(type)
+
+  # Extract qvalue from hill diversity type
+  qval <- as.numeric(gsub("hill", "", type))
 
   # Create list of incidence matrices by cell
   incidence_list <- x %>%
     dplyr::select(taxonKey, obs, cellid) %>%
     dplyr::group_by(cellid) %>%
     dplyr::group_split() %>%
+    # Process each cellid's data frame
     purrr::map(function(cell_data) {
-      cell_data %>%
+      df <- cell_data %>%
         dplyr::distinct(taxonKey, .keep_all = TRUE) %>%
-        dplyr::select(taxonKey, obs) %>%
-        tibble::deframe() %>%
-        as.matrix()
+        dplyr::select(taxonKey, obs)
+
+      # Convert to matrix, ensuring dimnames are preserved
+      # This is a more robust way to handle single-row data
+      mat <- as.matrix(df[, "obs", drop = FALSE])
+      rownames(mat) <- df$taxonKey
+
+      return(mat)
     })
+
+  if (length(incidence_list) == 0) {
+    stop(paste0("No grid cells to process. Something went wrong."))
+  }
 
   # Name the list elements by cellid
   names(incidence_list) <- unique(x$cellid)
+
+  temp_opts <- list(...)
+  cutoff_length <- temp_opts$cutoff_length
+  coverage <- temp_opts$coverage
 
   # Filter cells based on cutoff length (number of species >= cutoff)
   incidence_list_filtered <- purrr::keep(incidence_list,
@@ -96,30 +100,37 @@ calc_map_hill_core <- function(x,
     return(FALSE)
   })
 
-  # Ensure presence-absence (assuming obs > 0 is presence) and
-  # convert to numeric
+  if (length(incidence_list_filtered) == 0) {
+    stop(paste0("There are no grid cells left to process after filtering. ",
+                "Try setting the cutoff_length lower."))
+  }
+
   incidence_list_processed <- lapply(incidence_list_filtered,
                                      function(matrix) {
     numeric_matrix <- matrix(as.numeric(matrix),
                              nrow = nrow(matrix),
                              dimnames = dimnames(matrix))
-    numeric_matrix[numeric_matrix > 0] <- 1
     return(numeric_matrix)
   })
 
   # Compute Hill diversity using a wrapper for iNEXT::estimateD
   diversity_estimates <- incidence_list_processed %>%
-    my_estimateD(datatype = "incidence_raw",
+    my_estimateD(datatype = "abundance",
                  base = "coverage",
                  level = coverage,
-                 q = qval)
+                 q = qval,
+                 conf = 0.95,
+                 nboot = 0)
 
   # Extract and format the results
   indicator <- diversity_estimates %>%
-    dplyr::select(Assemblage, qD, t) %>%
+    dplyr::select(Assemblage, qD, m, SC, Order.q, Method) %>%
     dplyr::rename(cellid = Assemblage,
                   diversity_val = qD,
-                  samp_size_est = t) %>%
+                  samp_size_est = m,
+                  coverage = SC,
+                  diversity_type = Order.q,
+                  method = Method) %>%
     dplyr::mutate(cellid = as.integer(cellid), .keep = "unused")
 
   return(indicator)
