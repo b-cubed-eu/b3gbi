@@ -15,7 +15,7 @@ indicator, with an optional smoothed trendline, and visualizes uncertainty."><me
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -80,8 +80,8 @@ indicator, with an optional smoothed trendline, and visualizes uncertainty.</p>
 <span>  gridoff <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  x_label <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  y_label <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  x_expand <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  y_expand <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  x_expand <span class="op">=</span> <span class="fl">0.05</span>,</span>
+<span>  y_expand <span class="op">=</span> <span class="fl">0.05</span>,</span>
 <span>  x_breaks <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  y_breaks <span class="op">=</span> <span class="fl">6</span>,</span>
 <span>  wrap_length <span class="op">=</span> <span class="fl">60</span></span>
@@ -232,12 +232,14 @@ Default is 1.</p></dd>
 
 <dt id="arg-x-expand">x_expand<a class="anchor" aria-label="anchor" href="#arg-x-expand"></a></dt>
 <dd><p>(Optional)  Expansion factor to expand the x-axis beyond the data.
-Left and right values are required in the form of c(0.1, 0.2). Default is c(0,0).</p></dd>
+Left and right values are required in the form of c(0.1, 0.2) or simply 0.1 to
+apply the same value to each side. Default is 0.05.</p></dd>
 
 
 <dt id="arg-y-expand">y_expand<a class="anchor" aria-label="anchor" href="#arg-y-expand"></a></dt>
 <dd><p>(Optional)  Expansion factor to expand the y-axis beyond the data.
-Lower and upper values are required in the form of c(0.1, 0.2). Default is c(0,0).</p></dd>
+Lower and upper values are required in the form of c(0.1, 0.2) or simply 0.1 to
+apply the same value to the top and bottom. Default is 0.05.</p></dd>
 
 
 <dt id="arg-x-breaks">x_breaks<a class="anchor" aria-label="anchor" href="#arg-x-breaks"></a></dt>
