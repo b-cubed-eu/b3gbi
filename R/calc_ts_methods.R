@@ -100,9 +100,7 @@ calc_ts_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
   #                as.matrix() %>%
   #                ifelse(. > 1, 1, .))
   species_records_raw <- x %>%
-    # Select the required columns
     dplyr::select(year, scientificName, obs, cellCode) %>%
-    # Group and split by year
     dplyr::group_by(year) %>%
     dplyr::group_split() %>%
     # Process each year's data frame
@@ -130,13 +128,9 @@ calc_ts_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
   names(species_records_raw) <- richness_by_year$year
 
   temp_opts <- list(...)
-
   cutoff_length <- temp_opts$cutoff_length
-
   coverage <- temp_opts$coverage
-
   conf <- temp_opts$conf
-
   nboot <- temp_opts$nboot
 
   # remove all years with too little data to avoid errors from iNEXT
@@ -163,90 +157,6 @@ calc_ts_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
                   ul = qD.UCL) %>%
     dplyr::mutate(year = as.numeric(year))
 }
-# calc_ts_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
-#
-#   stopifnot_error("Please check the class and structure of your data. This is an
-#                   internal function, not meant to be called directly.",
-#                   inherits(x, c("data.frame", "sf")) &
-#                     rlang::inherits_any(x, c("hill0", "hill1", "hill2")))
-#
-#   scientificName <- year <- obs <- cellCode <- . <- variable <- value <- NULL
-#   Assemblage <- qD <- SC <- Order.q <- qD.LCL <- qD.UCL <- t <- NULL
-#
-#   type <- match.arg(type)
-#
-#   # NEW: Extract qvalue from hill diversity type as per your original logic
-#   qval <- as.numeric(gsub("hill", "", type))
-#
-#   # 1. Prepare data and create list of occurrence matrices by year
-#   # This section replaces your original convoluted pivot/gather/spread with
-#   # a single, optimized pivot_wider call.
-#   list_of_dataframes <- x %>%
-#     dplyr::select(year, cellCode, scientificName, obs) %>%
-#     dplyr::group_by(year) %>%
-#     dplyr::group_split()
-#
-#   # NEW: Map over the list and create a species-by-cell matrix for each year
-#   species_records_matrix <- purrr::map(list_of_dataframes, ~ .x %>%
-#                                          # Sum observations to ensure one value per species/cell
-#                                          dplyr::group_by(scientificName, cellCode) %>%
-#                                          dplyr::summarise(obs = sum(obs), .groups = "drop") %>%
-#                                          # Pivot to species x cell matrix, then convert to incidence (0 or 1)
-#                                          tidyr::pivot_wider(names_from = "cellCode",
-#                                                             values_from = "obs",
-#                                                             values_fill = 0,
-#                                                             id_cols = "scientificName") %>%
-#                                          tibble::column_to_rownames("scientificName") %>%
-#                                          as.matrix() %>%
-#                                          `[`(., .) %>% # Drop zero-sum rows/cols to avoid iNEXT errors
-#                                          {`if`(is.matrix(.), `if`(any(. > 1), ifelse(. > 1, 1, .), .), .)})
-#
-#   # Name list elements by year, as per your original logic
-#   years_final <- purrr::map_chr(list_of_dataframes, ~ as.character(.x$year[1]))
-#   names(species_records_matrix) <- years_final
-#
-#   temp_opts <- list(...)
-#   cutoff_length <- temp_opts$cutoff_length
-#   coverage <- temp_opts$coverage
-#
-#   # 2. Filter matrices and check for valid data to avoid iNEXT errors
-#   has_enough_columns <- purrr::map_lgl(species_records_matrix, ~ ncol(.x) > cutoff_length)
-#   filtered_matrices <- species_records_matrix[has_enough_columns]
-#
-#   # 3. Call iNEXT with the correct parameters, based on your original logic
-#   coverage_rare <- purrr::map_dfr(filtered_matrices, function(data) {
-#     # Check for empty or single-column matrices or all-zero matrices
-#     if (nrow(data) < 2 | ncol(data) < 2 | sum(data) == 0) {
-#       return(NULL)
-#     }
-#
-#     my_estimateD(
-#       data,
-#       base = "coverage",
-#       level = coverage,
-#       datatype = "incidence_raw", # Hardcoded as per your original code
-#       q = qval,
-#       ...
-#     )
-#   }, .id = "Assemblage")
-#
-#   # 4. Extract and format the estimated richness as per your original logic
-#   indicator <- coverage_rare %>%
-#     dplyr::select(Assemblage, qD, t, SC, Order.q, qD.LCL, qD.UCL) %>%
-#     dplyr::rename(
-#       year = Assemblage,
-#       diversity_val = qD,
-#       samp_size_est = t,
-#       coverage = SC,
-#       diversity_type = Order.q,
-#       ll = qD.LCL,
-#       ul = qD.UCL
-#     ) %>%
-#     dplyr::mutate(year = as.numeric(year))
-#
-#   return(indicator)
-# }
-
 
 #' @export
 #' @rdname calc_ts
