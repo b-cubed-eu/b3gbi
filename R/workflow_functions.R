@@ -397,7 +397,7 @@ compute_indicator_workflow <- function(data,
                                        last_year = NULL,
                                        spherical_geometry = TRUE,
                                        make_valid = FALSE,
-                                       num_bootstrap = 1000,
+                                       num_bootstrap = 100,
                                        shapefile_path = NULL,
                                        shapefile_crs = NULL,
                                        invert = FALSE,
@@ -425,22 +425,71 @@ compute_indicator_workflow <- function(data,
     stop("No occurrences found in the data.")
   }
 
+  # List of indicators that require grid cells for temporal calculations
+  ind_req_grid_list <- c("area_rarity",
+                         "hill0",
+                         "hill1",
+                         "hill2")
+
   # List of indicators for which bootstrapped confidence intervals should not
   # be calculated
   noci_list <- c("obs_richness",
                  "cum_richness",
-                 "occ_turnover")
+                 "occ_turnover",
+                 "tax_distinct",
+                 "hill0",
+                 "hill1",
+                 "hill2")
 
-  type <- match.arg(type,
-                    names(available_indicators))
-
+  type <- match.arg(type, names(available_indicators))
+  dim_type <- match.arg(dim_type)
   ci_type <- match.arg(ci_type)
-
   ne_type <- match.arg(ne_type)
-
   ne_scale <- match.arg(ne_scale)
-
   level <- match.arg(level)
+
+  # Check that user is not trying to calculate an indicator that requires grid
+  # cell assignment with a cube that lacks a supported grid system.
+  if (!data$grid_type %in% c("eea", "mgrs", "eqdgc")) {
+    if (dim_type=="map") {
+      stop(
+        paste0(
+          "Grid system is either unsupported or missing. Spatial ",
+          "indicators require a supported grid system. Currently ",
+          "supported grid systems are: EEA, MGRS, EQDGC"
+        )
+      )
+    } else if (type %in% ind_req_grid_list) {
+      stop(
+        paste0(
+          "You are attempting to calculate an indicator that requires ",
+          "assigned grid cells, but this cube has a missing or ",
+          "unsupported grid system. Please choose a different indicator."
+        )
+      )
+    } else if (!is.null(shapefile_path)) {
+      stop(
+        paste(
+          "Unsupported or missing grid system. Shapefile cannot be used."
+        )
+      )
+    } else if (level != "cube") {
+      level <- "cube"
+      warning("Unsupported or missing grid system. Setting level to 'cube'.")
+    }
+  }
+
+  if (type %in% c("hill0", "hill1", "hill2") &&
+      ci_type %in% c("norm", "basic", "bca")) {
+    message(
+      paste0(
+        "Note: Hill diversity measures are calculated by the iNEXT package, ",
+        "therefore bootstrap confidence intervals will be calculated using ",
+        "the standard iNEXT method, similar to the 'percentile' method of ",
+        "the 'boot' package."
+      )
+    )
+  }
 
   # Store the current spherical geometry setting
   original_s2_setting <- sf::sf_use_s2()
@@ -451,7 +500,7 @@ compute_indicator_workflow <- function(data,
   if (!is.null(first_year) && !is.null(last_year) && first_year > last_year) {
     stop("First year must be less than or equal to last year.")
   }
-  # set first year
+  # Set first year
   if (!is.null(first_year)) {
     first_year <- ifelse(first_year > data$first_year,
                          first_year,
@@ -459,13 +508,13 @@ compute_indicator_workflow <- function(data,
   } else {
     first_year <- data$first_year
   }
-  # set last year
+  # Set last year
   if (!is.null(last_year)) {
     last_year <- ifelse(last_year < data$last_year, last_year, data$last_year)
   } else {
     last_year <- data$last_year
   }
-  # filter
+  # Filter years
   df <- data$data[(data$data$year >= first_year) &
                     (data$data$year <= last_year),]
 
@@ -474,42 +523,44 @@ compute_indicator_workflow <- function(data,
   num_years <- length(unique(df$year))
   species_names <- unique(df$scientificName)
   years_with_obs <- unique(df$year)
+  kingdoms <- data$kingdoms
+  num_families <- data$num_families
+  coord_range <- data$coord_range
+  map_lims <- if (is.list(coord_range)) {
+    unlist(coord_range)
+  } else {
+    coord_range
+  }
+  region <- ifelse(level == "cube", "cube",
+                   ifelse(level == "world", "world", region))
 
-  if (!inherits(data, "sim_cube")) {
-
-    dim_type <- match.arg(dim_type)
-    level <- match.arg(level)
-    num_families <- data$num_families
-    coord_range <- data$coord_range
-    kingdoms <- data$kingdoms
-
-    if (spherical_geometry==FALSE){
-      # Temporarily disable spherical geometry
-      sf::sf_use_s2(FALSE)
-    }
-
-    # Check shapefile path and load if found
-    if (!is.null(shapefile_path)) {
-      if (!file.exists(shapefile_path)) {
-        stop("Shapefile not found at the specified path.")
-      } else {
-        is_wkt_file <- grepl("\\.wkt$", tolower(shapefile_path))
-        if (is_wkt_file) {
-          if (is.null(shapefile_crs)) {
-            shapefile_crs <- "EPSG:4326"
-            warning(paste(
-              "You have provided the location to a .wkt shapefile without",
-              "specifying the CRS. Assuming CRS to be EPSG:4326."))
-          }
-          shapefile <- sf::st_as_sfc(readLines(shapefile_path),
-                                     crs = shapefile_crs)
-        } else {
-          shapefile <- sf::read_sf(shapefile_path)
-        }
-      }
+  # Check shapefile path and load if found
+  if (!is.null(shapefile_path)) {
+    if (!file.exists(shapefile_path)) {
+      stop("Shapefile not found at the specified path.")
     } else {
-      shapefile <- NULL
+      is_wkt_file <- grepl("\\.wkt$", tolower(shapefile_path))
+      if (is_wkt_file) {
+        if (is.null(shapefile_crs)) {
+          shapefile_crs <- "EPSG:4326"
+          warning(paste(
+            "You have provided the location to a .wkt shapefile without",
+            "specifying the CRS. Assuming CRS to be EPSG:4326."))
+        }
+        shapefile <- sf::st_as_sfc(readLines(shapefile_path),
+                                   crs = shapefile_crs)
+      } else {
+        shapefile <- sf::read_sf(shapefile_path)
+      }
     }
+  } else {
+    shapefile <- NULL
+  }
+
+  if (!is.null(shapefile) ||
+      dim_type == "map" ||
+      level != "cube" ||
+      force_grid == TRUE) {
 
     # Determine cube CRS
     if (data$grid_type == "eea") {
@@ -546,6 +597,11 @@ compute_indicator_workflow <- function(data,
       projected_crs <- guess_utm_epsg(cube_bbox_latlong)
     } else {
       stop("Grid reference system not found.")
+    }
+
+    if (spherical_geometry==FALSE){
+      # Temporarily disable spherical geometry
+      sf::sf_use_s2(FALSE)
     }
 
     # Get cube extent in projected crs
@@ -728,166 +784,118 @@ compute_indicator_workflow <- function(data,
     if (data$grid_type == "eea") {
       map_data <- sf::st_transform(map_data, crs = projected_crs)
     }
+  }
 
-    if (dim_type == "map" || force_grid == TRUE) {
+  if (dim_type == "map" || force_grid == TRUE) {
 
-      # Create grid
-      grid <- create_grid(bbox_for_grid,
-                          cell_size,
-                          projected_crs,
-                          make_valid)
+    # Create grid
+    grid <- create_grid(bbox_for_grid,
+                        cell_size,
+                        projected_crs,
+                        make_valid)
 
-      sf::st_agr(grid) <- "constant"
+    sf::st_agr(grid) <- "constant"
 
-      # The following intersection operation requires special error handling
-      # because it fails when the grid contains invalid geometries.
-      # Therefore when invalid geometries are encountered, it will retry the
-      # operation with spherical geometry turned off. This often succeeds.
-      result <- NULL  # Initialize to capture result of intersection
-      tryCatch({
-        # Attempt without altering the spherical geometry setting
-        result <- grid %>%
-          sf::st_intersection(map_data) %>%
-          dplyr::select(dplyr::all_of(c("cellid", "geometry")),
-                        dplyr::any_of("area"))
-      }, error = function(e) {
-        if (grepl("Error in wk_handle.wk_wkb", e) ||
-            grepl("TopologyException", e)) {
-          message(
-            paste0(
-              "Encountered a geometry error during intersection. This may be ",
-              "due to invalid polygons in the grid."
-            )
+    # The following intersection operation requires special error handling
+    # because it fails when the grid contains invalid geometries.
+    # Therefore when invalid geometries are encountered, it will retry the
+    # operation with spherical geometry turned off. This often succeeds.
+    result <- NULL  # Initialize to capture result of intersection
+    tryCatch({
+      # Attempt without altering the spherical geometry setting
+      result <- grid %>%
+        sf::st_intersection(map_data) %>%
+        dplyr::select(dplyr::all_of(c("cellid", "geometry")),
+                      dplyr::any_of("area"))
+    }, error = function(e) {
+      if (grepl("Error in wk_handle.wk_wkb", e) ||
+          grepl("TopologyException", e)) {
+        message(
+          paste0(
+            "Encountered a geometry error during intersection. This may be ",
+            "due to invalid polygons in the grid."
           )
-        } else {
-          stop(e)
-        }
-      })
-      if (is.null(result)) {
-        # If intersection failed, turn off spherical geometry
-        message("Retrying the intersection with spherical geometry turned off.")
-        sf::sf_use_s2(FALSE)
-        # Retry the intersection operation
-        result <- grid %>%
-          sf::st_intersection(map_data) %>%
-          dplyr::select(dplyr::all_of(c("cellid", "geometry")),
-                        dplyr::any_of("area"))
-        # Notify success after retry
-        message("Intersection succeeded with spherical geometry turned off.")
-      }
-      if (spherical_geometry == TRUE) {
-        # Restore original spherical setting
-        sf::sf_use_s2(original_s2_setting)
-      }
-      # Check if there is any spatial intersection
-      if (nrow(result) == 0) {
-        stop("No spatial intersection between map data and grid.")
-      }
-      # Set grid to result
-      clipped_grid <- result
-
-      # Assign data to grid
-      data_gridded <- sf::st_join(data_projected, clipped_grid)
-      data_gridded_nogeom <- sf::st_drop_geometry(data_gridded)
-
-    }
-
-    if (dim_type == "map") {
-
-      # Assign classes to send data to correct calculator function
-      subtype <- paste0(type, "_", dim_type)
-      class(data_gridded_nogeom) <- append(type, class(data_gridded_nogeom))
-      class(data_gridded_nogeom) <- append(subtype, class(data_gridded_nogeom))
-
-      # Calculate indicator
-      indicator <- calc_map(data_gridded_nogeom, ...)
-
-      # Add indicator values to grid
-      diversity_grid <-
-        clipped_grid %>%
-        dplyr::left_join(indicator, by = "cellid")
-
-      diversity_grid <- sf::st_transform(diversity_grid, crs = output_crs)
-
-    } else {
-
-      if (force_grid == TRUE) {
-        data_filtered <- data_gridded
-        data_filtered_nogeom <- data_gridded_nogeom
+        )
       } else {
-        data_filtered <- sf::st_filter(data_projected, map_data)
-        data_filtered_nogeom <- sf::st_drop_geometry(data_filtered)
+        stop(e)
       }
-
-      # Assign classes to send data to correct calculator function
-      subtype <- paste0(type, "_", dim_type)
-      class(data_filtered_nogeom) <- append(type, class(data_filtered_nogeom))
-      class(data_filtered_nogeom) <- append(subtype, class(data_filtered_nogeom))
-
-      # Calculate indicator
-      indicator <- calc_ts(data_filtered_nogeom, ...)
-      # Calculate confidence intervals
-      if (ci_type!="none") {
-        if (!type %in% noci_list) {
-          indicator <- calc_ci(data_filtered_nogeom,
-                               indicator = indicator,
-                               num_bootstrap=num_bootstrap,
-                               ci_type = ci_type,
-                               ...)
-        } else {
-          warning(
-            paste0(
-              "Bootstrapped confidence intervals cannot be calculated for the ",
-              "chosen indicator."
-            )
-          )
-        }
-      }
-      year_names <- unique(df$year)
-      map_lims <- sf::st_transform(data_filtered, crs = output_crs) %>%
-        sf::st_bbox()
+    })
+    if (is.null(result)) {
+      # If intersection failed, turn off spherical geometry
+      message("Retrying the intersection with spherical geometry turned off.")
+      sf::sf_use_s2(FALSE)
+      # Retry the intersection operation
+      result <- grid %>%
+        sf::st_intersection(map_data) %>%
+        dplyr::select(dplyr::all_of(c("cellid", "geometry")),
+                      dplyr::any_of("area"))
+      # Notify success after retry
+      message("Intersection succeeded with spherical geometry turned off.")
     }
+    if (spherical_geometry == TRUE) {
+      # Restore original spherical setting
+      sf::sf_use_s2(original_s2_setting)
+    }
+    # Check if there is any spatial intersection
+    if (nrow(result) == 0) {
+      stop("No spatial intersection between map data and grid.")
+    }
+    # Set grid to result
+    clipped_grid <- result
+
+    # Assign data to grid
+    data_final <- sf::st_join(data_projected, clipped_grid)
+    data_final_nogeom <- sf::st_drop_geometry(data_final)
+    map_lims <- sf::st_transform(data_final, crs = output_crs) %>%
+      sf::st_bbox()
+
+  } else if (level != "cube") {
+
+    data_final <- sf::st_filter(data_projected, map_data)
+    data_final_nogeom <- sf::st_drop_geometry(data_final)
+    map_lims <- sf::st_transform(data_final, crs = output_crs) %>%
+      sf::st_bbox()
 
   } else {
-    # if the object is of the class sim_cube it contains no grid information, so
-    # bypass the usual workflow and deal with it here
 
-    if (dim_type=="map") {
+    data_final <- df
+    data_final_nogeom <- df
 
-      stop(paste("You have provided an object of class 'sim_cube' as input.",
-                 "As these objects do not contain grid information they can ",
-                 "only be used to calculate indicators of dim_type 'ts'."))
+  }
 
-    } else {
+  # Assign classes to send data to correct calculator function
+  subtype <- paste0(type, "_", dim_type)
+  class(data_final_nogeom) <- append(type, class(data_final_nogeom))
+  class(data_final_nogeom) <- append(subtype, class(data_final_nogeom))
 
-      year_names <- unique(df$year)
-      level <- "unknown"
-      region <- "unknown"
-      if (is.numeric(data$coord_range)) {
-        map_lims <- data$coord_range
+  if (dim_type == "map") {
+
+    # Calculate indicator
+    indicator <- calc_map(data_final_nogeom, ...)
+
+    # Add indicator values to grid
+    diversity_grid <-
+      clipped_grid %>%
+      dplyr::left_join(indicator, by = "cellid")
+
+    # Transform to output CRS
+    diversity_grid <- sf::st_transform(diversity_grid, crs = output_crs)
+
+  } else {
+
+    # Calculate indicator
+    indicator <- calc_ts(data_final_nogeom, ...)
+
+    # Calculate confidence intervals
+    if (ci_type!="none") {
+      if (!type %in% noci_list) {
+        indicator <- calc_ci(data_final_nogeom,
+                             indicator = indicator,
+                             num_bootstrap=num_bootstrap,
+                             ci_type = ci_type,
+                             ...)
       } else {
-        map_lims <- "Coordinates not provided"
-      }
-
-      kingdoms <- data$kingdoms
-      num_families <- data$num_families
-
-      # Assign classes to send data to correct calculator function
-      subtype <- paste0(type, "_", dim_type)
-      class(df) <- append(type, class(df))
-      class(df) <- append(subtype, class(df))
-
-      # Calculate indicator
-      indicator <- calc_ts(df, ...)
-      # Calculate confidence intervals
-      if (ci_type!="none") {
-        if (!type %in% noci_list) {
-          indicator <- calc_ci(df,
-                               indicator = indicator,
-                               num_bootstrap = 1000,
-                               ci_type = ci_type,
-                               ...)
-        } else {
+        if (!type %in% c("hill0", "hill1", "hill2")) {
           warning(
             paste0(
               "Bootstrapped confidence intervals cannot be calculated for the ",
@@ -910,6 +918,7 @@ compute_indicator_workflow <- function(data,
     if (data$grid_type != "eqdgc") {
       cell_size <- cell_size / 1000
     }
+
     # Build indicator_map object
     diversity_obj <- new_indicator_map(diversity_grid,
                                        div_type = type,
@@ -926,6 +935,7 @@ compute_indicator_workflow <- function(data,
                                        species_names = species_names,
                                        years_with_obs = years_with_obs)
   } else {
+
     # Build indicator_ts object
     diversity_obj <- new_indicator_ts(dplyr::as_tibble(indicator),
                                       div_type = type,

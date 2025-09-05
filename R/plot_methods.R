@@ -1004,9 +1004,11 @@ plot_map <- function(x,
 #' @param x_label Label for the x-axis.
 #' @param y_label Label for the y-axis.
 #' @param x_expand (Optional)  Expansion factor to expand the x-axis beyond the data.
-#'   Left and right values are required in the form of c(0.1, 0.2). Default is c(0,0).
+#'   Left and right values are required in the form of c(0.1, 0.2) or simply 0.1 to
+#'   apply the same value to each side. Default is 0.05.
 #' @param y_expand (Optional)  Expansion factor to expand the y-axis beyond the data.
-#'   Lower and upper values are required in the form of c(0.1, 0.2). Default is c(0,0).
+#'   Lower and upper values are required in the form of c(0.1, 0.2) or simply 0.1 to
+#'   apply the same value to the top and bottom. Default is 0.05.
 #' @param x_breaks Integer giving desired number of breaks for x axis.
 #'   (May not return exactly the number requested.)
 #' @param y_breaks Integer giving desired number of breaks for y axis.
@@ -1067,8 +1069,8 @@ plot_ts <- function(x,
                     gridoff = FALSE,
                     x_label = NULL,
                     y_label = NULL,
-                    x_expand = NULL,
-                    y_expand = NULL,
+                    x_expand = 0.05,
+                    y_expand = 0.05,
                     x_breaks = 10,
                     y_breaks = 6,
                     wrap_length = 60
@@ -1324,9 +1326,11 @@ plot_ts <- function(x,
 #' @param x_label Label for the x-axis.
 #' @param y_label Label for the y-axis.
 #' @param x_expand (Optional)  Expansion factor to expand the x-axis beyond the data.
-#'   Left and right values are required in the form of c(0.1, 0.2). Default is c(0.05,0.05).
+#'   Left and right values are required in the form of c(0.1, 0.2) or simply 0.1 to
+#'   apply the same value to both sides. Default is 0.05.
 #' @param y_expand (Optional)  Expansion factor to expand the y-axis beyond the data.
-#'   Lower and upper values are required in the form of c(0.1, 0.2). Default is c(0.05,0.05).
+#'   Lower and upper values are required in the form of c(0.1, 0.2) or simply 0.1 to
+#'   apply the same value to the top and bottom. Default is 0.05.
 #' @param x_breaks Integer giving desired number of breaks for x axis.
 #'   (May not return exactly the number requested.)
 #' @param y_breaks Integer giving desired number of breaks for y axis.
@@ -1388,8 +1392,8 @@ plot_species_ts <- function(x,
                             gridoff = FALSE,
                             x_label = NULL,
                             y_label = NULL,
-                            x_expand = NULL,
-                            y_expand = NULL,
+                            x_expand = 0.05,
+                            y_expand = 0.05,
                             x_breaks = 10,
                             y_breaks = 6,
                             wrap_length = 60

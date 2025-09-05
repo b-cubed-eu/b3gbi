@@ -77,28 +77,54 @@ calc_ts_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
                      .by = "year")
 
   # Create list of occurrence matrices by year, with species as rows
+  # species_records_raw <- x %>%
+  #   dplyr::select(year, scientificName, obs, cellCode) %>%
+  #   dplyr::group_by(year) %>%
+  #   dplyr::group_split() %>%
+  #   purrr::map(. %>%
+  #                dplyr::group_by(scientificName) %>%
+  #                tidyr::pivot_wider(names_from = "scientificName",
+  #                                   values_from = "obs") %>%
+  #                dplyr::ungroup() %>%
+  #                replace(is.na(.), 0) %>%
+  #                dplyr::mutate_if(is.numeric,
+  #                                 as.integer) %>%
+  #                dplyr::select(-year, -cellCode) %>%
+  #                tibble::rownames_to_column() %>%
+  #                tidyr::gather(variable,
+  #                              value,
+  #                              -rowname) %>%
+  #                tidyr::spread(rowname, value) %>%
+  #                'row.names<-'(., NULL) %>%
+  #                tibble::column_to_rownames(var = "variable") %>%
+  #                as.matrix() %>%
+  #                ifelse(. > 1, 1, .))
   species_records_raw <- x %>%
+    # Select the required columns
     dplyr::select(year, scientificName, obs, cellCode) %>%
+    # Group and split by year
     dplyr::group_by(year) %>%
     dplyr::group_split() %>%
-    purrr::map(. %>%
-                 dplyr::group_by(scientificName) %>%
-                 tidyr::pivot_wider(names_from = "scientificName",
-                                    values_from = "obs") %>%
-                 dplyr::ungroup() %>%
-                 replace(is.na(.), 0) %>%
-                 dplyr::mutate_if(is.numeric,
-                                  as.integer) %>%
-                 dplyr::select(-year, -cellCode) %>%
-                 tibble::rownames_to_column() %>%
-                 tidyr::gather(variable,
-                               value,
-                               -rowname) %>%
-                 tidyr::spread(rowname, value) %>%
-                 'row.names<-'(., NULL) %>%
-                 tibble::column_to_rownames(var = "variable") %>%
-                 as.matrix() %>%
-                 ifelse(. > 1, 1, .))
+    # Process each year's data frame
+    purrr::map(function(df) {
+      m <- df %>%
+        # Pivot wider to get species as columns and `obs` as values
+        tidyr::pivot_wider(
+          names_from = "scientificName",
+          values_from = "obs",
+          values_fn = sum,
+          values_fill = 0
+        ) %>%
+        # Remove the `year` and `cellCode` columns which are no longer needed
+        dplyr::select(-year, -cellCode) %>%
+        # Transpose the data frame efficiently using `t()`
+        # We must first convert the data to a matrix before transposing
+        as.matrix() %>%
+        t()
+      # Convert any values greater than 1 to 1 for presence-absence
+      m[m > 1] <- 1
+      return(m)
+    })
 
   # name list elements
   names(species_records_raw) <- richness_by_year$year
@@ -109,6 +135,10 @@ calc_ts_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
 
   coverage <- temp_opts$coverage
 
+  conf <- temp_opts$conf
+
+  nboot <- temp_opts$nboot
+
   # remove all years with too little data to avoid errors from iNEXT
   species_records_raw2 <- species_records_raw %>%
     purrr::keep(., function(x) length(x) > cutoff_length)
@@ -118,7 +148,8 @@ calc_ts_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
                  level = coverage,
                  datatype="incidence_raw",
                  q=qval,
-                 ...)
+                 conf=conf,
+                 nboot=nboot)
 
   # Extract estimated relative species richness
   indicator <- coverage_rare %>%

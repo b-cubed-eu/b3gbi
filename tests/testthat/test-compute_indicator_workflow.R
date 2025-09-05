@@ -123,7 +123,7 @@ test_that("compute_indicator_workflow handles input validation", {
       year = 2000,
       scientificName = "A",
       obs = 1
-    )
+    ), grid_type = "none"
   )
   class(mock_sim_cube) <- c("sim_cube", "list")
   expect_error(
@@ -132,7 +132,7 @@ test_that("compute_indicator_workflow handles input validation", {
       type = "obs_richness",
       dim_type = "map"
     ),
-    "You have provided an object of class 'sim_cube' as input."
+    "Grid system is either unsupported or missing."
   )
 
   # Test empty data
@@ -471,9 +471,9 @@ test_that("compute_indicator_workflow creates output objects correctly", {
   expect_equal(result_ts$div_type, "total_occ")
   expect_equal(result_ts$div_name, "Total Occurrences")
   expect_equal(as.numeric(result_ts$coord_range),
-               c(xmin, ymin, xmax, ymax))
+               c(xmin, xmax, ymin, ymax))
   expect_equal(names(result_ts$coord_range),
-               c("xmin", "ymin", "xmax", "ymax"))
+               c("xmin", "xmax", "ymin", "ymax"))
 })
 
 
@@ -491,7 +491,8 @@ test_that("compute_indicator_workflow handles sim_cube objects", {
     ),
     first_year = 2000,
     last_year = 2009,
-    num_species = 10
+    num_species = 10,
+    grid_type = "none"
   )
   class(mock_sim_cube) <- c("sim_cube", "list")
 
@@ -509,7 +510,7 @@ test_that("compute_indicator_workflow handles sim_cube objects", {
     data = mock_sim_cube,
     type = "total_occ",
     dim_type = "ts",
-    ci_type = "non"
+    ci_type = "none"
   )
   expect_s3_class(result_ts, "indicator_ts")
 
@@ -627,3 +628,4 @@ test_that(
       expect_true(sf::sf_use_s2())
     })
 })
+
