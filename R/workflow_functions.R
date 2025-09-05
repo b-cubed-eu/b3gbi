@@ -452,7 +452,7 @@ compute_indicator_workflow <- function(data,
   if (!data$grid_type %in% c("eea", "mgrs", "eqdgc")) {
     if (dim_type=="map") {
       stop(
-        paste(
+        paste0(
           "Grid system is either unsupported or missing. Spatial ",
           "indicators require a supported grid system. Currently ",
           "supported grid systems are: EEA, MGRS, EQDGC"
@@ -460,7 +460,7 @@ compute_indicator_workflow <- function(data,
       )
     } else if (type %in% ind_req_grid_list) {
       stop(
-        paste(
+        paste0(
           "You are attempting to calculate an indicator that requires ",
           "assigned grid cells, but this cube has a missing or ",
           "unsupported grid system. Please choose a different indicator."
