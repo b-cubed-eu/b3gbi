@@ -436,6 +436,7 @@ compute_indicator_workflow <- function(data,
   noci_list <- c("obs_richness",
                  "cum_richness",
                  "occ_turnover",
+                 "tax_distinct",
                  "hill0",
                  "hill1",
                  "hill2")
