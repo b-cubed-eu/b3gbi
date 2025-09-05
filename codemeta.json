@@ -7,7 +7,7 @@
   "relatedLink": "https://b-cubed-eu.github.io/b3gbi/",
   "codeRepository": "https://github.com/b-cubed-eu/b3gbi",
   "license": "https://spdx.org/licenses/MIT",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -353,7 +353,7 @@
     },
     "SystemRequirements": null
   },
-  "fileSize": "421097445.774KB",
+  "fileSize": "3207159.872KB",
   "releaseNotes": "https://github.com/b-cubed-eu/b3gbi/blob/master/NEWS.md",
   "readme": "https://github.com/b-cubed-eu/b3gbi/blob/main/README.md",
   "contIntegration": ["https://github.com/b-cubed-eu/b3gbi/actions/workflows/R-CMD-check.yaml", "https://app.codecov.io/gh/b-cubed-eu/b3gbi/"],
