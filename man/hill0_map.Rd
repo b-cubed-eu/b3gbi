@@ -11,15 +11,39 @@
 \usage{
 hill0_map(data, coverage = 0.95, cutoff_length = 5, ...)
 
-hill0_ts(data, coverage = 0.95, cutoff_length = 5, ...)
+hill0_ts(
+  data,
+  coverage = 0.95,
+  cutoff_length = 5,
+  num_bootstrap = 100,
+  conf_level = 0.95,
+  ci_type = "perc",
+  ...
+)
 
 hill1_map(data, cutoff_length = 5, coverage = 0.95, ...)
 
-hill1_ts(data, cutoff_length = 5, coverage = 0.95, ...)
+hill1_ts(
+  data,
+  cutoff_length = 5,
+  coverage = 0.95,
+  num_bootstrap = 100,
+  conf_level = 0.95,
+  ci_type = "perc",
+  ...
+)
 
 hill2_map(data, cutoff_length = 5, coverage = 0.95, ...)
 
-hill2_ts(data, cutoff_length = 5, coverage = 0.95, ...)
+hill2_ts(
+  data,
+  cutoff_length = 5,
+  coverage = 0.95,
+  num_bootstrap = 100,
+  conf_level = 0.95,
+  ci_type = "perc",
+  ...
+)
 }
 \arguments{
 \item{data}{A data cube object (class 'processed_cube').}
@@ -72,6 +96,9 @@ normally be part of the pipeline, e.g. for time series. This setting is
 required for the calculation of rarity, and is turned on by the ab_rarity_ts
 and area_rarity_ts wrappers. (Default: FALSE)}
   }}
+
+\item{conf_level}{Confidence level for bootstrap confidence intervals. Only
+applies to temporal indicators. Default is 0.95.}
 }
 \value{
 An S3 object with the classes 'indicator_map' or 'indicator_ts' and
