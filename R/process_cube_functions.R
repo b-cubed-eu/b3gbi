@@ -305,9 +305,6 @@ process_cube <- function(cube_name,
     # if the user has chosen 'none' as a grid type...
   } else if (grid_type == "none") {
 
-    # create dummy column full of zeros
-    #  occurrence_data$cellCode <- 0
-
     # if the user has specified a grid type...
   } else {
 
@@ -397,20 +394,6 @@ process_cube <- function(cube_name,
   for (i in (which(names(occurrence_data) %in% col_names[,2]))) {
     names(occurrence_data)[i] <- col_names[,1][which(col_names[,2] %in% names(occurrence_data)[i])]
   }
-
-  # for (i in 1:length(col_names_userlist)) {
-  #
-  #   if (!is.null(col_names_userlist[i])) {
-  #
-  #     new_name <- col_names_defaultlist[i]
-  #     old_name <- col_names_userlist[i]
-  #     occurrence_data <-
-  #       occurrence_data %>%
-  #       dplyr::rename(!!new_name := old_name)
-  #
-  #   }
-  #
-  # }
 
   # check for any non-user-supplied column names which match the default names but not the capitalization pattern and fix them
   for (i in 1:length(col_names_defaultlist)) {
