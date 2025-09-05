@@ -1,8 +1,14 @@
+# b3gbi 0.7.3 - Minor update:
+
+* Hill diversity maps now calculate without error.
+* Hill diversity maps now use observations as an abundance proxy instead of attempting to use matrices of raw incidence data.
+* Hill diversity maps no longer calculate confidence intervals as visualization is not supported at this time.
+
 # b3gbi 0.7.2 - Minor update:
 
-* Hill diversity indicators now calculate without error.
-* The number of bootstrap confidence intervals for Hill diversity can now be set by the user, and confidence intervals can be turned off.
-* The confidence level for Hill diversity can now be set by the user (default is 0.95).
+* Hill diversity time series indicators now calculate without error.
+* The number of bootstrap confidence intervals for Hill diversity time series can now be set by the user, and confidence intervals can be turned off.
+* The confidence level for Hill diversity time series can now be set by the user (default is 0.95).
 * Taxonomic distinctness no longer tries to calculate confidence intervals
 * If no shapefile is selected and no grid cells are required for calculation, time series now bypass all geometric operations and are thus extremely fast.
 * The x and y axis expansions for plot_ts and plot_species_ts now default to 0.05 instead of 0.This makes time series plots look less cramped.
