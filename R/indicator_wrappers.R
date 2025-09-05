@@ -527,6 +527,8 @@ hill_diversity_details <- paste0(
 #' @param cutoff_length The minimum number of data points for each grid cell.
 #'  Grid cells with fewer data points will be removed before calculations to
 #'  avoid errors.  Default is 5.
+#' @param conf_level Confidence level for bootstrap confidence intervals. Only
+#'  applies to temporal indicators. Default is 0.95.
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
@@ -553,11 +555,14 @@ hill0_map <- function(data,
                              dim_type = "map",
                              cutoff_length = cutoff_length,
                              coverage = coverage,
+                             nboot = 0,
+                             conf = 0.95,
                              ...)
 }
 
 
 #' @describeIn hill0_map
+#'
 #'
 #' @examples
 #' \dontrun{
@@ -568,12 +573,21 @@ hill0_map <- function(data,
 hill0_ts <- function(data,
                      coverage = 0.95,
                      cutoff_length = 5,
+                     num_bootstrap = 100,
+                     conf_level = 0.95,
+                     ci_type = "perc",
                      ...) {
+
+  if (ci_type == "none") num_bootstrap <- 0
+
   compute_indicator_workflow(data,
                              type = "hill0",
                              dim_type = "ts",
                              cutoff_length = cutoff_length,
                              coverage = coverage,
+                             nboot = num_bootstrap,
+                             conf = conf_level,
+                             ci_type = ci_type,
                              force_grid = TRUE,
                              ...)
 }
@@ -596,6 +610,8 @@ hill1_map <- function(data,
                              dim_type = "map",
                              cutoff_length = cutoff_length,
                              coverage = coverage,
+                             nboot = 0,
+                             conf = 0.95,
                              ...)
 }
 
@@ -611,12 +627,21 @@ hill1_map <- function(data,
 hill1_ts <- function(data,
                      cutoff_length = 5,
                      coverage = 0.95,
+                     num_bootstrap = 100,
+                     conf_level = 0.95,
+                     ci_type = "perc",
                      ...) {
+
+  if (ci_type == "none") num_bootstrap <- 0
+
   compute_indicator_workflow(data,
                              type = "hill1",
                              dim_type = "ts",
                              cutoff_length = cutoff_length,
                              coverage = coverage,
+                             nboot = num_bootstrap,
+                             conf = conf_level,
+                             ci_type = ci_type,
                              force_grid = TRUE,
                              ...)
 }
@@ -639,6 +664,8 @@ hill2_map <- function(data,
                              dim_type = "map",
                              cutoff_length = cutoff_length,
                              coverage = coverage,
+                             nboot = 0,
+                             conf = 0.95,
                              ...)
 }
 
@@ -653,12 +680,21 @@ hill2_map <- function(data,
 hill2_ts <- function(data,
                      cutoff_length = 5,
                      coverage = 0.95,
+                     num_bootstrap = 100,
+                     conf_level = 0.95,
+                     ci_type = "perc",
                      ...) {
+
+  if (ci_type == "none") num_bootstrap <- 0
+
   compute_indicator_workflow(data,
                              type = "hill2",
                              dim_type = "ts",
                              cutoff_length = cutoff_length,
                              coverage = coverage,
+                             nboot = num_bootstrap,
+                             conf = conf_level,
+                             ci_type = ci_type,
                              force_grid = TRUE,
                              ...)
 }
