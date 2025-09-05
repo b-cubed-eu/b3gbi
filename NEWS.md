@@ -1,3 +1,7 @@
+# b3gbi 0.7.2 - Minor update:
+
+* 
+
 # b3gbi 0.7.1 - Minor update:
 
 * Reorganized code in some indicator calculations to improve efficiency.
