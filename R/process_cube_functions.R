@@ -74,7 +74,7 @@
 #' @param cols_lifeStage (Optional) The name of the column containing the life
 #'  stage of the observed individuals.
 #' @param separator (Optional) The column-separating character in your csv file.
-#'  Default is white space ("\t").
+#'  Default is white space.
 #'
 #' @return A tibble containing the processed GBIF occurrence data.
 #'
