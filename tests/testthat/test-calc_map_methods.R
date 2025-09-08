@@ -15,29 +15,32 @@ mock_map_hill2 <- structure(mock_map_data, class = c("hill2", "data.frame"))
 test_that("calc_map.hill0 calculates correctly", {
   mockr::with_mock(
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
-      if (datatype == "incidence_raw" && all(q == 0)) {
+      if (datatype == "abundance" && all(q == 0)) {
         expected_data <- list(
           `1` = matrix(c(1, 1),
                        nrow = 2,
-                       dimnames = list(c("spA", "spB"), NULL)),
+                       dimnames = list(c("spA", "spB"), "obs")),
           `2` = matrix(c(1, 1),
                        nrow = 2,
-                       dimnames = list(c("spA", "spC"), NULL))
+                       dimnames = list(c("spA", "spC"), "obs"))
         )
         expect_equal(data, expected_data)
         return(tibble::tibble(
           Assemblage = c(1, 2),
           qD = c(2, 2),
+          m = c(2, 2),
+          SC = c(level, level),
           Order.q = 0,
-          t = c(2, 2),
-          SC = c(1, 1)
+          Method = c("Extrapolation", "Extrapolation")
         ))
       } else {
         return(tibble::tibble(Assemblage = numeric(),
                               qD = numeric(),
-                              t = numeric(),
+                              Order.q = numeric(),
+                              m = numeric(),
                               SC = numeric(),
-                              Order.q = numeric()))
+                              Order.q = numeric(),
+                              Method = character()))
       }
     },
     {
@@ -51,7 +54,10 @@ test_that("calc_map.hill0 calculates correctly", {
   expected_result <- tibble::tibble(
     cellid = c(1, 2),
     diversity_val = c(2, 2),
-    samp_size_est = c(2, 2)
+    samp_size_est = c(2, 2),
+    coverage = c(0.8, 0.8),
+    diversity_type = c(0, 0),
+    method = c("Extrapolation", "Extrapolation")
   )
 
   expect_equal(result, expected_result, tolerance = 1e-6)
@@ -60,29 +66,31 @@ test_that("calc_map.hill0 calculates correctly", {
 test_that("calc_map.hill1 calculates correctly", {
   mockr::with_mock(
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
-      if (datatype == "incidence_raw" && all(q == 1)) {
+      if (datatype == "abundance" && all(q == 1)) {
         expected_data <- list(
           `1` = matrix(c(1, 1),
                        nrow = 2,
-                       dimnames = list(c("spA", "spB"), NULL)),
+                       dimnames = list(c("spA", "spB"), "obs")),
           `2` = matrix(c(1, 1),
                        nrow = 2,
-                       dimnames = list(c("spA", "spC"), NULL))
+                       dimnames = list(c("spA", "spC"), "obs"))
         )
         expect_equal(data, expected_data)
         return(tibble::tibble(
           Assemblage = c(1, 2),
           qD = c(2, 2),
           Order.q = 1,
-          t = c(2, 2),
-          SC = c(1, 1)
+          m = c(2, 2),
+          SC = c(level, level),
+          Method = c("Extrapolation", "Extrapolation")
         ))
       } else {
         return(tibble::tibble(Assemblage = numeric(),
                               qD = numeric(),
-                              t = numeric(),
+                              m = numeric(),
                               SC = numeric(),
-                              Order.q = numeric()))
+                              Order.q = numeric(),
+                              Method = character()))
       }
     },
     {
@@ -96,7 +104,10 @@ test_that("calc_map.hill1 calculates correctly", {
   expected_hill1 <- tibble::tibble(
     cellid = c(1, 2),
     diversity_val = c(2, 2),
-    samp_size_est = c(2, 2)
+    samp_size_est = c(2, 2),
+    coverage = c(0.8, 0.8),
+    diversity_type = c(1, 1),
+    method = c("Extrapolation", "Extrapolation")
   )
 
   expect_equal(result, expected_hill1, tolerance = 1e-6)
@@ -105,27 +116,28 @@ test_that("calc_map.hill1 calculates correctly", {
 test_that("calc_map.hill2 calculates correctly", {
   mockr::with_mock(
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
-      if (datatype == "incidence_raw" && all(q == 2)) {
+      if (datatype == "abundance" && all(q == 2)) {
         expected_data <- list(
           `1` = matrix(c(1, 1),
                        nrow = 2,
-                       dimnames = list(c("spA", "spB"), NULL)),
+                       dimnames = list(c("spA", "spB"), "obs")),
           `2` = matrix(c(1, 1),
                        nrow = 2,
-                       dimnames = list(c("spA", "spC"), NULL))
+                       dimnames = list(c("spA", "spC"), "obs"))
         )
         expect_equal(data, expected_data)
         return(tibble::tibble(
           Assemblage = c(1, 2),
           qD = c(2, 2),
           Order.q = 2,
-          t = c(2, 2),
-          SC = c(1, 1)
+          m = c(2, 2),
+          SC = c(level, level),
+          Method = c("Extrapolation", "Extrapolation")
         ))
       } else {
         return(tibble::tibble(Assemblage = numeric(),
                               qD = numeric(),
-                              t = numeric(),
+                              m = numeric(),
                               SC = numeric(),
                               Order.q = numeric()))
       }
@@ -141,7 +153,10 @@ test_that("calc_map.hill2 calculates correctly", {
   expected_hill2 <- tibble::tibble(
     cellid = c(1, 2),
     diversity_val = c(2, 2),
-    samp_size_est = c(2, 2)
+    samp_size_est = c(2, 2),
+    coverage = c(0.8, 0.8),
+    diversity_type = c(2, 2),
+    method = c("Extrapolation", "Extrapolation")
   )
 
   expect_equal(result, expected_hill2, tolerance = 1e-6)
@@ -152,9 +167,10 @@ test_that("calc_map.hill0 handles empty data correctly", {
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
       return(tibble::tibble(Assemblage = numeric(),
                             qD = numeric(),
-                            t = numeric(),
+                            m = numeric(),
                             SC = numeric(),
-                            Order.q = numeric()))
+                            Order.q = numeric(),
+                            Method = character()))
     },
     {
       result <- calc_map.hill0(
@@ -167,7 +183,10 @@ test_that("calc_map.hill0 handles empty data correctly", {
   expected_result <- tibble::tibble(
     cellid = numeric(),
     diversity_val = numeric(),
-    samp_size_est = numeric()
+    samp_size_est = numeric(),
+    coverage = numeric(),
+    diversity_type = numeric(),
+    method = character()
   )
 
   expect_equal(result, expected_result)
@@ -178,9 +197,10 @@ test_that("calc_map.hill1 handles empty data correctly", {
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
       return(tibble::tibble(Assemblage = numeric(),
                             qD = numeric(),
-                            t = numeric(),
+                            m = numeric(),
                             SC = numeric(),
-                            Order.q = numeric()))
+                            Order.q = numeric(),
+                            Method = character()))
     },
     {
       result <- calc_map.hill1(
@@ -193,7 +213,10 @@ test_that("calc_map.hill1 handles empty data correctly", {
   expected_hill1 <- tibble::tibble(
     cellid = numeric(),
     diversity_val = numeric(),
-    samp_size_est = numeric()
+    samp_size_est = numeric(),
+    coverage = numeric(),
+    diversity_type = numeric(),
+    method = character()
   )
 
   expect_equal(result, expected_hill1)
@@ -204,9 +227,10 @@ test_that("calc_map.hill2 handles empty data correctly", {
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
       return(tibble::tibble(Assemblage = numeric(),
                             qD = numeric(),
-                            t = numeric(),
+                            m = numeric(),
                             SC = numeric(),
-                            Order.q = numeric()))
+                            Order.q = numeric(),
+                            Method = character()))
     },
     {
       result <- calc_map.hill2(
@@ -219,7 +243,10 @@ test_that("calc_map.hill2 handles empty data correctly", {
   expected_hill2 <- tibble::tibble(
     cellid = numeric(),
     diversity_val = numeric(),
-    samp_size_est = numeric()
+    samp_size_est = numeric(),
+    coverage = numeric(),
+    diversity_type = numeric(),
+    method = character()
   )
 
   expect_equal(result, expected_hill2)
@@ -230,9 +257,10 @@ test_that("calc_map.hill0 handles NA values correctly", {
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
       return(tibble::tibble(Assemblage = numeric(),
                             qD = numeric(),
-                            t = numeric(),
+                            m = numeric(),
                             SC = numeric(),
-                            Order.q = numeric()))
+                            Order.q = numeric(),
+                            Method = character()))
     },
     {
       result <- calc_map.hill0(
@@ -245,7 +273,10 @@ test_that("calc_map.hill0 handles NA values correctly", {
   expected_result <- tibble::tibble(
     cellid = numeric(),
     diversity_val = numeric(),
-    samp_size_est = numeric()
+    samp_size_est = numeric(),
+    coverage = numeric(),
+    diversity_type = numeric(),
+    method = character()
   )
 
   expect_equal(result, expected_result)
@@ -256,9 +287,10 @@ test_that("calc_map.hill1 handles NA values correctly", {
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
       return(tibble::tibble(Assemblage = numeric(),
                             qD = numeric(),
-                            t = numeric(),
+                            m = numeric(),
                             SC = numeric(),
-                            Order.q = numeric()))
+                            Order.q = numeric(),
+                            Method = character()))
     },
     {
       result <- calc_map.hill1(
@@ -271,7 +303,10 @@ test_that("calc_map.hill1 handles NA values correctly", {
   expected_hill1 <- tibble::tibble(
     cellid = numeric(),
     diversity_val = numeric(),
-    samp_size_est = numeric()
+    samp_size_est = numeric(),
+    coverage = numeric(),
+    diversity_type = numeric(),
+    method = character()
   )
 
   expect_equal(result, expected_hill1)
@@ -282,9 +317,10 @@ test_that("calc_map.hill2 handles NA values correctly", {
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
       return(tibble::tibble(Assemblage = numeric(),
                             qD = numeric(),
-                            t = numeric(),
+                            m = numeric(),
                             SC = numeric(),
-                            Order.q = numeric()))
+                            Order.q = numeric(),
+                            Method = character()))
     },
     {
       result <- calc_map.hill2(
@@ -297,7 +333,10 @@ test_that("calc_map.hill2 handles NA values correctly", {
   expected_hill2 <- tibble::tibble(
     cellid = numeric(),
     diversity_val = numeric(),
-    samp_size_est = numeric()
+    samp_size_est = numeric(),
+    coverage = numeric(),
+    diversity_type = numeric(),
+    method = character()
   )
 
   expect_equal(result, expected_hill2)
@@ -308,9 +347,10 @@ test_that("calc_map.hill0 handles non-numeric data correctly", {
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
       return(tibble::tibble(Assemblage = numeric(),
                             qD = numeric(),
-                            t = numeric(),
+                            m = numeric(),
                             SC = numeric(),
-                            Order.q = numeric()))
+                            Order.q = numeric(),
+                            Method = character()))
     },
     {
       result <- calc_map.hill0(
@@ -323,7 +363,10 @@ test_that("calc_map.hill0 handles non-numeric data correctly", {
   expected_result <- tibble::tibble(
     cellid = numeric(),
     diversity_val = numeric(),
-    samp_size_est = numeric()
+    samp_size_est = numeric(),
+    coverage = numeric(),
+    diversity_type = numeric(),
+    method = character()
   )
 
   expect_equal(result, expected_result)
@@ -334,9 +377,10 @@ test_that("calc_map.hill1 handles non-numeric data correctly", {
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
       return(tibble::tibble(Assemblage = numeric(),
                             qD = numeric(),
-                            t = numeric(),
+                            m = numeric(),
                             SC = numeric(),
-                            Order.q = numeric()))
+                            Order.q = numeric(),
+                            Method = character()))
     },
     {
       result <- calc_map.hill1(
@@ -349,7 +393,10 @@ test_that("calc_map.hill1 handles non-numeric data correctly", {
   expected_hill1 <- tibble::tibble(
     cellid = numeric(),
     diversity_val = numeric(),
-    samp_size_est = numeric()
+    samp_size_est = numeric(),
+    coverage = numeric(),
+    diversity_type = numeric(),
+    method = character()
   )
 
   expect_equal(result, expected_hill1)
@@ -360,9 +407,10 @@ test_that("calc_map.hill2 handles non-numeric data correctly", {
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
       return(tibble::tibble(Assemblage = numeric(),
                             qD = numeric(),
-                            t = numeric(),
+                            m = numeric(),
                             SC = numeric(),
-                            Order.q = numeric()))
+                            Order.q = numeric(),
+                            Method = character()))
     },
     {
       result <- calc_map.hill2(
@@ -375,7 +423,10 @@ test_that("calc_map.hill2 handles non-numeric data correctly", {
   expected_hill2 <- tibble::tibble(
     cellid = numeric(),
     diversity_val = numeric(),
-    samp_size_est = numeric()
+    samp_size_est = numeric(),
+    coverage = numeric(),
+    diversity_type = numeric(),
+    method = character()
   )
 
   expect_equal(result, expected_hill2)
@@ -385,9 +436,10 @@ test_that("calc_map.hill0 handles non-standard data types correctly", {
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
       return(tibble::tibble(Assemblage = numeric(),
                             qD = numeric(),
-                            t = numeric(),
+                            m = numeric(),
                             SC = numeric(),
-                            Order.q = numeric()))
+                            Order.q = numeric(),
+                            Method = character()))
     },
     {
       result <- calc_map.hill0(
@@ -400,7 +452,10 @@ test_that("calc_map.hill0 handles non-standard data types correctly", {
   expected_result <- tibble::tibble(
     cellid = numeric(),
     diversity_val = numeric(),
-    samp_size_est = numeric()
+    samp_size_est = numeric(),
+    coverage = numeric(),
+    diversity_type = numeric(),
+    method = character()
   )
 
   expect_equal(result, expected_result)
@@ -411,9 +466,10 @@ test_that("calc_map.hill1 handles non-standard data types correctly", {
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
       return(tibble::tibble(Assemblage = numeric(),
                             qD = numeric(),
-                            t = numeric(),
+                            m = numeric(),
                             SC = numeric(),
-                            Order.q = numeric()))
+                            Order.q = numeric(),
+                            Method = character()))
     },
     {
       result <- calc_map.hill1(
@@ -426,7 +482,10 @@ test_that("calc_map.hill1 handles non-standard data types correctly", {
   expected_hill1 <- tibble::tibble(
     cellid = numeric(),
     diversity_val = numeric(),
-    samp_size_est = numeric()
+    samp_size_est = numeric(),
+    coverage = numeric(),
+    diversity_type = numeric(),
+    method = character()
   )
 
   expect_equal(result, expected_hill1)
@@ -437,9 +496,10 @@ test_that("calc_map.hill2 handles non-standard data types correctly", {
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
       return(tibble::tibble(Assemblage = numeric(),
                             qD = numeric(),
-                            t = numeric(),
+                            m = numeric(),
                             SC = numeric(),
-                            Order.q = numeric()))
+                            Order.q = numeric(),
+                            Method = character()))
     },
     {
       result <- calc_map.hill2(
@@ -452,7 +512,10 @@ test_that("calc_map.hill2 handles non-standard data types correctly", {
   expected_hill2 <- tibble::tibble(
     cellid = numeric(),
     diversity_val = numeric(),
-    samp_size_est = numeric()
+    samp_size_est = numeric(),
+    coverage = numeric(),
+    diversity_type = numeric(),
+    method = character()
   )
 
   expect_equal(result, expected_hill2)
