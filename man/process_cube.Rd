@@ -111,7 +111,7 @@ observed individuals.}
 stage of the observed individuals.}
 
 \item{separator}{(Optional) The column-separating character in your csv file.
-Default is white space: "\t".}
+Default is white space ("\t").}
 }
 \value{
 A tibble containing the processed GBIF occurrence data.
