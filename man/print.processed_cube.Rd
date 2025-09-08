@@ -9,7 +9,8 @@
 \arguments{
 \item{x}{A processed_cube object.}
 
-\item{n}{Integer specifying the number of rows of cube data to display.}
+\item{n}{(Optional) Integer specifying the number of rows of cube data to
+display.}
 
 \item{...}{Additional arguments.}
 }

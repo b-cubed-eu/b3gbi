@@ -1,9 +1,9 @@
 #' @export
 calc_map.default <- function(x, ...){
 
-  warning(paste("calc_map does not know how to handle object of class ",
-                class(x),
-                ". Please ensure you are not calling calc_map directly on an object."))
+  warning(paste0(
+    "calc_map does not know how to handle object of class ", class(x), ". ",
+    "Please ensure you are not calling calc_map directly on an object."))
 
 }
 
@@ -11,8 +11,8 @@ calc_map.default <- function(x, ...){
 #' @rdname calc_map
 calc_map.hill0 <- function(x, ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
-                  inherits(x, "hill0"))
+  stopifnot_error("Wrong data class. This is an internal function and is not
+                  meant to be called directly.", inherits(x, "hill0"))
 
   indicator <- calc_map_hill_core(x = x, type = "hill0", ...)
 
@@ -24,8 +24,8 @@ calc_map.hill0 <- function(x, ...) {
 #' @rdname calc_map
 calc_map.hill1 <- function(x, ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
-                  inherits(x, "hill1"))
+  stopifnot_error("Wrong data class. This is an internal function and is not
+                  meant to be called directly.", inherits(x, "hill1"))
 
   indicator <- calc_map_hill_core(x = x, type = "hill1", ...)
 
@@ -37,8 +37,8 @@ calc_map.hill1 <- function(x, ...) {
 #' @rdname calc_map
 calc_map.hill2 <- function(x, ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
-                  inherits(x, "hill2"))
+  stopifnot_error("Wrong data class. This is an internal function and is not
+                  meant to be called directly.", inherits(x, "hill2"))
 
   indicator <- calc_map_hill_core(x = x, type = "hill2", ...)
 
@@ -163,8 +163,8 @@ calc_map.obs_richness <- function(x, ...) {
 #' @rdname calc_map
 calc_map.total_occ <- function(x, ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
-                  inherits(x, "total_occ"))
+  stopifnot_error("Wrong data class. This is an internal function and is not
+                  meant to be called directly.", inherits(x, "total_occ"))
 
   obs <- NULL
 
@@ -178,18 +178,19 @@ calc_map.total_occ <- function(x, ...) {
 
 }
 
-#' @param newness_min_year If set, only shows values above this (e.g. 1970). Values
-#'    below the minimum will be replaced with NA. This can be useful e.g. if you have
-#'    outlier cells where the data is very old causing the legend gradient to stretch
-#'    in a way that makes other cell values difficult to discern.
+#' @param newness_min_year (Optional) If set, only shows values above this
+#'  (e.g. 1970). Values below the minimum will be replaced with NA. This can be
+#'  useful e.g. if you have outlier cells where the data is very old causing the
+#'  legend gradient to stretch in a way that makes other cell values difficult
+#'  to discern.
 #' @export
 #' @rdname calc_map
 calc_map.newness <- function(x,
                              newness_min_year = NULL,
                              ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
-                  inherits(x, "newness"))
+  stopifnot_error("Wrong data class. This is an internal function and is not
+                  meant to be called directly.", inherits(x, "newness"))
 
   year <- NULL
 
@@ -200,9 +201,10 @@ calc_map.newness <- function(x,
                      .by = "cellid")
 
   if (!is.null(newness_min_year)) {
-    indicator$diversity_val <- ifelse(indicator$diversity_val > newness_min_year,
-                                           indicator$diversity_val,
-                                           NA)
+    indicator$diversity_val <- ifelse(
+      indicator$diversity_val > newness_min_year,
+      indicator$diversity_val,
+      NA)
   }
 
   return(indicator)
@@ -213,17 +215,17 @@ calc_map.newness <- function(x,
 #' @rdname calc_map
 calc_map.occ_density <- function(x, ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
-                  inherits(x, "occ_density"))
+  stopifnot_error("Wrong data class. This is an internal function and is not
+                  meant to be called directly.", inherits(x, "occ_density"))
 
   diversity_val <- obs <- area <- cellid <- NULL
 
-  cell_size_units <- stringr::str_extract(x$resolution[1], "(?<=[0-9,.]{1,6})[a-z]*$")
+  cell_size_units <- stringr::str_extract(x$resolution[1],
+                                          "(?<=[0-9,.]{1,6})[a-z]*$")
 
-  stopifnot_error(
-    paste0(
-      "To calculate occurrence density, please choose a projected CRS that ",
-      "uses meters or kilometers, not degrees."), "area" %in% names(x))
+  stopifnot_error("To calculate occurrence density, please choose a projected
+                  CRS that uses meters or kilometers, not degrees.",
+                  "area" %in% names(x))
 
   # Calculate density of occurrences over the grid (per square km)
   indicator <-
@@ -241,8 +243,10 @@ calc_map.occ_density <- function(x, ...) {
 #' @rdname calc_map
 calc_map.williams_evenness <- function(x, ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
-                  inherits(x, "williams_evenness"))
+  stopifnot_error(
+    "Wrong data class. This is an internal function and is not
+    meant to be called directly.", inherits(x, "williams_evenness")
+  )
 
   # Call function to calculate evenness over a grid
   indicator <- calc_map_evenness_core(x = x,
@@ -257,8 +261,10 @@ calc_map.williams_evenness <- function(x, ...) {
 #' @rdname calc_map
 calc_map.pielou_evenness <- function(x, ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
-                  inherits(x, "pielou_evenness"))
+  stopifnot_error(
+    "Wrong data class. This is an internal function and is not meant to be
+    called directly.", inherits(x, "pielou_evenness")
+  )
 
   # Call function to calculate evenness over a grid
   indicator <- calc_map_evenness_core(x = x,
@@ -274,12 +280,9 @@ calc_map_evenness_core <- function(x,
                                    type,
                                    ...) {
 
-  stopifnot_error(
-    paste0(
-      "Please check the class and structure of your data. This is an ",
-      "internal function, not meant to be called directly."
-    ),
-    inherits(x, c("data.frame", "sf")))
+  stopifnot_error("Please check the class and structure of your data. This is an
+                  internal function, not meant to be called directly.",
+                  inherits(x, c("data.frame", "sf")))
 
   available_indicators <- NULL; rm(available_indicators)
 
@@ -317,8 +320,8 @@ calc_map_evenness_core <- function(x,
 #' @rdname calc_map
 calc_map.ab_rarity <- function(x, ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
-                  inherits(x, "ab_rarity"))
+  stopifnot_error("Wrong data class. This is an internal function and is not
+                  meant to be called directly.", inherits(x, "ab_rarity"))
 
   obs <- taxonKey <- cellid <- records_taxon <- obs_taxon <- rarity <- NULL
   obs_cell <- NULL
@@ -352,8 +355,8 @@ calc_map.ab_rarity <- function(x, ...) {
 #' @rdname calc_map
 calc_map.area_rarity <- function(x, ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
-                  inherits(x, "area_rarity"))
+  stopifnot_error("Wrong data class. This is an internal function and is not
+                  meant to be called directly.", inherits(x, "area_rarity"))
 
   rec_tax_cell <- cellid <- taxonKey <- rarity <- NULL
   occ_by_taxa <- total_cells <- NULL
@@ -389,8 +392,8 @@ calc_map.area_rarity <- function(x, ...) {
 #' @rdname calc_map
 calc_map.spec_occ <- function(x, ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
-                  inherits(x, "spec_occ"))
+  stopifnot_error("Wrong data class. This is an internal function and is not
+                  meant to be called directly.", inherits(x, "spec_occ"))
 
   diversity_val <- obs <- taxonKey <- cellid <- scientificName <- NULL
 
@@ -408,8 +411,8 @@ calc_map.spec_occ <- function(x, ...) {
 #' @rdname calc_map
 calc_map.spec_range <- function(x, ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
-                  inherits(x, "spec_range"))
+  stopifnot_error("Wrong data class. This is an internal function and is not
+                  meant to be called directly.", inherits(x, "spec_range"))
 
   cellid <- taxonKey <- scientificName <- diversity_val <- NULL
 
@@ -427,8 +430,8 @@ calc_map.spec_range <- function(x, ...) {
 #' @rdname calc_map
 calc_map.tax_distinct <- function(x, ...) {
 
-  stopifnot_error("Wrong data class. This is an internal function and is not meant to be called directly.",
-                  inherits(x, "tax_distinct"))
+  stopifnot_error("Wrong data class. This is an internal function and is not
+                  meant to be called directly.", inherits(x, "tax_distinct"))
 
   cellid <- . <- diversity_val <- NULL
 
@@ -446,9 +449,9 @@ calc_map.tax_distinct <- function(x, ...) {
                                        ...)
 
   } else {
-
-    stop("The 'taxize' package is required to calculate taxonomic distinctness.")
-
+    stop(
+      "The 'taxize' package is required to calculate taxonomic distinctness."
+    )
   }
 
   # Save data

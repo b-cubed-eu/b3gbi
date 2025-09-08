@@ -700,11 +700,11 @@ plot.occ_turnover <- function(x,
 #'
 #' @param x An 'indicator_map' object containing indicator values associated with
 #'   map grid cells.
-#' @param title Plot title. Replace "auto" with your own title if you want a
+#' @param title (Optional) Plot title. Replace "auto" with your own title if you want a
 #'   custom title or if calling the function manually.
-#' @param auto_title Text for automatic title generation, provided by an
+#' @param auto_title (Optional) Text for automatic title generation, provided by an
 #'   appropriate S3 method (if calling the function manually, leave as NULL).
-#' @param leg_label_default Default label for the legend, provided by an
+#' @param leg_label_default (Optional) Default label for the legend, provided by an
 #'   appropriate S3 method (if calling the function manually, leave as NULL).
 #' @param xlims  (Optional) Custom x-axis limits.
 #' @param ylims (Optional) Custom y-axis limits.
@@ -714,18 +714,18 @@ plot.occ_turnover <- function(x,
 #'   Yeo-Johnson transformations.
 #' @param breaks (Optional) Break points for the legend scale.
 #' @param labels (Optional) Labels for legend scale break points.
-#' @param crop_to_grid If TRUE, the grid will determine the edges of the map.Overrides
+#' @param crop_to_grid (Optional) If TRUE, the grid will determine the edges of the map.Overrides
 #'    Europe_crop_EEA. Default is FALSE.
 #' @param panel_bg (Optional) Background colour for the map panel.
 #' @param land_fill_colour (Optional) Colour for the land area outside of the grid
 #'    (if surround = TRUE). Default is "grey85".
 #' @param legend_title (Optional) Title for the plot legend.
 #' @param legend_limits (Optional) Limits for the legend scale.
-#' @param legend_title_wrap_length Maximum legend title length before wrapping to a new line.
-#' @param title_wrap_length Maximum title length before wrapping to a new line.
-#' @param visible_gridlines Show gridlines between cells. Default is TRUE.
-#' @param layers Additional rnaturalearth layers to plot, e.g. c("reefs", "playas").
-#' @param scale Scale of Natural Earth data ("small", "medium", or "large"). Default is 'medium'.
+#' @param legend_title_wrap_length (Optional) Maximum legend title length before wrapping to a new line.
+#' @param title_wrap_length (Optional) Maximum title length before wrapping to a new line.
+#' @param visible_gridlines (Optional) Show gridlines between cells. Default is TRUE.
+#' @param layers (Optional) Additional rnaturalearth layers to plot, e.g. c("reefs", "playas").
+#' @param scale (Optional) Scale of Natural Earth data ("small", "medium", or "large"). Default is 'medium'.
 #'
 #' @return A ggplot object representing the biodiversity indicator map.
 #' Can be customized using ggplot2 functions.
@@ -958,62 +958,62 @@ plot_map <- function(x,
 #' @param x An 'indicator_ts' object containing a time series of indicator values.
 #' @param min_year (Optional)  Earliest year to include in the plot.
 #' @param max_year (Optional)  Latest year to include in the plot.
-#' @param title Plot title. Replace "auto" with your own title if you want a
+#' @param title (Optional) Plot title. Replace "auto" with your own title if you want a
 #'   custom title or if calling the function manually.
-#' @param auto_title Text for automatic title generation, provided by an
+#' @param auto_title (Optional) Text for automatic title generation, provided by an
 #'   appropriate S3 method (if calling the function manually, leave as NULL).
-#' @param y_label_default Default label for the y-axis, provided by an appropriate
+#' @param y_label_default (Optional) Default label for the y-axis, provided by an appropriate
 #'   S3 method (if calling the function manually, leave as NULL).
-#' @param suppress_y If TRUE, suppresses y-axis labels.
-#' @param smoothed_trend If TRUE, plot a smoothed trendline over time
+#' @param suppress_y (Optional) If TRUE, suppresses y-axis labels.
+#' @param smoothed_trend (Optional) If TRUE, plot a smoothed trendline over time
 #' (`stats::loess()`).
 #' @param linecolour (Optional) Colour for the indicator line or points.
 #'   Default is darkorange.
-#' @param linealpha Transparency for indicator line or points. Default is 0.8.
+#' @param linealpha (Optional) Transparency for indicator line or points. Default is 0.8.
 #' @param ribboncolour (Optional) Colour for the bootstrapped confidence intervals.
 #'   Default is goldenrod1. Set to "NA" if you don't want to plot the CIs.
-#' @param ribbonalpha Transparency for indicator confidence interval ribbon (if
+#' @param ribbonalpha (Optional) Transparency for indicator confidence interval ribbon (if
 #'   ci_type = "ribbon"). Default is 0.2.
-#' @param error_alpha Transparency for indicator error bars (if ci_type = "error_bar").
+#' @param error_alpha (Optional) Transparency for indicator error bars (if ci_type = "error_bar").
 #'   Default is 1.
 #' @param trendlinecolour (Optional) Colour for the smoothed trendline.
 #'   Default is blue.
-#' @param trendlinealpha Transparency for the smoothed trendline. Default is 0.5.
+#' @param trendlinealpha (Optional) Transparency for the smoothed trendline. Default is 0.5.
 #' @param envelopecolour (Optional) Colour for the uncertainty envelope.
 #'   Default is lightsteelblue.
-#' @param envelopealpha Transparency for the smoothed trendline envelope. Default is 0.2.
-#' @param smooth_cialpha Transparency for the smoothed lines forming the edges of the
+#' @param envelopealpha (Optional) Transparency for the smoothed trendline envelope. Default is 0.2.
+#' @param smooth_cialpha (Optional) Transparency for the smoothed lines forming the edges of the
 #'   trendline envelope. Default is 1.
-#' @param point_line Whether to plot the indicator as a line or a series of points.
+#' @param point_line (Optional) Whether to plot the indicator as a line or a series of points.
 #'   Options are "line" or "point". Default is "point".
-#' @param pointsize Size of the points if point_line = "point". Default is 2.
-#' @param linewidth Width of the line if point_line = "line". Default is 1.
-#' @param ci_type Whether to plot bootstrapped confidence intervals as a "ribbon"
+#' @param pointsize (Optional) Size of the points if point_line = "point". Default is 2.
+#' @param linewidth (Optional) Width of the line if point_line = "line". Default is 1.
+#' @param ci_type (Optional) Whether to plot bootstrapped confidence intervals as a "ribbon"
 #'   or "error_bars". Default is "error_bars".
-#' @param error_width Width of error bars if ci_type = "error_bars". Default is 1.
+#' @param error_width (Optional) Width of error bars if ci_type = "error_bars". Default is 1.
 #'   Note that unlike the default 'width' parameter in geom_errorbar, 'error_width' is NOT
 #'   dependent on the number of data points in the plot. It is automatically scaled to
 #'   account for this. Therefore the width you select will be consistent relative to the
 #'   plot width even if you change 'min_year' and 'max_year'.
-#' @param error_thickness Thickness of error bars if ci_type = "error_bars". Default is 1.
-#' @param smooth_linetype Type of line to plot for smoothed trendline. Default is "solid".
-#' @param smooth_linewidth Line width for smoothed trendline. Default is 1.
-#' @param smooth_cilinewidth Line width for smoothed trendline confidence intervals.
+#' @param error_thickness (Optional) Thickness of error bars if ci_type = "error_bars". Default is 1.
+#' @param smooth_linetype (Optional) Type of line to plot for smoothed trendline. Default is "solid".
+#' @param smooth_linewidth (Optional) Line width for smoothed trendline. Default is 1.
+#' @param smooth_cilinewidth (Optional) Line width for smoothed trendline confidence intervals.
 #'   Default is 1.
-#' @param gridoff  If TRUE, hides gridlines.
-#' @param x_label Label for the x-axis.
-#' @param y_label Label for the y-axis.
+#' @param gridoff (Optional) If TRUE, hides gridlines.
+#' @param x_label (Optional) Label for the x-axis.
+#' @param y_label (Optional) Label for the y-axis.
 #' @param x_expand (Optional)  Expansion factor to expand the x-axis beyond the data.
 #'   Left and right values are required in the form of c(0.1, 0.2) or simply 0.1 to
 #'   apply the same value to each side. Default is 0.05.
 #' @param y_expand (Optional)  Expansion factor to expand the y-axis beyond the data.
 #'   Lower and upper values are required in the form of c(0.1, 0.2) or simply 0.1 to
 #'   apply the same value to the top and bottom. Default is 0.05.
-#' @param x_breaks Integer giving desired number of breaks for x axis.
+#' @param x_breaks (Optional) Integer giving desired number of breaks for x axis.
 #'   (May not return exactly the number requested.)
-#' @param y_breaks Integer giving desired number of breaks for y axis.
+#' @param y_breaks (Optional) Integer giving desired number of breaks for y axis.
 #'   (May not return exactly the number requested.)
-#' @param wrap_length  Maximum title length before wrapping to a new line.
+#' @param wrap_length (Optional) Maximum title length before wrapping to a new line.
 #'
 #' @return A ggplot object representing the biodiversity indicator time series plot.
 #' Can be customized using ggplot2 functions.
@@ -1276,66 +1276,66 @@ plot_ts <- function(x,
 #' @param species Species you want to map occurrences for. Can be either numerical
 #'   taxonKeys or species names. Partial species names can be used (the function
 #'   will try to match them).
-#' @param single_plot By default all species occurrence time series will be combined
+#' @param single_plot (Optional) By default all species occurrence time series will be combined
 #'   into a single multi-panel plot. Set this to FALSE to plot each species separately.
 #' @param min_year (Optional)  Earliest year to include in the plot.
 #' @param max_year (Optional)  Latest year to include in the plot.
-#' @param title Plot title. Replace "auto" with your own title if you want a
+#' @param title (Optional) Plot title. Replace "auto" with your own title if you want a
 #'   custom title or if calling the function manually.
-#' @param auto_title Text for automatic title generation, provided by an
+#' @param auto_title (Optional) Text for automatic title generation, provided by an
 #'   appropriate S3 method (if calling the function manually, leave as NULL).
-#' @param y_label_default Default label for the y-axis, provided by an appropriate
+#' @param y_label_default (Optional) Default label for the y-axis, provided by an appropriate
 #'   S3 method (if calling the function manually, leave as NULL).
-#' @param suppress_y If TRUE, suppresses y-axis labels.
-#' @param smoothed_trend If TRUE, plot a smoothed trendline over time
+#' @param suppress_y (Optional) If TRUE, suppresses y-axis labels.
+#' @param smoothed_trend (Optional) If TRUE, plot a smoothed trendline over time
 #' (`stats::loess()`).
 #' @param linecolour (Optional) Colour for the indicator line or points.
 #'   Default is darkorange.
-#' @param linealpha Transparency for indicator line or points. Default is 0.8.
+#' @param linealpha (Optional) Transparency for indicator line or points. Default is 0.8.
 #' @param ribboncolour (Optional) Colour for the bootstrapped confidence intervals.
 #'   Default is goldenrod1. Set to "NA" if you don't want to plot the CIs.
-#' @param ribbonalpha Transparency for indicator confidence interval ribbon (if
+#' @param ribbonalpha (Optional) Transparency for indicator confidence interval ribbon (if
 #'   ci_type = "ribbon"). Default is 0.2.
-#' @param error_alpha Transparency for indicator error bars (if ci_type = "error_bar").
+#' @param error_alpha (Optional) Transparency for indicator error bars (if ci_type = "error_bar").
 #'   Default is 1.
 #' @param trendlinecolour (Optional) Colour for the smoothed trendline.
 #'   Default is blue.
-#' @param trendlinealpha Transparency for the smoothed trendline. Default is 0.5.
+#' @param trendlinealpha (Optional) Transparency for the smoothed trendline. Default is 0.5.
 #' @param envelopecolour (Optional) Colour for the uncertainty envelope.
 #'   Default is lightsteelblue.
-#' @param envelopealpha Transparency for the smoothed trendline envelope. Default is 0.2.
-#' @param smooth_cialpha Transparency for the smoothed lines forming the edges of the
+#' @param envelopealpha (Optional) Transparency for the smoothed trendline envelope. Default is 0.2.
+#' @param smooth_cialpha (Optional) Transparency for the smoothed lines forming the edges of the
 #'   trendline envelope. Default is 1.
-#' @param point_line Whether to plot the indicator as a line or a series of points.
+#' @param point_line (Optional) Whether to plot the indicator as a line or a series of points.
 #'   Options are "line" or "point". Default is "point".
-#' @param pointsize Size of the points if point_line = "point". Default is 2.
-#' @param linewidth Width of the line if point_line = "line". Default is 1.
-#' @param ci_type Whether to plot bootstrapped confidence intervals as a "ribbon"
+#' @param pointsize (Optional) Size of the points if point_line = "point". Default is 2.
+#' @param linewidth (Optional) Width of the line if point_line = "line". Default is 1.
+#' @param ci_type (Optional) Whether to plot bootstrapped confidence intervals as a "ribbon"
 #'   or "error_bars". Default is "error_bars".
-#' @param error_width Width of error bars if ci_type = "error_bars". Default is 1.
+#' @param error_width (Optional) Width of error bars if ci_type = "error_bars". Default is 1.
 #'   Note that unlike the default 'width' parameter in geom_errorbar, 'error_width' is NOT
 #'   dependent on the number of data points in the plot. It is automatically scaled to
 #'   account for this. Therefore the width you select will be consistent relative to the
 #'   plot width even if you change 'min_year' and 'max_year'.
-#' @param error_thickness Thickness of error bars if ci_type = "error_bars". Default is 1.
-#' @param smooth_linetype Type of line to plot for smoothed trendline. Default is "solid".
-#' @param smooth_linewidth Line width for smoothed trendline. Default is 1.
-#' @param smooth_cilinewidth Line width for smoothed trendline confidence intervals.
+#' @param error_thickness (Optional) Thickness of error bars if ci_type = "error_bars". Default is 1.
+#' @param smooth_linetype (Optional) Type of line to plot for smoothed trendline. Default is "solid".
+#' @param smooth_linewidth (Optional) Line width for smoothed trendline. Default is 1.
+#' @param smooth_cilinewidth (Optional) Line width for smoothed trendline confidence intervals.
 #'   Default is 1.
-#' @param gridoff  If TRUE, hides gridlines.
-#' @param x_label Label for the x-axis.
-#' @param y_label Label for the y-axis.
+#' @param gridoff (Optional) If TRUE, hides gridlines.
+#' @param x_label (Optional) Label for the x-axis.
+#' @param y_label (Optional) Label for the y-axis.
 #' @param x_expand (Optional)  Expansion factor to expand the x-axis beyond the data.
 #'   Left and right values are required in the form of c(0.1, 0.2) or simply 0.1 to
 #'   apply the same value to both sides. Default is 0.05.
 #' @param y_expand (Optional)  Expansion factor to expand the y-axis beyond the data.
 #'   Lower and upper values are required in the form of c(0.1, 0.2) or simply 0.1 to
 #'   apply the same value to the top and bottom. Default is 0.05.
-#' @param x_breaks Integer giving desired number of breaks for x axis.
+#' @param x_breaks (Optional) Integer giving desired number of breaks for x axis.
 #'   (May not return exactly the number requested.)
-#' @param y_breaks Integer giving desired number of breaks for y axis.
+#' @param y_breaks (Optional) Integer giving desired number of breaks for y axis.
 #'   (May not return exactly the number requested.)
-#' @param wrap_length  Maximum title length before wrapping to a new line.
+#' @param wrap_length (Optional) Maximum title length before wrapping to a new line.
 #'
 #' @return A ggplot object representing species range or occurrence time series plot(s).
 #'   Can be customized using ggplot2 functions.
@@ -1354,7 +1354,7 @@ plot_ts <- function(x,
 #'         envelopecolour = "lightgreen")
 #' @export
 plot_species_ts <- function(x,
-                            species = NULL,
+                            species,
                             single_plot = TRUE,
                             min_year = NULL,
                             max_year = NULL,
@@ -1662,15 +1662,17 @@ plot_species_ts <- function(x,
 #' @param species Species you want to map occurrences for. Can be either numerical
 #'   taxonKeys or species names. Partial species names can be used (the function
 #'   will try to match them).
-#' @param title Plot title. Replace "auto" with your own title if you want a
+#' @param single_plot (Optional) By default all species occurrence time series will be combined
+#'   into a single multi-panel plot. Set this to FALSE to plot each species separately.
+#' @param title (Optional) Plot title. Replace "auto" with your own title if you want a
 #'   custom title or if calling the function manually.
-#' @param auto_title Text for automatic title generation, provided by an
+#' @param auto_title (Optional) Text for automatic title generation, provided by an
 #'   appropriate S3 method (if calling the function manually, leave as NULL).
-#' @param leg_label_default Default label for the legend, provided by an
+#' @param leg_label_default (Optional) Default label for the legend, provided by an
 #'   appropriate S3 method (if calling the function manually, leave as NULL).
-#' @param suppress_legend Do not show legend. This should be set to true when
+#' @param suppress_legend (Optional) Do not show legend. This should be set to true when
 #'   plotting species ranges, as all cell values are 1.
-#' @param xlims  (Optional) Custom x-axis limits.
+#' @param xlims (Optional) Custom x-axis limits.
 #' @param ylims (Optional) Custom y-axis limits.
 #' @param trans (Optional) Scale transformation for the fill gradient
 #'   (e.g., 'log').
@@ -1678,21 +1680,19 @@ plot_species_ts <- function(x,
 #'   Yeo-Johnson transformations.
 #' @param breaks (Optional) Break points for the legend scale.
 #' @param labels (Optional) Labels for legend scale break points.
-#' @param crop_to_grid If TRUE, the grid will determine the edges of the map.Overrides
+#' @param crop_to_grid (Optional) If TRUE, the grid will determine the edges of the map.Overrides
 #'    Europe_crop_EEA. Default is FALSE.
-#' @param single_plot By default all species occurrence time series will be combined
-#'    into a single multi-panel plot. Set this to FALSE to plot each species separately.
-#' @param panel_bg  (Optional) Background colour for the map panel.
+#' @param panel_bg (Optional) Background colour for the map panel.
 #' @param land_fill_colour (Optional) Colour for the land area outside of the grid
 #'    (if surround = TRUE). Default is "grey85".
 #' @param legend_title (Optional) Title for the plot legend.
 #' @param legend_limits (Optional) Limits for the legend scale.
-#' @param legend_title_wrap_length Maximum legend title length before wrapping to a new line.
-#' @param title_wrap_length Maximum title length before wrapping to a new line.
-#' @param spec_name_wrap_length Maximum species name length before wrapping to a new line.
-#' @param visible_gridlines Show gridlines between cells. Default is TRUE.
-#' @param layers Additional rnaturalearth layers to plot, e.g. c("reefs", "playas").
-#' @param scale Scale of Natural Earth data ("small", "medium", or "large"). Default is 'medium'.
+#' @param legend_title_wrap_length (Optional) Maximum legend title length before wrapping to a new line.
+#' @param title_wrap_length (Optional) Maximum title length before wrapping to a new line.
+#' @param spec_name_wrap_length (Optional) Maximum species name length before wrapping to a new line.
+#' @param visible_gridlines (Optional) Show gridlines between cells. Default is TRUE.
+#' @param layers (Optional) Additional rnaturalearth layers to plot, e.g. c("reefs", "playas").
+#' @param scale (Optional) Scale of Natural Earth data ("small", "medium", or "large"). Default is 'medium'.
 #'
 #' @return A ggplot object representing the map of species range or occurrences.
 #' Can be customized using ggplot2 functions.
@@ -1705,7 +1705,7 @@ plot_species_ts <- function(x,
 #'
 #' @export
 plot_species_map <- function(x,
-                             species = NULL,
+                             species,
                              title = "auto",
                              auto_title = NULL,
                              leg_label_default = NULL,

@@ -67,8 +67,11 @@ multiyear_bootstrap <- function(tax_list, indicator, num_bootstrap = 1000) {
       }
 
       # Calculate turnover
-      boot_results[j] <- multiyear_boot_statistic(year2samp, year1samp, seq_along(year2samp), seq_along(year1samp))
-      # collect the data from the present year to feed to the boot.return function
+      boot_results[j] <- multiyear_boot_statistic(year2samp,
+                                                  year1samp,
+                                                  seq_along(year2samp),
+                                                  seq_along(year1samp))
+      # collect the data from the present year to feed to boot.return
       current_year_data[[j]] <- year2samp
 
     }
@@ -83,7 +86,7 @@ multiyear_bootstrap <- function(tax_list, indicator, num_bootstrap = 1000) {
     weights <- rep(1 / length(boot_results),
                    length(boot_results))
 
-    # use boot.return to format data appropriately for calculating confidence intervals
+    # use boot.return to format data appropriately for calculating CIs
     boot_results_formatted <- boot.return_int(sim = "ordinary",
                                               t0 = indicator$diversity_val[[i]],
                                               t = as.matrix(boot_results),

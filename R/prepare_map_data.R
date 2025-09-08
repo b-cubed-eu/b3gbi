@@ -53,15 +53,16 @@ prepare_map_data <- function(data,
         latlong_extent["ymax"] + (expand_percent * lat_range)
       ), crs = latlong_crs)
 
-      latlongbbox_transformed <- sf::st_transform(sf::st_as_sfc(expanded_latlong_bbox),
-                                                  crs = "ESRI:54012")
+      latlongbbox_transformed <- sf::st_transform(
+        sf::st_as_sfc(expanded_latlong_bbox), crs = "ESRI:54012")
       # Crop the world map in lat/long to the expanded extent
       surrounding_countries_latlong <- map_data_sf %>%
         sf::st_make_valid() %>%
         sf::st_transform(crs = "ESRI:54012") %>%
         dplyr::group_by(scalerank, featurecla) %>%
-        dplyr::reframe(geometry = sf::st_crop(geometry, latlongbbox_transformed)) %>%
-        dplyr::filter(!sf::st_is_empty(geometry)) %>% # Filter out empty geometries
+        dplyr::reframe(geometry = sf::st_crop(geometry,
+                                              latlongbbox_transformed)) %>%
+        dplyr::filter(!sf::st_is_empty(geometry)) %>%
         sf::st_make_valid() %>%
         sf::st_transform(crs = sf::st_crs(expanded_latlong_bbox))
 
@@ -84,16 +85,17 @@ prepare_map_data <- function(data,
     } else {
 
       # Project latlong extent for cropping
-      latlong_extent_transformed <- sf::st_transform(sf::st_as_sfc(latlong_extent),
-                                                     crs = "ESRI:54012")
+      latlong_extent_transformed <- sf::st_transform(
+        sf::st_as_sfc(latlong_extent), crs = "ESRI:54012")
 
       # Crop to the original extent if not expanding
       surrounding_countries_latlong <- map_data_sf %>%
         sf::st_make_valid() %>%
         sf::st_transform(crs = "ESRI:54012") %>%
         dplyr::group_by(scalerank, featurecla) %>%
-        dplyr::reframe(geometry = sf::st_crop(geometry, latlong_extent_transformed)) %>%
-        dplyr::filter(!sf::st_is_empty(geometry)) %>% # Filter out empty geometries
+        dplyr::reframe(geometry = sf::st_crop(geometry,
+                                              latlong_extent_transformed)) %>%
+        dplyr::filter(!sf::st_is_empty(geometry)) %>%
         sf::st_make_valid() %>%
         sf::st_transform(crs = sf::st_crs(latlong_extent))
 

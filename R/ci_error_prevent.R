@@ -1,5 +1,6 @@
-# Function to replace NA values to avoid errors when calculating confidence intervals
-# Use lapply over a list returned by the boot::boot function (or boot.out)
+# Function to replace NA values to avoid errors when calculating confidence
+# intervals. Use lapply over a list returned by the boot::boot function (or
+# boot.out).
 #' @noRd
 ci_error_prevent <- function(x) {
 

@@ -7,17 +7,18 @@
 get_crs_for_mgrs(cellcodes)
 }
 \arguments{
-\item{cellcodes}{A character vector of MGRS grid cell codes (e.g., "32UMA", "33TWE").}
+\item{cellcodes}{A character vector of MGRS grid cell codes (e.g., "32UMA",
+"33TWE").}
 }
 \value{
-A character string representing the most probable EPSG code for the given
-cell codes, for example, \code{"EPSG:32632"}.
+A character string representing the most probable EPSG code for the
+given cell codes, for example, \code{"EPSG:32632"}.
 }
 \description{
-This function takes a vector of MGRS (Military Grid Reference System) cell codes
-and determines the most likely UTM (Universal Transverse Mercator) coordinate
-reference system (CRS) in EPSG format. It extracts the UTM zone and
-determines the hemisphere (North or South) based on the letter codes.
+This function takes a vector of MGRS (Military Grid Reference System) cell
+codes and determines the most likely UTM (Universal Transverse Mercator)
+coordinate reference system (CRS) in EPSG format. It extracts the UTM zone
+and determines the hemisphere (North or South) based on the letter codes.
 }
 \examples{
 # Example with MGRS codes from a Northern Hemisphere zone (Zone 32)

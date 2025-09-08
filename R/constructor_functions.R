@@ -1,19 +1,21 @@
 #' @title 'processed_cube' S3 Constructor
 #'
-#' @description This function constructs a 'processed_cube' S3 object, a specialized data
-#' structure designed for biodiversity analysis within this package. It validates the input
-#' data cube, calculates essential summary information, and prepares the object for further use.
+#' @description This function constructs a 'processed_cube' S3 object, a
+#' specialized data structure designed for biodiversity analysis within this
+#' package. It validates the input data cube, calculates essential summary
+#' information, and prepares the object for further use.
 #'
 #' @param x A tibble data cube containing occurrence data.
 #'
 #' @return  A 'processed_cube' S3 object containing:
-#'   * **Summary statistics:** First and last year of data, coordinate range, number of
-#'     spatial cells, species, and observations.
-#'   * **Diversity information:** Kingdoms represented, resolutions, indication of multiple
-#'     resolutions and datasets, and types of occurrence records.
+#'   * **Summary statistics:** First and last year of data, coordinate range,
+#'     number of spatial cells, species, and observations.
+#'   * **Diversity information:** Kingdoms represented, resolutions, indication
+#'    of multiple resolutions and datasets, and types of occurrence records.
 #'   * **Original data:** The input data cube.
 #'
-#' @note 'processed_cube' objects are used by various analysis functions within this package.
+#' @note 'processed_cube' objects are used by various analysis functions within
+#'  this package.
 #'
 #' @noRd
 new_processed_cube <- function(x, grid_type) {
@@ -37,11 +39,18 @@ new_processed_cube <- function(x, grid_type) {
                    num_cells = length(unique(x$cellCode)),
                    num_species = length(unique(x$taxonKey)),
                    num_obs = sum(x$obs),
-                   kingdoms = ifelse("kingdom" %in% colnames(x), c(unique(x$kingdom)), "Data not present"),
-                   num_families = ifelse("family" %in% colnames(x), length(unique(x$family)), "Data not present"),
+                   kingdoms = ifelse(
+                     "kingdom" %in% colnames(x),
+                     c(unique(x$kingdom)),
+                     "Data not present"
+                   ),
+                   num_families = ifelse(
+                     "family" %in% colnames(x),
+                     length(unique(x$family)),
+                     "Data not present"
+                   ),
                    grid_type = grid_type,
                    resolutions = unique(x$resolution),
-                 #  multi_res = ifelse(length(unique(x$resolution)) > 1, TRUE, FALSE),
                    num_datasets = length(unique(x$datasetKey)),
                    record_types = unique(x$basisOfRecord),
                    data = x),
@@ -56,11 +65,18 @@ new_processed_cube <- function(x, grid_type) {
                    num_cells = length(unique(x$cellCode)),
                    num_species = length(unique(x$taxonKey)),
                    num_obs = sum(x$obs),
-                   kingdoms = ifelse("kingdom" %in% colnames(x), c(unique(x$kingdom)), "Data not present"),
-                   num_families = ifelse("family" %in% colnames(x), length(unique(x$family)), "Data not present"),
+                   kingdoms = ifelse(
+                     "kingdom" %in% colnames(x),
+                     c(unique(x$kingdom)),
+                     "Data not present"
+                   ),
+                   num_families = ifelse(
+                     "family" %in% colnames(x),
+                     length(unique(x$family)),
+                     "Data not present"
+                   ),
                    grid_type = grid_type,
                    resolutions = unique(x$resolution),
-                  # multi_res = ifelse(length(unique(x$resolution)) > 1, TRUE, FALSE),
                    data = x),
               class = "processed_cube")
   }
@@ -68,15 +84,17 @@ new_processed_cube <- function(x, grid_type) {
 
 #' @title 'sim_cube' S3 Constructor
 #'
-#' @description This function constructs a 'sim_cube' S3 object, a specialized data
-#' structure designed for analysis of simulated biodiversity data (e.g. from the gcube
-#' package) that lacks spatial information. It validates the input data cube, calculates
-#' essential summary information, and prepares the object for further use.
+#' @description This function constructs a 'sim_cube' S3 object, a specialized
+#' data structure designed for analysis of simulated biodiversity data (e.g.
+#' from the gcube package) that lacks spatial information. It validates the
+#' input data cube, calculates essential summary information, and prepares the
+#' object for further use.
 #'
 #' @param x A tibble data cube containing simulated occurrence data.
 #'
 #' @return  A 'gcube' S3 object containing:
-#'   * **Summary statistics:** First and last year of data, number of species, number of observations.
+#'   * **Summary statistics:** First and last year of data, number of species,
+#'     number of observations.
 #'   * **Original data:** The input data cube.
 #'
 #' @noRd
@@ -86,50 +104,77 @@ new_sim_cube <- function(x, grid_type) {
             all(c("year",
                   "taxonKey",
                   "obs") %in% names(x)))
-    structure(list(first_year = min(x$year),
-                   last_year = max(x$year),
-                   coord_range = ifelse(("xcoord" %in% colnames(x) & "ycoord" %in% colnames(x)),
-                                        list(c("xmin" = min(x$xcoord),
-                                             "xmax" = max(x$xcoord),
-                                             "ymin" = min(x$ycoord),
-                                             "ymax" = max(x$ycoord))),
-                                        "Coordinates not provided"),
-                   num_cells = ifelse("cellCode" %in% colnames(x), length(unique(x$cellCode)), "No cell codes provided"),
-                   num_species = length(unique(x$taxonKey)),
-                   num_obs = sum(x$obs),
-                   kingdoms = ifelse("kingdom" %in% colnames(x), c(unique(x$kingdom)), "Data not present"),
-                   num_families = ifelse("family" %in% colnames(x), length(unique(x$family)), "Data not present"),
-                   grid_type = grid_type,
-                   resolutions = ifelse("resolution" %in% colnames(x), unique(x$resolution), NA),
-                   data = x),
-              class = "sim_cube")
+  structure(list(
+    first_year = min(x$year),
+    last_year = max(x$year),
+    coord_range = ifelse(
+      ("xcoord" %in% colnames(x) & "ycoord" %in% colnames(x)),
+      list(c("xmin" = min(x$xcoord),
+             "xmax" = max(x$xcoord),
+             "ymin" = min(x$ycoord),
+             "ymax" = max(x$ycoord))),
+      "Coordinates not provided"
+    ),
+    num_cells = ifelse(
+      "cellCode" %in% colnames(x),
+      length(unique(x$cellCode)),
+      "No cell codes provided"
+    ),
+    num_species = length(unique(x$taxonKey)),
+    num_obs = sum(x$obs),
+    kingdoms = ifelse(
+      "kingdom" %in% colnames(x),
+      c(unique(x$kingdom)),
+      "Data not present"
+    ),
+    num_families = ifelse(
+      "family" %in% colnames(x),
+      length(unique(x$family)),
+      "Data not present"
+    ),
+    grid_type = grid_type,
+    resolutions = ifelse(
+      "resolution" %in% colnames(x),
+      unique(x$resolution),
+      NA
+    ),
+    data = x
+  ),
+  class = "sim_cube")
 }
 
 
 #' @title 'indicator_ts' S3 Constructor
 #'
-#' @description This function creates an 'indicator_ts' S3 object, a specialized structure
-#' for storing biodiversity indicator results calculated over time. These objects include
-#' essential metadata and the calculated indicator time series.
+#' @description This function creates an 'indicator_ts' S3 object, a
+#' specialized structure for storing biodiversity indicator results calculated
+#' over time. These objects include essential metadata and the calculated
+#' indicator time series.
 #'
 #' @param x A tibble data frame containing at least two columns:
 #'   * 'year'
 #'   * 'diversity_val' (calculated indicator value)
-#' @param div_type The type of biodiversity indicator in short form (e.g., "obs_richness").
+#' @param div_type The type of biodiversity indicator in short form (e.g.,
+#'  "obs_richness").
 #' @param kingdoms A character vector of kingdoms included in the analysis.
 #' @param num_species The total number of species in the dataset.
 #' @param num_years The number of years in the time series.
-#' @param species_names A character vector of species names, if a per-species indicator was calculated.
-#' @param map_level The spatial level of the data (e.g., "country", "continent", "world").
+#' @param species_names A character vector of species names, if a per-species
+#'  indicator was calculated.
+#' @param map_level The spatial level of the data (e.g., "country", "continent",
+#'  "world").
 #' @param map_region The name of the spatial region under analysis.
-#' @param coord_range A named list specifying the coordinate range of the analysis
-#' (elements: xmin, xmax, ymin, ymax).
+#' @param coord_range A named list specifying the coordinate range of the
+#'  analysis (elements: xmin, xmax, ymin, ymax).
 #'
 #' @return An 'indicator_ts' S3 object containing:
-#'   * **Indicator name and type:**  Descriptive name of indicator (e.g., "Observed Species Richness") and short-form (e.g., "obs_richness").
+#'   * **Indicator name and type:**  Descriptive name of indicator (e.g.,
+#'     "Observed Species Richness") and short-form (e.g., "obs_richness").
 #'   * **Data timeframe:** First year, last year, number of years.
-#'   * **Spatial details:** Level (country, continent, world), region name, and coordinate range.
-#'   * **Diversity information:**  Kingdoms, names of species, number of species.
+#'   * **Spatial details:** Level (country, continent, world), region name, and
+#'     coordinate range.
+#'   * **Diversity information:**  Kingdoms, names of species, number of
+#'     species.
 #'   * **Time Series:** The input tibble containing year and indicator values.
 #'
 #' @noRd
@@ -149,37 +194,42 @@ new_indicator_ts <- function(x,
                   "diversity_val") %in% names(x)))
   id = div_type
   class(x) <- c("indicator_data", class(x))
-  structure(list(div_name = get_indicator_name(id),
-                 div_type = div_type,
-                 first_year = min(x$year),
-                 last_year = max(x$year),
-                 num_years = num_years,
-                 num_species = num_species,
-                 map_level = map_level,
-                 map_region = map_region,
-                 kingdoms = kingdoms,
-                 num_families = num_families,
-                 coord_range = coord_range,
-                 species_names = species_names,
-                 data = x),
-            class = c("indicator_ts", div_type),
-            indicator_id = id,
-            type = "ts")
+  structure(list(
+    div_name = get_indicator_name(id),
+    div_type = div_type,
+    first_year = min(x$year),
+    last_year = max(x$year),
+    num_years = num_years,
+    num_species = num_species,
+    map_level = map_level,
+    map_region = map_region,
+    kingdoms = kingdoms,
+    num_families = num_families,
+    coord_range = coord_range,
+    species_names = species_names,
+    data = x
+  ),
+  class = c("indicator_ts", div_type),
+  indicator_id = id,
+  type = "ts")
 }
 
 
 #' @title 'indicator_map' S3 Constructor
 #'
-#' @description This function creates an 'indicator_map' S3 object, a specialized structure
-#' designed for storing spatial biodiversity indicator results. This includes metadata about
-#' the calculation and the indicator values mapped onto geographic cells.
+#' @description This function creates an 'indicator_map' S3 object, a
+#' specialized structure designed for storing spatial biodiversity indicator
+#' results. This includes metadata about the calculation and the indicator
+#' values mapped onto geographic cells.
 #'
 #' @param x An sf data frame containing at least two columns:
 #'   * 'cellid': Unique ID for each spatial cell.
 #'   * 'diversity_val': The calculated indicator value for the cell.
-#' @param div_type The type of biodiversity indicator in short form (e.g., obs_richness").
+#' @param div_type The type of biodiversity indicator in short form (e.g.,
+#'  obs_richness").
 #' @param cell_size Length of the grid cell sides, in kilometers.
-#' @param map_level The spatial level of the map (e.g., "country", "continent", "world").
+#' @param map_level The spatial level of the map (e.g., "country", "continent",
+#'  "world").
 #' @param map_region The name of the spatial region under analysis.
 #' @param kingdoms A character vector of kingdoms included in the analysis.
 #' @param num_species The total number of species in the dataset.
@@ -188,10 +238,13 @@ new_indicator_ts <- function(x,
 #' @param num_years The number of years in the time series.
 #'
 #' @return An 'indicator_map' S3 object containing:
-#'   * **Indicator name and type:**  Descriptive name of indicator (e.g. "Observed Species Richness") and short-form (e.g. "obs_richness").
+#'   * **Indicator name and type:**  Descriptive name of indicator (e.g.
+#'     "Observed Species Richness") and short-form (e.g. "obs_richness").
 #'   * **Cell information:** Number of cells, cell size (length x width).
-#'   * **Spatial details:** Level (country, continent, world), region name, projection, and coordinate range.
-#'   * **Diversity information:** Kingdoms, number of species, and names of species.
+#'   * **Spatial details:** Level (country, continent, world), region name,
+#'     projection, and coordinate range.
+#'   * **Diversity information:** Kingdoms, number of species, and names of
+#'     species.
 #'   * **Years analyzed:** First and last year, number of years.
 #'   * **Mapped Results:** The input sf object, now containing indicator scores.
 #'
@@ -220,24 +273,26 @@ new_indicator_map <- function(x,
   cell_size = paste(cell_size, cell_size_units)
   id = div_type
   class(x) <- c("indicator_data", class(x))
-  structure(list(div_name = get_indicator_name(id),
-                 div_type = div_type,
-                 num_cells = length(x$cellid),
-                 cell_size = cell_size,
-                 map_level = map_level,
-                 map_region = map_region,
-                 projection = sf::st_crs(x$geometry)$input,
-                 coord_range = coord_range,
-                 first_year = first_year,
-                 last_year = last_year,
-                 num_years = num_years,
-                 num_species = num_species,
-                 kingdoms = kingdoms,
-                 num_families = num_families,
-                 species_names = species_names,
-                 years_with_obs = years_with_obs,
-                 data = x),
-            class = c("indicator_map", div_type),
-            indicator_id = id,
-            type = "map")
+  structure(list(
+    div_name = get_indicator_name(id),
+    div_type = div_type,
+    num_cells = length(x$cellid),
+    cell_size = cell_size,
+    map_level = map_level,
+    map_region = map_region,
+    projection = sf::st_crs(x$geometry)$input,
+    coord_range = coord_range,
+    first_year = first_year,
+    last_year = last_year,
+    num_years = num_years,
+    num_species = num_species,
+    kingdoms = kingdoms,
+    num_families = num_families,
+    species_names = species_names,
+    years_with_obs = years_with_obs,
+    data = x
+  ),
+  class = c("indicator_map", div_type),
+  indicator_id = id,
+  type = "map")
 }

@@ -4,10 +4,10 @@
 #' its corresponding code.
 #'
 #' @param x A character string representing the biodiversity indicator class
-#'   (e.g., "obs_richness", "hill1", "cum_richness").
+#'  (e.g., "obs_richness", "hill1", "cum_richness").
 #' @return A character string containing the full descriptive name of the
-#'   biodiversity indicator. Returns an error if the specified indicator class is
-#'   not found.
+#'  biodiversity indicator. Returns an error if the specified indicator class
+#'  is not found.
 #'
 #' @noRd
 get_indicator_name <- function(x) {
@@ -30,10 +30,9 @@ get_indicator_name <- function(x) {
 #' suitable for use with time series plots ("ts") or maps.
 #'
 #' @param x A character string representing the biodiversity indicator class
-#'   (e.g., "obs_richness", "hill1", "cum_richness").
-#' @param type Specifies the visualization type: "ts" (time series) or "map".
+#'  (e.g., "obs_richness", "hill1", "cum_richness").
 #' @return A character string containing the legend title. Throws an error if
-#'   the specified indicator class is not found.
+#'  the specified indicator class is not found.
 #'
 #' @noRd
 get_legend_title <- function(x) {
@@ -43,7 +42,9 @@ get_legend_title <- function(x) {
   ltitle <- as.character(available_indicators[[x]]$legend_label)
 
   if (!length(ltitle) > 0) {
-    stop("Indicator class is not registered. Check that you typed it correctly.")
+    stop(
+      "Indicator class is not registered. Check that you typed it correctly."
+    )
   } else {
     ltitle
   }
@@ -56,14 +57,15 @@ get_legend_title <- function(x) {
 #' determines the years for which observation data exists.
 #'
 #' @param x An "indicator_map" object containing calculated indicator values
-#'   associated with grid cells.
+#'  associated with grid cells.
 #' @return A data frame with two columns:
-#'   * `years`: A sequence of years covering the range of observations.
-#'   * `occurrences`: A logical vector indicating if observations exist
-#'      for each year (`TRUE` if present, `FALSE` if absent).
+#'  * `years`: A sequence of years covering the range of observations.
+#'  * `occurrences`: A logical vector indicating if observations exist
+#'    for each year (`TRUE` if present, `FALSE` if absent).
 #'
 #' @examples
-#' total_occ_mammals_denmark <- total_occ_map(example_cube_1, level = "country", region = "Denmark")
+#' total_occ_mammals_denmark <- total_occ_map(example_cube_1, level = "country",
+#'                                            region = "Denmark")
 #' get_observed_years(total_occ_mammals_denmark)
 #' @export
 get_observed_years <- function(x) {
@@ -89,11 +91,11 @@ get_observed_years <- function(x) {
 #'   ('processed_cube', 'indicator_map' or 'indicator_ts').
 #'
 #' @param object A biodiversity data object containing species names, either as
-#'   a separate vector called species_names or as a column called scientificName.
+#'  a separate vector called species_names or as a column called scientificName.
 #' @return  Either a character vector of species names (if directly available)
-#'   or a data frame with columns:
-#'   * `taxonKey`: A unique identifier for each species.
-#'   * `scientificName`:  The scientific name of each species.
+#'  or a data frame with columns:
+#'  * `taxonKey`: A unique identifier for each species.
+#'  * `scientificName`:  The scientific name of each species.
 #'
 #' @examples
 #' list_species(example_cube_1)

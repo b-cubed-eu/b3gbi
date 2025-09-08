@@ -7,8 +7,22 @@ wrapper <- function(x, ...)
 
 # copy of function boot.return from boot package
 #' @noRd
-boot.return_int <- function (sim, t0, t, strata, R, data, stat, stype, call, seed,
-          L, m, pred.i, weights, ran.gen, mle)
+boot.return_int <- function (sim,
+                             t0,
+                             t,
+                             strata,
+                             R,
+                             data,
+                             stat,
+                             stype,
+                             call,
+                             seed,
+                             L,
+                             m,
+                             pred.i,
+                             weights,
+                             ran.gen,
+                             mle)
 {
   out <- list(t0 = t0, t = t, R = R, data = data, seed = seed,
               statistic = stat, sim = sim, call = call)
@@ -226,46 +240,39 @@ is.grob <- function (x)
 
 # Copy of plot_annotation from patchwork package
 #' @noRd
-plot_annotation_int <- function (title = NULL, subtitle = NULL, caption = NULL, tag_levels = NULL,
-          tag_prefix = NULL, tag_suffix = NULL, tag_sep = NULL, theme = NULL)
+plot_annotation_int <- function (title = NULL,
+                                 subtitle = NULL,
+                                 caption = NULL,
+                                 tag_levels = NULL,
+                                 tag_prefix = NULL,
+                                 tag_suffix = NULL,
+                                 tag_sep = NULL,
+                                 theme = NULL)
 {
   th <- if (is.null(theme))
     ggplot2::theme()
   else theme
-  structure(list(title = title, subtitle = subtitle, caption = caption,
-                 tag_levels = tag_levels, tag_prefix = tag_prefix, tag_suffix = tag_suffix,
-                 tag_sep = tag_sep, theme = th), class = "plot_annotation")
+  structure(list(title = title,
+                 subtitle = subtitle,
+                 caption = caption,
+                 tag_levels = tag_levels,
+                 tag_prefix = tag_prefix,
+                 tag_suffix = tag_suffix,
+                 tag_sep = tag_sep,
+                 theme = th
+  ), class = "plot_annotation")
 }
-
-# # Copy of function gifski from gifski package
-# # Gifski converts image frames to high quality GIF animations.
-# #' @noRd
-# #' @useDynLib b3gbi R_png_to_gif
-# gifski_int <- function (png_files, gif_file = "animation.gif", width = 800,
-#           height = 600, delay = 1, loop = TRUE, progress = TRUE)
-# {
-#   png_files <- normalizePath(png_files, mustWork = TRUE)
-#   gif_file <- normalizePath(gif_file, mustWork = FALSE)
-#   if (!file.exists(dirname(gif_file)))
-#     stop("Target directory does not exist:", dirname(gif_file))
-#   width <- as.integer(width)
-#   height <- as.integer(height)
-#   delay <- as.numeric(delay)
-#   repeats <- if (is.logical(loop) || loop == 0) {
-#     isTRUE(loop) - 1
-#   }
-#   else {
-#     as.integer(loop)
-#   }
-#   progress <- as.logical(progress)
-#   .Call(R_png_to_gif, enc2utf8(png_files), enc2utf8(gif_file),
-#         width, height, delay, repeats, progress)
-#u }
 
 # Copy of function specaccum from vegan package
 #' @noRd
-specaccum_int <- function (comm, method = "exact", permutations = 100, conditioned = TRUE,
-          gamma = "jack1", w = NULL, subset, ...)
+specaccum_int <- function (comm,
+                           method = "exact",
+                           permutations = 100,
+                           conditioned = TRUE,
+                           gamma = "jack1",
+                           w = NULL,
+                           subset,
+                           ...)
 {
   METHODS <- c("collector", "random", "exact", "rarefaction",
                "coleman")
@@ -305,8 +312,8 @@ specaccum_int <- function (comm, method = "exact", permutations = 100, condition
     } else {
       sumw <- sum(w)
       xout <- seq(sumw/n, sumw, length.out = n)
-      intx <- sapply(seq_len(NCOL(perm)), function(i) approx(weights[,
-                                                                     i], perm[, i], xout = xout)$y)
+      intx <- sapply(seq_len(NCOL(perm)),
+                     function(i) approx(weights[, i], perm[, i], xout = xout)$y)
       specaccum <- apply(intx, 1, mean)
       sdaccum <- apply(intx, 1, sd)
     }
@@ -317,8 +324,8 @@ specaccum_int <- function (comm, method = "exact", permutations = 100, condition
     ldiv <- lchoose(n, 1:n)
     result <- array(dim = c(n, f))
     for (i in 1:n) {
-      result[i, ] <- ifelse(n - freq < i, 0, exp(lchoose(n -
-                                                           freq, i) - ldiv[i]))
+      result[i, ] <-
+        ifelse(n - freq < i, 0, exp(lchoose(n - freq, i) - ldiv[i]))
     }
     sites <- 1:n
     specaccum <- rowSums(1 - result)
@@ -343,8 +350,10 @@ specaccum_int <- function (comm, method = "exact", permutations = 100, condition
     }
   }, rarefaction = {
     minobs <- min(x[x > 0])
-    if (minobs > 1) warning(gettextf("most observed count data have counts 1, but smallest count is %d",
-                                     minobs))
+    if (minobs > 1) warning(gettextf(
+      "most observed count data have counts 1, but smallest count is %d",
+      minobs
+    ))
     freq <- colSums(x)
     freq <- freq[freq > 0]
     tot <- sum(freq)
@@ -402,8 +411,11 @@ getPermuteMatrix <- function (perm, N, strata = NULL)
       stop("permutation matrix must be strictly integers: use round()")
   }
   if (is.null(attr(perm, "control")))
-    attr(perm, "control") <- structure(list(within = list(type = "supplied matrix"),
-                                            nperm = nrow(perm)), class = "how")
+    attr(perm, "control") <- structure(list(
+      within = list(type = "supplied matrix"),
+      nperm = nrow(perm)),
+      class = "how"
+    )
   perm
 }
 
@@ -418,16 +430,22 @@ rarefy_int <- function (x, sample, se = FALSE, MARGIN = 1)
     stop("function accepts only integers (counts)")
   minobs <- min(x[x > 0])
   if (minobs > 1)
-    warning(gettextf("most observed count data have counts 1, but smallest count is %d",
-                     minobs))
+    warning(gettextf(
+      "most observed count data have counts 1, but smallest count is %d",
+      minobs
+    ))
   minsample <- min(apply(x, MARGIN, sum))
   if (missing(sample)) {
-    stop(gettextf("the size of 'sample' must be given --\nHint: Smallest site maximum %d",
-                  minsample))
+    stop(gettextf(
+      "the size of 'sample' must be given --\nHint: Smallest site maximum %d",
+      minsample
+    ))
   }
   if (any(sample > minsample))
-    warning(gettextf("requested 'sample' was larger than smallest site maximum (%d)",
-                     minsample))
+    warning(gettextf(
+      "requested 'sample' was larger than smallest site maximum (%d)",
+      minsample
+    ))
   rarefun <- function(x, sample) {
     x <- x[x > 0]
     J <- sum(x)
@@ -440,8 +458,11 @@ rarefy_int <- function (x, sample, se = FALSE, MARGIN = 1)
       Jxx <- J - outer(x, x, "+")
       ind <- lower.tri(Jxx)
       Jxx <- Jxx[ind]
-      V <- V + 2 * sum(ifelse(Jxx < sample, 0, exp(lchoose(Jxx,
-                                                           sample) - ldiv)) - outer(p1, p1)[ind])
+      V <- V + 2 * sum(ifelse(
+        Jxx < sample,
+        0,
+        exp(lchoose(Jxx, sample) - ldiv)
+      ) - outer(p1, p1)[ind])
       out <- cbind(out, sqrt(max(V, 0)))
     }
     out
@@ -484,9 +505,10 @@ specpool <- function (x, pool, smallsample = TRUE)
   out <- seq(1:nrow(x))
   groups <- table(pool)
   inds <- names(groups)
-  S <- var.chao <- chao <- var.jack1 <- jack.1 <- jack.2 <- var.boot <- bootS <- rep(NA,
-                                                                                     length(inds))
-  names(S) <- names(var.chao) <- names(chao) <- names(var.jack1) <- names(jack.1) <- names(jack.2) <- names(var.boot) <- names(bootS) <- inds
+  S <- var.chao <- chao <- var.jack1 <- jack.1 <- jack.2 <- var.boot <- bootS <-
+    rep(NA, length(inds))
+  names(S) <- names(var.chao) <- names(chao) <- names(var.jack1) <-
+    names(jack.1) <- names(jack.2) <- names(var.boot) <- names(bootS) <- inds
   for (is in inds) {
     a1 <- a2 <- NA
     gr <- out[pool == is]
@@ -574,8 +596,12 @@ specpool <- function (x, pool, smallsample = TRUE)
 #'   units of degree decimal.
 #'
 #' @noRd
-meters_to_decdeg <- function(occs_df, lat_col = "latitude",
-                             lon_col = "longitude", distance, na_action = "NA as 0") {
+meters_to_decdeg <- function(occs_df,
+                             lat_col = "latitude",
+                             lon_col = "longitude",
+                             distance,
+                             na_action = "NA as 0")
+{
   lat <- occs_df[[lat_col]]
   lon <- occs_df[[lon_col]]
   dist <- occs_df[[distance]]
@@ -597,7 +623,8 @@ meters_to_decdeg <- function(occs_df, lat_col = "latitude",
   #each degree the radius line of the Earth corresponds to 111139 meters.
   lat_uncertainty <- dist/111325
   #at the equator, longitude approx equals latitude
-  #decrease in a trigonometric cosine-based fashion as one moves toward the earth's poles
+  #decrease in a trigonometric cosine-based fashion as one moves toward the
+  # earth's poles
   lon_uncertainty <- dist / (111325  * cos(lat * (pi / 180)))
   dist_dd <- data.frame(lon_uncertainty = lon_uncertainty,
                         lat_uncertainty = lat_uncertainty)

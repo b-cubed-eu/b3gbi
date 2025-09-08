@@ -33,7 +33,8 @@ meters_per_degree <- function(latitude) {
 #' @param input_units Units of the input data (degrees or km)
 #' @param target_units Units of the output (degrees or km)
 #' @param target_resolution Optional. If provided, validates if it's appropriate
-#' @return A list with recommended cell size in target CRS units and validation result
+#' @return A list with recommended cell size in target CRS units and validation
+#'  result
 #'
 #' @noRd
 #'
@@ -61,7 +62,10 @@ determine_cell_size <- function(data,
 
   # For debugging
   message(sprintf("Input CRS units: %s", input_units))
-  message(sprintf("Target CRS units: %s%s", target_units, if(is_km_crs) " (km detected in proj4string)" else ""))
+  message(sprintf(
+    "Target CRS units: %s%s", target_units,
+    if(is_km_crs) " (km detected in proj4string)" else "")
+  )
 
   # Initialize result list
   result <- list(
@@ -91,7 +95,10 @@ determine_cell_size <- function(data,
   }
 
   # Case 2: Converting between degrees and meters/feet/km
-  if (input_units == "degrees" && (target_units == "m" || target_units == "ft" || is_km_crs)) {
+  if (input_units == "degrees" &&
+      (target_units == "m" ||
+       target_units == "ft" ||
+       is_km_crs)) {
 
     # Get the centroid in geographic coordinates for conversion
     if (sf::st_crs(input_crs)$epsg != 4326) {
@@ -121,17 +128,23 @@ determine_cell_size <- function(data,
       # Convert to km
       recommended_x <- cell_size_m_x# / 1000
       recommended_y <- cell_size_m_y# / 1000
-      message(sprintf("Converting to km: %.2f km x %.2f km", recommended_x, recommended_y))
+      message(sprintf(
+        "Converting to km: %.2f km x %.2f km", recommended_x, recommended_y)
+      )
     } else if (target_units == "m") {
       # Keep as meters
       recommended_x <- cell_size_m_x
       recommended_y <- cell_size_m_y
-      message(sprintf("Using meters: %.2f m x %.2f m", recommended_x, recommended_y))
+      message(sprintf(
+        "Using meters: %.2f m x %.2f m", recommended_x, recommended_y)
+      )
     } else if (target_units == "ft") {
       # Convert to feet
       recommended_x <- cell_size_m_x * 3.28084
       recommended_y <- cell_size_m_y * 3.28084
-      message(sprintf("Converting to feet: %.2f ft x %.2f ft", recommended_x, recommended_y))
+      message(sprintf(
+        "Converting to feet: %.2f ft x %.2f ft", recommended_x, recommended_y)
+      )
     }
 
     result$recommended_cell_size <- c(recommended_x, recommended_y)
@@ -150,7 +163,10 @@ determine_cell_size <- function(data,
   }
 
   # Case 3: Converting from meters/feet/km to degrees
-  if ((target_units == "degrees") && (input_units == "m" || input_units == "ft" || is_km_crs)) {
+  if ((target_units == "degrees") &&
+      (input_units == "m" ||
+       input_units == "ft" ||
+       is_km_crs)) {
     # Get the centroid in geographic coordinates for conversion
     centroid_geo <- sf::st_transform(
       sf::st_sfc(sf::st_point(centroid), crs = input_crs),
@@ -177,8 +193,10 @@ determine_cell_size <- function(data,
     recommended_x <- cell_size_m_x / mpd["longitude"]
     recommended_y <- cell_size_m_y / mpd["latitude"]
 
-    message(sprintf("Converting from %s to degrees: %.6f degrees x %.6f degrees",
-                    if(is_km_crs) "km" else input_units, recommended_x, recommended_y))
+    message(sprintf(
+      "Converting from %s to degrees: %.6f degrees x %.6f degrees",
+      if(is_km_crs) "km" else input_units, recommended_x, recommended_y)
+    )
 
     result$recommended_cell_size <- c(recommended_x, recommended_y)
 
@@ -246,7 +264,8 @@ determine_cell_size <- function(data,
 
   # If we get here, we couldn't determine a good conversion
   result$is_valid <- FALSE
-  result$message <- "Unable to convert between these coordinate systems automatically"
+  result$message <-
+    "Unable to convert between these coordinate systems automatically"
   return(result)
 }
 
@@ -267,7 +286,8 @@ create_grid_from_reprojected_data <- function(data, resolution) {
 
   total_cells <- nx * ny
   if (total_cells > 1e7) {  # Arbitrary limit of 10 million cells
-    stop(paste("Grid would create", total_cells, "cells, which is too many. Check your resolution units."))
+    stop(paste0("Grid would create", total_cells, "cells, which is too many. ",
+    "Check your resolution units."))
   }
 
   # Get the bounding box of the data
@@ -312,7 +332,7 @@ create_grid_from_reprojected_data <- function(data, resolution) {
 #' @param target_crs Target CRS as EPSG code or proj4string
 #' @param input_units Units of the input data (degrees or km)
 #' @param target_units Units of the output (degrees or km)
-#' @param target_resolution Optional target resolution in target CRS units
+#' @param target_resolution (Optional) Target resolution in target CRS units
 #' @return A list with the reprojected data and grid
 #'
 #' @noRd
@@ -339,7 +359,8 @@ reproject_and_create_grid <- function(input_data,
   )
 
   print(paste("Input resolution:", input_resolution))
-  print(paste("Calculated target resolution:", cell_size_result$recommended_cell_size))
+  print(paste("Calculated target resolution:",
+              cell_size_result$recommended_cell_size))
  # print(paste("Input CRS units:", input_units))
  # print(paste("Target CRS units:", target_units))
 

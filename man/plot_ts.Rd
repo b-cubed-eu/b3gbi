@@ -49,77 +49,77 @@ plot_ts(
 
 \item{max_year}{(Optional)  Latest year to include in the plot.}
 
-\item{title}{Plot title. Replace "auto" with your own title if you want a
+\item{title}{(Optional) Plot title. Replace "auto" with your own title if you want a
 custom title or if calling the function manually.}
 
-\item{auto_title}{Text for automatic title generation, provided by an
+\item{auto_title}{(Optional) Text for automatic title generation, provided by an
 appropriate S3 method (if calling the function manually, leave as NULL).}
 
-\item{y_label_default}{Default label for the y-axis, provided by an appropriate
+\item{y_label_default}{(Optional) Default label for the y-axis, provided by an appropriate
 S3 method (if calling the function manually, leave as NULL).}
 
-\item{suppress_y}{If TRUE, suppresses y-axis labels.}
+\item{suppress_y}{(Optional) If TRUE, suppresses y-axis labels.}
 
-\item{smoothed_trend}{If TRUE, plot a smoothed trendline over time
+\item{smoothed_trend}{(Optional) If TRUE, plot a smoothed trendline over time
 (\code{stats::loess()}).}
 
 \item{linecolour}{(Optional) Colour for the indicator line or points.
 Default is darkorange.}
 
-\item{linealpha}{Transparency for indicator line or points. Default is 0.8.}
+\item{linealpha}{(Optional) Transparency for indicator line or points. Default is 0.8.}
 
 \item{ribboncolour}{(Optional) Colour for the bootstrapped confidence intervals.
 Default is goldenrod1. Set to "NA" if you don't want to plot the CIs.}
 
-\item{ribbonalpha}{Transparency for indicator confidence interval ribbon (if
+\item{ribbonalpha}{(Optional) Transparency for indicator confidence interval ribbon (if
 ci_type = "ribbon"). Default is 0.2.}
 
-\item{error_alpha}{Transparency for indicator error bars (if ci_type = "error_bar").
+\item{error_alpha}{(Optional) Transparency for indicator error bars (if ci_type = "error_bar").
 Default is 1.}
 
 \item{trendlinecolour}{(Optional) Colour for the smoothed trendline.
 Default is blue.}
 
-\item{trendlinealpha}{Transparency for the smoothed trendline. Default is 0.5.}
+\item{trendlinealpha}{(Optional) Transparency for the smoothed trendline. Default is 0.5.}
 
 \item{envelopecolour}{(Optional) Colour for the uncertainty envelope.
 Default is lightsteelblue.}
 
-\item{envelopealpha}{Transparency for the smoothed trendline envelope. Default is 0.2.}
+\item{envelopealpha}{(Optional) Transparency for the smoothed trendline envelope. Default is 0.2.}
 
-\item{smooth_cialpha}{Transparency for the smoothed lines forming the edges of the
+\item{smooth_cialpha}{(Optional) Transparency for the smoothed lines forming the edges of the
 trendline envelope. Default is 1.}
 
-\item{point_line}{Whether to plot the indicator as a line or a series of points.
+\item{point_line}{(Optional) Whether to plot the indicator as a line or a series of points.
 Options are "line" or "point". Default is "point".}
 
-\item{pointsize}{Size of the points if point_line = "point". Default is 2.}
+\item{pointsize}{(Optional) Size of the points if point_line = "point". Default is 2.}
 
-\item{linewidth}{Width of the line if point_line = "line". Default is 1.}
+\item{linewidth}{(Optional) Width of the line if point_line = "line". Default is 1.}
 
-\item{ci_type}{Whether to plot bootstrapped confidence intervals as a "ribbon"
+\item{ci_type}{(Optional) Whether to plot bootstrapped confidence intervals as a "ribbon"
 or "error_bars". Default is "error_bars".}
 
-\item{error_width}{Width of error bars if ci_type = "error_bars". Default is 1.
+\item{error_width}{(Optional) Width of error bars if ci_type = "error_bars". Default is 1.
 Note that unlike the default 'width' parameter in geom_errorbar, 'error_width' is NOT
 dependent on the number of data points in the plot. It is automatically scaled to
 account for this. Therefore the width you select will be consistent relative to the
 plot width even if you change 'min_year' and 'max_year'.}
 
-\item{error_thickness}{Thickness of error bars if ci_type = "error_bars". Default is 1.}
+\item{error_thickness}{(Optional) Thickness of error bars if ci_type = "error_bars". Default is 1.}
 
-\item{smooth_linetype}{Type of line to plot for smoothed trendline. Default is "solid".}
+\item{smooth_linetype}{(Optional) Type of line to plot for smoothed trendline. Default is "solid".}
 
-\item{smooth_linewidth}{Line width for smoothed trendline. Default is 1.}
+\item{smooth_linewidth}{(Optional) Line width for smoothed trendline. Default is 1.}
 
-\item{smooth_cilinewidth}{Line width for smoothed trendline confidence intervals.
+\item{smooth_cilinewidth}{(Optional) Line width for smoothed trendline confidence intervals.
 Default is 1.}
 
-\item{gridoff}{If TRUE, hides gridlines.}
+\item{gridoff}{(Optional) If TRUE, hides gridlines.}
 
-\item{x_label}{Label for the x-axis.}
+\item{x_label}{(Optional) Label for the x-axis.}
 
-\item{y_label}{Label for the y-axis.}
+\item{y_label}{(Optional) Label for the y-axis.}
 
 \item{x_expand}{(Optional)  Expansion factor to expand the x-axis beyond the data.
 Left and right values are required in the form of c(0.1, 0.2) or simply 0.1 to
@@ -129,13 +129,13 @@ apply the same value to each side. Default is 0.05.}
 Lower and upper values are required in the form of c(0.1, 0.2) or simply 0.1 to
 apply the same value to the top and bottom. Default is 0.05.}
 
-\item{x_breaks}{Integer giving desired number of breaks for x axis.
+\item{x_breaks}{(Optional) Integer giving desired number of breaks for x axis.
 (May not return exactly the number requested.)}
 
-\item{y_breaks}{Integer giving desired number of breaks for y axis.
+\item{y_breaks}{(Optional) Integer giving desired number of breaks for y axis.
 (May not return exactly the number requested.)}
 
-\item{wrap_length}{Maximum title length before wrapping to a new line.}
+\item{wrap_length}{(Optional) Maximum title length before wrapping to a new line.}
 }
 \value{
 A ggplot object representing the biodiversity indicator time series plot.

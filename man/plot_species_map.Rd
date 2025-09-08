@@ -6,7 +6,7 @@
 \usage{
 plot_species_map(
   x,
-  species = NULL,
+  species,
   title = "auto",
   auto_title = NULL,
   leg_label_default = NULL,
@@ -39,16 +39,16 @@ map grid cells.}
 taxonKeys or species names. Partial species names can be used (the function
 will try to match them).}
 
-\item{title}{Plot title. Replace "auto" with your own title if you want a
+\item{title}{(Optional) Plot title. Replace "auto" with your own title if you want a
 custom title or if calling the function manually.}
 
-\item{auto_title}{Text for automatic title generation, provided by an
+\item{auto_title}{(Optional) Text for automatic title generation, provided by an
 appropriate S3 method (if calling the function manually, leave as NULL).}
 
-\item{leg_label_default}{Default label for the legend, provided by an
+\item{leg_label_default}{(Optional) Default label for the legend, provided by an
 appropriate S3 method (if calling the function manually, leave as NULL).}
 
-\item{suppress_legend}{Do not show legend. This should be set to true when
+\item{suppress_legend}{(Optional) Do not show legend. This should be set to true when
 plotting species ranges, as all cell values are 1.}
 
 \item{xlims}{(Optional) Custom x-axis limits.}
@@ -65,10 +65,10 @@ Yeo-Johnson transformations.}
 
 \item{labels}{(Optional) Labels for legend scale break points.}
 
-\item{crop_to_grid}{If TRUE, the grid will determine the edges of the map.Overrides
+\item{crop_to_grid}{(Optional) If TRUE, the grid will determine the edges of the map.Overrides
 Europe_crop_EEA. Default is FALSE.}
 
-\item{single_plot}{By default all species occurrence time series will be combined
+\item{single_plot}{(Optional) By default all species occurrence time series will be combined
 into a single multi-panel plot. Set this to FALSE to plot each species separately.}
 
 \item{panel_bg}{(Optional) Background colour for the map panel.}
@@ -80,17 +80,17 @@ into a single multi-panel plot. Set this to FALSE to plot each species separatel
 
 \item{legend_limits}{(Optional) Limits for the legend scale.}
 
-\item{legend_title_wrap_length}{Maximum legend title length before wrapping to a new line.}
+\item{legend_title_wrap_length}{(Optional) Maximum legend title length before wrapping to a new line.}
 
-\item{title_wrap_length}{Maximum title length before wrapping to a new line.}
+\item{title_wrap_length}{(Optional) Maximum title length before wrapping to a new line.}
 
-\item{spec_name_wrap_length}{Maximum species name length before wrapping to a new line.}
+\item{spec_name_wrap_length}{(Optional) Maximum species name length before wrapping to a new line.}
 
-\item{visible_gridlines}{Show gridlines between cells. Default is TRUE.}
+\item{visible_gridlines}{(Optional) Show gridlines between cells. Default is TRUE.}
 
-\item{layers}{Additional rnaturalearth layers to plot, e.g. c("reefs", "playas").}
+\item{layers}{(Optional) Additional rnaturalearth layers to plot, e.g. c("reefs", "playas").}
 
-\item{scale}{Scale of Natural Earth data ("small", "medium", or "large"). Default is 'medium'.}
+\item{scale}{(Optional) Scale of Natural Earth data ("small", "medium", or "large"). Default is 'medium'.}
 }
 \value{
 A ggplot object representing the map of species range or occurrences.

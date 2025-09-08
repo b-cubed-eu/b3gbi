@@ -11,7 +11,8 @@ backup_registered_indicators <- function(suppress_prompt="FALSE") {
   available_indicators <- NULL; rm(available_indicators)
 
     #Path to backup file
-    backup_fname <- system.file("data", "available_indicators.rda.old", package = "b3gbi")
+    backup_fname <- system.file("data", "available_indicators.rda.old",
+                                package = "b3gbi")
 
 
   if (suppress_prompt=="TRUE" | !file.exists(backup_fname)) {
@@ -21,7 +22,9 @@ backup_registered_indicators <- function(suppress_prompt="FALSE") {
   } else {
 
     #Double-check if user wants to overwrite existing backup
-    check_if_certain <- readline(prompt = paste("Warning: This will overwrite the existing file ", backup_fname, ". Are you certain? (yes/no) ", sep=""))
+    check_if_certain <- readline(prompt = paste(
+      "Warning: This will overwrite the existing file ",
+      backup_fname, ". Are you certain? (yes/no) ", sep=""))
 
     check_if_certain <- match.arg(check_if_certain, choices = c("yes", "no"))
 
@@ -104,11 +107,13 @@ register_indicator <- function(indicator_class,
 
   if (is.null(map_wrapper) & is.null(ts_wrapper)) {
 
-    stop(paste0("Could not find functions ",
-                indicator_class, "_map or ",
-                indicator_class, "_ts in package namespace.
-               Before registering an indicator, you must include at least one exported and documented wrapper function for user access.
-                              Check that they are correctly named and that you have run devtools::document()."))
+    stop(paste0(
+      "Could not find functions ", indicator_class, "_map or ", indicator_class,
+      "_ts in package namespace. Before registering an indicator, you must ",
+      "include at least one exported and documented wrapper function for user ",
+      "access. Check that they are correctly named and that you have run ",
+      "devtools::document()."
+    ))
 
   }
 
@@ -127,13 +132,15 @@ register_indicator <- function(indicator_class,
     if(is.null(map_function_arguments)) {
       map_function_arguments <- NULL
     } else {
-      stopifnot_error("map_function_arguments must be a list", inherits(map_function_arguments, "list"))
+      stopifnot_error("map_function_arguments must be a list",
+                      inherits(map_function_arguments, "list"))
     }
 
     if(is.null(ts_function_arguments)) {
       ts_function_arguments <- NULL
     } else {
-      stopifnot_error("ts_function_arguments must be a list", inherits(ts_function_arguments, "list"))
+      stopifnot_error("ts_function_arguments must be a list",
+                      inherits(ts_function_arguments, "list"))
     }
 
   #Path to the data file
@@ -166,18 +173,22 @@ register_indicator <- function(indicator_class,
     #Add new list item to register the indicator
     e$available_indicators <- c(e$available_indicators, list(new_class))
 
-    names(e$available_indicators)[[length(e$available_indicators)]] <- indicator_class
+    names(e$available_indicators)[[length(e$available_indicators)]] <-
+      indicator_class
 
   } else {
 
     if (overwrite == FALSE) {
 
-      stop("Indicator class already registered. Use overwrite=TRUE to replace it.")
+      stop(
+        "Indicator class already registered. Use overwrite=TRUE to replace it."
+      )
 
     } else {
 
       # Get the number for the existing indicator list item
-      indicator_number <- which(names(e$available_indicators) %in% indicator_class)
+      indicator_number <- which(names(e$available_indicators) %in%
+                                  indicator_class)
 
       # Replace it with the new list item
       e$available_indicators[indicator_number] <- list(new_class)
@@ -189,14 +200,17 @@ register_indicator <- function(indicator_class,
 
   # Ensure object has the proper class
   if (!inherits(e$available_indicators, "available_indicators")) {
-    class(e$available_indicators) <- append("available_indicators", class(e$available_indicators))
+    class(e$available_indicators) <- append("available_indicators",
+                                            class(e$available_indicators))
   }
 
   #Write back to file
   save(available_indicators, file = fname, envir = e)
 
   #Load into global environment if desired
-  check_if_apply_now <- readline(prompt = paste0("Load changes into global environment immediately? (yes/no) "))
+  check_if_apply_now <- readline(prompt = paste0(
+    "Load changes into global environment immediately? (yes/no) "
+  ))
 
   check_if_apply_now <- match.arg(check_if_apply_now, choices = c("yes", "no"))
 
@@ -208,7 +222,10 @@ register_indicator <- function(indicator_class,
 
   } else {
 
-    message("Changes saved but not applied. Use load_registered_indicators() to apply.")
+    message(paste0(
+      "Changes saved but not applied. Use load_registered_indicators() to ",
+      "apply."
+    ))
 
   }
 
@@ -234,9 +251,9 @@ deregister_indicator <- function(indicator_number,
   # Get class of indicator
   i_class <- e$available_indicators[[indicator_number]]$indicator_class
 
-  check_if_certain <- readline(prompt = paste("Are you sure you want to deregister class ",
-                                              i_class,
-                                              "? (yes/no) "))
+  check_if_certain <- readline(prompt = paste(
+    "Are you sure you want to deregister class ", i_class, "? (yes/no) "
+  ))
 
   check_if_certain <- match.arg(check_if_certain, choices = c("yes", "no"))
 
@@ -259,14 +276,17 @@ deregister_indicator <- function(indicator_number,
 
   # Ensure object has the proper class
   if (!inherits(e$available_indicators, "available_indicators")) {
-    class(e$available_indicators) <- append("available_indicators", class(e$available_indicators))
+    class(e$available_indicators) <- append("available_indicators",
+                                            class(e$available_indicators))
   }
 
   #Write back to file
   save(available_indicators, file = fname, envir = e)
 
   #Load into global environment if desired
-  check_if_apply_now <- readline(prompt = paste0("Load changes into global environment immediately? (yes/no) "))
+  check_if_apply_now <- readline(prompt = paste0(
+    "Load changes into global environment immediately? (yes/no) "
+  ))
 
   check_if_apply_now <- match.arg(check_if_apply_now, choices = c("yes", "no"))
 
@@ -274,10 +294,11 @@ deregister_indicator <- function(indicator_number,
     load_registered_indicators()
     message("Changes applied to global environment.")
   } else {
-    message("Changes saved but not applied. Use load_registered_indicators() to apply.")
+    message(paste0(
+      "Changes saved but not applied. Use load_registered_indicators() to ",
+      "apply."
+    ))
   }
 
   message(paste("Registered indicators backed up to ", fname, ".old", sep=""))
 }
-
-

@@ -67,7 +67,9 @@ compute_tax_distinct_formula <- function(x, y) {
 
     } else {
 
-      stop("The taxize package is required to calculate taxonomic distinctness.")
+      stop(
+        "The taxize package is required to calculate taxonomic distinctness."
+      )
 
     }
 

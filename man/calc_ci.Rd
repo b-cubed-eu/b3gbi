@@ -54,11 +54,12 @@ be called by the 'compute_indicator_workflow' function.}
 
 \item{...}{Additional arguments passed to specific calc_ci functions.}
 
-\item{num_bootstrap}{Set the number of bootstraps to calculate for generating
-confidence intervals. (Default: 1000)}
+\item{num_bootstrap}{(Optional) Set the number of bootstraps to calculate for
+generating confidence intervals. (Default: 1000)}
 
-\item{ci_type}{Type of bootstrap confidence intervals to calculate.
-(Default: "norm". Select "none" to avoid calculating bootstrap CIs.)}
+\item{ci_type}{(Optional) Type of bootstrap confidence intervals to
+calculate. (Default: "norm". Select "none" to avoid calculating bootstrap
+CIs.)}
 }
 \description{
 This function calculates bootstrap confidence intervals for a

@@ -9,7 +9,7 @@
 \arguments{
 \item{x}{An indicator_ts object.}
 
-\item{n}{Integer specifying the number of rows of data to display.}
+\item{n}{(Optional) Integer specifying the number of rows of data to display.}
 
 \item{...}{Additional arguments.}
 }

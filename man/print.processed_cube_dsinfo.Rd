@@ -9,11 +9,11 @@
 \arguments{
 \item{x}{A processed_cube_dsinfo object.}
 
-\item{n}{Integer specifying the number of rows of data to display.}
+\item{n}{(Optional) Integer specifying the number of rows of data to display.}
 
 \item{...}{Additional arguments.}
 }
 \description{
-Provides a summary representation of a processed_cube_dsinfo object,
-designed for user-friendly display in the console.
+Provides a summary representation of a processed_cube_dsinfo
+object, designed for user-friendly display in the console.
 }

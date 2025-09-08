@@ -9,8 +9,8 @@ create_sf_from_utm(df, output_crs = NULL)
 \arguments{
 \item{df}{A data frame with columns: xcoord, ycoord, and utmzone.}
 
-\item{output_crs}{The EPSG code or CRS string for the desired output CRS.
-If NULL, the CRS of the first UTM zone will be used.}
+\item{output_crs}{(Optional) The EPSG code or CRS string for the desired
+output CRS. If NULL, the CRS of the first UTM zone will be used.}
 }
 \value{
 An sf object with the geometry correctly defined for each UTM zone.

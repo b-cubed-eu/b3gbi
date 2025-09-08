@@ -9,7 +9,7 @@
 \arguments{
 \item{x}{Object of class available_indicators}
 
-\item{n}{Integer specifying the number of rows of data to display.}
+\item{n}{(Optional) Integer specifying the number of rows of data to display.}
 
 \item{...}{Additional arguments.}
 }

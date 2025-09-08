@@ -4,8 +4,9 @@
 #' utmzone column, and creates an sf object with the correct CRS for each zone.
 #'
 #' @param df A data frame with columns: xcoord, ycoord, and utmzone.
-#' @param output_crs The EPSG code or CRS string for the desired output CRS.
-#'                   If NULL, the CRS of the first UTM zone will be used.
+#' @param output_crs (Optional) The EPSG code or CRS string for the desired
+#'  output CRS. If NULL, the CRS of the first UTM zone will be used.
+#'
 #' @return An sf object with the geometry correctly defined for each UTM zone.
 #'
 #' @export
@@ -16,9 +17,12 @@ create_sf_from_utm <- function(df, output_crs = NULL) {
   # 1. Input Validation
   required_cols <- c("xcoord", "ycoord", "utmzone", "hemisphere")
   if (!all(required_cols %in% names(df))) {
-    stop(paste("Input data frame must contain columns:", paste(required_cols, collapse = ", ")))
+    stop(paste0("Input data frame must contain columns:",
+                paste(required_cols, collapse = ", ")))
   }
-  if (!is.numeric(df$xcoord) || !is.numeric(df$ycoord) || !is.numeric(df$utmzone)) {
+  if (!is.numeric(df$xcoord) ||
+      !is.numeric(df$ycoord) ||
+      !is.numeric(df$utmzone)) {
     stop("xcoord, ycoord, and utmzone columns must be numeric.")
   }
 

@@ -50,60 +50,60 @@ compute_indicator_workflow(
 \item 'hill2': Hill-Simpson diversity (estimated by coverage-based rarefaction).
 }}
 
-\item{dim_type}{Dimension to calculate indicator over (time: 'ts', or space: 'map')}
+\item{dim_type}{(Optional) Dimension to calculate indicator over (time: 'ts', or space: 'map')}
 
-\item{ci_type}{Type of bootstrap confidence intervals to calculate. (Default: "norm".
+\item{ci_type}{(Optional) Type of bootstrap confidence intervals to calculate. (Default: "norm".
 Select "none" to avoid calculating bootstrap CIs.)}
 
-\item{cell_size}{Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)}
+\item{cell_size}{(Optional) Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)}
 
-\item{level}{Spatial level: 'cube', 'continent', 'country', 'world', 'sovereignty',
+\item{level}{(Optional) Spatial level: 'cube', 'continent', 'country', 'world', 'sovereignty',
 or 'geounit'. (Default: 'cube')}
 
-\item{region}{The region of interest (e.g., "Europe"). (Default: "Europe")}
+\item{region}{(Optional) The region of interest (e.g., "Europe"). (Default: "Europe")}
 
-\item{ne_type}{The type of Natural Earth data to download: 'countries', 'map_units',
+\item{ne_type}{(Optional) The type of Natural Earth data to download: 'countries', 'map_units',
 'sovereignty', or 'tiny_countries'. (Default: "countries")}
 
-\item{ne_scale}{The scale of Natural Earth data to download: 'small' - 110m,
+\item{ne_scale}{(Optional) The scale of Natural Earth data to download: 'small' - 110m,
 'medium' - 50m, or 'large' - 10m. (Default: "medium")}
 
-\item{output_crs}{The CRS you want for your calculated indicator. (Leave blank
+\item{output_crs}{(Optional) The CRS you want for your calculated indicator. (Leave blank
 to let the function choose a default based on grid reference system)}
 
-\item{first_year}{Exclude data before this year. (Uses all data in the cube by default.)}
+\item{first_year}{(Optinal) Exclude data before this year. (Uses all data in the cube by default.)}
 
-\item{last_year}{Exclude data after this year. (Uses all data in the cube by default.)}
+\item{last_year}{(Optional) Exclude data after this year. (Uses all data in the cube by default.)}
 
-\item{spherical_geometry}{If set to FALSE, will temporarily disable spherical geometry
+\item{spherical_geometry}{(Optional) If set to FALSE, will temporarily disable spherical geometry
 while the function runs. Should only be used to solve specific issues. (Default is TRUE)}
 
-\item{make_valid}{Calls st_make_valid() from the sf package. Increases processing
+\item{make_valid}{(Optional) Calls st_make_valid() from the sf package. Increases processing
 time but may help if you are getting polygon errors. (Default is FALSE).}
 
-\item{num_bootstrap}{Set the number of bootstraps to calculate for generating
+\item{num_bootstrap}{(Optional) Set the number of bootstraps to calculate for generating
 confidence intervals. (Default: 1000)}
 
-\item{shapefile_path}{Path of an external shapefile to merge into the workflow. For example,
+\item{shapefile_path}{(optional) Path of an external shapefile to merge into the workflow. For example,
 if you want to calculate your indicator particular features such as protected areas or wetlands.}
 
-\item{shapefile_crs}{CRS of a .wkt shapefile. If your shapefile is .wkt and you do
+\item{shapefile_crs}{(Optional) CRS of a .wkt shapefile. If your shapefile is .wkt and you do
 NOT use this parameter, the CRS will be assumed to be EPSG:4326 and the
 coordinates will be read in as lat/long. If your shape is NOT a .wkt the CRS
 will be determined automatically.}
 
-\item{invert}{Calculate an indicator over the inverse of the shapefile (e.g.
+\item{invert}{(optional) Calculate an indicator over the inverse of the shapefile (e.g.
 if you have a protected areas shapefile this would calculate an indicator over
 all non protected areas)}
 
-\item{include_ocean}{Include occurrences which fall outside the land area.
+\item{include_ocean}{(Optional) Include occurrences which fall outside the land area.
 Default is TRUE. Set as "buffered_coast" to include a set buffer size around
 the land area rather than the entire ocean area.}
 
-\item{buffer_dist_km}{The distance to buffer around the land if include_ocean
+\item{buffer_dist_km}{(Optional) The distance to buffer around the land if include_ocean
 is set to "buffered_coast".}
 
-\item{force_grid}{Forces the calculation of a grid even if this would not
+\item{force_grid}{(Optional) Forces the calculation of a grid even if this would not
 normally be part of the pipeline, e.g. for time series. This setting is
 required for the calculation of rarity, and is turned on by the ab_rarity_ts
 and area_rarity_ts wrappers. (Default: FALSE)}

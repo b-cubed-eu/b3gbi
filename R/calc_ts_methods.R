@@ -49,9 +49,9 @@ calc_ts.hill2 <- function(x, ...) {
   return(indicator)
 }
 
-#' @param type Choose which Hill number, or q, to calculate. Choose 'hill0'
-#' (q = 0) for estimated species richness, 'hill1' for Hill-Shannon diversity,
-#' or 'hill2' for Hill-Simpson diversity.
+#' @param type (Optional) Choose which Hill number, or q, to calculate. Choose
+#'  'hill0' (q = 0) for estimated species richness, 'hill1' for Hill-Shannon
+#'  diversity, or 'hill2' for Hill-Simpson diversity.
 #' @param ... Additional arguments passed to iNEXT::estimateD(e.g.,nboot, conf).
 #'
 #' @importFrom iNEXT estimateD
@@ -76,29 +76,6 @@ calc_ts_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
     dplyr::summarise(obs_richness = dplyr::n_distinct(scientificName),
                      .by = "year")
 
-  # Create list of occurrence matrices by year, with species as rows
-  # species_records_raw <- x %>%
-  #   dplyr::select(year, scientificName, obs, cellCode) %>%
-  #   dplyr::group_by(year) %>%
-  #   dplyr::group_split() %>%
-  #   purrr::map(. %>%
-  #                dplyr::group_by(scientificName) %>%
-  #                tidyr::pivot_wider(names_from = "scientificName",
-  #                                   values_from = "obs") %>%
-  #                dplyr::ungroup() %>%
-  #                replace(is.na(.), 0) %>%
-  #                dplyr::mutate_if(is.numeric,
-  #                                 as.integer) %>%
-  #                dplyr::select(-year, -cellCode) %>%
-  #                tibble::rownames_to_column() %>%
-  #                tidyr::gather(variable,
-  #                              value,
-  #                              -rowname) %>%
-  #                tidyr::spread(rowname, value) %>%
-  #                'row.names<-'(., NULL) %>%
-  #                tibble::column_to_rownames(var = "variable") %>%
-  #                as.matrix() %>%
-  #                ifelse(. > 1, 1, .))
   species_records_raw <- x %>%
     dplyr::select(year, scientificName, obs, cellCode) %>%
     dplyr::group_by(year) %>%

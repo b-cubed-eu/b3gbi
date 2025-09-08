@@ -523,11 +523,11 @@ hill_diversity_details <- paste0(
 #' *Methods in Ecology and Evolution*, *7*(12), 1451-1456.
 #'
 #' @param data A data cube object (class 'processed_cube').
-#' @param coverage The sample coverage value for the estimator. Default is 0.95.
-#' @param cutoff_length The minimum number of data points for each grid cell.
+#' @param coverage (Optional) The sample coverage value for the estimator. Default is 0.95.
+#' @param cutoff_length (Optional) The minimum number of data points for each grid cell.
 #'  Grid cells with fewer data points will be removed before calculations to
 #'  avoid errors.  Default is 5.
-#' @param conf_level Confidence level for bootstrap confidence intervals. Only
+#' @param conf_level (Optional) Confidence level for bootstrap confidence intervals. Only
 #'  applies to temporal indicators. Default is 0.95.
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
@@ -1012,7 +1012,7 @@ spec_range_ts <- function(data, ...) {
 #' Marine Ecology Progress Series, 184, 21-29.
 #'
 #' @param data A data cube object (class 'processed_cube').
-#' @param rows Choose which row to select if there are multiple matches when
+#' @param rows (Optional) Choose which row to select if there are multiple matches when
 #' retrieving taxonomic information from GBIF. (Default is 1. Use NA for
 #' interactive mode.)
 #'

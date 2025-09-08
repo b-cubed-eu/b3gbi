@@ -4,10 +4,11 @@
 #' `"boot"` per year into a dataframe containing all required summaries.
 #'
 #' @param bootstrap_list A list of objects of class `"boot"` per year.
+#' @param temporal_list_name (Optional) The temporal list names of
+#'  `bootstrap_list` (e.g., year, month ...) containing time point values.
+#'  Default `year`.
 #' @param ... Additional argument to be passed to the `boot::boot.ci()`
 #' function.
-#' @param temporal_list_name The temporal list names of `bootstrap_list`
-#' (e.g., year, month ...) containing time point values. Default `year`.
 #'
 #' @returns The returned value is a dataframe containing the time point,
 #' the type of interval (`int_type`), the lower limit of the confidence
@@ -15,8 +16,8 @@
 #' confidence level of the intervals (`conf_level`).
 
 get_bootstrap_ci <- function(bootstrap_list,
-                             ...,
-                             temporal_list_name = "year") {
+                             temporal_list_name = "year",
+                             ...) {
 
   # Calculate nonparametric confidence intervals
   conf_ints <- lapply(bootstrap_list, boot::boot.ci, ...)
