@@ -54,7 +54,8 @@ calc_map_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
                   inherits(x, c("data.frame", "sf")) &
                     rlang::inherits_any(x, c("hill0", "hill1", "hill2")))
 
-  qD <- cellid <- Assemblage <- taxonKey <- obs <- NULL
+  qD <- cellid <- Assemblage <- taxonKey <- m <- SC <- Order.q <- NULL
+  Methods <- obs <- NULL
 
   type <- match.arg(type)
 
