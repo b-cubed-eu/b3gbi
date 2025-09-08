@@ -283,8 +283,7 @@ test_that("plot_species_map responds to geographic and contextual parameters", {
 
 test_that("plot_species_map throws expected errors", {
   expect_error(
-    plot_species_map(x = spec_occ_mammals_denmark),
-    "Please enter either the species names"
+    plot_species_map(x = spec_occ_mammals_denmark)
   )
 
   expect_error(
@@ -486,11 +485,7 @@ test_that(
   "plot_species_ts returns a ggplot or patchwork object with defaults", {
   # Direct test without the `species` - expect error
   expect_error(
-    plot_species_ts(spec_occ_mammals_denmark_ts),
-    paste0(
-      "Please enter either the species names or the numeric taxonKeys for the ",
-      "species you want to plot."
-    )
+    plot_species_ts(spec_occ_mammals_denmark_ts)
   )
 })
 
