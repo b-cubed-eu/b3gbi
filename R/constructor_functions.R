@@ -192,7 +192,7 @@ new_indicator_ts <- function(x,
   stopifnot(tibble::is_tibble(x),
             all(c("year",
                   "diversity_val") %in% names(x)))
-  id = div_type
+  id <- div_type
   class(x) <- c("indicator_data", class(x))
   structure(list(
     div_name = get_indicator_name(id),
@@ -268,10 +268,10 @@ new_indicator_map <- function(x,
   stopifnot(inherits(x, c("sf", "data.frame")),
             all(c("cellid",
                   "geometry") %in% names(x)))
-  coord_range = sf::st_bbox(x)[c("xmin", "ymin", "xmax", "ymax")]
-  if (cell_size_units == "km") { cell_size_units <- "km^2" }
-  cell_size = paste(cell_size, cell_size_units)
-  id = div_type
+  coord_range <- sf::st_bbox(x)[c("xmin", "ymin", "xmax", "ymax")]
+  if (cell_size_units == "km") cell_size_units <- "km^2"
+  cell_size <- paste(cell_size, cell_size_units)
+  id <- div_type
   class(x) <- c("indicator_data", class(x))
   structure(list(
     div_name = get_indicator_name(id),

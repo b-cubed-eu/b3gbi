@@ -20,7 +20,7 @@ calc_ci <- function(x,
 #' @rdname calc_ci
 calc_ci.default <- function(x,
                             indicator,
-                            ...){
+                            ...) {
 
   warning(
     paste(
@@ -143,8 +143,7 @@ calc_ci.hill2 <- function(x,
 calc_ci_hill_core <- function(x,
                               indicator,
                               type = c("hill0", "hill1", "hill2"),
-                              ...)
-{
+                              ...) {
 
   stopifnot_error(
     "Please check the class and structure of your data.
@@ -155,7 +154,7 @@ calc_ci_hill_core <- function(x,
 
   type <- match.arg(type)
 
-  if ("ll" %in% colnames(indicator) & "ul" %in% colnames(indicator)) {
+  if ("ll" %in% colnames(indicator) && "ul" %in% colnames(indicator)) {
 
     return(indicator)
 
@@ -207,6 +206,8 @@ calc_ci.total_occ <- function(x,
   # Calculate confidence intervals and add to indicator values
   ci <- calc_ci_core(bootstraps, indicator, ci_type, ...)
 
+  return(ci)
+
 }
 
 #' @describeIn calc_ci Calculate confidence intervals for occurrence density
@@ -231,8 +232,7 @@ calc_ci.occ_density <- function(x,
   x <-
     x %>%
     dplyr::arrange(year, cellid) %>%
-    dplyr::reframe(diversity_val = sum(obs) / area
-                   ,
+    dplyr::reframe(diversity_val = sum(obs) / area,
                    .by = c("year", "cellid"))
 
   # Put individual observations into a list organized by year
@@ -248,6 +248,8 @@ calc_ci.occ_density <- function(x,
 
   # Calculate confidence intervals and add to indicator values
   ci <- calc_ci_core(bootstraps, indicator, ci_type, ...)
+
+  return(ci)
 
 }
 
@@ -265,19 +267,18 @@ calc_ci.newness <- function(x,
                             ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
-                  inherits(x, "newness"))
+                  meant to be called directly.", inherits(x, "newness"))
 
-  year <- NULL
+  year <- x$year
 
   # Put individual observations into a list organized by year
-  ind_list <- lapply(unique(x$year), function(y){
-    a <- x$year[x$year<=y]
+  ind_list <- lapply(unique(year), function(y) {
+    a <- year[year <= y]
     return(a)
   })
 
   # Use years to name list elements
-  names(ind_list) <- unique(x$year)
+  names(ind_list) <- unique(year)
 
   # Bootstrap indicator value
   bootstraps <-
@@ -289,6 +290,8 @@ calc_ci.newness <- function(x,
 
   # Calculate confidence intervals and add to indicator values
   ci <- calc_ci_core(bootstraps, indicator, ci_type, ...)
+
+  return(ci)
 
 }
 
@@ -311,6 +314,8 @@ calc_ci.williams_evenness <- function(x,
                                      type = "williams_evenness",
                                      ...)
 
+  return(indicator)
+
 }
 
 #' @describeIn calc_ci Calculate confidence intervals for Pielou's evenness
@@ -324,13 +329,14 @@ calc_ci.pielou_evenness <- function(x,
                                     ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
-                  inherits(x, "pielou_evenness"))
+                  meant to be called directly.", inherits(x, "pielou_evenness"))
 
   # Call function to calculate evenness over a grid
   indicator <- calc_ci_evenness_core(x = x,
                                      type = "pielou_evenness",
                                      ...)
+
+  return(indicator)
 
 }
 
@@ -347,6 +353,7 @@ calc_ci.pielou_evenness <- function(x,
 #'  calculate. (Default: "norm". Select "none" to avoid calculating bootstrap
 #'  CIs.)
 #' @param ... Additional arguments
+#' @importFrom b3gbi available_indicators
 #' @noRd
 calc_ci_evenness_core <- function(x,
                                   type,
@@ -355,9 +362,9 @@ calc_ci_evenness_core <- function(x,
                                   ci_type = ci_type,
                                   ...) {
 
-  available_indicators <- NULL; rm(available_indicators)
+ # available_indicators <- NULL; rm(available_indicators)
 
-  obs <- year <- taxonKey <- num_occ <- . <- NULL
+  obs <- year <- taxonKey <- num_occ <- NULL
 
   stopifnot_error(
     "Please check the class and structure of your data.
@@ -375,8 +382,8 @@ calc_ci_evenness_core <- function(x,
                      .by = c(year, taxonKey)) %>%
     dplyr::arrange(year) %>%
     tidyr::pivot_wider(names_from = year,
-                       values_from = num_occ) %>%
-    replace(is.na(.), 0) %>%
+                       values_from = num_occ,
+                       values_fill = 0) %>%
     tibble::column_to_rownames("taxonKey") %>%
     as.list()
 
@@ -396,6 +403,8 @@ calc_ci_evenness_core <- function(x,
 
   # Calculate confidence intervals and add to indicator values
   ci <- calc_ci_core(bootstraps, indicator, ci_type, ...)
+
+  return(ci)
 
 }
 
@@ -437,6 +446,8 @@ calc_ci.ab_rarity <- function(x,
 
     # Calculate confidence intervals and add to indicator values
     ci <- calc_ci_core(bootstraps, indicator, ci_type, ...)
+
+    return(ci)
 
 }
 
@@ -484,6 +495,8 @@ calc_ci.area_rarity <- function(x,
   # Calculate confidence intervals and add to indicator values
   ci <- calc_ci_core(bootstraps, indicator, ci_type, ...)
 
+  return(ci)
+
 }
 
 #' @describeIn calc_ci Calculate confidence intervals for species occurrences
@@ -503,7 +516,7 @@ calc_ci.spec_occ <- function(x,
                   meant to be called directly.",
                   inherits(x, "spec_occ"))
 
-  taxonKey <- totobs <- obs <- year <- cellCode <- . <- scientificName <- NULL
+  taxonKey <- totobs <- obs <- year <- cellCode <- scientificName <- NULL
 
   x <-
     x %>%
@@ -512,31 +525,32 @@ calc_ci.spec_occ <- function(x,
   # Bootstrap species occurrence values
   bootstraps <-
     x %>%
-    dplyr::summarize(totobs = sum(obs), .by = c(year,cellCode,taxonKey)) %>%
+    dplyr::summarize(totobs = sum(obs), .by = c(year, cellCode, taxonKey)) %>%
     dplyr::group_by(taxonKey) %>%
     dplyr::group_split() %>%
-    purrr::map(. %>%
-                 dplyr::select(year,totobs,cellCode) %>%
-                 dplyr::arrange(year) %>%
-                 tidyr::pivot_wider(names_from = year, values_from = totobs) %>%
-                 replace(is.na(.),0) %>%
-                 tibble::column_to_rownames("cellCode") %>%
-                 as.list() %>%
-                 purrr::map(. %>%
-                              boot::boot(
-                                data = .,
-                                statistic = boot_statistic_sum,
-                                R = num_bootstrap
-                              )
-                 )
-    )
+    purrr::map(function(taxon_df) {
+      taxon_df %>%
+        dplyr::select(year, totobs, cellCode) %>%
+        dplyr::arrange(year) %>%
+        tidyr::pivot_wider(names_from = year,
+                           values_from = totobs,
+                           values_fill = 0) %>%
+        tibble::column_to_rownames("cellCode") %>%
+        purrr::map(function(year_data) {
+          boot::boot(
+            data = year_data,
+            statistic = boot_statistic_sum,
+            R = num_bootstrap
+          )
+        })
+    })
 
   taxkeys <- unique(x$taxonKey)
   scinames <- unique(x$scientificName)
 
   # Calculate confidence intervals
   ci_df_list <- list()
-  for (i in 1:length(bootstraps)) {
+  for (i in seq_along(bootstraps)) {
 
     ci_df_list[[i]] <- get_bootstrap_ci(bootstraps[[i]], type = ci_type, ...)
     if (length(ci_df_list[[i]]) > 0) {
@@ -557,6 +571,8 @@ calc_ci.spec_occ <- function(x,
     dplyr::full_join(ci_df,
                      by = dplyr::join_by(year, taxonKey, scientificName),
                      relationship = "many-to-many")
+
+  return(indicator)
 
 }
 
@@ -577,7 +593,7 @@ calc_ci.spec_range <- function(x,
                   meant to be called directly.",
                   inherits(x, "spec_range"))
 
-  taxonKey <- obs <- observed <- year <- cellCode <- . <- scientificName <- NULL
+  taxonKey <- obs <- observed <- year <- cellCode <- scientificName <- NULL
 
   x <-
     x %>%
@@ -590,29 +606,29 @@ calc_ci.spec_range <- function(x,
                      .by = c(taxonKey, year, cellCode)) %>%
     dplyr::group_by(taxonKey) %>%
     dplyr::group_split() %>%
-    purrr::map(. %>%
-                 dplyr::select(year,observed,cellCode) %>%
-                 dplyr::arrange(year) %>%
-                 tidyr::pivot_wider(names_from = year,
-                                    values_from = observed) %>%
-                 replace(is.na(.),0) %>%
-                 tibble::column_to_rownames("cellCode") %>%
-                 as.list() %>%
-                 purrr::map(. %>%
-                              boot::boot(
-                                data = .,
-                                statistic = boot_statistic_sum,
-                                R = num_bootstrap
-                              )
-                 )
-    )
+    purrr::map(function(taxon_df) {
+      taxon_df %>%
+        dplyr::select(year, observed, cellCode) %>%
+        dplyr::arrange(year) %>%
+        tidyr::pivot_wider(names_from = year,
+                           values_from = observed,
+                           values_fill = 0) %>%
+        tibble::column_to_rownames("cellCode") %>%
+        purrr::map(function(year_data) {
+          boot::boot(
+            data = year_data,
+            statistic = boot_statistic_sum,
+            R = num_bootstrap
+          )
+        })
+    })
 
   taxkeys <- unique(x$taxonKey)
   scinames <- unique(x$scientificName)
 
   # Calculate confidence intervals
   ci_df_list <- list()
-  for (i in 1:length(bootstraps)) {
+  for (i in seq_along(bootstraps)) {
 
     ci_df_list[[i]] <- get_bootstrap_ci(bootstraps[[i]], type = ci_type, ...)
     if (length(ci_df_list[[i]]) > 0) {
@@ -633,5 +649,7 @@ calc_ci.spec_range <- function(x,
     dplyr::full_join(ci_df,
                      by = dplyr::join_by(year, taxonKey, scientificName),
                      relationship = "many-to-many")
+
+  return(indicator)
 
 }

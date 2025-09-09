@@ -2,12 +2,11 @@
 #' @rdname calc_ts
 calc_ts.default <- function(x, ...){
 
-  warning(
-    paste(
-      "calc_ts does not know how to handle object of class ",
-      class(x),
+  warning(paste0(
+      "calc_ts does not know how to handle object of class ", class(x),
       ". Please ensure you are not calling calc_ts directly on an object."
     ))
+
 }
 
 #' @export
@@ -21,6 +20,7 @@ calc_ts.hill0 <- function(x, ...) {
   indicator <- calc_ts_hill_core(x = x, type = "hill0", ...)
 
   return(indicator)
+
 }
 
 #' @export
@@ -34,6 +34,7 @@ calc_ts.hill1 <- function(x, ...) {
   indicator <- calc_ts_hill_core(x = x, type = "hill1", ...)
 
   return(indicator)
+
 }
 
 #' @export
@@ -47,15 +48,14 @@ calc_ts.hill2 <- function(x, ...) {
   indicator <- calc_ts_hill_core(x = x, type = "hill2", ...)
 
   return(indicator)
+
 }
 
 #' @param type (Optional) Choose which Hill number, or q, to calculate. Choose
 #'  'hill0' (q = 0) for estimated species richness, 'hill1' for Hill-Shannon
 #'  diversity, or 'hill2' for Hill-Simpson diversity.
 #' @param ... Additional arguments passed to iNEXT::estimateD(e.g.,nboot, conf).
-#'
 #' @importFrom iNEXT estimateD
-#'
 #' @noRd
 calc_ts_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
 
@@ -64,7 +64,7 @@ calc_ts_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
                   inherits(x, c("data.frame", "sf")) &
                     rlang::inherits_any(x, c("hill0", "hill1", "hill2")))
 
-  scientificName <- year <- obs <- cellCode <- . <- variable <- value <- NULL
+  scientificName <- year <- obs <- cellCode <- variable <- value <- NULL
   rowname <- Assemblage <- qD <- SC <- Order.q <- qD.LCL <- qD.UCL <- NULL
 
   type <- match.arg(type)
@@ -133,6 +133,9 @@ calc_ts_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
                   ll = qD.LCL,
                   ul = qD.UCL) %>%
     dplyr::mutate(year = as.numeric(year))
+
+  return(indicator)
+
 }
 
 #' @export
@@ -140,8 +143,7 @@ calc_ts_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
 calc_ts.obs_richness <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
-                  inherits(x, "obs_richness"))
+                  meant to be called directly.", inherits(x, "obs_richness"))
 
   year <- taxonKey <- NULL
 
@@ -151,6 +153,9 @@ calc_ts.obs_richness <- function(x, ...) {
     dplyr::summarise(diversity_val = dplyr::n_distinct(taxonKey),
                      .by = "year") %>%
     dplyr::arrange(year)
+
+  return(indicator)
+
 }
 
 #' @export
@@ -170,6 +175,9 @@ calc_ts.cum_richness <- function(x, ...) {
                        .by = year) %>%
       dplyr::arrange(year) %>%
       dplyr::reframe(year = year, diversity_val = cumsum(unique_by_year))
+
+    return(indicator)
+
 }
 
 #' @export
@@ -180,9 +188,13 @@ calc_ts.total_occ <- function(x, ...) {
                   meant to be called directly.", inherits(x, "total_occ"))
 
   obs <- NULL
+
   # Calculate total number of occurrences over the grid
   indicator <- x %>%
     dplyr::summarize(diversity_val = sum(obs), .by = "year")
+
+  return(indicator)
+
 }
 
 #' @export
@@ -192,14 +204,14 @@ calc_ts.occ_density <- function(x, ...) {
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.", inherits(x, "occ_density"))
 
-  year <- cellid <- diversity_val <- obs <- area <- NULL
+  year <- diversity_val <- obs <- area <- NULL
 
-  cell_size_units <- stringr::str_extract(x$resolution[1],
-                                          "(?<=[0-9,.]{1,6})[a-z]*$")
-
-  stopifnot_error("To calculate occurrence density, please choose a projected
-                  CRS that uses meters or kilometers, not degrees.",
-                  cell_size_units == "km")
+  # cell_size_units <- stringr::str_extract(x$resolution[1],
+  #                                         "(?<=[0-9,.]{1,6})[a-z]*$")
+  #
+  # stopifnot_error("To calculate occurrence density, please choose a projected
+  #                 CRS that uses meters or kilometers, not degrees.",
+  #                 cell_size_units == "km")
 
   # Calculate density of occurrences over the grid (per square km)
   indicator <- x %>%
@@ -208,6 +220,9 @@ calc_ts.occ_density <- function(x, ...) {
     dplyr::reframe(diversity_val = mean(diversity_val), .by = "year") %>%
     dplyr::mutate(diversity_val = as.numeric(diversity_val)) %>%
     dplyr::arrange(year)
+
+  return(indicator)
+
 }
 
 #' @export
@@ -217,7 +232,7 @@ calc_ts.newness <- function(x, ...) {
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.", inherits(x, "newness"))
 
-  year <- taxonKey <- cum_obs <- cum_year_sum <- NULL
+  year <- cum_obs <- cum_year_sum <- NULL
 
   # Handle empty input data
   if (nrow(x) == 0) {
@@ -227,13 +242,17 @@ calc_ts.newness <- function(x, ...) {
   # Prepare the data with cumulative sums and counts
   cum_data <- x %>%
     dplyr::arrange(year) %>%
-    dplyr::mutate(cum_obs = 1:dplyr::n(), cum_year_sum = cumsum(year))
+    dplyr::mutate(cum_year_sum = cumsum(year),
+                  cum_obs = seq_along(cum_year_sum))
 
   # Extract the final cumulative mean for each year
   indicator <- cum_data %>%
     dplyr::group_by(year) %>%
     dplyr::summarise(diversity_val = dplyr::last(round(cum_year_sum / cum_obs)),
                      .groups = "drop")
+
+  return(indicator)
+
 }
 
 #' @export
@@ -246,6 +265,9 @@ calc_ts.williams_evenness <- function(x, ...) {
 
   # Call function to calculate evenness over a grid
   indicator <- calc_ts_evenness_core(x = x, type = "williams_evenness", ...)
+
+  return(indicator)
+
 }
 
 #' @export
@@ -258,8 +280,12 @@ calc_ts.pielou_evenness <- function(x, ...) {
 
   # Call function to calculate evenness over a grid
   indicator <- calc_ts_evenness_core(x = x, type = "pielou_evenness", ...)
+
+  return(indicator)
+
 }
 
+#' @importFrom b3gbi available_indicators
 #' @noRd
 calc_ts_evenness_core <- function(x, type, ...) {
 
@@ -267,11 +293,11 @@ calc_ts_evenness_core <- function(x, type, ...) {
                   internal function, not meant to be called directly.",
                   inherits(x, c("data.frame", "sf")))
 
-  available_indicators <- NULL; rm(available_indicators)
+ # available_indicators <- NULL; rm(available_indicators)
 
-  num_occ <- obs <- year <- taxonKey <- . <- NULL
+  num_occ <- obs <- year <- taxonKey <- NULL
 
-   type <- match.arg(type, names(available_indicators))
+  type <- match.arg(type, names(available_indicators))
 
   # Check if the data is empty
   if (nrow(x) == 0) {
@@ -282,19 +308,25 @@ calc_ts_evenness_core <- function(x, type, ...) {
   x <- x %>%
     dplyr::summarize(num_occ = sum(obs), .by = c(year, taxonKey)) %>%
     dplyr::arrange(year) %>%
-    tidyr::pivot_wider(names_from = year, values_from = num_occ) %>%
-    replace(is.na(.), 0) %>%
+    tidyr::pivot_wider(names_from = year,
+                       values_from = num_occ,
+                       values_fill = 0) %>%
     tibble::column_to_rownames("taxonKey") %>%
     as.list()
 
   # Apply evenness formula and format result as a data frame
   indicator <- x %>%
-    purrr::map(~compute_evenness_formula(. ,type)) %>%
+    purrr::map(function(y) {
+      compute_evenness_formula(y ,type)
+    }) %>%
     unlist() %>%
     as.data.frame() %>%
     dplyr::rename(diversity_val = ".") %>%
     tibble::rownames_to_column(var = "year") %>%
     dplyr::mutate(year = as.integer(year), .keep = "unused")
+
+  return(indicator)
+
 }
 
 #' @export
@@ -302,17 +334,22 @@ calc_ts_evenness_core <- function(x, type, ...) {
 calc_ts.ab_rarity <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
-                  inherits(x, "ab_rarity"))
+                  meant to be called directly.", inherits(x, "ab_rarity"))
 
   obs <- taxonKey <- records_taxon <- year <- rarity <- diversity_val <- NULL
 
   total_obs <- sum(x$obs)
+
+  # Calculate rarity as the sum of the inverse of relative abundance for each
+  # species
   indicator <- x %>%
     dplyr::mutate(records_taxon = sum(obs), .by = taxonKey) %>%
     dplyr::mutate(rarity = 1 / (records_taxon / total_obs)) %>%
     dplyr::summarise(diversity_val = sum(rarity), .by = "year") %>%
     dplyr::arrange(year)
+
+  return(indicator)
+
 }
 
 #' @export
@@ -320,15 +357,15 @@ calc_ts.ab_rarity <- function(x, ...) {
 calc_ts.area_rarity <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
-                  meant to be called directly.",
-                  inherits(x, "area_rarity"))
+                  meant to be called directly.", inherits(x, "area_rarity"))
 
   year <- cellid <- taxonKey <- occupied_cells <- rarity <- NULL
   diversity_val <- NULL
 
+  total_cells <- dplyr::n_distinct(x$cellid)
+
   # Calculate rarity as the sum (per grid cell) of the inverse of occupancy
   # frequency for each species
-  total_cells <- dplyr::n_distinct(x$cellid)
   indicator <- x %>%
     dplyr::mutate(occupied_cells = dplyr::n_distinct(cellid),
                   .by = c(taxonKey)) %>%
@@ -336,6 +373,9 @@ calc_ts.area_rarity <- function(x, ...) {
     dplyr::summarise(diversity_val = sum(rarity), .by = c("year", "cellid")) %>%
     dplyr::summarise(diversity_val = mean(diversity_val), .by = "year") %>%
     dplyr::arrange(year)
+
+  return(indicator)
+
 }
 
 #' @export
@@ -359,6 +399,7 @@ calc_ts.spec_occ <- function(x, ...) {
   class(indicator) <- c("spec_occ", class(indicator))
 
   return(indicator)
+
 }
 
 #' @export
@@ -383,12 +424,12 @@ calc_ts.spec_range <- function(x, ...) {
   class(indicator) <- c("spec_range", class(indicator))
 
   return(indicator)
+
 }
 
 #' @param set_rows Automatically select which taxonomic information to keep when
 #'  there are multiple options. Default value of 1 keeps the first option,
 #'  which is usually the best.
-#'
 #' @export
 #' @rdname calc_ts
 calc_ts.tax_distinct <- function(x, set_rows = 1, ...) {
@@ -397,7 +438,7 @@ calc_ts.tax_distinct <- function(x, set_rows = 1, ...) {
                   meant to be called directly.",
                   inherits(x, "tax_distinct"))
 
-  year <- . <- diversity_val <- NULL
+  year <- diversity_val <- NULL
 
   # Early return for empty input
   if (nrow(x) == 0) {
@@ -411,22 +452,20 @@ calc_ts.tax_distinct <- function(x, set_rows = 1, ...) {
     stop("Please install the taxize package to use this function.")
   }
 
-  # Save data for use when calculating bootstraps
-  saveRDS(tax_hier, file = "taxonomic_hierarchy.RDS")
-
-  # tax_hier <- my_readRDS("taxonomic_hierarchy.RDS")
-
   # Calculate taxonomic distinctness
   indicator <- x %>%
     tibble::add_column(diversity_val = NA) %>%
     dplyr::group_split(year) %>%
-    purrr::map(. %>%
-                 dplyr::mutate(
-                   diversity_val = compute_tax_distinct_formula(.,
-                                                                tax_hier))) %>%
+    purrr::map(function(y) {
+      dplyr::mutate(
+        diversity_val = compute_tax_distinct_formula(y, tax_hier))
+    }) %>%
     dplyr::bind_rows() %>%
     dplyr::distinct(year, diversity_val, .keep_all = TRUE) %>%
     dplyr::select(year, diversity_val)
+
+  return(indicator)
+
 }
 
 
@@ -467,9 +506,9 @@ calc_ts.occ_turnover <- function(x, ...) {
         NA_real_,
         (gains + losses) / (gains + losses + shared)
       )
-    ) %>%#,
-      # The turnover formula: (gains + losses) / (gains + losses + shared)
-     # diversity_val = (gains + losses) / (gains + losses + shared)
-   # ) %>%
+    ) %>%
     dplyr::select(year, diversity_val)
+
+  return(indicator)
+
 }

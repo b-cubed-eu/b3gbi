@@ -6,6 +6,7 @@
 #' @noRd
 #'
 meters_per_degree <- function(latitude) {
+
   # Constants for Earth's dimensions (WGS84)
   a <- 6378137.0  # semi-major axis in meters
   f <- 1/298.257223563  # flattening
@@ -22,6 +23,7 @@ meters_per_degree <- function(latitude) {
   meters_per_degree_lat <- (pi/180) * b
 
   return(c(longitude = meters_per_degree_lon, latitude = meters_per_degree_lat))
+
 }
 
 #' Determine appropriate cell size when changing CRS
@@ -92,6 +94,7 @@ determine_cell_size <- function(data,
     }
 
     return(result)
+
   }
 
   # Case 2: Converting between degrees and meters/feet/km
@@ -195,7 +198,7 @@ determine_cell_size <- function(data,
 
     message(sprintf(
       "Converting from %s to degrees: %.6f degrees x %.6f degrees",
-      if(is_km_crs) "km" else input_units, recommended_x, recommended_y)
+      if (is_km_crs) "km" else input_units, recommended_x, recommended_y)
     )
 
     result$recommended_cell_size <- c(recommended_x, recommended_y)
@@ -242,10 +245,10 @@ determine_cell_size <- function(data,
     }
 
     message(sprintf("Converting from %s to %s: %.2f x %.2f %s",
-                    if(is_km_crs) "km" else input_units,
-                    if(is_km_crs) "km" else target_units,
+                    if (is_km_crs) "km" else input_units,
+                    if (is_km_crs) "km" else target_units,
                     recommended_x, recommended_y,
-                    if(is_km_crs) "km" else target_units))
+                    if (is_km_crs) "km" else target_units))
 
     result$recommended_cell_size <- c(recommended_x, recommended_y)
 
@@ -266,7 +269,9 @@ determine_cell_size <- function(data,
   result$is_valid <- FALSE
   result$message <-
     "Unable to convert between these coordinate systems automatically"
+
   return(result)
+
 }
 
 #' Create a grid based on reprojected data
@@ -302,17 +307,6 @@ create_grid_from_reprojected_data <- function(data, resolution) {
   nx <- ceiling((bbox["xmax"] - bbox["xmin"]) / resolution[1])
   ny <- ceiling((bbox["ymax"] - bbox["ymin"]) / resolution[2])
 
-  # # Create grid
-  # grid <- st_make_grid(
-  #   bbox,
-  #   cellsize = resolution,
-  #   n = c(nx, ny),
-  #   crs = st_crs(data)
-  # )
-  #
-  # # Convert to sf data frame
-  # grid_sf <- st_sf(id = 1:length(grid), geometry = grid)
-
   # Make a grid across the cube
   grid <- data %>%
     sf::st_make_grid(cellsize = resolution,
@@ -323,6 +317,7 @@ create_grid_from_reprojected_data <- function(data, resolution) {
     dplyr::mutate(cellid = dplyr::row_number())
 
   return(grid)
+
 }
 
 #' Example workflow function to demonstrate the entire process
@@ -361,8 +356,6 @@ reproject_and_create_grid <- function(input_data,
   print(paste("Input resolution:", input_resolution))
   print(paste("Calculated target resolution:",
               cell_size_result$recommended_cell_size))
- # print(paste("Input CRS units:", input_units))
- # print(paste("Target CRS units:", target_units))
 
   # 3. Check if the cell size is valid
   if (!cell_size_result$is_valid) {
@@ -379,11 +372,6 @@ reproject_and_create_grid <- function(input_data,
     cell_size_result$recommended_cell_size
   )
 
-  # # 6. Return results
-  # return(list(
-  #   reprojected_data = reprojected_data,
-  #   grid = grid,
-  #   cell_size = cell_size_result$recommended_cell_size
-  # ))
   return(grid)
+
 }

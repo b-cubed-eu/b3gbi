@@ -160,7 +160,6 @@ print.processed_cube_dsinfo <- function(x, n = 10, ...) {
 #'  display.
 #' @param ... Additional arguments.
 #'
-#'
 #' @export
 print.sim_cube <- function(x, n = 10, ...) {
   cat("\nSimulated data cube for calculating biodiversity indicators\n\n")

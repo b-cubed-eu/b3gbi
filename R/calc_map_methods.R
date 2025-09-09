@@ -1,5 +1,5 @@
 #' @export
-calc_map.default <- function(x, ...){
+calc_map.default <- function(x, ...) {
 
   warning(paste0(
     "calc_map does not know how to handle object of class ", class(x), ". ",
@@ -141,18 +141,13 @@ calc_map_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
 #' @rdname calc_map
 calc_map.obs_richness <- function(x, ...) {
 
-  stopifnot_error(
-    paste0(
-      "Wrong data class. This is an internal function and is not meant to be ",
-      "called directly."
-    ),
-    inherits(x, "obs_richness"))
+  stopifnot_error("Wrong data class. This is an internal function and is not
+                  meant to be called directly.", inherits(x, "obs_richness"))
 
   taxonKey <- NULL
 
   # Calculate observed species richness over the grid
-  indicator <-
-    x %>%
+  indicator <- x %>%
     dplyr::summarize(diversity_val = sum(dplyr::n_distinct(taxonKey)),
                      .by = "cellid")
 
@@ -170,10 +165,8 @@ calc_map.total_occ <- function(x, ...) {
   obs <- NULL
 
   # Calculate total number of occurrences over the grid
-  indicator <-
-    x %>%
-    dplyr::summarize(diversity_val = sum(obs, na.rm = TRUE),
-                     .by = "cellid")
+  indicator <- x %>%
+    dplyr::summarize(diversity_val = sum(obs, na.rm = TRUE), .by = "cellid")
 
   return(indicator)
 
@@ -196,8 +189,7 @@ calc_map.newness <- function(x,
   year <- NULL
 
   # Calculate mean year of occurrence over the grid
-  indicator <-
-    x %>%
+  indicator <- x %>%
     dplyr::summarize(diversity_val = round(mean(year, na.rm = TRUE)),
                      .by = "cellid")
 
@@ -221,16 +213,15 @@ calc_map.occ_density <- function(x, ...) {
 
   diversity_val <- obs <- area <- cellid <- NULL
 
-  cell_size_units <- stringr::str_extract(x$resolution[1],
-                                          "(?<=[0-9,.]{1,6})[a-z]*$")
-
-  stopifnot_error("To calculate occurrence density, please choose a projected
-                  CRS that uses meters or kilometers, not degrees.",
-                  "area" %in% names(x))
+  # cell_size_units <- stringr::str_extract(x$resolution[1],
+  #                                         "(?<=[0-9,.]{1,6})[a-z]*$")
+  #
+  # stopifnot_error("To calculate occurrence density, please choose a projected
+  #                 CRS that uses meters or kilometers, not degrees.",
+  #                 "area" %in% names(x))
 
   # Calculate density of occurrences over the grid (per square km)
-  indicator <-
-    x %>%
+  indicator <- x %>%
     dplyr::reframe(diversity_val = sum(obs, na.rm = TRUE) / area,
                    .by = "cellid") %>%
     dplyr::distinct(cellid, diversity_val) %>%
@@ -276,6 +267,7 @@ calc_map.pielou_evenness <- function(x, ...) {
 
 }
 
+#' @importFrom b3gbi available_indicators
 #' @noRd
 calc_map_evenness_core <- function(x,
                                    type,
@@ -285,7 +277,7 @@ calc_map_evenness_core <- function(x,
                   internal function, not meant to be called directly.",
                   inherits(x, c("data.frame", "sf")))
 
-  available_indicators <- NULL; rm(available_indicators)
+ # available_indicators <- NULL; rm(available_indicators)
 
   num_occ <- obs <- cellid <- taxonKey <- . <- NULL
 
@@ -297,8 +289,7 @@ calc_map_evenness_core <- function(x,
   }
 
   # Calculate adjusted evenness fo r each grid cell
-  indicator <-
-    x %>%
+  indicator <- x %>%
     dplyr::summarize(num_occ = sum(obs, na.rm = TRUE),
                      .by = c(cellid, taxonKey)) %>%
     dplyr::arrange(cellid) %>%
@@ -315,6 +306,8 @@ calc_map_evenness_core <- function(x,
     dplyr::mutate(cellid = as.integer(cellid),
                   .keep = "unused")
 
+  return(indicator)
+
 }
 
 #' @export
@@ -324,7 +317,7 @@ calc_map.ab_rarity <- function(x, ...) {
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.", inherits(x, "ab_rarity"))
 
-  obs <- taxonKey <- cellid <- records_taxon <- obs_taxon <- rarity <- NULL
+  obs <- taxonKey <- cellid <- obs_taxon <- rarity <- NULL
   obs_cell <- NULL
 
   # Select relevant columns
@@ -334,9 +327,8 @@ calc_map.ab_rarity <- function(x, ...) {
   # Remove invalid rows
   x <- x[stats::complete.cases(x), ]
 
-# Calculate total summed rarity (in terms of abundance) for each grid cell
-  indicator <-
-    x %>%
+  # Calculate total summed rarity (in terms of abundance) for each grid cell
+  indicator <- x %>%
     # calculate number of records for each species
     dplyr::summarise(obs_taxon = sum(obs, na.rm = TRUE),
                      .by = c(cellid, taxonKey)) %>%
@@ -350,6 +342,8 @@ calc_map.ab_rarity <- function(x, ...) {
     # arrange by cellid
     dplyr::arrange(cellid)
 
+  return(indicator)
+
 }
 
 #' @export
@@ -359,7 +353,7 @@ calc_map.area_rarity <- function(x, ...) {
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.", inherits(x, "area_rarity"))
 
-  rec_tax_cell <- cellid <- taxonKey <- rarity <- NULL
+  cellid <- taxonKey <- rarity <- NULL
   occ_by_taxa <- total_cells <- NULL
 
   # Select relevant columns
@@ -371,8 +365,7 @@ calc_map.area_rarity <- function(x, ...) {
 
   # Calculate rarity as the sum (per grid cell) of the inverse of occupancy
   # frequency for each species
-  indicator <-
-    x %>%
+  indicator <- x %>%
     # calculate number of cells each species occurs in
     dplyr::mutate(occ_by_taxa = sum(dplyr::n_distinct(cellid)),
                   .by = c(taxonKey)) %>%
@@ -387,6 +380,8 @@ calc_map.area_rarity <- function(x, ...) {
     # arrange by cellid
     dplyr::arrange(cellid)
 
+  return(indicator)
+
 }
 
 #' @export
@@ -399,12 +394,13 @@ calc_map.spec_occ <- function(x, ...) {
   diversity_val <- obs <- taxonKey <- cellid <- scientificName <- NULL
 
   # Calculate total occurrences for each species by grid cell
-  indicator <-
-    x %>%
+  indicator <- x %>%
     dplyr::mutate(diversity_val = sum(obs), .by = c(taxonKey, cellid)) %>%
     dplyr::distinct(cellid, scientificName, .keep_all = TRUE) %>%
     dplyr::arrange(cellid) %>%
     dplyr::select(cellid, taxonKey, scientificName, diversity_val)
+
+  return(indicator)
 
 }
 
@@ -418,12 +414,13 @@ calc_map.spec_range <- function(x, ...) {
   cellid <- taxonKey <- scientificName <- diversity_val <- NULL
 
   # Flatten occurrences for each species by grid cell
-  indicator <-
-    x %>%
+  indicator <- x %>%
     dplyr::mutate(diversity_val = 1) %>%
     dplyr::distinct(cellid, scientificName, .keep_all = TRUE) %>%
     dplyr::arrange(cellid) %>%
     dplyr::select(cellid, taxonKey, scientificName, diversity_val)
+
+  return(indicator)
 
 }
 
@@ -434,7 +431,7 @@ calc_map.tax_distinct <- function(x, ...) {
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.", inherits(x, "tax_distinct"))
 
-  cellid <- . <- diversity_val <- NULL
+  cellid <- diversity_val <- NULL
 
   # Early check for empty input
   if (nrow(x) == 0) {
@@ -455,22 +452,21 @@ calc_map.tax_distinct <- function(x, ...) {
     )
   }
 
-  # Save data
-  #  saveRDS(tax_hier, file = "taxonomic_hierarchy.RDS")
-
-  #  tax_hier <- my_readRDS("taxonomic_hierarchy.RDS")
+  # A helper function to check for empty rows
+  is_not_empty <- function(df) {
+    nrow(df) == 0
+  }
 
   # Calculate taxonomic distinctness
-  indicator <-
-    x %>%
+  indicator <- x %>%
     tibble::add_column(diversity_val = NA) %>%
     dplyr::group_split(cellid) %>%
-    purrr::discard(~ nrow(.) == 0) %>%
-    purrr::map(~{
-                   dplyr::mutate(.,
-                     diversity_val = compute_tax_distinct_formula(., tax_hier)
-                   ) }
-    ) %>%
+    purrr::discard(is_not_empty) %>%
+    purrr::map(function(df) {
+      dplyr::mutate(df,
+                    diversity_val = compute_tax_distinct_formula(df, tax_hier)
+      )
+    }) %>%
     dplyr::bind_rows() %>%
     dplyr::filter(.data$diversity_val != 0) %>%
     dplyr::distinct(cellid, diversity_val, .keep_all = TRUE) %>%

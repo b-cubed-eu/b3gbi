@@ -1,5 +1,5 @@
 #' @noRd
-add_NE_layer <- function(layer_name, scale, extent_projected) {
+add_ne_layer <- function(layer_name, scale, extent_projected) {
 
   geometry <- featurecla <- scalerank <- type <- NULL
 
@@ -71,7 +71,7 @@ add_NE_layer <- function(layer_name, scale, extent_projected) {
   }
 
   extent_projected <- sf::st_transform(sf::st_as_sfc(extent_projected),
-                                   crs = "ESRI:54012")
+                                       crs = "ESRI:54012")
 
   # Attempt to perform cropping for efficiency FIRST
   # If it fails, validate first
@@ -81,7 +81,6 @@ add_NE_layer <- function(layer_name, scale, extent_projected) {
       dplyr::group_by(scalerank, featurecla) %>%
       dplyr::reframe(geometry = sf::st_crop(geometry, extent_projected)) %>%
       sf::st_as_sf()
-    #  sf::st_transform(crs = sf::st_crs(latlong_extent))
   }, error = function(e) {
     layer_raw %>%
       sf::st_make_valid() %>%
@@ -89,7 +88,6 @@ add_NE_layer <- function(layer_name, scale, extent_projected) {
       dplyr::group_by(scalerank, featurecla) %>%
       dplyr::reframe(geometry = sf::st_crop(geometry, extent_projected)) %>%
       sf::st_as_sf()
-     # sf::st_transform(crs = sf::st_crs(latlong_extent))
   })
 
   # Then validate and filter (on the now smaller dataset)

@@ -1,11 +1,12 @@
+#' @importFrom b3gbi available_indicators
 #' @noRd
 compute_evenness_formula <- function(x, type) {
 
-  available_indicators <- NULL; rm(available_indicators)
+ # available_indicators <- NULL; rm(available_indicators)
 
   type <- match.arg(type, names(available_indicators))
 
-  if (type=="pielou_evenness") {
+  if (type == "pielou_evenness") {
 
     S <- length(x)
     n <- x
@@ -31,15 +32,15 @@ compute_evenness_formula <- function(x, type) {
     p_squared <- p^2
     summed <- sum(p_squared) * S
     adjusted <- (summed - 1) / (S - 1)
-    root <- adjusted^(1/2)
+    root <- adjusted^(1 / 2)
     even <- 1 - root
     if (is.nan(even)) {
       even <- NA
     }
 
     return(even)
-  }
 
+  }
 }
 
 #'
@@ -60,9 +61,10 @@ compute_tax_distinct_formula <- function(x, y) {
 
     if (requireNamespace("taxize", quietly = TRUE)) {
 
-      tax_tree <- taxize::class2tree(tax_hier_temp, check=FALSE)
+      tax_tree <- taxize::class2tree(tax_hier_temp, check = FALSE)
       tax_distance <- tax_tree$distmat
       tax_distinct <- sum(tax_distance) / ((n_spec * (n_spec - 1)) / 2)
+
       return(tax_distinct)
 
     } else {
@@ -72,7 +74,5 @@ compute_tax_distinct_formula <- function(x, y) {
       )
 
     }
-
   }
-
 }

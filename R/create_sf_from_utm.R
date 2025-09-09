@@ -42,7 +42,9 @@ create_sf_from_utm <- function(df, output_crs = NULL) {
     }
 
     sf::st_agr(sf_zone) <- "constant" # Set attribute to constant
+
     return(sf_zone)
+
   })
 
   # 4. Determine output CRS
@@ -51,20 +53,21 @@ create_sf_from_utm <- function(df, output_crs = NULL) {
   }
 
   # 5. Transform to a common CRS and combine
-  if (length(sf_list) > 0){
+  if (length(sf_list) > 0) {
     combined_sf <- sf::st_transform(sf_list[[1]], crs = output_crs)
     sf::st_agr(combined_sf) <- "constant" # Set attribute to constant
-    if (length(sf_list) > 1){
+    if (length(sf_list) > 1) {
       for (i in 2:length(sf_list)){
         sf_list[[i]] <- sf::st_transform(sf_list[[i]], crs = output_crs)
         sf::st_agr(sf_list[[i]]) <- "constant" # Set attribute to constant
         combined_sf <- rbind(combined_sf, sf_list[[i]])
       }
     }
-  }
-  else{
+  } else {
     combined_sf <- sf::st_sf(geometry = sf::st_sfc())
     sf::st_agr(combined_sf) <- "constant" # Set attribute to constant
   }
+
   return(combined_sf)
+
 }

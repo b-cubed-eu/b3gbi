@@ -43,20 +43,28 @@
 guess_utm_epsg <- function(x) {
 
   coord_range <- NULL
+
   if (inherits(x, "processed_cube")) {
+
     if (is.null(x$grid_type) || x$grid_type != "mgrs") {
+
       return(NULL)
+
     }
 
     if (!is.null(x$data$cellCode) && nrow(x$data) > 0) {
+
       # CHECK ALL UNIQUE MGRS CODES
       all_mgrs_codes <- as.character(x$data$cellCode)
       unique_utm_zones <- unique(substr(all_mgrs_codes, 1, 2))
 
       # If the data spans more than one UTM zone, return a global CRS
       if (length(unique_utm_zones) > 1) {
+
         warning("Data spans multiple UTM zones. Using a global equal-area CRS.")
+
         return("ESRI:54012")
+
       }
 
       # If there is only one UTM zone, proceed with the original logic
@@ -66,25 +74,42 @@ guess_utm_epsg <- function(x) {
       utm_zone <- as.numeric(utm_zone_str)
 
       if (!is.na(utm_zone) && utm_zone >= 1 && utm_zone <= 60) {
+
         hemisphere <- ifelse(lat_band_char %in% LETTERS[1:13],
                              "South", "North")
+
         if (hemisphere == "North") {
+
           return(paste0("EPSG:326", sprintf("%02d", utm_zone)))
+
         } else if (hemisphere == "South") {
+
           return(paste0("EPSG:327", sprintf("%02d", utm_zone)))
+
         }
       }
     }
+
     coord_range <- x$coord_range
+
   } else if (inherits(x, "bbox")) {
+
     coord_range <- x
+
   } else {
+
     warning("Input must be a 'processed_cube' object or an 'sf::bbox' object.")
+
     return(NULL)
+
   }
+
   if (is.null(coord_range) || length(coord_range) != 4) {
+
     warning("Could not automatically determine CRS from provided data.")
+
     return(NULL)
+
   }
 
   # Apply the checks for UTM suitability using the corrected logic
@@ -101,7 +126,9 @@ guess_utm_epsg <- function(x) {
       coord_range["ymin"] < -80 ||
       coord_range["ymax"] > 84 ||
       !single_utm_zone) {
+
     return("ESRI:54012")
+
   }
 
   # If all checks pass, return the UTM CRS based on the center of the bbox
@@ -110,8 +137,12 @@ guess_utm_epsg <- function(x) {
   utm_zone <- floor((lon_center + 180) / 6) + 1
 
   if (lat_center >= 0) {
+
     return(paste0("EPSG:326", sprintf("%02d", utm_zone)))
+
   } else {
+
     return(paste0("EPSG:327", sprintf("%02d", utm_zone)))
+
   }
 }

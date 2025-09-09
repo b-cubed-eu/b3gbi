@@ -475,7 +475,8 @@ process_cube <- function(cube_name,
 
   }
 
-  # If scientificName column missing but species column present, copy species to scientificName
+  # If scientificName column missing but species column present, copy species
+  # to scientificName
   if ("species" %in% colnames(occurrence_data) &
       !("scientificName" %in% colnames(occurrence_data))) {
 
@@ -867,4 +868,3 @@ process_cube_old <- function(cube_name,
   cube <- new_processed_cube(merged_data, grid_type = "eea")
 
 }
-

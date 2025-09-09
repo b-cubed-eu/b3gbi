@@ -49,12 +49,12 @@ convert_eqdgc_latlong <- function(cellCode) {
                                              "([EW]-?\\d+)|([NS]-?\\d+)", "")
 
   grid_level <- nchar(position_codes)
-  ff <- c(0.5, 0.25, 0.25/2, 0.25/4, 0.25/8, 0.25/16, 0.25/32)
+  ff <- c(0.5, 0.25, 0.25 / 2, 0.25 / 4, 0.25 / 8, 0.25 / 16, 0.25 / 32)
 
   long_ext <- numeric(length(long_base))
   lat_ext <- numeric(length(lat_base))
 
-  for (i in 1:length(cellCode)) {
+  for (i in seq_along(cellCode)) {
 
     # This conditional statement is the fix. It ensures the inner loop
     # only runs when there are sub-grid codes to process.
@@ -87,4 +87,5 @@ convert_eqdgc_latlong <- function(cellCode) {
   lat <- lat_dir * (lat_base + lat_ext + ff_final)
 
   return(cbind(lat, long))
+
 }

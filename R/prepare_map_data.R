@@ -69,7 +69,7 @@ prepare_map_data <- function(data,
       layer_list <- list()
       if(!is.null(layers)) {
         for (i in 1:length(layers)) {
-          layer_data <- add_NE_layer(layers[i],
+          layer_data <- add_ne_layer(layers[i],
                                      scale,
                                      expanded_latlong_bbox)
           # Project the layer
@@ -102,7 +102,7 @@ prepare_map_data <- function(data,
       layer_list <- list()
       if (!is.null(layers)) {
         for (i in 1:length(layers)) {
-          layer_data <- add_NE_layer(layers[i],
+          layer_data <- add_ne_layer(layers[i],
                                      scale,
                                      latlong_extent)
           # Project the layer
@@ -156,7 +156,7 @@ prepare_map_data <- function(data,
       layer_list <- list()
       if (!is.null(layers)) {
         for (i in 1:length(layers)) {
-          layer_data <- add_NE_layer(layers[i],
+          layer_data <- add_ne_layer(layers[i],
                                      scale,
                                      bbox_lims)
 

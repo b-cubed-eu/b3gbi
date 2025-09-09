@@ -8,19 +8,25 @@
 #' @return A character string containing the full descriptive name of the
 #'  biodiversity indicator. Returns an error if the specified indicator class
 #'  is not found.
-#'
+#' @importFrom b3gbi available_indicators
 #' @noRd
 get_indicator_name <- function(x) {
 
-  available_indicators <- NULL; rm(available_indicators)
+ # available_indicators <- NULL; rm(available_indicators)
 
   iname <- as.character(available_indicators[[x]]$indicator_name)
 
   if (!length(iname) > 0) {
+
     stop("Indicator class is not registered. Check that you typed it correctly")
+
   } else {
+
     iname
+
   }
+
+  return(iname)
 
 }
 
@@ -33,21 +39,27 @@ get_indicator_name <- function(x) {
 #'  (e.g., "obs_richness", "hill1", "cum_richness").
 #' @return A character string containing the legend title. Throws an error if
 #'  the specified indicator class is not found.
-#'
+#' @importFrom b3gbi available_indicators
 #' @noRd
 get_legend_title <- function(x) {
 
-  available_indicators <- NULL; rm(available_indicators)
+ # available_indicators <- NULL; rm(available_indicators)
 
   ltitle <- as.character(available_indicators[[x]]$legend_label)
 
   if (!length(ltitle) > 0) {
+
     stop(
       "Indicator class is not registered. Check that you typed it correctly."
     )
+
   } else {
+
     ltitle
+
   }
+
+  return(ltitle)
 
 }
 
@@ -73,7 +85,7 @@ get_observed_years <- function(x) {
   if (inherits(x, "indicator_map")) {
     obs <- x$years_with_obs
     years <- min(x$years_with_obs):max(x$years_with_obs)
-  } else if (inherits(x, "indicator_ts") | inherits(x, "processed_cube")) {
+  } else if (inherits(x, "indicator_ts") || inherits(x, "processed_cube")) {
     obs <- unique(x$data$year)
     years <- min(obs):max(obs)
   }
@@ -81,6 +93,8 @@ get_observed_years <- function(x) {
   observed <- ifelse(years %in% obs, TRUE, FALSE)
   data.frame("years" = years,
              "occurrences" = observed)
+
+  return
 
 }
 
@@ -104,7 +118,7 @@ list_species <- function(object) {
 
   taxonKey <- scientificName <- NULL
 
-  if(length(object$species_names) > 0) {
+  if (length(object$species_names) > 0) {
 
     return(object$species_names)
 
@@ -119,4 +133,3 @@ list_species <- function(object) {
 
   }
 }
-
