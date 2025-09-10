@@ -1,8 +1,6 @@
 #' @noRd
 compute_evenness_formula <- function(x, type) {
 
- # available_indicators <- NULL; rm(available_indicators)
-
   type <- match.arg(type, names(available_indicators))
 
   if (type == "pielou_evenness") {

@@ -135,6 +135,7 @@ calc_map_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
     dplyr::mutate(cellid = as.integer(cellid), .keep = "unused")
 
   return(indicator)
+
 }
 
 #' @export
@@ -213,13 +214,6 @@ calc_map.occ_density <- function(x, ...) {
 
   diversity_val <- obs <- area <- cellid <- NULL
 
-  # cell_size_units <- stringr::str_extract(x$resolution[1],
-  #                                         "(?<=[0-9,.]{1,6})[a-z]*$")
-  #
-  # stopifnot_error("To calculate occurrence density, please choose a projected
-  #                 CRS that uses meters or kilometers, not degrees.",
-  #                 "area" %in% names(x))
-
   # Calculate density of occurrences over the grid (per square km)
   indicator <- x %>%
     dplyr::reframe(diversity_val = sum(obs, na.rm = TRUE) / area,
@@ -275,8 +269,6 @@ calc_map_evenness_core <- function(x,
   stopifnot_error("Please check the class and structure of your data. This is an
                   internal function, not meant to be called directly.",
                   inherits(x, c("data.frame", "sf")))
-
- # available_indicators <- NULL; rm(available_indicators)
 
   num_occ <- obs <- cellid <- taxonKey <- . <- NULL
 

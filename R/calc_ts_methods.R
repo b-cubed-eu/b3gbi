@@ -207,13 +207,6 @@ calc_ts.occ_density <- function(x, ...) {
 
   year <- diversity_val <- obs <- area <- NULL
 
-  # cell_size_units <- stringr::str_extract(x$resolution[1],
-  #                                         "(?<=[0-9,.]{1,6})[a-z]*$")
-  #
-  # stopifnot_error("To calculate occurrence density, please choose a projected
-  #                 CRS that uses meters or kilometers, not degrees.",
-  #                 cell_size_units == "km")
-
   # Calculate density of occurrences over the grid (per square km)
   indicator <- x %>%
     dplyr::reframe(diversity_val = sum(obs) / area,
@@ -468,7 +461,6 @@ calc_ts.tax_distinct <- function(x, set_rows = 1, ...) {
   return(indicator)
 
 }
-
 
 #' @export
 #' @rdname calc_ts

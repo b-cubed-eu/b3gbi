@@ -11,8 +11,6 @@
 #' @noRd
 get_indicator_name <- function(x) {
 
- # available_indicators <- NULL; rm(available_indicators)
-
   iname <- as.character(available_indicators[[x]]$indicator_name)
 
   if (!length(iname) > 0) {
@@ -40,8 +38,6 @@ get_indicator_name <- function(x) {
 #'  the specified indicator class is not found.
 #' @noRd
 get_legend_title <- function(x) {
-
- # available_indicators <- NULL; rm(available_indicators)
 
   ltitle <- as.character(available_indicators[[x]]$legend_label)
 

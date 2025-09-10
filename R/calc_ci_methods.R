@@ -13,7 +13,9 @@
 calc_ci <- function(x,
                     indicator,
                     ...) {
+
   UseMethod("calc_ci")
+
 }
 
 #' @export
@@ -229,8 +231,7 @@ calc_ci.occ_density <- function(x,
 
   year <- cellid <- obs <- area <- NULL
 
-  x <-
-    x %>%
+  x <- x %>%
     dplyr::arrange(year, cellid) %>%
     dplyr::reframe(diversity_val = sum(obs) / area,
                    .by = c("year", "cellid"))
@@ -281,8 +282,7 @@ calc_ci.newness <- function(x,
   names(ind_list) <- unique(year)
 
   # Bootstrap indicator value
-  bootstraps <-
-    ind_list %>%
+  bootstraps <- ind_list %>%
     purrr::map(~boot::boot(
       data = .,
       statistic = boot_statistic_newness,
@@ -361,8 +361,6 @@ calc_ci_evenness_core <- function(x,
                                   ci_type = ci_type,
                                   ...) {
 
- # available_indicators <- NULL; rm(available_indicators)
-
   obs <- year <- taxonKey <- num_occ <- NULL
 
   stopifnot_error(
@@ -375,8 +373,7 @@ calc_ci_evenness_core <- function(x,
                     names(available_indicators))
 
   # Calculate number of records for each species by grid cell
-  x <-
-    x %>%
+  x <- x %>%
     dplyr::summarize(num_occ = sum(obs),
                      .by = c(year, taxonKey)) %>%
     dplyr::arrange(year) %>%
@@ -387,8 +384,7 @@ calc_ci_evenness_core <- function(x,
     as.list()
 
   # Bootstrap evenness values
-  bootstraps <-
-    x %>%
+  bootstraps <- x %>%
     purrr::map(~boot::boot(
       data = .,
       statistic = boot_statistic_evenness,
@@ -427,8 +423,7 @@ calc_ci.ab_rarity <- function(x,
   obs <- taxonKey <- records_taxon <- year <- NULL
 
     # Calculate rarity for each cell each year
-    x <-
-      x %>%
+    x <- x %>%
       dplyr::mutate(records_taxon = sum(obs), .by = taxonKey) %>%
       dplyr::mutate(rarity = 1 / (records_taxon / sum(obs))) %>%
       dplyr::arrange(year)
@@ -436,8 +431,7 @@ calc_ci.ab_rarity <- function(x,
     ind_list <- list_org_by_year(x, "rarity")
 
     # Bootstrap indicator value
-    bootstraps <-
-      ind_list %>%
+    bootstraps <- ind_list %>%
       purrr::map(~boot::boot(
         data = .,
         statistic = boot_statistic_sum,
@@ -470,8 +464,7 @@ calc_ci.area_rarity <- function(x,
   year <- cellid <- taxonKey <- rec_tax_cell <- rarity <- diversity_val <- NULL
 
   # Calculate rarity for each cell each year
-  x <-
-    x %>%
+  x <- x %>%
     dplyr::arrange(year, cellid, taxonKey) %>%
     dplyr::mutate(rec_tax_cell = sum(dplyr::n_distinct(cellid)),
                   .by = c(taxonKey)) %>%
@@ -484,8 +477,7 @@ calc_ci.area_rarity <- function(x,
   ind_list <- list_org_by_year(x, "diversity_val")
 
   # Bootstrap indicator value
-  bootstraps <-
-    ind_list %>%
+  bootstraps <- ind_list %>%
     purrr::map(~boot::boot(
       data = .,
       statistic = boot_statistic_mean,
@@ -517,13 +509,11 @@ calc_ci.spec_occ <- function(x,
 
   taxonKey <- totobs <- obs <- year <- cellCode <- scientificName <- NULL
 
-  x <-
-    x %>%
+  x <- x %>%
     dplyr::arrange(taxonKey)
 
   # Bootstrap species occurrence values
-  bootstraps <-
-    x %>%
+  bootstraps <- x %>%
     dplyr::summarize(totobs = sum(obs), .by = c(year, cellCode, taxonKey)) %>%
     dplyr::group_by(taxonKey) %>%
     dplyr::group_split() %>%
@@ -594,13 +584,11 @@ calc_ci.spec_range <- function(x,
 
   taxonKey <- obs <- observed <- year <- cellCode <- scientificName <- NULL
 
-  x <-
-    x %>%
+  x <- x %>%
     dplyr::arrange(taxonKey, year, cellCode)
 
   # Bootstrap species range values
-  bootstraps <-
-    x %>%
+  bootstraps <- x %>%
     dplyr::summarize(observed = sum(obs >= 1),
                      .by = c(taxonKey, year, cellCode)) %>%
     dplyr::group_by(taxonKey) %>%
