@@ -111,16 +111,17 @@ calc_ts_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
   nboot <- temp_opts$nboot
 
   # remove all years with too little data to avoid errors from iNEXT
-  species_records_raw2 <- species_records_raw %>%
-    purrr::keep(., function(x) length(x) > cutoff_length)
+  species_records_raw <- purrr::keep(
+    species_records_raw, function(x) length(x) > cutoff_length
+  )
 
-  coverage_rare <- species_records_raw2 %>%
+  coverage_rare <- species_records_raw %>%
     my_estimateD(base = "coverage",
                  level = coverage,
-                 datatype="incidence_raw",
-                 q=qval,
-                 conf=conf,
-                 nboot=nboot)
+                 datatype = "incidence_raw",
+                 q = qval,
+                 conf = conf,
+                 nboot = nboot)
 
   # Extract estimated relative species richness
   indicator <- coverage_rare %>%
@@ -456,8 +457,9 @@ calc_ts.tax_distinct <- function(x, set_rows = 1, ...) {
     tibble::add_column(diversity_val = NA) %>%
     dplyr::group_split(year) %>%
     purrr::map(function(y) {
-      dplyr::mutate(
-        diversity_val = compute_tax_distinct_formula(y, tax_hier))
+      y %>%
+        dplyr::mutate(
+          diversity_val = compute_tax_distinct_formula(y, tax_hier))
     }) %>%
     dplyr::bind_rows() %>%
     dplyr::distinct(year, diversity_val, .keep_all = TRUE) %>%
