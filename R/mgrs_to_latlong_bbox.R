@@ -54,10 +54,6 @@ mgrs_to_latlong_bbox <- function(df) {
   # Combine all sf objects and compute the final bbox
   final_sf_latlong <- do.call(rbind, all_sf_objects)
 
-  # # Transform to a single suitable projected CRS (e.g., Albers)
-  # # This is the single CRS for calculations
-  # final_sf_projected <- sf::st_transform(final_sf_latlong, "ESRI:54012")
-
   # Return the bbox of the projected data
   sf::st_bbox(final_sf_latlong)
 }
