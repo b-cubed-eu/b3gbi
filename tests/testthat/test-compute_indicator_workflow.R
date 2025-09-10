@@ -186,12 +186,12 @@ test_that(
   "compute_indicator_workflow creates grids and performs spatial operations", {
   mock_cube <- list(
     data = data.frame(
-      xcoord = c(9,1,5),
-      ycoord = c(1,9,5),
-      cellCode = c(1,2,3),
-      year = c(2000,2000,2000),
-      scientificName = c("A","A","A"),
-      obs = c(1,1,1)
+      xcoord = c(9, 1, 5),
+      ycoord = c(1, 9, 5),
+      cellCode = c(1, 2, 3),
+      year = c(2000, 2000, 2000),
+      scientificName = c("A", "A", "A"),
+      obs = c(1, 1, 1)
     ),
     first_year = 2000,
     last_year = 2000,
@@ -264,7 +264,7 @@ test_that(
   )
 
   # cleanup
-  file.remove(temp_shapefile);
+  file.remove(temp_shapefile)
 
   # test invert.
   temp_shapefile <- tempfile(fileext = ".shp")
@@ -307,7 +307,7 @@ test_that(
   )
 
   # cleanup
-  file.remove(temp_shapefile);
+  file.remove(temp_shapefile)
 
   # test spherical geometry.
   with_mocked_bindings(
@@ -547,12 +547,12 @@ test_that(
   # Create a mock processed_cube object
     mock_cube <- list(
       data = data.frame(
-        xcoord = c(1,5),
-        ycoord = c(5,1),
-        cellCode = c(1,2),
-        year = c(2000,2000),
-        scientificName = c("A","A"),
-        obs = c(1,1)
+        xcoord = c(1, 5),
+        ycoord = c(5, 1),
+        cellCode = c(1, 2),
+        year = c(2000, 2000),
+        scientificName = c("A", "A"),
+        obs = c(1, 1)
       ),
       first_year = 2000,
       last_year = 2000,
@@ -590,4 +590,3 @@ test_that(
       expect_true(sf::sf_use_s2())
     })
 })
-

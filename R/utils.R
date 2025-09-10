@@ -1,45 +1,44 @@
 # Define function to wrap title and legend title if too long
 #' @noRd
-wrapper <- function(x, ...)
-{
+wrapper <- function(x, ...) {
   paste(strwrap(x, ...), collapse = "\n")
 }
 
 # copy of function boot.return from boot package
 #' @noRd
-boot.return_int <- function (sim,
-                             t0,
-                             t,
-                             strata,
-                             R,
-                             data,
-                             stat,
-                             stype,
-                             call,
-                             seed,
-                             L,
-                             m,
-                             pred.i,
-                             weights,
-                             ran.gen,
-                             mle)
-{
+boot.return_int <- function(sim,
+                            t0,
+                            t,
+                            strata,
+                            R,
+                            data,
+                            stat,
+                            stype,
+                            call,
+                            seed,
+                            L,
+                            m,
+                            pred.i,
+                            weights,
+                            ran.gen,
+                            mle) {
   out <- list(t0 = t0, t = t, R = R, data = data, seed = seed,
               statistic = stat, sim = sim, call = call)
-  if (sim == "parametric")
+  if (sim == "parametric") {
     out <- c(out, list(ran.gen = ran.gen, mle = mle))
-  else if (sim == "antithetic")
+  } else if (sim == "antithetic") {
     out <- c(out, list(stype = stype, strata = strata, L = L))
-  else if (sim == "ordinary") {
+  } else if (sim == "ordinary") {
     if (sum(m) > 0)
       out <- c(out, list(stype = stype, strata = strata,
                          weights = weights, pred.i = pred.i))
     else out <- c(out, list(stype = stype, strata = strata,
                             weights = weights))
-  }
-  else if (sim == "balanced")
+  } else if (sim == "balanced") {
     out <- c(out, list(stype = stype, strata = strata, weights = weights))
-  else out <- c(out, list(stype = stype, strata = strata))
+  } else {
+    out <- c(out, list(stype = stype, strata = strata))
+  }
   class(out) <- "boot"
   out
 }
@@ -81,8 +80,7 @@ add_yearvals_to_boot <- function(boot, orig_data) {
 #' @param ... An error is raised if any these expressions is \code{FALSE}.
 #'
 #' @noRd
-stopifnot_error <- function(err_message, ...)
-{
+stopifnot_error <- function(err_message, ...) {
   n <- length(ll <- list(...))
   for (i in 1:n)
     if (!(is.logical(r <- ll[[i]]) && !anyNA(r) && all(r))) {
@@ -92,8 +90,7 @@ stopifnot_error <- function(err_message, ...)
 
 # Copy of breaks_log from scales package
 #' @noRd
-breaks_log_int <- function (n = 5, base = 10)
-{
+breaks_log_int <- function (n = 5, base = 10) {
   force_all(n, base)
   n_default <- n
   function(x, n = n_default) {
@@ -107,7 +104,7 @@ breaks_log_int <- function (n = 5, base = 10)
     if (max == min) {
       return(base^min)
     }
-    by <- floor((max - min)/n) + 1
+    by <- floor((max - min) / n) + 1
     breaks <- base^seq(min, max, by = by)
     relevant_breaks <- base^rng[1] <= breaks & breaks <=
       base^rng[2]
@@ -129,8 +126,7 @@ breaks_log_int <- function (n = 5, base = 10)
 
 # Copy of breaks_pretty from scales package
 #' @noRd
-breaks_pretty_int <- function (n = 5, ...)
-{
+breaks_pretty_int <- function (n = 5, ...) {
   force_all(n, ...)
   n_default <- n
   function(x, n = n_default) {
@@ -142,15 +138,13 @@ breaks_pretty_int <- function (n = 5, ...)
 
 # Copy of internal function force_all from scales package
 #' @noRd
-force_all <- function (...)
-{
+force_all <- function (...) {
   list(...)
 }
 
 # Copy of internal function log_sub_breaks from scales package
 #' @noRd
-log_sub_breaks <- function (rng, n = 5, base = 10)
-{
+log_sub_breaks <- function (rng, n = 5, base = 10) {
   min <- floor(rng[1])
   max <- ceiling(rng[2])
   if (base <= 2) {
@@ -180,16 +174,14 @@ log_sub_breaks <- function (rng, n = 5, base = 10)
     upper_end <- pmin(max(which(breaks <= base^rng[2])) +
                         1, length(breaks))
     breaks[lower_end:upper_end]
-  }
-  else {
+  } else {
     extended_breaks(n = n)(base^rng)
   }
 }
 
 # Copy of internal function extended_breaks from scales package
 #' @noRd
-extended_breaks <- function (n = 5, ...)
-{
+extended_breaks <- function (n = 5, ...) {
   n_default <- n
   function(x, n = n_default) {
     x <- x[is.finite(x)]
@@ -204,8 +196,7 @@ extended_breaks <- function (n = 5, ...)
 # Copy of internal function cli_abort from cli package
 #' @noRd
 cli_abort <- function (message, ..., call = .envir, .envir = parent.frame(),
-          .frame = .envir)
-{
+          .frame = .envir) {
 
   format_inline <- NULL
 
@@ -216,15 +207,13 @@ cli_abort <- function (message, ..., call = .envir, .envir = parent.frame(),
 
 # Copy of internal function vcapply from cli package
 #' @noRd
-vcapply <- function (X, FUN, ..., USE.NAMES = TRUE)
-{
+vcapply <- function (X, FUN, ..., USE.NAMES = TRUE) {
   vapply(X, FUN, FUN.VALUE = character(1), ..., USE.NAMES = USE.NAMES)
 }
 
 # Copy of internal function exec from rlang package
 #' @noRd
-exec <- function (.fn, ..., .env = caller_env())
-{
+exec <- function (.fn, ..., .env = caller_env()) {
 
   ffi_exec <- NULL
 
@@ -233,8 +222,7 @@ exec <- function (.fn, ..., .env = caller_env())
 
 # Copy of internal function is.grob from grid package
 #' @noRd
-is.grob <- function (x)
-{
+is.grob <- function (x) {
   inherits(x, "grob")
 }
 
@@ -247,8 +235,7 @@ plot_annotation_int <- function (title = NULL,
                                  tag_prefix = NULL,
                                  tag_suffix = NULL,
                                  tag_sep = NULL,
-                                 theme = NULL)
-{
+                                 theme = NULL) {
   th <- if (is.null(theme))
     ggplot2::theme()
   else theme
@@ -272,8 +259,7 @@ specaccum_int <- function (comm,
                            gamma = "jack1",
                            w = NULL,
                            subset,
-                           ...)
-{
+                           ...) {
   METHODS <- c("collector", "random", "exact", "rarefaction",
                "coleman")
   method <- match.arg(method, METHODS)
@@ -311,7 +297,7 @@ specaccum_int <- function (comm,
       sdaccum <- apply(perm, 1, sd)
     } else {
       sumw <- sum(w)
-      xout <- seq(sumw/n, sumw, length.out = n)
+      xout <- seq(sumw / n, sumw, length.out = n)
       intx <- sapply(seq_len(NCOL(perm)),
                      function(i) approx(weights[, i], perm[, i], xout = xout)$y)
       specaccum <- apply(intx, 1, mean)
@@ -345,7 +331,7 @@ specaccum_int <- function (comm,
     } else {
       Stot <- specpool(x)[, gamma]
       sdaccum1 <- rowSums((1 - result)^2)
-      sdaccum2 <- specaccum^2/Stot
+      sdaccum2 <- specaccum^2 / Stot
       sdaccum <- sqrt(sdaccum1 - sdaccum2)
     }
   }, rarefaction = {
@@ -357,7 +343,7 @@ specaccum_int <- function (comm,
     freq <- colSums(x)
     freq <- freq[freq > 0]
     tot <- sum(freq)
-    ind <- round(seq(tot/n, tot, length = n))
+    ind <- round(seq(tot / n, tot, length = n))
     result <- matrix(NA, nrow = 2, ncol = n)
     for (i in 1:n) {
       result[, i] <- suppressWarnings(rarefy_int(t(freq),
@@ -365,12 +351,12 @@ specaccum_int <- function (comm,
     }
     specaccum <- result[1, ]
     sdaccum <- result[2, ]
-    sites <- ind/tot * n
+    sites <- ind / tot * n
   }, coleman = {
     freq <- colSums(x > 0)
     result <- array(dim = c(n, p))
     for (i in 1:n) {
-      result[i, ] <- (1 - i/n)^freq
+      result[i, ] <- (1 - i / n)^freq
     }
     result <- 1 - result
     sites <- seq_len(n)
@@ -395,8 +381,7 @@ specaccum_int <- function (comm,
 
 # Copy of internal function getPermuteMatrix from vegan package
 #' @noRd
-getPermuteMatrix <- function (perm, N, strata = NULL)
-{
+getPermuteMatrix <- function (perm, N, strata = NULL) {
   if (length(perm) == 1) {
     perm <- permute::how(nperm = perm)
   }
@@ -404,9 +389,9 @@ getPermuteMatrix <- function (perm, N, strata = NULL)
     if (inherits(perm, "how") && is.null(permute::getBlocks(perm)))
       permute::setBlocks(perm) <- strata
   }
-  if (inherits(perm, "how"))
+  if (inherits(perm, "how")) {
     perm <- permute::shuffleSet(N, control = perm)
-  else {
+  } else {
     if (!is.integer(perm) && !all(perm == round(perm)))
       stop("permutation matrix must be strictly integers: use round()")
   }
@@ -421,8 +406,7 @@ getPermuteMatrix <- function (perm, N, strata = NULL)
 
 # Copy of function rarefy from vegan package
 #' @noRd
-rarefy_int <- function (x, sample, se = FALSE, MARGIN = 1)
-{
+rarefy_int <- function (x, sample, se = FALSE, MARGIN = 1) {
   x <- as.matrix(x)
   if (ncol(x) == 1 && MARGIN == 1)
     x <- t(x)
@@ -477,8 +461,7 @@ rarefy_int <- function (x, sample, se = FALSE, MARGIN = 1)
       rownames(S.rare) <- paste(rep(dn, each = 2), c("S",
                                                      "se"), sep = ".")
     }
-  }
-  else {
+  } else {
     S.rare <- apply(x, MARGIN, rarefun, sample = sample)
     if (se)
       rownames(S.rare) <- c("S", "se")
@@ -489,8 +472,7 @@ rarefy_int <- function (x, sample, se = FALSE, MARGIN = 1)
 
 #' Copy of internal function specpool from vegan package
 #' @noRd
-specpool <- function (x, pool, smallsample = TRUE)
-{
+specpool <- function (x, pool, smallsample = TRUE) {
   x <- as.matrix(x)
   if (!(is.numeric(x) || is.logical(x)))
     stop("input data must be numeric")
@@ -516,11 +498,11 @@ specpool <- function (x, pool, smallsample = TRUE)
     if (n <= 0)
       next
     if (smallsample)
-      ssc <- (n - 1)/n
+      ssc <- (n - 1) / n
     else ssc <- 1
     X <- x[gr, , drop = FALSE]
     freq <- colSums(X > 0)
-    p <- freq[freq > 0]/n
+    p <- freq[freq > 0] / n
     S[is] <- sum(freq > 0)
     if (S[is] == 0)
       next
@@ -530,34 +512,33 @@ specpool <- function (x, pool, smallsample = TRUE)
       a2 <- sum(freq == 2)
     else a2 <- 0
     chao[is] <- S[is] + if (!is.na(a2) && a2 > 0)
-      ssc * a1 * a1/2/a2
-    else ssc * a1 * (a1 - 1)/2
-    jack.1[is] <- S[is] + a1 * (n - 1)/n
+      ssc * a1 * a1 / 2 / a2
+    else ssc * a1 * (a1 - 1) / 2
+    jack.1[is] <- S[is] + a1 * (n - 1) / n
     if (n > 1L)
-      jack.2[is] <- S[is] + a1 * (2 * n - 3)/n - a2 * (n -
-                                                         2)^2/n/(n - 1)
+      jack.2[is] <- S[is] + a1 * (2 * n - 3)/n - a2 * (n - 2)^2 / n / (n - 1)
     else jack.2[is] <- S[is]
     bootS[is] <- S[is] + sum((1 - p)^n)
     aa <- if (!is.na(a2) && a2 > 0)
-      a1/a2
+      a1 / a2
     else 0
     if (!is.na(a2) && a2 > 0)
-      var.chao[is] <- a1 * ssc * (0.5 + ssc * (1 + aa/4) *
+      var.chao[is] <- a1 * ssc * (0.5 + ssc * (1 + aa / 4) *
                                     aa) * aa
-    else var.chao[is] <- ssc * (ssc * (a1 * (2 * a1 - 1)^2/4 -
-                                         a1^4/chao[is]/4) + a1 * (a1 - 1)/2)
+    else var.chao[is] <-
+      ssc * (ssc * (a1 * (2 * a1 - 1)^2 / 4 - a1^4 / chao[is] / 4) +
+               a1 * (a1 - 1) / 2)
     if (!is.na(a1) && a1 > 0) {
       jf <- table(rowSums(X[, freq == 1, drop = FALSE] >
                             0))
       var.jack1[is] <- (sum(as.numeric(names(jf))^2 * jf) -
-                          a1/n) * (n - 1)/n
-    }
-    else {
+                          a1 / n) * (n - 1) / n
+    } else {
       var.jack1[is] <- 0
     }
     pn <- (1 - p)^n
     X <- X[, freq > 0, drop = FALSE]
-    Zp <- (crossprod(X == 0)/n)^n - outer(pn, pn, "*")
+    Zp <- (crossprod(X == 0) / n)^n - outer(pn, pn, "*")
     var.boot[is] <- sum(pn * (1 - pn)) + 2 * sum(Zp[lower.tri(Zp)])
   }
   out <- list(Species = S, chao = chao, chao.se = sqrt(var.chao),
@@ -600,8 +581,7 @@ meters_to_decdeg <- function(occs_df,
                              lat_col = "latitude",
                              lon_col = "longitude",
                              distance,
-                             na_action = "NA as 0")
-{
+                             na_action = "NA as 0") {
   lat <- occs_df[[lat_col]]
   lon <- occs_df[[lon_col]]
   dist <- occs_df[[distance]]
@@ -610,18 +590,18 @@ meters_to_decdeg <- function(occs_df,
   # treat NA as mean dist
   # treat NA as NA
   if (na_action == "NA as 0") {
-    dist <- ifelse (is.na(dist), yes = 0, no = dist )
+    dist <- ifelse(is.na(dist), yes = 0, no = dist)
   } else if (na_action == "NA as mean") {
-    dist <- ifelse (is.na(dist), yes = mean(dist, na.rm = TRUE), no = dist )
+    dist <- ifelse(is.na(dist), yes = mean(dist, na.rm = TRUE), no = dist)
   } else if (na_action == "NA as NA" ) {
-    dist = dist
+    dist <- dist
   } else {
     warning("Incorrect na_action chosen")
     return(0)
   }
 
   #each degree the radius line of the Earth corresponds to 111139 meters.
-  lat_uncertainty <- dist/111325
+  lat_uncertainty <- dist / 111325
   #at the equator, longitude approx equals latitude
   #decrease in a trigonometric cosine-based fashion as one moves toward the
   # earth's poles

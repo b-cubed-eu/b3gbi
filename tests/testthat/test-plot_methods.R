@@ -18,13 +18,15 @@ test_that("plot_map handles input and basic plot creation", {
 
 test_that("plot_map handles custom title", {
   data(example_indicator_map1)
-  p <- suppressWarnings(plot_map(example_indicator_map1, title = "Custom Title"))
+  p <- suppressWarnings(plot_map(example_indicator_map1,
+                                 title = "Custom Title"))
   expect_equal(p$labels$title, "Custom Title")
 })
 
 test_that("plot_map handles custom legend title", {
   data(example_indicator_map1)
-  p <- suppressWarnings(plot_map(example_indicator_map1, legend_title = "Custom Legend"))
+  p <- suppressWarnings(plot_map(example_indicator_map1,
+                                 legend_title = "Custom Legend"))
   expect_equal(p$labels$fill, "Custom\nLegend")
 })
 

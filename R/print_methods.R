@@ -17,16 +17,15 @@ print.indicator_ts <- function(x, n = 10, ...) {
   cat("Biodiversity indicator time series\n\n")
   cat("Name of indicator:", x$div_name, "\n\n")
   cat("Date Range:", x$first_year, "-", x$last_year, "\n\n")
-  if (x$map_region!="unknown") cat("Region(s) represented:",
+  if (x$map_region != "unknown") cat("Region(s) represented:",
                                    x$map_region, "\n\n")
   cat("Coordinate range represented:\n")
   print(x$coord_range)
   cat("\nNumber of species represented:", x$num_species, "\n")
-  if (!is.null(x$num_families)) {cat("Number of families represented:",
-                                     paste(x$num_families, collapse = ", "),
-                                     "\n\n")}
-  if (!is.null(x$kingdoms)) {cat("Kingdoms represented:", x$kingdoms, "\n")}
- # if (!is.null(x$families)) {cat("Families represented:", x$families, "\n")}
+  if (!is.null(x$num_families)) cat("Number of families represented:",
+                                    paste(x$num_families, collapse = ", "),
+                                    "\n\n")
+  if (!is.null(x$kingdoms)) cat("Kingdoms represented:", x$kingdoms, "\n")
   cat("\nFirst", n, "rows of data (use n = to show more):\n\n")
   print(x$data, n = n, ...)
 }
@@ -50,7 +49,7 @@ print.indicator_map <- function(x, n = 10, ...) {
 
   cat("Gridded biodiversity indicator map\n\n")
   cat("Name of Indicator:", x$div_name, "\n\n")
-  if (x$map_level == "continent" | x$map_level == "country") {
+  if (x$map_level == "continent" || x$map_level == "country") {
     cat("Map of", x$map_region, "\n\n")
   } else if (x$map_level == "world") {
     cat("World map\n\n")
@@ -96,7 +95,7 @@ print.processed_cube <- function(x, n = 10, ...) {
   cell_size_units <- stringr::str_extract(x$resolutions,
                                           "(?<=[0-9,.]{1,6})[a-z]*$")
   if (cell_size_units == "km") {
-    res_adjust <- paste(x$resolutions,"^2")
+    res_adjust <- paste(x$resolutions, "^2")
   } else {
     res_adjust <- x$resolutions
   }

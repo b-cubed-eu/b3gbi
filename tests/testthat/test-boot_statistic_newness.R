@@ -56,4 +56,3 @@ test_that("boot_statistic_newness handles NA values", {
   result <- boot_statistic_newness(data, indices)
   expect_equal(result, round(mean(data, na.rm = TRUE)))
 })
-

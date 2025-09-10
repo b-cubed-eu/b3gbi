@@ -42,7 +42,7 @@ plot.occ_by_dataset <- function(x,
                                 facet_label_width = 60,
                                 max_datasets = 20,
                                 min_occurrences = NULL,
-                                ...){
+                                ...) {
 
   stopifnot_error(
     "Incorrect object class. Must be class 'occ_by_dataset'.",
@@ -140,7 +140,7 @@ plot.occ_by_type <- function(x,
                              facet_rows = NULL,
                              facet_cols = NULL,
                              facet_label_width = 60,
-                             ...){
+                             ...) {
 
   stopifnot_error(
     "Incorrect object class. Must be class 'occ_by_type'.",
@@ -274,7 +274,7 @@ plot.spec_occ <- function(x, ...) {
 #' @export
 plot.cum_richness <- function(x,
                               envelopecolour = NULL,
-                              ...){
+                              ...) {
 
   stopifnot_error(
     "Incorrect object class. Must be class 'cum_richness'.",
@@ -303,7 +303,7 @@ plot.cum_richness <- function(x,
 
 
 #' @export
-plot.pielou_evenness <- function(x, ...){
+plot.pielou_evenness <- function(x, ...) {
 
   stopifnot_error(
     "Incorrect object class. Must be class 'pielou_evenness'.",
@@ -345,7 +345,7 @@ plot.pielou_evenness <- function(x, ...){
 
 
 #' @export
-plot.williams_evenness <- function(x, ...){
+plot.williams_evenness <- function(x, ...) {
 
   stopifnot_error(
     "Incorrect object class. Must be class 'williams_evenness'.",
@@ -387,7 +387,7 @@ plot.williams_evenness <- function(x, ...){
 
 
 #' @export
-plot.tax_distinct <- function(x, ...){
+plot.tax_distinct <- function(x, ...) {
 
   stopifnot_error(
     "Incorrect object class. Must be class 'tax_distinct'.",
@@ -429,7 +429,7 @@ plot.tax_distinct <- function(x, ...){
 
 
 #' @export
-plot.occ_density <- function(x, ...){
+plot.occ_density <- function(x, ...) {
 
   stopifnot_error(
     "Incorrect object class. Must be class 'occ_density'.",
@@ -470,7 +470,7 @@ plot.occ_density <- function(x, ...){
 }
 
 #' @export
-plot.newness <- function(x, ...){
+plot.newness <- function(x, ...) {
 
   stopifnot_error(
     "Incorrect object class. Must be class 'newness'.", inherits(x, "newness")
@@ -509,7 +509,7 @@ plot.newness <- function(x, ...){
 
 
 #' @export
-plot.total_occ <- function(x, ...){
+plot.total_occ <- function(x, ...) {
 
   stopifnot_error(
     "Incorrect object class. Must be class 'total_occ'.",
@@ -550,7 +550,7 @@ plot.total_occ <- function(x, ...){
 }
 
 #' @export
-plot.area_rarity <- function(x, ...){
+plot.area_rarity <- function(x, ...) {
 
   stopifnot_error(
     "Incorrect object class. Must be class 'area_rarity'.",
@@ -591,7 +591,7 @@ plot.area_rarity <- function(x, ...){
 }
 
 #' @export
-plot.ab_rarity <- function(x, ...){
+plot.ab_rarity <- function(x, ...) {
 
   stopifnot_error(
     "Incorrect object class. Must be class 'ab_rarity'.",
@@ -632,7 +632,7 @@ plot.ab_rarity <- function(x, ...){
 }
 
 #' @noRd
-plot.rarefied <- function(x, ...){
+plot.rarefied <- function(x, ...) {
 
   stopifnot_error(
     "Incorrect object class. Must be class 'rarefied'.",
@@ -676,7 +676,7 @@ plot.rarefied <- function(x, ...){
 }
 
 #' @export
-plot.hill2 <- function(x, ...){
+plot.hill2 <- function(x, ...) {
 
   stopifnot_error(
     "Incorrect object class. Must be class 'hill2'.", inherits(x, "hill2")
@@ -718,7 +718,7 @@ plot.hill2 <- function(x, ...){
 }
 
 #' @export
-plot.hill1 <- function(x, ...){
+plot.hill1 <- function(x, ...) {
 
   stopifnot_error(
     "Incorrect object class. Must be class 'hill1'.", inherits(x, "hill1")
@@ -760,7 +760,7 @@ plot.hill1 <- function(x, ...){
 }
 
 #' @export
-plot.hill0 <- function(x, ...){
+plot.hill0 <- function(x, ...) {
 
   stopifnot_error(
     "Incorrect object class. Must be class 'hill0'.", inherits(x, "hill0")
@@ -801,7 +801,7 @@ plot.hill0 <- function(x, ...){
 }
 
 #' @export
-plot.obs_richness <- function(x, ...){
+plot.obs_richness <- function(x, ...) {
 
   stopifnot_error(
     "Incorrect object class. Must be class 'obs_richness'.",
@@ -844,7 +844,7 @@ plot.obs_richness <- function(x, ...){
 #' @export
 plot.occ_turnover <- function(x,
                               auccolour = NULL,
-                              ...){
+                              ...) {
 
   stopifnot_error(
     "Incorrect object class. Must be class 'occ_turnover'.",
@@ -944,7 +944,7 @@ plot_map <- function(x,
 ) {
 
   # Set variable definitions to NULL where required
-  diversity_val <- geometry <- scalerank <- featurecla <- NULL
+  diversity_val <- geometry <- NULL
 
   # Check that object to plot is the correct class
   if (!inherits(x, "indicator_map")) {
@@ -1071,17 +1071,18 @@ plot_map <- function(x,
     theme_bw() +
     theme(
       panel.background = element_rect(fill = dplyr::coalesce(panel_bg,
-                                                             "#92c5f0")),
-      if(x$map_level == "country") {
-        panel.grid.major = element_blank()
-        panel.grid.minor = element_blank()
-      }
+                                                             "#92c5f0"))
     ) +
     # Wrap legend title if longer than user-specified wrap length
-    labs(fill = if(!is.null(legend_title)) wrapper(legend_title,
-                                                   legend_title_wrap_length)
-         else wrapper(leg_label_default,
-                      legend_title_wrap_length))
+    labs(fill = if (!is.null(legend_title)) wrapper(legend_title,
+                                                    legend_title_wrap_length)
+         else wrapper(leg_label_default, legend_title_wrap_length)) +
+    if (x$map_level == "country") {
+      theme(
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank()
+      )
+    }
 
   # Step 5: Re-create lines from layers
   # This ensures that indicator values are plotted on top of layer fill (e.g.,
@@ -1121,7 +1122,7 @@ plot_map <- function(x,
       expand = expand_val)
 
   # Step 8: Wrap title if longer than user-specified wrap length
-  if(!is.null(title)) {
+  if (!is.null(title)) {
     diversity_plot <-
       diversity_plot +
       labs(title = wrapper(title, title_wrap_length))
@@ -1156,7 +1157,8 @@ plot_map <- function(x,
 #' @param linealpha (Optional) Transparency for indicator line or points.
 #'  Default is 0.8.
 #' @param ribboncolour (Optional) Colour for the bootstrapped confidence
-#'  intervals. Default is goldenrod1. Set to "NA" if you don't want to plot the CIs.
+#'  intervals. Default is goldenrod1. Set to "NA" if you don't want to plot the
+#'  CIs.
 #' @param ribbonalpha (Optional) Transparency for indicator confidence interval
 #'  ribbon (if ci_type = "ribbon"). Default is 0.2.
 #' @param error_alpha (Optional) Transparency for indicator error bars (if
@@ -1312,28 +1314,28 @@ plot_ts <- function(x,
                      "-",
                      max_year,
                      ")",
-                     sep="")
+                     sep = "")
     }
   }
 
   # Set some defaults for plotting
 
   # Set colours
-  if (is.null(linecolour)) linecolour = "darkorange"
-  if (is.null(ribboncolour)) ribboncolour = "goldenrod1"
-  if (is.null(trendlinecolour)) trendlinecolour = "blue"
-  if (is.null(envelopecolour)) envelopecolour = "lightsteelblue1"
+  if (is.null(linecolour)) linecolour <- "darkorange"
+  if (is.null(ribboncolour)) ribboncolour <- "goldenrod1"
+  if (is.null(trendlinecolour)) trendlinecolour <- "blue"
+  if (is.null(envelopecolour)) envelopecolour <- "lightsteelblue1"
 
   # Set axis titles
-  if (is.null(x_label)) x_label = "Year"
-  if (is.null(y_label)) y_label = y_label_default
+  if (is.null(x_label)) x_label <- "Year"
+  if (is.null(y_label)) y_label <- y_label_default
 
   # Set axis limits
-  if (is.null(x_expand)) x_expand = c(0, 0)
-  if (is.null(y_expand)) y_expand = c(0, 0)
+  if (is.null(x_expand)) x_expand <- c(0, 0)
+  if (is.null(y_expand)) y_expand <- c(0, 0)
 
   # Adjust error bar width according to number of years being plotted
-  error_width = (error_width * (max_year - min_year)) / 100
+  error_width <- (error_width * (max_year - min_year)) / 100
 
   if ("ll" %in% colnames(x$data) && "ul" %in% colnames(x$data)) {
 
@@ -1342,9 +1344,6 @@ plot_ts <- function(x,
     x$data$ul <- ifelse(is.na(x$data$ul), x$data$diversity_val, x$data$ul)
 
   }
-
-  # Convert years to factor
- # x$data$year <- as.factor(x$data$year)
 
   # Create basis of plot
   trend_plot <-
@@ -1445,7 +1444,7 @@ plot_ts <- function(x,
     )
 
   # Wrap title if longer than wrap_length
-  if(!is.null(title)) {
+  if (!is.null(title)) {
     trend_plot <-
       trend_plot +
       labs(title = wrapper(title, wrap_length))
@@ -1486,7 +1485,8 @@ plot_ts <- function(x,
 #' @param linealpha (Optional) Transparency for indicator line or points.
 #'  Default is 0.8.
 #' @param ribboncolour (Optional) Colour for the bootstrapped confidence
-#'  intervals. Default is goldenrod1. Set to "NA" if you don't want to plot the CIs.
+#'  intervals. Default is goldenrod1. Set to "NA" if you don't want to plot the
+#'  CIs.
 #' @param ribbonalpha (Optional) Transparency for indicator confidence interval
 #'  ribbon (if ci_type = "ribbon"). Default is 0.2.
 #' @param error_alpha (Optional) Transparency for indicator error bars (if
@@ -1601,7 +1601,7 @@ plot_species_ts <- function(x,
                             wrap_length = 60
                             ) {
 
-  year <- taxonKey <- . <- scientificName <- ll <- ul <- diversity_val <- NULL
+  year <- ll <- ul <- diversity_val <- NULL
 
   point_line <- match.arg(point_line)
   ci_type <- match.arg(ci_type)
@@ -1623,7 +1623,9 @@ plot_species_ts <- function(x,
         dplyr::filter(year <= max_year)
 
       if (length(x$data$year) < 1) {
-        stop("No data available for the selected years. Please check your input.")
+        stop(
+          "No data available for the selected years. Please check your input."
+        )
       }
   } else {
     min_year <- x$first_year
@@ -1633,7 +1635,10 @@ plot_species_ts <- function(x,
 
   if (is.null(species)) {
 
-    stop("Please enter either the species names or the numeric taxonKeys for the species you want to plot.")
+    stop(paste0(
+      "Please enter either the species names or the numeric taxonKeys for the ",
+      "species you want to plot."
+    ))
 
   } else if (is.numeric(species)) {
 
@@ -1660,31 +1665,31 @@ plot_species_ts <- function(x,
                      "-",
                      max_year,
                      ")",
-                     sep="")
+                     sep = "")
     }
   }
 
   # Set some defaults for plotting
 
   # Set colours
-  if (is.null(linecolour)) linecolour = "darkorange"
-  if (is.null(ribboncolour)) ribboncolour = "goldenrod1"
-  if (is.null(trendlinecolour)) trendlinecolour = "blue"
-  if (is.null(envelopecolour)) envelopecolour = "lightsteelblue1"
+  if (is.null(linecolour)) linecolour <- "darkorange"
+  if (is.null(ribboncolour)) ribboncolour <- "goldenrod1"
+  if (is.null(trendlinecolour)) trendlinecolour <- "blue"
+  if (is.null(envelopecolour)) envelopecolour <- "lightsteelblue1"
 
   # Set axis titles
-  if (is.null(x_label)) x_label = "Year"
-  if (is.null(y_label)) y_label = y_label_default
+  if (is.null(x_label)) x_label <- "Year"
+  if (is.null(y_label)) y_label <- y_label_default
 
   # Set axis limits
-  if (is.null(x_expand)) x_expand = c(0, 0)
-  if (is.null(y_expand)) y_expand = c(0, 0)
+  if (is.null(x_expand)) x_expand <- c(0, 0)
+  if (is.null(y_expand)) y_expand <- c(0, 0)
 
   # Adjust error bar width according to number of years being plotted
-  error_width = (error_width * (max_year - min_year)) / 100
+  error_width <- (error_width * (max_year - min_year)) / 100
 
   # Create bootstrapped confidence intervals if columns present
-  if ("ll" %in% colnames(x$data) & "ul" %in% colnames(x$data)) {
+  if ("ll" %in% colnames(x$data) && "ul" %in% colnames(x$data)) {
 
     # Remove NAs from CIs
     x$data$ll <- ifelse(is.na(x$data$ll), x$data$diversity_val, x$data$ll)
@@ -1800,7 +1805,7 @@ plot_species_ts <- function(x,
                             element_line()
                           },
                           panel.grid.minor = element_blank(),
-                          axis.text.y = if (suppress_y==TRUE) {
+                          axis.text.y = if (suppress_y == TRUE) {
                             element_blank()
                           } else {
                             element_text()
@@ -1824,7 +1829,10 @@ plot_species_ts <- function(x,
       plot_annotation_int(title = title,
                           theme = theme(plot.title = element_text(size = 20)))
   } else if (length(trend_plot) > 1 && single_plot == FALSE) {
-    cat("Option single_plot set to false. Creating separate plot for each species.\n\n")
+    message(paste0(
+      "Option single_plot set to false. Creating separate plot for each ",
+      "species.\n\n"
+    ))
   }
 
   return(trend_plot)
@@ -1914,10 +1922,9 @@ plot_species_map <- function(x,
                              spec_name_wrap_length = 40,
                              visible_gridlines = TRUE,
                              layers = NULL,
-                             scale = "medium"
-) {
+                             scale = "medium") {
 
-  taxonKey <- . <- scientificName <- geometry <- diversity_val <- NULL
+  geometry <- diversity_val <- NULL
 
   if (!inherits(x, "indicator_map")) {
     stop("Incorrect object class. Must be class 'indicator_map'.")
@@ -1956,7 +1963,7 @@ plot_species_map <- function(x,
   map_lims <- x$coord_range
 
   if (!is.null(xlims)) {
-    if (is.vector(xlims) && length(xlims)==2) {
+    if (is.vector(xlims) && length(xlims) == 2) {
       map_lims["xmin"] <- xlims[1]
       map_lims["xmax"] <- xlims[2]
     } else {
@@ -1965,7 +1972,7 @@ plot_species_map <- function(x,
   }
 
   if (!is.null(ylims)) {
-    if (is.vector(ylims) && length(ylims)==2) {
+    if (is.vector(ylims) && length(ylims) == 2) {
       map_lims["ymin"] <- ylims[1]
       map_lims["ymax"] <- ylims[2]
     } else {
@@ -2057,20 +2064,25 @@ plot_species_map <- function(x,
         theme(
           panel.background = element_rect(fill = dplyr::coalesce(panel_bg,
                                                                  "#92c5f0")),
-          if(x$map_level == "country") {
-            panel.grid.major = element_blank()
-            panel.grid.minor = element_blank()
-          },
           legend.text = element_text(),
           strip.text = element_text(face = "italic"),
           plot.title = element_text(face = "italic")
         ) +
         labs(title = wrapper(sci_names[[i]], spec_name_wrap_length),
-             fill = if(!is.null(legend_title)) wrapper(legend_title,
-                                                       legend_title_wrap_length)
-             else wrapper(leg_label_default, legend_title_wrap_length)) +
-        if(suppress_legend == TRUE) {
+             fill = if (!is.null(legend_title)) {
+               wrapper(legend_title, legend_title_wrap_length)
+             } else {
+               wrapper(leg_label_default, legend_title_wrap_length)
+             }
+        ) +
+        if (suppress_legend == TRUE) {
           theme(legend.position = "none")
+        } +
+        if (x$map_level == "country") {
+          theme(
+            panel.grid.major = element_blank(),
+            panel.grid.minor = element_blank()
+          )
         }
 
       for (j in names(layer_list)) {
@@ -2118,7 +2130,10 @@ plot_species_map <- function(x,
       plot_annotation_int(title = wrapper(title, title_wrap_length),
                           theme = theme(plot.title = element_text(size = 20)))
   } else if (length(diversity_plot) > 1 && single_plot == FALSE) {
-    cat("Option single_plot set to false. Creating separate plot for each species.\n\n")
+    message(paste0(
+      "Option single_plot set to false. Creating separate plot for each ",
+      "species.\n\n"
+    ))
   }
 
   # Exit function

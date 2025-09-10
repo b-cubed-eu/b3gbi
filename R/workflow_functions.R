@@ -36,7 +36,7 @@ get_NE_data <- function(projected_crs,
                         buffer_dist_km = NULL
                         ) {
 
-  scalerank <- featurecla <- geometry <- x <- . <- NULL
+  x <- . <- NULL
 
   if (ne_scale == "large" && ne_type == "tiny_countries") {
     stop("tiny_countries are only available for medium (50 km) or small (110 km)
@@ -170,7 +170,6 @@ get_NE_data <- function(projected_crs,
         map_data_projected <- map_data_ocean
       } else {
         # Otherwise, perform the union as normal
-        #map_data_projected <- sf::st_union(map_data_projected, map_data_ocean)
         map_data_ocean_ <- sf::st_as_sf(map_data_ocean)
         map_data_projected <- bind_rows(map_data_projected,
                                                map_data_ocean_)
@@ -181,9 +180,6 @@ get_NE_data <- function(projected_crs,
           sf::st_as_sf()
 
       }
-
-      # Merge the land with the oceans
-    #  map_data_projected <- sf::st_union(map_data_projected, map_data_ocean)
 
     } else if (is.character(include_ocean) &&
                include_ocean == "buffered_coast") {
@@ -270,7 +266,7 @@ create_grid <- function(bbox,
     dplyr::mutate(cellid = dplyr::row_number())
 
   # Validate grid if make_valid set to TRUE
-  if (make_valid==TRUE) {
+  if (make_valid == TRUE) {
     grid <- sf::st_make_valid(grid)
   }
 
@@ -420,10 +416,6 @@ compute_indicator_workflow <- function(data,
                     inherits(data, "processed_cube_dsinfo") |
                     inherits(data, "sim_cube"))
 
-  available_indicators <- NULL; rm(available_indicators)
-
-  geometry <- area <- cellid <- NULL
-
   # Check for empty cube
   if (nrow(data$data) == 0) {
     stop("No data found in the cube.")
@@ -460,7 +452,7 @@ compute_indicator_workflow <- function(data,
   # Check that user is not trying to calculate an indicator that requires grid
   # cell assignment with a cube that lacks a supported grid system.
   if (!data$grid_type %in% c("eea", "mgrs", "eqdgc")) {
-    if (dim_type=="map") {
+    if (dim_type == "map") {
       stop(
         paste0(
           "Grid system is either unsupported or missing. Spatial ",
@@ -525,7 +517,7 @@ compute_indicator_workflow <- function(data,
   }
   # Filter years
   df <- data$data[(data$data$year >= first_year) &
-                    (data$data$year <= last_year),]
+                    (data$data$year <= last_year), ]
 
   # Collect information to add to final object
   num_species <- data$num_species
@@ -608,7 +600,7 @@ compute_indicator_workflow <- function(data,
       stop("Grid reference system not found.")
     }
 
-    if (spherical_geometry==FALSE){
+    if (spherical_geometry == FALSE) {
       # Temporarily disable spherical geometry
       sf::sf_use_s2(FALSE)
     }
@@ -641,17 +633,6 @@ compute_indicator_workflow <- function(data,
 
     # # Get units based on CRS
     output_units <- check_crs_units(output_crs)
-
-    # Get current cell size
-    if (stringr::str_detect(data$resolution, "degrees")) {
-      input_cell_size <- as.numeric(stringr::str_extract(data$resolution,
-                                                         "[0-9.]+(?=degrees)"))
-    } else if (stringr::str_detect(data$resolution, "km")) {
-      input_cell_size <- as.numeric(stringr::str_extract(data$resolution,
-                                                         "[0-9.]+(?=km)"))
-    } else {
-      stop("Resolution units not recognized. Must be km or degrees.")
-    }
 
     # Get cube area
     cube_area_sqkm <-
@@ -896,11 +877,11 @@ compute_indicator_workflow <- function(data,
     indicator <- calc_ts(data_final_nogeom, ...)
 
     # Calculate confidence intervals
-    if (ci_type!="none") {
+    if (ci_type != "none") {
       if (!type %in% noci_list) {
         indicator <- calc_ci(data_final_nogeom,
                              indicator = indicator,
-                             num_bootstrap=num_bootstrap,
+                             num_bootstrap = num_bootstrap,
                              ci_type = ci_type,
                              ...)
       } else {
@@ -916,7 +897,7 @@ compute_indicator_workflow <- function(data,
     }
   }
 
-  if (spherical_geometry==FALSE) {
+  if (spherical_geometry == FALSE) {
     # restore the original spherical geometry setting
     sf::sf_use_s2(original_s2_setting)
   }

@@ -67,8 +67,8 @@ prepare_map_data <- function(data,
         sf::st_transform(crs = sf::st_crs(expanded_latlong_bbox))
 
       layer_list <- list()
-      if(!is.null(layers)) {
-        for (i in 1:length(layers)) {
+      if (!is.null(layers)) {
+        for (i in seq_along(layers)) {
           layer_data <- add_ne_layer(layers[i],
                                      scale,
                                      expanded_latlong_bbox)
@@ -101,7 +101,7 @@ prepare_map_data <- function(data,
 
       layer_list <- list()
       if (!is.null(layers)) {
-        for (i in 1:length(layers)) {
+        for (i in seq_along(layers)) {
           layer_data <- add_ne_layer(layers[i],
                                      scale,
                                      latlong_extent)
@@ -155,7 +155,7 @@ prepare_map_data <- function(data,
 
       layer_list <- list()
       if (!is.null(layers)) {
-        for (i in 1:length(layers)) {
+        for (i in seq_along(layers)) {
           layer_data <- add_ne_layer(layers[i],
                                      scale,
                                      bbox_lims)
@@ -167,7 +167,7 @@ prepare_map_data <- function(data,
         }
       }
 
-    sf::st_agr(map_surround) = "constant"
+    sf::st_agr(map_surround) <- "constant"
     bbox_t <- sf::st_transform(bbox, crs = "ESRI:54012")
 
     map_surround <- sf::st_transform(map_surround, crs = "ESRI:54012") %>%

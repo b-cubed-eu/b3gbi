@@ -520,15 +520,11 @@ test_that("calc_ts.tax_distinct calculates correctly", {
 
 test_that("calc_ts.tax_distinct handles missing taxize package", {
   with_mocked_bindings(
-    my_classification = function(...) stop(
-      "Please install the taxize package to use this function."
-      ),
-
-    {
-      expect_error(calc_ts.tax_distinct(mock_tax_distinct),
-                   "Please install the taxize package")
-    }
-  )
+    my_classification = function(...) {
+      stop("Please install the taxize package to use this function.")
+    },
+    expect_error(calc_ts.tax_distinct(mock_tax_distinct),
+                 "Please install the taxize package"))
 })
 
 test_that("calc_ts.tax_distinct throws error on wrong class", {
@@ -565,7 +561,8 @@ mock_occ_turnover_data <- data.frame(
 )
 
 # Adding the required class
-mock_occ_turnover <- structure(mock_occ_turnover_data, class = c("occ_turnover", "data.frame"))
+mock_occ_turnover <- structure(mock_occ_turnover_data,
+                               class = c("occ_turnover", "data.frame"))
 
 # Mock list_org_by_year's functionality
 list_org_by_year <- function(data, var) {
@@ -626,8 +623,10 @@ mock_evenness_data <- data.frame(
 )
 
 # Create mock input with the appropriate class
-mock_williams_evenness <- structure(mock_evenness_data, class = c("williams_evenness", "data.frame"))
-mock_pielou_evenness <- structure(mock_evenness_data, class = c("pielou_evenness", "data.frame"))
+mock_williams_evenness <-
+  structure(mock_evenness_data, class = c("williams_evenness", "data.frame"))
+mock_pielou_evenness <-
+  structure(mock_evenness_data, class = c("pielou_evenness", "data.frame"))
 
 test_that("calc_ts.williams_evenness calculates correctly", {
   # Mock the function to return a fixed value
@@ -643,14 +642,16 @@ test_that("calc_ts.williams_evenness calculates correctly", {
   # Expected output should reflect the mocked return value
   expected_result <- data.frame(
     year = c(2001, 2002, 2003),
-    diversity_val = c(0.5, 0.5, 0.5)  # All years should have the identical mocked evenness value
+    diversity_val = c(0.5, 0.5, 0.5)
   )
 
   expect_equal(result, expected_result)
 })
 
 test_that("calc_ts.williams_evenness throws error on wrong class", {
-  mock_invalid_input <- data.frame(year = c(2001, 2002), taxonKey = c(1, 2), obs = c(10, 20))
+  mock_invalid_input <- data.frame(year = c(2001, 2002),
+                                   taxonKey = c(1, 2),
+                                   obs = c(10, 20))
 
   expect_error(
     calc_ts.williams_evenness(mock_invalid_input),
@@ -709,7 +710,9 @@ test_that("calc_ts.pielou_evenness handles empty input gracefully", {
 })
 
 test_that("calc_ts.pielou_evenness throws error on wrong class", {
-  mock_invalid_input <- data.frame(year = c(2001, 2002), taxonKey = c(1, 2), obs = c(10, 20))
+  mock_invalid_input <- data.frame(year = c(2001, 2002),
+                                   taxonKey = c(1, 2),
+                                   obs = c(10, 20))
 
   expect_error(
     calc_ts.pielou_evenness(mock_invalid_input),
@@ -718,7 +721,10 @@ test_that("calc_ts.pielou_evenness throws error on wrong class", {
 })
 
 test_that("calc_ts_evenness_core handles empty input", {
-  empty_input <- structure(data.frame(year = integer(), taxonKey = integer(), obs = integer()), class = c("data.frame", "sf"))
+  empty_input <- structure(data.frame(year = integer(),
+                                      taxonKey = integer(),
+                                      obs = integer()),
+                           class = c("data.frame", "sf"))
 
   expected_result <- tibble::tibble(
     year = integer(),

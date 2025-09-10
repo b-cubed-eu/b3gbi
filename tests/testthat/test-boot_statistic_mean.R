@@ -1,6 +1,6 @@
 test_that("boot_statistic_mean calculates the correct mean", {
   data <- 1:5
-  indices <- c(1,3,5)
+  indices <- c(1, 3, 5)
   result <- boot_statistic_mean(data, indices)
   expect_equal(result, mean(data[indices]))
 })
@@ -32,7 +32,7 @@ test_that("boot_statistic_mean handles edge cases", {
 })
 
 test_that("boot_statistic_mean handles NA values", {
-  data <- c(1,2,NA,4,5)
+  data <- c(1, 2, NA, 4, 5)
   indices <- 1:5
   result <- boot_statistic_mean(data, indices)
   expect_equal(result, mean(data, na.rm = TRUE))
