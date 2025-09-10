@@ -81,7 +81,8 @@ Default is darkorange.}
 Default is 0.8.}
 
 \item{ribboncolour}{(Optional) Colour for the bootstrapped confidence
-intervals. Default is goldenrod1. Set to "NA" if you don't want to plot the CIs.}
+intervals. Default is goldenrod1. Set to "NA" if you don't want to plot the
+CIs.}
 
 \item{ribbonalpha}{(Optional) Transparency for indicator confidence interval
 ribbon (if ci_type = "ribbon"). Default is 0.2.}
