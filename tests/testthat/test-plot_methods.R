@@ -575,6 +575,12 @@ test_that("plot_species_ts applies custom aesthetics correctly", {
   expect_equal(point_geom$aes_params$size, 4)
 })
 
+spec_occ_mammals_denmark_ts_ci <- spec_occ_ts(example_cube_1,
+                                           level = "country",
+                                           region = "Denmark",
+                                           ci_type = "norm",
+                                           num_bootstrap = 20)
+
 test_that("plot_species_ts manages trends and confidence intervals", {
   # Verify presence of smoothed trend
   p1 <- plot_species_ts(spec_occ_mammals_denmark_ts,
@@ -587,7 +593,7 @@ test_that("plot_species_ts manages trends and confidence intervals", {
   expect_true(is_smooth_present)
 
   # Test for confidence interval presence
-  p2 <- plot_species_ts(spec_occ_mammals_denmark_ts,
+  p2 <- plot_species_ts(spec_occ_mammals_denmark_ts_ci,
                         species = 4265185,
                         ci_type = "ribbon")
   is_ribbon_present <- any(sapply(p2$layers, function(layer) {
