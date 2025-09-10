@@ -1649,7 +1649,7 @@ plot_species_ts <- function(x,
 
   sci_names <-
     split_so %>%
-    purrr::map(~unique(.$scientificName))
+    purrr::map(function(x) unique(x$scientificName))
 
   # Create plot title if title is set to "auto"
   if (!is.null(title)) {
