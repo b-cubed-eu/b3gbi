@@ -19,10 +19,8 @@ get_occurrences_and_split <- function(data, filter_type, species) {
     grepl(regex, string)
   }
 
-  split_by_column <- function(data, col)
-  {
-    data %>%
-      dplyr::group_split({{ col }})
+  split_by_column <- function(data, col) {
+    data %>% dplyr::group_split({{ col }})
   }
 
   if (filter_type == "taxonKey") {
