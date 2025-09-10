@@ -1,6 +1,6 @@
 #' @export
 #' @rdname calc_ts
-calc_ts.default <- function(x, ...){
+calc_ts.default <- function(x, ...) {
 
   warning(paste0(
       "calc_ts does not know how to handle object of class ", class(x),
@@ -64,8 +64,8 @@ calc_ts_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
                   inherits(x, c("data.frame", "sf")) &
                     rlang::inherits_any(x, c("hill0", "hill1", "hill2")))
 
-  scientificName <- year <- obs <- cellCode <- variable <- value <- NULL
-  rowname <- Assemblage <- qD <- SC <- Order.q <- qD.LCL <- qD.UCL <- NULL
+  scientificName <- year <- obs <- cellCode <- Assemblage <- qD <- SC <-
+    Order.q <- qD.LCL <- qD.UCL <- NULL
 
   type <- match.arg(type)
 
@@ -286,8 +286,6 @@ calc_ts_evenness_core <- function(x, type, ...) {
                   internal function, not meant to be called directly.",
                   inherits(x, c("data.frame", "sf")))
 
- # available_indicators <- NULL; rm(available_indicators)
-
   num_occ <- obs <- year <- taxonKey <- NULL
 
   type <- match.arg(type, names(available_indicators))
@@ -310,7 +308,7 @@ calc_ts_evenness_core <- function(x, type, ...) {
   # Apply evenness formula and format result as a data frame
   indicator <- x %>%
     purrr::map(function(y) {
-      compute_evenness_formula(y ,type)
+      compute_evenness_formula(y, type)
     }) %>%
     unlist() %>%
     as.data.frame() %>%
@@ -329,7 +327,7 @@ calc_ts.ab_rarity <- function(x, ...) {
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.", inherits(x, "ab_rarity"))
 
-  obs <- taxonKey <- records_taxon <- year <- rarity <- diversity_val <- NULL
+  obs <- taxonKey <- records_taxon <- year <- rarity <- NULL
 
   total_obs <- sum(x$obs)
 
@@ -403,7 +401,7 @@ calc_ts.spec_range <- function(x, ...) {
                   meant to be called directly.",
                   inherits(x, "spec_range"))
 
-  year <- taxonKey <- cellCode <- obs <- diversity_val <- scientificName <- NULL
+  year <- taxonKey <- obs <- diversity_val <- scientificName <- NULL
 
   # Flatten occurrences for each species by year
   indicator <- x %>%

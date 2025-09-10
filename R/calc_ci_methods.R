@@ -461,7 +461,7 @@ calc_ci.area_rarity <- function(x,
                   meant to be called directly.",
                   inherits(x, "area_rarity"))
 
-  year <- cellid <- taxonKey <- rec_tax_cell <- rarity <- diversity_val <- NULL
+  year <- cellid <- taxonKey <- rec_tax_cell <- rarity <- NULL
 
   # Calculate rarity for each cell each year
   x <- x %>%
