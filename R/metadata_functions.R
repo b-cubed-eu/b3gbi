@@ -8,7 +8,6 @@
 #' @return A character string containing the full descriptive name of the
 #'  biodiversity indicator. Returns an error if the specified indicator class
 #'  is not found.
-#' @importFrom b3gbi available_indicators
 #' @noRd
 get_indicator_name <- function(x) {
 
@@ -39,7 +38,6 @@ get_indicator_name <- function(x) {
 #'  (e.g., "obs_richness", "hill1", "cum_richness").
 #' @return A character string containing the legend title. Throws an error if
 #'  the specified indicator class is not found.
-#' @importFrom b3gbi available_indicators
 #' @noRd
 get_legend_title <- function(x) {
 
@@ -91,10 +89,10 @@ get_observed_years <- function(x) {
   }
 
   observed <- ifelse(years %in% obs, TRUE, FALSE)
-  data.frame("years" = years,
-             "occurrences" = observed)
+  df <- data.frame("years" = years,
+                   "occurrences" = observed)
 
-  return
+  return(df)
 
 }
 
