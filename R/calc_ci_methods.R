@@ -353,7 +353,6 @@ calc_ci.pielou_evenness <- function(x,
 #'  calculate. (Default: "norm". Select "none" to avoid calculating bootstrap
 #'  CIs.)
 #' @param ... Additional arguments
-#' @importFrom b3gbi available_indicators
 #' @noRd
 calc_ci_evenness_core <- function(x,
                                   type,

@@ -7,7 +7,6 @@ load_registered_indicators <- function() {
 }
 
 # Function to backup the available_indicators.rda file as .rda.old
-#' @importFrom b3gbi available_indicators
 #' @noRd
 backup_registered_indicators <- function(suppress_prompt = "FALSE") {
 
@@ -56,7 +55,6 @@ backup_registered_indicators <- function(suppress_prompt = "FALSE") {
 }
 
 # Function to empty indicator registry and start from scratch
-#' @importFrom b3gbi available_indicators
 #' @noRd
 reset_indicator_registry <- function() {
 
@@ -78,7 +76,6 @@ reset_indicator_registry <- function() {
 }
 
 # Function to register indicators
-#' @importFrom b3gbi available_indicators
 #' @noRd
 register_indicator <- function(indicator_class,
                                indicator_name,
@@ -235,7 +232,6 @@ register_indicator <- function(indicator_class,
 }
 
 # Function to remove a registered indicator
-#' @importFrom b3gbi available_indicators
 #' @noRd
 deregister_indicator <- function(indicator_number, backup = TRUE) {
 

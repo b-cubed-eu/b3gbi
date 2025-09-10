@@ -267,7 +267,6 @@ calc_map.pielou_evenness <- function(x, ...) {
 
 }
 
-#' @importFrom b3gbi available_indicators
 #' @noRd
 calc_map_evenness_core <- function(x,
                                    type,

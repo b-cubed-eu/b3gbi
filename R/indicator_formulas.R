@@ -1,4 +1,3 @@
-#' @importFrom b3gbi available_indicators
 #' @noRd
 compute_evenness_formula <- function(x, type) {
 

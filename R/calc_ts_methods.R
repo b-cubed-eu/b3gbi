@@ -285,7 +285,6 @@ calc_ts.pielou_evenness <- function(x, ...) {
 
 }
 
-#' @importFrom b3gbi available_indicators
 #' @noRd
 calc_ts_evenness_core <- function(x, type, ...) {
 
