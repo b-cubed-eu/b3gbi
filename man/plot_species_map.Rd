@@ -32,24 +32,24 @@ plot_species_map(
 )
 }
 \arguments{
-\item{x}{An 'indicator_map' object containing indicator values associated with
-map grid cells.}
+\item{x}{An 'indicator_map' object containing indicator values associated
+with map grid cells.}
 
-\item{species}{Species you want to map occurrences for. Can be either numerical
-taxonKeys or species names. Partial species names can be used (the function
-will try to match them).}
+\item{species}{Species you want to map occurrences for. Can be either
+numerical taxonKeys or species names. Partial species names can be used
+(the function will try to match them).}
 
-\item{title}{(Optional) Plot title. Replace "auto" with your own title if you want a
-custom title or if calling the function manually.}
+\item{title}{(Optional) Plot title. Replace "auto" with your own title if you
+want a custom title or if calling the function manually.}
 
-\item{auto_title}{(Optional) Text for automatic title generation, provided by an
-appropriate S3 method (if calling the function manually, leave as NULL).}
+\item{auto_title}{(Optional) Text for automatic title generation, provided by
+an appropriate S3 method (if calling the function manually, leave as NULL).}
 
-\item{leg_label_default}{(Optional) Default label for the legend, provided by an
-appropriate S3 method (if calling the function manually, leave as NULL).}
+\item{leg_label_default}{(Optional) Default label for the legend, provided by
+an appropriate S3 method (if calling the function manually, leave as NULL).}
 
-\item{suppress_legend}{(Optional) Do not show legend. This should be set to true when
-plotting species ranges, as all cell values are 1.}
+\item{suppress_legend}{(Optional) Do not show legend. This should be set to
+true when plotting species ranges, as all cell values are 1.}
 
 \item{xlims}{(Optional) Custom x-axis limits.}
 
@@ -65,40 +65,47 @@ Yeo-Johnson transformations.}
 
 \item{labels}{(Optional) Labels for legend scale break points.}
 
-\item{crop_to_grid}{(Optional) If TRUE, the grid will determine the edges of the map.Overrides
-Europe_crop_EEA. Default is FALSE.}
+\item{crop_to_grid}{(Optional) If TRUE, the grid will determine the edges of
+the map. Default is FALSE.}
 
-\item{single_plot}{(Optional) By default all species occurrence time series will be combined
-into a single multi-panel plot. Set this to FALSE to plot each species separately.}
+\item{single_plot}{(Optional) By default all species occurrence time series
+will be combined into a single multi-panel plot. Set this to FALSE to plot
+each species separately.}
 
 \item{panel_bg}{(Optional) Background colour for the map panel.}
 
-\item{land_fill_colour}{(Optional) Colour for the land area outside of the grid
-(if surround = TRUE). Default is "grey85".}
+\item{land_fill_colour}{(Optional) Colour for the land area outside of the
+grid (if surround = TRUE). Default is "grey85".}
 
 \item{legend_title}{(Optional) Title for the plot legend.}
 
 \item{legend_limits}{(Optional) Limits for the legend scale.}
 
-\item{legend_title_wrap_length}{(Optional) Maximum legend title length before wrapping to a new line.}
+\item{legend_title_wrap_length}{(Optional) Maximum legend title length
+before wrapping to a new line.}
 
-\item{title_wrap_length}{(Optional) Maximum title length before wrapping to a new line.}
+\item{title_wrap_length}{(Optional) Maximum title length before wrapping to
+a new line.}
 
-\item{spec_name_wrap_length}{(Optional) Maximum species name length before wrapping to a new line.}
+\item{spec_name_wrap_length}{(Optional) Maximum species name length before
+wrapping to a new line.}
 
-\item{visible_gridlines}{(Optional) Show gridlines between cells. Default is TRUE.}
+\item{visible_gridlines}{(Optional) Show gridlines between cells.
+Default is TRUE.}
 
-\item{layers}{(Optional) Additional rnaturalearth layers to plot, e.g. c("reefs", "playas").}
+\item{layers}{(Optional) Additional rnaturalearth layers to plot, e.g.
+c("reefs", "playas").}
 
-\item{scale}{(Optional) Scale of Natural Earth data ("small", "medium", or "large"). Default is 'medium'.}
+\item{scale}{(Optional) Scale of Natural Earth data ("small", "medium",
+or "large"). Default is 'medium'.}
 }
 \value{
 A ggplot object representing the map of species range or occurrences.
 Can be customized using ggplot2 functions.
 }
 \description{
-Creates map visualizations of species ranges or species occurrences,
-providing customization options.
+Creates map visualizations of species ranges or species
+occurrences, providing customization options.
 }
 \examples{
 spec_occ_mammals_denmark <- spec_occ_map(example_cube_1,

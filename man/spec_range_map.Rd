@@ -15,44 +15,54 @@ spec_range_ts(data, ...)
 \item{...}{
   Arguments passed on to \code{\link[=compute_indicator_workflow]{compute_indicator_workflow}}
   \describe{
-    \item{\code{ci_type}}{(Optional) Type of bootstrap confidence intervals to calculate. (Default: "norm".
-Select "none" to avoid calculating bootstrap CIs.)}
-    \item{\code{cell_size}}{(Optional) Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)}
-    \item{\code{level}}{(Optional) Spatial level: 'cube', 'continent', 'country', 'world', 'sovereignty',
-or 'geounit'. (Default: 'cube')}
-    \item{\code{region}}{(Optional) The region of interest (e.g., "Europe"). (Default: "Europe")}
-    \item{\code{ne_type}}{(Optional) The type of Natural Earth data to download: 'countries', 'map_units',
-'sovereignty', or 'tiny_countries'. (Default: "countries")}
-    \item{\code{ne_scale}}{(Optional) The scale of Natural Earth data to download: 'small' - 110m,
-'medium' - 50m, or 'large' - 10m. (Default: "medium")}
-    \item{\code{output_crs}}{(Optional) The CRS you want for your calculated indicator. (Leave blank
-to let the function choose a default based on grid reference system)}
-    \item{\code{first_year}}{(Optinal) Exclude data before this year. (Uses all data in the cube by default.)}
-    \item{\code{last_year}}{(Optional) Exclude data after this year. (Uses all data in the cube by default.)}
-    \item{\code{spherical_geometry}}{(Optional) If set to FALSE, will temporarily disable spherical geometry
-while the function runs. Should only be used to solve specific issues. (Default is TRUE)}
-    \item{\code{make_valid}}{(Optional) Calls st_make_valid() from the sf package. Increases processing
-time but may help if you are getting polygon errors. (Default is FALSE).}
-    \item{\code{num_bootstrap}}{(Optional) Set the number of bootstraps to calculate for generating
-confidence intervals. (Default: 1000)}
-    \item{\code{shapefile_path}}{(optional) Path of an external shapefile to merge into the workflow. For example,
-if you want to calculate your indicator particular features such as protected areas or wetlands.}
-    \item{\code{shapefile_crs}}{(Optional) CRS of a .wkt shapefile. If your shapefile is .wkt and you do
-NOT use this parameter, the CRS will be assumed to be EPSG:4326 and the
-coordinates will be read in as lat/long. If your shape is NOT a .wkt the CRS
-will be determined automatically.}
-    \item{\code{invert}}{(optional) Calculate an indicator over the inverse of the shapefile (e.g.
-if you have a protected areas shapefile this would calculate an indicator over
-all non protected areas)}
-    \item{\code{include_ocean}}{(Optional) Include occurrences which fall outside the land area.
-Default is TRUE. Set as "buffered_coast" to include a set buffer size around
-the land area rather than the entire ocean area.}
-    \item{\code{buffer_dist_km}}{(Optional) The distance to buffer around the land if include_ocean
-is set to "buffered_coast".}
-    \item{\code{force_grid}}{(Optional) Forces the calculation of a grid even if this would not
-normally be part of the pipeline, e.g. for time series. This setting is
-required for the calculation of rarity, and is turned on by the ab_rarity_ts
-and area_rarity_ts wrappers. (Default: FALSE)}
+    \item{\code{ci_type}}{(Optional) Type of bootstrap confidence intervals to
+calculate. (Default: "norm". Select "none" to avoid calculating bootstrap
+CIs.)}
+    \item{\code{cell_size}}{(Optional) Length of grid cell sides, in km. (Default: 10
+for country, 100 for continent or world)}
+    \item{\code{level}}{(Optional) Spatial level: 'cube', 'continent', 'country',
+'world', 'sovereignty', or 'geounit'. (Default: 'cube')}
+    \item{\code{region}}{(Optional) The region of interest (e.g., "Europe"). (Default:
+"Europe")}
+    \item{\code{ne_type}}{(Optional) The type of Natural Earth data to download:
+'countries', 'map_units', 'sovereignty', or 'tiny_countries'. (Default:
+"countries")}
+    \item{\code{ne_scale}}{(Optional) The scale of Natural Earth data to download:
+'small' - 110m, 'medium' - 50m, or 'large' - 10m. (Default: "medium")}
+    \item{\code{output_crs}}{(Optional) The CRS you want for your calculated indicator.
+(Leave blank to let the function choose a default based on grid reference
+system)}
+    \item{\code{first_year}}{(Optinal) Exclude data before this year. (Uses all data in
+the cube by default.)}
+    \item{\code{last_year}}{(Optional) Exclude data after this year. (Uses all data in
+the cube by default.)}
+    \item{\code{spherical_geometry}}{(Optional) If set to FALSE, will temporarily
+disable spherical geometry while the function runs. Should only be used to
+solve specific issues. (Default is TRUE)}
+    \item{\code{make_valid}}{(Optional) Calls st_make_valid() from the sf package.
+Increases processing time but may help if you are getting polygon errors.
+(Default is FALSE).}
+    \item{\code{num_bootstrap}}{(Optional) Set the number of bootstraps to calculate for
+generating confidence intervals. (Default: 1000)}
+    \item{\code{shapefile_path}}{(optional) Path of an external shapefile to merge into
+the workflow. For example, if you want to calculate your indicator
+particular features such as protected areas or wetlands.}
+    \item{\code{shapefile_crs}}{(Optional) CRS of a .wkt shapefile. If your shapefile
+is .wkt and you do NOT use this parameter, the CRS will be assumed to be
+EPSG:4326 and the coordinates will be read in as lat/long. If your shape is
+NOT a .wkt the CRS will be determined automatically.}
+    \item{\code{invert}}{(optional) Calculate an indicator over the inverse of the
+shapefile (e.g. if you have a protected areas shapefile this would calculate
+an indicator over all non protected areas)}
+    \item{\code{include_ocean}}{(Optional) Include occurrences which fall outside the
+land area. Default is TRUE. Set as "buffered_coast" to include a set buffer
+size around the land area rather than the entire ocean area.}
+    \item{\code{buffer_dist_km}}{(Optional) The distance to buffer around the land if
+include_ocean is set to "buffered_coast".}
+    \item{\code{force_grid}}{(Optional) Forces the calculation of a grid even if this
+would not normally be part of the pipeline, e.g. for time series. This
+setting is required for the calculation of rarity, and is turned on by the
+ab_rarity_ts and area_rarity_ts wrappers. (Default: FALSE)}
   }}
 }
 \value{
@@ -61,7 +71,8 @@ An S3 object with the classes 'indicator_map' or 'indicator_ts' and
 }
 \description{
 Plot the cells occupied for individual species over a gridded
-map or calculate the change in the number of cells occupied as a time series.
+map or calculate the change in the number of cells occupied as a time
+series.
 }
 \section{Functions}{
 \itemize{
@@ -71,7 +82,8 @@ map or calculate the change in the number of cells occupied as a time series.
 
 }}
 \examples{
-sr_map <- spec_range_map(example_cube_1, level = "country", region = "Denmark")
+sr_map <- spec_range_map(example_cube_1, level = "country",
+                         region = "Denmark")
 plot(sr_map, c(2440728, 4265185))
 
 \dontrun{
