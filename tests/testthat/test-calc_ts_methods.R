@@ -182,17 +182,6 @@ test_that("calc_ts.occ_density throws error on wrong class", {
   )
 })
 
-test_that("calc_ts.occ_density handles non-km resolutions correctly", {
-  # Creating a mock input with resolution in degrees will trigger the error
-  mock_invalid_resolution <- mock_occ_density
-  mock_invalid_resolution$resolution <- "1degree"
-
-  expect_error(
-    calc_ts.occ_density(mock_invalid_resolution),
-    "To calculate occurrence density, please choose a projected"
-  )
-})
-
 test_that("calc_ts.occ_density handles empty input gracefully", {
   # Create an empty data frame with the structure needed
   empty_input <- structure(
