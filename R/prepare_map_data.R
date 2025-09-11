@@ -12,10 +12,12 @@ prepare_map_data <- function(data,
   # Set variables to NULL
   scalerank <- featurecla <- geometry <- . <- NULL
 
+  # Transform the base map data to the desired projection
   map_surround <- map_data_sf %>%
     sf::st_transform(crs = projection) %>%
     sf::st_make_valid()
 
+  # If the projection uses kilometers and is not EPSG:3035, handle differently
   if (check_crs_units(projection) == "km" &&
       sf::st_crs(projection)$input != "EPSG:3035") {
 
@@ -53,8 +55,10 @@ prepare_map_data <- function(data,
         latlong_extent["ymax"] + (expand_percent * lat_range)
       ), crs = latlong_crs)
 
+      # Project the expanded latlong extent for cropping
       latlongbbox_transformed <- sf::st_transform(
         sf::st_as_sfc(expanded_latlong_bbox), crs = "ESRI:54012")
+
       # Crop the world map in lat/long to the expanded extent
       surrounding_countries_latlong <- map_data_sf %>%
         sf::st_make_valid() %>%
@@ -66,6 +70,7 @@ prepare_map_data <- function(data,
         sf::st_make_valid() %>%
         sf::st_transform(crs = sf::st_crs(expanded_latlong_bbox))
 
+      # Initialize list to hold additional layers
       layer_list <- list()
       if (!is.null(layers)) {
         for (i in seq_along(layers)) {
@@ -99,6 +104,7 @@ prepare_map_data <- function(data,
         sf::st_make_valid() %>%
         sf::st_transform(crs = sf::st_crs(latlong_extent))
 
+      # Initialize list to hold additional layers
       layer_list <- list()
       if (!is.null(layers)) {
         for (i in seq_along(layers)) {
@@ -125,6 +131,7 @@ prepare_map_data <- function(data,
 
   } else {
 
+    # Transform the base map data to the desired projection
     map_surround <- sf::st_transform(map_surround, crs = projection) %>%
       sf::st_make_valid()
 
@@ -145,6 +152,7 @@ prepare_map_data <- function(data,
         map_lims["ymax"] + (expand_percent * y_range)
       )))
     } else {
+      # Use original map limits if cropping to grid or user-specified limits
       expanded_lims <- map_lims
     }
 
@@ -153,6 +161,7 @@ prepare_map_data <- function(data,
         sf::st_set_crs(., sf::st_crs(map_surround))
       bbox_lims <- sf::st_bbox(bbox)
 
+      # Initialize list to hold additional layers
       layer_list <- list()
       if (!is.null(layers)) {
         for (i in seq_along(layers)) {
@@ -167,16 +176,20 @@ prepare_map_data <- function(data,
         }
       }
 
+    # Crop the map to the bounding box
     sf::st_agr(map_surround) <- "constant"
     bbox_t <- sf::st_transform(bbox, crs = "ESRI:54012")
 
+    # Crop and reproject the surrounding map data
     map_surround <- sf::st_transform(map_surround, crs = "ESRI:54012") %>%
       sf::st_intersection(bbox_t) %>%
       sf::st_transform(crs = projection)
   }
-  map_data_list <- list(
+
+  # Return a list containing the map data and any additional layers
+  return(list(
     map_surround = map_surround,
     layer_list = layer_list
-  )
-  return(map_data_list)
+  ))
+
 }
