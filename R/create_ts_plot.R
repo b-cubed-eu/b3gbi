@@ -32,7 +32,7 @@ create_ts_plot <- function(data,
                            y_breaks) {
 
   # Set NULL variables to avoid R CMD check notes
-  year <- diversity_al <- ul <- ll <- NULL
+  year <- diversity_val <- ul <- ll <- NULL
 
   if ("ll" %in% colnames(data) && "ul" %in% colnames(data)) {
     # Remove NAs from CIs
