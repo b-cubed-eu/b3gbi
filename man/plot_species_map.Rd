@@ -28,7 +28,7 @@ plot_species_map(
   spec_name_wrap_length = 40,
   visible_gridlines = TRUE,
   layers = NULL,
-  scale = "medium"
+  scale = c("medium", "small", "large")
 )
 }
 \arguments{

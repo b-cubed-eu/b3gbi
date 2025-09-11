@@ -24,7 +24,7 @@ plot_map(
   title_wrap_length = 60,
   visible_gridlines = TRUE,
   layers = NULL,
-  scale = "medium"
+  scale = c("medium", "small", "large")
 )
 }
 \arguments{
