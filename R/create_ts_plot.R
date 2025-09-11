@@ -24,11 +24,15 @@ create_ts_plot <- function(data,
                            suppress_y,
                            x_label,
                            y_label,
-                           title,
+                           title_label,
+                           title_face,
                            x_expand,
                            y_expand,
                            x_breaks,
                            y_breaks) {
+
+  # Set NULL variables to avoid R CMD check notes
+  year <- diversity_al <- ul <- ll <- NULL
 
   if ("ll" %in% colnames(data) && "ul" %in% colnames(data)) {
     # Remove NAs from CIs
@@ -112,9 +116,10 @@ create_ts_plot <- function(data,
                        expand = expansion(mult = x_expand)) +
     scale_y_continuous(breaks = breaks_pretty_int(n = y_breaks),
                        expand = expansion(mult = y_expand)) +
-    labs(x = x_label, y = y_label, title = title) +
+    labs(x = x_label, y = y_label) +
     theme_minimal() +
-    theme(plot.title = element_text(hjust = 0.5),
+    theme(plot.title = element_text(hjust = 0.5,
+                                    face = title_face),
           text = element_text(size = 14),
           panel.grid.major = if (gridoff == TRUE) {
             element_blank()
@@ -131,6 +136,11 @@ create_ts_plot <- function(data,
           plot.background = element_rect(fill = "white", color = NA),
           panel.background = element_rect(fill = "white", color = NA)
     )
+
+  # Add title
+  if (!is.null(title_label)) {
+    plot <- plot + ggplot2::labs(title = title_label)
+  }
 
   # Exit function
   return(plot)
