@@ -887,8 +887,8 @@ plot.occ_turnover <- function(x, auccolour = NULL,  ...) {
 #'  axis. (May not return exactly the number requested.)
 #' @param y_breaks (Optional) Integer giving desired number of breaks for y
 #'  axis. (May not return exactly the number requested.)
-#' @param wrap_length (Optional) Maximum title length before wrapping to a new
-#'  line.
+#' @param title_wrap_length (Optional) Maximum title length before wrapping to
+#'  a new line.
 #'
 #' @return A ggplot object representing the biodiversity indicator time series
 #'  plot. Can be customized using ggplot2 functions.
@@ -948,7 +948,7 @@ plot_ts <- function(x,
                     y_expand = 0.05,
                     x_breaks = 10,
                     y_breaks = 6,
-                    wrap_length = 60
+                    title_wrap_length = 60
                     ) {
 
   # Set variable definitions to NULL where required
@@ -1022,18 +1022,13 @@ plot_ts <- function(x,
     suppress_y = suppress_y,
     x_label = x_label,
     y_label = y_label,
-    title = title,
+    title_label = wrapper(title, title_wrap_length),
+    title_face = "plain",
     x_expand = x_expand,
     y_expand = y_expand,
     x_breaks = x_breaks,
     y_breaks = y_breaks
   )
-
-  # Wrap title if longer than wrap_length
-  if (!is.null(title)) {
-    plot <- plot +
-      ggplot2::labs(title = wrapper(title, wrap_length))
-  }
 
   # Exit function
   return(plot)
@@ -1121,8 +1116,10 @@ plot_ts <- function(x,
 #'  axis. (May not return exactly the number requested.)
 #' @param y_breaks (Optional) Integer giving desired number of breaks for y
 #'  axis. (May not return exactly the number requested.)
-#' @param wrap_length (Optional) Maximum title length before wrapping to a new
-#'  line.
+#' @param title_wrap_length (Optional) Maximum title length before wrapping to
+#'  a new line.
+#' @param spec_name_wrap_length (Optional) Maximum species name length before
+#'  wrapping to a new line.
 #'
 #' @return A ggplot object representing species range or occurrence time series
 #'  plot(s). Can be customized using ggplot2 functions.
@@ -1183,8 +1180,9 @@ plot_species_ts <- function(x,
                             y_expand = 0.05,
                             x_breaks = 10,
                             y_breaks = 6,
-                            wrap_length = 60
-                            ) {
+                            title_wrap_length = 60,
+                            spec_name_wrap_length = 40
+) {
 
   # Set variable definitions to NULL where required
   year <- ll <- ul <- diversity_val <- NULL
@@ -1233,7 +1231,7 @@ plot_species_ts <- function(x,
 
   # Create plot title if title is set to "auto"
   if (!is.null(title) && title == "auto") {
-      title <- create_auto_title(auto_title, min_year, max_year)
+    title <- create_auto_title(auto_title, min_year, max_year)
   }
 
   # Set some defaults for plotting
@@ -1249,38 +1247,41 @@ plot_species_ts <- function(x,
   error_width <- (error_width * (max_year - min_year)) / 100
 
   # Create the plots for each species
-  plot <- purrr::map(split_so, ~ create_ts_plot(
-    data = .x,
-    point_line = point_line,
-    ci_type = ci_type,
-    smoothed_trend = smoothed_trend,
-    pointsize = pointsize,
-    linecolour = linecolour,
-    linealpha = linealpha,
-    linewidth = linewidth,
-    ribboncolour = ribboncolour,
-    ribbonalpha = ribbonalpha,
-    error_alpha = error_alpha,
-    error_width = error_width,
-    error_thickness = error_thickness,
-    trendlinecolour = trendlinecolour,
-    trendlinealpha = trendlinealpha,
-    envelopecolour = envelopecolour,
-    envelopealpha = envelopealpha,
-    smooth_cialpha = smooth_cialpha,
-    smooth_linewidth = smooth_linewidth,
-    smooth_cilinewidth = smooth_cilinewidth,
-    smooth_linetype = smooth_linetype,
-    gridoff = gridoff,
-    suppress_y = suppress_y,
-    x_label = x_label,
-    y_label = y_label,
-    title = title,
-    x_expand = x_expand,
-    y_expand = y_expand,
-    x_breaks = x_breaks,
-    y_breaks = y_breaks
-  ))
+  plot <- purrr::map(seq_along(sci_names), function(i) {
+    create_ts_plot(
+      data = split_so[[i]],
+      point_line = point_line,
+      ci_type = ci_type,
+      smoothed_trend = smoothed_trend,
+      pointsize = pointsize,
+      linecolour = linecolour,
+      linealpha = linealpha,
+      linewidth = linewidth,
+      ribboncolour = ribboncolour,
+      ribbonalpha = ribbonalpha,
+      error_alpha = error_alpha,
+      error_width = error_width,
+      error_thickness = error_thickness,
+      trendlinecolour = trendlinecolour,
+      trendlinealpha = trendlinealpha,
+      envelopecolour = envelopecolour,
+      envelopealpha = envelopealpha,
+      smooth_cialpha = smooth_cialpha,
+      smooth_linewidth = smooth_linewidth,
+      smooth_cilinewidth = smooth_cilinewidth,
+      smooth_linetype = smooth_linetype,
+      gridoff = gridoff,
+      suppress_y = suppress_y,
+      x_label = x_label,
+      y_label = y_label,
+      title = wrapper(sci_names[[i]], spec_name_wrap_length),
+      title_face = "italic",
+      x_expand = x_expand,
+      y_expand = y_expand,
+      x_breaks = x_breaks,
+      y_breaks = y_breaks
+      )
+  })
 
   # Name each plot with the corresponding species name
   names(plot) <- sci_names
@@ -1290,7 +1291,7 @@ plot_species_ts <- function(x,
     plot <- patchwork::wrap_plots(plot) +
       plot_annotation_int(title = wrapper(title, title_wrap_length),
                           theme = theme(plot.title = element_text(size = 20)))
-  # Or create each plot separately if single_plot is FALSE
+    # Or create each plot separately if single_plot is FALSE
   } else if (length(plot) > 1 && single_plot == FALSE) {
     message(paste0(
       "Option single_plot set to false. Creating separate plot for each ",
@@ -1376,10 +1377,10 @@ plot_map <- function(x,
                      visible_gridlines = TRUE,
                      layers = NULL,
                      scale = c("medium", "small", "large")
-) {
+                     ) {
 
   # Set variable definitions to NULL where required
-  diversity_val <- geometry <- NULL
+  diversity_val <- geometry <- map_surround <- layer_list <- map_lims <- NULL
 
   # Match arguments
   scale <- match.arg(scale)
@@ -1512,7 +1513,7 @@ plot_species_map <- function(x,
                              ) {
 
   # Set variable definitions to NULL where required
-  geometry <- diversity_val <- NULL
+  geometry <- diversity_val <- map_surround <- layer_list <- map_lims <- NULL
 
   # Match arguments
   scale <- match.arg(scale)
