@@ -1,3 +1,9 @@
+# b3gbi 0.7.4 - Minor update:
+
+* Refactored code in main plotting functions to improve efficiency and readability.
+* Fixed many style inconsistencies across the package.
+* This update does not significantly affect functionality of the package. It is mostly about cleaner, more efficient, more readable code.
+
 # b3gbi 0.7.3 - Minor update:
 
 * Hill diversity maps now calculate without error.
