@@ -505,7 +505,7 @@ test_that("plot_ts handles all parameters without error", {
     y_expand = c(0.1, 0.2),
     x_breaks = 5,
     y_breaks = 3,
-    wrap_length = 30
+    title_wrap_length = 30
   )
 
   # Check that the resulting plot is a ggplot object
@@ -572,7 +572,7 @@ test_that("plot_species_ts applies custom aesthetics correctly", {
     pointsize = 4
   )
 
-  point_geom <- p$layers[[1]]
+  point_geom <- p$layers[[2]]
   expect_equal(point_geom$aes_params$colour, "green")
   expect_equal(point_geom$aes_params$size, 4)
 })
@@ -657,7 +657,8 @@ test_that("plot_species_ts handles all parameters without error", {
     y_expand = c(0.1, 0.2),
     x_breaks = 5,
     y_breaks = 3,
-    wrap_length = 30
+    title_wrap_length = 30,
+    spec_name_wrap_length = 30
   )
 
   # Check that the resulting plot is indeed a ggplot or patchwork object
@@ -720,10 +721,6 @@ mock_ab_rarity <- structure(list(data = mock_data,
                                  first_year = 2001,
                                  last_year = 2005),
                             class = c("indicator_ts", "ab_rarity"))
-mock_rarefied <- structure(list(data = mock_data,
-                                first_year = 2001,
-                                last_year = 2005),
-                           class = c("indicator_ts", "rarefied"))
 mock_hill2 <- structure(list(data = mock_data,
                              first_year = 2001,
                              last_year = 2005),
@@ -812,12 +809,6 @@ test_that("plot.area_rarity handles valid input and class", {
 test_that("plot.ab_rarity handles valid input and class", {
   expect_silent(plot.ab_rarity(mock_ab_rarity))
   expect_error(plot.ab_rarity(mock_invalid_object),
-               "Incorrect object class.")
-})
-
-test_that("plot.rarefied handles valid input and class", {
-  expect_silent(plot.rarefied(mock_rarefied))
-  expect_error(plot.rarefied(mock_invalid_object),
                "Incorrect object class.")
 })
 
