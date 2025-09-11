@@ -96,7 +96,7 @@ test_that("plot_map handles default parameters", {
   data(example_indicator_map1)
   p <- suppressWarnings(plot_map(example_indicator_map1))
   expect_s3_class(p, "ggplot")
-  expect_null(p$labels$title)
+  expect_equal(p$labels$title, "")
 })
 
 # Test with all options
@@ -220,7 +220,7 @@ test_that("plot_species_map handles species selection correctly", {
     species = c("Vulpes vulpes")
   )
   expect_s3_class(p, "ggplot")
-  expect_true("Lepus europaeus" %in% unique(p$data$scientificName))
+  expect_true("Vulpes vulpes" %in% unique(p$data$scientificName))
 
   # Test with valid species name
   p <- plot_species_map(
