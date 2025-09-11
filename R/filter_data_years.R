@@ -1,6 +1,9 @@
 #' @noRd
 filter_data_years <- function(x, min_year, max_year) {
 
+  # set NULL variables to avoid R CMD check notes
+  year <- NULL
+
   # Check input
   if (!is.null(min_year) && !is.numeric(min_year)) {
     stop("min_year must be numeric.")
