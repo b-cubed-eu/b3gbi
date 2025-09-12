@@ -411,10 +411,9 @@ compute_indicator_workflow <- function(data,
                                        force_grid = FALSE,
                                        ...) {
 
-  stopifnot_error("Object class not recognized.",
-                  inherits(data, "processed_cube") |
-                    inherits(data, "processed_cube_dsinfo") |
-                    inherits(data, "sim_cube"))
+  wrong_class(data,
+              class = c("processed_cube", "processed_cube_dsinfo", "sim_cube"),
+              reason = "unrecognized")
 
   # Check for empty cube
   if (nrow(data$data) == 0) {
