@@ -88,6 +88,39 @@ stopifnot_error <- function(err_message, ...) {
     }
 }
 
+#' Stop with an error message if the object is not the correct class
+#' @noRd
+wrong_class <- function(object,
+                        class,
+                        reason = c("internal",
+                                   "unrecognized",
+                                   "incorrect"),
+                        multiple = FALSE,
+                        ...) {
+
+  reason <- match.arg(reason)
+
+  collapse <- if (multiple == TRUE) " and " else " or "
+
+  err_message <- if (reason == "internal") {
+    paste0("Wrong data class. Must be class, ",
+           paste(class, collapse = collapse), ". Note that this is ",
+           "an internal function and is not meant to be called directly.")
+  } else if (reason == "incorrect") {
+    paste0("Incorrect object class. Must be class ",
+           paste(class, collapse = collapse), ".")
+  } else if (reason == "unrecognized") {
+    paste0("Object class not recognized. Must be one of the following: ",
+           paste(class, collapse = collapse), ".")
+  }
+
+  if (multiple == TRUE) {
+    if(!rlang::inherits_all(object, class)) stop(err_message)
+  } else {
+    if(!inherits(object, class)) stop(err_message)
+  }
+}
+
 # Copy of breaks_log from scales package
 #' @noRd
 breaks_log_int <- function (n = 5, base = 10) {
