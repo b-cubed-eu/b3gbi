@@ -1,9 +1,5 @@
-add_NE_layer <- function(layer_name, scale, extent_projected) {
-  # Load necessary packages if not already loaded (good practice for functions)
-  if (!requireNamespace("rnaturalearth", quietly = TRUE)) stop("rnaturalearth package required.")
-  if (!requireNamespace("sf", quietly = TRUE)) stop("sf package required.")
-  if (!requireNamespace("dplyr", quietly = TRUE)) stop("dplyr package required.")
-  if (!requireNamespace("rlang", quietly = TRUE)) stop("rlang package required for dynamic filtering.") # Added rlang
+#' @noRd
+add_ne_layer <- function(layer_name, scale, extent_projected) {
 
   geometry <- featurecla <- scalerank <- type <- NULL
 
@@ -25,22 +21,26 @@ add_NE_layer <- function(layer_name, scale, extent_projected) {
                       type = layer)
     )
 
-    # Map 'scale' argument to the column names in df_layers_X for availability check
-    scale_col <- switch(scale,
-                        "large" = "scale10",
-                        "medium" = "scale50",
-                        "small" = "scale110",
-                        stop("Unsupported scale. Choose 'small', 'medium', or 'large'.")
+    # Map 'scale' argument to the column names in df_layers_X for availability
+    # check
+    scale_col <- switch(
+      scale,
+      "large" = "scale10",
+      "medium" = "scale50",
+      "small" = "scale110",
+      stop("Unsupported scale. Choose 'small', 'medium', or 'large'.")
     )
 
     # Filter to find the layer and its category at the specified scale
     layer_info <- all_layers_info %>%
       dplyr::filter(type == layer_name) %>%
-      dplyr::filter(!!rlang::sym(scale_col) == 1) # Check if available at the specified scale
+      dplyr::filter(!!rlang::sym(scale_col) == 1)
 
     if (nrow(layer_info) == 0) {
-      stop(paste0("Layer '", layer_name, "' not found or not available at scale '",
-                  scale, "'. Please check rnaturalearth::df_layers_physical and rnaturalearth::df_layers_cultural."))
+      stop(paste0(
+        "Layer '", layer_name, "' not found or not available at scale '",
+        scale, "'. Please check rnaturalearth::df_layers_physical and ",
+        "rnaturalearth::df_layers_cultural."))
     }
     # Assuming unique layer_name + scale combination yields a single category
     category <- layer_info$category[1]
@@ -71,7 +71,7 @@ add_NE_layer <- function(layer_name, scale, extent_projected) {
   }
 
   extent_projected <- sf::st_transform(sf::st_as_sfc(extent_projected),
-                                   crs = "ESRI:54012")
+                                       crs = "ESRI:54012")
 
   # Attempt to perform cropping for efficiency FIRST
   # If it fails, validate first
@@ -81,7 +81,6 @@ add_NE_layer <- function(layer_name, scale, extent_projected) {
       dplyr::group_by(scalerank, featurecla) %>%
       dplyr::reframe(geometry = sf::st_crop(geometry, extent_projected)) %>%
       sf::st_as_sf()
-    #  sf::st_transform(crs = sf::st_crs(latlong_extent))
   }, error = function(e) {
     layer_raw %>%
       sf::st_make_valid() %>%
@@ -89,7 +88,6 @@ add_NE_layer <- function(layer_name, scale, extent_projected) {
       dplyr::group_by(scalerank, featurecla) %>%
       dplyr::reframe(geometry = sf::st_crop(geometry, extent_projected)) %>%
       sf::st_as_sf()
-     # sf::st_transform(crs = sf::st_crs(latlong_extent))
   })
 
   # Then validate and filter (on the now smaller dataset)

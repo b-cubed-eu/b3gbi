@@ -50,9 +50,9 @@ test_that("boot_statistic_sum handles NA values", {
 
 test_that("boot_statistic_sum handles out of bounds indices", {
   data <- 1:5
-  indices <- c(1,2,6)
+  indices <- c(1, 2, 6)
   expect_error(boot_statistic_sum(data, indices))
 
-  indices <- c(0,1,2)
+  indices <- c(0, 1, 2)
   expect_error(boot_statistic_sum(data, indices))
 })

@@ -148,7 +148,8 @@ test_that("print.indicator_map prints expected output", {
   expect_match(output_string, "Number of species represented: 20")
   expect_match(output_string, "Number of families represented: 10, 11")
   expect_match(output_string, "Kingdoms represented: Animalia Plantae")
-  expect_match(output_string, "First 10 rows of data \\(use n = to show more\\):")
+  expect_match(output_string,
+               "First 10 rows of data \\(use n = to show more\\):")
   expect_match(output_string, "1       1     1")
   expect_match(output_string, "10      10    10")
 })

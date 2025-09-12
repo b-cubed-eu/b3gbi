@@ -157,8 +157,8 @@ test_that("compute_indicator_workflow handles input validation", {
 
 
 # Mock get_NE_data function
-mock_get_NE_data <- function(latlong_bbox,
-                             projected_crs,
+mock_get_NE_data <- function(projected_crs,
+                             latlong_bbox,
                              region,
                              level,
                              ne_type,
@@ -171,17 +171,6 @@ mock_get_NE_data <- function(latlong_bbox,
         list(
           matrix(
             c(0, 0, 0, 10, 10, 10, 10, 0, 0, 0),
-            # c(unname(latlong_bbox["xmin"])-1,
-            #   unname(latlong_bbox["ymin"])-1,
-            #   unname(latlong_bbox["xmin"])-1,
-            #   unname(latlong_bbox["ymax"])+1,
-            #   unname(latlong_bbox["xmax"])+1,
-            #   unname(latlong_bbox["ymax"])+1,
-            #   unname(latlong_bbox["xmax"])+1,
-            #   unname(latlong_bbox["ymin"])-1,
-            #   unname(latlong_bbox["xmin"])-1,
-            #   unname(latlong_bbox["ymin"])-1
-            #   ),
             ncol = 2,
             byrow = TRUE
           )
@@ -197,12 +186,12 @@ test_that(
   "compute_indicator_workflow creates grids and performs spatial operations", {
   mock_cube <- list(
     data = data.frame(
-      xcoord = c(9,1,5),
-      ycoord = c(1,9,5),
-      cellCode = c(1,2,3),
-      year = c(2000,2000,2000),
-      scientificName = c("A","A","A"),
-      obs = c(1,1,1)
+      xcoord = c(9, 1, 5),
+      ycoord = c(1, 9, 5),
+      cellCode = c(1, 2, 3),
+      year = c(2000, 2000, 2000),
+      scientificName = c("A", "A", "A"),
+      obs = c(1, 1, 1)
     ),
     first_year = 2000,
     last_year = 2000,
@@ -275,7 +264,7 @@ test_that(
   )
 
   # cleanup
-  file.remove(temp_shapefile);
+  file.remove(temp_shapefile)
 
   # test invert.
   temp_shapefile <- tempfile(fileext = ".shp")
@@ -318,7 +307,7 @@ test_that(
   )
 
   # cleanup
-  file.remove(temp_shapefile);
+  file.remove(temp_shapefile)
 
   # test spherical geometry.
   with_mocked_bindings(
@@ -553,44 +542,17 @@ test_that("compute_indicator_workflow handles sim_cube objects", {
   )
 })
 
-# Mock get_NE_data function
-mock_get_NE_data <- function(region,
-                             output_crs,
-                             level,
-                             ne_type,
-                             ne_scale,
-                             cube_cell_codes = NULL,
-                             include_water = FALSE,
-                             buffer_dist_km = NULL,
-                             data = NULL,
-                             layers = NULL) {
-  sf::st_sf(
-    geometry = sf::st_sfc(
-      sf::st_polygon(
-        list(
-          matrix(
-            c(0, 0, 0, 10, 10, 10, 10, 0, 0, 0),
-            ncol = 2,
-            byrow = TRUE
-          )
-        )
-      )
-    ),
-    crs = output_crs
-  )
-}
-
 test_that(
   "compute_indicator_workflow leaves the sf::sf_use_s2() setting as it was", {
   # Create a mock processed_cube object
     mock_cube <- list(
       data = data.frame(
-        xcoord = c(1,5),
-        ycoord = c(5,1),
-        cellCode = c(1,2),
-        year = c(2000,2000),
-        scientificName = c("A","A"),
-        obs = c(1,1)
+        xcoord = c(1, 5),
+        ycoord = c(5, 1),
+        cellCode = c(1, 2),
+        year = c(2000, 2000),
+        scientificName = c("A", "A"),
+        obs = c(1, 1)
       ),
       first_year = 2000,
       last_year = 2000,
@@ -628,4 +590,3 @@ test_that(
       expect_true(sf::sf_use_s2())
     })
 })
-

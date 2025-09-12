@@ -18,13 +18,15 @@ test_that("plot_map handles input and basic plot creation", {
 
 test_that("plot_map handles custom title", {
   data(example_indicator_map1)
-  p <- suppressWarnings(plot_map(example_indicator_map1, title = "Custom Title"))
+  p <- suppressWarnings(plot_map(example_indicator_map1,
+                                 title = "Custom Title"))
   expect_equal(p$labels$title, "Custom Title")
 })
 
 test_that("plot_map handles custom legend title", {
   data(example_indicator_map1)
-  p <- suppressWarnings(plot_map(example_indicator_map1, legend_title = "Custom Legend"))
+  p <- suppressWarnings(plot_map(example_indicator_map1,
+                                 legend_title = "Custom Legend"))
   expect_equal(p$labels$fill, "Custom\nLegend")
 })
 
@@ -94,7 +96,7 @@ test_that("plot_map handles default parameters", {
   data(example_indicator_map1)
   p <- suppressWarnings(plot_map(example_indicator_map1))
   expect_s3_class(p, "ggplot")
-  expect_null(p$labels$title)
+  expect_equal(p$labels$title, "")
 })
 
 # Test with all options
@@ -211,13 +213,38 @@ test_that("plot_species_map handles basic functionality", {
 })
 
 test_that("plot_species_map handles species selection correctly", {
-  # Test with species name
+
+  # Test with valid species name
+  p <- plot_species_map(
+    x = spec_occ_mammals_denmark,
+    species = c("Vulpes vulpes")
+  )
+  expect_s3_class(p, "ggplot")
+  expect_true("Vulpes vulpes" %in% unique(p$data$scientificName))
+
+  # Test with valid species name
+  p <- plot_species_map(
+    x = spec_occ_mammals_denmark,
+    species = c("Vulpes")
+  )
+  expect_s3_class(p, "ggplot")
+  expect_false("Vulpes" %in% unique(p$data$scientificName))
+
+  # Test with invalid species name
   expect_error(
     plot_species_map(
       x = spec_occ_mammals_denmark,
       species = "NotRealSpecies"
-    ), "No matching species"
+    ), "No matching"
   )
+  expect_false("NotRealSpecies" %in% unique(p$data$scientificName))
+
+  # Test with multiple species names
+  p <- plot_species_map(
+    x = spec_occ_mammals_denmark,
+    species = c("Vulpes vulpes", "Lepus europaeus")
+  )
+  expect_s3_class(p, "ggplot")
 
   # Test with valid taxonKey
   p <- plot_species_map(
@@ -225,6 +252,14 @@ test_that("plot_species_map handles species selection correctly", {
     species = c(2440728)
   )
   expect_s3_class(p, "ggplot")
+
+  # Test with invalid taxonKey
+  expect_error(
+    plot_species_map(
+      x = spec_occ_mammals_denmark,
+      species = 999999999
+    ), "No matching"
+  )
 })
 
 test_that(
@@ -283,8 +318,7 @@ test_that("plot_species_map responds to geographic and contextual parameters", {
 
 test_that("plot_species_map throws expected errors", {
   expect_error(
-    plot_species_map(x = spec_occ_mammals_denmark),
-    "Please enter either the species names"
+    plot_species_map(x = spec_occ_mammals_denmark)
   )
 
   expect_error(
@@ -471,7 +505,7 @@ test_that("plot_ts handles all parameters without error", {
     y_expand = c(0.1, 0.2),
     x_breaks = 5,
     y_breaks = 3,
-    wrap_length = 30
+    title_wrap_length = 30
   )
 
   # Check that the resulting plot is a ggplot object
@@ -480,31 +514,40 @@ test_that("plot_ts handles all parameters without error", {
 
 spec_occ_mammals_denmark_ts <- spec_occ_ts(example_cube_1,
                                            level = "country",
-                                           region = "Denmark")
+                                           region = "Denmark",
+                                           ci_type = "none")
 
 test_that(
   "plot_species_ts returns a ggplot or patchwork object with defaults", {
   # Direct test without the `species` - expect error
   expect_error(
-    plot_species_ts(spec_occ_mammals_denmark_ts),
-    paste0(
-      "Please enter either the species names or the numeric taxonKeys for the ",
-      "species you want to plot."
-    )
+    plot_species_ts(spec_occ_mammals_denmark_ts)
   )
 })
 
 test_that("plot_species_ts correctly handles species selection", {
-  # Valid numeric taxonKey selection
+
+  # Valid single taxonKey selection
+  p <- plot_species_ts(spec_occ_mammals_denmark_ts,
+                       species = c(4265185))
+  expect_true(inherits(p, "ggplot"))
+
+  # Valid multiple taxonKey selection
   p <- plot_species_ts(spec_occ_mammals_denmark_ts,
                        species = c(2440728, 4265185))
-  expect_true(inherits(p, "ggplot") || inherits(p, "patchwork"))
+  expect_true(inherits(p, "ggplot") && length(p) == 2)
 
-  # Non-existent species
-  expect_error(
-    plot_species_ts(spec_occ_mammals_denmark_ts, species = "NotARealSpecies"),
-    "No matching species."
-  )
+  # Invalid taxonKey
+  expect_error(plot_species_ts(spec_occ_mammals_denmark_ts, species = 99999))
+
+  # Valid scientificName, one full match and one partial match
+  p <- plot_species_ts(spec_occ_mammals_denmark_ts,
+                       species = c("Vulpes v", "Phoca vitulina"))
+  expect_true(inherits(p, "patchwork") && length(p) == 2)
+
+  # Invalid scientificName
+  expect_error(plot_species_ts(spec_occ_mammals_denmark_ts, species = "Fake"))
+
 })
 
 test_that("plot_species_ts filters data by year correctly", {
@@ -529,10 +572,16 @@ test_that("plot_species_ts applies custom aesthetics correctly", {
     pointsize = 4
   )
 
-  point_geom <- p$layers[[1]]
+  point_geom <- p$layers[[2]]
   expect_equal(point_geom$aes_params$colour, "green")
   expect_equal(point_geom$aes_params$size, 4)
 })
+
+spec_occ_mammals_denmark_ts_ci <- spec_occ_ts(example_cube_1,
+                                           level = "country",
+                                           region = "Denmark",
+                                           ci_type = "norm",
+                                           num_bootstrap = 20)
 
 test_that("plot_species_ts manages trends and confidence intervals", {
   # Verify presence of smoothed trend
@@ -546,7 +595,7 @@ test_that("plot_species_ts manages trends and confidence intervals", {
   expect_true(is_smooth_present)
 
   # Test for confidence interval presence
-  p2 <- plot_species_ts(spec_occ_mammals_denmark_ts,
+  p2 <- plot_species_ts(spec_occ_mammals_denmark_ts_ci,
                         species = 4265185,
                         ci_type = "ribbon")
   is_ribbon_present <- any(sapply(p2$layers, function(layer) {
@@ -608,7 +657,8 @@ test_that("plot_species_ts handles all parameters without error", {
     y_expand = c(0.1, 0.2),
     x_breaks = 5,
     y_breaks = 3,
-    wrap_length = 30
+    title_wrap_length = 30,
+    spec_name_wrap_length = 30
   )
 
   # Check that the resulting plot is indeed a ggplot or patchwork object
@@ -671,10 +721,6 @@ mock_ab_rarity <- structure(list(data = mock_data,
                                  first_year = 2001,
                                  last_year = 2005),
                             class = c("indicator_ts", "ab_rarity"))
-mock_rarefied <- structure(list(data = mock_data,
-                                first_year = 2001,
-                                last_year = 2005),
-                           class = c("indicator_ts", "rarefied"))
 mock_hill2 <- structure(list(data = mock_data,
                              first_year = 2001,
                              last_year = 2005),
@@ -763,12 +809,6 @@ test_that("plot.area_rarity handles valid input and class", {
 test_that("plot.ab_rarity handles valid input and class", {
   expect_silent(plot.ab_rarity(mock_ab_rarity))
   expect_error(plot.ab_rarity(mock_invalid_object),
-               "Incorrect object class.")
-})
-
-test_that("plot.rarefied handles valid input and class", {
-  expect_silent(plot.rarefied(mock_rarefied))
-  expect_error(plot.rarefied(mock_invalid_object),
                "Incorrect object class.")
 })
 

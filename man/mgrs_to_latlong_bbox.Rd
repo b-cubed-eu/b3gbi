@@ -11,7 +11,8 @@ mgrs_to_latlong_bbox(df)
 MGRS strings), and \code{xcoord} and \code{ycoord} for easting and northing.}
 }
 \value{
-An sf bounding box (\code{sf::st_bbox}) in a single projected CRS (e.g., Albers).
+An sf bounding box (\code{sf::st_bbox}) in a single projected CRS (e.g.,
+Albers).
 }
 \description{
 Converts MGRS coordinates to a single sf bounding box in a

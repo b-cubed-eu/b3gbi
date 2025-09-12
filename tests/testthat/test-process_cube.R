@@ -468,8 +468,8 @@ test_that("process_cube removes duplicate rows", {
                                na = "",
                                show_col_types = FALSE
   )
-  cube_df <- cube_df[complete.cases(cube_df),]
-  cube_df[6:10,] <- cube_df[1:5,]
+  cube_df <- cube_df[complete.cases(cube_df), ]
+  cube_df[6:10, ] <- cube_df[1:5, ]
   result <- process_cube(cube_df)
   original_data <- readr::read_delim(
     system.file("extdata",
@@ -479,7 +479,7 @@ test_that("process_cube removes duplicate rows", {
     na = "",
     show_col_types = FALSE
   )
-  original_data <- original_data[complete.cases(original_data),]
+  original_data <- original_data[complete.cases(original_data), ]
   expect_lt(nrow(result$data), nrow(original_data))
   expect_equal(nrow(result$data), nrow(dplyr::distinct(cube_df)))
 })

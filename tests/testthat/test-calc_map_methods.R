@@ -525,7 +525,12 @@ test_that("calc_map.hill2 handles non-standard data types correctly", {
 # Mock input data for other calc_map functions
 mock_map_data_other <- data.frame(
   cellid = c(1, 1, 2, 2, 1, 2),
-  scientificName = c("Species A", "Species B", "Species A", "Species C", "Species A", "Species C"),
+  scientificName = c("Species A",
+                     "Species B",
+                     "Species A",
+                     "Species C",
+                     "Species A",
+                     "Species C"),
   obs = c(1, 1, 1, 1, 1, 1),
   taxonKey = c("spA", "spB", "spA", "spC", "spA", "spC"),
   year = c(2000, 2010, 2005, 2015, 2002, 2018),
@@ -533,10 +538,14 @@ mock_map_data_other <- data.frame(
   resolution = c("10km", "10km", "10km", "10km", "10km", "10km")
 )
 
-mock_obs_richness <- structure(mock_map_data_other, class = c("obs_richness", "data.frame"))
-mock_total_occ <- structure(mock_map_data_other, class = c("total_occ", "data.frame"))
-mock_newness <- structure(mock_map_data_other, class = c("newness", "data.frame"))
-mock_occ_density <- structure(mock_map_data_other, class = c("occ_density", "data.frame"))
+mock_obs_richness <-
+  structure(mock_map_data_other, class = c("obs_richness", "data.frame"))
+mock_total_occ <-
+  structure(mock_map_data_other, class = c("total_occ", "data.frame"))
+mock_newness <-
+  structure(mock_map_data_other, class = c("newness", "data.frame"))
+mock_occ_density <-
+  structure(mock_map_data_other, class = c("occ_density", "data.frame"))
 
 test_that("calc_map.obs_richness calculates correctly", {
   result <- calc_map.obs_richness(mock_obs_richness)
@@ -602,7 +611,8 @@ test_that("calc_map.newness calculates correctly without min year", {
   result <- calc_map.newness(mock_newness)
   expected_result <- data.frame(
     cellid = c(1, 2),
-    diversity_val = c(round(mean(c(2000, 2010, 2002))), round(mean(c(2005, 2015, 2018))))
+    diversity_val = c(round(mean(c(2000, 2010, 2002))),
+                      round(mean(c(2005, 2015, 2018))))
   )
   expect_equal(result, expected_result)
 })
@@ -615,8 +625,10 @@ test_that("calc_map.newness calculates correctly with min year", {
 
   expected_result <- data.frame(
     cellid = c(1, 2),
-    diversity_val = c(ifelse(initial_mean_year_cell1 > 2006, initial_mean_year_cell1, NA),
-                      ifelse(initial_mean_year_cell2 > 2006, initial_mean_year_cell2, NA))
+    diversity_val = c(ifelse(initial_mean_year_cell1 > 2006,
+                             initial_mean_year_cell1, NA),
+                      ifelse(initial_mean_year_cell2 > 2006,
+                             initial_mean_year_cell2, NA))
   )
   expect_equal(result, expected_result)
 })
@@ -682,14 +694,17 @@ mock_evenness_data <- data.frame(
   obs = c(2, 1, 1, 1, 1, 1)
 )
 
-mock_williams_evenness <- structure(mock_evenness_data, class = c("williams_evenness", "data.frame"))
-mock_pielou_evenness <- structure(mock_evenness_data, class = c("pielou_evenness", "data.frame"))
+mock_williams_evenness <-
+  structure(mock_evenness_data, class = c("williams_evenness", "data.frame"))
+mock_pielou_evenness <-
+  structure(mock_evenness_data, class = c("pielou_evenness", "data.frame"))
 
 # Mock the compute_evenness_formula function
 mock_compute_evenness_formula <- function(x, type) {
   if (type == "williams_evenness") {
     # Simplified mock for Williams' evenness (should return a single value)
-    # Assuming Williams' evenness is sensitive to number of species and total abundance
+    # Assuming Williams' evenness is sensitive to number of species and
+    # total abundance
     num_species <- length(x[x > 0])
     total_abundance <- sum(x)
     if (num_species > 0) {
@@ -698,8 +713,10 @@ mock_compute_evenness_formula <- function(x, type) {
       return(NA)
     }
   } else if (type == "pielou_evenness") {
-    # Simplified mock for Pielou's evenness (should return a value between 0 and 1)
-    # Assuming Pielou's evenness relates observed diversity to maximum possible diversity
+    # Simplified mock for Pielou's evenness (should return a value
+    # between 0 and 1)
+    # Assuming Pielou's evenness relates observed diversity to maximum
+    # possible diversity
     num_species <- length(x[x > 0])
     total_abundance <- sum(x)
     if (num_species > 0 && total_abundance > 0) {
@@ -718,7 +735,7 @@ test_that("calc_map.williams_evenness calculates correctly", {
       result <- calc_map.williams_evenness(mock_williams_evenness)
       expected_result <- data.frame(
         cellid = c(1, 2),
-        diversity_val = c((2 + 1 + 1) / 2, (1 + 1 + 1) / 3) # Total abundance / num species
+        diversity_val = c((2 + 1 + 1) / 2, (1 + 1 + 1) / 3)
       )
       expect_equal(result, expected_result, tolerance = 1e-6)
     }
@@ -732,7 +749,7 @@ test_that("calc_map.pielou_evenness calculates correctly", {
       result <- calc_map.pielou_evenness(mock_pielou_evenness)
       expected_result <- data.frame(
         cellid = c(1, 2),
-        diversity_val = c(2 / log(2 + 1 + 1), 3 / log(1 + 1 + 1)) # Placeholder calculation
+        diversity_val = c(2 / log(2 + 1 + 1), 3 / log(1 + 1 + 1))
       )
       expect_equal(result, expected_result, tolerance = 1e-6)
     }
@@ -745,13 +762,16 @@ test_that("calc_map_evenness_core handles cases with no occurrences", {
     taxonKey = character(0),
     obs = integer(0)
   )
-  mock_williams_evenness_empty <- structure(mock_evenness_empty, class = c("williams_evenness", "data.frame"))
-  mock_pielou_evenness_empty <- structure(mock_evenness_empty, class = c("pielou_evenness", "data.frame"))
+  mock_williams_evenness_empty <-
+    structure(mock_evenness_empty, class = c("williams_evenness", "data.frame"))
+  mock_pielou_evenness_empty <-
+    structure(mock_evenness_empty, class = c("pielou_evenness", "data.frame"))
 
   mockr::with_mock(
     `compute_evenness_formula` = mock_compute_evenness_formula,
     {
-      result_williams <- calc_map.williams_evenness(mock_williams_evenness_empty)
+      result_williams <-
+        calc_map.williams_evenness(mock_williams_evenness_empty)
       expected_result_empty <- tibble::tibble(
         cellid = integer(0),
         diversity_val = numeric(0)
@@ -775,9 +795,12 @@ test_that("calc_map_evenness_core handles NA values in obs correctly", {
     `compute_evenness_formula` = mock_compute_evenness_formula,
     {
       # Williams' Evenness Calculation (based on species across cells)
-      # Cell 1: Species A (2), Species B (0). Total abundance = 2, Num Species = 1. Evenness = 2 / 1 = 2
-      # Cell 2: Species A (1), Species B (0), Species C (1). Total abundance = 2, Num Species = 2. Evenness = 2 / 2 = 1
-      result_williams <- calc_map_evenness_core(mock_evenness_core_na, type = "williams_evenness")
+      # Cell 1: Species A (2), Species B (0). Total abundance = 2,
+      #         Num Species = 1. Evenness = 2 / 1 = 2
+      # Cell 2: Species A (1), Species B (0), Species C (1).
+      #         Total abundance = 2, Num Species = 2. Evenness = 2 / 2 = 1
+      result_williams <- calc_map_evenness_core(mock_evenness_core_na,
+                                                type = "williams_evenness")
       expected_result_williams <- data.frame(
         cellid = c(1, 2),
         diversity_val = c(2, 1)
@@ -785,9 +808,12 @@ test_that("calc_map_evenness_core handles NA values in obs correctly", {
       expect_equal(result_williams, expected_result_williams, tolerance = 1e-6)
 
       # Pielou's Evenness Calculation (based on species across cells)
-      # Cell 1: Num Species = 1, Total Abundance = 2. Evenness = 1 / log(2) ≈ 1.44
-      # Cell 2: Num Species = 2, Total Abundance = 2. Evenness = 2 / log(2) ≈ 2.89
-      result_pielou <- calc_map_evenness_core(mock_evenness_core_na, type = "pielou_evenness")
+      # Cell 1: Num Species = 1, Total Abundance = 2.
+      #         Evenness = 1 / log(2) ≈ 1.44
+      # Cell 2: Num Species = 2, Total Abundance = 2.
+      #         Evenness = 2 / log(2) ≈ 2.89
+      result_pielou <- calc_map_evenness_core(mock_evenness_core_na,
+                                              type = "pielou_evenness")
       expected_result_pielou <- data.frame(
         cellid = c(1, 2),
         diversity_val = c(1 / log(2), 2 / log(2))
@@ -911,7 +937,12 @@ test_that("calc_map.area_rarity handles empty input", {
 mock_spec_occ_data <- tibble::tibble(
   cellid = c("A1", "A1", "A2", "B1", "B1", "B2"),
   taxonKey = c(1, 1, 2, 3, 3, 4),
-  scientificName = c("Species A", "Species A", "Species B", "Species C", "Species C", "Species D"),
+  scientificName = c("Species A",
+                     "Species A",
+                     "Species B",
+                     "Species C",
+                     "Species C",
+                     "Species D"),
   obs = c(5, 3, 2, 7, 2, 1)
 )
 mock_spec_occ_data <- structure(mock_spec_occ_data,
@@ -920,7 +951,12 @@ mock_spec_occ_data <- structure(mock_spec_occ_data,
 mock_spec_range_data <- tibble::tibble(
   cellid = c("A1", "A1", "A2", "B1", "B1", "B2"),
   taxonKey = c(1, 1, 2, 3, 3, 4),
-  scientificName = c("Species A", "Species A", "Species B", "Species C", "Species C", "Species D")
+  scientificName = c("Species A",
+                     "Species A",
+                     "Species B",
+                     "Species C",
+                     "Species C",
+                     "Species D")
 )
 mock_spec_range_data <- structure(mock_spec_range_data,
                                   class = c("spec_range", "data.frame"))
@@ -929,7 +965,10 @@ mock_spec_range_data <- structure(mock_spec_range_data,
 test_that("calc_map.spec_occ returns correct output structure", {
   result <- calc_map.spec_occ(mock_spec_occ_data)
   expect_s3_class(result, "data.frame")
-  expect_named(result, c("cellid", "taxonKey", "scientificName", "diversity_val"))
+  expect_named(result, c("cellid",
+                         "taxonKey",
+                         "scientificName",
+                         "diversity_val"))
 })
 
 test_that("calc_map.spec_occ calculates diversity_val correctly", {
@@ -938,7 +977,10 @@ test_that("calc_map.spec_occ calculates diversity_val correctly", {
     data.frame(
       cellid = c("A1", "A2", "B1", "B2"),
       taxonKey = c(1, 2, 3, 4),
-      scientificName = c("Species A", "Species B", "Species C", "Species D"),
+      scientificName = c("Species A",
+                         "Species B",
+                         "Species C",
+                         "Species D"),
       diversity_val = c(8, 2, 9, 1)
     ), class = c("spec_occ", "data.frame")
   )
@@ -957,7 +999,10 @@ test_that("calc_map.spec_occ handles empty input", {
   expect_s3_class(result, "data.frame")
   expect_equal(nrow(result), 0)
   expect_named(result,
-               c("cellid", "taxonKey", "scientificName", "diversity_val"))
+               c("cellid",
+                 "taxonKey",
+                 "scientificName",
+                 "diversity_val"))
 })
 
 test_that("calc_map.spec_occ handles single row input", {
@@ -1223,4 +1268,3 @@ with_mocked_bindings(
     )
   })
 )
-

@@ -9,24 +9,25 @@ convert_eqdgc_latlong(cellCode)
 \arguments{
 \item{cellCode}{A character vector of EQDGC cell codes, which must follow
 the "direction-base_coord" format (e.g., "W10N34" or "E15S20"). The code
-can also contain additional letter characters for sub-grids (e.g., "W10N34A").}
+can also contain additional letter characters for sub-grids (e.g.,
+"W10N34A").}
 }
 \value{
 A matrix with two columns, \code{lat} and \code{long}, representing the central
 coordinates of each input grid cell.
 }
 \description{
-This is a helper function that takes a vector of EQDGC (Equal-Area Quarter-Degree
-Grid Cell) codes and converts them to their central latitude and longitude
-coordinates. The function parses the base coordinates and the nested sub-grid
-codes to precisely locate the center of each grid cell.
+This is a helper function that takes a vector of EQDGC (Equal-Area
+Quarter-Degree Grid Cell) codes and converts them to their central latitude
+and longitude coordinates. The function parses the base coordinates and the
+nested sub-grid codes to precisely locate the center of each grid cell.
 }
 \details{
 The function works by first extracting the base longitude and
-latitude coordinates from the cell code, accounting for direction (East/West
-and North/South). It then iteratively processes any sub-grid codes (e.g.,
-\code{A}, \code{B}, \code{C}, \code{D}) to refine the coordinates. The final coordinates are
-the center point of the most specific grid cell.
+latitude coordinates from the cell code, accounting for direction
+(East/West and North/South). It then iteratively processes any sub-grid
+codes (e.g., \code{A}, \code{B}, \code{C}, \code{D}) to refine the coordinates. The final
+coordinates are the center point of the most specific grid cell.
 }
 \examples{
 # A simple quarter-degree cell

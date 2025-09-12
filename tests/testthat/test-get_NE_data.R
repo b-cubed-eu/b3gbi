@@ -29,17 +29,6 @@ test_that("get_NE_data retrieves map data correctly", {
   expect_s3_class(world_map, "sf")
   expect_equal(sf::st_crs(world_map), sf::st_crs("EPSG:3857"))
 
-  # # Test cube level (default)
-  # mock_data <- data.frame(resolution = c("10km", "10km"),
-  #                         xcoord = c("5", "3"),
-  #                         ycoord = c("5", "6"))
-  # mock_bbox <- sf::st_bbox(sf::st_as_sfc(mock_data))
-  # cube_map <- suppressWarnings(get_NE_data(mock_bbox = NULL,
-  #                         projected_crs = "EPSG:3857",
-  #                         region = NULL))
-  # expect_s3_class(cube_map, "sf")
-  # expect_equal(sf::st_crs(cube_map), sf::st_crs("EPSG:3857"))
-
   # Test sovereignty level
   sovereignty_map <- get_NE_data(latlong_bbox = NULL,
                                  projected_crs = "EPSG:3857",

@@ -7,7 +7,8 @@
 check_crs_units(crs_input)
 }
 \arguments{
-\item{crs_input}{The CRS, which can be an EPSG code, WKT string, or PROJ.4 string.}
+\item{crs_input}{The CRS, which can be an EPSG code, WKT string, or
+PROJ.4 string.}
 }
 \value{
 "km" if it's in meters,

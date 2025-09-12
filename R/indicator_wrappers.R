@@ -1,7 +1,7 @@
 #' @title Calculate Observed Species Richness Over Space or Time
 #'
 #' @description This function calculates observed species richness over a
-#' gridded map or as a time series (see 'Details' for more information).
+#'  gridded map or as a time series (see 'Details' for more information).
 #'
 #' @details
 #' ## Species richness
@@ -44,21 +44,24 @@
 #' @seealso compute_indicator_workflow
 #'
 #' @return An S3 object with the classes 'indicator_map' or 'indicator_ts' and
-#' 'obs_richness' containing the calculated indicator values and metadata.
+#'  'obs_richness' containing the calculated indicator values and metadata.
 #'
 #' @describeIn obs_richness_map
 #'
 #' @examples
 #' \dontrun{
-#' or_map <- obs_richness_map(example_cube_1, level = "country", region = "Denmark")
+#' or_map <- obs_richness_map(example_cube_1, level = "country",
+#'                            region = "Denmark")
 #' plot(or_map)
 #' }
 #' @export
 obs_richness_map <- function(data, ...) {
+
   compute_indicator_workflow(data,
                              type = "obs_richness",
                              dim_type = "map",
                              ...)
+
 }
 
 
@@ -71,18 +74,20 @@ obs_richness_map <- function(data, ...) {
 #' }
 #' @export
 obs_richness_ts <- function(data, ...) {
+
   compute_indicator_workflow(data,
                              type = "obs_richness",
                              dim_type = "ts",
                              ...)
+
 }
 
 
 #' @title Calculate Total Occurrences Over Space or Time
 #'
 #' @description This function calculates the total number of species occurrence
-#' records over a gridded map or as a time series (see 'Details' for more '
-#' information).
+#'  records over a gridded map or as a time series (see 'Details' for more '
+#'  information).
 #'
 #' @details
 #' The total number of occurrences is calculated by summing the occurrences of
@@ -98,7 +103,7 @@ obs_richness_ts <- function(data, ...) {
 #' @seealso compute_indicator_workflow
 #'
 #' @return An S3 object with the classes 'indicator_map' or 'indicator_ts' and
-#' 'total_occ' containing the calculated indicator values and metadata.
+#'  'total_occ' containing the calculated indicator values and metadata.
 #'
 #' @describeIn total_occ_map
 #'
@@ -110,10 +115,12 @@ obs_richness_ts <- function(data, ...) {
 #' }
 #' @export
 total_occ_map <- function(data, ...) {
+
   compute_indicator_workflow(data,
                              type = "total_occ",
                              dim_type = "map",
                              ...)
+
 }
 
 
@@ -126,17 +133,19 @@ total_occ_map <- function(data, ...) {
 #' }
 #' @export
 total_occ_ts <- function(data, ...) {
+
   compute_indicator_workflow(data,
                              type = "total_occ",
                              dim_type = "ts",
                              ...)
+
 }
 
 
 #' @title Calculate Evenness Over Time or Space
 #'
 #' @description Calculate evenness over a gridded map or as a time series (see
-#' 'Details' for more information).
+#'  'Details' for more information).
 #'
 #' @details
 #' ## Evenness
@@ -199,8 +208,8 @@ total_occ_ts <- function(data, ...) {
 #' different types of biological collections. *Journal of theoretical biology*,
 #' *13*, 131-144.
 #'
-#' Kv&aring;lseth, T. O. (2015). Evenness indices once again: critical analysis of
-#' properties. *SpringerPlus*, *4*, 1-12.
+#' Kv&aring;lseth, T. O. (2015). Evenness indices once again: critical analysis
+#' of properties. *SpringerPlus*, *4*, 1-12.
 #'
 #' @param data A data cube object (class 'processed_cube').
 #'
@@ -209,22 +218,25 @@ total_occ_ts <- function(data, ...) {
 #' @seealso compute_indicator_workflow
 #'
 #' @return An S3 object with the classes 'indicator_map' or 'indicator_ts' and
-#' 'pielou_evenness' or 'williams_evenness' containing the calculated indicator
-#' values and metadata.
+#'  'pielou_evenness' or 'williams_evenness' containing the calculated indicator
+#'  values and metadata.
 #'
 #' @describeIn pielou_evenness_map
 #'
 #' @examples
 #' \dontrun{
-#' pe_map <- pielou_evenness_map(example_cube_1, level = "country", region = "Denmark")
+#' pe_map <- pielou_evenness_map(example_cube_1, level = "country",
+#'                               region = "Denmark")
 #' plot(pe_map)
 #' }
 #' @export
 pielou_evenness_map <- function(data, ...) {
+
   compute_indicator_workflow(data,
                              type = "pielou_evenness",
                              dim_type = "map",
                              ...)
+
 }
 
 
@@ -237,10 +249,12 @@ pielou_evenness_map <- function(data, ...) {
 #' }
 #' @export
 pielou_evenness_ts <- function(data, ...) {
+
   compute_indicator_workflow(data,
                              type = "pielou_evenness",
                              dim_type = "ts",
                              ...)
+
 }
 
 
@@ -248,15 +262,18 @@ pielou_evenness_ts <- function(data, ...) {
 #'
 #' @examples
 #' \dontrun{
-#' we_map <- williams_evenness_map(example_cube_1, level = "country", region = "Denmark")
+#' we_map <- williams_evenness_map(example_cube_1, level = "country",
+#'                                 region = "Denmark")
 #' plot(we_map)
 #' }
 #' @export
 williams_evenness_map <- function(data, ...) {
+
   compute_indicator_workflow(data,
                              type = "williams_evenness",
                              dim_type = "map",
                              ...)
+
 }
 
 #' @describeIn pielou_evenness_map
@@ -268,10 +285,12 @@ williams_evenness_map <- function(data, ...) {
 #' }
 #' @export
 williams_evenness_ts <- function(data, ...) {
+
   compute_indicator_workflow(data,
                              type = "williams_evenness",
                              dim_type = "ts",
                              ...)
+
 }
 
 
@@ -335,22 +354,25 @@ williams_evenness_ts <- function(data, ...) {
 #' @seealso compute_indicator_workflow
 #'
 #' @return An S3 object with the classes 'indicator_map' or 'indicator_ts' and
-#' 'area_rarity' or 'ab_rarity' containing the calculated indicator values and
-#' metadata.
+#'  'area_rarity' or 'ab_rarity' containing the calculated indicator values and
+#'  metadata.
 #'
 #' @describeIn area_rarity_map
 #'
 #' @examples
 #' \dontrun{
-#' arr_map <- area_rarity_map(example_cube_1, level = "country", region = "Denmark")
+#' arr_map <- area_rarity_map(example_cube_1, level = "country",
+#'                            region = "Denmark")
 #' plot(arr_map)
 #' }
 #' @export
 area_rarity_map <- function(data, ...) {
+
   compute_indicator_workflow(data,
                              type = "area_rarity",
                              dim_type = "map",
                              ...)
+
 }
 
 
@@ -363,11 +385,13 @@ area_rarity_map <- function(data, ...) {
 #' }
 #' @export
 area_rarity_ts <- function(data, ...) {
+
   compute_indicator_workflow(data,
                              type = "area_rarity",
                              dim_type = "ts",
                              force_grid = TRUE,
                              ...)
+
 }
 
 
@@ -375,15 +399,18 @@ area_rarity_ts <- function(data, ...) {
 #'
 #' @examples
 #' \dontrun{
-#' abr_map <- ab_rarity_map(example_cube_1, level = "country", region = "Denmark")
+#' abr_map <- ab_rarity_map(example_cube_1, level = "country",
+#'                          region = "Denmark")
 #' plot(abr_map)
 #' }
 #' @export
 ab_rarity_map <- function(data, ...) {
+
   compute_indicator_workflow(data,
                              type = "ab_rarity",
                              dim_type = "map",
                              ...)
+
 }
 
 
@@ -396,10 +423,12 @@ ab_rarity_map <- function(data, ...) {
 #' }
 #' @export
 ab_rarity_ts <- function(data, ...) {
+
   compute_indicator_workflow(data,
                              type = "ab_rarity",
                              dim_type = "ts",
                              ...)
+
 }
 
 #' @noRd
@@ -453,53 +482,57 @@ hill_diversity_details <- paste0(
   "<h3>Coverage-based estimation</h3>",
   "\n\n",
   "Hill diversity values can be estimated through different ",
-  "standardisation procedures as a way to mitigate the effects of sample size and ",
-  "sampling biases. One way to do this is by equalising sample size by calculating ",
-  "a species accumulation curve (a plot of cumulative species richness as a function ",
-  "of sample size) for each year or grid cell. The smallest ",
-  "sample size from among all the grid cells or years in the dataset is used as a reference ",
-  "to select richness values from each curve. This is called rarefaction. It is also ",
-  "possible to use a larger sample size as a reference, but this requires extrapolation ",
-  "of smaller samples, which is more prone to error than rarefaction.\n\n",
-  "However, results from sample-size based estimation can be ",
-  "problematic as they depend on both richness and evenness. A sample from a ",
-  "community with a more even distribution of individuals across species is likely ",
-  "to show higher richness than a sample of the same size from a community where ",
-  "many species are rare, as the rare species are less likely to appear in the ",
-  "sample. Similarly, a community containing a lot of species will appear less ",
-  "rich than it actually is if the sample size used for comparison is too small. ",
-  "Detectability also plays an important part; hard to detect species are less ",
-  "likely to appear in the sample, so communities in which rare species are more ",
-  "easily detectable are likely to yield richer samples. \n\n",
-  "Another way to estimate species richness is to standardise ",
-  "by coverage. The iNEXT package (Chao et al., 2014; Hsieh et al., 2016) for R is ",
-  "used to estimate species richness at an equal level of coverage (e.g. 0.95) for ",
-  "each cell or year in a biodiversity data cube. Coverage is the proportion of ",
-  "individuals in the community belonging to species in the sample. So, at a ",
-  "coverage of 0.95, 95% of individuals in the community belong to species ",
-  "detected in the sample while 5% belong to species that are not detected in the ",
-  "sample. Coverage is estimated based on the frequencies of species already in ",
-  "the sample. It can be illustrated using a species accumulation curve, the slope ",
-  "of which represents the probability of detecting a new species with the next ",
-  "individual you sample from a community. At a sample size of zero, the slope ",
-  "would be one, meaning the next individual sampled has a 100% probability of ",
-  "being a species not already in the sample. Therefore, a coverage value of one ",
-  "corresponds to the asymptote of a species accumulation curve (slope of zero), ",
-  "meaning no new species would be uncovered through further sampling."
-
+  "standardisation procedures as a way to mitigate the effects of sample size ",
+  "and sampling biases. One way to do this is by equalising sample size by ",
+  "calculating a species accumulation curve (a plot of cumulative species ",
+  "richness as a function of sample size) for each year or grid cell. The ",
+  "smallest sample size from among all the grid cells or years in the dataset ",
+  "is used as a reference to select richness values from each curve. This is ",
+  "called rarefaction. It is also possible to use a larger sample size as a ",
+  "reference, but this requires extrapolation of smaller samples, which is ",
+  "more prone to error than rarefaction.\n\n However, results from ",
+  "sample-size based estimation can be problematic as they depend on both ",
+  "richness and evenness. A sample from a community with a more even ",
+  "distribution of individuals across species is likely to show higher ",
+  "richness than a sample of the same size from a community where many ",
+  "species are rare, as the rare species are less likely to appear in the ",
+  "sample. Similarly, a community containing a lot of species will appear ",
+  "less rich than it actually is if the sample size used for comparison is ",
+  "too small. Detectability also plays an important part; hard to detect ",
+  "species are less likely to appear in the sample, so communities in which ",
+  "rare species are more easily detectable are likely to yield richer ",
+  "samples. \n\n Another way to estimate species richness is to standardise ",
+  "by coverage. The iNEXT package (Chao et al., 2014; Hsieh et al., 2016) for ",
+  "R is used to estimate species richness at an equal level of coverage ",
+  "(e.g. 0.95) for each cell or year in a biodiversity data cube. Coverage ",
+  "is the proportion of individuals in the community belonging to species in ",
+  "the sample. So, at a coverage of 0.95, 95% of individuals in the community ",
+  "belong to species detected in the sample while 5% belong to species that ",
+  "are not detected in the sample. Coverage is estimated based on the ",
+  "frequencies of species already in the sample. It can be illustrated using ",
+  "a species accumulation curve, the slope of which represents the ",
+  "probability of detecting a new species with the next individual you sample ",
+  "from a community. At a sample size of zero, the slope would be one, ",
+  "meaning the next individual sampled has a 100% probability of being a ",
+  "species not already in the sample. Therefore, a coverage value of one ",
+  "corresponds to the asymptote of a species accumulation curve (slope of ",
+  "zero), meaning no new species would be uncovered through further sampling."
 )
 
 #' @title Calculate Estimated Hill Diversity Over Space or Time
 #'
 #' @description Use coverage-based methods to estimate Hill diversity measures
-#' over a gridded map or as a time series.
-#' Three Hill diversity measures are covered:
+#'  over a gridded map or as a time series.
+#'  Three Hill diversity measures are covered:
 #'
-#' *Species richness* - <code>hill0_map()</code> and <code>hill0_ts()</code>
+#' *Species richness* - <code>hill0_map()</code> and
+#'  <code>hill0_ts()</code>
 #'
-#' *Hill-Shannon diversity* - <code>hill1_map()</code> and <code>hill1_ts()</code>
+#' *Hill-Shannon diversity* - <code>hill1_map()</code> and
+#'  <code>hill1_ts()</code>
 #'
-#' *Hill-Simpson diversity* - <code>hill2_map()</code> and <code>hill2_ts()</code>
+#' *Hill-Simpson diversity* - <code>hill2_map()</code> and
+#'  <code>hill2_ts()</code>
 #'
 #' (see 'Details' for more information).
 #'
@@ -523,20 +556,21 @@ hill_diversity_details <- paste0(
 #' *Methods in Ecology and Evolution*, *7*(12), 1451-1456.
 #'
 #' @param data A data cube object (class 'processed_cube').
-#' @param coverage The sample coverage value for the estimator. Default is 0.95.
-#' @param cutoff_length The minimum number of data points for each grid cell.
-#'  Grid cells with fewer data points will be removed before calculations to
-#'  avoid errors.  Default is 5.
-#' @param conf_level Confidence level for bootstrap confidence intervals. Only
-#'  applies to temporal indicators. Default is 0.95.
+#' @param coverage (Optional) The sample coverage value for the estimator.
+#'  Default is 0.95.
+#' @param cutoff_length (Optional) The minimum number of data points for each
+#'  grid cell. Grid cells with fewer data points will be removed before
+#'  calculations to avoid errors. Default is 5.
+#' @param conf_level (Optional) Confidence level for bootstrap confidence
+#' intervals. Only applies to temporal indicators. Default is 0.95.
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
 #' @seealso compute_indicator_workflow
 #'
 #' @return An S3 object with the classes 'indicator_map' or 'indicator_ts' and
-#' 'hill0' or 'hill1' or 'hill2' containing the calculated indicator values and
-#' metadata.
+#'  'hill0' or 'hill1' or 'hill2' containing the calculated indicator values and
+#'  metadata.
 #'
 #' @describeIn hill0_map
 #'
@@ -559,6 +593,7 @@ hill0_map <- function(data,
                              nboot = 0,
                              conf = 0.95,
                              ...)
+
 }
 
 
@@ -596,6 +631,7 @@ hill0_ts <- function(data,
                              nboot = num_bootstrap,
                              force_grid = TRUE,
                              ...)
+
 }
 
 
@@ -620,6 +656,7 @@ hill1_map <- function(data,
                              nboot = 0,
                              conf = 0.95,
                              ...)
+
 }
 
 
@@ -656,6 +693,7 @@ hill1_ts <- function(data,
                              nboot = num_bootstrap,
                              force_grid = TRUE,
                              ...)
+
 }
 
 
@@ -680,6 +718,7 @@ hill2_map <- function(data,
                              nboot = 0,
                              conf = 0.95,
                              ...)
+
 }
 
 #' @describeIn hill0_map
@@ -715,13 +754,14 @@ hill2_ts <- function(data,
                              nboot = num_bootstrap,
                              force_grid = TRUE,
                              ...)
+
 }
 
 
 #' @title Calculate Cumulative Species Richness
 #'
 #' @description This function calculates cumulative species richness as a time
-#' series (see 'Details' for more information).
+#'  series (see 'Details' for more information).
 #'
 #' @details
 #' ## Species richness
@@ -754,8 +794,8 @@ hill2_ts <- function(data,
 #'
 #' @seealso compute_indicator_workflow
 #'
-#' @return An S3 object with the classes 'indicator_ts' and 'cum_richness' containing
-#' the calculated indicator values and metadata.
+#' @return An S3 object with the classes 'indicator_ts' and 'cum_richness'
+#'  containing the calculated indicator values and metadata.
 #'
 #' @examples
 #' \dontrun{
@@ -764,27 +804,29 @@ hill2_ts <- function(data,
 #' }
 #' @export
 cum_richness_ts <- function(data, ...) {
+
   compute_indicator_workflow(data,
                              type = "cum_richness",
                              dim_type = "ts",
                              ...)
+
 }
 
 
 #' @title Calculate Mean Year of Occurrence Over Time or Space
 #'
 #' @description This function estimates the relative newness of records in a
-#' data cube by calculating the mean year of occurrence over a gridded map or as
-#' a time series (see 'Details' for more information).
+#'  data cube by calculating the mean year of occurrence over a gridded map or
+#'  as a time series (see 'Details' for more information).
 #'
 #' @details The mean year of occurrence is calculated per cell, giving an
-#' indication of how recent the data is for each cell. A recent
-#' mean year is not necessarily an indication of quality, as some
-#' countries or regions have been conducting comprehensive
-#' biodiversity monitoring for many years and will therefore
-#' reflect an older mean year of occurrence, while others may show
-#' a recent mean year due to e.g., the sudden availability of large
-#' amounts of citizen science data.
+#'  indication of how recent the data is for each cell. A recent
+#'  mean year is not necessarily an indication of quality, as some
+#'  countries or regions have been conducting comprehensive
+#'  biodiversity monitoring for many years and will therefore
+#'  reflect an older mean year of occurrence, while others may show
+#'  a recent mean year due to e.g., the sudden availability of large
+#'  amounts of citizen science data.
 #'
 #' @param data A data cube object (class 'processed_cube').
 #'
@@ -793,7 +835,7 @@ cum_richness_ts <- function(data, ...) {
 #' @seealso compute_indicator_workflow
 #'
 #' @return An S3 object with the classes 'indicator_map' or 'indicator_ts' and
-#' 'newness' containing the calculated indicator values and metadata.
+#'  'newness' containing the calculated indicator values and metadata.
 #'
 #' @describeIn newness_map
 #'
@@ -804,10 +846,12 @@ cum_richness_ts <- function(data, ...) {
 #' }
 #' @export
 newness_map <- function(data, ...) {
+
   compute_indicator_workflow(data,
                              type = "newness",
                              dim_type = "map",
                              ...)
+
 }
 
 
@@ -820,17 +864,19 @@ newness_map <- function(data, ...) {
 #' }
 #' @export
 newness_ts <- function(data, ...) {
+
   compute_indicator_workflow(data,
                              type = "newness",
                              dim_type = "ts",
                              ...)
+
 }
 
 
 #' @title Calculate Occurrence Density Over Space or Time
 #'
 #' @description This function calculates the density of records over a gridded
-#' map or as a time series (see 'Details' for more information).
+#'  map or as a time series (see 'Details' for more information).
 #'
 #' @details
 #' Density is calculated by summing the total number of occurrences per square
@@ -844,7 +890,7 @@ newness_ts <- function(data, ...) {
 #' @seealso compute_indicator_workflow
 #'
 #' @return An S3 object with the classes 'indicator_map' or 'indicator_ts' and
-#' 'occ_density' containing the calculated indicator values and metadata.
+#'  'occ_density' containing the calculated indicator values and metadata.
 #'
 #' @describeIn occ_density_map
 #'
@@ -856,10 +902,12 @@ newness_ts <- function(data, ...) {
 #' }
 #' @export
 occ_density_map <- function(data, ...) {
+
   compute_indicator_workflow(data,
                              type = "occ_density",
                              dim_type = "map",
                              ...)
+
 }
 
 
@@ -872,17 +920,19 @@ occ_density_map <- function(data, ...) {
 #' }
 #' @export
 occ_density_ts <- function(data, ...) {
+
   compute_indicator_workflow(data,
                              type = "occ_density",
                              dim_type = "ts",
                              ...)
+
 }
 
 #' @title Calculate Species Occurrences Over Space or Time
 #'
-#' @description This function calculates the number of occurrences for individual
-#' species over a gridded map or as a time series (see 'Details' for more
-#' information).
+#' @description This function calculates the number of occurrences for
+#'  individual species over a gridded map or as a time series (see 'Details'
+#'  for more information).
 #'
 #' @details
 #' Species occurrences are considered an essential biodiversity variable (EBV).
@@ -900,7 +950,7 @@ occ_density_ts <- function(data, ...) {
 #' @seealso compute_indicator_workflow
 #'
 #' @return An S3 object with the classes 'indicator_map' or 'indicator_ts' and
-#' 'spec_occ' containing the calculated indicator values and metadata.
+#'  'spec_occ' containing the calculated indicator values and metadata.
 #'
 #' @describeIn spec_occ_map
 #'
@@ -911,10 +961,12 @@ occ_density_ts <- function(data, ...) {
 #' }
 #' @export
 spec_occ_map <- function(data, ...) {
+
   compute_indicator_workflow(data,
                              type = "spec_occ",
                              dim_type = "map",
                              ...)
+
 }
 
 #' @describeIn spec_occ_map
@@ -925,16 +977,19 @@ spec_occ_map <- function(data, ...) {
 #'
 #' @export
 spec_occ_ts <- function(data, ...) {
+
   compute_indicator_workflow(data,
                              type = "spec_occ",
                              dim_type = "ts",
                              ...)
+
 }
 
 #' @title Plot Species Ranges Over Space or Time
 #'
 #' @description Plot the cells occupied for individual species over a gridded
-#' map or calculate the change in the number of cells occupied as a time series.
+#'  map or calculate the change in the number of cells occupied as a time
+#'  series.
 #'
 #' @param data A data cube object (class 'processed_cube').
 #'
@@ -943,20 +998,23 @@ spec_occ_ts <- function(data, ...) {
 #' @seealso compute_indicator_workflow
 #'
 #' @return An S3 object with the classes 'indicator_map' or 'indicator_ts' and
-#' 'spec_range' containing the calculated indicator values and metadata.
+#'  'spec_range' containing the calculated indicator values and metadata.
 #'
 #' @describeIn spec_range_map
 #'
 #' @examples
-#' sr_map <- spec_range_map(example_cube_1, level = "country", region = "Denmark")
+#' sr_map <- spec_range_map(example_cube_1, level = "country",
+#'                          region = "Denmark")
 #' plot(sr_map, c(2440728, 4265185))
 #'
 #' @export
 spec_range_map <- function(data, ...) {
+
   compute_indicator_workflow(data,
                              type = "spec_range",
                              dim_type = "map",
                              ...)
+
 }
 
 #' @describeIn spec_range_map
@@ -968,16 +1026,18 @@ spec_range_map <- function(data, ...) {
 #' }
 #' @export
 spec_range_ts <- function(data, ...) {
+
   compute_indicator_workflow(data,
                              type = "spec_range",
                              dim_type = "ts",
                              ...)
+
 }
 
 #' @title Calculate Taxonomic Distinctness Over Space or Time
 #'
 #' @description This function calculates the taxonomic distinctness index (TDI)
-#' over a gridded map or as a time series (see 'Details' for more information).
+#'  over a gridded map or as a time series (see 'Details' for more information).
 #'
 #' @details Taxonomic distinctness is an essential biodiversity variable (EBV)
 #' that measures the taxonomic relatedness between species, providing a measure
@@ -1003,8 +1063,8 @@ spec_range_ts <- function(data, ...) {
 #'
 #' Chamberlain, S., Szoecs, E., Foster, Z., Boettiger, C., Ram, K., Bartomeus,
 #' I., Baumgartner, J., O'Donnell, J., Oksanen, J., Tzovaras, B. G., Marchand,
-#' P., Tran, V., Salmon, M., Li, G., & Greni&eacute;, M. (2020). taxize: Taxonomic
-#' Information from Around the Web. R package version 0.9.98.
+#' P., Tran, V., Salmon, M., Li, G., & Greni&eacute;, M. (2020). taxize:
+#' Taxonomic Information from Around the Web. R package version 0.9.98.
 #' https://github.com/ropensci/taxize.
 #'
 #' Clarke, K. R., & Warwick, R. M. (1999). The taxonomic distinctness measure
@@ -1012,54 +1072,62 @@ spec_range_ts <- function(data, ...) {
 #' Marine Ecology Progress Series, 184, 21-29.
 #'
 #' @param data A data cube object (class 'processed_cube').
-#' @param rows Choose which row to select if there are multiple matches when
-#' retrieving taxonomic information from GBIF. (Default is 1. Use NA for
-#' interactive mode.)
+#' @param rows (Optional) Choose which row to select if there are multiple
+#'  matches when retrieving taxonomic information from GBIF. (Default is 1.
+#'  Use NA for interactive mode.)
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
 #' @seealso compute_indicator_workflow
 #'
 #' @return An S3 object with the classes 'indicator_map' or 'indicator_ts' and
-#' 'tax_distinct' containing the calculated indicator values and metadata.
+#'  'tax_distinct' containing the calculated indicator values and metadata.
 #'
 #' @describeIn tax_distinct_map
 #'
 #' @examples
 #' \dontrun{
-#' td_map <- tax_distinct_map(example_cube_1, level = "country", region = "Denmark")
+#' td_map <- tax_distinct_map(example_cube_1, level = "country",
+#'                                            region = "Denmark")
 #' plot(td_map)
 #' }
 #'
 #' @export
 tax_distinct_map <- function(data, rows = 1, ...) {
+
   if (!requireNamespace("taxize", quietly = TRUE)) {
     stop("The package {taxize} is required for this action")
   }
+
   compute_indicator_workflow(data,
                              type = "tax_distinct",
                              dim_type = "map",
                              rows = rows,
                              ...)
+
 }
 
 #' @describeIn tax_distinct_map
 #'
 #' @examples
 #' \dontrun{
-#' td_ts <- tax_distinct_ts(example_cube_1, level = "country", region = "Denmark")
+#' td_ts <- tax_distinct_ts(example_cube_1, level = "country",
+#'                          region = "Denmark")
 #' plot(td_ts)
 #' }
 #' @export
 tax_distinct_ts <- function(data, rows = 1, ...) {
+
   if (!requireNamespace("taxize", quietly = TRUE)) {
     stop("The package {taxize} is required for this action")
   }
+
   compute_indicator_workflow(data,
                              type = "tax_distinct",
                              dim_type = "ts",
                              rows = rows,
                              ...)
+
 }
 
 #' @title Calculate Occupancy Turnover
@@ -1105,7 +1173,7 @@ tax_distinct_ts <- function(data, rows = 1, ...) {
 #' @seealso compute_indicator_workflow
 #'
 #' @return An S3 object with the classes 'indicator_ts' and 'occ_turnover'
-#' containing the calculated indicator values and metadata.
+#'  containing the calculated indicator values and metadata.
 #'
 #' @examples
 #' ot_ts <- occ_turnover_ts(example_cube_1, first_year = 1985)
@@ -1113,8 +1181,10 @@ tax_distinct_ts <- function(data, rows = 1, ...) {
 #'
 #' @export
 occ_turnover_ts <- function(data, ...) {
+
   compute_indicator_workflow(data,
                              type = "occ_turnover",
                              dim_type = "ts",
                              ...)
+
 }

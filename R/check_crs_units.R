@@ -1,6 +1,7 @@
 #' Check if a given CRS is in meters or degrees.
 #'
-#' @param crs_input The CRS, which can be an EPSG code, WKT string, or PROJ.4 string.
+#' @param crs_input The CRS, which can be an EPSG code, WKT string, or
+#'  PROJ.4 string.
 #'
 #' @return "km" if it's in meters,
 #' "degrees" if it's in degrees. Otherwise, throws an informative error.
@@ -27,7 +28,7 @@ check_crs_units <- function(crs_input) {
 
   # Check if the CRS is valid
   if (is.na(crs_info)) {
-    stop(paste("Error: Invalid CRS input. Please provide a valid EPSG code, ",
+    stop(paste0("Error: Invalid CRS input. Please provide a valid EPSG code, ",
     "WKT string, or PROJ.4 string."))
   }
 
@@ -37,7 +38,7 @@ check_crs_units <- function(crs_input) {
   } else if (crs_info$units_gdal == "metre") {
     return("km")
   } else {
-    stop(paste("Error: CRS units are not in degrees or meters. ",
+    stop(paste0("Error: CRS units are not in degrees or meters. ",
     "Please provide a CRS with valid units."))
   }
 }

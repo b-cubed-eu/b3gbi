@@ -12,10 +12,12 @@ prepare_map_data <- function(data,
   # Set variables to NULL
   scalerank <- featurecla <- geometry <- . <- NULL
 
+  # Transform the base map data to the desired projection
   map_surround <- map_data_sf %>%
     sf::st_transform(crs = projection) %>%
     sf::st_make_valid()
 
+  # If the projection uses kilometers and is not EPSG:3035, handle differently
   if (check_crs_units(projection) == "km" &&
       sf::st_crs(projection)$input != "EPSG:3035") {
 
@@ -53,22 +55,26 @@ prepare_map_data <- function(data,
         latlong_extent["ymax"] + (expand_percent * lat_range)
       ), crs = latlong_crs)
 
-      latlongbbox_transformed <- sf::st_transform(sf::st_as_sfc(expanded_latlong_bbox),
-                                                  crs = "ESRI:54012")
+      # Project the expanded latlong extent for cropping
+      latlongbbox_transformed <- sf::st_transform(
+        sf::st_as_sfc(expanded_latlong_bbox), crs = "ESRI:54012")
+
       # Crop the world map in lat/long to the expanded extent
       surrounding_countries_latlong <- map_data_sf %>%
         sf::st_make_valid() %>%
         sf::st_transform(crs = "ESRI:54012") %>%
         dplyr::group_by(scalerank, featurecla) %>%
-        dplyr::reframe(geometry = sf::st_crop(geometry, latlongbbox_transformed)) %>%
-        dplyr::filter(!sf::st_is_empty(geometry)) %>% # Filter out empty geometries
+        dplyr::reframe(geometry = sf::st_crop(geometry,
+                                              latlongbbox_transformed)) %>%
+        dplyr::filter(!sf::st_is_empty(geometry)) %>%
         sf::st_make_valid() %>%
         sf::st_transform(crs = sf::st_crs(expanded_latlong_bbox))
 
+      # Initialize list to hold additional layers
       layer_list <- list()
-      if(!is.null(layers)) {
-        for (i in 1:length(layers)) {
-          layer_data <- add_NE_layer(layers[i],
+      if (!is.null(layers)) {
+        for (i in seq_along(layers)) {
+          layer_data <- add_ne_layer(layers[i],
                                      scale,
                                      expanded_latlong_bbox)
           # Project the layer
@@ -84,23 +90,25 @@ prepare_map_data <- function(data,
     } else {
 
       # Project latlong extent for cropping
-      latlong_extent_transformed <- sf::st_transform(sf::st_as_sfc(latlong_extent),
-                                                     crs = "ESRI:54012")
+      latlong_extent_transformed <- sf::st_transform(
+        sf::st_as_sfc(latlong_extent), crs = "ESRI:54012")
 
       # Crop to the original extent if not expanding
       surrounding_countries_latlong <- map_data_sf %>%
         sf::st_make_valid() %>%
         sf::st_transform(crs = "ESRI:54012") %>%
         dplyr::group_by(scalerank, featurecla) %>%
-        dplyr::reframe(geometry = sf::st_crop(geometry, latlong_extent_transformed)) %>%
-        dplyr::filter(!sf::st_is_empty(geometry)) %>% # Filter out empty geometries
+        dplyr::reframe(geometry = sf::st_crop(geometry,
+                                              latlong_extent_transformed)) %>%
+        dplyr::filter(!sf::st_is_empty(geometry)) %>%
         sf::st_make_valid() %>%
         sf::st_transform(crs = sf::st_crs(latlong_extent))
 
+      # Initialize list to hold additional layers
       layer_list <- list()
       if (!is.null(layers)) {
-        for (i in 1:length(layers)) {
-          layer_data <- add_NE_layer(layers[i],
+        for (i in seq_along(layers)) {
+          layer_data <- add_ne_layer(layers[i],
                                      scale,
                                      latlong_extent)
           # Project the layer
@@ -123,6 +131,7 @@ prepare_map_data <- function(data,
 
   } else {
 
+    # Transform the base map data to the desired projection
     map_surround <- sf::st_transform(map_surround, crs = projection) %>%
       sf::st_make_valid()
 
@@ -143,6 +152,7 @@ prepare_map_data <- function(data,
         map_lims["ymax"] + (expand_percent * y_range)
       )))
     } else {
+      # Use original map limits if cropping to grid or user-specified limits
       expanded_lims <- map_lims
     }
 
@@ -151,10 +161,11 @@ prepare_map_data <- function(data,
         sf::st_set_crs(., sf::st_crs(map_surround))
       bbox_lims <- sf::st_bbox(bbox)
 
+      # Initialize list to hold additional layers
       layer_list <- list()
       if (!is.null(layers)) {
-        for (i in 1:length(layers)) {
-          layer_data <- add_NE_layer(layers[i],
+        for (i in seq_along(layers)) {
+          layer_data <- add_ne_layer(layers[i],
                                      scale,
                                      bbox_lims)
 
@@ -165,16 +176,20 @@ prepare_map_data <- function(data,
         }
       }
 
-    sf::st_agr(map_surround) = "constant"
+    # Crop the map to the bounding box
+    sf::st_agr(map_surround) <- "constant"
     bbox_t <- sf::st_transform(bbox, crs = "ESRI:54012")
 
+    # Crop and reproject the surrounding map data
     map_surround <- sf::st_transform(map_surround, crs = "ESRI:54012") %>%
       sf::st_intersection(bbox_t) %>%
       sf::st_transform(crs = projection)
   }
-  map_data_list <- list(
+
+  # Return a list containing the map data and any additional layers
+  return(list(
     map_surround = map_surround,
     layer_list = layer_list
-  )
-  return(map_data_list)
+  ))
+
 }

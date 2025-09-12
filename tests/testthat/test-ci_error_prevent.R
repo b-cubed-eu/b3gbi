@@ -8,7 +8,7 @@ test_that("ci_error_prevent handles all NA values", {
 test_that("ci_error_prevent handles some NA values", {
   mock_boot <- list(t = matrix(c(1, 2, NA, 4, NA)), t0 = 3)
   result <- ci_error_prevent(mock_boot)
-  expect_equal(result$t, matrix(c(1, 2, 7/3, 4, 7/3)))
+  expect_equal(result$t, matrix(c(1, 2, 7 / 3, 4, 7 / 3)))
 })
 
 test_that("ci_error_prevent handles no NA values", {

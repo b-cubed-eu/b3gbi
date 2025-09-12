@@ -3,38 +3,31 @@
 #' Downloads and prepares map data from the rnaturalearth package at
 #' different geographic scales (country, continent, or world).
 #'
-#' @param latlong_bbox A bbox object in latitude and longitude ("EPSG:4326") to
-#'   use for cropping the downloaded map data (required if level = 'cube').
 #' @param projected_crs The projected CRS to convert the cropped map to.
-#' @param region The specific region to retrieve data for (required unless
-#'   level = 'cube' or 'world').
-#' @param level The desired geographic scale: 'country', 'continent', 'geounit',
-#'   'sovereignty', 'world', or 'cube'. Cube refers to the geographic extent of
-#'   the data cube.
-#' @param ne_type The type of Natural Earth data to download: 'countries',
-#'   'map_units', 'sovereignty', or 'tiny_countries'. (Default: 'countries')
-#' @param ne_scale The scale of Natural Earth data to download: 'small' - 110m,
-#'   'medium' - 50m, or 'large' - 10m. (Default: 'medium')
-#' @param include_ocean Include oceans if TRUE. Set to "buffered_coast" to
-#'   instead create a buffer around the land area. If set to FALSE occurrences
-#'   that fall outside of land boundaries will not be included in the analysis.
-#' @param buffer_dist_km Distance to buffer around the land if you choose
-#'   "buffered_coast" for the include_ocean parameter.
+#' @param latlong_bbox A bbox object in latitude and longitude ("EPSG:4326") to
+#'  use for cropping the downloaded map data (required if level = 'cube').
+#' @param region (Optional) The specific region to retrieve data for (required
+#'  unless level = 'cube' or 'world').
+#' @param level (Optional) The desired geographic scale: 'country', 'continent',
+#'  'geounit', 'sovereignty', 'world', or 'cube'. Cube refers to the geographic
+#'  extent of the data cube.
+#' @param ne_type (Optional) The type of Natural Earth data to download:
+#'  'countries', 'map_units', 'sovereignty', or 'tiny_countries'. (Default:
+#'  'countries')
+#' @param ne_scale (Optional) The scale of Natural Earth data to download:
+#'  'small' - 110m, 'medium' - 50m, or 'large' - 10m. (Default: 'medium')
+#' @param include_ocean (Optional) Include oceans if TRUE. Set to
+#'  "buffered_coast" to instead create a buffer around the land area. If set to
+#'  FALSE occurrences that fall outside of land boundaries will not be included
+#'  in the analysis.
+#' @param buffer_dist_km (Optional) Distance to buffer around the land if you
+#'  choose "buffered_coast" for the include_ocean parameter.
 #' @return An sf object containing the map data, transformed to the
-#'   appropriate projection.
+#'  appropriate projection.
 #'
-#' @examples
-#' # Download country-level data for France
-#' france_map <- get_NE_data(level = "country", region = "France")
-#'
-#' # Get continent-level data for Africa
-#' africa_map <- get_NE_data(level = "continent", region = "Africa")
-#'
-#' # Retrieve a map of the entire world
-#' world_map <- get_NE_data(level = "world")
 #' @noRd
-get_NE_data <- function(latlong_bbox = NULL,
-                        projected_crs,
+get_NE_data <- function(projected_crs,
+                        latlong_bbox = NULL,
                         region = NULL,
                         level = "cube",
                         ne_type = "countries",
@@ -43,7 +36,7 @@ get_NE_data <- function(latlong_bbox = NULL,
                         buffer_dist_km = NULL
                         ) {
 
-  scalerank <- featurecla <- geometry <- x <- . <- NULL
+  x <- . <- NULL
 
   if (ne_scale == "large" && ne_type == "tiny_countries") {
     stop("tiny_countries are only available for medium (50 km) or small (110 km)
@@ -177,7 +170,6 @@ get_NE_data <- function(latlong_bbox = NULL,
         map_data_projected <- map_data_ocean
       } else {
         # Otherwise, perform the union as normal
-        #map_data_projected <- sf::st_union(map_data_projected, map_data_ocean)
         map_data_ocean_ <- sf::st_as_sf(map_data_ocean)
         map_data_projected <- bind_rows(map_data_projected,
                                                map_data_ocean_)
@@ -188,9 +180,6 @@ get_NE_data <- function(latlong_bbox = NULL,
           sf::st_as_sf()
 
       }
-
-      # Merge the land with the oceans
-    #  map_data_projected <- sf::st_union(map_data_projected, map_data_ocean)
 
     } else if (is.character(include_ocean) &&
                include_ocean == "buffered_coast") {
@@ -246,7 +235,7 @@ get_NE_data <- function(latlong_bbox = NULL,
 #' @param cell_size Cell length in kilometers.
 # #' @param grid_units Cell size unit type: "km" or "degrees".
 #' @param projected_crs The projected CRS the grid should be converted to.
-#' @param make_valid Run sf::st_make_valid() on grid. TRUE or FALSE.
+#' @param make_valid (Optional) Run sf::st_make_valid() on grid. TRUE or FALSE.
 #' @return An sf object containing the grid polygons, with attributes:
 #'   * `cellid`: A unique ID for each grid cell.
 #'   * `area`: Area of each grid cell.
@@ -277,7 +266,7 @@ create_grid <- function(bbox,
     dplyr::mutate(cellid = dplyr::row_number())
 
   # Validate grid if make_valid set to TRUE
-  if (make_valid==TRUE) {
+  if (make_valid == TRUE) {
     grid <- sf::st_make_valid(grid)
   }
 
@@ -296,9 +285,10 @@ create_grid <- function(bbox,
 
 #' @title Calculate Biodiversity Indicators Over Space or Time
 #'
-#' @description This function provides a flexible framework for calculating various biodiversity
-#' indicators on a spatial grid or as a time series. It prepares the data, creates a grid, calculates indicators,
-#' and formats the output into an appropriate S3 object ('indicator_map' or 'indicator_ts').
+#' @description This function provides a flexible framework for calculating
+#'  various biodiversity indicators on a spatial grid or as a time series. It
+#'  prepares the data, creates a grid, calculates indicators, and formats the
+#'  output into an appropriate S3 object ('indicator_map' or 'indicator_ts').
 #'
 #' @param data A data cube object (class 'processed_cube').
 #' @param type The indicator to calculate. Supported options include:
@@ -307,55 +297,70 @@ create_grid <- function(bbox,
 #'   * 'newness': Mean year of occurrence.
 #'   * 'occ_density': Density of occurrences.
 #'   * 'williams_evenness', 'pielou_evenness': Evenness measures.
-#'   * 'ab_rarity', 'area_rarity':  Abundance-based and area-based rarity scores.
+#'   * 'ab_rarity', 'area_rarity':  Abundance-based and area-based rarity
+#'     scores.
 #'   * 'cum_richness': Cumulative species richness.
 #'   * 'occ_turnover': Occupancy turnover.
 #'   * 'spec_range': Species range size.
 #'   * 'spec_occ': Species occurrences.
 #'   * 'tax_distinct': Taxonomic distinctness.
 #'   * 'hill0': Species richness (estimated by coverage-based rarefaction).
-#'   * 'hill1': Hill-Shannon diversity (estimated by coverage-based rarefaction).
-#'   * 'hill2': Hill-Simpson diversity (estimated by coverage-based rarefaction).
-#' @param dim_type Dimension to calculate indicator over (time: 'ts', or space: 'map')
-#' @param ci_type Type of bootstrap confidence intervals to calculate. (Default: "norm".
-#'   Select "none" to avoid calculating bootstrap CIs.)
-#' @param cell_size Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)
-#' @param level Spatial level: 'cube', 'continent', 'country', 'world', 'sovereignty',
-#'  or 'geounit'. (Default: 'cube')
-#' @param region The region of interest (e.g., "Europe"). (Default: "Europe")
-#' @param ne_type The type of Natural Earth data to download: 'countries', 'map_units',
-#'  'sovereignty', or 'tiny_countries'. (Default: "countries")
-#' @param ne_scale The scale of Natural Earth data to download: 'small' - 110m,
-#'  'medium' - 50m, or 'large' - 10m. (Default: "medium")
-#' @param output_crs The CRS you want for your calculated indicator. (Leave blank
-#'  to let the function choose a default based on grid reference system)
-#' @param first_year Exclude data before this year. (Uses all data in the cube by default.)
-#' @param last_year Exclude data after this year. (Uses all data in the cube by default.)
-#' @param spherical_geometry If set to FALSE, will temporarily disable spherical geometry
-#'  while the function runs. Should only be used to solve specific issues. (Default is TRUE)
-#' @param make_valid Calls st_make_valid() from the sf package. Increases processing
-#'  time but may help if you are getting polygon errors. (Default is FALSE).
-#' @param num_bootstrap Set the number of bootstraps to calculate for generating
-#'  confidence intervals. (Default: 1000)
-#' @param shapefile_path Path of an external shapefile to merge into the workflow. For example,
-#'  if you want to calculate your indicator particular features such as protected areas or wetlands.
-#' @param shapefile_crs CRS of a .wkt shapefile. If your shapefile is .wkt and you do
-#'  NOT use this parameter, the CRS will be assumed to be EPSG:4326 and the
-#'  coordinates will be read in as lat/long. If your shape is NOT a .wkt the CRS
-#'  will be determined automatically.
-#' @param invert Calculate an indicator over the inverse of the shapefile (e.g.
-#'  if you have a protected areas shapefile this would calculate an indicator over
-#'  all non protected areas)
-#' @param include_ocean Include occurrences which fall outside the land area.
-#'  Default is TRUE. Set as "buffered_coast" to include a set buffer size around
-#'  the land area rather than the entire ocean area.
-#' @param buffer_dist_km The distance to buffer around the land if include_ocean
-#'  is set to "buffered_coast".
-#' @param force_grid Forces the calculation of a grid even if this would not
-#'  normally be part of the pipeline, e.g. for time series. This setting is
-#'  required for the calculation of rarity, and is turned on by the ab_rarity_ts
-#'  and area_rarity_ts wrappers. (Default: FALSE)
-#' @param ... Additional arguments passed to specific indicator calculation functions.
+#'   * 'hill1': Hill-Shannon diversity (estimated by coverage-based
+#'     rarefaction).
+#'   * 'hill2': Hill-Simpson diversity (estimated by coverage-based
+#'     rarefaction).
+#' @param dim_type (Optional) Dimension to calculate indicator over (time: 'ts',
+#'  or space: 'map')
+#' @param ci_type (Optional) Type of bootstrap confidence intervals to
+#'  calculate. (Default: "norm". Select "none" to avoid calculating bootstrap
+#'  CIs.)
+#' @param cell_size (Optional) Length of grid cell sides, in km. (Default: 10
+#'  for country, 100 for continent or world)
+#' @param level (Optional) Spatial level: 'cube', 'continent', 'country',
+#'  'world', 'sovereignty', or 'geounit'. (Default: 'cube')
+#' @param region (Optional) The region of interest (e.g., "Europe"). (Default:
+#'  "Europe")
+#' @param ne_type (Optional) The type of Natural Earth data to download:
+#'  'countries', 'map_units', 'sovereignty', or 'tiny_countries'. (Default:
+#'  "countries")
+#' @param ne_scale (Optional) The scale of Natural Earth data to download:
+#'  'small' - 110m, 'medium' - 50m, or 'large' - 10m. (Default: "medium")
+#' @param output_crs (Optional) The CRS you want for your calculated indicator.
+#'  (Leave blank to let the function choose a default based on grid reference
+#'  system)
+#' @param first_year (Optinal) Exclude data before this year. (Uses all data in
+#'  the cube by default.)
+#' @param last_year (Optional) Exclude data after this year. (Uses all data in
+#'  the cube by default.)
+#' @param spherical_geometry (Optional) If set to FALSE, will temporarily
+#'  disable spherical geometry while the function runs. Should only be used to
+#'  solve specific issues. (Default is TRUE)
+#' @param make_valid (Optional) Calls st_make_valid() from the sf package.
+#'  Increases processing time but may help if you are getting polygon errors.
+#'  (Default is FALSE).
+#' @param num_bootstrap (Optional) Set the number of bootstraps to calculate for
+#'  generating confidence intervals. (Default: 1000)
+#' @param shapefile_path (optional) Path of an external shapefile to merge into
+#'  the workflow. For example, if you want to calculate your indicator
+#'  particular features such as protected areas or wetlands.
+#' @param shapefile_crs (Optional) CRS of a .wkt shapefile. If your shapefile
+#'  is .wkt and you do NOT use this parameter, the CRS will be assumed to be
+#'  EPSG:4326 and the coordinates will be read in as lat/long. If your shape is
+#'  NOT a .wkt the CRS will be determined automatically.
+#' @param invert (optional) Calculate an indicator over the inverse of the
+#'  shapefile (e.g. if you have a protected areas shapefile this would calculate
+#'  an indicator over all non protected areas)
+#' @param include_ocean (Optional) Include occurrences which fall outside the
+#'  land area. Default is TRUE. Set as "buffered_coast" to include a set buffer
+#'  size around the land area rather than the entire ocean area.
+#' @param buffer_dist_km (Optional) The distance to buffer around the land if
+#'  include_ocean is set to "buffered_coast".
+#' @param force_grid (Optional) Forces the calculation of a grid even if this
+#'  would not normally be part of the pipeline, e.g. for time series. This
+#'  setting is required for the calculation of rarity, and is turned on by the
+#'  ab_rarity_ts and area_rarity_ts wrappers. (Default: FALSE)
+#' @param ... Additional arguments passed to specific indicator calculation
+#'  functions.
 #'
 #' @return An S3 object containing the calculated indicator values and metadata.
 #'
@@ -411,10 +416,6 @@ compute_indicator_workflow <- function(data,
                     inherits(data, "processed_cube_dsinfo") |
                     inherits(data, "sim_cube"))
 
-  available_indicators <- NULL; rm(available_indicators)
-
-  geometry <- area <- cellid <- NULL
-
   # Check for empty cube
   if (nrow(data$data) == 0) {
     stop("No data found in the cube.")
@@ -451,7 +452,7 @@ compute_indicator_workflow <- function(data,
   # Check that user is not trying to calculate an indicator that requires grid
   # cell assignment with a cube that lacks a supported grid system.
   if (!data$grid_type %in% c("eea", "mgrs", "eqdgc")) {
-    if (dim_type=="map") {
+    if (dim_type == "map") {
       stop(
         paste0(
           "Grid system is either unsupported or missing. Spatial ",
@@ -516,7 +517,7 @@ compute_indicator_workflow <- function(data,
   }
   # Filter years
   df <- data$data[(data$data$year >= first_year) &
-                    (data$data$year <= last_year),]
+                    (data$data$year <= last_year), ]
 
   # Collect information to add to final object
   num_species <- data$num_species
@@ -599,7 +600,7 @@ compute_indicator_workflow <- function(data,
       stop("Grid reference system not found.")
     }
 
-    if (spherical_geometry==FALSE){
+    if (spherical_geometry == FALSE) {
       # Temporarily disable spherical geometry
       sf::sf_use_s2(FALSE)
     }
@@ -632,17 +633,6 @@ compute_indicator_workflow <- function(data,
 
     # # Get units based on CRS
     output_units <- check_crs_units(output_crs)
-
-    # Get current cell size
-    if (stringr::str_detect(data$resolution, "degrees")) {
-      input_cell_size <- as.numeric(stringr::str_extract(data$resolution,
-                                                         "[0-9.]+(?=degrees)"))
-    } else if (stringr::str_detect(data$resolution, "km")) {
-      input_cell_size <- as.numeric(stringr::str_extract(data$resolution,
-                                                         "[0-9.]+(?=km)"))
-    } else {
-      stop("Resolution units not recognized. Must be km or degrees.")
-    }
 
     # Get cube area
     cube_area_sqkm <-
@@ -771,8 +761,8 @@ compute_indicator_workflow <- function(data,
     }
 
     # Retrieve and validate Natural Earth data
-    map_data <- get_NE_data(bbox_latlong,
-                            projected_crs,
+    map_data <- get_NE_data(projected_crs,
+                            bbox_latlong,
                             region,
                             level,
                             ne_type,
@@ -887,11 +877,11 @@ compute_indicator_workflow <- function(data,
     indicator <- calc_ts(data_final_nogeom, ...)
 
     # Calculate confidence intervals
-    if (ci_type!="none") {
+    if (ci_type != "none") {
       if (!type %in% noci_list) {
         indicator <- calc_ci(data_final_nogeom,
                              indicator = indicator,
-                             num_bootstrap=num_bootstrap,
+                             num_bootstrap = num_bootstrap,
                              ci_type = ci_type,
                              ...)
       } else {
@@ -907,7 +897,7 @@ compute_indicator_workflow <- function(data,
     }
   }
 
-  if (spherical_geometry==FALSE) {
+  if (spherical_geometry == FALSE) {
     # restore the original spherical geometry setting
     sf::sf_use_s2(original_s2_setting)
   }
@@ -948,5 +938,7 @@ compute_indicator_workflow <- function(data,
                                       species_names = species_names,
                                       coord_range = map_lims)
   }
+
   return(diversity_obj)
+
 }

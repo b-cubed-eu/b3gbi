@@ -47,8 +47,8 @@ The old ones come with an additional .csv file containing taxonomic information 
 #   * Argument 1: data, cube in .csv format 
 #   * Argument 2: grid_type (optional). By default the function will attempt to 
 #                 determine this automatically. However, you have the option to 
-#                 manually specify 'eea', 'mgrs', or 'eqdgc'. If you are using a 
-#                 simulated cube. e.g. output by the gcube package, choose 
+#                 manually specify 'eea', 'mgrs', or 'eqdgc'. If you are using 
+#                 a simulated cube. e.g. output by the gcube package, choose 
 #                 'custom'.
 #   * Argument 3: first_year (optional), you can filter your cube to include 
 #                 only data in a certain time period, by default this will be 
@@ -110,7 +110,7 @@ The old ones come with an additional .csv file containing taxonomic information 
 library(b3gbi)
 denmark_cube <- process_cube(system.file("extdata", 
                                          "denmark_mammals_cube_eqdgc.csv", 
-                                         package="b3gbi"))
+                                         package = "b3gbi"))
 denmark_cube
 
 ```
@@ -138,7 +138,8 @@ Each indicator comes with its own wrapper functions, and these should be used ra
 ```{r}
 # Function 2: compute_indicator_workflow()
 # Description: Calculates a biodiversity indicator over time or space from a 
-# processed_cube object. Should be called by one of the wrapper functions listed below. 
+# processed_cube object. Should be called by one of the wrapper functions listed 
+# below. 
 #
 # Inputs: 
 #   * Argument 1: data, a processed_cube object
@@ -177,8 +178,8 @@ Each indicator comes with its own wrapper functions, and these should be used ra
 #                  .wkt format and is not EPSG:4326
 #   * Argument 18: invert, invert the shapefile
 #   * Argument 19: include_water, include ocean and lake layers from 
-#                  rnaturalearth. Defaults to FALSE. Alternatively you can set it
-#                  to "buffered_coast" for to set a buffer distance around land.
+#                  rnaturalearth. Defaults to FALSE. Alternatively you can set 
+#                  it to "buffered_coast" to set a buffer distance around land.
 #   * Argument 20: buffer_dist_km, Distance to buffer around the land if
 #                  include_water set to "buffered_coast".
 #
@@ -377,4 +378,3 @@ Denmark_observed_richness_map <- obs_richness_map(example_cube_1,
 plot(Denmark_observed_richness_map)
 
 ```
-
