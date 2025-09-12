@@ -15,7 +15,7 @@ map or as a time series (see 'Details' for more information)."><meta property="o
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,7 +38,7 @@ map or as a time series (see 'Details' for more information)."><meta property="o
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Calculate Occurrence Density Over Space or Time</h1>
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/R/indicator_wrappers.R" class="external-link"><code>R/indicator_wrappers.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.7.4/R/indicator_wrappers.R" class="external-link"><code>R/indicator_wrappers.R</code></a></small>
       <div class="d-none name"><code>occ_density_map.Rd</code></div>
     </div>
 
@@ -64,88 +64,78 @@ map or as a time series (see 'Details' for more information).</p>
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Arguments passed on to <code><a href="compute_indicator_workflow.html">compute_indicator_workflow</a></code></p><dl><dt><code>ci_type</code></dt>
-<dd><p>(Optional) Type of bootstrap confidence intervals to
-calculate. (Default: "norm". Select "none" to avoid calculating bootstrap
-CIs.)</p></dd>
+<dd><p>Type of bootstrap confidence intervals to calculate. (Default: "norm".
+Select "none" to avoid calculating bootstrap CIs.)</p></dd>
 
     <dt><code>cell_size</code></dt>
-<dd><p>(Optional) Length of grid cell sides, in km. (Default: 10
-for country, 100 for continent or world)</p></dd>
+<dd><p>Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)</p></dd>
 
     <dt><code>level</code></dt>
-<dd><p>(Optional) Spatial level: 'cube', 'continent', 'country',
-'world', 'sovereignty', or 'geounit'. (Default: 'cube')</p></dd>
+<dd><p>Spatial level: 'cube', 'continent', 'country', 'world', 'sovereignty',
+or 'geounit'. (Default: 'cube')</p></dd>
 
     <dt><code>region</code></dt>
-<dd><p>(Optional) The region of interest (e.g., "Europe"). (Default:
-"Europe")</p></dd>
+<dd><p>The region of interest (e.g., "Europe"). (Default: "Europe")</p></dd>
 
     <dt><code>ne_type</code></dt>
-<dd><p>(Optional) The type of Natural Earth data to download:
-'countries', 'map_units', 'sovereignty', or 'tiny_countries'. (Default:
-"countries")</p></dd>
+<dd><p>The type of Natural Earth data to download: 'countries', 'map_units',
+'sovereignty', or 'tiny_countries'. (Default: "countries")</p></dd>
 
     <dt><code>ne_scale</code></dt>
-<dd><p>(Optional) The scale of Natural Earth data to download:
-'small' - 110m, 'medium' - 50m, or 'large' - 10m. (Default: "medium")</p></dd>
+<dd><p>The scale of Natural Earth data to download: 'small' - 110m,
+'medium' - 50m, or 'large' - 10m. (Default: "medium")</p></dd>
 
     <dt><code>output_crs</code></dt>
-<dd><p>(Optional) The CRS you want for your calculated indicator.
-(Leave blank to let the function choose a default based on grid reference
-system)</p></dd>
+<dd><p>The CRS you want for your calculated indicator. (Leave blank
+to let the function choose a default based on grid reference system)</p></dd>
 
     <dt><code>first_year</code></dt>
-<dd><p>(Optinal) Exclude data before this year. (Uses all data in
-the cube by default.)</p></dd>
+<dd><p>Exclude data before this year. (Uses all data in the cube by default.)</p></dd>
 
     <dt><code>last_year</code></dt>
-<dd><p>(Optional) Exclude data after this year. (Uses all data in
-the cube by default.)</p></dd>
+<dd><p>Exclude data after this year. (Uses all data in the cube by default.)</p></dd>
 
     <dt><code>spherical_geometry</code></dt>
-<dd><p>(Optional) If set to FALSE, will temporarily
-disable spherical geometry while the function runs. Should only be used to
-solve specific issues. (Default is TRUE)</p></dd>
+<dd><p>If set to FALSE, will temporarily disable spherical geometry
+while the function runs. Should only be used to solve specific issues. (Default is TRUE)</p></dd>
 
     <dt><code>make_valid</code></dt>
-<dd><p>(Optional) Calls st_make_valid() from the sf package.
-Increases processing time but may help if you are getting polygon errors.
-(Default is FALSE).</p></dd>
+<dd><p>Calls st_make_valid() from the sf package. Increases processing
+time but may help if you are getting polygon errors. (Default is FALSE).</p></dd>
 
     <dt><code>num_bootstrap</code></dt>
-<dd><p>(Optional) Set the number of bootstraps to calculate for
-generating confidence intervals. (Default: 1000)</p></dd>
+<dd><p>Set the number of bootstraps to calculate for generating
+confidence intervals. (Default: 1000)</p></dd>
 
     <dt><code>shapefile_path</code></dt>
-<dd><p>(optional) Path of an external shapefile to merge into
-the workflow. For example, if you want to calculate your indicator
-particular features such as protected areas or wetlands.</p></dd>
+<dd><p>Path of an external shapefile to merge into the workflow. For example,
+if you want to calculate your indicator particular features such as protected areas or wetlands.</p></dd>
 
     <dt><code>shapefile_crs</code></dt>
-<dd><p>(Optional) CRS of a .wkt shapefile. If your shapefile
-is .wkt and you do NOT use this parameter, the CRS will be assumed to be
-EPSG:4326 and the coordinates will be read in as lat/long. If your shape is
-NOT a .wkt the CRS will be determined automatically.</p></dd>
+<dd><p>CRS of a .wkt shapefile. If your shapefile is .wkt and you do
+NOT use this parameter, the CRS will be assumed to be EPSG:4326 and the
+coordinates will be read in as lat/long. If your shape is NOT a .wkt the CRS
+will be determined automatically.</p></dd>
 
     <dt><code>invert</code></dt>
-<dd><p>(optional) Calculate an indicator over the inverse of the
-shapefile (e.g. if you have a protected areas shapefile this would calculate
-an indicator over all non protected areas)</p></dd>
+<dd><p>Calculate an indicator over the inverse of the shapefile (e.g.
+if you have a protected areas shapefile this would calculate an indicator over
+all non protected areas)</p></dd>
 
     <dt><code>include_ocean</code></dt>
-<dd><p>(Optional) Include occurrences which fall outside the
-land area. Default is TRUE. Set as "buffered_coast" to include a set buffer
-size around the land area rather than the entire ocean area.</p></dd>
+<dd><p>Include occurrences which fall outside the land area.
+Default is TRUE. Set as "buffered_coast" to include a set buffer size around
+the land area rather than the entire ocean area.</p></dd>
 
     <dt><code>buffer_dist_km</code></dt>
-<dd><p>(Optional) The distance to buffer around the land if
-include_ocean is set to "buffered_coast".</p></dd>
+<dd><p>The distance to buffer around the land if include_ocean
+is set to "buffered_coast".</p></dd>
 
     <dt><code>force_grid</code></dt>
-<dd><p>(Optional) Forces the calculation of a grid even if this
-would not normally be part of the pipeline, e.g. for time series. This
-setting is required for the calculation of rarity, and is turned on by the
-ab_rarity_ts and area_rarity_ts wrappers. (Default: FALSE)</p></dd>
+<dd><p>Forces the calculation of a grid even if this would not
+normally be part of the pipeline, e.g. for time series. This setting is
+required for the calculation of rarity, and is turned on by the ab_rarity_ts
+and area_rarity_ts wrappers. (Default: FALSE)</p></dd>
 
 
 </dl></dd>

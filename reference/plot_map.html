@@ -5,9 +5,9 @@
       fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
     }
   };
-</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/PT_Sans-0.4.10/font.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet"><meta property="og:title" content="Plot Biodiversity Indicator Map — plot_map"><meta name="description" content="Creates a map visualization of a calculated biodiversity
-indicator, providing customization options."><meta property="og:description" content="Creates a map visualization of a calculated biodiversity
-indicator, providing customization options."><meta property="og:image" content="https://b-cubed-eu.github.io/b3gbi/logo.png"></head><body>
+</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/PT_Sans-0.4.10/font.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet"><meta property="og:title" content="Plot Biodiversity Indicator Map — plot_map"><meta name="description" content="Creates a map visualization of a calculated biodiversity indicator,
+providing customization options."><meta property="og:description" content="Creates a map visualization of a calculated biodiversity indicator,
+providing customization options."><meta property="og:image" content="https://b-cubed-eu.github.io/b3gbi/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -15,7 +15,7 @@ indicator, providing customization options."><meta property="og:image" content="
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.4</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,13 +38,13 @@ indicator, providing customization options."><meta property="og:image" content="
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Plot Biodiversity Indicator Map</h1>
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/R/plot_methods.R" class="external-link"><code>R/plot_methods.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.7.4/R/plot_methods.R" class="external-link"><code>R/plot_methods.R</code></a></small>
       <div class="d-none name"><code>plot_map.Rd</code></div>
     </div>
 
     <div class="ref-description section level2">
-    <p>Creates a map visualization of a calculated biodiversity
-indicator, providing customization options.</p>
+    <p>Creates a map visualization of a calculated biodiversity indicator,
+providing customization options.</p>
     </div>
 
     <div class="section level2">
@@ -69,7 +69,7 @@ indicator, providing customization options.</p>
 <span>  title_wrap_length <span class="op">=</span> <span class="fl">60</span>,</span>
 <span>  visible_gridlines <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  layers <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  scale <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"medium"</span>, <span class="st">"small"</span>, <span class="st">"large"</span><span class="op">)</span></span>
+<span>  scale <span class="op">=</span> <span class="st">"medium"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -78,23 +78,23 @@ indicator, providing customization options.</p>
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>An 'indicator_map' object containing indicator values associated
-with map grid cells.</p></dd>
+<dd><p>An 'indicator_map' object containing indicator values associated with
+map grid cells.</p></dd>
 
 
 <dt id="arg-title">title<a class="anchor" aria-label="anchor" href="#arg-title"></a></dt>
-<dd><p>(Optional) Plot title. Replace "auto" with your own title if you
-want a custom title or if calling the function manually.</p></dd>
+<dd><p>Plot title. Replace "auto" with your own title if you want a
+custom title or if calling the function manually.</p></dd>
 
 
 <dt id="arg-auto-title">auto_title<a class="anchor" aria-label="anchor" href="#arg-auto-title"></a></dt>
-<dd><p>(Optional) Text for automatic title generation, provided by
-an appropriate S3 method (if calling the function manually, leave as NULL).</p></dd>
+<dd><p>Text for automatic title generation, provided by an
+appropriate S3 method (if calling the function manually, leave as NULL).</p></dd>
 
 
 <dt id="arg-leg-label-default">leg_label_default<a class="anchor" aria-label="anchor" href="#arg-leg-label-default"></a></dt>
-<dd><p>(Optional) Default label for the legend, provided by
-an appropriate S3 method (if calling the function manually, leave as NULL).</p></dd>
+<dd><p>Default label for the legend, provided by an
+appropriate S3 method (if calling the function manually, leave as NULL).</p></dd>
 
 
 <dt id="arg-xlims">xlims<a class="anchor" aria-label="anchor" href="#arg-xlims"></a></dt>
@@ -124,8 +124,8 @@ Yeo-Johnson transformations.</p></dd>
 
 
 <dt id="arg-crop-to-grid">crop_to_grid<a class="anchor" aria-label="anchor" href="#arg-crop-to-grid"></a></dt>
-<dd><p>(Optional) If TRUE, the grid will determine the edges of
-the map. Default is FALSE.</p></dd>
+<dd><p>If TRUE, the grid will determine the edges of the map.Overrides
+Europe_crop_EEA. Default is FALSE.</p></dd>
 
 
 <dt id="arg-panel-bg">panel_bg<a class="anchor" aria-label="anchor" href="#arg-panel-bg"></a></dt>
@@ -133,8 +133,8 @@ the map. Default is FALSE.</p></dd>
 
 
 <dt id="arg-land-fill-colour">land_fill_colour<a class="anchor" aria-label="anchor" href="#arg-land-fill-colour"></a></dt>
-<dd><p>(Optional) Colour for the land area outside of the
-grid (if surround = TRUE). Default is "grey85".</p></dd>
+<dd><p>(Optional) Colour for the land area outside of the grid
+(if surround = TRUE). Default is "grey85".</p></dd>
 
 
 <dt id="arg-legend-title">legend_title<a class="anchor" aria-label="anchor" href="#arg-legend-title"></a></dt>
@@ -146,28 +146,23 @@ grid (if surround = TRUE). Default is "grey85".</p></dd>
 
 
 <dt id="arg-legend-title-wrap-length">legend_title_wrap_length<a class="anchor" aria-label="anchor" href="#arg-legend-title-wrap-length"></a></dt>
-<dd><p>(Optional) Maximum legend title length before
-wrapping to a new line.</p></dd>
+<dd><p>Maximum legend title length before wrapping to a new line.</p></dd>
 
 
 <dt id="arg-title-wrap-length">title_wrap_length<a class="anchor" aria-label="anchor" href="#arg-title-wrap-length"></a></dt>
-<dd><p>(Optional) Maximum title length before wrapping to a
-new line.</p></dd>
+<dd><p>Maximum title length before wrapping to a new line.</p></dd>
 
 
 <dt id="arg-visible-gridlines">visible_gridlines<a class="anchor" aria-label="anchor" href="#arg-visible-gridlines"></a></dt>
-<dd><p>(Optional) Show gridlines between cells. Default is
-TRUE.</p></dd>
+<dd><p>Show gridlines between cells. Default is TRUE.</p></dd>
 
 
 <dt id="arg-layers">layers<a class="anchor" aria-label="anchor" href="#arg-layers"></a></dt>
-<dd><p>(Optional) Additional rnaturalearth layers to plot, e.g.
-c("reefs", "playas").</p></dd>
+<dd><p>Additional rnaturalearth layers to plot, e.g. c("reefs", "playas").</p></dd>
 
 
 <dt id="arg-scale">scale<a class="anchor" aria-label="anchor" href="#arg-scale"></a></dt>
-<dd><p>(Optional) Scale of Natural Earth data ("small", "medium", or
-"large"). Default is 'medium'.</p></dd>
+<dd><p>Scale of Natural Earth data ("small", "medium", or "large"). Default is 'medium'.</p></dd>
 
 </dl></div>
     <div class="section level2">
