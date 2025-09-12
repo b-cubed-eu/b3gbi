@@ -3,9 +3,6 @@
 \name{calc_ci}
 \alias{calc_ci}
 \alias{calc_ci.default}
-\alias{calc_ci.hill0}
-\alias{calc_ci.hill1}
-\alias{calc_ci.hill2}
 \alias{calc_ci.total_occ}
 \alias{calc_ci.occ_density}
 \alias{calc_ci.newness}
@@ -20,12 +17,6 @@
 calc_ci(x, indicator, ...)
 
 \method{calc_ci}{default}(x, indicator, ...)
-
-\method{calc_ci}{hill0}(x, indicator, ...)
-
-\method{calc_ci}{hill1}(x, indicator, ...)
-
-\method{calc_ci}{hill2}(x, indicator, ...)
 
 \method{calc_ci}{total_occ}(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
 
@@ -68,12 +59,6 @@ biodiversity indicator over time unless you choose 'none' for ci_type.
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{calc_ci(hill0)}: Calculate confidence intervals for Hill richness
-
-\item \code{calc_ci(hill1)}: Calculate confidence intervals for Simpson-Hill diversity
-
-\item \code{calc_ci(hill2)}: Calculate confidence intervals for Shannon-Hill diversity
-
 \item \code{calc_ci(total_occ)}: Calculate confidence intervals for total occurrences
 
 \item \code{calc_ci(occ_density)}: Calculate confidence intervals for occurrence density
