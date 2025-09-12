@@ -5,29 +5,31 @@
       fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
     }
   };
-</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/PT_Sans-0.4.10/font.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet"><meta property="og:title" content="Process GBIF Data Cubes — process_cube"><meta name="description" content="Processes a GBIF data cube and (if applicable) an associated taxonomic
-information file. If your cube includes a taxonomic info file it is likely a
-previous generation cube and should be processed using 'process_cube_old'.
-The taxonomic info file must reside in the same directory as your cube and
-share a base file name (e.g., 'cubes/my_mammals_cube.csv', 'cubes/my_mammals_info.csv').
-If your cube does NOT include a taxonomic info file then it is likely a current
-generation cube and should be processed using the standard process_cube function
-The API used to generate the current generation cubes is very flexible and allows
-user-specified column names. Therefore, please check that the column names
-of your cube match the Darwin Core standard expected by the process_cube function.
-If they do not, you may need to enter them manually. The function will return
-an error if it cannot find all required columns."><meta property="og:description" content="Processes a GBIF data cube and (if applicable) an associated taxonomic
-information file. If your cube includes a taxonomic info file it is likely a
-previous generation cube and should be processed using 'process_cube_old'.
-The taxonomic info file must reside in the same directory as your cube and
-share a base file name (e.g., 'cubes/my_mammals_cube.csv', 'cubes/my_mammals_info.csv').
-If your cube does NOT include a taxonomic info file then it is likely a current
-generation cube and should be processed using the standard process_cube function
-The API used to generate the current generation cubes is very flexible and allows
-user-specified column names. Therefore, please check that the column names
-of your cube match the Darwin Core standard expected by the process_cube function.
-If they do not, you may need to enter them manually. The function will return
-an error if it cannot find all required columns."><meta property="og:image" content="https://b-cubed-eu.github.io/b3gbi/logo.png"></head><body>
+</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/PT_Sans-0.4.10/font.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet"><meta property="og:title" content="Process GBIF Data Cubes — process_cube"><meta name="description" content="Processes a GBIF data cube and (if applicable) an associated
+taxonomic information file. If your cube includes a taxonomic info file it
+is likely a previous generation cube and should be processed using
+'process_cube_old'. The taxonomic info file must reside in the same
+directory as your cube and share a base file name (e.g.,
+'cubes/my_mammals_cube.csv', 'cubes/my_mammals_info.csv'). If your cube does
+NOT include a taxonomic info file then it is likely a current generation
+cube and should be processed using the standard process_cube function. The
+API used to generate the current generation cubes is very flexible and
+allows user-specified column names. Therefore, please check that the column
+names of your cube match the Darwin Core standard expected by the
+process_cube function. If they do not, you may need to enter them manually.
+The function will return an error if it cannot find all required columns."><meta property="og:description" content="Processes a GBIF data cube and (if applicable) an associated
+taxonomic information file. If your cube includes a taxonomic info file it
+is likely a previous generation cube and should be processed using
+'process_cube_old'. The taxonomic info file must reside in the same
+directory as your cube and share a base file name (e.g.,
+'cubes/my_mammals_cube.csv', 'cubes/my_mammals_info.csv'). If your cube does
+NOT include a taxonomic info file then it is likely a current generation
+cube and should be processed using the standard process_cube function. The
+API used to generate the current generation cubes is very flexible and
+allows user-specified column names. Therefore, please check that the column
+names of your cube match the Darwin Core standard expected by the
+process_cube function. If they do not, you may need to enter them manually.
+The function will return an error if it cannot find all required columns."><meta property="og:image" content="https://b-cubed-eu.github.io/b3gbi/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -35,7 +37,7 @@ an error if it cannot find all required columns."><meta property="og:image" cont
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -58,23 +60,24 @@ an error if it cannot find all required columns."><meta property="og:image" cont
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Process GBIF Data Cubes</h1>
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.7.4/R/process_cube_functions.R" class="external-link"><code>R/process_cube_functions.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/R/process_cube_functions.R" class="external-link"><code>R/process_cube_functions.R</code></a></small>
       <div class="d-none name"><code>process_cube.Rd</code></div>
     </div>
 
     <div class="ref-description section level2">
-    <p>Processes a GBIF data cube and (if applicable) an associated taxonomic
-information file. If your cube includes a taxonomic info file it is likely a
-previous generation cube and should be processed using 'process_cube_old'.
-The taxonomic info file must reside in the same directory as your cube and
-share a base file name (e.g., 'cubes/my_mammals_cube.csv', 'cubes/my_mammals_info.csv').
-If your cube does NOT include a taxonomic info file then it is likely a current
-generation cube and should be processed using the standard process_cube function
-The API used to generate the current generation cubes is very flexible and allows
-user-specified column names. Therefore, please check that the column names
-of your cube match the Darwin Core standard expected by the process_cube function.
-If they do not, you may need to enter them manually. The function will return
-an error if it cannot find all required columns.</p>
+    <p>Processes a GBIF data cube and (if applicable) an associated
+taxonomic information file. If your cube includes a taxonomic info file it
+is likely a previous generation cube and should be processed using
+'process_cube_old'. The taxonomic info file must reside in the same
+directory as your cube and share a base file name (e.g.,
+'cubes/my_mammals_cube.csv', 'cubes/my_mammals_info.csv'). If your cube does
+NOT include a taxonomic info file then it is likely a current generation
+cube and should be processed using the standard process_cube function. The
+API used to generate the current generation cubes is very flexible and
+allows user-specified column names. Therefore, please check that the column
+names of your cube match the Darwin Core standard expected by the
+process_cube function. If they do not, you may need to enter them manually.
+The function will return an error if it cannot find all required columns.</p>
     </div>
 
     <div class="section level2">
@@ -115,16 +118,17 @@ an error if it cannot find all required columns.</p>
 
 
 <dt id="arg-grid-type">grid_type<a class="anchor" aria-label="anchor" href="#arg-grid-type"></a></dt>
-<dd><p>Specify which grid reference system your cube uses. By default
-the function will attempt to determine this automatically and return an error if it fails.
-If you want to perform analysis on a cube with custom grid codes (e.g. output
-from the gcube package) or a cube without grid codes, select 'custom' or 'none',
-respectively.</p></dd>
+<dd><p>(Optional) Specify which grid reference system your cube
+uses. By default the function will attempt to determine this automatically
+and return an error if it fails. If you want to perform analysis on a cube
+with custom grid codes (e.g. output from the gcube package) or a cube
+without grid codes, select 'custom' or 'none', respectively.</p></dd>
 
 
 <dt id="arg-first-year">first_year<a class="anchor" aria-label="anchor" href="#arg-first-year"></a></dt>
 <dd><p>(Optional) The first year of occurrences to include. If not
-specified, uses a default of 1600 to prevent false records (e.g. with year = 0).</p></dd>
+specified, uses a default of 1600 to prevent false records (e.g. with
+year = 0).</p></dd>
 
 
 <dt id="arg-last-year">last_year<a class="anchor" aria-label="anchor" href="#arg-last-year"></a></dt>
@@ -133,102 +137,106 @@ specified, uses the latest year present in the cube.</p></dd>
 
 
 <dt id="arg-force-gridcode">force_gridcode<a class="anchor" aria-label="anchor" href="#arg-force-gridcode"></a></dt>
-<dd><p>Force the function to assume a specific grid reference system.
-This may cause unexpected downstream issues, so it is not recommended. If you are
-getting errors related to grid cell codes, check to make sure they are valid.</p></dd>
+<dd><p>(Optional) Force the function to assume a specific
+grid reference system. This may cause unexpected downstream issues, so it is
+not recommended. If you are getting errors related to grid cell codes,
+check to make sure they are valid.</p></dd>
 
 
 <dt id="arg-cols-year">cols_year<a class="anchor" aria-label="anchor" href="#arg-cols-year"></a></dt>
-<dd><p>The name of the column containing the year of occurrence (if
-something other than 'year'). This column is required unless you have a yearMonth
-column.</p></dd>
+<dd><p>(Optional) The name of the column containing the year of
+occurrence (if something other than 'year'). This column is required unless
+you have a yearMonth column.</p></dd>
 
 
 <dt id="arg-cols-yearmonth">cols_yearMonth<a class="anchor" aria-label="anchor" href="#arg-cols-yearmonth"></a></dt>
-<dd><p>The name of the column containing the year and month of
-occurrence (if present and if other than 'yearMonth'). Use this if only if you
-do not have a year column. The b3gbi package does not use month data, so the
-function will convert your yearMonth column to a year column.</p></dd>
+<dd><p>(Optional) The name of the column containing the year
+and month of occurrence (if present and if other than 'yearMonth'). Use this
+only if you do not have a year column. The b3gbi package does not use month
+data, so the function will convert your yearMonth column to a year column.</p></dd>
 
 
 <dt id="arg-cols-cellcode">cols_cellCode<a class="anchor" aria-label="anchor" href="#arg-cols-cellcode"></a></dt>
-<dd><p>The name of the column containing the grid reference codes
-(if other than 'cellCode'). This column is required.</p></dd>
+<dd><p>(Optional) The name of the column containing the grid
+reference codes (if other than 'cellCode'). This column is required.</p></dd>
 
 
 <dt id="arg-cols-occurrences">cols_occurrences<a class="anchor" aria-label="anchor" href="#arg-cols-occurrences"></a></dt>
-<dd><p>The name of the column containing the number of occurrence
-(if other than 'occurrences'). This column is required.</p></dd>
+<dd><p>(Optional) The name of the column containing the
+number of occurrence (if other than 'occurrences'). This column is required.</p></dd>
 
 
 <dt id="arg-cols-scientificname">cols_scientificName<a class="anchor" aria-label="anchor" href="#arg-cols-scientificname"></a></dt>
-<dd><p>The name of the column containing the scientific name
-of the species (if other than 'scientificName'). Note that it is not necessary
-to have both a species column and a scientificName column. One or the other is
-sufficient.</p></dd>
+<dd><p>(Optional) The name of the column containing the
+scientific name of the species (if other than 'scientificName'). Note that
+it is not necessary to have both a species column and a scientificName
+column. One or the other is sufficient.</p></dd>
 
 
 <dt id="arg-cols-mincoordinateuncertaintyinmeters">cols_minCoordinateUncertaintyInMeters<a class="anchor" aria-label="anchor" href="#arg-cols-mincoordinateuncertaintyinmeters"></a></dt>
-<dd><p>The name of the column containing
-the minimum coordinate uncertainty of the occurrences (if other than
-'minCoordinateUncertaintyinMeters').</p></dd>
+<dd><p>(Optional) The name of the
+column containing the minimum coordinate uncertainty of the occurrences (if
+other than 'minCoordinateUncertaintyinMeters').</p></dd>
 
 
 <dt id="arg-cols-mintemporaluncertainty">cols_minTemporalUncertainty<a class="anchor" aria-label="anchor" href="#arg-cols-mintemporaluncertainty"></a></dt>
-<dd><p>The name of the column containing the minimum
-temporal uncertainty of the occurrences (if other than 'minTemporalUncertainty').</p></dd>
+<dd><p>(Optional) The name of the column
+containing the minimum temporal uncertainty of the occurrences (if other
+than 'minTemporalUncertainty').</p></dd>
 
 
 <dt id="arg-cols-kingdom">cols_kingdom<a class="anchor" aria-label="anchor" href="#arg-cols-kingdom"></a></dt>
-<dd><p>The name of the column containing the kingdom the occurring
-species belongs to (if other than 'kingdom'). This column is optional.</p></dd>
+<dd><p>(Optional) The name of the column containing the kingdom
+the occurring species belongs to (if other than 'kingdom').</p></dd>
 
 
 <dt id="arg-cols-family">cols_family<a class="anchor" aria-label="anchor" href="#arg-cols-family"></a></dt>
-<dd><p>The name of the column containing the family the occurring
-species belongs to (if other than 'family'). This column is optional.</p></dd>
+<dd><p>(Optional) The name of the column containing the family
+the occurring species belongs to (if other than 'family').</p></dd>
 
 
 <dt id="arg-cols-species">cols_species<a class="anchor" aria-label="anchor" href="#arg-cols-species"></a></dt>
-<dd><p>The name of the column containing the name of the occurring
-species (if other than 'species'). Note that it is not necessary to have both a
-species column and a scientificName column. One or the other is sufficient.</p></dd>
+<dd><p>(Optional) The name of the column containing the name of
+the occurring species (if other than 'species'). Note that it is not
+necessary to have both a species column and a scientificName column. One or
+the other is sufficient.</p></dd>
 
 
 <dt id="arg-cols-kingdomkey">cols_kingdomKey<a class="anchor" aria-label="anchor" href="#arg-cols-kingdomkey"></a></dt>
-<dd><p>The name of the column containing the kingdom key of the
-occurring species (if other than 'kingdomKey'). This column is optional.</p></dd>
+<dd><p>(Optional) The name of the column containing the
+kingdom key of the occurring species (if other than 'kingdomKey').</p></dd>
 
 
 <dt id="arg-cols-familykey">cols_familyKey<a class="anchor" aria-label="anchor" href="#arg-cols-familykey"></a></dt>
-<dd><p>The name of the column containing the family key of the
-occurring species (if other than 'familykey'). This column is optional.</p></dd>
+<dd><p>(Optional) The name of the column containing the family
+key of the  occurring species (if other than 'familykey').</p></dd>
 
 
 <dt id="arg-cols-specieskey">cols_speciesKey<a class="anchor" aria-label="anchor" href="#arg-cols-specieskey"></a></dt>
-<dd><p>The name of the column containing the species key of the
-occurring species (if other than 'speciesKey'). This column is required, but
-note that if you have a 'taxonKey' column you can provide it as the speciesKey.</p></dd>
+<dd><p>(Optional) The name of the column containing the
+species key of the occurring species (if other than 'speciesKey'). The
+column is required, but note that if you have a 'taxonKey' column you can
+provide it as the speciesKey.</p></dd>
 
 
 <dt id="arg-cols-familycount">cols_familyCount<a class="anchor" aria-label="anchor" href="#arg-cols-familycount"></a></dt>
-<dd><p>The name of the column containing the occurrence count
-by family. This column is optional.</p></dd>
+<dd><p>(Optional) The name of the column containing the
+occurrence count by family.</p></dd>
 
 
 <dt id="arg-cols-sex">cols_sex<a class="anchor" aria-label="anchor" href="#arg-cols-sex"></a></dt>
-<dd><p>The name of the column containing the sex of the observed
-individuals. This column is optional.</p></dd>
+<dd><p>(Optional) The name of the column containing the sex of the
+observed individuals.</p></dd>
 
 
 <dt id="arg-cols-lifestage">cols_lifeStage<a class="anchor" aria-label="anchor" href="#arg-cols-lifestage"></a></dt>
-<dd><p>the name of the column containing the life stage of the
-observed individuals. This column is optional.</p></dd>
+<dd><p>(Optional) The name of the column containing the life
+stage of the observed individuals.</p></dd>
 
 
 <dt id="arg-separator">separator<a class="anchor" aria-label="anchor" href="#arg-separator"></a></dt>
-<dd><p>The column-separating character in your csv file. Default is
-white space.</p></dd>
+<dd><p>(Optional) The column-separating character in your csv file.
+Default is white space.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -239,7 +247,8 @@ white space.</p></dd>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="va">cube_name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"denmark_mammals_cube_eqdgc.csv"</span>, package <span class="op">=</span> <span class="st">"b3gbi"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">cube_name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"denmark_mammals_cube_eqdgc.csv"</span>,</span></span>
+<span class="r-in"><span>                         package <span class="op">=</span> <span class="st">"b3gbi"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">denmark_example_cube</span> <span class="op">&lt;-</span> <span class="fu">process_cube</span><span class="op">(</span><span class="va">cube_name</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">denmark_example_cube</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>

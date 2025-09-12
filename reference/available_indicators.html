@@ -5,7 +5,11 @@
       fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
     }
   };
-</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/PT_Sans-0.4.10/font.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet"><meta property="og:title" content="Indicators Available for Use in the Package — available_indicators"><meta name="description" content="A list of all biodiversity indicators available within the package, along with the dimensions they can be calculated across, the functions to access them, and any special arguments"><meta property="og:description" content="A list of all biodiversity indicators available within the package, along with the dimensions they can be calculated across, the functions to access them, and any special arguments"><meta property="og:image" content="https://b-cubed-eu.github.io/b3gbi/logo.png"></head><body>
+</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/PT_Sans-0.4.10/font.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet"><meta property="og:title" content="Indicators Available for Use in the Package — available_indicators"><meta name="description" content="A list of all biodiversity indicators available within the package, along
+with the dimensions they can be calculated across, the functions to access
+them, and any special arguments"><meta property="og:description" content="A list of all biodiversity indicators available within the package, along
+with the dimensions they can be calculated across, the functions to access
+them, and any special arguments"><meta property="og:image" content="https://b-cubed-eu.github.io/b3gbi/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -13,7 +17,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,12 +40,14 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Indicators Available for Use in the Package</h1>
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.7.4/R/data.R" class="external-link"><code>R/data.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/R/data.R" class="external-link"><code>R/data.R</code></a></small>
       <div class="d-none name"><code>available_indicators.Rd</code></div>
     </div>
 
     <div class="ref-description section level2">
-    <p>A list of all biodiversity indicators available within the package, along with the dimensions they can be calculated across, the functions to access them, and any special arguments</p>
+    <p>A list of all biodiversity indicators available within the package, along
+with the dimensions they can be calculated across, the functions to access
+them, and any special arguments</p>
     </div>
 
     <div class="section level2">
@@ -51,32 +57,40 @@
 
     <div class="section level2">
     <h2 id="format">Format<a class="anchor" aria-label="anchor" href="#format"></a></h2>
-    <p>A special object of class 'available_indicators' containing a list of indicators and six fields with information about them</p><dl><dt>indicator_class</dt>
+    <p>A special object of class 'available_indicators' containing a list
+of indicators and six fields with information about them</p><dl><dt>indicator_class</dt>
 <dd><p>class of the indicator</p></dd>
 
 <dt>indicator_name</dt>
 <dd><p>name of the indicator</p></dd>
 
 <dt>plot_title</dt>
-<dd><p>title to be used when plotting with automated title generation</p></dd>
+<dd><p>title to be used when plotting with automated title
+generation</p></dd>
 
 <dt>legend_label</dt>
-<dd><p>title to be used when plotting with automated legend title generation</p></dd>
+<dd><p>title to be used when plotting with automated legend
+title generation</p></dd>
 
 <dt>legend_transformation</dt>
-<dd><p>any transformation to perform on the legend when plotting, to improve visualization of maps</p></dd>
+<dd><p>any transformation to perform on the legend
+when plotting, to improve visualization of maps</p></dd>
 
 <dt>map_wrapper</dt>
-<dd><p>wrapper function to use when calculating indicator as a map</p></dd>
+<dd><p>wrapper function to use when calculating indicator as a
+map</p></dd>
 
 <dt>ts_wrapper</dt>
-<dd><p>wrapper function to use when calculating indicator as a time series</p></dd>
+<dd><p>wrapper function to use when calculating indicator as a
+time series</p></dd>
 
 <dt>map_function_arguments</dt>
-<dd><p>any special arguments to consider when using the function to calculate an indicator map</p></dd>
+<dd><p>any special arguments to consider when using
+the function to calculate an indicator map</p></dd>
 
 <dt>ts_function_arguments</dt>
-<dd><p>any special arguments to consider when using the function to calculate an indicator time series</p></dd>
+<dd><p>any special arguments to consider when using
+the function to calculate an indicator time series</p></dd>
 
 
 </dl></div>
