@@ -17,7 +17,7 @@ biodiversity indicator over time unless you choose 'none' for ci_type."><meta pr
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,7 +40,7 @@ biodiversity indicator over time unless you choose 'none' for ci_type."><meta pr
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Calculate Confidence Intervals for a Biodiversity Indicator</h1>
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.7.4/R/calc_ci_methods.R" class="external-link"><code>R/calc_ci_methods.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/R/calc_ci_methods.R" class="external-link"><code>R/calc_ci_methods.R</code></a></small>
       <div class="d-none name"><code>calc_ci.Rd</code></div>
     </div>
 
@@ -55,15 +55,6 @@ biodiversity indicator over time unless you choose 'none' for ci_type.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">calc_ci</span><span class="op">(</span><span class="va">x</span>, <span class="va">indicator</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Default S3 method</span></span>
-<span><span class="fu">calc_ci</span><span class="op">(</span><span class="va">x</span>, <span class="va">indicator</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S3 method for class 'hill0'</span></span>
-<span><span class="fu">calc_ci</span><span class="op">(</span><span class="va">x</span>, <span class="va">indicator</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S3 method for class 'hill1'</span></span>
-<span><span class="fu">calc_ci</span><span class="op">(</span><span class="va">x</span>, <span class="va">indicator</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># S3 method for class 'hill2'</span></span>
 <span><span class="fu">calc_ci</span><span class="op">(</span><span class="va">x</span>, <span class="va">indicator</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'total_occ'</span></span>
@@ -113,22 +104,20 @@ be called by the 'compute_indicator_workflow' function.</p></dd>
 
 
 <dt id="arg-num-bootstrap">num_bootstrap<a class="anchor" aria-label="anchor" href="#arg-num-bootstrap"></a></dt>
-<dd><p>Set the number of bootstraps to calculate for generating
-confidence intervals. (Default: 1000)</p></dd>
+<dd><p>(Optional) Set the number of bootstraps to calculate for
+generating confidence intervals. (Default: 1000)</p></dd>
 
 
 <dt id="arg-ci-type">ci_type<a class="anchor" aria-label="anchor" href="#arg-ci-type"></a></dt>
-<dd><p>Type of bootstrap confidence intervals to calculate.
-(Default: "norm". Select "none" to avoid calculating bootstrap CIs.)</p></dd>
+<dd><p>(Optional) Type of bootstrap confidence intervals to
+calculate. (Default: "norm". Select "none" to avoid calculating bootstrap
+CIs.)</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="methods-by-class-">Methods (by class)<a class="anchor" aria-label="anchor" href="#methods-by-class-"></a></h2>
 
-<ul><li><p><code>calc_ci(hill0)</code>: Calculate confidence intervals for Hill richness</p></li>
-<li><p><code>calc_ci(hill1)</code>: Calculate confidence intervals for Simpson-Hill diversity</p></li>
-<li><p><code>calc_ci(hill2)</code>: Calculate confidence intervals for Shannon-Hill diversity</p></li>
-<li><p><code>calc_ci(total_occ)</code>: Calculate confidence intervals for total occurrences</p></li>
+<ul><li><p><code>calc_ci(total_occ)</code>: Calculate confidence intervals for total occurrences</p></li>
 <li><p><code>calc_ci(occ_density)</code>: Calculate confidence intervals for occurrence density</p></li>
 <li><p><code>calc_ci(newness)</code>: Calculate confidence intervals for newness</p></li>
 <li><p><code>calc_ci(williams_evenness)</code>: Calculate confidence intervals for Williams' evenness</p></li>

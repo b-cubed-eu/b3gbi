@@ -33,7 +33,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -68,7 +68,7 @@
                         <h4 data-toc-skip class="author">Shawn Dove</h4>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.7.4/vignettes/b3gbi.Rmd" class="external-link"><code>vignettes/b3gbi.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/vignettes/b3gbi.Rmd" class="external-link"><code>vignettes/b3gbi.Rmd</code></a></small>
       <div class="d-none name"><code>b3gbi.Rmd</code></div>
     </div>
 
@@ -115,8 +115,8 @@ with both the old and new cubes. The old ones come with an additional
 <span><span class="co">#   * Argument 1: data, cube in .csv format </span></span>
 <span><span class="co">#   * Argument 2: grid_type (optional). By default the function will attempt to </span></span>
 <span><span class="co">#                 determine this automatically. However, you have the option to </span></span>
-<span><span class="co">#                 manually specify 'eea', 'mgrs', or 'eqdgc'. If you are using a </span></span>
-<span><span class="co">#                 simulated cube. e.g. output by the gcube package, choose </span></span>
+<span><span class="co">#                 manually specify 'eea', 'mgrs', or 'eqdgc'. If you are using </span></span>
+<span><span class="co">#                 a simulated cube. e.g. output by the gcube package, choose </span></span>
 <span><span class="co">#                 'custom'.</span></span>
 <span><span class="co">#   * Argument 3: first_year (optional), you can filter your cube to include </span></span>
 <span><span class="co">#                 only data in a certain time period, by default this will be </span></span>
@@ -178,7 +178,7 @@ with both the old and new cubes. The old ones come with an additional
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/b-cubed-eu/b3gbi" class="external-link">b3gbi</a></span><span class="op">)</span></span>
 <span><span class="va">denmark_cube</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/process_cube.html">process_cube</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, </span>
 <span>                                         <span class="st">"denmark_mammals_cube_eqdgc.csv"</span>, </span>
-<span>                                         package<span class="op">=</span><span class="st">"b3gbi"</span><span class="op">)</span><span class="op">)</span></span>
+<span>                                         package <span class="op">=</span> <span class="st">"b3gbi"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">denmark_cube</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Processed data cube for calculating biodiversity indicators</span></span>
@@ -387,7 +387,8 @@ convenience.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Function 2: compute_indicator_workflow()</span></span>
 <span><span class="co"># Description: Calculates a biodiversity indicator over time or space from a </span></span>
-<span><span class="co"># processed_cube object. Should be called by one of the wrapper functions listed below. </span></span>
+<span><span class="co"># processed_cube object. Should be called by one of the wrapper functions listed </span></span>
+<span><span class="co"># below. </span></span>
 <span><span class="co">#</span></span>
 <span><span class="co"># Inputs: </span></span>
 <span><span class="co">#   * Argument 1: data, a processed_cube object</span></span>
@@ -426,8 +427,8 @@ convenience.</p>
 <span><span class="co">#                  .wkt format and is not EPSG:4326</span></span>
 <span><span class="co">#   * Argument 18: invert, invert the shapefile</span></span>
 <span><span class="co">#   * Argument 19: include_water, include ocean and lake layers from </span></span>
-<span><span class="co">#                  rnaturalearth. Defaults to FALSE. Alternatively you can set it</span></span>
-<span><span class="co">#                  to "buffered_coast" for to set a buffer distance around land.</span></span>
+<span><span class="co">#                  rnaturalearth. Defaults to FALSE. Alternatively you can set </span></span>
+<span><span class="co">#                  it to "buffered_coast" to set a buffer distance around land.</span></span>
 <span><span class="co">#   * Argument 20: buffer_dist_km, Distance to buffer around the land if</span></span>
 <span><span class="co">#                  include_water set to "buffered_coast".</span></span>
 <span><span class="co">#</span></span>

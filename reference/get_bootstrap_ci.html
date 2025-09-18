@@ -15,7 +15,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,7 +38,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Calculate confidence intervals for list of <code>boot</code> objects</h1>
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.7.4/R/get_bootstrap_ci.R" class="external-link"><code>R/get_bootstrap_ci.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/R/get_bootstrap_ci.R" class="external-link"><code>R/get_bootstrap_ci.R</code></a></small>
       <div class="d-none name"><code>get_bootstrap_ci.Rd</code></div>
     </div>
 
@@ -49,7 +49,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_bootstrap_ci</span><span class="op">(</span><span class="va">bootstrap_list</span>, <span class="va">...</span>, temporal_list_name <span class="op">=</span> <span class="st">"year"</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_bootstrap_ci</span><span class="op">(</span><span class="va">bootstrap_list</span>, temporal_list_name <span class="op">=</span> <span class="st">"year"</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -60,14 +60,15 @@
 <dd><p>A list of objects of class <code>"boot"</code> per year.</p></dd>
 
 
+<dt id="arg-temporal-list-name">temporal_list_name<a class="anchor" aria-label="anchor" href="#arg-temporal-list-name"></a></dt>
+<dd><p>(Optional) The temporal list names of
+<code>bootstrap_list</code> (e.g., year, month ...) containing time point values.
+Default <code>year</code>.</p></dd>
+
+
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Additional argument to be passed to the <code><a href="https://rdrr.io/pkg/boot/man/boot.ci.html" class="external-link">boot::boot.ci()</a></code>
 function.</p></dd>
-
-
-<dt id="arg-temporal-list-name">temporal_list_name<a class="anchor" aria-label="anchor" href="#arg-temporal-list-name"></a></dt>
-<dd><p>The temporal list names of <code>bootstrap_list</code>
-(e.g., year, month ...) containing time point values. Default <code>year</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">

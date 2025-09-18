@@ -5,11 +5,13 @@
       fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
     }
   };
-</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/PT_Sans-0.4.10/font.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet"><meta property="og:title" content="Calculate Biodiversity Indicators Over Space or Time — compute_indicator_workflow"><meta name="description" content="This function provides a flexible framework for calculating various biodiversity
-indicators on a spatial grid or as a time series. It prepares the data, creates a grid, calculates indicators,
-and formats the output into an appropriate S3 object ('indicator_map' or 'indicator_ts')."><meta property="og:description" content="This function provides a flexible framework for calculating various biodiversity
-indicators on a spatial grid or as a time series. It prepares the data, creates a grid, calculates indicators,
-and formats the output into an appropriate S3 object ('indicator_map' or 'indicator_ts')."><meta property="og:image" content="https://b-cubed-eu.github.io/b3gbi/logo.png"></head><body>
+</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/PT_Sans-0.4.10/font.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet"><meta property="og:title" content="Calculate Biodiversity Indicators Over Space or Time — compute_indicator_workflow"><meta name="description" content="This function provides a flexible framework for calculating
+various biodiversity indicators on a spatial grid or as a time series. It
+prepares the data, creates a grid, calculates indicators, and formats the
+output into an appropriate S3 object ('indicator_map' or 'indicator_ts')."><meta property="og:description" content="This function provides a flexible framework for calculating
+various biodiversity indicators on a spatial grid or as a time series. It
+prepares the data, creates a grid, calculates indicators, and formats the
+output into an appropriate S3 object ('indicator_map' or 'indicator_ts')."><meta property="og:image" content="https://b-cubed-eu.github.io/b3gbi/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -17,7 +19,7 @@ and formats the output into an appropriate S3 object ('indicator_map' or 'indica
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.5</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,14 +42,15 @@ and formats the output into an appropriate S3 object ('indicator_map' or 'indica
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Calculate Biodiversity Indicators Over Space or Time</h1>
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.7.4/R/workflow_functions.R" class="external-link"><code>R/workflow_functions.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/R/compute_indicator_workflow.R" class="external-link"><code>R/compute_indicator_workflow.R</code></a></small>
       <div class="d-none name"><code>compute_indicator_workflow.Rd</code></div>
     </div>
 
     <div class="ref-description section level2">
-    <p>This function provides a flexible framework for calculating various biodiversity
-indicators on a spatial grid or as a time series. It prepares the data, creates a grid, calculates indicators,
-and formats the output into an appropriate S3 object ('indicator_map' or 'indicator_ts').</p>
+    <p>This function provides a flexible framework for calculating
+various biodiversity indicators on a spatial grid or as a time series. It
+prepares the data, creates a grid, calculates indicators, and formats the
+output into an appropriate S3 object ('indicator_map' or 'indicator_ts').</p>
     </div>
 
     <div class="section level2">
@@ -92,116 +95,131 @@ and formats the output into an appropriate S3 object ('indicator_map' or 'indica
 <li><p>'newness': Mean year of occurrence.</p></li>
 <li><p>'occ_density': Density of occurrences.</p></li>
 <li><p>'williams_evenness', 'pielou_evenness': Evenness measures.</p></li>
-<li><p>'ab_rarity', 'area_rarity':  Abundance-based and area-based rarity scores.</p></li>
+<li><p>'ab_rarity', 'area_rarity':  Abundance-based and area-based rarity
+scores.</p></li>
 <li><p>'cum_richness': Cumulative species richness.</p></li>
 <li><p>'occ_turnover': Occupancy turnover.</p></li>
 <li><p>'spec_range': Species range size.</p></li>
 <li><p>'spec_occ': Species occurrences.</p></li>
 <li><p>'tax_distinct': Taxonomic distinctness.</p></li>
 <li><p>'hill0': Species richness (estimated by coverage-based rarefaction).</p></li>
-<li><p>'hill1': Hill-Shannon diversity (estimated by coverage-based rarefaction).</p></li>
-<li><p>'hill2': Hill-Simpson diversity (estimated by coverage-based rarefaction).</p></li>
+<li><p>'hill1': Hill-Shannon diversity (estimated by coverage-based
+rarefaction).</p></li>
+<li><p>'hill2': Hill-Simpson diversity (estimated by coverage-based
+rarefaction).</p></li>
 </ul></dd>
 
 
 <dt id="arg-dim-type">dim_type<a class="anchor" aria-label="anchor" href="#arg-dim-type"></a></dt>
-<dd><p>Dimension to calculate indicator over (time: 'ts', or space: 'map')</p></dd>
+<dd><p>(Optional) Dimension to calculate indicator over (time: 'ts',
+or space: 'map')</p></dd>
 
 
 <dt id="arg-ci-type">ci_type<a class="anchor" aria-label="anchor" href="#arg-ci-type"></a></dt>
-<dd><p>Type of bootstrap confidence intervals to calculate. (Default: "norm".
-Select "none" to avoid calculating bootstrap CIs.)</p></dd>
+<dd><p>(Optional) Type of bootstrap confidence intervals to
+calculate. (Default: "norm". Select "none" to avoid calculating bootstrap
+CIs.)</p></dd>
 
 
 <dt id="arg-cell-size">cell_size<a class="anchor" aria-label="anchor" href="#arg-cell-size"></a></dt>
-<dd><p>Length of grid cell sides, in km. (Default: 10 for country, 100 for continent or world)</p></dd>
+<dd><p>(Optional) Length of grid cell sides, in km. (Default: 10
+for country, 100 for continent or world)</p></dd>
 
 
 <dt id="arg-level">level<a class="anchor" aria-label="anchor" href="#arg-level"></a></dt>
-<dd><p>Spatial level: 'cube', 'continent', 'country', 'world', 'sovereignty',
-or 'geounit'. (Default: 'cube')</p></dd>
+<dd><p>(Optional) Spatial level: 'cube', 'continent', 'country',
+'world', 'sovereignty', or 'geounit'. (Default: 'cube')</p></dd>
 
 
 <dt id="arg-region">region<a class="anchor" aria-label="anchor" href="#arg-region"></a></dt>
-<dd><p>The region of interest (e.g., "Europe"). (Default: "Europe")</p></dd>
+<dd><p>(Optional) The region of interest (e.g., "Europe"). (Default:
+"Europe")</p></dd>
 
 
 <dt id="arg-ne-type">ne_type<a class="anchor" aria-label="anchor" href="#arg-ne-type"></a></dt>
-<dd><p>The type of Natural Earth data to download: 'countries', 'map_units',
-'sovereignty', or 'tiny_countries'. (Default: "countries")</p></dd>
+<dd><p>(Optional) The type of Natural Earth data to download:
+'countries', 'map_units', 'sovereignty', or 'tiny_countries'. (Default:
+"countries")</p></dd>
 
 
 <dt id="arg-ne-scale">ne_scale<a class="anchor" aria-label="anchor" href="#arg-ne-scale"></a></dt>
-<dd><p>The scale of Natural Earth data to download: 'small' - 110m,
-'medium' - 50m, or 'large' - 10m. (Default: "medium")</p></dd>
+<dd><p>(Optional) The scale of Natural Earth data to download:
+'small' - 110m, 'medium' - 50m, or 'large' - 10m. (Default: "medium")</p></dd>
 
 
 <dt id="arg-output-crs">output_crs<a class="anchor" aria-label="anchor" href="#arg-output-crs"></a></dt>
-<dd><p>The CRS you want for your calculated indicator. (Leave blank
-to let the function choose a default based on grid reference system)</p></dd>
+<dd><p>(Optional) The CRS you want for your calculated indicator.
+(Leave blank to let the function choose a default based on grid reference
+system)</p></dd>
 
 
 <dt id="arg-first-year">first_year<a class="anchor" aria-label="anchor" href="#arg-first-year"></a></dt>
-<dd><p>Exclude data before this year. (Uses all data in the cube by default.)</p></dd>
+<dd><p>(Optinal) Exclude data before this year. (Uses all data in
+the cube by default.)</p></dd>
 
 
 <dt id="arg-last-year">last_year<a class="anchor" aria-label="anchor" href="#arg-last-year"></a></dt>
-<dd><p>Exclude data after this year. (Uses all data in the cube by default.)</p></dd>
+<dd><p>(Optional) Exclude data after this year. (Uses all data in
+the cube by default.)</p></dd>
 
 
 <dt id="arg-spherical-geometry">spherical_geometry<a class="anchor" aria-label="anchor" href="#arg-spherical-geometry"></a></dt>
-<dd><p>If set to FALSE, will temporarily disable spherical geometry
-while the function runs. Should only be used to solve specific issues. (Default is TRUE)</p></dd>
+<dd><p>(Optional) If set to FALSE, will temporarily
+disable spherical geometry while the function runs. Should only be used to
+solve specific issues. (Default is TRUE)</p></dd>
 
 
 <dt id="arg-make-valid">make_valid<a class="anchor" aria-label="anchor" href="#arg-make-valid"></a></dt>
-<dd><p>Calls st_make_valid() from the sf package. Increases processing
-time but may help if you are getting polygon errors. (Default is FALSE).</p></dd>
+<dd><p>(Optional) Calls st_make_valid() from the sf package.
+Increases processing time but may help if you are getting polygon errors.
+(Default is FALSE).</p></dd>
 
 
 <dt id="arg-num-bootstrap">num_bootstrap<a class="anchor" aria-label="anchor" href="#arg-num-bootstrap"></a></dt>
-<dd><p>Set the number of bootstraps to calculate for generating
-confidence intervals. (Default: 1000)</p></dd>
+<dd><p>(Optional) Set the number of bootstraps to calculate for
+generating confidence intervals. (Default: 1000)</p></dd>
 
 
 <dt id="arg-shapefile-path">shapefile_path<a class="anchor" aria-label="anchor" href="#arg-shapefile-path"></a></dt>
-<dd><p>Path of an external shapefile to merge into the workflow. For example,
-if you want to calculate your indicator particular features such as protected areas or wetlands.</p></dd>
+<dd><p>(optional) Path of an external shapefile to merge into
+the workflow. For example, if you want to calculate your indicator
+particular features such as protected areas or wetlands.</p></dd>
 
 
 <dt id="arg-shapefile-crs">shapefile_crs<a class="anchor" aria-label="anchor" href="#arg-shapefile-crs"></a></dt>
-<dd><p>CRS of a .wkt shapefile. If your shapefile is .wkt and you do
-NOT use this parameter, the CRS will be assumed to be EPSG:4326 and the
-coordinates will be read in as lat/long. If your shape is NOT a .wkt the CRS
-will be determined automatically.</p></dd>
+<dd><p>(Optional) CRS of a .wkt shapefile. If your shapefile
+is .wkt and you do NOT use this parameter, the CRS will be assumed to be
+EPSG:4326 and the coordinates will be read in as lat/long. If your shape is
+NOT a .wkt the CRS will be determined automatically.</p></dd>
 
 
 <dt id="arg-invert">invert<a class="anchor" aria-label="anchor" href="#arg-invert"></a></dt>
-<dd><p>Calculate an indicator over the inverse of the shapefile (e.g.
-if you have a protected areas shapefile this would calculate an indicator over
-all non protected areas)</p></dd>
+<dd><p>(optional) Calculate an indicator over the inverse of the
+shapefile (e.g. if you have a protected areas shapefile this would calculate
+an indicator over all non protected areas)</p></dd>
 
 
 <dt id="arg-include-ocean">include_ocean<a class="anchor" aria-label="anchor" href="#arg-include-ocean"></a></dt>
-<dd><p>Include occurrences which fall outside the land area.
-Default is TRUE. Set as "buffered_coast" to include a set buffer size around
-the land area rather than the entire ocean area.</p></dd>
+<dd><p>(Optional) Include occurrences which fall outside the
+land area. Default is TRUE. Set as "buffered_coast" to include a set buffer
+size around the land area rather than the entire ocean area.</p></dd>
 
 
 <dt id="arg-buffer-dist-km">buffer_dist_km<a class="anchor" aria-label="anchor" href="#arg-buffer-dist-km"></a></dt>
-<dd><p>The distance to buffer around the land if include_ocean
-is set to "buffered_coast".</p></dd>
+<dd><p>(Optional) The distance to buffer around the land if
+include_ocean is set to "buffered_coast".</p></dd>
 
 
 <dt id="arg-force-grid">force_grid<a class="anchor" aria-label="anchor" href="#arg-force-grid"></a></dt>
-<dd><p>Forces the calculation of a grid even if this would not
-normally be part of the pipeline, e.g. for time series. This setting is
-required for the calculation of rarity, and is turned on by the ab_rarity_ts
-and area_rarity_ts wrappers. (Default: FALSE)</p></dd>
+<dd><p>(Optional) Forces the calculation of a grid even if this
+would not normally be part of the pipeline, e.g. for time series. This
+setting is required for the calculation of rarity, and is turned on by the
+ab_rarity_ts and area_rarity_ts wrappers. (Default: FALSE)</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Additional arguments passed to specific indicator calculation functions.</p></dd>
+<dd><p>Additional arguments passed to specific indicator calculation
+functions.</p></dd>
 
 </dl></div>
     <div class="section level2">
