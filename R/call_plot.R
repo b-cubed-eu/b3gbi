@@ -14,7 +14,8 @@ call_plot <- function(x,
     if (inherits(x, c("spec_occ", "spec_range"))) {
       plot_species_ts(x,
                       y_label_default = y_label_default,
-                      auto_title = auto_title_ts)
+                      auto_title = auto_title_ts,
+                      ...)
     } else {
       plot_ts(x,
               y_label_default = y_label_default,
