@@ -1,3 +1,8 @@
+# b3gbi 0.7.5 - Minor update:
+
+* Fixed a bug that caused maps to sometimes fail to plot with an error about wrong object class.
+* Some code restructuring to reduce the size of the codebase and improve readability.
+
 # b3gbi 0.7.4 - Minor update:
 
 * Refactored code in main plotting functions to improve efficiency and readability.
