@@ -1,5 +1,5 @@
 #' @export
-plot.spec_range <- function(x, ...) {
+plot.spec_range <- function(x, species, ...) {
 
   wrong_class(x, "spec_range", reason = "incorrect")
   wrong_class(x, c("indicator_ts", "indicator_map"), reason = "incorrect")
@@ -7,6 +7,7 @@ plot.spec_range <- function(x, ...) {
   # Prepare a list of default arguments for call_plot
   plot_args <- list(
     x = x,
+    species = species,
     y_label_default = "Cells Occupied",
     auto_title_ts = "Species Range Size",
     auto_title_map = "Species Range",
@@ -24,7 +25,7 @@ plot.spec_range <- function(x, ...) {
 }
 
 #' @export
-plot.spec_occ <- function(x, ...) {
+plot.spec_occ <- function(x, species, ...) {
 
   wrong_class(x, "spec_occ", reason = "incorrect")
   wrong_class(x, c("indicator_ts", "indicator_map"), reason = "incorrect")
