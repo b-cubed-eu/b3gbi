@@ -956,7 +956,8 @@ occ_density_ts <- function(data, ...) {
 #'
 #' @examples
 #' \dontrun{
-#' so_map <- spec_occ_map(example_cube_1, level = "country", region = "Denmark")
+#' so_map <- spec_occ_map(example_cube_1, level = "country",
+#'                        region = "Denmark", include_ocean = FALSE)
 #' plot(so_map, c(2440728, 4265185))
 #' }
 #' @export
@@ -1004,7 +1005,7 @@ spec_occ_ts <- function(data, ...) {
 #'
 #' @examples
 #' sr_map <- spec_range_map(example_cube_1, level = "country",
-#'                          region = "Denmark")
+#'                          region = "Denmark", include_ocean = FALSE)
 #' plot(sr_map, c(2440728, 4265185))
 #'
 #' @export
