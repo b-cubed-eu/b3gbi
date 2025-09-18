@@ -10,29 +10,25 @@ call_plot <- function(x,
     stop("Default titles or labels not provided.")
   }
 
+  plot.args <- list(x = x, ...)
+
   if (inherits(x, "indicator_ts")) {
+    plot.args$y_label_default <- y_label_default
+    plot.args$auto_title <- auto_title_ts
     if (inherits(x, c("spec_occ", "spec_range"))) {
-      plot_species_ts(x,
-                      y_label_default = y_label_default,
-                      auto_title = auto_title_ts,
-                      ...)
+      plot.args$species <- list(...)$species
+      do.call(plot_species_ts, plot.args)
     } else {
-      plot_ts(x,
-              y_label_default = y_label_default,
-              auto_title = auto_title_ts,
-              ...)
+      do_call(plot_ts, plot.args)
     }
   } else if (inherits(x, "indicator_map")) {
+    plot.args$leg_label_default <- leg_label_default
+    plot.args$auto_title <- auto_title_map
     if (inherits(x, c("spec_occ", "spec_range"))) {
-      plot_species_map(x,
-                       leg_label_default = leg_label_default,
-                       auto_title = auto_title_map,
-                       ...)
+      plot.args$species <- list(...)$species
+      do.call(plot_species_map, plot.args)
     } else {
-      plot_map(x,
-               leg_label_default = leg_label_default,
-               auto_title = auto_title_map,
-               ...)
+      do.call(plot_map, plot.args)
     }
   }
 }
