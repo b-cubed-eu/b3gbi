@@ -5,6 +5,7 @@ compute_evenness_formula <- function(x, type) {
 
   S <- length(x)
   n <- x[x > 0]
+  if (length(n) == 0) return(NA)
   N <- sum(n)
   p <- n / N
 
