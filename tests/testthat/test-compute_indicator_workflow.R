@@ -156,8 +156,8 @@ test_that("compute_indicator_workflow handles input validation", {
 })
 
 
-# Mock get_NE_data function
-mock_get_NE_data <- function(projected_crs,
+# Mock get_ne_data function
+mock_get_ne_data <- function(projected_crs,
                              latlong_bbox,
                              region,
                              level,
@@ -205,9 +205,9 @@ test_that(
   )
   class(mock_cube) <- c("processed_cube", "list")
 
-  # Mock get_NE_data
+  # Mock get_ne_data
   with_mocked_bindings(
-    `get_NE_data` = mock_get_NE_data,
+    `get_ne_data` = mock_get_ne_data,
     {
       # Test grid creation and intersection with EEA grid.
       result <- compute_indicator_workflow(
@@ -245,7 +245,7 @@ test_that(
   )
 
   with_mocked_bindings(
-    `get_NE_data` = mock_get_NE_data,
+    `get_ne_data` = mock_get_ne_data,
     {
       result_shapefile <- compute_indicator_workflow(
         data = mock_cube,
@@ -287,7 +287,7 @@ test_that(
   )
 
   with_mocked_bindings(
-    `get_NE_data` = mock_get_NE_data,
+    `get_ne_data` = mock_get_ne_data,
     {
       result_invert <- compute_indicator_workflow(
         data = mock_cube,
@@ -311,7 +311,7 @@ test_that(
 
   # test spherical geometry.
   with_mocked_bindings(
-    `get_NE_data` = mock_get_NE_data,
+    `get_ne_data` = mock_get_ne_data,
     {
       result_spherical <- compute_indicator_workflow(
         data = mock_cube,
@@ -569,7 +569,7 @@ test_that(
   sf::sf_use_s2(TRUE)
 
   with_mocked_bindings(
-    `get_NE_data` = mock_get_NE_data,
+    `get_ne_data` = mock_get_ne_data,
     {
       # Test spherical geometry setting
       result <- compute_indicator_workflow(

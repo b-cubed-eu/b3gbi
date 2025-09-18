@@ -83,7 +83,7 @@ series.
 }}
 \examples{
 sr_map <- spec_range_map(example_cube_1, level = "country",
-                         region = "Denmark")
+                         region = "Denmark", include_ocean = FALSE)
 plot(sr_map, c(2440728, 4265185))
 
 \dontrun{
