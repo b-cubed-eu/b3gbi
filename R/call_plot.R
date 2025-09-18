@@ -19,7 +19,7 @@ call_plot <- function(x,
       plot.args$species <- list(...)$species
       do.call(plot_species_ts, plot.args)
     } else {
-      do_call(plot_ts, plot.args)
+      do.call(plot_ts, plot.args)
     }
   } else if (inherits(x, "indicator_map")) {
     plot.args$leg_label_default <- leg_label_default
