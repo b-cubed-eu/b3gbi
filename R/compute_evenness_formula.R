@@ -3,17 +3,16 @@ compute_evenness_formula <- function(x, type) {
 
   type <- match.arg(type, names(available_indicators))
 
+  S <- length(x)
+  n <- x[x > 0]
+  N <- sum(n)
+  p <- n / N
+
+
   if (type == "pielou_evenness") {
 
-    S <- length(x)
-    n <- x
-    N <- sum(n)
-    p <- n / N
-    p_squared <- p^2
-    summed <- sum(p_squared)
-    rooted <- sqrt(summed)
-    complement <- 1 - rooted
-    even <- complement / (1 - sqrt(1 / S))
+    H_prime <- -sum(p * log(p))
+    even <- H_prime / log(S)
     if (is.nan(even)) {
       even <- NA
     }
@@ -22,13 +21,9 @@ compute_evenness_formula <- function(x, type) {
 
   } else if (type == "williams_evenness") {
 
-    n <- x
-    N <- sum(n)
-    S <- sum(n > 0)
-    p <- n / N
     p_squared <- p^2
-    summed <- sum(p_squared) * S
-    adjusted <- (summed - 1) / (S - 1)
+    summed <- S * sum(p_squared) - 1
+    adjusted <- summed / (S - 1)
     root <- adjusted^(1 / 2)
     even <- 1 - root
     if (is.nan(even)) {
