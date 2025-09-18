@@ -4,14 +4,22 @@ plot.spec_range <- function(x, ...) {
   wrong_class(x, "spec_range", reason = "incorrect")
   wrong_class(x, c("indicator_ts", "indicator_map"), reason = "incorrect")
 
-  call_plot(
-    x,
+  # Prepare a list of default arguments for call_plot
+  plot_args <- list(
+    x = x,
     y_label_default = "Cells Occupied",
     auto_title_ts = "Species Range Size",
     auto_title_map = "Species Range",
-    suppress_legend = TRUE,
     ...
   )
+
+  # Conditionally add the suppress_legend argument
+  if (inherits(x, "indicator_map")) {
+    plot_args$suppress_legend <- TRUE
+  }
+
+  # Use do.call to execute the function with the prepared arguments
+  do.call(call_plot, plot_args)
 
 }
 
