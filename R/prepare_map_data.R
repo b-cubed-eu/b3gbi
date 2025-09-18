@@ -67,6 +67,7 @@ prepare_map_data <- function(data,
         dplyr::reframe(geometry = sf::st_crop(geometry,
                                               latlongbbox_transformed)) %>%
         dplyr::filter(!sf::st_is_empty(geometry)) %>%
+        sf::st_as_sf() %>%
         sf::st_make_valid() %>%
         sf::st_transform(crs = sf::st_crs(expanded_latlong_bbox))
 
@@ -101,6 +102,7 @@ prepare_map_data <- function(data,
         dplyr::reframe(geometry = sf::st_crop(geometry,
                                               latlong_extent_transformed)) %>%
         dplyr::filter(!sf::st_is_empty(geometry)) %>%
+        sf::st_as_sf() %>%
         sf::st_make_valid() %>%
         sf::st_transform(crs = sf::st_crs(latlong_extent))
 
