@@ -32,6 +32,7 @@ plot.spec_occ <- function(x, species, ...) {
 
   call_plot(
     x,
+    species = species,
     "Occurrences",
     "Species Occurrences",
     "Occurrences",
