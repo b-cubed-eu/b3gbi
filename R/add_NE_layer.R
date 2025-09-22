@@ -73,6 +73,10 @@ add_ne_layer <- function(layer_name, scale, extent_projected) {
       }
     })
 
+    if ("geom" %in% names(layer_raw)) {
+      layer_raw <- dplyr::rename(layer_raw, geometry = geom)
+    }
+
   }
 
   extent_projected <- sf::st_transform(sf::st_as_sfc(extent_projected),
