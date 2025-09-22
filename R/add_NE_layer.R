@@ -3,6 +3,8 @@ add_ne_layer <- function(layer_name, scale, extent_projected) {
 
   geometry <- featurecla <- scalerank <- type <- NULL
 
+  temp_ne_dir <- tools::R_user_dir("rnaturalearth", "cache")
+
   if (layer_name == "admin_0_countries") {
     # Use the robust ne_countries function for the base layer
     # The ne_countries function handles downloading the data if it doesn't exist
@@ -52,7 +54,8 @@ add_ne_layer <- function(layer_name, scale, extent_projected) {
       rnaturalearth::ne_load(scale = scale,
                              returnclass = "sf",
                              type = layer_name,
-                             category = category)
+                             category = category,
+                             temp_ne_dir)
     }, error = function(e) {
       if (grepl("the file .* seems not to exist", e, ignore.case = TRUE) ||
           grepl("Failed to download", e, ignore.case = TRUE) ||
@@ -62,7 +65,9 @@ add_ne_layer <- function(layer_name, scale, extent_projected) {
         rnaturalearth::ne_download(scale = scale,
                                    returnclass = "sf",
                                    type = layer_name,
-                                   category = category)
+                                   category = category,
+                                   load = FALSE,
+                                   destdir = temp_ne_dir)
       } else {
         stop(e) # Re-throw other unhandled errors
       }
