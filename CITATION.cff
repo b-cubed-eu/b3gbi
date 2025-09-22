@@ -8,7 +8,7 @@ message: 'To cite package "b3gbi" in publications use:'
 type: software
 license: MIT
 title: 'b3gbi: General Biodiversity Indicators for Biodiversity Data Cubes'
-version: 0.7.5
+version: 0.7.6
 abstract: Calculate general biodiversity indicators from GBIF data cubes. Includes
   many common indicators such as species richness and evenness, which can be calculated
   over time (trends) or space (maps).
@@ -458,6 +458,26 @@ references:
     email: pmassicotte@hotmail.com
     orcid: https://orcid.org/0000-0002-5919-4116
   year: '2025'
+- type: software
+  title: taxize
+  abstract: 'taxize: Taxonomic Information from Around the Web'
+  notes: Suggests
+  url: https://docs.ropensci.org/taxize/
+  repository: https://CRAN.R-project.org/package=taxize
+  authors:
+  - family-names: Chamberlain
+    given-names: Scott
+    email: myrmecocystus@gmail.com
+  - family-names: Szoecs
+    given-names: Eduard
+  - family-names: Foster
+    given-names: Zachary
+    email: zacharyfoster1989@gmail.com
+  - family-names: Arendsee
+    given-names: Zebulun
+  year: '2025'
+  doi: 10.32614/CRAN.package.taxize
+  version: '>= 0.9.99'
 - type: software
   title: testthat
   abstract: 'testthat: Unit Testing for R'

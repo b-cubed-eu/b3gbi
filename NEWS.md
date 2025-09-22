@@ -1,3 +1,7 @@
+# b3gbi 0.7.6 - Minor update:
+
+* Fixed a bug that caused rnaturalearth to keep downloading the same layer data. It now downloads the data to a cache folder and loads it from there the next time it needs it.
+
 # b3gbi 0.7.5 - Minor update:
 
 * Fixed a bug that caused maps to sometimes fail to plot with an error about wrong object class.
