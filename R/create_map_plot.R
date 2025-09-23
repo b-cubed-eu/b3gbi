@@ -2,6 +2,8 @@
 create_map_plot <- function(data,
                             map_surround,
                             layer_list,
+                            layer_colours,
+                            layer_fill_colours,
                             land_fill_colour,
                             grid_fill_colour,
                             grid_line_colour,
@@ -33,11 +35,15 @@ create_map_plot <- function(data,
   # Set default values
   land_fill_colour <- land_fill_colour %||% "grey85"
   grid_fill_colour <- grid_fill_colour %||% "transparent"
-  grid_line_colour <- if (visible_gridlines) "black" else "transparent"
+  if (visible_gridlines) {
+    grid_line_colour <- grid_line_colour %||% "black"
+  } else {
+    grid_line_colour <- "transparent"
+  }
   grid_outline_colour <- grid_outline_colour %||% "black"
   grid_outline_width <- grid_outline_width %||% 0.5
   grid_line_width <- grid_line_width %||% 0.1
-  grid_fill_transparency <- grid_fill_transparency %||% 0.3
+  grid_fill_transparency <- grid_fill_transparency %||% 0.2
 
   # Define function to modify legend
   cust_leg <- function(scale.params = list()) {
@@ -75,18 +81,23 @@ create_map_plot <- function(data,
     )
 
   # Step 3: Add additional layers, with ocean and lakes in blue
-  for (i in names(layer_list)) {
+  for (i in seq_along(layer_list)) {
     layer_data <- layer_list[[i]]
-    if (i %in% c("ocean", "lakes")) {
-      fill_colour <- "#92c5f0"
+    layer_fill_colour <- if(names(layer_list)[[i]] %in% c("ocean", "lakes") &&
+                            is.null(layer_fill_colours)) {
+      "#92c5f0"
+    } else if (!is.null(layer_fill_colours)) {
+      layer_fill_colours[[i]]
     } else {
-      fill_colour <- "transparent"
+      "transparent"
     }
+    layer_colour <- if (!is.null(layer_colours)) layer_colours[[i]] else "black"
+
     plot <- plot +
       ggplot2::geom_sf(data = layer_data,
                        aes(geometry = geometry),
-                       fill = fill_colour,
-                       colour = "black",
+                       fill = layer_fill_colour,
+                       colour = layer_colour,
                        inherit.aes = FALSE)
   }
 

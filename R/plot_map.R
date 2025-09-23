@@ -74,6 +74,8 @@ plot_map <- function(x,
                      title_wrap_length = 60,
                      visible_gridlines = TRUE,
                      layers = NULL,
+                     layer_colours = NULL,
+                     layer_fill_colours = NULL,
                      scale = c("medium", "small", "large")
 ) {
 
@@ -85,6 +87,17 @@ plot_map <- function(x,
 
   # Check that the object is the correct class
   wrong_class(x, "indicator_map", reason = "incorrect")
+
+  # Check that layers, layer_colours, and layer_fill_colours are same length
+  if (length(layer_colours) != length(layers) && !is.null(layer_colours)) {
+    stop("If layer_colours is provided, it must be the same length as layers.")
+  }
+  if (length(layer_fill_colours) != length(layers) &&
+      !is.null(layer_fill_colours)) {
+    stop(
+      "If layer_fill_colours is provided, it must be the same length as layers."
+    )
+  }
 
   # Get plot title (if set to "auto")
   title <- if (title == "auto") auto_title else title
