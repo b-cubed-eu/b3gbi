@@ -46,6 +46,10 @@ create_map_plot <- function(data,
     }
   }
 
+  # Set the grid line color based on the function argument
+  # If TRUE, the color is black. If FALSE, it's transparent.
+  grid_line_colour <- if (visible_gridlines) "black" else "transparent"
+
   # Create plot in steps using ggplot
   ###################################
 
@@ -82,7 +86,7 @@ create_map_plot <- function(data,
   plot <- plot +
     geom_sf(aes(fill = diversity_val,
                 geometry = geometry),
-            colour = "transparent") +
+            colour = grid_line_colour) +
     cust_leg(list(trans = trans,
                   breaks = breaks,
                   labels = labels,
@@ -118,18 +122,15 @@ create_map_plot <- function(data,
                        inherit.aes = FALSE)
   }
 
-  # Step 6: Add gridlines between cells if not set to false
-  if (visible_gridlines == TRUE) {
-    # plot gridlines
-    plot$layers <- c(
-      plot$layers,
-      ggplot2::geom_sf(aes(geometry = geometry),
-                       colour = "black",
-                       linewidth = 0.1,
-                       fill = "transparent"
-      )[[1]]
+  # Step 6: Add the grid outline
+  grid_outline <- sf::st_union(data)
+  plot <- plot +
+    ggplot2::geom_sf(data = grid_outline,
+                     colour = "black",
+                     linewidth = 0.5,
+                     fill = "transparent",
+                     inherit.aes = FALSE
     )
-  }
 
   # Step 7: Expand the plot if crop_to_grid is not set
   expand_val <- if (crop_to_grid) FALSE else TRUE
