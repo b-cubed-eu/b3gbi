@@ -3,6 +3,12 @@ create_map_plot <- function(data,
                             map_surround,
                             layer_list,
                             land_fill_colour,
+                            grid_fill_colour,
+                            grid_line_colour,
+                            grid_outline_colour,
+                            grid_line_width,
+                            grid_outline_width,
+                            grid_fill_transparency,
                             panel_bg,
                             trans,
                             bcpower,
@@ -24,8 +30,14 @@ create_map_plot <- function(data,
   # Set necessary variables to NULL to avoid R CMD check notes
   geometry <- diversity_val <- NULL
 
-  # Set default value for land_fill_colour if NULL
+  # Set default values
   land_fill_colour <- land_fill_colour %||% "grey85"
+  grid_fill_colour <- grid_fill_colour %||% "transparent"
+  grid_line_colour <- if (visible_gridlines) "black" else "transparent"
+  grid_outline_colour <- grid_outline_colour %||% "black"
+  grid_outline_width <- grid_outline_width %||% 0.5
+  grid_line_width <- grid_line_width %||% 0.1
+  grid_fill_transparency <- grid_fill_transparency %||% 0.3
 
   # Define function to modify legend
   cust_leg <- function(scale.params = list()) {
@@ -45,10 +57,6 @@ create_map_plot <- function(data,
       trans <- scales::transform_yj(p = bcpower)
     }
   }
-
-  # Set the grid line color based on the function argument
-  # If TRUE, the color is black. If FALSE, it's transparent.
-  grid_line_colour <- if (visible_gridlines) "black" else "transparent"
 
   # Create plot in steps using ggplot
   ###################################
@@ -86,7 +94,8 @@ create_map_plot <- function(data,
   plot <- plot +
     geom_sf(aes(fill = diversity_val,
                 geometry = geometry),
-            colour = grid_line_colour) +
+            colour = grid_line_colour,
+            linewidth = grid_line_width) +
     cust_leg(list(trans = trans,
                   breaks = breaks,
                   labels = labels,
@@ -122,13 +131,14 @@ create_map_plot <- function(data,
                        inherit.aes = FALSE)
   }
 
-  # Step 6: Add the grid outline
+  # Step 6: Add the grid outline and fill
   grid_outline <- sf::st_union(data)
   plot <- plot +
     ggplot2::geom_sf(data = grid_outline,
-                     colour = "black",
-                     linewidth = 0.5,
-                     fill = "transparent",
+                     colour = grid_outline_colour,
+                     linewidth = grid_outline_width,
+                     fill = grid_fill_colour,
+                     alpha = grid_fill_transparency,
                      inherit.aes = FALSE
     )
 
