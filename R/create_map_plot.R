@@ -46,8 +46,8 @@ create_map_plot <- function(data,
   grid_fill_transparency <- grid_fill_transparency %||% 0.2
 
   # Format layer colours
-  layer_colours <- list("black", layer_colours)
-  layer_fill_colours <- list("transparent", layer_fill_colours)
+  layer_colours <- list("black", layer_colours) %||% NULL
+  layer_fill_colours <- list("transparent", layer_fill_colours) %||% NULL
 
   # Define function to modify legend
   cust_leg <- function(scale.params = list()) {
