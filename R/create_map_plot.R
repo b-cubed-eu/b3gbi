@@ -45,6 +45,10 @@ create_map_plot <- function(data,
   grid_line_width <- grid_line_width %||% 0.1
   grid_fill_transparency <- grid_fill_transparency %||% 0.2
 
+  # Format layer colours
+  layer_colours <- list("black", layer_colours)
+  layer_fill_colours <- list("transparent", layer_fill_colours)
+
   # Define function to modify legend
   cust_leg <- function(scale.params = list()) {
     do.call("scale_fill_gradient", modifyList(
