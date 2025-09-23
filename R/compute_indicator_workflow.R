@@ -305,9 +305,9 @@ compute_indicator_workflow <- function(data,
 
     # Choose appropriate projection CRS
     if (data$grid_type == "eea") {
-      projected_crs <- "EPSG:3035"
+      projected_crs <- cube_crs
     } else if (data$grid_type == "mgrs") {
-      projected_crs <- guess_utm_epsg(data)
+      projected_crs <- cube_crs
     } else if (data$grid_type == "eqdgc") {
       projected_crs <- guess_utm_epsg(cube_bbox_latlong)
     } else {
