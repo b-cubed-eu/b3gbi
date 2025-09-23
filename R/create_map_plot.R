@@ -150,7 +150,7 @@ create_map_plot <- function(data,
   grid_outline <- sf::st_union(data)
   plot <- plot +
     ggplot2::geom_sf(data = grid_outline,
-                     colour = grid_outline_colour,
+                     colour = alpha(grid_outline_colour, 0.5),
                      linewidth = grid_outline_width,
                      fill = grid_fill_colour,
                      alpha = grid_fill_transparency,
