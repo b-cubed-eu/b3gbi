@@ -485,6 +485,7 @@ compute_indicator_workflow <- function(data,
                             buffer_dist_km) %>%
       sf::st_make_valid()
 
+    # Transform map data to projected CRS if needed
     if (data$grid_type == "eea") {
       map_data <- sf::st_transform(map_data, crs = projected_crs)
     }
@@ -500,6 +501,13 @@ compute_indicator_workflow <- function(data,
 
     sf::st_agr(grid) <- "constant"
 
+    # Determine the object to intersect with the grid
+    intersection_target <- if (!is.null(shapefile)) {
+      sf::st_make_valid(shapefile_merge)
+    } else {
+      map_data
+    }
+
     # The following intersection operation requires special error handling
     # because it fails when the grid contains invalid geometries.
     # Therefore when invalid geometries are encountered, it will retry the
@@ -508,7 +516,7 @@ compute_indicator_workflow <- function(data,
     tryCatch({
       # Attempt without altering the spherical geometry setting
       result <- grid %>%
-        sf::st_intersection(map_data) %>%
+        sf::st_intersection(intersection_target) %>%
         dplyr::select(dplyr::all_of(c("cellid", "geometry")),
                       dplyr::any_of("area"))
     }, error = function(e) {
@@ -530,7 +538,7 @@ compute_indicator_workflow <- function(data,
       sf::sf_use_s2(FALSE)
       # Retry the intersection operation
       result <- grid %>%
-        sf::st_intersection(map_data) %>%
+        sf::st_intersection(intersection_target) %>%
         dplyr::select(dplyr::all_of(c("cellid", "geometry")),
                       dplyr::any_of("area"))
       # Notify success after retry
