@@ -501,11 +501,21 @@ compute_indicator_workflow <- function(data,
 
     sf::st_agr(grid) <- "constant"
 
-    # Determine the object to intersect with the grid
-    intersection_target <- if (!is.null(shapefile)) {
-      sf::st_make_valid(shapefile_merge)
+    # Define the object to be used for intersection
+    # If a shapefile is provided, use it directly. Otherwise, use the map data.
+    if (!is.null(shapefile)) {
+      if (invert) {
+        # If invert is TRUE, we want the area *outside* the shapefile but inside
+        # the cube. We use st_difference for this.
+        intersection_target <- sf::st_difference(cube_polygon_projected,
+                                                 sf::st_union(shapefile_projected))
+      } else {
+        # If invert is FALSE, we simply want the area of the shapefile
+        intersection_target <- shapefile_projected
+      }
     } else {
-      map_data
+      # No shapefile provided, so we intersect with the Natural Earth data
+      intersection_target <- map_data
     }
 
     # The following intersection operation requires special error handling
