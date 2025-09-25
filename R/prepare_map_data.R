@@ -11,13 +11,17 @@ prepare_map_data <- function(data,
                              map_region,
                              map_level,
                              map_type,
-                             crop_by_region) {
+                             crop_by_region,
+                             map_expansion_factor) {
 
   # Set variables to NULL
   scalerank <- featurecla <- geometry <- . <- NULL
 
   # Define a lat/long CRS (WGS84)
   latlong_crs <- sf::st_crs(4326)
+
+  # Get the CRS of the input data
+  data_crs <- sf::st_crs(data)
 
   # Determine bounding box for cropping:
   # ... from bbox of map data for stored regions if crop_by_region set
@@ -36,33 +40,32 @@ prepare_map_data <- function(data,
     latlong_extent <- sf::st_bbox(xylims, crs = latlong_crs)
   #  latlong_extent <- sf::st_set_crs(latlong_extent, latlong_crs)
 
-    # ... or from the map limits in the projected CRS if crop_by_region set
-  } else if (crop_by_region == TRUE) {
-    latlong_extent <- sf::st_bbox(map_data_sf)
-
     # ... or from the indicator data in lat/long if using a km-based CRS other
     # than EPSG:3035
-  } else if (check_crs_units(projection) == "km"
-             && sf::st_crs(projection)$input != "EPSG:3035") {
+  } else if (check_crs_units(data_crs) == "km"
+             && sf::st_crs(data_crs)$input != "EPSG:3035") {
     # Get bounding box of the indicator map data
     utm_bbox <- sf::st_bbox(data)
-    utm_crs <- sf::st_crs(data)
+
     # Transform data bbox to lat/long to define the extent
-    bbox_polygon_utm <- sf::st_as_sfc(utm_bbox, crs = utm_crs)
+    bbox_polygon_utm <- sf::st_as_sfc(utm_bbox, crs = data_crs)
     bbox_latlong <- sf::st_transform(bbox_polygon_utm, crs = latlong_crs)
     latlong_extent <- sf::st_bbox(bbox_latlong)
 
     # ... or from existing map limits
   } else {
-    latlong_extent <- sf::st_bbox(map_lims, crs = latlong_crs)
+    latlong_extent <- map_lims %>% sf::st_bbox(crs = data_crs) %>%
+      sf::st_transform(crs = latlong_crs)
   }
 
-  latlong_extent <- sf::st_transform(latlong_extent, crs = projection)
+ # latlong_extent <- latlong_extent %>%
+   # sf::st_transform(latlong_extent, crs = "ESRI:54012") %>%
+   # sf::st_transform(crs = projection)
 
-  # Expand the bounding box by 10% in all directions if not cropping to grid
-  # and no xlims/ylims were provided
-#  if (!crop_to_grid && is.null(xlims) && is.null(ylims)) {
-    expand_percent <- 0.1
+  # Expand the bounding box by 50% in all directions
+  # This should ensure that the map surrounds the data
+  # even if the projection is quite extreme
+    expand_percent <- map_expansion_factor
     lon_range <- latlong_extent["xmax"] - latlong_extent["xmin"]
     lat_range <- latlong_extent["ymax"] - latlong_extent["ymin"]
     latlong_extent <- sf::st_bbox(c(
@@ -76,9 +79,9 @@ prepare_map_data <- function(data,
   sf::st_agr(map_data_sf) <- "constant"
   # Crop to the above-determined bounding box
   map_surround <- map_data_sf %>%
-    sf::st_transform(crs = projection) %>%
     sf::st_make_valid() %>%
-    sf::st_crop(latlong_extent)
+    sf::st_crop(latlong_extent) %>%
+    sf::st_transform(crs = projection)
 
   # Crop layers if provided
   layer_list <- list()
@@ -97,6 +100,15 @@ prepare_map_data <- function(data,
     layer_list <- lapply(layer_list, function(x) {
       sf::st_transform(x, crs = projection)
     })
+  }
+
+  # Transform the map limits to the target projection
+  if (!is.null(xlims) && !is.null(ylims)) {
+    map_lims <- sf::st_bbox(map_lims, crs = latlong_crs) %>%
+      sf::st_transform(crs = projection)
+  } else {
+    map_lims <- sf::st_bbox(map_lims, crs = data_crs) %>%
+      sf::st_transform(crs = projection)
   }
 
   # Return a list containing the final projected map data and layers
