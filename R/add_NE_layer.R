@@ -60,14 +60,18 @@ add_ne_layer <- function(layer_name, scale, extent_projected) {
       if (grepl("the file .* seems not to exist", e, ignore.case = TRUE) ||
           grepl("Failed to download", e, ignore.case = TRUE) ||
           grepl("HTTP status was 404", e, ignore.case = TRUE)) {
-        message(paste0("Attempting to download '", layer_name,
-                       "' data due to previous load error."))
+        message(paste0("Attempting to download '", layer_name, "' data."))
         rnaturalearth::ne_download(scale = scale,
                                    returnclass = "sf",
                                    type = layer_name,
                                    category = category,
                                    load = FALSE,
                                    destdir = temp_ne_dir)
+        rnaturalearth::ne_load(scale = scale,
+                               returnclass = "sf",
+                               type = layer_name,
+                               category = category,
+                               temp_ne_dir)
       } else {
         stop(e) # Re-throw other unhandled errors
       }
@@ -101,7 +105,7 @@ add_ne_layer <- function(layer_name, scale, extent_projected) {
 
   # Then validate and filter (on the now smaller dataset)
   processed_layer <- processed_layer %>%
-    sf::st_make_valid() %>%
+   # sf::st_make_valid() %>%
     dplyr::filter(!sf::st_is_empty(geometry)) # Filter out empty geometries
 
   return(processed_layer)
