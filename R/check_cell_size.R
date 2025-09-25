@@ -38,8 +38,6 @@ check_cell_size <- function(cell_size, resolution, level, area = NULL) {
         message(paste0("Automatically determined grid cell size of ", cell_size,
         " km would be smaller than the grid cells of the cube. Therefore, ",
         "setting cell_size to ", res_size, " km to match cube resolution."))
-      } else {
-        message(paste0("Setting grid cell size to ", cell_size, " km."))
       }
     } else {
       if (!isTRUE(all.equal(cell_size / res_size,
@@ -65,7 +63,6 @@ check_cell_size <- function(cell_size, resolution, level, area = NULL) {
       }
       cell_size <- ifelse((level == "world" || level == "continent"),
                           cont_res_size, res_size)
-      message(paste0("Setting grid cell size to ", cell_size, " degrees."))
     } else {
       res_size <- as.numeric(stringr::str_extract(resolution,
                                                   "[0-9.]+(?=degrees)"))
