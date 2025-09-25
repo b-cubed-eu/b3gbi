@@ -19,7 +19,7 @@ plot_species_map(
   breaks = NULL,
   labels = NULL,
   output_crs = NULL,
-  crop_to_grid = FALSE,
+  crop_to_grid = NULL,
   crop_by_region = FALSE,
   ocean_fill_colour = NULL,
   land_fill_colour = NULL,
@@ -36,9 +36,9 @@ plot_species_map(
   title_wrap_length = 60,
   spec_name_wrap_length = 40,
   visible_gridlines = TRUE,
-  visible_grid_outline = TRUE,
+  visible_grid_outline = FALSE,
   visible_panel_gridlines = FALSE,
-  complete_grid_outline = TRUE,
+  complete_grid_outline = FALSE,
   map_expansion_factor = 0.5,
   layers = NULL,
   layer_colours = NULL,
@@ -151,15 +151,13 @@ wrapping to a new line. Default: 40 characters.}
 TRUE.}
 
 \item{visible_grid_outline}{(Optional) Show outline around grid. Default is
-TRUE.}
+FALSE.}
 
 \item{visible_panel_gridlines}{(Optional) Show ggplot panel gridlines.
 Default is FALSE.}
 
 \item{complete_grid_outline}{(Optional) If TRUE, the grid outline will be
-completed around the entire grid, even if some grid cells are missing (for
-example, if you have selected include_land = FALSE or include_ocean = FALSE
-when calculating the indicator). Default is TRUE.}
+extended as a complete rectangle, even if the grid is not. Default is FALSE.}
 
 \item{map_expansion_factor}{(Optional) Factor to expand the map limits
 beyond the grid limits. This does NOT expand the boundaries of the plot, it
