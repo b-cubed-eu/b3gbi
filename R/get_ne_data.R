@@ -32,6 +32,7 @@ get_ne_data <- function(projected_crs,
                         level = "cube",
                         ne_type = "countries",
                         ne_scale = "medium",
+                        include_land = TRUE,
                         include_ocean = TRUE,
                         buffer_dist_km = NULL
 ) {
@@ -56,43 +57,10 @@ get_ne_data <- function(projected_crs,
     stop("No projected CRS provided.")
   }
 
-  # Download and prepare Natural Earth map data
-  if (level == "country") {
-
-    map_data <- rnaturalearth::ne_countries(scale = ne_scale,
-                                            country = region,
-                                            type = ne_type,
-                                            returnclass = "sf")
-
-  } else if (level == "continent") {
-
-    map_data <- rnaturalearth::ne_countries(scale = ne_scale,
-                                            continent = region,
-                                            returnclass = "sf")
-
-  } else if (level == "sovereignty") {
-
-    map_data <- rnaturalearth::ne_countries(scale = ne_scale,
-                                            type = ne_type,
-                                            sovereignty = region,
-                                            returnclass = "sf")
-
-  } else if (level == "geounit") {
-
-    map_data <- rnaturalearth::ne_countries(scale = ne_scale,
-                                            type = ne_type,
-                                            geounit = region,
-                                            returnclass = "sf")
-
-  } else if (level == "world" || level == "cube") {
-
-    map_data <- rnaturalearth::ne_countries(scale = ne_scale,
-                                            returnclass = "sf")
-
-  } else {
-    stop("Level not recognized. Must be country, continent, geounit,
-         sovereignty, world, or cube.")
-  }
+  map_data <- download_ne_data(region = region,
+                               level = level,
+                               ne_scale = ne_scale,
+                               ne_type = ne_type)
 
   # Project and validate the map
   map_data_projected <-
@@ -164,22 +132,26 @@ get_ne_data <- function(projected_crs,
       dplyr::filter(!is.na(sf::st_geometry(.))) %>%
       dplyr::filter(!sf::st_is_empty(.))
 
-    # Check if the land data is empty before performing the union
-    if (nrow(map_data_projected) == 0) {
-      # If there's no land in the bounding box, return just the ocean layer
-      map_data_projected <- map_data_ocean
-    } else {
+    # # Check if the land data is empty before performing the union
+    # if (nrow(map_data_projected) == 0 || include_land == FALSE) {
+    #   # If there's no land in the bounding box, return just the ocean layer
+    #   map_data_projected <- map_data_ocean
+  #  } else {
       # Otherwise, perform the union as normal
       map_data_ocean_ <- sf::st_as_sf(map_data_ocean)
-      map_data_projected <- bind_rows(map_data_projected,
-                                      map_data_ocean_)
-      map_data_projected <- map_data_projected %>%
-        dplyr::group_by() %>%
-        dplyr::reframe(geometry = sf::st_union(x)) %>%
-        dplyr::ungroup() %>%
-        sf::st_as_sf()
+      # map_data_projected <- bind_rows(map_data_projected,
+      #                                 map_data_ocean_)
+      # map_data_projected <- map_data_projected %>%
+      #   dplyr::group_by() %>%
+      #   dplyr::reframe(geometry = sf::st_union(x)) %>%
+      #   dplyr::ungroup() %>%
+      #   sf::st_as_sf()
 
-    }
+      # convert to the desired projected CRS
+      map_data_ocean_projected <- sf::st_transform(map_data_ocean_,
+                                                   crs = projected_crs)
+
+  #  }
 
   } else if (is.character(include_ocean) &&
              include_ocean == "buffered_coast") {
@@ -210,17 +182,26 @@ get_ne_data <- function(projected_crs,
                                     dist = buffer_dist_km * 1000)
 
     # Validate oceans
-    map_data_ocean <- sf::st_make_valid(map_data_ocean)
+    map_data_ocean_ <- sf::st_make_valid(map_data_ocean)
+
+    # convert to the desired projected CRS
+    map_data_ocean_projected <- sf::st_transform(map_data_ocean_,
+                                                 crs = projected_crs)
 
     # Merge the land with the oceans
-    map_data_projected <- sf::st_union(map_data_projected,
-                                       map_data_ocean)
+    # map_data_projected <- sf::st_union(map_data_projected,
+    #                                    map_data_ocean_)
+
+  } else {
+
+    map_data_ocean_projected <- NULL
 
   }
 
+  # convert to the desired projected CRS
   map_data_projected <- sf::st_transform(map_data_projected,
                                          crs = projected_crs)
 
-  return(map_data_projected)
+  return(list(land = map_data_projected, ocean = map_data_ocean_projected))
 
 }
