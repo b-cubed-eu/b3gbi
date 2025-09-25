@@ -5,7 +5,9 @@ prepare_map_for_plot <- function(x,
                                  layers,
                                  scale,
                                  crop_to_grid,
-                                 crop_by_region) {
+                                 crop_by_region,
+                                 projection,
+                                 map_expansion_factor) {
 
   # Check that object to plot is the correct class
   if (!inherits(x, "indicator_map")) {
@@ -45,7 +47,7 @@ prepare_map_for_plot <- function(x,
 
   # Prepare map data with correct layers, CRS, bounding box, etc.
   map_data_list <- prepare_map_data(data = x$data,
-                                    projection = x$projection,
+                                    projection = projection,
                                     map_lims = map_lims,
                                     xlims = xlims,
                                     ylims = ylims,
@@ -56,7 +58,8 @@ prepare_map_for_plot <- function(x,
                                     map_region = x$map_region,
                                     map_level = x$map_level,
                                     map_type = x$map_type,
-                                    crop_by_region = crop_by_region
+                                    crop_by_region = crop_by_region,
+                                    map_expansion_factor = map_expansion_factor
   )
 
   # Get map data and layer list
