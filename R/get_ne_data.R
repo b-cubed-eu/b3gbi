@@ -113,12 +113,30 @@ get_ne_data <- function(projected_crs,
 
   }
 
-  if (include_ocean == TRUE) {
-
     extent_projected_polygon <- sf::st_as_sfc(extent_projected)
 
-    map_data_ocean <- sf::st_difference(extent_projected_polygon,
-                                        map_data_projected)
+    map_data_ocean_bad <- sf::st_difference(extent_projected_polygon,
+                                            map_data_projected)
+
+    map_data_ocean <- map_data_ocean_bad
+
+    if (include_ocean == TRUE) {
+
+      if (level != "cube") {
+        # Remove land outside of the users chosen region from the ocean layer
+        extra_land_data <- download_ne_data(region = NULL,
+                                            level = "cube",
+                                            ne_scale = ne_scale,
+                                            ne_type = ne_type) %>%
+          sf::st_transform(crs = "ESRI:54012") %>%
+          sf::st_make_valid() %>%
+          sf::st_make_valid() %>%
+          sf::st_union() %>%
+          sf::st_as_sf()
+        unwanted_land <- sf::st_intersection(map_data_ocean, extra_land_data)
+        map_data_ocean <- sf::st_difference(map_data_ocean, unwanted_land)
+
+      }
 
     # Validate oceans
     map_data_ocean <- map_data_ocean %>%
@@ -149,6 +167,9 @@ get_ne_data <- function(projected_crs,
 
       # convert to the desired projected CRS
       map_data_ocean_projected <- sf::st_transform(map_data_ocean_,
+                                                   crs = projected_crs)
+
+      map_data_ocean_bad_projected <- sf::st_transform(map_data_ocean_bad,
                                                    crs = projected_crs)
 
   #  }
@@ -202,6 +223,8 @@ get_ne_data <- function(projected_crs,
   map_data_projected <- sf::st_transform(map_data_projected,
                                          crs = projected_crs)
 
-  return(list(land = map_data_projected, ocean = map_data_ocean_projected))
+  return(list(land = map_data_projected,
+              ocean = map_data_ocean_projected,
+              ocean_save = map_data_ocean_bad_projected))
 
 }
