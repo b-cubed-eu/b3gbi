@@ -79,21 +79,21 @@ add_ne_layer <- function(layer_name, scale, extent_projected) {
 
   }
 
-  extent_projected <- sf::st_transform(sf::st_as_sfc(extent_projected),
-                                       crs = "ESRI:54012")
+  # extent_projected <- sf::st_transform(sf::st_as_sfc(extent_projected),
+  #                                      crs = "ESRI:54012")
 
   # Attempt to perform cropping for efficiency FIRST
   # If it fails, validate first
   processed_layer <- tryCatch({
     layer_raw %>%
-      sf::st_transform(crs = "ESRI:54012") %>%
+  #    sf::st_transform(crs = "ESRI:54012") %>%
       dplyr::group_by(scalerank, featurecla) %>%
       dplyr::reframe(geometry = sf::st_crop(geometry, extent_projected)) %>%
       sf::st_as_sf()
   }, error = function(e) {
     layer_raw %>%
       sf::st_make_valid() %>%
-      sf::st_transform(crs = "ESRI:54012") %>%
+   #   sf::st_transform(crs = "ESRI:54012") %>%
       dplyr::group_by(scalerank, featurecla) %>%
       dplyr::reframe(geometry = sf::st_crop(geometry, extent_projected)) %>%
       sf::st_as_sf()
