@@ -22,6 +22,9 @@
 #'   Yeo-Johnson transformations.
 #' @param breaks (Optional) Break points for the legend scale.
 #' @param labels (Optional) Labels for legend scale break points.
+#' @param output_crs (Optional) Coordinate Reference System (CRS) for the output
+#'  map. Can be specified as an EPSG code (e.g., 4326) or a proj4string. If
+#'  NULL (default), the original CRS of the indicator_map object will be used.
 #' @param crop_to_grid (Optional) If TRUE, the grid will determine the edges of
 #'  the map. If FALSE, a buffer will be added around the grid. If NULL
 #'  (default), will be set to TRUE if map_level is "cube", otherwise FALSE.
@@ -63,10 +66,20 @@
 #'  TRUE.
 #' @param visible_grid_outline (Optional) Show outline around grid. Default is
 #'  TRUE.
+#' @param visible_panel_gridlines (Optional) Show ggplot panel gridlines.
+#'  Default is FALSE.
 #' @param complete_grid_outline (Optional) If TRUE, the grid outline will be
 #'  completed around the entire grid, even if some grid cells are missing (for
 #'  example, if you have selected include_land = FALSE or include_ocean = FALSE
 #'  when calculating the indicator). Default is TRUE.
+#' @param map_expansion_factor (Optional) Factor to expand the map limits
+#' beyond the grid limits. This does NOT expand the boundaries of the plot, it
+#' only affects where the crop is applied. If this value is too small, some
+#' land may be visibly cut off due to map distortion caused by projections. A
+#' larger value will extend the bounding box for cropping to prevent this.
+#' Must be a positive number. (Default is 0.5). This should be enough for most
+#' projections, but you can increase this value if you are using an extreme
+#' projection and find that some land is visibly cut off.
 #' @param layers (Optional) Additional rnaturalearth layers to plot, e.g.
 #'  c("reefs", "playas").
 #' @param layer_colours (Optional) Colours for the outlines of additional
@@ -98,6 +111,7 @@ plot_map <- function(x,
                      bcpower = NULL,
                      breaks = NULL,
                      labels = NULL,
+                     output_crs = NULL,
                      crop_to_grid = NULL,
                      crop_by_region = FALSE,
                      ocean_fill_colour = NULL,
@@ -114,8 +128,10 @@ plot_map <- function(x,
                      legend_title_wrap_length = 10,
                      title_wrap_length = 60,
                      visible_gridlines = TRUE,
-                     visible_grid_outline = TRUE,
-                     complete_grid_outline = TRUE,
+                     visible_grid_outline = FALSE,
+                     visible_panel_gridlines = FALSE,
+                     complete_grid_outline = FALSE,
+                     map_expansion_factor = 0.5,
                      layers = NULL,
                      layer_colours = NULL,
                      layer_fill_colours = NULL,
@@ -127,6 +143,16 @@ plot_map <- function(x,
 
   # Match arguments
   scale <- match.arg(scale)
+
+  # Set CRS for the plot
+  if (!is.null(output_crs)) {
+    # If output CRS is provided, check if it is valid and then use it
+    check_crs_units(output_crs)
+    projection <- output_crs
+  } else {
+    # Otherwise, use the projection from the indicator_map object
+    projection <- x$projection
+  }
 
   # Check that the object is the correct class
   wrong_class(x, "indicator_map", reason = "incorrect")
@@ -158,7 +184,8 @@ plot_map <- function(x,
 
   # Prepare data and layers for plotting
   map_data_list <- prepare_map_for_plot(
-    x, xlims, ylims, layers, scale, crop_to_grid, crop_by_region
+    x, xlims, ylims, layers, scale, crop_to_grid, crop_by_region, projection,
+    map_expansion_factor
   )
 
   # Unpack the list
@@ -188,10 +215,12 @@ plot_map <- function(x,
     map_level = x$map_level,
     visible_gridlines = visible_gridlines,
     visible_grid_outline = visible_grid_outline,
+    visible_panel_gridlines = visible_panel_gridlines,
     complete_grid_outline = complete_grid_outline,
     crop_to_grid = crop_to_grid,
     map_lims = map_lims,
-    projection = x$projection,
+    projection = projection,
+    original_bbox = x$original_bbox,
     leg_label_default = leg_label_default,
     legend_title = legend_title,
     legend_title_wrap_length = legend_title_wrap_length,
