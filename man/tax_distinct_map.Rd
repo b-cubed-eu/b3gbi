@@ -58,6 +58,8 @@ NOT a .wkt the CRS will be determined automatically.}
     \item{\code{invert}}{(optional) Calculate an indicator over the inverse of the
 shapefile (e.g. if you have a protected areas shapefile this would calculate
 an indicator over all non protected areas)}
+    \item{\code{include_land}}{(Optional) Include occurrences which fall within the
+land area. Default is TRUE.}
     \item{\code{include_ocean}}{(Optional) Include occurrences which fall outside the
 land area. Default is TRUE. Set as "buffered_coast" to include a set buffer
 size around the land area rather than the entire ocean area.}

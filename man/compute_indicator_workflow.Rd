@@ -23,6 +23,7 @@ compute_indicator_workflow(
   shapefile_path = NULL,
   shapefile_crs = NULL,
   invert = FALSE,
+  include_land = TRUE,
   include_ocean = TRUE,
   buffer_dist_km = 50,
   force_grid = FALSE,
@@ -109,6 +110,9 @@ NOT a .wkt the CRS will be determined automatically.}
 \item{invert}{(optional) Calculate an indicator over the inverse of the
 shapefile (e.g. if you have a protected areas shapefile this would calculate
 an indicator over all non protected areas)}
+
+\item{include_land}{(Optional) Include occurrences which fall within the
+land area. Default is TRUE.}
 
 \item{include_ocean}{(Optional) Include occurrences which fall outside the
 land area. Default is TRUE. Set as "buffered_coast" to include a set buffer

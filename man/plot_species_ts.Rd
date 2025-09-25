@@ -47,11 +47,14 @@ plot_species_ts(
 }
 \arguments{
 \item{x}{An 'indicator_ts' object containing time series of indicator values
-matched to species names and/or taxon keys.}
+matched to species names and/or taxon keys, created using the
+\code{spec_occ_ts()} or \code{spec_range_ts()} functions. This is a required
+parameter with no default.}
 
 \item{species}{Species you want to map occurrences for. Can be either
 numerical taxonKeys or species names. Partial species names can be used
-(the function will try to match them).}
+(the function will try to match them). This is a required parameter with
+no default.}
 
 \item{single_plot}{(Optional) By default all species occurrence time series
 will be combined into a single multi-panel plot. Set this to FALSE to plot
@@ -131,8 +134,8 @@ ci_type = "error_bars". Default is 1.}
 \item{smooth_linetype}{(Optional) Type of line to plot for smoothed
 trendline. Default is "solid".}
 
-\item{smooth_linewidth}{(Optional) Line width for smoothed trendline. Default
-is 1.}
+\item{smooth_linewidth}{(Optional) Line width for smoothed trendline.
+Default is 1.}
 
 \item{smooth_cilinewidth}{(Optional) Line width for smoothed trendline
 confidence intervals. Default is 1.}
@@ -145,7 +148,7 @@ confidence intervals. Default is 1.}
 
 \item{x_expand}{(Optional)  Expansion factor to expand the x-axis beyond the
 data. Left and right values are required in the form of c(0.1, 0.2) or
-simply 0.1 to apply the same value to both sides. Default is 0.05.}
+simply 0.1 to apply the same value to each side. Default is 0.05.}
 
 \item{y_expand}{(Optional)  Expansion factor to expand the y-axis beyond the
 data. Lower and upper values are required in the form of c(0.1, 0.2) or
@@ -170,7 +173,10 @@ plot(s). Can be customized using ggplot2 functions.
 \description{
 Creates time series plots of species occurrences or species
 range sizes, with an optional smoothed trendline, and visualizes
-uncertainty.
+uncertainty. Requires an indicator_ts object created using the
+\code{spec_occ_ts()} or \code{spec_range_ts()} functions as input. To plot
+multi-species indicators (e.g., species richness or evenness), use the
+\code{plot_ts()} function instead.
 }
 \examples{
 spec_occ_ts_mammals_denmark <- spec_occ_ts(example_cube_1,
