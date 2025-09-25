@@ -21,10 +21,12 @@ create_map_plot <- function(data,
                             map_level,
                             visible_gridlines,
                             visible_grid_outline,
+                            visible_panel_gridlines,
                             complete_grid_outline,
                             crop_to_grid,
                             map_lims,
                             projection,
+                            original_bbox,
                             leg_label_default,
                             legend_title,
                             legend_title_wrap_length,
@@ -89,7 +91,10 @@ create_map_plot <- function(data,
     }
   }
 
+  # Transform data to the chosen projection
+  data <- sf::st_transform(data, crs = projection)
 
+  ###################################
   # Create plot in steps using ggplot
   ###################################
 
@@ -163,8 +168,13 @@ create_map_plot <- function(data,
   }
 
   # Step 6: Add the grid outline and fill
-  if (complete_grid_outline) {
-    grid_outline <- sf::st_as_sfc(sf::st_bbox(data, crs = sf::st_crs(data)))
+  if (complete_grid_outline == "original") {
+    grid_outline <- original_bbox
+  } else if (complete_grid_outline == "transformed") {
+    grid_outline <- sf::st_as_sfc(sf::st_bbox(data,
+                                              crs = sf::st_crs(data))) %>%
+      sf::st_transform(crs = projection)
+
   } else {
     grid_outline <- sf::st_union(data)
   }
@@ -194,7 +204,7 @@ create_map_plot <- function(data,
     plot <- plot + ggplot2::labs(title = title_label)
   }
 
-  if (!(map_level %in% c("continent", "world"))) {
+  if (visible_panel_gridlines != TRUE) {
     plot <- plot + ggplot2::theme(
       panel.grid.major = element_blank(),
       panel.grid.minor = element_blank()
