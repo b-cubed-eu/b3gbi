@@ -65,13 +65,11 @@
 #' @param visible_gridlines (Optional) Show gridlines between cells. Default is
 #'  TRUE.
 #' @param visible_grid_outline (Optional) Show outline around grid. Default is
-#'  TRUE.
+#'  FALSE.
 #' @param visible_panel_gridlines (Optional) Show ggplot panel gridlines.
 #'  Default is FALSE.
 #' @param complete_grid_outline (Optional) If TRUE, the grid outline will be
-#'  completed around the entire grid, even if some grid cells are missing (for
-#'  example, if you have selected include_land = FALSE or include_ocean = FALSE
-#'  when calculating the indicator). Default is TRUE.
+#'  extended as a complete rectangle, even if the grid is not. Default is FALSE.
 #' @param map_expansion_factor (Optional) Factor to expand the map limits
 #' beyond the grid limits. This does NOT expand the boundaries of the plot, it
 #' only affects where the crop is applied. If this value is too small, some
