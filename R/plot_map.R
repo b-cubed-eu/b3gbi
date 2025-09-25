@@ -1,10 +1,13 @@
 #' @title Plot Biodiversity Indicator Map
 #'
-#' @description Creates a map visualization of a calculated biodiversity
-#'  indicator, providing customization options.
+#' @description Creates a map visualization of a calculated multi-species
+#'  biodiversity indicator. Requires an indicator_map object as input. To plot
+#'  single-species indicators, use the \code{plot_species_map()} function
+#'  instead.
 #'
-#' @param x An 'indicator_map' object containing indicator values associated
-#'  with map grid cells.
+#' @param x An 'indicator_map' object containing multi-species indicator values
+#'  associated with map grid cells. This is a required parameter with no
+#'  default.
 #' @param title (Optional) Plot title. Replace "auto" with your own title if you
 #'  want a custom title or if calling the function manually.
 #' @param auto_title (Optional) Text for automatic title generation, provided by
@@ -20,10 +23,36 @@
 #' @param breaks (Optional) Break points for the legend scale.
 #' @param labels (Optional) Labels for legend scale break points.
 #' @param crop_to_grid (Optional) If TRUE, the grid will determine the edges of
-#'  the map. Default is FALSE.
-#' @param panel_bg (Optional) Background colour for the map panel.
+#'  the map. If FALSE, a buffer will be added around the grid. If NULL
+#'  (default), will be set to TRUE if map_level is "cube", otherwise FALSE.
+#' @param crop_by_region (Optional) If TRUE, the map will be cropped to the
+#'  specified region when calculating the indicator_map. Default is FALSE.
+#'  Note: this requires that a region was specified when calculating the
+#'  indicator_map.
+#' @param ocean_fill_colour (Optional) Colour for the ocean area outside of the
+#'  grid. Default is "lightblue".
 #' @param land_fill_colour (Optional) Colour for the land area outside of the
-#'  grid (if surround = TRUE). Default is "grey85".
+#'  grid. Default is "grey85".
+#' @param grid_fill_colour (Optional) Colour for empty grid cells (non-empty
+#'  grid cells will be coloured according to their indicator value). Default is
+#'  "transparent".
+#' @param grid_line_colour (Optional) Colour for the grid lines. Default is
+#'  "black". If visible_gridlines is set to FALSE, this setting will have no
+#'  effect.
+#' @param grid_outline_colour (Optional) Colour for the grid outline. Default is
+#'  "black". If visible_grid_outline is set to FALSE, this setting will have no
+#'  effect.
+#' @param grid_line_width (Optional) Width of the grid lines. Default is 0.1.
+#' @param grid_outline_width (Optional) Width of the grid outline. Default is
+#'  0.5.
+#' @param grid_fill_transparency (Optional) Transparency of the grid fill colour
+#'  for empty grid cells (0 = fully transparent, 1 = fully opaque). If
+#'  visible_gridlines is set to TRUE, default is 0.2. Otherwise, default is 0.
+#'  *Note that this setting does NOT apply to grid cells with indicator values!
+#' @param grid_line_transparency (Optional) Transparency of the grid line colour
+#'  (0 = fully transparent, 1 = fully opaque). Default is 0.5. If
+#'  visible_gridlines is set to FALSE, this setting will have no effect.
+#'  *Note that this setting does NOT apply to the grid outline!
 #' @param legend_title (Optional) Title for the plot legend.
 #' @param legend_limits (Optional) Limits for the legend scale.
 #' @param legend_title_wrap_length (Optional) Maximum legend title length before
@@ -32,8 +61,18 @@
 #'  new line.
 #' @param visible_gridlines (Optional) Show gridlines between cells. Default is
 #'  TRUE.
+#' @param visible_grid_outline (Optional) Show outline around grid. Default is
+#'  TRUE.
+#' @param complete_grid_outline (Optional) If TRUE, the grid outline will be
+#'  completed around the entire grid, even if some grid cells are missing (for
+#'  example, if you have selected include_land = FALSE or include_ocean = FALSE
+#'  when calculating the indicator). Default is TRUE.
 #' @param layers (Optional) Additional rnaturalearth layers to plot, e.g.
 #'  c("reefs", "playas").
+#' @param layer_colours (Optional) Colours for the outlines of additional
+#' layers. Must be the same length as 'layers'.
+#' @param layer_fill_colours (Optional) Fill colours for the additional layers.
+#'  Must be the same length as 'layers'.
 #' @param scale (Optional) Scale of Natural Earth data ("small", "medium", or
 #'  "large"). Default is 'medium'.
 #'
@@ -59,8 +98,9 @@ plot_map <- function(x,
                      bcpower = NULL,
                      breaks = NULL,
                      labels = NULL,
-                     crop_to_grid = FALSE,
-                     panel_bg = NULL,
+                     crop_to_grid = NULL,
+                     crop_by_region = FALSE,
+                     ocean_fill_colour = NULL,
                      land_fill_colour = NULL,
                      grid_fill_colour = NULL,
                      grid_line_colour = NULL,
@@ -68,11 +108,14 @@ plot_map <- function(x,
                      grid_line_width = NULL,
                      grid_outline_width = NULL,
                      grid_fill_transparency = NULL,
+                     grid_line_transparency = NULL,
                      legend_title = NULL,
                      legend_limits = NULL,
                      legend_title_wrap_length = 10,
                      title_wrap_length = 60,
                      visible_gridlines = TRUE,
+                     visible_grid_outline = TRUE,
+                     complete_grid_outline = TRUE,
                      layers = NULL,
                      layer_colours = NULL,
                      layer_fill_colours = NULL,
@@ -87,6 +130,17 @@ plot_map <- function(x,
 
   # Check that the object is the correct class
   wrong_class(x, "indicator_map", reason = "incorrect")
+
+  if (is.null(crop_to_grid)) {
+    crop_to_grid <- if (x$map_level == "cube") TRUE else FALSE
+  }
+
+  if (crop_by_region == TRUE &&
+      any(x$map_region %in% c("cube", "world"))) {
+    stop("crop_by_region is set to TRUE, but no region was specified when
+         calculating the indicator_map. Please recalculate the indicator_map
+         with a region specified.")
+  }
 
   # Check that layers, layer_colours, and layer_fill_colours are same length
   if (length(layer_colours) != length(layers) && !is.null(layer_colours)) {
@@ -104,7 +158,7 @@ plot_map <- function(x,
 
   # Prepare data and layers for plotting
   map_data_list <- prepare_map_for_plot(
-    x, xlims, ylims, layers, scale, crop_to_grid
+    x, xlims, ylims, layers, scale, crop_to_grid, crop_by_region
   )
 
   # Unpack the list
@@ -118,13 +172,14 @@ plot_map <- function(x,
     layer_colours = layer_colours,
     layer_fill_colours = layer_fill_colours,
     land_fill_colour = land_fill_colour,
+    ocean_fill_colour = ocean_fill_colour,
     grid_fill_colour = grid_fill_colour,
     grid_line_colour = grid_line_colour,
     grid_outline_colour = grid_outline_colour,
     grid_line_width = grid_line_width,
     grid_outline_width = grid_outline_width,
     grid_fill_transparency = grid_fill_transparency,
-    panel_bg = panel_bg,
+    grid_line_transparency = grid_line_transparency,
     trans = trans,
     bcpower = bcpower,
     breaks = breaks,
@@ -132,6 +187,8 @@ plot_map <- function(x,
     legend_limits = legend_limits,
     map_level = x$map_level,
     visible_gridlines = visible_gridlines,
+    visible_grid_outline = visible_grid_outline,
+    complete_grid_outline = complete_grid_outline,
     crop_to_grid = crop_to_grid,
     map_lims = map_lims,
     projection = x$projection,
