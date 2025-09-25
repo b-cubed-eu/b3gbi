@@ -15,6 +15,7 @@ plot_map(
   bcpower = NULL,
   breaks = NULL,
   labels = NULL,
+  output_crs = NULL,
   crop_to_grid = NULL,
   crop_by_region = FALSE,
   ocean_fill_colour = NULL,
@@ -32,7 +33,9 @@ plot_map(
   title_wrap_length = 60,
   visible_gridlines = TRUE,
   visible_grid_outline = TRUE,
+  visible_panel_gridlines = FALSE,
   complete_grid_outline = TRUE,
+  map_expansion_factor = 0.5,
   layers = NULL,
   layer_colours = NULL,
   layer_fill_colours = NULL,
@@ -66,6 +69,10 @@ Yeo-Johnson transformations.}
 \item{breaks}{(Optional) Break points for the legend scale.}
 
 \item{labels}{(Optional) Labels for legend scale break points.}
+
+\item{output_crs}{(Optional) Coordinate Reference System (CRS) for the output
+map. Can be specified as an EPSG code (e.g., 4326) or a proj4string. If
+NULL (default), the original CRS of the indicator_map object will be used.}
 
 \item{crop_to_grid}{(Optional) If TRUE, the grid will determine the edges of
 the map. If FALSE, a buffer will be added around the grid. If NULL
@@ -125,10 +132,22 @@ TRUE.}
 \item{visible_grid_outline}{(Optional) Show outline around grid. Default is
 TRUE.}
 
+\item{visible_panel_gridlines}{(Optional) Show ggplot panel gridlines.
+Default is FALSE.}
+
 \item{complete_grid_outline}{(Optional) If TRUE, the grid outline will be
 completed around the entire grid, even if some grid cells are missing (for
 example, if you have selected include_land = FALSE or include_ocean = FALSE
 when calculating the indicator). Default is TRUE.}
+
+\item{map_expansion_factor}{(Optional) Factor to expand the map limits
+beyond the grid limits. This does NOT expand the boundaries of the plot, it
+only affects where the crop is applied. If this value is too small, some
+land may be visibly cut off due to map distortion caused by projections. A
+larger value will extend the bounding box for cropping to prevent this.
+Must be a positive number. (Default is 0.5). This should be enough for most
+projections, but you can increase this value if you are using an extreme
+projection and find that some land is visibly cut off.}
 
 \item{layers}{(Optional) Additional rnaturalearth layers to plot, e.g.
 c("reefs", "playas").}
