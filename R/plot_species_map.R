@@ -48,7 +48,8 @@ plot_species_map <- function(x,
                              bcpower = NULL,
                              breaks = NULL,
                              labels = NULL,
-                             crop_to_grid = FALSE,
+                             output_crs = NULL,
+                             crop_to_grid = NULL,
                              crop_by_region = FALSE,
                              ocean_fill_colour = NULL,
                              land_fill_colour = NULL,
@@ -65,8 +66,10 @@ plot_species_map <- function(x,
                              title_wrap_length = 60,
                              spec_name_wrap_length = 40,
                              visible_gridlines = TRUE,
-                             visible_grid_outline = TRUE,
-                             complete_grid_outline = TRUE,
+                             visible_grid_outline = FALSE,
+                             visible_panel_gridlines = FALSE,
+                             complete_grid_outline = FALSE,
+                             map_expansion_factor = 0.5,
                              layers = NULL,
                              layer_colours = NULL,
                              layer_fill_colours = NULL,
@@ -78,6 +81,16 @@ plot_species_map <- function(x,
 
   # Match arguments
   scale <- match.arg(scale)
+
+  # Set CRS for the plot
+  if (!is.null(output_crs)) {
+    # If output CRS is provided, check if it is valid and then use it
+    check_crs_units(output_crs)
+    projection <- output_crs
+  } else {
+    # Otherwise, use the projection from the indicator_map object
+    projection <- x$projection
+  }
 
   # Check that the object is the correct class
   wrong_class(x, "indicator_map", reason = "incorrect")
@@ -130,7 +143,8 @@ plot_species_map <- function(x,
 
   # Prepare data and layers for plotting
   map_data_list <- prepare_map_for_plot(
-    x, xlims, ylims, layers, scale, crop_to_grid, crop_by_region
+    x, xlims, ylims, layers, scale, crop_to_grid, crop_by_region, projection,
+    map_expansion_factor
   )
 
   # Unpack the list
@@ -161,10 +175,12 @@ plot_species_map <- function(x,
       map_level = x$map_level,
       visible_gridlines = visible_gridlines,
       visible_grid_outline = visible_grid_outline,
+      visible_panel_gridlines = visible_panel_gridlines,
       complete_grid_outline = complete_grid_outline,
       crop_to_grid = crop_to_grid,
       map_lims = map_lims,
-      projection = x$projection,
+      projection = projection,
+      original_bbox = x$original_bbox,
       leg_label_default = leg_label_default,
       legend_title = legend_title,
       legend_title_wrap_length = legend_title_wrap_length,
