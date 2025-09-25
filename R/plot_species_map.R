@@ -1,51 +1,29 @@
 #' @title Plot Occurrence Map or Range Map of Individual Species
 #'
 #' @description Creates map visualizations of species ranges or species
-#'  occurrences, providing customization options.
+#'  occurrences. Requires an indicator_map object created using the
+#'  \code{spec_occ_map()} or \code{spec_range_map()} functions as input. To plot
+#'  multi-species indicators (e.g., species richness or evenness), use the
+#'  \code{plot_map()} function instead.
 #'
-#' @param x An 'indicator_map' object containing indicator values associated
-#'  with map grid cells.
+#' @inheritParams plot_map
+#'
+#' @param x An 'indicator_map' object containing indicator values for individual
+#'  species associated with map grid cells. This object is typically created
+#'  using the \code{spec_occ_map()} or \code{spec_range_map()} functions.
+#'  This is a required parameter with no default.
 #' @param species Species you want to map occurrences for. Can be either
 #'  numerical taxonKeys or species names. Partial species names can be used
-#'  (the function will try to match them).
-#' @param single_plot (Optional) By default all species occurrence time series
+#'  (the function will try to match them). This is a required parameter with
+#'  no default.
+#' @param single_plot (Optional) If TRUE, all species occurrence time series
 #'  will be combined into a single multi-panel plot. Set this to FALSE to plot
-#'  each species separately.
-#' @param title (Optional) Plot title. Replace "auto" with your own title if you
-#'  want a custom title or if calling the function manually.
-#' @param auto_title (Optional) Text for automatic title generation, provided by
-#'  an appropriate S3 method (if calling the function manually, leave as NULL).
-#' @param leg_label_default (Optional) Default label for the legend, provided by
-#'  an appropriate S3 method (if calling the function manually, leave as NULL).
-#' @param suppress_legend (Optional) Do not show legend. This should be set to
-#'  true when plotting species ranges, as all cell values are 1.
-#' @param xlims (Optional) Custom x-axis limits.
-#' @param ylims (Optional) Custom y-axis limits.
-#' @param trans (Optional) Scale transformation for the fill gradient
-#'   (e.g., 'log').
-#' @param bcpower (Optional) Power parameter for the Box-Cox, modulus, or
-#'   Yeo-Johnson transformations.
-#' @param breaks (Optional) Break points for the legend scale.
-#' @param labels (Optional) Labels for legend scale break points.
-#' @param crop_to_grid (Optional) If TRUE, the grid will determine the edges of
-#'  the map. Default is FALSE.
-#' @param panel_bg (Optional) Background colour for the map panel.
-#' @param land_fill_colour (Optional) Colour for the land area outside of the
-#'  grid (if surround = TRUE). Default is "grey85".
-#' @param legend_title (Optional) Title for the plot legend.
-#' @param legend_limits (Optional) Limits for the legend scale.
-#' @param legend_title_wrap_length (Optional) Maximum legend title length
-#'  before wrapping to a new line.
-#' @param title_wrap_length (Optional) Maximum title length before wrapping to
-#'  a new line.
+#'  each species separately. Default is TRUE.
+#' @param suppress_legend (Optional) Do not show legend. This defaults to FALSE
+#'  but will be forcibly set to TRUE when plotting species ranges, as all cell
+#'  values are 1.
 #' @param spec_name_wrap_length (Optional) Maximum species name length before
-#'  wrapping to a new line.
-#' @param visible_gridlines (Optional) Show gridlines between cells.
-#'  Default is TRUE.
-#' @param layers (Optional) Additional rnaturalearth layers to plot, e.g.
-#'  c("reefs", "playas").
-#' @param scale (Optional) Scale of Natural Earth data ("small", "medium",
-#'  or "large"). Default is 'medium'.
+#'  wrapping to a new line. Default: 40 characters.
 #'
 #' @return A ggplot object representing the map of species range or occurrences.
 #' Can be customized using ggplot2 functions.
@@ -59,6 +37,7 @@
 #' @export
 plot_species_map <- function(x,
                              species,
+                             single_plot = TRUE,
                              title = "auto",
                              auto_title = NULL,
                              leg_label_default = NULL,
@@ -70,16 +49,27 @@ plot_species_map <- function(x,
                              breaks = NULL,
                              labels = NULL,
                              crop_to_grid = FALSE,
-                             single_plot = TRUE,
-                             panel_bg = NULL,
+                             crop_by_region = FALSE,
+                             ocean_fill_colour = NULL,
                              land_fill_colour = NULL,
+                             grid_fill_colour = NULL,
+                             grid_line_colour = NULL,
+                             grid_outline_colour = NULL,
+                             grid_line_width = NULL,
+                             grid_outline_width = NULL,
+                             grid_fill_transparency = NULL,
+                             grid_line_transparency = NULL,
                              legend_title = NULL,
                              legend_limits = NULL,
                              legend_title_wrap_length = 10,
                              title_wrap_length = 60,
                              spec_name_wrap_length = 40,
                              visible_gridlines = TRUE,
+                             visible_grid_outline = TRUE,
+                             complete_grid_outline = TRUE,
                              layers = NULL,
+                             layer_colours = NULL,
+                             layer_fill_colours = NULL,
                              scale = c("medium", "small", "large")
 ) {
 
@@ -91,6 +81,31 @@ plot_species_map <- function(x,
 
   # Check that the object is the correct class
   wrong_class(x, "indicator_map", reason = "incorrect")
+
+  # Set suppress_legend to TRUE if plotting a range map
+  if (inherits(x, "spec_range_map")) suppress_legend <- TRUE
+
+  if (is.null(crop_to_grid)) {
+    crop_to_grid <- if (x$map_level == "cube") TRUE else FALSE
+  }
+
+  if (crop_by_region == TRUE &&
+      any(x$map_region %in% c("cube", "world"))) {
+    stop("crop_by_region is set to TRUE, but no region was specified when
+         calculating the indicator_map. Please recalculate the indicator_map
+         with a region specified.")
+  }
+
+  # Check that layers, layer_colours, and layer_fill_colours are same length
+  if (length(layer_colours) != length(layers) && !is.null(layer_colours)) {
+    stop("If layer_colours is provided, it must be the same length as layers.")
+  }
+  if (length(layer_fill_colours) != length(layers) &&
+      !is.null(layer_fill_colours)) {
+    stop(
+      "If layer_fill_colours is provided, it must be the same length as layers."
+    )
+  }
 
   # Get plot title (if set to "auto")
   title <- if (title == "auto") auto_title else title
@@ -115,7 +130,7 @@ plot_species_map <- function(x,
 
   # Prepare data and layers for plotting
   map_data_list <- prepare_map_for_plot(
-    x, xlims, ylims, layers, scale, crop_to_grid
+    x, xlims, ylims, layers, scale, crop_to_grid, crop_by_region
   )
 
   # Unpack the list
@@ -127,8 +142,17 @@ plot_species_map <- function(x,
       data = split_so[[i]],
       map_surround = map_surround,
       layer_list = layer_list,
+      layer_colours = layer_colours,
+      layer_fill_colours = layer_fill_colours,
       land_fill_colour = land_fill_colour,
-      panel_bg = panel_bg,
+      ocean_fill_colour = ocean_fill_colour,
+      grid_fill_colour = grid_fill_colour,
+      grid_line_colour = grid_line_colour,
+      grid_outline_colour = grid_outline_colour,
+      grid_line_width = grid_line_width,
+      grid_outline_width = grid_outline_width,
+      grid_fill_transparency = grid_fill_transparency,
+      grid_line_transparency = grid_line_transparency,
       trans = trans,
       bcpower = bcpower,
       breaks = breaks,
@@ -136,6 +160,8 @@ plot_species_map <- function(x,
       legend_limits = legend_limits,
       map_level = x$map_level,
       visible_gridlines = visible_gridlines,
+      visible_grid_outline = visible_grid_outline,
+      complete_grid_outline = complete_grid_outline,
       crop_to_grid = crop_to_grid,
       map_lims = map_lims,
       projection = x$projection,
