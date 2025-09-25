@@ -547,7 +547,7 @@ compute_indicator_workflow <- function(data,
       }
     } else {
       # No shapefile provided, so we intersect with the Natural Earth data
-      intersection_target <- map_data
+      intersection_target <- map_data[1:2]
     }
 
     # Intersect grid with intersection target
@@ -569,7 +569,7 @@ compute_indicator_workflow <- function(data,
 
   } else if (level != "cube") {
 
-    data_final <- sf::st_filter(data_projected, map_data)
+    data_final <- sf::st_filter(data_projected, dplyr::bind_rows(map_data))
     data_final_nogeom <- sf::st_drop_geometry(data_final)
     map_lims <- sf::st_transform(data_final, crs = output_crs) %>%
       sf::st_bbox()
@@ -595,6 +595,13 @@ compute_indicator_workflow <- function(data,
     diversity_grid <-
       clipped_grid %>%
       dplyr::left_join(indicator, by = "cellid")
+
+    # Get bbox of original grid before transformation
+    bad_map_data <- intersect_grid_with_polygon(grid,
+                                               map_data[c(1,3)],
+                                               include_land = TRUE,
+                                               include_ocean = TRUE)
+    original_bbox <- sf::st_union(bad_map_data)
 
     # Transform to output CRS
     diversity_grid <- sf::st_transform(diversity_grid, crs = output_crs)
@@ -652,7 +659,8 @@ compute_indicator_workflow <- function(data,
                                        last_year = last_year,
                                        num_years = num_years,
                                        species_names = species_names,
-                                       years_with_obs = years_with_obs)
+                                       years_with_obs = years_with_obs,
+                                       original_bbox = original_bbox)
   } else {
 
     # Build indicator_ts object
