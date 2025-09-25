@@ -1,3 +1,19 @@
+# b3gbi 0.8.0 - Major update:
+
+* The grid is now intersected with the shapefile polygon if one is provided, so the grid is clipped to the shape polygon instead of the bounding box.
+* The user can now choose to exclude occurrences on land, whereas previously only oceanic occurrences could be excluded. This can be changed using the parameter include_land = FALSE. By default, both ocean and land occurrences are included. Please note: this are geographical filters, they do not discriminate by taxa. Furthermore, since cubes contain pre-aggregated data, occurrences within grid cells that overlap both land and ocean cannot be excluded, regardless of whether the occurrences themselves are on land or ocean.
+* Grid line width and colour, and the fill colour of empty grid cells can now be customized using the parameters grid_line_width, grid_line_colour, and grid_fill_colour.
+* The width and colour of the grid outline can also be customized using the parameters grid_outline_width and grid_outline_colour.
+* The grid outline can also be turned off using the parameter visible_grid_outline = FALSE.
+* The grid outline will now be complete by default even when there are missing grid cells (e.g., include_land or include_ocean are set to FALSE). This behaviour can be turned off using complete_grid_outline = FALSE.
+* It is now possible to crop a map according to the boundaries of the geographical regions you selected when calculating the indicator, even if they are different from the bounding box of the cube. This can be done using the parameter crop_by_region = TRUE. Note that this only works if you specified one or more region(s) when calculating the indicator, not if you used level = 'cube'. By default, crop_by_region is set to FALSE.
+* Colours and fill colours for each rnaturalearth layer that the user specifies when plotting a map can now be customized using the parameters layer_colours and layer_fill_colours. The user must provide a vector of colours that matches the order and number of layers specified in the layers parameter.
+* The parameter panel_bg has been renamed to ocean_fill_colour to better reflect its function.
+* The parameter ne_type, which specifies the type of rnaturalearth data used, is now retained in the metadata of the calculated indicator (the level and region are still retained as well). 
+* Area-based automatic cell size determination now has more categories.
+* Plotting code has been restructured and simplified to improve efficiency and readability.
+* Documentation has been updated and improved.
+
 # b3gbi 0.7.6 - Minor update:
 
 * Fixed a bug that caused rnaturalearth to keep downloading the same layer data. It now downloads the data to a cache folder and loads it from there the next time it needs it.
