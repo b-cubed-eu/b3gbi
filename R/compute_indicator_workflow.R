@@ -65,6 +65,8 @@
 #' @param invert (optional) Calculate an indicator over the inverse of the
 #'  shapefile (e.g. if you have a protected areas shapefile this would calculate
 #'  an indicator over all non protected areas)
+#' @param include_land (Optional) Include occurrences which fall within the
+#' land area. Default is TRUE.
 #' @param include_ocean (Optional) Include occurrences which fall outside the
 #'  land area. Default is TRUE. Set as "buffered_coast" to include a set buffer
 #'  size around the land area rather than the entire ocean area.
@@ -121,6 +123,7 @@ compute_indicator_workflow <- function(data,
                                        shapefile_path = NULL,
                                        shapefile_crs = NULL,
                                        invert = FALSE,
+                                       include_land = TRUE,
                                        include_ocean = TRUE,
                                        buffer_dist_km = 50,
                                        force_grid = FALSE,
@@ -138,6 +141,11 @@ compute_indicator_workflow <- function(data,
   # Check that obs column exists
   if (!"obs" %in% colnames(data$data)) {
     stop("No occurrences found in the data.")
+  }
+
+  # Check that user has not excluded both land and ocean data
+  if (!include_land && !include_ocean) {
+    stop("You must include either land or ocean data, or both.")
   }
 
   # List of indicators that require grid cells for temporal calculations
@@ -246,8 +254,13 @@ compute_indicator_workflow <- function(data,
   } else {
     coord_range
   }
-  region <- ifelse(level == "cube", "cube",
-                   ifelse(level == "world", "world", region))
+  region <- if (level == "cube") {
+    "cube"
+  } else if (level == "world") {
+    "world"
+  } else {
+    region
+  }
 
   # Check shapefile path and load if found
   if (!is.null(shapefile_path)) {
@@ -481,14 +494,14 @@ compute_indicator_workflow <- function(data,
                             level,
                             ne_type,
                             ne_scale,
+                            include_land,
                             include_ocean,
-                            buffer_dist_km) %>%
-      sf::st_make_valid()
+                            buffer_dist_km)
 
-    # Transform map data to projected CRS if needed
-    if (data$grid_type == "eea") {
-      map_data <- sf::st_transform(map_data, crs = projected_crs)
-    }
+    # # Transform map data to projected CRS if needed
+    # if (data$grid_type == "eea") {
+    #   map_data <- sf::st_transform(map_data, crs = projected_crs)
+    # }
   }
 
   if (dim_type == "map" || force_grid == TRUE) {
@@ -518,52 +531,16 @@ compute_indicator_workflow <- function(data,
       intersection_target <- map_data
     }
 
-    # The following intersection operation requires special error handling
-    # because it fails when the grid contains invalid geometries.
-    # Therefore when invalid geometries are encountered, it will retry the
-    # operation with spherical geometry turned off. This often succeeds.
-    result <- NULL  # Initialize to capture result of intersection
-    tryCatch({
-      # Attempt without altering the spherical geometry setting
-      result <- grid %>%
-        sf::st_intersection(intersection_target) %>%
-        dplyr::select(dplyr::all_of(c("cellid", "geometry")),
-                      dplyr::any_of("area"))
-    }, error = function(e) {
-      if (grepl("Error in wk_handle.wk_wkb", e) ||
-          grepl("TopologyException", e)) {
-        message(
-          paste0(
-            "Encountered a geometry error during intersection. This may be ",
-            "due to invalid polygons in the grid."
-          )
-        )
-      } else {
-        stop(e)
-      }
-    })
-    if (is.null(result)) {
-      # If intersection failed, turn off spherical geometry
-      message("Retrying the intersection with spherical geometry turned off.")
-      sf::sf_use_s2(FALSE)
-      # Retry the intersection operation
-      result <- grid %>%
-        sf::st_intersection(intersection_target) %>%
-        dplyr::select(dplyr::all_of(c("cellid", "geometry")),
-                      dplyr::any_of("area"))
-      # Notify success after retry
-      message("Intersection succeeded with spherical geometry turned off.")
-    }
+    # Intersect grid with intersection target
+    clipped_grid <- intersect_grid_with_polygon(grid,
+                                                intersection_target,
+                                                include_land,
+                                                include_ocean)
+
     if (spherical_geometry == TRUE) {
       # Restore original spherical setting
       sf::sf_use_s2(original_s2_setting)
     }
-    # Check if there is any spatial intersection
-    if (nrow(result) == 0) {
-      stop("No spatial intersection between map data and grid.")
-    }
-    # Set grid to result
-    clipped_grid <- result
 
     # Assign data to grid
     data_final <- sf::st_join(data_projected, clipped_grid)
@@ -648,6 +625,7 @@ compute_indicator_workflow <- function(data,
                                        cell_size_units = output_units,
                                        map_level = level,
                                        map_region = region,
+                                       map_type = ne_type,
                                        kingdoms = kingdoms,
                                        num_families = num_families,
                                        num_species = num_species,
@@ -663,6 +641,7 @@ compute_indicator_workflow <- function(data,
                                       div_type = type,
                                       map_level = level,
                                       map_region = region,
+                                      map_type = ne_type,
                                       kingdoms = kingdoms,
                                       num_families = num_families,
                                       num_species = num_species,
