@@ -24,37 +24,45 @@
 #'     rarefaction).
 #'   * 'hill2': Hill-Simpson diversity (estimated by coverage-based
 #'     rarefaction).
-#' @param dim_type (Optional) Dimension to calculate indicator over (time: 'ts',
-#'  or space: 'map')
+#' @param dim_type (Optional) Dimension to calculate indicator over time: 'ts',
+#'  or space: 'map'. (Default: 'map')
 #' @param ci_type (Optional) Type of bootstrap confidence intervals to
-#'  calculate. (Default: "norm". Select "none" to avoid calculating bootstrap
-#'  CIs.)
-#' @param cell_size (Optional) Length of grid cell sides, in km. (Default: 10
-#'  for country, 100 for continent or world)
+#'  calculate. (Default: "norm"). Select "none" to avoid calculating bootstrap
+#'  CIs.
+#' @param cell_size (Optional) Length of grid cell sides, in km or degrees.
+#'  If NULL, this will be automatically determined according to the geographical
+#'  level selected. This is 100 km or 1 degree for 'continent' or 'world', 10 km
+#'  or (for a degree-based CRS) the native resolution of the cube for 'country',
+#'  'sovereignty' or 'geounit'. If level is set to 'cube', cell size will be the
+#'  native resolution of the cube for a degree-based CRS, or for a km-based CRS,
+#'  the cell size will be determined by the area of the cube: 100 km for cubes
+#'  larger than 1 million sq km, 10 km for cubes between 10 thousand and 1
+#'  million sq km, 1 km for cubes between 100 and 10 thousand sq km, and 0.1 km
+#'  for cubes smaller than 100 sq km. (Default: NULL)
 #' @param level (Optional) Spatial level: 'cube', 'continent', 'country',
 #'  'world', 'sovereignty', or 'geounit'. (Default: 'cube')
-#' @param region (Optional) The region of interest (e.g., "Europe"). (Default:
-#'  "Europe")
+#' @param region (Optional) The region of interest (e.g., "Europe"). This
+#'  parameter is ignored if level is set to 'cube' or 'world'. (Default: NULL)
 #' @param ne_type (Optional) The type of Natural Earth data to download:
-#'  'countries', 'map_units', 'sovereignty', or 'tiny_countries'. (Default:
-#'  "countries")
+#'  'countries', 'map_units', 'sovereignty', or 'tiny_countries'. This parameter
+#'  is ignored if level is set to 'cube' or 'world'. (Default: "countries")
 #' @param ne_scale (Optional) The scale of Natural Earth data to download:
 #'  'small' - 110m, 'medium' - 50m, or 'large' - 10m. (Default: "medium")
 #' @param output_crs (Optional) The CRS you want for your calculated indicator.
 #'  (Leave blank to let the function choose a default based on grid reference
-#'  system)
-#' @param first_year (Optinal) Exclude data before this year. (Uses all data in
+#'  system.)
+#' @param first_year (Optional) Exclude data before this year. (Uses all data in
 #'  the cube by default.)
 #' @param last_year (Optional) Exclude data after this year. (Uses all data in
 #'  the cube by default.)
 #' @param spherical_geometry (Optional) If set to FALSE, will temporarily
 #'  disable spherical geometry while the function runs. Should only be used to
-#'  solve specific issues. (Default is TRUE)
-#' @param make_valid (Optional) Calls st_make_valid() from the sf package.
-#'  Increases processing time but may help if you are getting polygon errors.
-#'  (Default is FALSE).
+#'  solve specific issues. (Default is TRUE).
+#' @param make_valid (Optional) Calls st_make_valid() from the sf package
+#'  after creating the grid. Increases processing time but may help if you are
+#'  getting polygon errors. (Default is FALSE).
 #' @param num_bootstrap (Optional) Set the number of bootstraps to calculate for
-#'  generating confidence intervals. (Default: 1000)
+#'  generating confidence intervals. (Default: 100)
 #' @param shapefile_path (optional) Path of an external shapefile to merge into
 #'  the workflow. For example, if you want to calculate your indicator
 #'  particular features such as protected areas or wetlands.
@@ -64,14 +72,25 @@
 #'  NOT a .wkt the CRS will be determined automatically.
 #' @param invert (optional) Calculate an indicator over the inverse of the
 #'  shapefile (e.g. if you have a protected areas shapefile this would calculate
-#'  an indicator over all non protected areas)
+#'  an indicator over all non protected areas within your cube). Default is
+#'  FALSE.
 #' @param include_land (Optional) Include occurrences which fall within the
-#' land area. Default is TRUE.
+#'  land area. Default is TRUE. *Note that this purely a geographic filter, and
+#'  does not filter based on whether the occurrence is actually terrestrial.
+#'  Grid cells which fall partially on land and partially on ocean will be
+#'  included even if include_land is FALSE. To exclude terrestrial and/or
+#'  freshwater taxa, you must manually filter your data cube before calculating
+#'  your indicator.
 #' @param include_ocean (Optional) Include occurrences which fall outside the
 #'  land area. Default is TRUE. Set as "buffered_coast" to include a set buffer
-#'  size around the land area rather than the entire ocean area.
+#'  size around the land area rather than the entire ocean area. *Note that this
+#'  is purely a geographic filter, and does not filter based on whether the
+#'  occurrence is actually marine. Grid cells which fall partially on land and
+#'  partially on ocean will be included even if include_ocean is FALSE. To
+#'  exclude marine taxa, you must manually filter your data cube before
+#'  calculating your indicator.
 #' @param buffer_dist_km (Optional) The distance to buffer around the land if
-#'  include_ocean is set to "buffered_coast".
+#'  include_ocean is set to "buffered_coast". Default is 50 km.
 #' @param force_grid (Optional) Forces the calculation of a grid even if this
 #'  would not normally be part of the pipeline, e.g. for time series. This
 #'  setting is required for the calculation of rarity, and is turned on by the
