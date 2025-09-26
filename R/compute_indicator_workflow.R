@@ -507,20 +507,18 @@ compute_indicator_workflow <- function(data,
     }
 
     # Retrieve and validate Natural Earth data
-    map_data <- get_ne_data(projected_crs,
-                            bbox_latlong,
-                            region,
-                            level,
-                            ne_type,
-                            ne_scale,
-                            include_land,
-                            include_ocean,
-                            buffer_dist_km)
+    map_data_list <- get_ne_data(projected_crs,
+                                 bbox_latlong,
+                                 region,
+                                 level,
+                                 ne_type,
+                                 ne_scale,
+                                 include_land,
+                                 include_ocean,
+                                 buffer_dist_km)
+    map_data <- map_data_list$combined
+    saved_layer <- map_data_list$saved
 
-    # # Transform map data to projected CRS if needed
-    # if (data$grid_type == "eea") {
-    #   map_data <- sf::st_transform(map_data, crs = projected_crs)
-    # }
   }
 
   if (dim_type == "map" || force_grid == TRUE) {
@@ -539,22 +537,24 @@ compute_indicator_workflow <- function(data,
       if (invert) {
         # If invert is TRUE, we want the area *outside* the shapefile but inside
         # the cube. We use st_difference for this.
-        intersection_target <- sf::st_difference(cube_polygon_projected,
-                                                 sf::st_union(shapefile_projected))
+        intersection_target <- sf::st_difference(
+          cube_polygon_projected, sf::st_union(shapefile_projected)
+        )
       } else {
         # If invert is FALSE, we simply want the area of the shapefile
         intersection_target <- shapefile_projected
       }
+
+      intersection_target <- sf::st_as_sf(intersection_target)
     } else {
       # No shapefile provided, so we intersect with the Natural Earth data
-      intersection_target <- map_data[1:2]
+      intersection_target <- map_data
     }
 
+    sf::st_agr(intersection_target) <- "constant"
+
     # Intersect grid with intersection target
-    clipped_grid <- intersect_grid_with_polygon(grid,
-                                                intersection_target,
-                                                include_land,
-                                                include_ocean)
+    clipped_grid <- intersect_grid_with_polygon(grid, intersection_target)
 
     if (spherical_geometry == TRUE) {
       # Restore original spherical setting
@@ -569,7 +569,7 @@ compute_indicator_workflow <- function(data,
 
   } else if (level != "cube") {
 
-    data_final <- sf::st_filter(data_projected, dplyr::bind_rows(map_data[1:2]))
+    data_final <- sf::st_filter(data_projected, map_data)
     data_final_nogeom <- sf::st_drop_geometry(data_final)
     map_lims <- sf::st_transform(data_final, crs = output_crs) %>%
       sf::st_bbox()
@@ -597,11 +597,8 @@ compute_indicator_workflow <- function(data,
       dplyr::left_join(indicator, by = "cellid")
 
     # Get bbox of original grid before transformation
-    bad_map_data <- intersect_grid_with_polygon(grid,
-                                               map_data[c(1,3)],
-                                               include_land = TRUE,
-                                               include_ocean = TRUE)
-    original_bbox <- sf::st_union(bad_map_data)
+    original_bbox <- intersect_grid_with_polygon(grid, saved_layer) %>%
+      sf::st_union()
 
     # Transform to output CRS
     diversity_grid <- sf::st_transform(diversity_grid, crs = output_crs)
