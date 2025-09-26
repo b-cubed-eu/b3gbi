@@ -1,7 +1,7 @@
 #' @noRd
 add_ne_layer <- function(layer_name, scale, extent_projected) {
 
-  geometry <- featurecla <- scalerank <- type <- NULL
+  geometry <- featurecla <- scalerank <- type <- geom <- NULL
 
   temp_ne_dir <- tools::R_user_dir("rnaturalearth", "cache")
 
