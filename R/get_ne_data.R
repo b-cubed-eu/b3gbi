@@ -145,7 +145,7 @@ get_ne_data <- function(projected_crs,
     }
 
     # Merge the land with the oceans
-    map_data_combined <- sf::st_union(map_data_projected, map_data_ocean) %>%
+    map_data_combined <- union_helper(map_data_projected, map_data_ocean) %>%
       sf::st_as_sf()
 
   } else if (is.character(include_ocean) &&
