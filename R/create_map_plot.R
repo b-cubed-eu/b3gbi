@@ -25,6 +25,7 @@ create_map_plot <- function(data,
                             complete_grid_outline,
                             crop_to_grid,
                             map_lims,
+                            map_lims_original,
                             projection,
                             original_bbox,
                             leg_label_default,
@@ -171,7 +172,7 @@ create_map_plot <- function(data,
   if (complete_grid_outline == "original") {
     grid_outline <- original_bbox
   } else if (complete_grid_outline == "transformed") {
-    grid_outline <- sf::st_as_sfc(sf::st_bbox(data,
+    grid_outline <- sf::st_as_sfc(sf::st_bbox(map_lims_original,
                                               crs = sf::st_crs(data))) %>%
       sf::st_transform(crs = projection)
 
