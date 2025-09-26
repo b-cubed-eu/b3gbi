@@ -569,7 +569,7 @@ compute_indicator_workflow <- function(data,
 
   } else if (level != "cube") {
 
-    data_final <- sf::st_filter(data_projected, dplyr::bind_rows(map_data))
+    data_final <- sf::st_filter(data_projected, dplyr::bind_rows(map_data[1:2]))
     data_final_nogeom <- sf::st_drop_geometry(data_final)
     map_lims <- sf::st_transform(data_final, crs = output_crs) %>%
       sf::st_bbox()
