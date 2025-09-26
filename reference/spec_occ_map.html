@@ -17,7 +17,7 @@ for more information)."><meta property="og:image" content="https://b-cubed-eu.gi
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,7 +40,7 @@ for more information)."><meta property="og:image" content="https://b-cubed-eu.gi
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Calculate Species Occurrences Over Space or Time</h1>
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.7.6/R/indicator_wrappers.R" class="external-link"><code>R/indicator_wrappers.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/R/indicator_wrappers.R" class="external-link"><code>R/indicator_wrappers.R</code></a></small>
       <div class="d-none name"><code>spec_occ_map.Rd</code></div>
     </div>
 
@@ -68,25 +68,33 @@ for more information).</p>
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Arguments passed on to <code><a href="compute_indicator_workflow.html">compute_indicator_workflow</a></code></p><dl><dt><code>ci_type</code></dt>
 <dd><p>(Optional) Type of bootstrap confidence intervals to
-calculate. (Default: "norm". Select "none" to avoid calculating bootstrap
-CIs.)</p></dd>
+calculate. (Default: "norm"). Select "none" to avoid calculating bootstrap
+CIs.</p></dd>
 
     <dt><code>cell_size</code></dt>
-<dd><p>(Optional) Length of grid cell sides, in km. (Default: 10
-for country, 100 for continent or world)</p></dd>
+<dd><p>(Optional) Length of grid cell sides, in km or degrees.
+If NULL, this will be automatically determined according to the geographical
+level selected. This is 100 km or 1 degree for 'continent' or 'world', 10 km
+or (for a degree-based CRS) the native resolution of the cube for 'country',
+'sovereignty' or 'geounit'. If level is set to 'cube', cell size will be the
+native resolution of the cube for a degree-based CRS, or for a km-based CRS,
+the cell size will be determined by the area of the cube: 100 km for cubes
+larger than 1 million sq km, 10 km for cubes between 10 thousand and 1
+million sq km, 1 km for cubes between 100 and 10 thousand sq km, and 0.1 km
+for cubes smaller than 100 sq km. (Default: NULL)</p></dd>
 
     <dt><code>level</code></dt>
 <dd><p>(Optional) Spatial level: 'cube', 'continent', 'country',
 'world', 'sovereignty', or 'geounit'. (Default: 'cube')</p></dd>
 
     <dt><code>region</code></dt>
-<dd><p>(Optional) The region of interest (e.g., "Europe"). (Default:
-"Europe")</p></dd>
+<dd><p>(Optional) The region of interest (e.g., "Europe"). This
+parameter is ignored if level is set to 'cube' or 'world'. (Default: NULL)</p></dd>
 
     <dt><code>ne_type</code></dt>
 <dd><p>(Optional) The type of Natural Earth data to download:
-'countries', 'map_units', 'sovereignty', or 'tiny_countries'. (Default:
-"countries")</p></dd>
+'countries', 'map_units', 'sovereignty', or 'tiny_countries'. This parameter
+is ignored if level is set to 'cube' or 'world'. (Default: "countries")</p></dd>
 
     <dt><code>ne_scale</code></dt>
 <dd><p>(Optional) The scale of Natural Earth data to download:
@@ -95,10 +103,10 @@ for country, 100 for continent or world)</p></dd>
     <dt><code>output_crs</code></dt>
 <dd><p>(Optional) The CRS you want for your calculated indicator.
 (Leave blank to let the function choose a default based on grid reference
-system)</p></dd>
+system.)</p></dd>
 
     <dt><code>first_year</code></dt>
-<dd><p>(Optinal) Exclude data before this year. (Uses all data in
+<dd><p>(Optional) Exclude data before this year. (Uses all data in
 the cube by default.)</p></dd>
 
     <dt><code>last_year</code></dt>
@@ -108,16 +116,16 @@ the cube by default.)</p></dd>
     <dt><code>spherical_geometry</code></dt>
 <dd><p>(Optional) If set to FALSE, will temporarily
 disable spherical geometry while the function runs. Should only be used to
-solve specific issues. (Default is TRUE)</p></dd>
+solve specific issues. (Default is TRUE).</p></dd>
 
     <dt><code>make_valid</code></dt>
-<dd><p>(Optional) Calls st_make_valid() from the sf package.
-Increases processing time but may help if you are getting polygon errors.
-(Default is FALSE).</p></dd>
+<dd><p>(Optional) Calls st_make_valid() from the sf package
+after creating the grid. Increases processing time but may help if you are
+getting polygon errors. (Default is FALSE).</p></dd>
 
     <dt><code>num_bootstrap</code></dt>
 <dd><p>(Optional) Set the number of bootstraps to calculate for
-generating confidence intervals. (Default: 1000)</p></dd>
+generating confidence intervals. (Default: 100)</p></dd>
 
     <dt><code>shapefile_path</code></dt>
 <dd><p>(optional) Path of an external shapefile to merge into
@@ -133,16 +141,31 @@ NOT a .wkt the CRS will be determined automatically.</p></dd>
     <dt><code>invert</code></dt>
 <dd><p>(optional) Calculate an indicator over the inverse of the
 shapefile (e.g. if you have a protected areas shapefile this would calculate
-an indicator over all non protected areas)</p></dd>
+an indicator over all non protected areas within your cube). Default is
+FALSE.</p></dd>
+
+    <dt><code>include_land</code></dt>
+<dd><p>(Optional) Include occurrences which fall within the
+land area. Default is TRUE. *Note that this purely a geographic filter, and
+does not filter based on whether the occurrence is actually terrestrial.
+Grid cells which fall partially on land and partially on ocean will be
+included even if include_land is FALSE. To exclude terrestrial and/or
+freshwater taxa, you must manually filter your data cube before calculating
+your indicator.</p></dd>
 
     <dt><code>include_ocean</code></dt>
 <dd><p>(Optional) Include occurrences which fall outside the
 land area. Default is TRUE. Set as "buffered_coast" to include a set buffer
-size around the land area rather than the entire ocean area.</p></dd>
+size around the land area rather than the entire ocean area. *Note that this
+is purely a geographic filter, and does not filter based on whether the
+occurrence is actually marine. Grid cells which fall partially on land and
+partially on ocean will be included even if include_ocean is FALSE. To
+exclude marine taxa, you must manually filter your data cube before
+calculating your indicator.</p></dd>
 
     <dt><code>buffer_dist_km</code></dt>
 <dd><p>(Optional) The distance to buffer around the land if
-include_ocean is set to "buffered_coast".</p></dd>
+include_ocean is set to "buffered_coast". Default is 50 km.</p></dd>
 
     <dt><code>force_grid</code></dt>
 <dd><p>(Optional) Forces the calculation of a grid even if this

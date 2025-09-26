@@ -7,9 +7,15 @@
   };
 </script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/PT_Sans-0.4.10/font.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet"><meta property="og:title" content="Plot Occurrence Trends or Range Size Trends for Individual Species — plot_species_ts"><meta name="description" content="Creates time series plots of species occurrences or species
 range sizes, with an optional smoothed trendline, and visualizes
-uncertainty."><meta property="og:description" content="Creates time series plots of species occurrences or species
+uncertainty. Requires an indicator_ts object created using the
+spec_occ_ts() or spec_range_ts() functions as input. To plot
+multi-species indicators (e.g., species richness or evenness), use the
+plot_ts() function instead."><meta property="og:description" content="Creates time series plots of species occurrences or species
 range sizes, with an optional smoothed trendline, and visualizes
-uncertainty."><meta property="og:image" content="https://b-cubed-eu.github.io/b3gbi/logo.png"></head><body>
+uncertainty. Requires an indicator_ts object created using the
+spec_occ_ts() or spec_range_ts() functions as input. To plot
+multi-species indicators (e.g., species richness or evenness), use the
+plot_ts() function instead."><meta property="og:image" content="https://b-cubed-eu.github.io/b3gbi/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -17,7 +23,7 @@ uncertainty."><meta property="og:image" content="https://b-cubed-eu.github.io/b3
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,14 +46,17 @@ uncertainty."><meta property="og:image" content="https://b-cubed-eu.github.io/b3
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Plot Occurrence Trends or Range Size Trends for Individual Species</h1>
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.7.6/R/plot_species_ts.R" class="external-link"><code>R/plot_species_ts.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/R/plot_species_ts.R" class="external-link"><code>R/plot_species_ts.R</code></a></small>
       <div class="d-none name"><code>plot_species_ts.Rd</code></div>
     </div>
 
     <div class="ref-description section level2">
     <p>Creates time series plots of species occurrences or species
 range sizes, with an optional smoothed trendline, and visualizes
-uncertainty.</p>
+uncertainty. Requires an indicator_ts object created using the
+<code><a href="spec_occ_map.html">spec_occ_ts()</a></code> or <code><a href="spec_range_map.html">spec_range_ts()</a></code> functions as input. To plot
+multi-species indicators (e.g., species richness or evenness), use the
+<code><a href="plot_ts.html">plot_ts()</a></code> function instead.</p>
     </div>
 
     <div class="section level2">
@@ -85,8 +94,8 @@ uncertainty.</p>
 <span>  gridoff <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  x_label <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  y_label <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  x_expand <span class="op">=</span> <span class="fl">0.05</span>,</span>
-<span>  y_expand <span class="op">=</span> <span class="fl">0.05</span>,</span>
+<span>  x_expand <span class="op">=</span> <span class="fl">0.1</span>,</span>
+<span>  y_expand <span class="op">=</span> <span class="fl">0.1</span>,</span>
 <span>  x_breaks <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  y_breaks <span class="op">=</span> <span class="fl">6</span>,</span>
 <span>  title_wrap_length <span class="op">=</span> <span class="fl">60</span>,</span>
@@ -100,13 +109,16 @@ uncertainty.</p>
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>An 'indicator_ts' object containing time series of indicator values
-matched to species names and/or taxon keys.</p></dd>
+matched to species names and/or taxon keys, created using the
+<code><a href="spec_occ_map.html">spec_occ_ts()</a></code> or <code><a href="spec_range_map.html">spec_range_ts()</a></code> functions. This is a required
+parameter with no default.</p></dd>
 
 
 <dt id="arg-species">species<a class="anchor" aria-label="anchor" href="#arg-species"></a></dt>
 <dd><p>Species you want to map occurrences for. Can be either
 numerical taxonKeys or species names. Partial species names can be used
-(the function will try to match them).</p></dd>
+(the function will try to match them). This is a required parameter with
+no default.</p></dd>
 
 
 <dt id="arg-single-plot">single_plot<a class="anchor" aria-label="anchor" href="#arg-single-plot"></a></dt>
@@ -238,8 +250,8 @@ trendline. Default is "solid".</p></dd>
 
 
 <dt id="arg-smooth-linewidth">smooth_linewidth<a class="anchor" aria-label="anchor" href="#arg-smooth-linewidth"></a></dt>
-<dd><p>(Optional) Line width for smoothed trendline. Default
-is 1.</p></dd>
+<dd><p>(Optional) Line width for smoothed trendline.
+Default is 1.</p></dd>
 
 
 <dt id="arg-smooth-cilinewidth">smooth_cilinewidth<a class="anchor" aria-label="anchor" href="#arg-smooth-cilinewidth"></a></dt>
@@ -262,7 +274,7 @@ confidence intervals. Default is 1.</p></dd>
 <dt id="arg-x-expand">x_expand<a class="anchor" aria-label="anchor" href="#arg-x-expand"></a></dt>
 <dd><p>(Optional)  Expansion factor to expand the x-axis beyond the
 data. Left and right values are required in the form of c(0.1, 0.2) or
-simply 0.1 to apply the same value to both sides. Default is 0.05.</p></dd>
+simply 0.1 to apply the same value to each side. Default is 0.05.</p></dd>
 
 
 <dt id="arg-y-expand">y_expand<a class="anchor" aria-label="anchor" href="#arg-y-expand"></a></dt>

@@ -19,7 +19,7 @@ output into an appropriate S3 object ('indicator_map' or 'indicator_ts')."><meta
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.7.6</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -42,7 +42,7 @@ output into an appropriate S3 object ('indicator_map' or 'indicator_ts')."><meta
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Calculate Biodiversity Indicators Over Space or Time</h1>
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.7.6/R/compute_indicator_workflow.R" class="external-link"><code>R/compute_indicator_workflow.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/R/compute_indicator_workflow.R" class="external-link"><code>R/compute_indicator_workflow.R</code></a></small>
       <div class="d-none name"><code>compute_indicator_workflow.Rd</code></div>
     </div>
 
@@ -74,6 +74,7 @@ output into an appropriate S3 object ('indicator_map' or 'indicator_ts').</p>
 <span>  shapefile_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  shapefile_crs <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  invert <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  include_land <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  include_ocean <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  buffer_dist_km <span class="op">=</span> <span class="fl">50</span>,</span>
 <span>  force_grid <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -111,19 +112,27 @@ rarefaction).</p></li>
 
 
 <dt id="arg-dim-type">dim_type<a class="anchor" aria-label="anchor" href="#arg-dim-type"></a></dt>
-<dd><p>(Optional) Dimension to calculate indicator over (time: 'ts',
-or space: 'map')</p></dd>
+<dd><p>(Optional) Dimension to calculate indicator over time: 'ts',
+or space: 'map'. (Default: 'map')</p></dd>
 
 
 <dt id="arg-ci-type">ci_type<a class="anchor" aria-label="anchor" href="#arg-ci-type"></a></dt>
 <dd><p>(Optional) Type of bootstrap confidence intervals to
-calculate. (Default: "norm". Select "none" to avoid calculating bootstrap
-CIs.)</p></dd>
+calculate. (Default: "norm"). Select "none" to avoid calculating bootstrap
+CIs.</p></dd>
 
 
 <dt id="arg-cell-size">cell_size<a class="anchor" aria-label="anchor" href="#arg-cell-size"></a></dt>
-<dd><p>(Optional) Length of grid cell sides, in km. (Default: 10
-for country, 100 for continent or world)</p></dd>
+<dd><p>(Optional) Length of grid cell sides, in km or degrees.
+If NULL, this will be automatically determined according to the geographical
+level selected. This is 100 km or 1 degree for 'continent' or 'world', 10 km
+or (for a degree-based CRS) the native resolution of the cube for 'country',
+'sovereignty' or 'geounit'. If level is set to 'cube', cell size will be the
+native resolution of the cube for a degree-based CRS, or for a km-based CRS,
+the cell size will be determined by the area of the cube: 100 km for cubes
+larger than 1 million sq km, 10 km for cubes between 10 thousand and 1
+million sq km, 1 km for cubes between 100 and 10 thousand sq km, and 0.1 km
+for cubes smaller than 100 sq km. (Default: NULL)</p></dd>
 
 
 <dt id="arg-level">level<a class="anchor" aria-label="anchor" href="#arg-level"></a></dt>
@@ -132,14 +141,14 @@ for country, 100 for continent or world)</p></dd>
 
 
 <dt id="arg-region">region<a class="anchor" aria-label="anchor" href="#arg-region"></a></dt>
-<dd><p>(Optional) The region of interest (e.g., "Europe"). (Default:
-"Europe")</p></dd>
+<dd><p>(Optional) The region of interest (e.g., "Europe"). This
+parameter is ignored if level is set to 'cube' or 'world'. (Default: NULL)</p></dd>
 
 
 <dt id="arg-ne-type">ne_type<a class="anchor" aria-label="anchor" href="#arg-ne-type"></a></dt>
 <dd><p>(Optional) The type of Natural Earth data to download:
-'countries', 'map_units', 'sovereignty', or 'tiny_countries'. (Default:
-"countries")</p></dd>
+'countries', 'map_units', 'sovereignty', or 'tiny_countries'. This parameter
+is ignored if level is set to 'cube' or 'world'. (Default: "countries")</p></dd>
 
 
 <dt id="arg-ne-scale">ne_scale<a class="anchor" aria-label="anchor" href="#arg-ne-scale"></a></dt>
@@ -150,11 +159,11 @@ for country, 100 for continent or world)</p></dd>
 <dt id="arg-output-crs">output_crs<a class="anchor" aria-label="anchor" href="#arg-output-crs"></a></dt>
 <dd><p>(Optional) The CRS you want for your calculated indicator.
 (Leave blank to let the function choose a default based on grid reference
-system)</p></dd>
+system.)</p></dd>
 
 
 <dt id="arg-first-year">first_year<a class="anchor" aria-label="anchor" href="#arg-first-year"></a></dt>
-<dd><p>(Optinal) Exclude data before this year. (Uses all data in
+<dd><p>(Optional) Exclude data before this year. (Uses all data in
 the cube by default.)</p></dd>
 
 
@@ -166,18 +175,18 @@ the cube by default.)</p></dd>
 <dt id="arg-spherical-geometry">spherical_geometry<a class="anchor" aria-label="anchor" href="#arg-spherical-geometry"></a></dt>
 <dd><p>(Optional) If set to FALSE, will temporarily
 disable spherical geometry while the function runs. Should only be used to
-solve specific issues. (Default is TRUE)</p></dd>
+solve specific issues. (Default is TRUE).</p></dd>
 
 
 <dt id="arg-make-valid">make_valid<a class="anchor" aria-label="anchor" href="#arg-make-valid"></a></dt>
-<dd><p>(Optional) Calls st_make_valid() from the sf package.
-Increases processing time but may help if you are getting polygon errors.
-(Default is FALSE).</p></dd>
+<dd><p>(Optional) Calls st_make_valid() from the sf package
+after creating the grid. Increases processing time but may help if you are
+getting polygon errors. (Default is FALSE).</p></dd>
 
 
 <dt id="arg-num-bootstrap">num_bootstrap<a class="anchor" aria-label="anchor" href="#arg-num-bootstrap"></a></dt>
 <dd><p>(Optional) Set the number of bootstraps to calculate for
-generating confidence intervals. (Default: 1000)</p></dd>
+generating confidence intervals. (Default: 100)</p></dd>
 
 
 <dt id="arg-shapefile-path">shapefile_path<a class="anchor" aria-label="anchor" href="#arg-shapefile-path"></a></dt>
@@ -196,18 +205,34 @@ NOT a .wkt the CRS will be determined automatically.</p></dd>
 <dt id="arg-invert">invert<a class="anchor" aria-label="anchor" href="#arg-invert"></a></dt>
 <dd><p>(optional) Calculate an indicator over the inverse of the
 shapefile (e.g. if you have a protected areas shapefile this would calculate
-an indicator over all non protected areas)</p></dd>
+an indicator over all non protected areas within your cube). Default is
+FALSE.</p></dd>
+
+
+<dt id="arg-include-land">include_land<a class="anchor" aria-label="anchor" href="#arg-include-land"></a></dt>
+<dd><p>(Optional) Include occurrences which fall within the
+land area. Default is TRUE. *Note that this purely a geographic filter, and
+does not filter based on whether the occurrence is actually terrestrial.
+Grid cells which fall partially on land and partially on ocean will be
+included even if include_land is FALSE. To exclude terrestrial and/or
+freshwater taxa, you must manually filter your data cube before calculating
+your indicator.</p></dd>
 
 
 <dt id="arg-include-ocean">include_ocean<a class="anchor" aria-label="anchor" href="#arg-include-ocean"></a></dt>
 <dd><p>(Optional) Include occurrences which fall outside the
 land area. Default is TRUE. Set as "buffered_coast" to include a set buffer
-size around the land area rather than the entire ocean area.</p></dd>
+size around the land area rather than the entire ocean area. *Note that this
+is purely a geographic filter, and does not filter based on whether the
+occurrence is actually marine. Grid cells which fall partially on land and
+partially on ocean will be included even if include_ocean is FALSE. To
+exclude marine taxa, you must manually filter your data cube before
+calculating your indicator.</p></dd>
 
 
 <dt id="arg-buffer-dist-km">buffer_dist_km<a class="anchor" aria-label="anchor" href="#arg-buffer-dist-km"></a></dt>
 <dd><p>(Optional) The distance to buffer around the land if
-include_ocean is set to "buffered_coast".</p></dd>
+include_ocean is set to "buffered_coast". Default is 50 km.</p></dd>
 
 
 <dt id="arg-force-grid">force_grid<a class="anchor" aria-label="anchor" href="#arg-force-grid"></a></dt>
@@ -245,10 +270,10 @@ functions.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Coordinate range:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>      xmin      ymin      xmax      ymax </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  8.016236 54.628857 15.483170 57.736914 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  8.016236 54.628857 15.272695 57.736914 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Grid cell size: 0.25 degrees </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Number of cells: 387 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Number of cells: 299 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Observation years: 1862 - 2023 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Total years with observations: 125 </span>
@@ -262,20 +287,20 @@ functions.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> First 10 rows of data (use n = to show more):</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 387 × 3</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 299 × 3</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    cellid   area diversity_val</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494;">[km^2]</span>         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>     68   447.            <span style="color: #BB0000;">NA</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>     69   447.            <span style="color: #BB0000;">NA</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>     70   447.            20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>     71   447.            34</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>     72   447.            32</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>     71   447.            20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>     72   447.            17</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>     73   447.            34</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>     74   447.            47</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>     75   447.            48</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>     76   447.            37</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>     77   447.            21</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 377 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 289 more rows</span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
