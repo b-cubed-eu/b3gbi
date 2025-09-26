@@ -22,7 +22,7 @@ compute_tax_distinct_formula <- function(x, y) {
 
       # 3. Get all unique pairs of species
       species_names <- names(tax_hier_temp)
-      species_pairs <- combn(species_names, 2, simplify = FALSE)
+      species_pairs <- utils::combn(species_names, 2, simplify = FALSE)
 
       # 4. Calculate the sum of pairwise distances (numerator of TDI)
       sum_of_distances <- 0
