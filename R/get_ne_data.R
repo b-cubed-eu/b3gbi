@@ -57,6 +57,7 @@ get_ne_data <- function(projected_crs,
     stop("No projected CRS provided.")
   }
 
+  # Download the map data
   map_data <- download_ne_data(region = region,
                                level = level,
                                ne_scale = ne_scale,
@@ -70,109 +71,82 @@ get_ne_data <- function(projected_crs,
 
   if (level == "cube") {
 
-    expand_percent <- 0.5 # 10% buffer
+    # Add a buffer around the bbox to ensure full coverage
+    expand_percent <- 0.5 # 50% buffer
     lng_range <- unname(latlong_bbox["xmax"] - latlong_bbox["xmin"])
     lat_range <- unname(latlong_bbox["ymax"] - latlong_bbox["ymin"])
-
-    # Find bounding box
     min_lon <- unname(latlong_bbox["xmin"] - (expand_percent * lng_range))
     max_lon <- unname(latlong_bbox["xmax"] + (expand_percent * lng_range))
     min_lat <- unname(latlong_bbox["ymin"] - (expand_percent * lat_range))
     max_lat <- unname(latlong_bbox["ymax"] + (expand_percent * lat_range))
 
+    # Create a bbox object
     latlong_extent <- c("xmin" = min_lon,
                         "xmax" = max_lon,
                         "ymin" = min_lat,
-                        "ymax" = max_lat)
+                        "ymax" = max_lat) %>%
+      sf::st_bbox(crs = sf::st_crs(4326))
 
     # Project the extent
-    extent_projected <-
-      sf::st_bbox(latlong_extent, crs = "EPSG:4326") %>%
+    extent_projected <- latlong_extent %>%
       sf::st_as_sfc() %>%
       sf::st_transform(crs = "ESRI:54012")
 
     # Set attributes as spatially constant to avoid warnings when clipping
     sf::st_agr(map_data_projected) <- "constant"
 
-    # Crop the world map
-    map_data_projected <- sf::st_crop(map_data_projected,
-                                      extent_projected) %>%
+    # Crop and validate and union the world map to avoid issues with overlaps
+    map_data_projected <- map_data_projected %>%
+      sf::st_crop(extent_projected) %>%
       sf::st_make_valid() %>%
       sf::st_union() %>%
       sf::st_as_sf()
 
+    # Get the bbox of the cropped map data
     extent_projected <- sf::st_bbox(map_data_projected)
 
   } else {
 
-    extent_projected <- sf::st_bbox(map_data_projected)
-
+    # Validate and union the map data to avoid issues with overlaps
     map_data_projected <- sf::st_make_valid(map_data_projected) %>%
       sf::st_union() %>%
       sf::st_as_sf()
 
+    # Use the full extent of the projected map data
+    extent_projected <- sf::st_bbox(map_data_projected)
+
   }
 
-    extent_projected_polygon <- sf::st_as_sfc(extent_projected)
+  # Create a polygon from the extent
+  extent_projected_polygon <- sf::st_as_sfc(extent_projected)
 
-    map_data_ocean_bad <- sf::st_difference(extent_projected_polygon,
-                                            map_data_projected)
+  # Create ocean layer by subtracting land from the extent
+  map_data_ocean <- sf::st_difference(extent_projected_polygon,
+                                      map_data_projected)
 
-    map_data_ocean <- map_data_ocean_bad
+  # Save the new layer for later use before removing unwanted land
+  map_data_save <- map_data_ocean
 
-    if (include_ocean == TRUE) {
+  if (include_ocean == TRUE) {
 
-      if (level != "cube") {
-        # Remove land outside of the users chosen region from the ocean layer
-        extra_land_data <- download_ne_data(region = NULL,
-                                            level = "cube",
-                                            ne_scale = ne_scale,
-                                            ne_type = ne_type) %>%
-          sf::st_transform(crs = "ESRI:54012") %>%
-          sf::st_make_valid() %>%
-          sf::st_make_valid() %>%
-          sf::st_union() %>%
-          sf::st_as_sf()
-        unwanted_land <- sf::st_intersection(map_data_ocean, extra_land_data)
-        map_data_ocean <- sf::st_difference(map_data_ocean, unwanted_land)
+    if (level != "cube") {
+      # Remove land outside of the users chosen region from the ocean layer
+      extra_land_data <- download_ne_data(region = NULL,
+                                          level = "cube",
+                                          ne_scale = ne_scale,
+                                          ne_type = ne_type) %>%
+        sf::st_transform(crs = "ESRI:54012") %>%
+        sf::st_make_valid() %>%
+        sf::st_union() %>%
+        sf::st_as_sf()
+      unwanted_land <- sf::st_intersection(map_data_save, extra_land_data)
+      map_data_ocean <- sf::st_difference(map_data_save, unwanted_land)
 
-      }
+    }
 
-    # Validate oceans
-    map_data_ocean <- map_data_ocean %>%
-      sanitize_geometries() %>%
-      sf::st_make_valid()
-
-    # Remove empty geometries
-    map_data_projected <- map_data_projected %>%
-      sanitize_geometries() %>%
-      sf::st_make_valid() %>%
-      dplyr::filter(!is.na(sf::st_geometry(.))) %>%
-      dplyr::filter(!sf::st_is_empty(.))
-
-    # # Check if the land data is empty before performing the union
-    # if (nrow(map_data_projected) == 0 || include_land == FALSE) {
-    #   # If there's no land in the bounding box, return just the ocean layer
-    #   map_data_projected <- map_data_ocean
-  #  } else {
-      # Otherwise, perform the union as normal
-      map_data_ocean_ <- sf::st_as_sf(map_data_ocean)
-      # map_data_projected <- bind_rows(map_data_projected,
-      #                                 map_data_ocean_)
-      # map_data_projected <- map_data_projected %>%
-      #   dplyr::group_by() %>%
-      #   dplyr::reframe(geometry = sf::st_union(x)) %>%
-      #   dplyr::ungroup() %>%
-      #   sf::st_as_sf()
-
-      # convert to the desired projected CRS
-      map_data_ocean_projected <- sf::st_transform(map_data_ocean_,
-                                                   crs = projected_crs)
-
-      map_data_ocean_bad_projected <- sf::st_transform(map_data_ocean_bad,
-                                                   crs = projected_crs)
-
-  #  }
+    # Merge the land with the oceans
+    map_data_combined <- sf::st_union(map_data_projected, map_data_ocean) %>%
+      sf::st_as_sf()
 
   } else if (is.character(include_ocean) &&
              include_ocean == "buffered_coast") {
@@ -199,32 +173,32 @@ get_ne_data <- function(projected_crs,
       )
     }
 
-    map_data_ocean <- sf::st_buffer(map_data_projected,
-                                    dist = buffer_dist_km * 1000)
-
-    # Validate oceans
-    map_data_ocean_ <- sf::st_make_valid(map_data_ocean)
-
-    # convert to the desired projected CRS
-    map_data_ocean_projected <- sf::st_transform(map_data_ocean_,
-                                                 crs = projected_crs)
-
-    # Merge the land with the oceans
-    # map_data_projected <- sf::st_union(map_data_projected,
-    #                                    map_data_ocean_)
+    # Create a buffer around the land
+    map_data_combined <- sf::st_buffer(map_data_projected,
+                                       dist = buffer_dist_km * 1000) %>%
+      sf::st_make_valid()
 
   } else {
 
-    map_data_ocean_projected <- NULL
+    # just use the land layer
+    map_data_combined <- map_data_projected
 
   }
 
-  # convert to the desired projected CRS
-  map_data_projected <- sf::st_transform(map_data_projected,
-                                         crs = projected_crs)
+  if (include_land == FALSE) {
+    # just use the ocean layer
+    map_data_combined <- map_data_ocean
+  }
 
-  return(list(land = map_data_projected,
-              ocean = map_data_ocean_projected,
-              ocean_save = map_data_ocean_bad_projected))
+  # convert to the desired projected CRS
+  map_data_combined <- sf::st_transform(map_data_combined, crs = projected_crs)
+
+  # also convert the saved layer
+  map_data_save <- sf::st_union(map_data_save, map_data_projected) %>%
+    sf::st_transform(crs = projected_crs) %>%
+    sf::st_as_sf()
+
+  return(list(combined = map_data_combined,
+              saved = map_data_save))
 
 }
