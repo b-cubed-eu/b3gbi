@@ -23,13 +23,19 @@
 #'
 check_crs_units <- function(crs_input) {
 
-  # Get CRS info
-  crs_info <- st_crs(crs_input)
+  # Use tryCatch to gracefully handle errors from st_crs
+  crs_info <- tryCatch(
+    suppressWarnings(sf::st_crs(crs_input)),
+    error = function(e) {
+      stop(paste0("Error: Invalid output_crs: ", crs_input, ". Please provide ",
+      "a valid EPSG code, WKT string, or PROJ.4 string."))
+    }
+  )
 
-  # Check if the CRS is valid
-  if (is.na(crs_info)) {
-    stop(paste0("Error: Invalid CRS input. Please provide a valid EPSG code, ",
-    "WKT string, or PROJ.4 string."))
+  # Check if the returned CRS object is valid
+  if (is.na(crs_info$proj4string)) {
+    stop(paste0("Error: Invalid output_crs: ", crs_input, ". Please provide ",
+    "a valid EPSG code, WKT string, or PROJ.4 string."))
   }
 
   # Check if the CRS is in meters or degrees
@@ -39,6 +45,6 @@ check_crs_units <- function(crs_input) {
     return("km")
   } else {
     stop(paste0("Error: CRS units are not in degrees or meters. ",
-    "Please provide a CRS with valid units."))
+                "Please provide a CRS with valid units."))
   }
 }

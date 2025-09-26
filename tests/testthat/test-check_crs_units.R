@@ -57,14 +57,12 @@ test_that("check_crs_units handles invalid CRS inputs", {
     check_crs_units(
       "not a crs"
     ),
-    "invalid crs"
+    "Invalid output_crs"
   )
-  expect_warning(
-    expect_error(
-      check_crs_units(
-        99999  # Invalid EPSG code
-      ), "Invalid CRS input."
-    )
+  expect_error(
+    check_crs_units(
+      99999  # Invalid EPSG code
+    ), "Invalid output_crs"
   )
 })
 

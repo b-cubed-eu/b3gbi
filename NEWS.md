@@ -1,3 +1,21 @@
+# b3gbi 0.8.0 - Major update:
+
+* The grid is now intersected with the shapefile polygon if one is provided, so the grid is clipped to the shape polygon instead of the bounding box.
+* The user can now choose to exclude occurrences on land, whereas previously only oceanic occurrences could be excluded. This can be changed using the parameter include_land = FALSE. By default, both ocean and land occurrences are included. Please note: this are geographical filters, they do not discriminate by taxa. Furthermore, since cubes contain pre-aggregated data, occurrences within grid cells that overlap both land and ocean cannot be excluded, regardless of whether the occurrences themselves are on land or ocean.
+* The user can now select the output CRS when plotting, independently of the CRS of the indicator object. This can be done using the parameter output_crs. By default, output_crs is NULL and will use the CRS of the indicator object.
+* Grid line width and colour, and the fill colour of empty grid cells can now be customized using the parameters grid_line_width, grid_line_colour, and grid_fill_colour.
+* The width and colour of the grid outline can also be customized using the parameters grid_outline_width and grid_outline_colour.
+* The grid outline is turned off by default, but can be turned on using the parameter visible_grid_outline = TRUE.
+* The grid outline can be plotted as a complete rectangle even when the grid is not, using complete_grid_outline. Set this to 'original' to use an outline that is generally rectangular but follows the distortions of the grid caused by the chosen projection. Use 'transformed' to force a proper rectangular shape regardless of the projection. By default, complete_grid_outline is set to FALSE.
+* It is now possible to crop a map according to the boundaries of the geographical regions you selected when calculating the indicator, even if they are different from the bounding box of the cube. This can be done using the parameter crop_by_region = TRUE. Note that this only works if you specified one or more region(s) when calculating the indicator, not if you used level = 'cube'. By default, crop_by_region is set to FALSE.
+* Colours and fill colours for each rnaturalearth layer that the user specifies when plotting a map can now be customized using the parameters layer_colours and layer_fill_colours. The user must provide a vector of colours that matches the order and number of layers specified in the layers parameter.
+* Panel grid lines can now be turned on using the parameter visible_panel_gridlines. By default, panel grid lines are turned off (visible_panel_gridlines = FALSE).
+* The parameter panel_bg has been renamed to ocean_fill_colour to better reflect its function.
+* The parameter ne_type, which specifies the type of rnaturalearth data used, is now retained in the metadata of the calculated indicator (the level and region are still retained as well). 
+* Area-based automatic cell size determination now has more categories.
+* Plotting code has been restructured and simplified to improve efficiency and readability.
+* Documentation has been updated and improved.
+
 # b3gbi 0.7.6 - Minor update:
 
 * Fixed a bug that caused rnaturalearth to keep downloading the same layer data. It now downloads the data to a cache folder and loads it from there the next time it needs it.

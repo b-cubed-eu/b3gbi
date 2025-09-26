@@ -35,16 +35,16 @@ plot_ts(
   gridoff = FALSE,
   x_label = NULL,
   y_label = NULL,
-  x_expand = 0.05,
-  y_expand = 0.05,
+  x_expand = 0.1,
+  y_expand = 0.1,
   x_breaks = 10,
   y_breaks = 6,
   title_wrap_length = 60
 )
 }
 \arguments{
-\item{x}{An 'indicator_ts' object containing a time series of indicator
-values.}
+\item{x}{An 'indicator_ts' object containing a time series of multi-species
+indicator values. This is a required parameter with no default.}
 
 \item{min_year}{(Optional)  Earliest year to include in the plot.}
 
@@ -154,8 +154,11 @@ A ggplot object representing the biodiversity indicator time series
 plot. Can be customized using ggplot2 functions.
 }
 \description{
-Creates a time series plot of a calculated biodiversity
-indicator, with an optional smoothed trendline, and visualizes uncertainty.
+Creates a time series plot of a calculated multi-species
+biodiversity indicator (e.g. species richness or evenness), with an optional
+smoothed trendline, and visualizes uncertainty. Requires an 'indicator_ts'
+object as input. To plot a single-species indicator time series, use the
+\code{plot_species_ts()} function instead.
 }
 \examples{
 # default colours:

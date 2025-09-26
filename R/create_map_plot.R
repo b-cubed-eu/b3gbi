@@ -2,8 +2,17 @@
 create_map_plot <- function(data,
                             map_surround,
                             layer_list,
+                            layer_colours,
+                            layer_fill_colours,
                             land_fill_colour,
-                            panel_bg,
+                            ocean_fill_colour,
+                            grid_fill_colour,
+                            grid_line_colour,
+                            grid_outline_colour,
+                            grid_line_width,
+                            grid_outline_width,
+                            grid_fill_transparency,
+                            grid_line_transparency,
                             trans,
                             bcpower,
                             breaks,
@@ -11,9 +20,14 @@ create_map_plot <- function(data,
                             legend_limits,
                             map_level,
                             visible_gridlines,
+                            visible_grid_outline,
+                            visible_panel_gridlines,
+                            complete_grid_outline,
                             crop_to_grid,
                             map_lims,
+                            map_lims_original,
                             projection,
+                            original_bbox,
                             leg_label_default,
                             legend_title,
                             legend_title_wrap_length,
@@ -24,8 +38,40 @@ create_map_plot <- function(data,
   # Set necessary variables to NULL to avoid R CMD check notes
   geometry <- diversity_val <- NULL
 
-  # Set default value for land_fill_colour if NULL
+  # Set default values
+  ocean_fill_colour <- ocean_fill_colour %||% "#92c5f0"
   land_fill_colour <- land_fill_colour %||% "grey85"
+  grid_fill_colour <- grid_fill_colour %||% "transparent"
+  grid_line_colour <- if (visible_gridlines) {
+    grid_line_colour %||% "black"
+  } else {
+    "transparent"
+  }
+  grid_outline_colour <- if (visible_grid_outline) {
+    grid_outline_colour %||% "black"
+  } else {
+    "transparent"
+  }
+  grid_outline_width <- grid_outline_width %||% 0.5
+  grid_line_width <- grid_line_width %||% 0.1
+  grid_fill_transparency <- if (visible_gridlines) {
+    grid_fill_transparency %||% 0.2
+  } else {
+    grid_fill_transparency %||% 0
+  }
+  grid_line_transparency <- if (visible_gridlines) {
+    grid_line_transparency %||% 0.5
+  } else {
+    0
+  }
+
+  # Format layer colours
+  if (!is.null(layer_colours)) {
+    layer_colours <- list("black", layer_colours)
+  }
+  if (!is.null(layer_fill_colours)) {
+    layer_fill_colours <- list("transparent", layer_fill_colours)
+  }
 
   # Define function to modify legend
   cust_leg <- function(scale.params = list()) {
@@ -46,6 +92,10 @@ create_map_plot <- function(data,
     }
   }
 
+  # Transform data to the chosen projection
+  data <- sf::st_transform(data, crs = projection)
+
+  ###################################
   # Create plot in steps using ggplot
   ###################################
 
@@ -63,18 +113,23 @@ create_map_plot <- function(data,
     )
 
   # Step 3: Add additional layers, with ocean and lakes in blue
-  for (i in names(layer_list)) {
+  for (i in seq_along(layer_list)) {
     layer_data <- layer_list[[i]]
-    if (i %in% c("ocean", "lakes")) {
-      fill_colour <- "#92c5f0"
+    layer_fill_colour <- if(names(layer_list)[[i]] %in% c("ocean", "lakes") &&
+                            is.null(layer_fill_colours)) {
+      "#92c5f0"
+    } else if (!is.null(layer_fill_colours)) {
+      layer_fill_colours[[i]]
     } else {
-      fill_colour <- "transparent"
+      "transparent"
     }
+    layer_colour <- if (!is.null(layer_colours)) layer_colours[[i]] else "black"
+
     plot <- plot +
       ggplot2::geom_sf(data = layer_data,
                        aes(geometry = geometry),
-                       fill = fill_colour,
-                       colour = "black",
+                       fill = layer_fill_colour,
+                       colour = layer_colour,
                        inherit.aes = FALSE)
   }
 
@@ -82,14 +137,15 @@ create_map_plot <- function(data,
   plot <- plot +
     geom_sf(aes(fill = diversity_val,
                 geometry = geometry),
-            colour = "transparent") +
+            colour = alpha(grid_line_colour, grid_line_transparency),
+            linewidth = grid_line_width) +
     cust_leg(list(trans = trans,
                   breaks = breaks,
                   labels = labels,
                   limits = legend_limits)) +
     theme_bw() +
     theme(
-      panel.background = element_rect(fill = panel_bg %||% "#92c5f0"),
+      panel.background = element_rect(fill = ocean_fill_colour),
       legend.text = ggplot2::element_text(),
       strip.text = ggplot2::element_text(face = "italic"),
       plot.title = ggplot2::element_text(face = title_face)
@@ -97,13 +153,7 @@ create_map_plot <- function(data,
     # Wrap legend title if longer than user-specified wrap length
     labs(fill = wrapper(legend_title %||% leg_label_default,
                                                     legend_title_wrap_length)) +
-    if (suppress_legend) theme(legend.position = "none") +
-    if (map_level == "country") {
-      theme(
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank()
-      )
-    }
+    if (suppress_legend) theme(legend.position = "none")
 
   # Step 5: Re-create lines from layers
   # This ensures that indicator values are plotted on top of layer fill (e.g.,
@@ -118,18 +168,26 @@ create_map_plot <- function(data,
                        inherit.aes = FALSE)
   }
 
-  # Step 6: Add gridlines between cells if not set to false
-  if (visible_gridlines == TRUE) {
-    # plot gridlines
-    plot$layers <- c(
-      plot$layers,
-      ggplot2::geom_sf(aes(geometry = geometry),
-                       colour = "black",
-                       linewidth = 0.1,
-                       fill = "transparent"
-      )[[1]]
-    )
+  # Step 6: Add the grid outline and fill
+  if (complete_grid_outline == "original") {
+    grid_outline <- original_bbox
+  } else if (complete_grid_outline == "transformed") {
+    grid_outline <- sf::st_as_sfc(sf::st_bbox(map_lims_original,
+                                              crs = sf::st_crs(data))) %>%
+      sf::st_transform(crs = projection)
+
+  } else {
+    grid_outline <- sf::st_union(data)
   }
+
+  plot <- plot +
+    ggplot2::geom_sf(data = grid_outline,
+                     colour = grid_outline_colour,
+                     linewidth = grid_outline_width,
+                     fill = grid_fill_colour,
+                     alpha = grid_fill_transparency,
+                     inherit.aes = FALSE
+    )
 
   # Step 7: Expand the plot if crop_to_grid is not set
   expand_val <- if (crop_to_grid) FALSE else TRUE
@@ -145,6 +203,13 @@ create_map_plot <- function(data,
   # Step 8: Add title
   if (!is.null(title_label)) {
     plot <- plot + ggplot2::labs(title = title_label)
+  }
+
+  if (visible_panel_gridlines != TRUE) {
+    plot <- plot + ggplot2::theme(
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank()
+    )
   }
 
   # Exit function

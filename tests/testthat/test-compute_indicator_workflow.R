@@ -164,22 +164,38 @@ mock_get_ne_data <- function(projected_crs,
                              ne_type,
                              ne_scale,
                              include_water = TRUE,
+                             include_land = TRUE,
                              buffer_dist_km = NULL) {
-  sf::st_sf(
-    geometry = sf::st_sfc(
-      sf::st_polygon(
-        list(
-          matrix(
-            c(0, 0, 0, 10, 10, 10, 10, 0, 0, 0),
-            ncol = 2,
-            byrow = TRUE
+  list(
+    combined = sf::st_sf(
+      geometry = sf::st_sfc(
+        sf::st_polygon(
+          list(
+            matrix(
+              c(0, 0, 0, 10, 10, 10, 10, 0, 0, 0),
+              ncol = 2,
+              byrow = TRUE
+            )
           )
         )
-      )
+      ),
+      crs = projected_crs
     ),
-    crs = projected_crs
+    saved = sf::st_sf(
+      geometry = sf::st_sfc(
+        sf::st_polygon(
+          list(
+            matrix(
+              c(0, 0, 0, 10, 10, 10, 10, 0, 0, 0),
+              ncol = 2,
+              byrow = TRUE
+            )
+          )
+        )
+      ),
+      crs = projected_crs
+    )
   )
-
 }
 
 test_that(

@@ -1,10 +1,13 @@
 #' @title Plot Biodiversity Indicator Trend
 #'
-#' @description  Creates a time series plot of a calculated biodiversity
-#'   indicator, with an optional smoothed trendline, and visualizes uncertainty.
+#' @description  Creates a time series plot of a calculated multi-species
+#'  biodiversity indicator (e.g. species richness or evenness), with an optional
+#'  smoothed trendline, and visualizes uncertainty. Requires an 'indicator_ts'
+#'  object as input. To plot a single-species indicator time series, use the
+#'  \code{plot_species_ts()} function instead.
 #'
-#' @param x An 'indicator_ts' object containing a time series of indicator
-#'  values.
+#' @param x An 'indicator_ts' object containing a time series of multi-species
+#'  indicator values. This is a required parameter with no default.
 #' @param min_year (Optional)  Earliest year to include in the plot.
 #' @param max_year (Optional)  Latest year to include in the plot.
 #' @param title (Optional) Plot title. Replace "auto" with your own title if you
@@ -129,8 +132,8 @@ plot_ts <- function(x,
                     gridoff = FALSE,
                     x_label = NULL,
                     y_label = NULL,
-                    x_expand = 0.05,
-                    y_expand = 0.05,
+                    x_expand = 0.1,
+                    y_expand = 0.1,
                     x_breaks = 10,
                     y_breaks = 6,
                     title_wrap_length = 60

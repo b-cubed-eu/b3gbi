@@ -60,11 +60,7 @@ guess_utm_epsg <- function(x) {
 
       # If the data spans more than one UTM zone, return a global CRS
       if (length(unique_utm_zones) > 1) {
-
-        warning("Data spans multiple UTM zones. Using a global equal-area CRS.")
-
         return("ESRI:54012")
-
       }
 
       # If there is only one UTM zone, proceed with the original logic
