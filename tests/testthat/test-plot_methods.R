@@ -85,7 +85,7 @@ test_that("plot_map handles crop_to_grid", {
 test_that("plot_map handles panel_bg and land_fill_colour", {
   data(example_indicator_map1)
   p <- suppressWarnings(plot_map(example_indicator_map1,
-                panel_bg = "red",
+                ocean_fill_colour = "red",
                 land_fill_colour = "blue"))
   expect_equal(p$theme$panel.background$fill, "red")
   expect_equal(p$layers[[1]]$aes_params$fill, "blue")
@@ -113,7 +113,7 @@ test_that("plot_map with all parameters set", {
                                  breaks = c(1, 2, 3),
                                  labels = c("One", "Two", "Three"),
                                  crop_to_grid = TRUE,
-                                 panel_bg = "green",
+                                 ocean_fill_colour = "green",
                                  land_fill_colour = "yellow",
                                  legend_title = "Legend Title",
                                  legend_limits = c(1, 10),
@@ -184,7 +184,7 @@ test_that("plot_map handles all parameters without error", {
     breaks = c(1, 2, 3),
     labels = c("Low", "Medium", "High"),
     crop_to_grid = TRUE,
-    panel_bg = "white",
+    ocean_fill_colour = "white",
     land_fill_colour = "grey90",
     legend_title = "Legend Title",
     legend_limits = c(1, 5),
@@ -347,7 +347,7 @@ test_that("plot_species_map handles all parameters without error", {
     labels = c("Low", "Medium", "High"),
     crop_to_grid = TRUE,
     single_plot = TRUE,
-    panel_bg = "white",
+    ocean_fill_colour = "white",
     land_fill_colour = "grey90",
     legend_title = "Legend Title",
     legend_limits = c(1, 5),

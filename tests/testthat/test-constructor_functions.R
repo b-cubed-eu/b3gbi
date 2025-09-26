@@ -122,6 +122,7 @@ test_that("new_indicator_ts creates indicator_ts object correctly", {
     div_type = "obs_richness",
     map_level = "country",
     map_region = "Test Country",
+    map_type = "countries",
     kingdoms = "Animalia",
     num_families = 1,
     num_species = 3,
@@ -148,6 +149,7 @@ test_that("new_indicator_map creates indicator_map object correctly", {
     cell_size_units = "km",
     map_level = "country",
     map_region = "Test Country",
+    map_type = "countries",
     kingdoms = "Animalia",
     num_families = 1,
     num_species = 3,
@@ -155,7 +157,8 @@ test_that("new_indicator_map creates indicator_map object correctly", {
     last_year = 2010,
     num_years = 11,
     species_names = NULL,
-    years_with_obs = 11
+    years_with_obs = 11,
+    original_bbox = list(xmin = 1, xmax = 2, ymin = 3, ymax = 4)
   )
   expect_s3_class(im, c("indicator_map", "obs_richness"))
   expect_equal(im$div_type, "obs_richness")
