@@ -1,3 +1,27 @@
+# is_sf_empty()
+# A simple helper function to check if an sf object has an empty geometry or no rows.
+#
+# @param x An sf or sfc object.
+#
+# @return A logical value: TRUE if the object is empty (no rows or empty geometry),
+#         FALSE otherwise.
+#' @noRd
+is_sf_empty <- function(x) {
+  if (is.null(x)) {
+    return(TRUE)
+  }
+  # Handles cases where nrow() is a valid check (e.g., sf data frames)
+  if (is.data.frame(x) && nrow(x) == 0) {
+    return(TRUE)
+  }
+  # A more robust check for GEOMETRYCOLLECTION EMPTY and sfc objects
+  # This handles cases like `sf::st_sfc(sf::st_geometrycollection())`
+  if (all(sf::st_is_empty(x))) {
+    return(TRUE)
+  }
+  return(FALSE)
+}
+
 # Define function to wrap title and legend title if too long
 #' @noRd
 wrapper <- function(x, ...) {
