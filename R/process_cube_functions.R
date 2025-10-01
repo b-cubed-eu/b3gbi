@@ -638,19 +638,26 @@ process_cube <- function(cube_name,
 
     }
 
-    occurrence_data <-
-      occurrence_data %>%
-      dplyr::mutate(cellCode = stringr::str_replace(cellCode, "W", "W-")) %>%
-      dplyr::mutate(cellCode = stringr::str_replace(cellCode, "S", "S-"))
+    # occurrence_data <-
+    #   occurrence_data %>%
+    #   dplyr::mutate(cellCode = stringr::str_replace(cellCode, "W", "W-")) %>%
+    #   dplyr::mutate(cellCode = stringr::str_replace(cellCode, "S", "S-"))
 
+    # Determine the resolution from the cellCode length (e.g., 0.125 for 1/8 degree)
+    resolution_deg <- 1 / (2^(nchar(occurrence_data$cellCode[1]) - 7))
+    # Calculate the required shift (half the cell size) to move from corner to center
+
+    # 2. Convert cell codes to bottom-left coordinates
     latlong <- convert_eqdgc_latlong(occurrence_data$cellCode)
+
+    # 3. Apply the shift to convert corner coordinates to cell centers (centroids)
     lat <- latlong[, 1]
     long <- latlong[, 2]
 
     occurrence_data$xcoord <- long
     occurrence_data$ycoord <- lat
     occurrence_data$resolution <- rep(paste0(
-      (1 / (2^(nchar(occurrence_data$cellCode[1]) - 7))), "degrees"
+     resolution_deg, "degrees"
     ), nrow(occurrence_data))
 
   }
