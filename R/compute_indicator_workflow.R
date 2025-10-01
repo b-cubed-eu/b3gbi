@@ -338,9 +338,9 @@ compute_indicator_workflow <- function(data,
     # Choose appropriate projection CRS
     if (data$grid_type == "eea") {
       projected_crs <- cube_crs
-    } else if (data$grid_type == "mgrs") {
-      projected_crs <- cube_crs
     } else if (data$grid_type == "eqdgc") {
+      projected_crs <- cube_crs
+    } else if (data$grid_type == "mgrs") {
       projected_crs <- guess_utm_epsg(cube_bbox_latlong)
     } else {
       stop("Grid reference system not found.")

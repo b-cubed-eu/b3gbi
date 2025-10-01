@@ -1,3 +1,7 @@
+# b3gbi 0.8.1 - Minor update:
+
+* Fixed multiple small bugs that led to incorrect grid cell calculation and assignment for quarter-degree and eea grids.
+
 # b3gbi 0.8.0 - Major update:
 
 * The grid is now intersected with the shapefile polygon if one is provided, so the grid is clipped to the shape polygon instead of the bounding box.
