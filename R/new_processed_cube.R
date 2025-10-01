@@ -41,7 +41,7 @@ new_processed_cube <- function(x, grid_type) {
                        "xmax" = max(x$xcoord) + res_num,
                        "ymin" = min(x$ycoord),
                        "ymax" = max(x$ycoord) + res_num)
-  } else if (grid_type == "mgrs"){
+  } else {
     coord_range = list("xmin" = min(x$xcoord),
                        "xmax" = max(x$xcoord),
                        "ymin" = min(x$ycoord),
