@@ -30,10 +30,13 @@ create_grid <- function(bbox,
                         projected_crs,
                         make_valid = FALSE) {
 
+  offset_x <- bbox["xmin"]
+  offset_y <- bbox["ymin"]
+
   # Make a grid across the cube
   grid <- bbox %>%
     sf::st_make_grid(cellsize = c(cell_size, cell_size),
-                     offset = c(bbox["xmin"], bbox["ymin"])) %>%
+                     offset = c(offset_x, offset_y)) %>%
     sf::st_sf() %>%
     dplyr::mutate(cellid = dplyr::row_number())
 
