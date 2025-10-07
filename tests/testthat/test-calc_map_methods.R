@@ -4,7 +4,8 @@ mock_map_data <- data.frame(
   cellid = c(1, 1, 2, 2),
   scientificName = c("Species A", "Species B", "Species A", "Species C"),
   obs = c(1, 1, 1, 1),
-  taxonKey = c("spA", "spB", "spA", "spC")
+  taxonKey = c("spA", "spB", "spA", "spC"),
+  year = c(1992, 1992, 1993, 1993)
 )
 
 # Create mock input with appropriate classes (reused)
@@ -15,14 +16,10 @@ mock_map_hill2 <- structure(mock_map_data, class = c("hill2", "data.frame"))
 test_that("calc_map.hill0 calculates correctly", {
   mockr::with_mock(
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
-      if (datatype == "abundance" && all(q == 0)) {
+      if (datatype == "incidence_freq" && all(q == 0)) {
         expected_data <- list(
-          `1` = matrix(c(1, 1),
-                       nrow = 2,
-                       dimnames = list(c("spA", "spB"), "obs")),
-          `2` = matrix(c(1, 1),
-                       nrow = 2,
-                       dimnames = list(c("spA", "spC"), "obs"))
+          `1` = c(1, 1, 1),
+          `2` = c(1, 1, 1)
         )
         expect_equal(data, expected_data)
         return(tibble::tibble(
@@ -66,14 +63,10 @@ test_that("calc_map.hill0 calculates correctly", {
 test_that("calc_map.hill1 calculates correctly", {
   mockr::with_mock(
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
-      if (datatype == "abundance" && all(q == 1)) {
+      if (datatype == "incidence_freq" && all(q == 1)) {
         expected_data <- list(
-          `1` = matrix(c(1, 1),
-                       nrow = 2,
-                       dimnames = list(c("spA", "spB"), "obs")),
-          `2` = matrix(c(1, 1),
-                       nrow = 2,
-                       dimnames = list(c("spA", "spC"), "obs"))
+          `1` = c(1,1,1),
+          `2` = c(1,1,1)
         )
         expect_equal(data, expected_data)
         return(tibble::tibble(
@@ -116,14 +109,10 @@ test_that("calc_map.hill1 calculates correctly", {
 test_that("calc_map.hill2 calculates correctly", {
   mockr::with_mock(
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
-      if (datatype == "abundance" && all(q == 2)) {
+      if (datatype == "incidence_freq" && all(q == 2)) {
         expected_data <- list(
-          `1` = matrix(c(1, 1),
-                       nrow = 2,
-                       dimnames = list(c("spA", "spB"), "obs")),
-          `2` = matrix(c(1, 1),
-                       nrow = 2,
-                       dimnames = list(c("spA", "spC"), "obs"))
+          `1` = c(1, 1, 1),
+          `2` = c(1, 1, 1)
         )
         expect_equal(data, expected_data)
         return(tibble::tibble(
