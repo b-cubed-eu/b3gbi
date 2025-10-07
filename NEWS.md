@@ -1,3 +1,7 @@
+# b3gbi 0.8.2 - Minor update:
+
+* Fixed the way Hill diversity is calculated for maps. It now uses years as sampling units instead of aggregating across years, and estimates from incidence data (presence/absence) instead of using observations as an abundance proxy.
+
 # b3gbi 0.8.1 - Minor update:
 
 * Fixed multiple small bugs that led to incorrect grid cell calculation and assignment for quarter-degree and eea grids.
