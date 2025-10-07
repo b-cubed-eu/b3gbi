@@ -12,26 +12,33 @@ calc_map_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
 
   type <- match.arg(type)
 
+  temp_opts <- list(...)
+  cutoff_length <- temp_opts$cutoff_length
+  coverage <- temp_opts$coverage
+
   # Extract qvalue from hill diversity type
   qval <- as.numeric(gsub("hill", "", type))
 
-  # Create list of incidence matrices by cell
   incidence_list <- x %>%
-    dplyr::select(taxonKey, obs, cellid) %>%
+    dplyr::select(taxonKey, obs, cellid, year) %>%
+    dplyr::mutate(incidence = as.numeric(obs > 0)) %>%
+    dplyr::filter(incidence > 0) %>% # Keep only detections
     dplyr::group_by(cellid) %>%
     dplyr::group_split() %>%
-    # Process each cellid's data frame
+
     purrr::map(function(cell_data) {
-      df <- cell_data %>%
-        dplyr::distinct(taxonKey, .keep_all = TRUE) %>%
-        dplyr::select(taxonKey, obs)
+      T_units <- dplyr::n_distinct(cell_data$year) # Total unique years (T)
 
-      # Convert to matrix, ensuring dimnames are preserved
-      # This is a more robust way to handle single-row data
-      mat <- as.matrix(df[, "obs", drop = FALSE])
-      rownames(mat) <- df$taxonKey
+      freq_data <- cell_data %>%
+        dplyr::group_by(taxonKey) %>%
+        dplyr::summarise(Y_i = dplyr::n_distinct(year)) %>%
+        dplyr::ungroup() %>%
+        dplyr::pull(Y_i)
 
-      return(mat)
+      # Combine T and the frequencies (Y_i)
+      incidence_vector <- c(T_units, freq_data)
+
+      return(incidence_vector)
     })
 
   if (length(incidence_list) == 0) {
@@ -41,35 +48,29 @@ calc_map_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
   # Name the list elements by cellid
   names(incidence_list) <- unique(x$cellid)
 
-  temp_opts <- list(...)
-  cutoff_length <- temp_opts$cutoff_length
-  coverage <- temp_opts$coverage
+  incidence_list_processed <-
+    purrr::keep(incidence_list,
+                function(vec) {
+                  # Check if the vector exists and has more than 1 element
+                  # (T plus at least one species)
+                  if (!is.null(vec) && is.vector(vec) && length(vec) > 1) {
+                    # The number of species is the length of the vector minus the T value
+                    species_count <- length(vec) - 1
+                    return(species_count >= cutoff_length)
+                  }
+                  # Return FALSE for empty or invalid vectors
+                  return(FALSE)
+                })
 
-  # Filter cells based on cutoff length (number of species >= cutoff)
-  incidence_list_filtered <- purrr::keep(incidence_list,
-                                         function(matrix) {
-                                           if (!is.null(matrix) && is.matrix(matrix)) {
-                                             return(nrow(matrix) >= cutoff_length)
-                                           }
-                                           return(FALSE)
-                                         })
-
-  if (length(incidence_list_filtered) == 0) {
+  if (length(incidence_list_processed) == 0) {
     stop(paste0("There are no grid cells left to process after filtering. ",
                 "Try setting the cutoff_length lower."))
-  }
 
-  incidence_list_processed <- lapply(incidence_list_filtered,
-                                     function(matrix) {
-                                       numeric_matrix <- matrix(as.numeric(matrix),
-                                                                nrow = nrow(matrix),
-                                                                dimnames = dimnames(matrix))
-                                       return(numeric_matrix)
-                                     })
+  }
 
   # Compute Hill diversity using a wrapper for iNEXT::estimateD
   diversity_estimates <- incidence_list_processed %>%
-    my_estimateD(datatype = "abundance",
+    my_estimateD(datatype = "incidence_freq",
                  base = "coverage",
                  level = coverage,
                  q = qval,
