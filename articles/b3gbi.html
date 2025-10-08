@@ -68,7 +68,7 @@
                         <h4 data-toc-skip class="author">Shawn Dove</h4>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/vignettes/b3gbi.Rmd" class="external-link"><code>vignettes/b3gbi.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.8.3/vignettes/b3gbi.Rmd" class="external-link"><code>vignettes/b3gbi.Rmd</code></a></small>
       <div class="d-none name"><code>b3gbi.Rmd</code></div>
     </div>
 
@@ -262,6 +262,8 @@ series</strong> (temporal trends).</p>
 <p>Use <code>available_indicators</code> to see the full list of
 indicators and their associated wrapper functions (e.g.,
 <code>obs_richness_map</code>, <code>total_occ_ts</code>).</p>
+<p>💡 <strong>Note</strong>: The ANSI characters around the indicator
+titles do not appear in R. They are used to colour the titles.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">available_indicators</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -426,6 +428,11 @@ time series.</td>
 series.</td>
 <td>Defaults to 100.</td>
 </tr>
+<tr class="even">
+<td><code>first_year</code></td>
+<td>Narrow the time range for this specific calculation.</td>
+<td>Defaults to the cube’s start year.</td>
+</tr>
 </tbody>
 </table>
 <p>⚠️ <strong>Important Note on Confidence Intervals (CIs)</strong>:</p>
@@ -517,9 +524,8 @@ and layout.</p>
 <td></td>
 </tr>
 <tr class="even">
-<td><code>crop_by_region</code></td>
-<td>If TRUE, map edges are determined by the map region selected during
-indicator calculation, rather than the data.</td>
+<td><code>surround</code></td>
+<td>If FALSE, hides surrounding countries.</td>
 <td></td>
 </tr>
 </tbody>
@@ -554,22 +560,12 @@ indicator calculation, rather than the data.</td>
 <tr class="even">
 <td><code>linecolour</code></td>
 <td>Sets the color of the indicator line/points.</td>
-<td>e.g., “blue”</td>
+<td>e.g., “darkgreen”</td>
 </tr>
 <tr class="odd">
 <td><code>ribboncolour</code></td>
-<td>Sets the color of the indicator confidence interval.</td>
-<td>e.g., “skyblue”</td>
-</tr>
-<tr class="even">
-<td><code>trendlinecolour</code></td>
-<td>Sets the color of the trend line.</td>
-<td>e.g., “darkorange”</td>
-</tr>
-<tr class="odd">
-<td><code>envelopecolour</code></td>
-<td>Sets the color of the trend line confidence intervals.</td>
-<td>e.g., “orange”</td>
+<td>Sets the color of the confidence interval ribbon.</td>
+<td>e.g., “lightgreen”</td>
 </tr>
 <tr class="even">
 <td>
