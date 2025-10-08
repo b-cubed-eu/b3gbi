@@ -106,7 +106,6 @@ All indicator wrapper functions (e.g., `obs_richness_map`, `occ_turnover_ts`) sh
 | `region` | The specific region name (e.g., 'Germany', 'Europe'). | Required if level is set. |
 | `ci_type` | Type of bootstrap confidence interval to calculate. Only relevant for time series. | 'norm', 'basic', 'perc', 'bca', or 'none'. Defaults to 'norm' for time series. |
 | `num_bootstrap` | Number of bootstrap runs for CI calculation. Only relevant for time series. | Defaults to 100. |
-| `first_year` | Narrow the time range for this specific calculation. | Defaults to the cube's start year. |
 
 ⚠️ **Important Note on Confidence Intervals (CIs)**:
 
@@ -162,7 +161,7 @@ The generic `plot()` function automatically calls the appropriate helper functio
 | `title` | Sets the plot title. | e.g., "Observed Richness in Denmark" |
 | `legend_title` | Sets the legend title. | e.g., "Number of Species" |
 | `crop_to_grid` | If TRUE, the map edges are determined by the grid extent. | |
-| `surround` | If FALSE, hides surrounding countries. | |
+| `crop_by_region` | If TRUE, map edges are determined by the map region selected during indicator calculation, rather than the data. | |
 
 ```{r plot-map}
 # Plotting the map object
@@ -176,8 +175,10 @@ plot(Denmark_observed_richness_map,
 | Argument | Description | Common Use |
 |----------|-------------|------------|
 | `smoothed_trend` | If TRUE, displays a smoothed trend line (LOESS). | Defaults to TRUE. |
-| `linecolour` | Sets the color of the indicator line/points. | e.g., "darkgreen" |
-| `ribboncolour` | Sets the color of the confidence interval ribbon. | e.g., "lightgreen" |
+| `linecolour` | Sets the color of the indicator line/points. | e.g., "blue" |
+| `ribboncolour` | Sets the color of the indicator confidence interval. | e.g., "skyblue" |
+| `trendlinecolour` | Sets the color of the trend line. | e.g., "darkorange" |
+| `envelopecolour` | Sets the color of the trend line confidence intervals. | e.g., "orange" |
 | `x_label` / `y_label` | Custom labels for the axes. | |
 
 ```{r plot-ts}
