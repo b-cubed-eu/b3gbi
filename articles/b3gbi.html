@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Tutorial • b3gbi</title>
+<title>A Gentle Introduction to b3gbi: Data Cubes to Biodiversity Indicators • b3gbi</title>
 <!-- favicons --><link rel="icon" type="image/png" sizes="96x96" href="../favicon-96x96.png">
 <link rel="icon" type="”image/svg+xml”" href="../favicon.svg">
 <link rel="apple-touch-icon" sizes="180x180" href="../apple-touch-icon.png">
@@ -23,7 +23,7 @@
 <link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet">
-<meta property="og:title" content="Tutorial">
+<meta property="og:title" content="A Gentle Introduction to b3gbi: Data Cubes to Biodiversity Indicators">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -33,7 +33,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,126 +64,122 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="../logo.png" class="logo" alt=""><h1>Tutorial</h1>
+      <img src="../logo.png" class="logo" alt=""><h1>A Gentle Introduction to b3gbi: Data Cubes to Biodiversity Indicators</h1>
                         <h4 data-toc-skip class="author">Shawn Dove</h4>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.8.2/vignettes/b3gbi.Rmd" class="external-link"><code>vignettes/b3gbi.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/vignettes/b3gbi.Rmd" class="external-link"><code>vignettes/b3gbi.Rmd</code></a></small>
       <div class="d-none name"><code>b3gbi.Rmd</code></div>
     </div>
 
     
     
 <div class="section level2">
-<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+<h2 id="introduction">Introduction 🌍<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
-<p>The goal of this tutorial is to get you familiar with how to use the
-b3gbi package, which contains a number of functions for calculating and
-plotting biodiversity indicators from GBIF occurrence cubes. The package
-is not ready for official release yet, but it is publicly available at
-<a href="https://www.github.com/b-cubed-eu/b3gbi" class="external-link uri">https://www.github.com/b-cubed-eu/b3gbi</a>.</p>
-<p>Below I will explain how to install the package on your own computer,
-and give a quick tutorial on the core functions, with examples. Given
-that the package is unfinished and has undergone limited testing, it is
-possible that you will encounter errors.</p>
+<p>The goal of the <strong>b3gbi</strong> package (B3 General
+Biodiversity Indicators) is to provide standardized, automated, and
+reproducible workflows for calculating essential spatial and temporal
+biodiversity indicators. Developed as part of the EU-funded B3
+(Biodiversity Building Blocks for Policy) project, b3gbi takes
+pre-processed GBIF occurrence cubes as input and quickly transforms them
+into actionable metrics, complete with integrated uncertainty estimation
+using robust bootstrapping methods.</p>
+<p>This tutorial will guide you through the three core steps of the
+b3gbi workflow:</p>
+<ol style="list-style-type: decimal">
+<li>
+<strong>Data Ingestion</strong>: Preparing your GBIF data cube with
+<code><a href="../reference/process_cube.html">process_cube()</a></code>.</li>
+<li>
+<strong>Indicator Calculation</strong>: Using indicator-specific
+wrapper functions.</li>
+<li>
+<strong>Visualization</strong>: Plotting the results as maps or time
+series using the generic <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> function.</li>
+</ol>
+<p>The package is publicly available at <a href="https://www.github.com/b-cubed-eu/b3gbi" class="external-link uri">https://www.github.com/b-cubed-eu/b3gbi</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="package-installation">Package Installation<a class="anchor" aria-label="anchor" href="#package-installation"></a>
 </h2>
+<p>The package is available on the dedicated B-Cubed R-universe
+repository.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"b3gbi"</span>, repos <span class="op">=</span> <span class="st">"https://b-cubed-eu.r-universe.dev"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># Install the package from the dedicated R-universe</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"b3gbi"</span>, repos <span class="op">=</span> <span class="st">"https://b-cubed-eu.r-universe.dev"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Load the package</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/b-cubed-eu/b3gbi" class="external-link">b3gbi</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="core-functions">Core Functions<a class="anchor" aria-label="anchor" href="#core-functions"></a>
+<h2 id="step-1-data-ingestion-with-process_cube">Step 1: Data Ingestion with <code>process_cube()</code><a class="anchor" aria-label="anchor" href="#step-1-data-ingestion-with-process_cube"></a>
 </h2>
-<p>Let’s have a look at the core functions of the b3gbi package. The
-first one is called process_cube() and is used to import GBIF occurrence
-cubes from .csv files into R objects. It is very simple to use. You only
-need to provide it with the name and location of a cube in .csv format.
-Note that there are different versions of GBIF cubes floating around,
-and the format has changed. Since most of the code for this package was
-created before the present generation came available, it is compatible
-with both the old and new cubes. The old ones come with an additional
-.csv file containing taxonomic information for the cube.</p>
+<p>The first step is importing your GBIF occurrence cube (a .csv file)
+and converting it into a structured <code>processed_cube</code> object.
+This function automatically validates the input and attempts to
+autodetect column names and grid types.</p>
+<div class="section level3">
+<h3 id="key-process_cube-arguments">Key <code>process_cube()</code> Arguments<a class="anchor" aria-label="anchor" href="#key-process_cube-arguments"></a>
+</h3>
+<table class="table">
+<colgroup>
+<col width="25%">
+<col width="32%">
+<col width="42%">
+</colgroup>
+<thead><tr class="header">
+<th>Argument</th>
+<th>Description</th>
+<th>Default/Details</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>data</code></td>
+<td>Path to the .csv file containing the GBIF cube. Required.</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>grid_type</code></td>
+<td>The grid system used (e.g., ‘eea’, ‘mgrs’, ‘eqdgc’, ‘custom’).</td>
+<td>Autodetected if possible.</td>
+</tr>
+<tr class="odd">
+<td><code>first_year</code></td>
+<td>Filters the cube to start at this year.</td>
+<td>First year in the data.</td>
+</tr>
+<tr class="even">
+<td><code>last_year</code></td>
+<td>Filters the cube to end at this year.</td>
+<td>Last year in the data.</td>
+</tr>
+</tbody>
+</table>
+<p>💡 <strong>Note on Column Names</strong>: The function automatically
+attempts to detect required columns (like cell code, year, species key).
+You only need to manually specify arguments like <code>cols_year</code>
+or <code>cols_cellCode</code> if your column names deviate from expected
+standards.</p>
+</div>
+<div class="section level3">
+<h3 id="example-import-data-and-filter-by-time">Example: Import Data and Filter by Time<a class="anchor" aria-label="anchor" href="#example-import-data-and-filter-by-time"></a>
+</h3>
+<p>Here we import an example cube of mammals in Denmark, filtering the
+data to start from 1980.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Function 1: process_cube()</span></span>
-<span><span class="co"># Description: Imports a data cube from a .csv file and prepares it as a </span></span>
-<span><span class="co"># processed_cube object for indicator calculations and plotting.</span></span>
-<span><span class="co">#</span></span>
-<span><span class="co"># Inputs: </span></span>
-<span><span class="co">#   * Argument 1: data, cube in .csv format </span></span>
-<span><span class="co">#   * Argument 2: grid_type (optional). By default the function will attempt to </span></span>
-<span><span class="co">#                 determine this automatically. However, you have the option to </span></span>
-<span><span class="co">#                 manually specify 'eea', 'mgrs', or 'eqdgc'. If you are using </span></span>
-<span><span class="co">#                 a simulated cube. e.g. output by the gcube package, choose </span></span>
-<span><span class="co">#                 'custom'.</span></span>
-<span><span class="co">#   * Argument 3: first_year (optional), you can filter your cube to include </span></span>
-<span><span class="co">#                 only data in a certain time period, by default this will be </span></span>
-<span><span class="co">#                 the first year of data in your cube</span></span>
-<span><span class="co">#   * Argument 4: last_year (optional), by default this will be the last year </span></span>
-<span><span class="co">#                 of data in your cube</span></span>
-<span><span class="co">#   * Argument 5: force_gridcode (optional), this will force the function to </span></span>
-<span><span class="co">#                 assume a specific grid reference code, not recommended and </span></span>
-<span><span class="co">#                 could lead to problems downstream.</span></span>
-<span><span class="co">#</span></span>
-<span><span class="co"># The remaining arguments are all column names. Some columns are required, some </span></span>
-<span><span class="co"># are not, but it is only necessary to provide the names if they cannot be </span></span>
-<span><span class="co"># autodetected by the function.</span></span>
-<span></span>
-<span><span class="co">#   * Argument 6: cols_year (optional), the name of the column containing the </span></span>
-<span><span class="co">#                 year of occurrence. You must have either a year or yearMonth </span></span>
-<span><span class="co">#                 column in your cube.</span></span>
-<span><span class="co">#   * Argument 7: cols_yearMonth (optional), the name of the column containing </span></span>
-<span><span class="co">#                 the year and month of occurrence</span></span>
-<span><span class="co">#   * Argument 8: cols_cellCode (optional), the name of the column containing </span></span>
-<span><span class="co">#                 the cell codes. This column is required</span></span>
-<span><span class="co">#   * Argument 9: cols_occurrences (optional), the name of the column </span></span>
-<span><span class="co">#                 containing species occurrences. This column is required</span></span>
-<span><span class="co">#   * Argument 10: cols_scientificName (optional), the name of the column </span></span>
-<span><span class="co">#                  containing species names. This column is required</span></span>
-<span><span class="co">#   * Argument 11: cols_minCoordinateUncertaintyInMeters (optional), the name </span></span>
-<span><span class="co">#                  of the column containing the minimum coordinate uncertainty. </span></span>
-<span><span class="co">#                  This column is not required</span></span>
-<span><span class="co">#   * Argument 12: cols_minTemporalUncertainty (optional), the name of the </span></span>
-<span><span class="co">#                  column containing the minimum temporal uncertainty. This </span></span>
-<span><span class="co">#                  column is not required</span></span>
-<span><span class="co">#   * Argument 13: cols_kingdom (optional)</span></span>
-<span><span class="co">#   * Argument 14: cols_family (optional)</span></span>
-<span><span class="co">#   * Argument 15: cols_species (optional), you must have either a </span></span>
-<span><span class="co">#                  scientificName or a species column, but you do not need both</span></span>
-<span><span class="co">#   * Argument 16: cols_kingdomKey (optional)</span></span>
-<span><span class="co">#   * Argument 17: cols_familyKey (optional)</span></span>
-<span><span class="co">#   * Argument 18: cols_speciesKey (required), this can be either a taxonKey or </span></span>
-<span><span class="co">#                  speciesKey</span></span>
-<span><span class="co">#   * Argument 19: cols_familyCount (optional)</span></span>
-<span><span class="co">#   * Argument 20: cols_sex (optional)</span></span>
-<span><span class="co">#   * Argument 20: cols_lifeStage (optional)</span></span>
-<span><span class="co">#</span></span>
-<span><span class="co"># Outputs:</span></span>
-<span><span class="co">#   * processed_cube object containing the data cube as output_object$data </span></span>
-<span><span class="co">#     along with various metadata.</span></span>
-<span><span class="co">#</span></span>
-<span><span class="co">#     metadata include: range of years (as first_year and last_year), </span></span>
-<span><span class="co">#                                               coordinate range (as xmin, xmax, ymin, ymax), </span></span>
-<span><span class="co">#                                               number of grid cells (num_cells), </span></span>
-<span><span class="co">#                                               number of species (num_species), </span></span>
-<span><span class="co">#                                               total number of observations (num_obs), </span></span>
-<span><span class="co">#                                               vector of kingdoms (kingdoms), </span></span>
-<span><span class="co">#                                               number of families (num_families),</span></span>
-<span><span class="co">#                                               resolutions (resolution)</span></span>
-<span>                                                </span>
-<span></span>
-<span><span class="co"># Example:</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/b-cubed-eu/b3gbi" class="external-link">b3gbi</a></span><span class="op">)</span></span>
 <span><span class="va">denmark_cube</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/process_cube.html">process_cube</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, </span>
 <span>                                         <span class="st">"denmark_mammals_cube_eqdgc.csv"</span>, </span>
-<span>                                         package <span class="op">=</span> <span class="st">"b3gbi"</span><span class="op">)</span><span class="op">)</span></span>
+<span>                                         package <span class="op">=</span> <span class="st">"b3gbi"</span><span class="op">)</span>,</span>
+<span>                             first_year <span class="op">=</span> <span class="fl">1980</span><span class="op">)</span> <span class="co"># Filter the cube to start at 1980</span></span>
+<span></span>
+<span><span class="co"># Printing the object shows key metadata</span></span>
 <span><span class="va">denmark_cube</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Processed data cube for calculating biodiversity indicators</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Date Range: 1862 - 2024 </span></span>
+<span><span class="co">#&gt; Date Range: 1980 - 2024 </span></span>
 <span><span class="co">#&gt; Single-resolution cube with cell size 0.25degrees </span></span>
 <span><span class="co">#&gt; Number of cells: 323 </span></span>
 <span><span class="co">#&gt; Grid reference system: eqdgc </span></span>
@@ -191,38 +187,37 @@ with both the old and new cubes. The old ones come with an additional
 <span><span class="co">#&gt;  xmin  xmax  ymin  ymax </span></span>
 <span><span class="co">#&gt;  3.25 15.75 54.25 58.25 </span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Total number of observations: 207342 </span></span>
-<span><span class="co">#&gt; Number of species represented: 106 </span></span>
+<span><span class="co">#&gt; Total number of observations: 204664 </span></span>
+<span><span class="co">#&gt; Number of species represented: 100 </span></span>
 <span><span class="co">#&gt; Number of families represented: 31 </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; Kingdoms represented: Animalia </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; First 10 rows of data (use n = to show more):</span></span>
 <span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 31,632 × 15</span></span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 30,985 × 15</span></span></span>
 <span><span class="co">#&gt;     year cellCode  kingdomKey kingdom  familyKey family  taxonKey scientificName</span></span>
 <span><span class="co">#&gt;    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>          <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>        <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         </span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>  <span style="text-decoration: underline;">1</span>862 E009N57DD          1 Animalia      <span style="text-decoration: underline;">5</span>510 Muridae  5<span style="text-decoration: underline;">219</span>833 Micromys minu…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>  <span style="text-decoration: underline;">1</span>863 E009N57DD          1 Animalia      <span style="text-decoration: underline;">5</span>510 Muridae  5<span style="text-decoration: underline;">219</span>833 Micromys minu…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>  <span style="text-decoration: underline;">1</span>870 E009N57DD          1 Animalia      <span style="text-decoration: underline;">9</span>368 Vesper…  2<span style="text-decoration: underline;">432</span>439 Myotis dauben…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>  <span style="text-decoration: underline;">1</span>874 E009N57DD          1 Animalia      <span style="text-decoration: underline;">9</span>368 Vesper…  2<span style="text-decoration: underline;">432</span>439 Myotis dauben…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>  <span style="text-decoration: underline;">1</span>879 E009N57DB          1 Animalia      <span style="text-decoration: underline;">9</span>368 Vesper…  2<span style="text-decoration: underline;">432</span>439 Myotis dauben…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>  <span style="text-decoration: underline;">1</span>881 E008N56AB          1 Animalia      <span style="text-decoration: underline;">9</span>435 Dipodi…  2<span style="text-decoration: underline;">439</span>449 Sicista betul…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>  <span style="text-decoration: underline;">1</span>881 E015N55CC          1 Animalia      <span style="text-decoration: underline;">9</span>701 Canidae  5<span style="text-decoration: underline;">219</span>303 Vulpes lagopus</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>  <span style="text-decoration: underline;">1</span>884 E008N56AB          1 Animalia      <span style="text-decoration: underline;">9</span>435 Dipodi…  2<span style="text-decoration: underline;">439</span>449 Sicista betul…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>  <span style="text-decoration: underline;">1</span>884 E014N55DD          1 Animalia      <span style="text-decoration: underline;">5</span>510 Muridae  2<span style="text-decoration: underline;">437</span>756 Apodemus flav…</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>  <span style="text-decoration: underline;">1</span>884 E014N55DD          1 Animalia      <span style="text-decoration: underline;">5</span>510 Muridae  2<span style="text-decoration: underline;">437</span>760 Apodemus sylv…</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 31,622 more rows</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>  <span style="text-decoration: underline;">1</span>980 E008N55CB          1 Animalia      <span style="text-decoration: underline;">5</span>310 Phocid…  2<span style="text-decoration: underline;">434</span>793 Phoca vitulina</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>  <span style="text-decoration: underline;">1</span>980 E008N56BB          1 Animalia      <span style="text-decoration: underline;">5</span>307 Mustel…  5<span style="text-decoration: underline;">218</span>987 Mustela nival…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>  <span style="text-decoration: underline;">1</span>980 E008N57DC          1 Animalia      <span style="text-decoration: underline;">9</span>361 Phocoe…  2<span style="text-decoration: underline;">440</span>669 Phocoena phoc…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>  <span style="text-decoration: underline;">1</span>980 E009N55BB          1 Animalia      <span style="text-decoration: underline;">5</span>722 Erinac…  5<span style="text-decoration: underline;">219</span>616 Erinaceus eur…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>  <span style="text-decoration: underline;">1</span>980 E009N56BB          1 Animalia      <span style="text-decoration: underline;">9</span>368 Vesper…  5<span style="text-decoration: underline;">218</span>507 Plecotus auri…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>  <span style="text-decoration: underline;">1</span>980 E009N57DD          1 Animalia      <span style="text-decoration: underline;">9</span>361 Phocoe…  2<span style="text-decoration: underline;">440</span>669 Phocoena phoc…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>  <span style="text-decoration: underline;">1</span>980 E010N55AA          1 Animalia      <span style="text-decoration: underline;">5</span>310 Phocid…  2<span style="text-decoration: underline;">434</span>793 Phoca vitulina</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>  <span style="text-decoration: underline;">1</span>980 E010N55AA          1 Animalia      <span style="text-decoration: underline;">5</span>307 Mustel…  5<span style="text-decoration: underline;">219</span>019 Mustela ermin…</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>  <span style="text-decoration: underline;">1</span>980 E010N55BB          1 Animalia      <span style="text-decoration: underline;">5</span>310 Phocid…  2<span style="text-decoration: underline;">434</span>793 Phoca vitulina</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>  <span style="text-decoration: underline;">1</span>980 E010N56CB          1 Animalia      <span style="text-decoration: underline;">5</span>307 Mustel…  5<span style="text-decoration: underline;">218</span>887 Martes foina  </span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 30,975 more rows</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># ℹ 7 more variables: obs &lt;dbl&gt;, minCoordinateUncertaintyInMeters &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   minTemporalUncertainty &lt;dbl&gt;, familyCount &lt;dbl&gt;, xcoord &lt;dbl&gt;,</span></span></span>
 <span><span class="co">#&gt; <span style="color: #949494;">#   ycoord &lt;dbl&gt;, resolution &lt;chr&gt;</span></span></span></code></pre></div>
-<p>When you type the name of the cube object, the contents are displayed
-by a custom print function within the package. You can see the object
-structure using str().</p>
+<p>The data itself is stored in a tibble within the object’s
+<code>data</code> slot, and the rest is metadata.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">denmark_cube</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 11</span></span>
-<span><span class="co">#&gt;  $ first_year  : num 1862</span></span>
+<span><span class="co">#&gt;  $ first_year  : num 1980</span></span>
 <span><span class="co">#&gt;  $ last_year   : num 2024</span></span>
 <span><span class="co">#&gt;  $ coord_range :List of 4</span></span>
 <span><span class="co">#&gt;   ..$ xmin: num 3.25</span></span>
@@ -230,33 +225,45 @@ structure using str().</p>
 <span><span class="co">#&gt;   ..$ ymin: num 54.2</span></span>
 <span><span class="co">#&gt;   ..$ ymax: num 58.2</span></span>
 <span><span class="co">#&gt;  $ num_cells   : int 323</span></span>
-<span><span class="co">#&gt;  $ num_species : int 106</span></span>
-<span><span class="co">#&gt;  $ num_obs     : num 207342</span></span>
+<span><span class="co">#&gt;  $ num_species : int 100</span></span>
+<span><span class="co">#&gt;  $ num_obs     : num 204664</span></span>
 <span><span class="co">#&gt;  $ kingdoms    : chr "Animalia"</span></span>
 <span><span class="co">#&gt;  $ num_families: int 31</span></span>
 <span><span class="co">#&gt;  $ grid_type   : chr "eqdgc"</span></span>
 <span><span class="co">#&gt;  $ resolutions : chr "0.25degrees"</span></span>
-<span><span class="co">#&gt;  $ data        : tibble [31,632 × 15] (S3: tbl_df/tbl/data.frame)</span></span>
-<span><span class="co">#&gt;   ..$ year                            : num [1:31632] 1862 1863 1870 1874 1879 ...</span></span>
-<span><span class="co">#&gt;   ..$ cellCode                        : chr [1:31632] "E009N57DD" "E009N57DD" "E009N57DD" "E009N57DD" ...</span></span>
-<span><span class="co">#&gt;   ..$ kingdomKey                      : num [1:31632] 1 1 1 1 1 1 1 1 1 1 ...</span></span>
-<span><span class="co">#&gt;   ..$ kingdom                         : chr [1:31632] "Animalia" "Animalia" "Animalia" "Animalia" ...</span></span>
-<span><span class="co">#&gt;   ..$ familyKey                       : num [1:31632] 5510 5510 9368 9368 9368 ...</span></span>
-<span><span class="co">#&gt;   ..$ family                          : chr [1:31632] "Muridae" "Muridae" "Vespertilionidae" "Vespertilionidae" ...</span></span>
-<span><span class="co">#&gt;   ..$ taxonKey                        : num [1:31632] 5219833 5219833 2432439 2432439 2432439 ...</span></span>
-<span><span class="co">#&gt;   ..$ scientificName                  : chr [1:31632] "Micromys minutus" "Micromys minutus" "Myotis daubentonii" "Myotis daubentonii" ...</span></span>
-<span><span class="co">#&gt;   ..$ obs                             : num [1:31632] 2 1 1 1 1 1 1 1 1 1 ...</span></span>
-<span><span class="co">#&gt;   ..$ minCoordinateUncertaintyInMeters: num [1:31632] 1000 1000 1000 1000 1000 1000 1000 1000 1000 1000 ...</span></span>
-<span><span class="co">#&gt;   ..$ minTemporalUncertainty          : num [1:31632] 86400 86400 86400 86400 86400 ...</span></span>
-<span><span class="co">#&gt;   ..$ familyCount                     : num [1:31632] 4493 4493 16848 16848 16848 ...</span></span>
-<span><span class="co">#&gt;   ..$ xcoord                          : num [1:31632] 9.88 9.88 9.88 9.88 9.88 ...</span></span>
-<span><span class="co">#&gt;   ..$ ycoord                          : num [1:31632] 57.1 57.1 57.1 57.1 57.4 ...</span></span>
-<span><span class="co">#&gt;   ..$ resolution                      : chr [1:31632] "0.25degrees" "0.25degrees" "0.25degrees" "0.25degrees" ...</span></span>
+<span><span class="co">#&gt;  $ data        : tibble [30,985 × 15] (S3: tbl_df/tbl/data.frame)</span></span>
+<span><span class="co">#&gt;   ..$ year                            : num [1:30985] 1980 1980 1980 1980 1980 1980 1980 1980 1980 1980 ...</span></span>
+<span><span class="co">#&gt;   ..$ cellCode                        : chr [1:30985] "E008N55CB" "E008N56BB" "E008N57DC" "E009N55BB" ...</span></span>
+<span><span class="co">#&gt;   ..$ kingdomKey                      : num [1:30985] 1 1 1 1 1 1 1 1 1 1 ...</span></span>
+<span><span class="co">#&gt;   ..$ kingdom                         : chr [1:30985] "Animalia" "Animalia" "Animalia" "Animalia" ...</span></span>
+<span><span class="co">#&gt;   ..$ familyKey                       : num [1:30985] 5310 5307 9361 5722 9368 ...</span></span>
+<span><span class="co">#&gt;   ..$ family                          : chr [1:30985] "Phocidae" "Mustelidae" "Phocoenidae" "Erinaceidae" ...</span></span>
+<span><span class="co">#&gt;   ..$ taxonKey                        : num [1:30985] 2434793 5218987 2440669 5219616 5218507 ...</span></span>
+<span><span class="co">#&gt;   ..$ scientificName                  : chr [1:30985] "Phoca vitulina" "Mustela nivalis" "Phocoena phocoena" "Erinaceus europaeus" ...</span></span>
+<span><span class="co">#&gt;   ..$ obs                             : num [1:30985] 1 1 27 1 1 1 1 1 1 1 ...</span></span>
+<span><span class="co">#&gt;   ..$ minCoordinateUncertaintyInMeters: num [1:30985] 3 1000 1000 50 1000 1000 3 930 3 92 ...</span></span>
+<span><span class="co">#&gt;   ..$ minTemporalUncertainty          : num [1:30985] 86400 86400 86400 86400 2678400 ...</span></span>
+<span><span class="co">#&gt;   ..$ familyCount                     : num [1:30985] 39284 23427 19402 3807 16848 ...</span></span>
+<span><span class="co">#&gt;   ..$ xcoord                          : num [1:30985] 8.38 8.88 8.62 9.88 9.88 ...</span></span>
+<span><span class="co">#&gt;   ..$ ycoord                          : num [1:30985] 55.4 56.9 57.1 55.9 56.9 ...</span></span>
+<span><span class="co">#&gt;   ..$ resolution                      : chr [1:30985] "0.25degrees" "0.25degrees" "0.25degrees" "0.25degrees" ...</span></span>
 <span><span class="co">#&gt;  - attr(*, "class")= chr "processed_cube"</span></span></code></pre></div>
-<p>The cube itself is contained in a tibble (tidyverse version of data
-frame) called data, while other variables contain metadata.</p>
-<p>Now let’s have a look at what indicators are available to calculate
-and plot.</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="step-2-indicator-calculation">Step 2: Indicator Calculation<a class="anchor" aria-label="anchor" href="#step-2-indicator-calculation"></a>
+</h2>
+<p>The package provides numerous wrappers to calculate indicators as
+either <strong>maps</strong> (spatial distribution) or <strong>time
+series</strong> (temporal trends).</p>
+<div class="section level3">
+<h3 id="available-indicators">Available Indicators<a class="anchor" aria-label="anchor" href="#available-indicators"></a>
+</h3>
+<p>Use <code>available_indicators</code> to see the full list of
+indicators and their associated wrapper functions (e.g.,
+<code>obs_richness_map</code>, <code>total_occ_ts</code>).</p>
+<p>💡 <strong>Note</strong>: The ANSI characters around the indicator
+titles do not appear in R. They are used to colour the titles.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">available_indicators</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -375,296 +382,211 @@ and plot.</p>
 <span><span class="co">#&gt;     Calculate time series: yes, e.g. occ_turnover_ts(my_data_cube)</span></span>
 <span><span class="co">#&gt;     Additional map function arguments: none</span></span>
 <span><span class="co">#&gt;     Additional time series function arguments: none</span></span></code></pre></div>
-<p>Each available indicator is listed along with its class, and the
-functions used to calculate it as a map and/or time series.</p>
-<p>The next function we need to understand is called
-compute_indicator_workflow(). This is the core of the package, where the
-work of calculating the indicator is done. Each indicator comes with its
-own wrapper functions, and these should be used rather than directly
-calling compute_indicator_workflow(). The wrapper functions are given in
-the details of available_indicators, but are also listed below for
-convenience.</p>
+</div>
+<div class="section level3">
+<h3 id="core-arguments-for-wrapper-functions">Core Arguments for Wrapper Functions<a class="anchor" aria-label="anchor" href="#core-arguments-for-wrapper-functions"></a>
+</h3>
+<p>All indicator wrapper functions (e.g., <code>obs_richness_map</code>,
+<code>occ_turnover_ts</code>) share the following key arguments:</p>
+<table class="table">
+<colgroup>
+<col width="31%">
+<col width="40%">
+<col width="28%">
+</colgroup>
+<thead><tr class="header">
+<th>Argument</th>
+<th>Description</th>
+<th>Details</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>data</code></td>
+<td>The <code>processed_cube</code> object. Required.</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>level</code></td>
+<td>The geographical scale (‘country’, ‘continent’, ‘world’).</td>
+<td>Automatically retrieves boundaries.</td>
+</tr>
+<tr class="odd">
+<td><code>region</code></td>
+<td>The specific region name (e.g., ‘Germany’, ‘Europe’).</td>
+<td>Required if level is set.</td>
+</tr>
+<tr class="even">
+<td><code>ci_type</code></td>
+<td>Type of bootstrap confidence interval to calculate. Only relevant
+for time series.</td>
+<td>‘norm’, ‘basic’, ‘perc’, ‘bca’, or ‘none’. Defaults to ‘norm’ for
+time series.</td>
+</tr>
+<tr class="odd">
+<td><code>num_bootstrap</code></td>
+<td>Number of bootstrap runs for CI calculation. Only relevant for time
+series.</td>
+<td>Defaults to 100.</td>
+</tr>
+<tr class="even">
+<td><code>first_year</code></td>
+<td>Narrow the time range for this specific calculation.</td>
+<td>Defaults to the cube’s start year.</td>
+</tr>
+</tbody>
+</table>
+<p>⚠️ <strong>Important Note on Confidence Intervals (CIs)</strong>:</p>
+<ul>
+<li>The <code>ci_type</code> argument is only used for calculating
+uncertainty in general time series indicators (e.g.,
+<code>obs_richness_ts</code>) and is ignored for map indicators.</li>
+<li>For indicators based on Hill diversity (e.g.,
+<code>hill_ts()</code>), the <code>ci_type</code> is ignored because CIs
+are calculated internally using the iNEXT package. However, the
+<code>num_bootstrap</code> argument is still required to define the
+number of runs for iNEXT’s internal uncertainty estimation.</li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="example-observed-species-richness-map">Example: Observed Species Richness Map<a class="anchor" aria-label="anchor" href="#example-observed-species-richness-map"></a>
+</h3>
+<p>Let’s calculate the observed richness spatially, covering the period
+from 1980 to the end of the cube’s data.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Function 2: compute_indicator_workflow()</span></span>
-<span><span class="co"># Description: Calculates a biodiversity indicator over time or space from a </span></span>
-<span><span class="co"># processed_cube object. Should be called by one of the wrapper functions listed </span></span>
-<span><span class="co"># below. </span></span>
-<span><span class="co">#</span></span>
-<span><span class="co"># Inputs: </span></span>
-<span><span class="co">#   * Argument 1: data, a processed_cube object</span></span>
-<span><span class="co">#   * Argument 2: type, the type of indicator to calculate</span></span>
-<span><span class="co">#   * Argument 3: dim_type, dimension to calculate the indicator across time, </span></span>
-<span><span class="co">#                 'ts', or space, 'map'.</span></span>
-<span><span class="co">#   * Argument 4: ci_type (optional), type of bootstrap confidence intervals to </span></span>
-<span><span class="co">#                 calculate (norm, basic, perc, bca, none). Uses 'norm' by </span></span>
-<span><span class="co">#                 default.</span></span>
-<span><span class="co">#   * Argument 5: cell_size (optional), the length (in km) of grid cells to use</span></span>
-<span><span class="co">#   * Argument 6: level (optional), the scale of region to calculate over </span></span>
-<span><span class="co">#                 (country, continent, world). Uses the whole cube by default.</span></span>
-<span><span class="co">#   * Argument 7: region (optional), the name of the region to calculate over </span></span>
-<span><span class="co">#                 (e.g. Germany, Europe). Uses the whole cube by default.</span></span>
-<span><span class="co">#   * Argument 8: ne_type (optional), the type of natural earth data to </span></span>
-<span><span class="co">#                 download (countries, map units, sovereignty, geounit). Uses </span></span>
-<span><span class="co">#                 'countries' by default.</span></span>
-<span><span class="co">#   * Argument 9: ne_scale (optional), the scale of natural earth data to </span></span>
-<span><span class="co">#                 download (small - 110m, medium - 50m, large - 10m). Uses </span></span>
-<span><span class="co">#                 'medium' by default.</span></span>
-<span><span class="co">#   * Argument 10: output_crs (optional), the projection to use for your </span></span>
-<span><span class="co">#                  calculated indicator if you don't want the default.</span></span>
-<span><span class="co">#   * Argument 11: first_year (optional), use to limit the data used to </span></span>
-<span><span class="co">#                  calculate the indicator to a narrower range than the cube.</span></span>
-<span><span class="co">#   * Argument 12: last_year (optional), see first_year.</span></span>
-<span><span class="co">#   * Argument 13: spherical_geometry (optional), if FALSE, temporarily turn </span></span>
-<span><span class="co">#                  off spherical geometry when calculating indicator.</span></span>
-<span><span class="co">#   * Argument 14: make_valid (optional), call st_make_valid from the sf </span></span>
-<span><span class="co">#                  package to fix geometry issues if you are getting errors.</span></span>
-<span><span class="co">#   * Argument 15: num_bootstrap (optional), set the number of bootstraps to </span></span>
-<span><span class="co">#                  calculate for generating confidence intervals. Uses 1000 by </span></span>
-<span><span class="co">#                  default.</span></span>
-<span><span class="co">#   * Argument 16: shapefile_path, path to an external shapefile you want to</span></span>
-<span><span class="co">#                  use for cropping your data</span></span>
-<span><span class="co">#   * Argument 17: shapefile_crs (optional), CRS of your shapefile if it is </span></span>
-<span><span class="co">#                  .wkt format and is not EPSG:4326</span></span>
-<span><span class="co">#   * Argument 18: invert, invert the shapefile</span></span>
-<span><span class="co">#   * Argument 19: include_water, include ocean and lake layers from </span></span>
-<span><span class="co">#                  rnaturalearth. Defaults to FALSE. Alternatively you can set </span></span>
-<span><span class="co">#                  it to "buffered_coast" to set a buffer distance around land.</span></span>
-<span><span class="co">#   * Argument 20: buffer_dist_km, Distance to buffer around the land if</span></span>
-<span><span class="co">#                  include_water set to "buffered_coast".</span></span>
-<span><span class="co">#</span></span>
-<span><span class="co"># Outputs:</span></span>
-<span><span class="co">#   * indicator_ts or indicator_map object containing a data frame of indicator </span></span>
-<span><span class="co">#     values mapped to years or grid cells, along with various metadata.</span></span>
-<span><span class="co">#</span></span>
-<span><span class="co">#     metadata include: range of years (as first_year and last_year), </span></span>
-<span><span class="co">#                                               coordinate range (as xmin, xmax, ymin, ymax), </span></span>
-<span><span class="co">#                                               number of grid cells (num_cells), </span></span>
-<span><span class="co">#                                               number of species (num_species), </span></span>
-<span><span class="co">#                                               total number of observations (num_obs), </span></span>
-<span><span class="co">#                                               vector of kingdoms (kingdoms), </span></span>
-<span><span class="co">#                                               number of families (num_families),</span></span>
-<span><span class="co">#                                               resolutions (resolution)</span></span>
-<span><span class="co">#</span></span>
-<span><span class="co"># Wrapper functions:</span></span>
-<span><span class="co">#   * obs_richness_map(): Calculate a gridded map of observed richness</span></span>
-<span><span class="co">#   * obs_richness_ts(): Calculate a time series (trend) of observed richness</span></span>
-<span><span class="co">#   * cum_richness_ts(): Calculate cumulative richness over time</span></span>
-<span><span class="co">#   * total_occ_map(): Calculate the total number of records over a gridded map</span></span>
-<span><span class="co">#   * total_occ_ts(): Calculate the total number of records over time</span></span>
-<span><span class="co">#   * occ_density_map(): Calculate the density of records over a gridded map</span></span>
-<span><span class="co">#   * occ_density_ts(): Calculate the density of records over time</span></span>
-<span><span class="co">#   * williams_eveness_map(): Calculate Williams' evenness over a gridded map</span></span>
-<span><span class="co">#   * williams_evenness_ts(): Calculate Williams' evenness over time</span></span>
-<span><span class="co">#   * pielou_evenness_map(): Calculate Pielou's evenness over a gridded map</span></span>
-<span><span class="co">#   * pielou_evenness_ts(): Calculate Pielou's evenness over time</span></span>
-<span><span class="co">#   * ab_rarity_map(): Calculate abundance-based rarity over a gridded map</span></span>
-<span><span class="co">#   * ab_rarity_ts(): Calculate abundance-based rarity over time</span></span>
-<span><span class="co">#   * area_rarity_map(): Calculate area-based rarity over a gridded map</span></span>
-<span><span class="co">#   * area_rarity_ts(): Calculate area-based rarity over time</span></span>
-<span><span class="co">#   * newness_map(): Calculate the mean year of occurrence over a gridded map</span></span>
-<span><span class="co">#   * newness_ts(): Calculate the mean year of occurrence over time</span></span>
-<span><span class="co">#   * tax_distinct_map(): Calculate taxonomic distinctness over a gridded map</span></span>
-<span><span class="co">#   * tax_distinct_ts(): Calculate  taxonomic distinctness over time</span></span>
-<span><span class="co">#   * occ_turnover_ts(): Calculate occupancy turnover over time</span></span>
-<span><span class="co"># </span></span>
-<span></span>
-<span>                    </span>
-<span><span class="co"># Example:</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/b-cubed-eu/b3gbi" class="external-link">b3gbi</a></span><span class="op">)</span></span>
-<span><span class="va">Denmark_observed_richness_map</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/obs_richness_map.html">obs_richness_map</a></span><span class="op">(</span><span class="va">example_cube_1</span>, </span>
-<span>                                                  first_year <span class="op">=</span> <span class="fl">1980</span>, </span>
-<span>                                                  level <span class="op">=</span> <span class="st">"country"</span>, </span>
-<span>                                                  region <span class="op">=</span> <span class="st">"Denmark"</span><span class="op">)</span> </span>
-<span><span class="va">Denmark_observed_richness_map</span></span>
-<span><span class="co">#&gt; Gridded biodiversity indicator map</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Name of Indicator: Observed Species Richness </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Map of Denmark </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Projected CRS: EPSG:4326 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Coordinate range:</span></span>
-<span><span class="co">#&gt;      xmin      ymin      xmax      ymax </span></span>
-<span><span class="co">#&gt;  8.016236 54.628857 15.272695 57.742483 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Grid cell size: 0.25 degrees </span></span>
-<span><span class="co">#&gt; Number of cells: 299 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Observation years: 1980 - 2023 </span></span>
-<span><span class="co">#&gt; Total years with observations: 44 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Number of species represented: 106 </span></span>
-<span><span class="co">#&gt; Number of families represented: 31 </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Kingdoms represented: Animalia </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Map layers:  </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; First 10 rows of data (use n = to show more):</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 299 × 3</span></span></span>
-<span><span class="co">#&gt;    cellid   area diversity_val</span></span>
-<span><span class="co">#&gt;     <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494;">[km^2]</span>         <span style="color: #949494; font-style: italic;">&lt;int&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 1</span>     68   446.            <span style="color: #BB0000;">NA</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 2</span>     69   446.            <span style="color: #BB0000;">NA</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 3</span>     70   446.            <span style="color: #BB0000;">NA</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 4</span>     71   446.            <span style="color: #BB0000;">NA</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 5</span>     72   446.            17</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 6</span>     73   446.            32</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 7</span>     74   446.            47</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span>     75   446.            48</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span>     76   446.            37</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span>     77   446.            <span style="color: #BB0000;">NA</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 289 more rows</span></span></span></code></pre></div>
-<p>When you type the name of the indicator object, you will again see
-that it is plotted by an internal function of the package. As with the
-cube objects, indicator objects contain a tibble called data. In the
-case of a mapped indicator, the tibble is also an sf object containing
-geometry information for each cell.</p>
-<p>Each indicator object belongs to two specialized object classes which
-determine how it is handled when you use the plot() command. First, it
-has either the class ‘indicator_ts’ or ‘indicator_map’. Second, it has a
-class specific to the indicator type. You can see this using the class()
-command.</p>
+<code class="sourceCode R"><span><span class="co"># Calculate a gridded map of observed species richness for Denmark</span></span>
+<span><span class="co"># Note that ci_type is ignored for map indicators</span></span>
+<span><span class="va">Denmark_observed_richness_map</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/obs_richness_map.html">obs_richness_map</a></span><span class="op">(</span><span class="va">denmark_cube</span>, </span>
+<span>                                                   level <span class="op">=</span> <span class="st">"country"</span>, </span>
+<span>                                                   region <span class="op">=</span> <span class="st">"Denmark"</span><span class="op">)</span> </span></code></pre></div>
+<p>The result is an <code>indicator_map</code> object (the data within
+it is also an <code>sf</code> object, containing geographical
+information).</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">Denmark_observed_richness_map</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "indicator_map" "obs_richness"</span></span></code></pre></div>
-<p>These are S3 classes (S3 being one of several objected oriented
-programming systems contained within R).</p>
-<p>The final functions we will need to interface with are the plot
-functions. These are plot_ts() and plot_map(), but in fact they are
-called using plot(). The plot functions offer quite a few arguments to
-customize the output, but the plotting is done using the ggplot package,
-so further customization is quite easy.</p>
+<span><span class="co">#&gt; [1] "indicator_map" "obs_richness"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">Denmark_observed_richness_map</span><span class="op">$</span><span class="va">data</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "indicator_data" "sf"             "data.frame"</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="example-total-occurrences-time-series">Example: Total Occurrences Time Series<a class="anchor" aria-label="anchor" href="#example-total-occurrences-time-series"></a>
+</h3>
+<p>Now, let’s calculate the same indicator temporally for a trend
+analysis. We will use the default <code>ci_type = "norm"</code> and
+<code>num_bootstrap = 100</code>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Function 3: plot_ts()</span></span>
-<span><span class="co"># Description: Plots an indicator_ts object as a time series using ggplot. </span></span>
-<span><span class="co"># Called by plot().</span></span>
-<span></span>
-<span><span class="co"># Inputs: </span></span>
-<span><span class="co">#   * Argument 1: x, an indicator_ts object </span></span>
-<span><span class="co">#   * Argument 2: min_year (optional), earliest year to include in plot</span></span>
-<span><span class="co">#   * Argument 3: max_year (optional), latest year to include in plot</span></span>
-<span><span class="co">#   * Argument 4: title (optional), specify a title for the plot</span></span>
-<span><span class="co">#   * Argument 5: auto_title (optional), specified by the calling function if </span></span>
-<span><span class="co">#                 title is set to "auto"</span></span>
-<span><span class="co">#   * Argument 6: y_label_default (optional), specified by the calling function </span></span>
-<span><span class="co">#                 if no y_label is provided</span></span>
-<span><span class="co">#   * Argument 7: suppress_y (optional), default is "FALSE". Set to "TRUE" to </span></span>
-<span><span class="co">#                 turn off y axis text</span></span>
-<span><span class="co">#   * Argument 8: smoothed_trend (optional), default is "TRUE". Set to "FALSE" </span></span>
-<span><span class="co">#                 to avoid displaying only the time series, without a smoothed </span></span>
-<span><span class="co">#                 trend </span></span>
-<span><span class="co">#   * Argument 9: linecolour (optional), sets the colour of the indicator line </span></span>
-<span><span class="co">#                 or points. Default is darkorange. </span></span>
-<span><span class="co">#   * Argument 10: linealpha (optional), sets the transparency of the indicator </span></span>
-<span><span class="co">#                  line or points. Default is 0.8.</span></span>
-<span><span class="co">#   * Argument 11: ribboncolour (optional), colour for bootstrapped confidence </span></span>
-<span><span class="co">#                  intervals. Default is goldenrod1. Set to NA if you don't </span></span>
-<span><span class="co">#                  want to plot the CIs.</span></span>
-<span><span class="co">#   * Argument 12: ribbonalpha (optional), transparency for confidence interval </span></span>
-<span><span class="co">#                  ribbon (if CI type set to 'ribbon'. Default is 0.2.</span></span>
-<span><span class="co">#   * Argument 13: error_alpha (optional), transparency for error bars (if CI </span></span>
-<span><span class="co">#                  type set to 'error_bar). Default is 1.</span></span>
-<span><span class="co">#   * Argument 14: trendlinecolour (optional), sets the colour of the smoothed </span></span>
-<span><span class="co">#                  trend line. Default is blue.</span></span>
-<span><span class="co">#   * Argument 15: trendlinealpha (optional), sets the transparency of the </span></span>
-<span><span class="co">#                  smoothed trend line. Default is 0.5.</span></span>
-<span><span class="co">#   * Argument 16: envelopecolour (optional), sets the colour of the smoothed </span></span>
-<span><span class="co">#                  trend envelope. Default is lightsteelblue.</span></span>
-<span><span class="co">#   * Argument 17: envelopealpha (optional), sets the transparency of the </span></span>
-<span><span class="co">#                  smoothed trend envelope. Default is 0.2.</span></span>
-<span><span class="co">#   * Argument 18: smooth_cialpha (optional), sets the transparency for the </span></span>
-<span><span class="co">#                  smoothed lines forming the edges of the smoothed trend </span></span>
-<span><span class="co">#                  envelope. Default is 1.</span></span>
-<span><span class="co">#   * Argument 19: point_line (optional)</span></span>
-<span><span class="co">#   * Argument 20: pointsize (optional)</span></span>
-<span><span class="co">#   * Argument 21: linewidth (optional)</span></span>
-<span><span class="co">#   * Argument 22: ci_type (optional)</span></span>
-<span><span class="co">#   * Argument 23: error_width (optional)</span></span>
-<span><span class="co">#   * Argument 24: error_thickness (optional)</span></span>
-<span><span class="co">#   * Argument 25: smooth_linetype (optional)</span></span>
-<span><span class="co">#   * Argument 26: smooth_linewidth (optional)</span></span>
-<span><span class="co">#   * Argument 27: smooth_cilinewidth (optional)</span></span>
-<span><span class="co">#   * Argument 28: gridoff (optional), default is "FALSE". Set to "TRUE" to </span></span>
-<span><span class="co">#                  turn off grid lines on the plot  </span></span>
-<span><span class="co">#   * Argument 29: x_label (optional), use to set a custom label for the x-axis</span></span>
-<span><span class="co">#   * Argument 30: y_label (optional), use to set a custom label for the y-axis</span></span>
-<span><span class="co">#   * Argument 31: x_expand (optional)</span></span>
-<span><span class="co">#   * Argument 32: y_expand (optional)</span></span>
-<span><span class="co">#   * Argument 33: x_breaks (optional), set number of breaks along the x-axis</span></span>
-<span><span class="co">#   * Argument 34: y_breaks (optional), set number of breaks along the y-axis</span></span>
-<span><span class="co">#   * Argument 35: wrap_length (optional), set maximum length of text allowed </span></span>
-<span><span class="co">#                  on a single line for the plot title</span></span>
-<span><span class="co">#</span></span>
-<span><span class="co"># Outputs:</span></span>
-<span><span class="co">#   * Time series plot with optional smoothed trend overlay. The plot can be </span></span>
-<span><span class="co">#     further customized (beyond the provided arguments) using ggplot functions.</span></span>
-<span><span class="co">#   * Plots can be saved using ggsave.</span></span>
-<span></span>
-<span><span class="co"># Example:</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/b-cubed-eu/b3gbi" class="external-link">b3gbi</a></span><span class="op">)</span></span>
-<span><span class="va">Denmark_observed_richness_ts</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/obs_richness_map.html">obs_richness_ts</a></span><span class="op">(</span><span class="va">example_cube_1</span>, </span>
-<span>                                                first_year <span class="op">=</span> <span class="fl">1980</span>, </span>
-<span>                                                level <span class="op">=</span> <span class="st">"country"</span>, </span>
-<span>                                                region <span class="op">=</span> <span class="st">"Denmark"</span>, </span>
-<span>                                                ci_type <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> </span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">Denmark_observed_richness_ts</span><span class="op">)</span></span></code></pre></div>
-<p><img src="b3gbi_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
+<code class="sourceCode R"><span><span class="co"># Calculate a time series of total occurrences for Denmark</span></span>
+<span><span class="va">Denmark_total_occ_ts</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/total_occ_map.html">total_occ_ts</a></span><span class="op">(</span><span class="va">denmark_cube</span>, </span>
+<span>                                                 level <span class="op">=</span> <span class="st">"country"</span>, </span>
+<span>                                                 region <span class="op">=</span> <span class="st">"Denmark"</span>, </span>
+<span>                                                 ci_type <span class="op">=</span> <span class="st">"norm"</span>, <span class="co"># Include confidence intervals</span></span>
+<span>                                                 num_bootstrap <span class="op">=</span> <span class="fl">100</span><span class="op">)</span> <span class="co"># Using the default number of runs</span></span></code></pre></div>
+<p>The result is an <code>indicator_ts</code> object.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Function 4: plot_map()</span></span>
-<span><span class="co"># Description: Plots an indicator_map object as a gridded map using ggplot. </span></span>
-<span><span class="co"># Called by plot().</span></span>
-<span></span>
-<span><span class="co"># Inputs: </span></span>
-<span><span class="co">#   * Argument 1: x, an indicator_map object </span></span>
-<span><span class="co">#   * Argument 2: title (optional), specify a title for the plot</span></span>
-<span><span class="co">#   * Argument 3: auto_title (optional), specified by the calling function if </span></span>
-<span><span class="co">#                 title is set to "auto"</span></span>
-<span><span class="co">#   * Argument 4: leg_label_default (optional), legend title specified by the </span></span>
-<span><span class="co">#                 calling function if no leg_label is provided</span></span>
-<span><span class="co">#   * Argument 5: xlims (optional), use to set custom map limits</span></span>
-<span><span class="co">#   * Argument 6: ylims (optional), use to set custom map limits </span></span>
-<span><span class="co">#   * Argument 7: trans (optional), set transformation to apply to the legend, </span></span>
-<span><span class="co">#                 e.g. "log10"</span></span>
-<span><span class="co">#   * Argument 8: breaks (optional), set custom breaks for the legend</span></span>
-<span><span class="co">#   * Argument 9: labels (optional), set custom labels for the legend</span></span>
-<span><span class="co">#   * Argument 10: Europe_crop_EEA (optional), default is "TRUE". Crops </span></span>
-<span><span class="co">#                  outlying islands when plotting a continental map of Europe </span></span>
-<span><span class="co">#                  using the EEA grid. You can set this to "FALSE" to show the </span></span>
-<span><span class="co">#                  islands, but the output will be less pretty. Will be </span></span>
-<span><span class="co">#                  overridden if crop_to_grid set to "TRUE".</span></span>
-<span><span class="co">#   * Argument 11: crop_to_grid (optional), If set to "TRUE" the grid will </span></span>
-<span><span class="co">#                  determine the edges of the map. This argument overrides </span></span>
-<span><span class="co">#                  Europe_crop_EEA. Default is "FALSE".</span></span>
-<span><span class="co">#   * Argument 12: surround (optional), default is "TRUE". Shows surrounding </span></span>
-<span><span class="co">#                  countries when plotting a single country. Set to "FALSE" to </span></span>
-<span><span class="co">#                  show only the country of interest, but output will be less </span></span>
-<span><span class="co">#                  pretty.</span></span>
-<span><span class="co">#   * Argument 13: panel_bg (optional), set panel background colour. Default is </span></span>
-<span><span class="co">#                  "white".</span></span>
-<span><span class="co">#   * Argument 14: land_fill_colour (optional), set colour for the land area </span></span>
-<span><span class="co">#                  outside of the grid. Default is "grey85".</span></span>
-<span><span class="co">#   * Argument 15: legend_title (optional), set a custom legend title</span></span>
-<span><span class="co">#   * Argument 16: legend_limits (optional), set custom limits for the legend</span></span>
-<span><span class="co">#   * Argument 17: legend_title_wrap_length (optional), set maximum length of </span></span>
-<span><span class="co">#                  text allowed on a single line for the legend title</span></span>
-<span><span class="co">#   * Argument 18: title_wrap_length (optional), set maximum length of text </span></span>
-<span><span class="co">#                  allowed on a single line for the plot title</span></span>
-<span><span class="co">#</span></span>
-<span><span class="co"># Outputs:</span></span>
-<span><span class="co">#   * Time series plot with optional smoothed trend overlay. The plot can be </span></span>
-<span><span class="co">#     further customized (beyond the provided arguments) using ggplot functions.</span></span>
-<span><span class="co">#   * Plots can be saved using ggsave.</span></span>
-<span></span>
-<span><span class="co"># Example:</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/b-cubed-eu/b3gbi" class="external-link">b3gbi</a></span><span class="op">)</span></span>
-<span><span class="va">Denmark_observed_richness_map</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/obs_richness_map.html">obs_richness_map</a></span><span class="op">(</span><span class="va">example_cube_1</span>, </span>
-<span>                                                  level <span class="op">=</span> <span class="st">"country"</span>, </span>
-<span>                                                  region <span class="op">=</span> <span class="st">"Denmark"</span><span class="op">)</span> </span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">Denmark_observed_richness_map</span><span class="op">)</span></span></code></pre></div>
-<p><img src="b3gbi_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">Denmark_total_occ_ts</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "indicator_ts" "total_occ"</span></span></code></pre></div>
+</div>
+</div>
+<div class="section level2">
+<h2 id="step-3-visualization-with-plot">Step 3: Visualization with <code>plot()</code><a class="anchor" aria-label="anchor" href="#step-3-visualization-with-plot"></a>
+</h2>
+<p>The generic <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> function automatically calls the
+appropriate helper function (<code><a href="../reference/plot_map.html">plot_map()</a></code> or
+<code><a href="../reference/plot_ts.html">plot_ts()</a></code>) and applies smart defaults for titles, colors,
+and layout.</p>
+<div class="section level3">
+<h3 id="plotting-the-map">Plotting the Map<a class="anchor" aria-label="anchor" href="#plotting-the-map"></a>
+</h3>
+<table class="table">
+<colgroup>
+<col width="28%">
+<col width="37%">
+<col width="34%">
+</colgroup>
+<thead><tr class="header">
+<th>Argument</th>
+<th>Description</th>
+<th>Common Use</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>title</code></td>
+<td>Sets the plot title.</td>
+<td>e.g., “Observed Richness in Denmark”</td>
+</tr>
+<tr class="even">
+<td><code>legend_title</code></td>
+<td>Sets the legend title.</td>
+<td>e.g., “Number of Species”</td>
+</tr>
+<tr class="odd">
+<td><code>crop_to_grid</code></td>
+<td>If TRUE, the map edges are determined by the grid extent.</td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code>surround</code></td>
+<td>If FALSE, hides surrounding countries.</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Plotting the map object</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">Denmark_observed_richness_map</span>, </span>
+<span>     legend_title <span class="op">=</span> <span class="st">"Mammal Species Count"</span>,</span>
+<span>     title <span class="op">=</span> <span class="st">"Observed Mammal Richness (1980-Present)"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="b3gbi_files/figure-html/plot-map-1.png" width="95%"></p>
+</div>
+<div class="section level3">
+<h3 id="plotting-the-time-series">Plotting the Time Series<a class="anchor" aria-label="anchor" href="#plotting-the-time-series"></a>
+</h3>
+<table class="table">
+<colgroup>
+<col width="28%">
+<col width="37%">
+<col width="34%">
+</colgroup>
+<thead><tr class="header">
+<th>Argument</th>
+<th>Description</th>
+<th>Common Use</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>smoothed_trend</code></td>
+<td>If TRUE, displays a smoothed trend line (LOESS).</td>
+<td>Defaults to TRUE.</td>
+</tr>
+<tr class="even">
+<td><code>linecolour</code></td>
+<td>Sets the color of the indicator line/points.</td>
+<td>e.g., “darkgreen”</td>
+</tr>
+<tr class="odd">
+<td><code>ribboncolour</code></td>
+<td>Sets the color of the confidence interval ribbon.</td>
+<td>e.g., “lightgreen”</td>
+</tr>
+<tr class="even">
+<td>
+<code>x_label</code> / <code>y_label</code>
+</td>
+<td>Custom labels for the axes.</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Plotting the time series object</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">Denmark_total_occ_ts</span>, </span>
+<span>     title <span class="op">=</span> <span class="st">"Temporal Trend of Total Mammal Occurrences in Denmark"</span>,</span>
+<span>     linecolour <span class="op">=</span> <span class="st">"blue"</span>,</span>
+<span>     ribboncolour <span class="op">=</span> <span class="st">"skyblue"</span>,</span>
+<span>     trendlinecolour <span class="op">=</span> <span class="st">"darkorange"</span>,</span>
+<span>     envelopecolour <span class="op">=</span> <span class="st">"orange"</span>,</span>
+<span>     smoothed_trend <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p><img src="b3gbi_files/figure-html/plot-ts-1.png" width="95%"></p>
+</div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
