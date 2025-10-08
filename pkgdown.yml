@@ -3,7 +3,7 @@ pkgdown: 2.1.3
 pkgdown_sha: ~
 articles:
   b3gbi: b3gbi.html
-last_built: 2025-10-08T14:05Z
+last_built: 2025-10-08T14:09Z
 urls:
   reference: https://b-cubed-eu.github.io/b3gbi/reference
   article: https://b-cubed-eu.github.io/b3gbi/articles
