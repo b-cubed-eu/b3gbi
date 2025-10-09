@@ -43,7 +43,10 @@ test_that("calc_map.hill0 calculates correctly", {
     {
       result <- calc_map.hill0(
         mock_map_hill0,
-        cutoff_length = 1, coverage = 0.8
+        cutoff_length = 1,
+        coverage = 0.8,
+        data_type = "incidence",
+        assume_freq = FALSE
       )
     }
   )
@@ -89,7 +92,10 @@ test_that("calc_map.hill1 calculates correctly", {
     {
       result <- calc_map.hill1(
         mock_map_hill1,
-        cutoff_length = 1, coverage = 0.8
+        cutoff_length = 1,
+        coverage = 0.8,
+        data_type = "incidence",
+        assume_freq = FALSE
       )
     }
   )
@@ -134,7 +140,10 @@ test_that("calc_map.hill2 calculates correctly", {
     {
       result <- calc_map.hill2(
         mock_map_hill2,
-        cutoff_length = 1, coverage = 0.8
+        cutoff_length = 1,
+        coverage = 0.8,
+        data_type = "incidence",
+        assume_freq = FALSE
       )
     }
   )
@@ -194,7 +203,10 @@ test_that("calc_map.hill1 handles empty data correctly", {
     {
       result <- calc_map.hill1(
         mock_map_hill1,
-        cutoff_length = 1, coverage = 0.8
+        cutoff_length = 1,
+        coverage = 0.8,
+        data_type = "incidence",
+        assume_freq = FALSE
       )
     }
   )
@@ -224,7 +236,10 @@ test_that("calc_map.hill2 handles empty data correctly", {
     {
       result <- calc_map.hill2(
         mock_map_hill2,
-        cutoff_length = 1, coverage = 0.8
+        cutoff_length = 1,
+        coverage = 0.8,
+        data_type = "incidence",
+        assume_freq = FALSE
       )
     }
   )
@@ -254,7 +269,10 @@ test_that("calc_map.hill0 handles NA values correctly", {
     {
       result <- calc_map.hill0(
         mock_map_hill0,
-        cutoff_length = 1, coverage = 0.8
+        cutoff_length = 1,
+        coverage = 0.8,
+        data_type = "incidence",
+        assume_freq = FALSE
       )
     }
   )
@@ -284,7 +302,10 @@ test_that("calc_map.hill1 handles NA values correctly", {
     {
       result <- calc_map.hill1(
         mock_map_hill1,
-        cutoff_length = 1, coverage = 0.8
+        cutoff_length = 1,
+        coverage = 0.8,
+        data_type = "incidence",
+        assume_freq = FALSE
       )
     }
   )
@@ -314,7 +335,10 @@ test_that("calc_map.hill2 handles NA values correctly", {
     {
       result <- calc_map.hill2(
         mock_map_hill2,
-        cutoff_length = 1, coverage = 0.8
+        cutoff_length = 1,
+        coverage = 0.8,
+        data_type = "incidence",
+        assume_freq = FALSE
       )
     }
   )
@@ -344,7 +368,10 @@ test_that("calc_map.hill0 handles non-numeric data correctly", {
     {
       result <- calc_map.hill0(
         mock_map_hill0,
-        cutoff_length = 1, coverage = 0.8
+        cutoff_length = 1,
+        coverage = 0.8,
+        data_type = "incidence",
+        assume_freq = FALSE
       )
     }
   )
@@ -374,7 +401,10 @@ test_that("calc_map.hill1 handles non-numeric data correctly", {
     {
       result <- calc_map.hill1(
         mock_map_hill1,
-        cutoff_length = 1, coverage = 0.8
+        cutoff_length = 1,
+        coverage = 0.8,
+        data_type = "incidence",
+        assume_freq = FALSE
       )
     }
   )
@@ -404,7 +434,10 @@ test_that("calc_map.hill2 handles non-numeric data correctly", {
     {
       result <- calc_map.hill2(
         mock_map_hill2,
-        cutoff_length = 1, coverage = 0.8
+        cutoff_length = 1,
+        coverage = 0.8,
+        data_type = "incidence",
+        assume_freq = FALSE
       )
     }
   )
@@ -420,6 +453,7 @@ test_that("calc_map.hill2 handles non-numeric data correctly", {
 
   expect_equal(result, expected_hill2)
 })
+
 test_that("calc_map.hill0 handles non-standard data types correctly", {
   mockr::with_mock(
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
@@ -433,7 +467,10 @@ test_that("calc_map.hill0 handles non-standard data types correctly", {
     {
       result <- calc_map.hill0(
         mock_map_hill0,
-        cutoff_length = 1, coverage = 0.8
+        cutoff_length = 1,
+        coverage = 0.8,
+        data_type = "incidence",
+        assume_freq = FALSE
       )
     }
   )
@@ -463,7 +500,10 @@ test_that("calc_map.hill1 handles non-standard data types correctly", {
     {
       result <- calc_map.hill1(
         mock_map_hill1,
-        cutoff_length = 1, coverage = 0.8
+        cutoff_length = 1,
+        coverage = 0.8,
+        data_type = "incidence",
+        assume_freq = FALSE
       )
     }
   )
@@ -493,7 +533,10 @@ test_that("calc_map.hill2 handles non-standard data types correctly", {
     {
       result <- calc_map.hill2(
         mock_map_hill2,
-        cutoff_length = 1, coverage = 0.8
+        cutoff_length = 1,
+        coverage = 0.8,
+        data_type = "incidence",
+        assume_freq = FALSE
       )
     }
   )
