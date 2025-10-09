@@ -15,38 +15,138 @@ calc_map_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
   temp_opts <- list(...)
   cutoff_length <- temp_opts$cutoff_length
   coverage <- temp_opts$coverage
+  assume_freq <- temp_opts$assume_freq
+  data_type <- temp_opts$data_type
+  data_type <- if (data_type == "incidence") "incidence_freq" else data_type
 
   # Extract qvalue from hill diversity type
   qval <- as.numeric(gsub("hill", "", type))
 
-  incidence_list <- x %>%
-    dplyr::select(taxonKey, obs, cellid, year) %>%
-    dplyr::mutate(incidence = as.numeric(obs > 0)) %>%
-    dplyr::filter(incidence > 0) %>% # Keep only detections
-    dplyr::group_by(cellid) %>%
-    dplyr::group_split() %>%
+  if (data_type == "abundance") {
 
-    purrr::map(function(cell_data) {
-      T_units <- dplyr::n_distinct(cell_data$year) # Total unique years (T)
+    incidence_list <- x %>%
+      # 1. Select relevant columns (including 'species' for optional sorting/consistency)
+      dplyr::select(cellid, taxonKey, obs, scientificName) %>%
 
-      freq_data <- cell_data %>%
-        dplyr::group_by(taxonKey) %>%
-        dplyr::summarise(Y_i = dplyr::n_distinct(year)) %>%
-        dplyr::ungroup() %>%
-        dplyr::pull(Y_i)
+      # 2. Group by the spatial unit
+      dplyr::group_by(cellid) %>%
 
-      # Combine T and the frequencies (Y_i)
-      incidence_vector <- c(T_units, freq_data)
+      # 3. FIX: Split the data and name the list elements correctly
+      {
+        list_data <- dplyr::group_split(., .keep = FALSE)
+        list_names <- dplyr::group_keys(.) %>% dplyr::pull(cellid)
+        names(list_data) <- list_names
+        list_data
+      } %>%
 
-      return(incidence_vector)
-    })
+      # 4. Process each cell's data frame to calculate total abundance
+      purrr::map(function(cell_data) {
+
+        # Calculate Total Abundance (sum of obs) for each species
+        abundance_summary <- cell_data %>%
+          # Group by both keys to maintain the species name for sorting
+          dplyr::group_by(taxonKey, scientificName) %>%
+          # Sum 'obs' to get the total abundance (Y_i)
+          dplyr::summarise(count = sum(obs, na.rm = TRUE), .groups = "drop") %>%
+
+          # Sort by 'species' alphabetically for consistency (optional but recommended)
+          dplyr::arrange(scientificName)
+
+        # Extract the final abundance counts vector
+        abundance_vector <- abundance_summary %>%
+          dplyr::pull(count)
+
+        return(abundance_vector)
+      })
+
+  } else {
+
+    if (assume_freq == FALSE) {
+
+      incidence_list <- x %>%
+        dplyr::select(taxonKey, obs, cellid, year) %>%
+
+        # Filter and setup the data structure
+        dplyr::mutate(incidence = as.numeric(obs > 0)) %>%
+        dplyr::filter(incidence > 0) %>% # Keep only detections
+
+        # Group the data
+        dplyr::group_by(cellid) %>%
+
+        # Split the data and name the list elements
+        {
+          list_data <- dplyr::group_split(., .keep = FALSE)
+          list_names <- dplyr::group_keys(.) %>% dplyr::pull(cellid)
+          names(list_data) <- list_names
+          list_data
+        } %>%
+
+        # Process each cell's data frame to calculate T and Y_i
+        purrr::map(function(cell_data) {
+
+          # T_units: Total unique years (T)
+          T_units <- dplyr::n_distinct(cell_data$year)
+
+          # freq_data: Incidence frequency (Y_i) - number of unique years each species was detected
+          freq_data <- cell_data %>%
+            dplyr::group_by(taxonKey) %>%
+            dplyr::summarise(Y_i = dplyr::n_distinct(year), .groups = "drop") %>%
+            dplyr::ungroup() %>%
+            dplyr::pull(Y_i)
+
+          # Combine T and the frequencies (Y_i)
+          incidence_vector <- c(T_units, freq_data)
+
+          return(incidence_vector)
+        })
+
+    } else {
+
+      incidence_list <- x %>%
+        # 1. Select relevant columns
+        dplyr::select(cellid, taxonKey, obs, scientificName) %>%
+
+        # 2. Group by the spatial unit
+        dplyr::group_by(cellid) %>%
+
+        # 3. Split the data frame into a list of data frames (one per cell)
+        #  Use group_keys() and pull the cellid to name the list
+        {
+          list_data <- dplyr::group_split(., .keep = FALSE)
+          list_names <- dplyr::group_keys(.) %>% dplyr::pull(cellid)
+          names(list_data) <- list_names
+          list_data
+        } %>%
+
+        # 4. Process each cell's data frame
+        purrr::map(function(cell_data) {
+
+          # Calculate Incidence Frequencies (Y_i)
+          freq_summary <- cell_data %>%
+            dplyr::group_by(taxonKey, scientificName) %>%
+            dplyr::summarise(Y_i = sum(obs, na.rm = TRUE), .groups = "drop") %>%
+            dplyr::arrange(scientificName)
+
+          # --- CALCULATE T ---
+          T_units <- freq_summary %>%
+            dplyr::pull(Y_i) %>%
+            max(na.rm = TRUE)
+
+          # Extract the Y_i counts
+          freq_data <- freq_summary %>%
+            dplyr::pull(Y_i)
+
+          # Combine T and the frequencies (Y_i)
+          incidence_vector <- c(T_units, freq_data)
+
+          return(incidence_vector)
+        })
+    }
+  }
 
   if (length(incidence_list) == 0) {
     stop(paste0("No grid cells to process. Something went wrong."))
   }
-
-  # Name the list elements by cellid
-  names(incidence_list) <- unique(x$cellid)
 
   incidence_list_processed <-
     purrr::keep(incidence_list,
@@ -55,7 +155,11 @@ calc_map_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
                   # (T plus at least one species)
                   if (!is.null(vec) && is.vector(vec) && length(vec) > 1) {
                     # The number of species is the length of the vector minus the T value
-                    species_count <- length(vec) - 1
+                    if (data_type == "abundance") {
+                      species_count <- length(vec)
+                    } else {
+                      species_count <- length(vec) - 1
+                    }
                     return(species_count >= cutoff_length)
                   }
                   # Return FALSE for empty or invalid vectors
@@ -70,7 +174,7 @@ calc_map_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
 
   # Compute Hill diversity using a wrapper for iNEXT::estimateD
   diversity_estimates <- incidence_list_processed %>%
-    my_estimateD(datatype = "incidence_freq",
+    my_estimateD(datatype = data_type,
                  base = "coverage",
                  level = coverage,
                  q = qval,

@@ -563,6 +563,19 @@ hill_diversity_details <- paste0(
 #'  calculations to avoid errors. Default is 5.
 #' @param conf_level (Optional) Confidence level for bootstrap confidence
 #' intervals. Only applies to temporal indicators. Default is 0.95.
+#' @param data_type (Optional) If set to "incidence", occurrences are converted
+#'  to incidence data. Observations are treated as presence/absence and years
+#'  are used as sampling units. The number of years in which a species was
+#'  observed within a grid cell are then summarized. If set to "abundance",
+#'  occurrences are summed across years for each species as a proxy for
+#'  abundance. Default is "incidence".
+#' @param assume_freq (Optional) If TRUE, the sum of observations for a
+#'  species within a grid cell is assumed to be a sum of sampling sites in
+#'  which that species was observed. The maximum number of observations for
+#'  any species within a grid cell is then taken as a proxy for the total number
+#'  of sampling sites for that cell. This parameter is ignored if data_type is
+#'  set to "abundance". It is advisable to leave this on FALSE unless you are
+#'  certain of how your data is structured. Default is FALSE.
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
@@ -583,13 +596,19 @@ hill_diversity_details <- paste0(
 hill0_map <- function(data,
                       coverage = 0.95,
                       cutoff_length = 5,
+                      data_type = c("incidence", "abundance"),
+                      assume_freq = FALSE,
                       ...) {
+
+  data_type <- match.arg(data_type)
 
   compute_indicator_workflow(data,
                              type = "hill0",
                              dim_type = "map",
                              cutoff_length = cutoff_length,
                              coverage = coverage,
+                             assume_freq = assume_freq,
+                             data_type = data_type,
                              nboot = 0,
                              conf = 0.95,
                              ...)
@@ -646,13 +665,19 @@ hill0_ts <- function(data,
 hill1_map <- function(data,
                       cutoff_length = 5,
                       coverage = 0.95,
+                      data_type = c("incidence", "abundance"),
+                      assume_freq = FALSE,
                       ...) {
+
+  data_type = match.arg(data_type)
 
   compute_indicator_workflow(data,
                              type = "hill1",
                              dim_type = "map",
                              cutoff_length = cutoff_length,
                              coverage = coverage,
+                             assume_freq = assume_freq,
+                             data_type = data_type,
                              nboot = 0,
                              conf = 0.95,
                              ...)
@@ -708,13 +733,19 @@ hill1_ts <- function(data,
 hill2_map <- function(data,
                       cutoff_length = 5,
                       coverage = 0.95,
+                      data_type = c("incidence", "abundance"),
+                      assume_freq = FALSE,
                       ...) {
+
+  data_type = match.arg(data_type)
 
   compute_indicator_workflow(data,
                              type = "hill2",
                              dim_type = "map",
                              cutoff_length = cutoff_length,
                              coverage = coverage,
+                             assume_freq = assume_freq,
+                             data_type = data_type,
                              nboot = 0,
                              conf = 0.95,
                              ...)

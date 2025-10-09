@@ -9,15 +9,36 @@
 \alias{hill2_ts}
 \title{Calculate Estimated Hill Diversity Over Space or Time}
 \usage{
-hill0_map(data, coverage = 0.95, cutoff_length = 5, ...)
+hill0_map(
+  data,
+  coverage = 0.95,
+  cutoff_length = 5,
+  data_type = c("incidence", "abundance"),
+  assume_freq = FALSE,
+  ...
+)
 
 hill0_ts(data, coverage = 0.95, cutoff_length = 5, conf_level = 0.95, ...)
 
-hill1_map(data, cutoff_length = 5, coverage = 0.95, ...)
+hill1_map(
+  data,
+  cutoff_length = 5,
+  coverage = 0.95,
+  data_type = c("incidence", "abundance"),
+  assume_freq = FALSE,
+  ...
+)
 
 hill1_ts(data, cutoff_length = 5, coverage = 0.95, conf_level = 0.95, ...)
 
-hill2_map(data, cutoff_length = 5, coverage = 0.95, ...)
+hill2_map(
+  data,
+  cutoff_length = 5,
+  coverage = 0.95,
+  data_type = c("incidence", "abundance"),
+  assume_freq = FALSE,
+  ...
+)
 
 hill2_ts(data, cutoff_length = 5, coverage = 0.95, conf_level = 0.95, ...)
 }
@@ -30,6 +51,21 @@ Default is 0.95.}
 \item{cutoff_length}{(Optional) The minimum number of data points for each
 grid cell. Grid cells with fewer data points will be removed before
 calculations to avoid errors. Default is 5.}
+
+\item{data_type}{(Optional) If set to "incidence", occurrences are converted
+to incidence data. Observations are treated as presence/absence and years
+are used as sampling units. The number of years in which a species was
+observed within a grid cell are then summarized. If set to "abundance",
+occurrences are summed across years for each species as a proxy for
+abundance. Default is "incidence".}
+
+\item{assume_freq}{(Optional) If TRUE, the sum of observations for a
+species within a grid cell is assumed to be a sum of sampling sites in
+which that species was observed. The maximum number of observations for
+any species within a grid cell is then taken as a proxy for the total number
+of sampling sites for that cell. This parameter is ignored if data_type is
+set to "abundance". It is advisable to leave this on FALSE unless you are
+certain of how your data is structured. Default is FALSE.}
 
 \item{...}{
   Arguments passed on to \code{\link[=compute_indicator_workflow]{compute_indicator_workflow}}
