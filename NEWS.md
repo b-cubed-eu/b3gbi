@@ -1,3 +1,9 @@
+# b3gbi 0.8.4 - Minor update:
+
+* Fixed a bug that caused a grid cell naming mix up during Hill diversity map calculation and resulted in incorrect results.
+* The new data_type parameter for Hill diversity maps allows the user to treat their species occurrences as either incidence data (presence/absence with years as sampling units) or abundance data (number of occurrences as a proxy for abundance).
+* The new assume_freq option for Hill diversity maps allows the user to force the treatment of occurrence counts for each species as incidence frequencies (number of sites at which a species was present). This is only valid if data_type is set to 'incidence' and should remain at the default FALSE setting unless the user is certain of the data structure.
+
 # b3gbi 0.8.3 - Minor update:
 
 * Improved and updated the introductory tutorial

@@ -69,3 +69,5 @@ vs_script.R
 /local
 app.R
 .RDataTmp
+/doc/
+/Meta/
