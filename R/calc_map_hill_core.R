@@ -7,7 +7,8 @@ calc_map_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
                   inherits(x, c("data.frame", "sf")) &
                     rlang::inherits_any(x, c("hill0", "hill1", "hill2")))
 
-  qD <- cellid <- Assemblage <- taxonKey <- m <- SC <- Order.q <- NULL
+  qD <- cellid <- Assemblage <- taxonKey <- m <- SC <- Order.q <- . <-
+    scientificName <- count <- year <- Y_i <- incidence <- NULL
   Method <- obs <- NULL
 
   type <- match.arg(type)
