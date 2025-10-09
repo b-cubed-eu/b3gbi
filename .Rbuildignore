@@ -23,3 +23,5 @@
 ^codecov\.yml$
 run_ramsar_metrics.R
 test-indicator_formulas.R
+^doc$
+^Meta$
