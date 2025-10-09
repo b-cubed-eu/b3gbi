@@ -8,7 +8,7 @@ message: 'To cite package "b3gbi" in publications use:'
 type: software
 license: MIT
 title: 'b3gbi: General Biodiversity Indicators for Biodiversity Data Cubes'
-version: 0.8.3
+version: 0.8.4
 abstract: Calculate general biodiversity indicators from GBIF data cubes. Includes
   many common indicators such as species richness and evenness, which can be calculated
   over time (trends) or space (maps).
@@ -64,12 +64,12 @@ references:
     given-names: Hadley
     email: hadley@posit.co
     orcid: https://orcid.org/0000-0003-4757-117X
-  - family-names: Francois
+  - family-names: François
     given-names: Romain
     orcid: https://orcid.org/0000-0002-2444-4226
   - family-names: Henry
     given-names: Lionel
-  - family-names: Muller
+  - family-names: Müller
     given-names: Kirill
     orcid: https://orcid.org/0000-0002-1416-3412
   - family-names: Vaughan
@@ -314,7 +314,7 @@ references:
   url: https://tibble.tidyverse.org/
   repository: https://CRAN.R-project.org/package=tibble
   authors:
-  - family-names: M<U+00FC>ller
+  - family-names: Müller
     given-names: Kirill
     email: kirill@cynkra.com
     orcid: https://orcid.org/0000-0002-1416-3412
@@ -357,7 +357,7 @@ references:
   - family-names: Kalinowski
     given-names: Tomasz
   - family-names: Ucar
-    given-names: Inaki
+    given-names: Iñaki
     email: iucar@fedoraproject.org
     orcid: https://orcid.org/0000-0001-6403-5550
   year: '2025'
@@ -382,7 +382,7 @@ references:
   url: https://krlmlr.github.io/mockr/
   repository: https://CRAN.R-project.org/package=mockr
   authors:
-  - family-names: M<U+00FC>ller
+  - family-names: Müller
     given-names: Kirill
     email: kirill@cynkra.com
   year: '2025'
