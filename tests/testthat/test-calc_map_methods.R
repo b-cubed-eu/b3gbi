@@ -173,7 +173,10 @@ test_that("calc_map.hill0 handles empty data correctly", {
     {
       result <- calc_map.hill0(
         mock_map_hill0,
-        cutoff_length = 1, coverage = 0.8
+        cutoff_length = 1,
+        coverage = 0.8,
+        data_type = "incidence",
+        assume_freq = FALSE
       )
     }
   )
