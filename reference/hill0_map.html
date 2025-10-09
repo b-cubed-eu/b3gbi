@@ -31,7 +31,7 @@ hill2_ts()
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,7 +54,7 @@ hill2_ts()
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Calculate Estimated Hill Diversity Over Space or Time</h1>
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.8.3/R/indicator_wrappers.R" class="external-link"><code>R/indicator_wrappers.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/R/indicator_wrappers.R" class="external-link"><code>R/indicator_wrappers.R</code></a></small>
       <div class="d-none name"><code>hill0_map.Rd</code></div>
     </div>
 
@@ -73,15 +73,36 @@ Three Hill diversity measures are covered:</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">hill0_map</span><span class="op">(</span><span class="va">data</span>, coverage <span class="op">=</span> <span class="fl">0.95</span>, cutoff_length <span class="op">=</span> <span class="fl">5</span>, <span class="va">...</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">hill0_map</span><span class="op">(</span></span>
+<span>  <span class="va">data</span>,</span>
+<span>  coverage <span class="op">=</span> <span class="fl">0.95</span>,</span>
+<span>  cutoff_length <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>  data_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"incidence"</span>, <span class="st">"abundance"</span><span class="op">)</span>,</span>
+<span>  assume_freq <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">hill0_ts</span><span class="op">(</span><span class="va">data</span>, coverage <span class="op">=</span> <span class="fl">0.95</span>, cutoff_length <span class="op">=</span> <span class="fl">5</span>, conf_level <span class="op">=</span> <span class="fl">0.95</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">hill1_map</span><span class="op">(</span><span class="va">data</span>, cutoff_length <span class="op">=</span> <span class="fl">5</span>, coverage <span class="op">=</span> <span class="fl">0.95</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">hill1_map</span><span class="op">(</span></span>
+<span>  <span class="va">data</span>,</span>
+<span>  cutoff_length <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>  coverage <span class="op">=</span> <span class="fl">0.95</span>,</span>
+<span>  data_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"incidence"</span>, <span class="st">"abundance"</span><span class="op">)</span>,</span>
+<span>  assume_freq <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">hill1_ts</span><span class="op">(</span><span class="va">data</span>, cutoff_length <span class="op">=</span> <span class="fl">5</span>, coverage <span class="op">=</span> <span class="fl">0.95</span>, conf_level <span class="op">=</span> <span class="fl">0.95</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">hill2_map</span><span class="op">(</span><span class="va">data</span>, cutoff_length <span class="op">=</span> <span class="fl">5</span>, coverage <span class="op">=</span> <span class="fl">0.95</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">hill2_map</span><span class="op">(</span></span>
+<span>  <span class="va">data</span>,</span>
+<span>  cutoff_length <span class="op">=</span> <span class="fl">5</span>,</span>
+<span>  coverage <span class="op">=</span> <span class="fl">0.95</span>,</span>
+<span>  data_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"incidence"</span>, <span class="st">"abundance"</span><span class="op">)</span>,</span>
+<span>  assume_freq <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">hill2_ts</span><span class="op">(</span><span class="va">data</span>, cutoff_length <span class="op">=</span> <span class="fl">5</span>, coverage <span class="op">=</span> <span class="fl">0.95</span>, conf_level <span class="op">=</span> <span class="fl">0.95</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -103,6 +124,25 @@ Default is 0.95.</p></dd>
 <dd><p>(Optional) The minimum number of data points for each
 grid cell. Grid cells with fewer data points will be removed before
 calculations to avoid errors. Default is 5.</p></dd>
+
+
+<dt id="arg-data-type">data_type<a class="anchor" aria-label="anchor" href="#arg-data-type"></a></dt>
+<dd><p>(Optional) If set to "incidence", occurrences are converted
+to incidence data. Observations are treated as presence/absence and years
+are used as sampling units. The number of years in which a species was
+observed within a grid cell are then summarized. If set to "abundance",
+occurrences are summed across years for each species as a proxy for
+abundance. Default is "incidence".</p></dd>
+
+
+<dt id="arg-assume-freq">assume_freq<a class="anchor" aria-label="anchor" href="#arg-assume-freq"></a></dt>
+<dd><p>(Optional) If TRUE, the sum of observations for a
+species within a grid cell is assumed to be a sum of sampling sites in
+which that species was observed. The maximum number of observations for
+any species within a grid cell is then taken as a proxy for the total number
+of sampling sites for that cell. This parameter is ignored if data_type is
+set to "abundance". It is advisable to leave this on FALSE unless you are
+certain of how your data is structured. Default is FALSE.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
