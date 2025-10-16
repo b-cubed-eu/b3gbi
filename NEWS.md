@@ -1,3 +1,7 @@
+# b3gbi 0.8.5 - Minor update:
+
+* Fixed a small bug in Hill diversity map code that was causing some datasets to fail.
+
 # b3gbi 0.8.4 - Minor update:
 
 * Fixed a bug that caused a grid cell naming mix up during Hill diversity map calculation and resulted in incorrect results.
