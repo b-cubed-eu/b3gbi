@@ -1,3 +1,7 @@
+# b3gbi 0.8.6 - Minor update:
+
+* Added support for plotting interactive maps using the mapview package. Use plot_mv() to call mapview on an indicator_map object.
+
 # b3gbi 0.8.5 - Minor update:
 
 * Fixed a small bug in Hill diversity map code that was causing some datasets to fail.

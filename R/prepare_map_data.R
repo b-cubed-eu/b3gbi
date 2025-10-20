@@ -54,8 +54,11 @@ prepare_map_data <- function(data,
 
     # ... or from existing map limits
   } else {
-    latlong_extent <- map_lims %>% sf::st_bbox(crs = data_crs) %>%
-      sf::st_transform(crs = latlong_crs)
+    latlong_extent <- map_lims %>%
+      sf::st_bbox(crs = data_crs) %>%
+      sf::st_as_sfc() %>%
+      sf::st_transform(crs = latlong_crs) %>%
+      sf::st_bbox()
   }
 
  # latlong_extent <- latlong_extent %>%
@@ -105,10 +108,14 @@ prepare_map_data <- function(data,
   # Transform the map limits to the target projection
   if (!is.null(xlims) && !is.null(ylims)) {
     map_lims <- sf::st_bbox(map_lims, crs = latlong_crs) %>%
-      sf::st_transform(crs = projection)
+      sf::st_as_sfc() %>%
+      sf::st_transform(crs = projection) %>%
+      sf::st_bbox()
   } else {
     map_lims <- sf::st_bbox(map_lims, crs = data_crs) %>%
-      sf::st_transform(crs = projection)
+      sf::st_as_sfc() %>%
+      sf::st_transform(crs = projection) %>%
+      sf::st_bbox()
   }
 
   # Return a list containing the final projected map data and layers
