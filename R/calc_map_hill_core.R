@@ -35,7 +35,8 @@ calc_map_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
       # 3. FIX: Split the data and name the list elements correctly
       {
         list_data <- dplyr::group_split(., .keep = FALSE)
-        list_names <- dplyr::group_keys(.) %>% dplyr::pull(cellid)
+        list_names <- dplyr::group_keys(.) %>% dplyr::pull(cellid) %>%
+          as.character()
         names(list_data) <- list_names
         list_data
       } %>%
@@ -115,7 +116,8 @@ calc_map_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
         #  Use group_keys() and pull the cellid to name the list
         {
           list_data <- dplyr::group_split(., .keep = FALSE)
-          list_names <- dplyr::group_keys(.) %>% dplyr::pull(cellid)
+          list_names <- dplyr::group_keys(.) %>% dplyr::pull(cellid) %>%
+            as.character()
           names(list_data) <- list_names
           list_data
         } %>%
