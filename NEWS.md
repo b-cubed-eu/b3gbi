@@ -1,3 +1,7 @@
+# b3gbi 0.8.7 - Minor update:
+
+* The bug fix for the Hill diversity maps in version 0.8.5 was incomplete, as some datasets were still failing when data_type = "abundance" or assume_freq = TRUE. The fix now applies to all parameter options.
+
 # b3gbi 0.8.6 - Minor update:
 
 * Added support for plotting interactive maps using the mapview package. Use plot_mv() to call mapview on an indicator_map object.
