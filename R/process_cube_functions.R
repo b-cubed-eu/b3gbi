@@ -74,7 +74,8 @@
 #' @param cols_lifeStage (Optional) The name of the column containing the life
 #'  stage of the observed individuals.
 #' @param separator (Optional) The column-separating character in your csv file.
-#'  Default is white space.
+#'  This should be automatically recognized, so only specify this if you are
+#'  having trouble.
 #'
 #' @return A tibble containing the processed GBIF occurrence data.
 #'
@@ -112,20 +113,28 @@ process_cube <- function(cube_name,
                          cols_familyCount = NULL,
                          cols_sex = NULL,
                          cols_lifeStage = NULL,
-                         separator = "\t") {
+                         separator = NULL) {
 
   yearMonth <- species <- occurrences <- speciesKey <- cellCode <- NULL
   year <- . <- max_year <- NULL
 
   if (is.character(cube_name) && length(cube_name == 1)) {
-
-    # Read in data cube
-    occurrence_data <- readr::read_delim(
-      file = cube_name,
-      delim = separator,
-      na = "",
-      show_col_types = FALSE
-    )
+    if (is.null(separator)) {
+      # Read in data cube
+      occurrence_data <- readr::read_delim(
+        file = cube_name,
+        na = "",
+        show_col_types = FALSE
+      )
+    } else {
+      # Read in data cube
+      occurrence_data <- readr::read_delim(
+        file = cube_name,
+        delim = separator,
+        na = "",
+        show_col_types = FALSE
+      )
+    }
 
   } else if (inherits(cube_name, "data.frame")) {
 
