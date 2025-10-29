@@ -37,7 +37,7 @@ The function will return an error if it cannot find all required columns."><meta
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.7</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.8</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -60,7 +60,7 @@ The function will return an error if it cannot find all required columns."><meta
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Process GBIF Data Cubes</h1>
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.8.7/R/process_cube_functions.R" class="external-link"><code>R/process_cube_functions.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/R/process_cube_functions.R" class="external-link"><code>R/process_cube_functions.R</code></a></small>
       <div class="d-none name"><code>process_cube.Rd</code></div>
     </div>
 
@@ -104,7 +104,7 @@ The function will return an error if it cannot find all required columns.</p>
 <span>  cols_familyCount <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  cols_sex <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  cols_lifeStage <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  separator <span class="op">=</span> <span class="st">"\t"</span></span>
+<span>  separator <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -236,7 +236,8 @@ stage of the observed individuals.</p></dd>
 
 <dt id="arg-separator">separator<a class="anchor" aria-label="anchor" href="#arg-separator"></a></dt>
 <dd><p>(Optional) The column-separating character in your csv file.
-Default is white space.</p></dd>
+This should be automatically recognized, so only specify this if you are
+having trouble.</p></dd>
 
 </dl></div>
     <div class="section level2">
