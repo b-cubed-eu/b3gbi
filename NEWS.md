@@ -1,3 +1,7 @@
+# b3gbi 0.8.8 - Minor update:
+
+* Fixed bug that caused some cubes to be read incorrectly if the delimiting character ('separator' paramter in process_cube()) was not manually specified, without informing the user.
+
 # b3gbi 0.8.7 - Minor update:
 
 * The bug fix for the Hill diversity maps in version 0.8.5 was incomplete, as some datasets were still failing when data_type = "abundance" or assume_freq = TRUE. The fix now applies to all parameter options.

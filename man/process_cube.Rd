@@ -26,7 +26,7 @@ process_cube(
   cols_familyCount = NULL,
   cols_sex = NULL,
   cols_lifeStage = NULL,
-  separator = "\\t"
+  separator = NULL
 )
 }
 \arguments{
@@ -111,7 +111,8 @@ observed individuals.}
 stage of the observed individuals.}
 
 \item{separator}{(Optional) The column-separating character in your csv file.
-Default is white space.}
+This should be automatically recognized, so only specify this if you are
+having trouble.}
 }
 \value{
 A tibble containing the processed GBIF occurrence data.
