@@ -537,6 +537,8 @@ compute_indicator_workflow <- function(data,
   } else {
     # This block handles level == "cube", no shapefile, dim_type != "map"
 
+    if ()
+
     # Determine cube CRS
     cube_crs <- if (data$grid_type == "eea") {
       "EPSG:3035"
