@@ -19,15 +19,18 @@ spec_range_ts(data, ...)
 calculate. (Default: "norm"). Select "none" to avoid calculating bootstrap
 CIs.}
     \item{\code{cell_size}}{(Optional) Length of grid cell sides, in km or degrees.
-If NULL, this will be automatically determined according to the geographical
-level selected. This is 100 km or 1 degree for 'continent' or 'world', 10 km
-or (for a degree-based CRS) the native resolution of the cube for 'country',
-'sovereignty' or 'geounit'. If level is set to 'cube', cell size will be the
-native resolution of the cube for a degree-based CRS, or for a km-based CRS,
-the cell size will be determined by the area of the cube: 100 km for cubes
-larger than 1 million sq km, 10 km for cubes between 10 thousand and 1
-million sq km, 1 km for cubes between 100 and 10 thousand sq km, and 0.1 km
-for cubes smaller than 100 sq km. (Default: NULL)}
+If set to "grid" (default), this will use the existing grid size of your
+cube. If set to "auto", this will be automatically determined according to
+the geographical level selected. This is 100 km or 1 degree for 'continent'
+or 'world', 10 km or (for a degree-based CRS) the native resolution of the
+cube for 'country', 'sovereignty' or 'geounit'. If level is set to 'cube',
+cell size will be the native resolution of the cube for a degree-based CRS,
+or for a km-based CRS, the cell size will be determined by the area of the
+cube: 100 km for cubes larger than 1 million sq km, 10 km for cubes between
+10 thousand and 1 million sq km, 1 km for cubes between 100 and 10 thousand
+sq km, and 0.1 km for cubes smaller than 100 sq km. Alternatively, the user
+can manually select the grid cell size (in km or degrees). Note that the
+cell size must be a whole number multiple of the cube's resolution.}
     \item{\code{level}}{(Optional) Spatial level: 'cube', 'continent', 'country',
 'world', 'sovereignty', or 'geounit'. (Default: 'cube')}
     \item{\code{region}}{(Optional) The region of interest (e.g., "Europe"). This
@@ -82,8 +85,8 @@ calculating your indicator.}
 include_ocean is set to "buffered_coast". Default is 50 km.}
     \item{\code{force_grid}}{(Optional) Forces the calculation of a grid even if this
 would not normally be part of the pipeline, e.g. for time series. This
-setting is required for the calculation of rarity, and is turned on by the
-ab_rarity_ts and area_rarity_ts wrappers. (Default: FALSE)}
+setting is required for the calculation of rarity or Hill diversity, and is
+forced on by indicators that require it. (Default: FALSE)}
   }}
 }
 \value{
