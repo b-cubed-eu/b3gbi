@@ -117,7 +117,7 @@ calc_ts.occ_density <- function(x, ...) {
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.", inherits(x, "occ_density"))
 
-  year <- diversity_val <- obs <- area <- NULL
+  total_occurrences <- year <- diversity_val <- obs <- area <- NULL
 
   # Extract the total area from the attribute
   total_study_area_sqkm <- attr(x, "total_area_sqkm")

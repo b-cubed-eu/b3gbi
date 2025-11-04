@@ -3,6 +3,9 @@ eea_code_to_coords <- function(cellCodes) {
   if (!requireNamespace("dplyr", quietly = TRUE)) stop("The 'dplyr' package is required.")
   if (!requireNamespace("stringr", quietly = TRUE)) stop("The 'stringr' package is required.")
 
+  cellCode <- resolution_text <- xcoord_base <- ycoord_base <- NULL
+  km_multiplier <- xcoord <- ycoord <- resolution_final <- NULL
+
   data.frame(cellCode = cellCodes) %>%
     dplyr::mutate(
       # 1. Extract the resolution part (e.g., "1km", "250m")

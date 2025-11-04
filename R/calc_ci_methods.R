@@ -92,7 +92,7 @@ calc_ci.occ_density <- function(x,
                   meant to be called directly.",
                   inherits(x, "occ_density"))
 
-  year <- obs <- area <- NULL
+  total_area <- year <- obs <- area <- NULL
 
     # 1. Extract the total area from the attribute attached in compute_indicator_workflow
     total_study_area_sqkm <- attr(x, "total_area_sqkm")
