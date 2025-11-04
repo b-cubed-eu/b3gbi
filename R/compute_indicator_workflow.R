@@ -537,29 +537,33 @@ compute_indicator_workflow <- function(data,
   } else {
     # This block handles level == "cube", no shapefile, dim_type != "map"
 
-    if ()
+    if (!"sim_cube" %in% class(data)) {
 
-    # Determine cube CRS
-    cube_crs <- if (data$grid_type == "eea") {
-      "EPSG:3035"
-    } else if (data$grid_type == "mgrs") {
-      guess_utm_epsg(data)
+      # Determine cube CRS
+      cube_crs <- if (data$grid_type == "eea") {
+        "EPSG:3035"
+      } else if (data$grid_type == "mgrs") {
+        guess_utm_epsg(data)
+      } else {
+        "EPSG:4326"
+      }
+
+      # Calculate the area of the cube's extent
+      cube_bbox <- sf::st_bbox(c(xmin = coord_range[[1]],
+                                 xmax = coord_range[[2]],
+                                 ymin = coord_range[[3]],
+                                 ymax = coord_range[[4]]),
+                               crs = cube_crs)
+
+      final_area_sqkm <-
+        sf::st_as_sfc(cube_bbox) %>%
+        sf::st_transform(crs = "EPSG:4326") %>%
+        sf::st_area() %>%
+        units::set_units("km^2")
+
     } else {
-      "EPSG:4326"
+      final_area_sqkm <- NA
     }
-
-    # Calculate the area of the cube's extent
-    cube_bbox <- sf::st_bbox(c(xmin = coord_range[[1]],
-                               xmax = coord_range[[2]],
-                               ymin = coord_range[[3]],
-                               ymax = coord_range[[4]]),
-                             crs = cube_crs)
-
-    final_area_sqkm <-
-      sf::st_as_sfc(cube_bbox) %>%
-      sf::st_transform(crs = "EPSG:4326") %>%
-      sf::st_area() %>%
-      units::set_units("km^2")
 
   }
 
