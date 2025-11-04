@@ -1,3 +1,10 @@
+# b3gbi 0.8.6 - Minor update:
+
+* Fixed an important bug that caused observations to be assigned to multiple grid cells when level was set to 'cube' (no specific region was selected).
+* Fixed a bug that caused the occ_density_ts() function to give an error about missing 'cellid'. It should now work as expected.
+* Fixed a bug that that caused grid sizes other than 1km to fail for the EEA grid type (this was due to an inflexible coordinate extraction process that assumed all EEA grids were 1km).
+* Changed the default grid cell size to match the grid of the provided cube (previously the default was to recalculate based on either the level or the area of the cube, unless the user specificied otherwise, which could lead to unexpected results). Now the user can still manually select the size, or set it to 'auto' to have the package calculate the size. Also, the user is prompted if the grid size of the provided cube is likely to lead to a large number of grid cells and long calculation times.
+
 # b3gbi 0.8.5 - Minor update:
 
 * Fixed a small bug in Hill diversity map code that was causing some datasets to fail.
