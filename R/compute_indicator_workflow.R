@@ -320,7 +320,6 @@ compute_indicator_workflow <- function(data,
       stop("Grid reference system not found.")
     }
 
-    # Determine projection to use for internal processing
     # Get cube extent in lat/long
     if (data$grid_type == "mgrs") {
       cube_bbox_latlong <- mgrs_to_latlong_bbox(df)
@@ -339,7 +338,7 @@ compute_indicator_workflow <- function(data,
     if (data$grid_type == "eea") {
       projected_crs <- cube_crs
     } else if (data$grid_type == "eqdgc") {
-      projected_crs <- cube_crs
+      projected_crs <- "ESRI:54012"
     } else if (data$grid_type == "mgrs") {
       projected_crs <- guess_utm_epsg(cube_bbox_latlong)
     } else {

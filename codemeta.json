@@ -7,13 +7,13 @@
   "relatedLink": "https://b-cubed-eu.github.io/b3gbi/",
   "codeRepository": "https://github.com/b-cubed-eu/b3gbi",
   "license": "https://spdx.org/licenses/MIT",
-  "version": "0.8.6",
+  "version": "0.8.9",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.5.1 (2025-06-13 ucrt)",
+  "runtimePlatform": "R version 4.3.1 (2023-06-16 ucrt)",
   "author": [
     {
       "@type": "Person",
@@ -54,6 +54,18 @@
     },
     {
       "@type": "SoftwareApplication",
+      "identifier": "mapview",
+      "name": "mapview",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=mapview"
+    },
+    {
+      "@type": "SoftwareApplication",
       "identifier": "mockr",
       "name": "mockr",
       "provider": {
@@ -63,6 +75,18 @@
         "url": "https://cran.r-project.org"
       },
       "sameAs": "https://CRAN.R-project.org/package=mockr"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "RColorBrewer",
+      "name": "RColorBrewer",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=RColorBrewer"
     },
     {
       "@type": "SoftwareApplication",
