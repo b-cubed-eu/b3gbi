@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.8</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.9</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,9 +36,16 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.8.8/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.8.9" id="b3gbi-089---minor-update">b3gbi 0.8.9 - Minor update:<a class="anchor" aria-label="anchor" href="#b3gbi-089---minor-update"></a></h2>
+<ul><li>Fixed an important bug that caused observations to be assigned to multiple grid cells when level was set to ‘cube’ (no specific region was selected).</li>
+<li>Fixed a bug that caused the occ_density_ts() function to give an error about missing ‘cellid’. It should now work as expected.</li>
+<li>Fixed a bug that that caused grid sizes other than 1km to fail for the EEA grid type (this was due to an inflexible coordinate extraction process that assumed all EEA grids were 1km).</li>
+<li>Changed the default grid cell size to match the grid of the provided cube (previously the default was to recalculate based on either the level or the area of the cube, unless the user specificied otherwise, which could lead to unexpected results). Now the user can still manually select the size, or set it to ‘auto’ to have the package calculate the size. Also, the user is prompted if the grid size of the provided cube is likely to lead to a large number of grid cells and long calculation times.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.8.8" id="b3gbi-088---minor-update">b3gbi 0.8.8 - Minor update:<a class="anchor" aria-label="anchor" href="#b3gbi-088---minor-update"></a></h2>
 <ul><li>Fixed bug that caused some cubes to be read incorrectly if the delimiting character (‘separator’ paramter in process_cube()) was not manually specified, without informing the user.</li>

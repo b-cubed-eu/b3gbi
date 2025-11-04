@@ -19,7 +19,7 @@ instead."><meta property="og:image" content="https://b-cubed-eu.github.io/b3gbi/
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.8</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.9</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -42,7 +42,7 @@ instead."><meta property="og:image" content="https://b-cubed-eu.github.io/b3gbi/
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Plot Biodiversity Indicator Map</h1>
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.8.8/R/plot_map.R" class="external-link"><code>R/plot_map.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/R/plot_map.R" class="external-link"><code>R/plot_map.R</code></a></small>
       <div class="d-none name"><code>plot_map.Rd</code></div>
     </div>
 
@@ -295,10 +295,7 @@ Can be customized using ggplot2 functions.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">evenness_map</span> <span class="op">&lt;-</span> <span class="fu"><a href="pielou_evenness_map.html">pielou_evenness_map</a></span><span class="op">(</span><span class="va">example_cube_1</span>,</span></span>
 <span class="r-in"><span>                                    level <span class="op">=</span> <span class="st">"country"</span>,</span></span>
 <span class="r-in"><span>                                    region <span class="op">=</span> <span class="st">"Denmark"</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>There was 1 warning in `dplyr::mutate()`.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> In argument: `cellid = as.integer(cellid)`.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> Caused by warning:</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> NAs introduced by coercion</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 191226</span>
 <span class="r-in"><span><span class="fu">plot_map</span><span class="op">(</span>x <span class="op">=</span> <span class="va">evenness_map</span>,</span></span>
 <span class="r-in"><span>         title <span class="op">=</span> <span class="st">"Map of Species Evenness in Denmark"</span>,</span></span>
 <span class="r-in"><span>         legend_title <span class="op">=</span> <span class="st">"Evenness"</span><span class="op">)</span></span></span>

@@ -19,7 +19,7 @@ output into an appropriate S3 object ('indicator_map' or 'indicator_ts')."><meta
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.8</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.9</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -42,7 +42,7 @@ output into an appropriate S3 object ('indicator_map' or 'indicator_ts')."><meta
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Calculate Biodiversity Indicators Over Space or Time</h1>
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.8.8/R/compute_indicator_workflow.R" class="external-link"><code>R/compute_indicator_workflow.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/R/compute_indicator_workflow.R" class="external-link"><code>R/compute_indicator_workflow.R</code></a></small>
       <div class="d-none name"><code>compute_indicator_workflow.Rd</code></div>
     </div>
 
@@ -60,7 +60,7 @@ output into an appropriate S3 object ('indicator_map' or 'indicator_ts').</p>
 <span>  <span class="va">type</span>,</span>
 <span>  dim_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"map"</span>, <span class="st">"ts"</span><span class="op">)</span>,</span>
 <span>  ci_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"norm"</span>, <span class="st">"basic"</span>, <span class="st">"perc"</span>, <span class="st">"bca"</span>, <span class="st">"none"</span><span class="op">)</span>,</span>
-<span>  cell_size <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  cell_size <span class="op">=</span> <span class="st">"grid"</span>,</span>
 <span>  level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cube"</span>, <span class="st">"continent"</span>, <span class="st">"country"</span>, <span class="st">"world"</span>, <span class="st">"sovereignty"</span>, <span class="st">"geounit"</span><span class="op">)</span>,</span>
 <span>  region <span class="op">=</span> <span class="st">"Europe"</span>,</span>
 <span>  ne_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"countries"</span>, <span class="st">"map_units"</span>, <span class="st">"sovereignty"</span>, <span class="st">"tiny_countries"</span><span class="op">)</span>,</span>
@@ -124,15 +124,18 @@ CIs.</p></dd>
 
 <dt id="arg-cell-size">cell_size<a class="anchor" aria-label="anchor" href="#arg-cell-size"></a></dt>
 <dd><p>(Optional) Length of grid cell sides, in km or degrees.
-If NULL, this will be automatically determined according to the geographical
-level selected. This is 100 km or 1 degree for 'continent' or 'world', 10 km
-or (for a degree-based CRS) the native resolution of the cube for 'country',
-'sovereignty' or 'geounit'. If level is set to 'cube', cell size will be the
-native resolution of the cube for a degree-based CRS, or for a km-based CRS,
-the cell size will be determined by the area of the cube: 100 km for cubes
-larger than 1 million sq km, 10 km for cubes between 10 thousand and 1
-million sq km, 1 km for cubes between 100 and 10 thousand sq km, and 0.1 km
-for cubes smaller than 100 sq km. (Default: NULL)</p></dd>
+If set to "grid" (default), this will use the existing grid size of your
+cube. If set to "auto", this will be automatically determined according to
+the geographical level selected. This is 100 km or 1 degree for 'continent'
+or 'world', 10 km or (for a degree-based CRS) the native resolution of the
+cube for 'country', 'sovereignty' or 'geounit'. If level is set to 'cube',
+cell size will be the native resolution of the cube for a degree-based CRS,
+or for a km-based CRS, the cell size will be determined by the area of the
+cube: 100 km for cubes larger than 1 million sq km, 10 km for cubes between
+10 thousand and 1 million sq km, 1 km for cubes between 100 and 10 thousand
+sq km, and 0.1 km for cubes smaller than 100 sq km. Alternatively, the user
+can manually select the grid cell size (in km or degrees). Note that the
+cell size must be a whole number multiple of the cube's resolution.</p></dd>
 
 
 <dt id="arg-level">level<a class="anchor" aria-label="anchor" href="#arg-level"></a></dt>
@@ -238,8 +241,8 @@ include_ocean is set to "buffered_coast". Default is 50 km.</p></dd>
 <dt id="arg-force-grid">force_grid<a class="anchor" aria-label="anchor" href="#arg-force-grid"></a></dt>
 <dd><p>(Optional) Forces the calculation of a grid even if this
 would not normally be part of the pipeline, e.g. for time series. This
-setting is required for the calculation of rarity, and is turned on by the
-ab_rarity_ts and area_rarity_ts wrappers. (Default: FALSE)</p></dd>
+setting is required for the calculation of rarity or Hill diversity, and is
+forced on by indicators that require it. (Default: FALSE)</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -259,6 +262,7 @@ functions.</p></dd>
 <span class="r-in"><span>                                            dim_type <span class="op">=</span> <span class="st">"map"</span>,</span></span>
 <span class="r-in"><span>                                            level <span class="op">=</span> <span class="st">"country"</span>,</span></span>
 <span class="r-in"><span>                                            region <span class="op">=</span> <span class="st">"Denmark"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 191226</span>
 <span class="r-in"><span><span class="va">diversity_map</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Gridded biodiversity indicator map</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -293,11 +297,11 @@ functions.</p></dd>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>     68   447.            <span style="color: #BB0000;">NA</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>     69   447.            <span style="color: #BB0000;">NA</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>     70   447.            20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>     71   447.            20</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>     72   447.            17</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>     71   447.            <span style="color: #BB0000;">NA</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>     72   447.            <span style="color: #BB0000;">NA</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>     73   447.            34</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>     74   447.            47</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>     75   447.            48</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>     74   447.            <span style="color: #BB0000;">NA</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>     75   447.            40</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>     76   447.            37</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>     77   447.            21</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 289 more rows</span></span>

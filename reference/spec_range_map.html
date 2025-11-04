@@ -17,7 +17,7 @@ series."><meta property="og:image" content="https://b-cubed-eu.github.io/b3gbi/l
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.8</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.9</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,7 +40,7 @@ series."><meta property="og:image" content="https://b-cubed-eu.github.io/b3gbi/l
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Plot Species Ranges Over Space or Time</h1>
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.8.8/R/indicator_wrappers.R" class="external-link"><code>R/indicator_wrappers.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/R/indicator_wrappers.R" class="external-link"><code>R/indicator_wrappers.R</code></a></small>
       <div class="d-none name"><code>spec_range_map.Rd</code></div>
     </div>
 
@@ -73,15 +73,18 @@ CIs.</p></dd>
 
     <dt><code>cell_size</code></dt>
 <dd><p>(Optional) Length of grid cell sides, in km or degrees.
-If NULL, this will be automatically determined according to the geographical
-level selected. This is 100 km or 1 degree for 'continent' or 'world', 10 km
-or (for a degree-based CRS) the native resolution of the cube for 'country',
-'sovereignty' or 'geounit'. If level is set to 'cube', cell size will be the
-native resolution of the cube for a degree-based CRS, or for a km-based CRS,
-the cell size will be determined by the area of the cube: 100 km for cubes
-larger than 1 million sq km, 10 km for cubes between 10 thousand and 1
-million sq km, 1 km for cubes between 100 and 10 thousand sq km, and 0.1 km
-for cubes smaller than 100 sq km. (Default: NULL)</p></dd>
+If set to "grid" (default), this will use the existing grid size of your
+cube. If set to "auto", this will be automatically determined according to
+the geographical level selected. This is 100 km or 1 degree for 'continent'
+or 'world', 10 km or (for a degree-based CRS) the native resolution of the
+cube for 'country', 'sovereignty' or 'geounit'. If level is set to 'cube',
+cell size will be the native resolution of the cube for a degree-based CRS,
+or for a km-based CRS, the cell size will be determined by the area of the
+cube: 100 km for cubes larger than 1 million sq km, 10 km for cubes between
+10 thousand and 1 million sq km, 1 km for cubes between 100 and 10 thousand
+sq km, and 0.1 km for cubes smaller than 100 sq km. Alternatively, the user
+can manually select the grid cell size (in km or degrees). Note that the
+cell size must be a whole number multiple of the cube's resolution.</p></dd>
 
     <dt><code>level</code></dt>
 <dd><p>(Optional) Spatial level: 'cube', 'continent', 'country',
@@ -170,8 +173,8 @@ include_ocean is set to "buffered_coast". Default is 50 km.</p></dd>
     <dt><code>force_grid</code></dt>
 <dd><p>(Optional) Forces the calculation of a grid even if this
 would not normally be part of the pipeline, e.g. for time series. This
-setting is required for the calculation of rarity, and is turned on by the
-ab_rarity_ts and area_rarity_ts wrappers. (Default: FALSE)</p></dd>
+setting is required for the calculation of rarity or Hill diversity, and is
+forced on by indicators that require it. (Default: FALSE)</p></dd>
 
 
 </dl></dd>
@@ -197,6 +200,7 @@ ab_rarity_ts and area_rarity_ts wrappers. (Default: FALSE)</p></dd>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">sr_map</span> <span class="op">&lt;-</span> <span class="fu">spec_range_map</span><span class="op">(</span><span class="va">example_cube_1</span>, level <span class="op">=</span> <span class="st">"country"</span>,</span></span>
 <span class="r-in"><span>                         region <span class="op">=</span> <span class="st">"Denmark"</span>, include_ocean <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 117484</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">sr_map</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2440728</span>, <span class="fl">4265185</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="spec_range_map-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
