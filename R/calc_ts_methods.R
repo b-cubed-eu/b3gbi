@@ -119,13 +119,38 @@ calc_ts.occ_density <- function(x, ...) {
 
   year <- diversity_val <- obs <- area <- NULL
 
+  # Extract the total area from the attribute
+  total_study_area_sqkm <- attr(x, "total_area_sqkm")
+
+  # Critical Check: Ensure the total area attribute was found and is valid
+  if (is.null(total_study_area_sqkm) ||
+      !is.numeric(total_study_area_sqkm) ||
+      total_study_area_sqkm <= 0) {
+    stop(paste("The total area of the study region ('total_area_sqkm') is ",
+    "missing or invalid in the data attributes. Ensure the area is correctly ",
+    "calculated and attached to the data in the workflow."))
+  }
+
   # Calculate density of occurrences over the grid (per square km)
   indicator <- x %>%
-    dplyr::reframe(diversity_val = sum(obs) / area,
-                   .by = c("year", "cellid")) %>%
-    dplyr::reframe(diversity_val = mean(diversity_val), .by = "year") %>%
+    dplyr::reframe(
+      # Numerator: Sum of all occurrences across all occupied cells for the year
+      total_occurrences = sum(obs),
+      .by = "year"
+    ) %>%
+    dplyr::mutate(
+      # Denominator: Use the constant Total Study Area
+      diversity_val = total_occurrences / total_study_area_sqkm
+    ) %>%
+    # Final Formatting
+    dplyr::select(year, diversity_val) %>%
     dplyr::mutate(diversity_val = as.numeric(diversity_val)) %>%
     dplyr::arrange(year)
+    # dplyr::reframe(diversity_val = sum(obs) / area,
+    #                .by = c("year", "cellid")) %>%
+    # dplyr::reframe(diversity_val = mean(diversity_val), .by = "year") %>%
+    # dplyr::mutate(diversity_val = as.numeric(diversity_val)) %>%
+    # dplyr::arrange(year)
 
   return(indicator)
 
