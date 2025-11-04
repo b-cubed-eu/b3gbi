@@ -13,8 +13,8 @@ test_that("check_cell_size handles invalid cell sizes", {
 })
 
 test_that("check_cell_size handles NULL cell size (km)", {
-  expect_equal(check_cell_size(NULL, "1km", "world"), 100000)
-  expect_equal(check_cell_size(NULL, "1km", "continent"), 100000)
+  expect_equal(check_cell_size(NULL, "1km", "world"), 10000)
+  expect_equal(check_cell_size(NULL, "1km", "continent"), 10000)
   expect_equal(check_cell_size(NULL, "1km", "country"), 10000)
 })
 

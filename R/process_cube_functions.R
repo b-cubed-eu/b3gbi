@@ -570,21 +570,26 @@ process_cube <- function(cube_name,
       dplyr::mutate(cellCode = stringr::str_replace(cellCode, "S", "S-"))
 
     # Separate cell code into resolution, coordinates
+    # occurrence_data <- occurrence_data %>%
+    #   dplyr::mutate(
+    #     xcoord = as.numeric(stringr::str_extract(
+    #       cellCode,
+    #       "(?<=[EW])-?\\d+"
+    #     )) * 1000,
+    #     ycoord = as.numeric(stringr::str_extract(
+    #       cellCode,
+    #       "(?<=[NS])-?\\d+"
+    #     )) * 1000,
+    #     resolution = stringr::str_replace_all(
+    #       cellCode,
+    #       "(E\\d+)|(N\\d+)|(W-\\d+)|(S-\\d+)",
+    #       ""
+    #     ))
+
     occurrence_data <- occurrence_data %>%
-      dplyr::mutate(
-        xcoord = as.numeric(stringr::str_extract(
-          cellCode,
-          "(?<=[EW])-?\\d+"
-        )) * 1000,
-        ycoord = as.numeric(stringr::str_extract(
-          cellCode,
-          "(?<=[NS])-?\\d+"
-        )) * 1000,
-        resolution = stringr::str_replace_all(
-          cellCode,
-          "(E\\d+)|(N\\d+)|(W-\\d+)|(S-\\d+)",
-          ""
-        ))
+      dplyr::bind_cols(
+        eea_code_to_coords(.$cellCode)
+      )
 
   } else if (grid_type == "mgrs") {
 

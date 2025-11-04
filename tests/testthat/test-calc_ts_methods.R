@@ -149,9 +149,9 @@ test_that("calc_ts.total_occ handles empty input gracefully", {
 mock_occ_density_data <- data.frame(
   year = c(2001, 2002, 2003),
   cellid = c(1, 1, 1),
-  obs = c(100, 200, 300),
-  area = c(10, 10, 10)
+  obs = c(100, 200, 300)
 )
+attr(mock_occ_density_data, "total_area_sqkm") <- 10
 
 mock_occ_density <- structure(mock_occ_density_data, class = c("occ_density",
                                                                "data.frame"))
@@ -193,6 +193,7 @@ test_that("calc_ts.occ_density handles empty input gracefully", {
     ),
     class = c("occ_density", "data.frame")
   )
+  attr(empty_input, "total_area_sqkm") <- 1
 
   # Set attribute separately for an empty data frame
   attr(empty_input, "resolution") <- "1km"

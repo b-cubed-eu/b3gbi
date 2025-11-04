@@ -30,15 +30,18 @@
 #'  calculate. (Default: "norm"). Select "none" to avoid calculating bootstrap
 #'  CIs.
 #' @param cell_size (Optional) Length of grid cell sides, in km or degrees.
-#'  If NULL, this will be automatically determined according to the geographical
-#'  level selected. This is 100 km or 1 degree for 'continent' or 'world', 10 km
-#'  or (for a degree-based CRS) the native resolution of the cube for 'country',
-#'  'sovereignty' or 'geounit'. If level is set to 'cube', cell size will be the
-#'  native resolution of the cube for a degree-based CRS, or for a km-based CRS,
-#'  the cell size will be determined by the area of the cube: 100 km for cubes
-#'  larger than 1 million sq km, 10 km for cubes between 10 thousand and 1
-#'  million sq km, 1 km for cubes between 100 and 10 thousand sq km, and 0.1 km
-#'  for cubes smaller than 100 sq km. (Default: NULL)
+#'  If set to "grid" (default), this will use the existing grid size of your
+#'  cube. If set to "auto", this will be automatically determined according to
+#'  the geographical level selected. This is 100 km or 1 degree for 'continent'
+#'  or 'world', 10 km or (for a degree-based CRS) the native resolution of the
+#'  cube for 'country', 'sovereignty' or 'geounit'. If level is set to 'cube',
+#'  cell size will be the native resolution of the cube for a degree-based CRS,
+#'  or for a km-based CRS, the cell size will be determined by the area of the
+#'  cube: 100 km for cubes larger than 1 million sq km, 10 km for cubes between
+#'  10 thousand and 1 million sq km, 1 km for cubes between 100 and 10 thousand
+#'  sq km, and 0.1 km for cubes smaller than 100 sq km. Alternatively, the user
+#'  can manually select the grid cell size (in km or degrees). Note that the
+#'  cell size must be a whole number multiple of the cube's resolution.
 #' @param level (Optional) Spatial level: 'cube', 'continent', 'country',
 #'  'world', 'sovereignty', or 'geounit'. (Default: 'cube')
 #' @param region (Optional) The region of interest (e.g., "Europe"). This
@@ -93,8 +96,8 @@
 #'  include_ocean is set to "buffered_coast". Default is 50 km.
 #' @param force_grid (Optional) Forces the calculation of a grid even if this
 #'  would not normally be part of the pipeline, e.g. for time series. This
-#'  setting is required for the calculation of rarity, and is turned on by the
-#'  ab_rarity_ts and area_rarity_ts wrappers. (Default: FALSE)
+#'  setting is required for the calculation of rarity or Hill diversity, and is
+#'  forced on by indicators that require it. (Default: FALSE)
 #' @param ... Additional arguments passed to specific indicator calculation
 #'  functions.
 #'
@@ -118,7 +121,7 @@ compute_indicator_workflow <- function(data,
                                                    "perc",
                                                    "bca",
                                                    "none"),
-                                       cell_size = NULL,
+                                       cell_size = "grid",
                                        level = c("cube",
                                                  "continent",
                                                  "country",
@@ -233,9 +236,6 @@ compute_indicator_workflow <- function(data,
     )
   }
 
-  # Store the current spherical geometry setting
-  original_s2_setting <- sf::sf_use_s2()
-
   # Ensure user has entered reasonable first and last years, then filter the
   # data accordingly. If user-chosen first and/or last years are outside the
   # range of the data, the actual first and last years of the data will be used.
@@ -345,6 +345,9 @@ compute_indicator_workflow <- function(data,
       stop("Grid reference system not found.")
     }
 
+    # Store the current spherical geometry setting
+    original_s2_setting <- sf::sf_use_s2()
+
     if (spherical_geometry == FALSE) {
       # Temporarily disable spherical geometry
       sf::sf_use_s2(FALSE)
@@ -378,18 +381,6 @@ compute_indicator_workflow <- function(data,
 
     # # Get units based on CRS
     output_units <- check_crs_units(output_crs)
-
-    # Get cube area
-    cube_area_sqkm <-
-      cube_polygon_projected %>%
-      sf::st_area() %>%
-      units::set_units("km^2")
-
-    # Set output cell size (or if user provided one, check that it makes sense)
-    cell_size <- check_cell_size(cell_size,
-                                 data$resolution,
-                                 level,
-                                 cube_area_sqkm)
 
     # Create an sf object from cube data
     if (data$grid_type == "mgrs") {
@@ -518,6 +509,62 @@ compute_indicator_workflow <- function(data,
     map_data <- map_data_list$combined
     saved_layer <- map_data_list$saved
 
+    # Define the final study polygon
+    if (!is.null(shapefile)) {
+      # Final polygon is determined by shapefile intersection
+      final_study_polygon <- sf::st_as_sf(shapefile_merge)
+    } else {
+      # Final polygon is determined by Natural Earth map data
+      final_study_polygon <- map_data
+    }
+
+    # Calculate the final, correct area of the study region
+    final_area_sqkm <-
+      final_study_polygon %>%
+      sf::st_union() %>% # Union handles multi-polygons (e.g., countries)
+      sf::st_area() %>%
+      units::set_units("km^2")
+
+    if (dim_type == "map" || force_grid == TRUE) {
+      # Set output cell size (or if user provided one, check if it makes sense)
+      cell_size <- check_cell_size(cell_size,
+                                   data$resolution,
+                                   level,
+                                   final_area_sqkm)
+    }
+
+
+  } else {
+    # This block handles level == "cube", no shapefile, dim_type != "map"
+
+    if (!"sim_cube" %in% class(data)) {
+
+      # Determine cube CRS
+      cube_crs <- if (data$grid_type == "eea") {
+        "EPSG:3035"
+      } else if (data$grid_type == "mgrs") {
+        guess_utm_epsg(data)
+      } else {
+        "EPSG:4326"
+      }
+
+      # Calculate the area of the cube's extent
+      cube_bbox <- sf::st_bbox(c(xmin = coord_range[[1]],
+                                 xmax = coord_range[[2]],
+                                 ymin = coord_range[[3]],
+                                 ymax = coord_range[[4]]),
+                               crs = cube_crs)
+
+      final_area_sqkm <-
+        sf::st_as_sfc(cube_bbox) %>%
+        sf::st_transform(crs = "EPSG:4326") %>%
+        sf::st_area() %>%
+        units::set_units("km^2")
+
+    } else {
+      final_area_sqkm <- NA
+    }
+
   }
 
   if (dim_type == "map" || force_grid == TRUE) {
@@ -543,7 +590,7 @@ compute_indicator_workflow <- function(data,
         # If invert is FALSE, we simply want the area of the shapefile
         intersection_target <- shapefile_projected
       }
-
+      # Convert to sf if not already
       intersection_target <- sf::st_as_sf(intersection_target)
     } else {
       # No shapefile provided, so we intersect with the Natural Earth data
@@ -560,8 +607,11 @@ compute_indicator_workflow <- function(data,
       sf::sf_use_s2(original_s2_setting)
     }
 
+    # Filter data to only those within the intersection target
+    data_filtered <- sf::st_filter(data_projected, intersection_target)
     # Assign data to grid
-    data_final <- sf::st_join(data_projected, clipped_grid)
+    data_final <- data_filtered %>%
+      sf::st_join(clipped_grid, join = sf::st_nearest_feature)
     data_final_nogeom <- sf::st_drop_geometry(data_final)
     map_lims <- sf::st_transform(data_final, crs = output_crs) %>%
       sf::st_bbox()
@@ -584,6 +634,13 @@ compute_indicator_workflow <- function(data,
   subtype <- paste0(type, "_", dim_type)
   class(data_final_nogeom) <- append(type, class(data_final_nogeom))
   class(data_final_nogeom) <- append(subtype, class(data_final_nogeom))
+
+  # Make total area available for use in certain indicator calculations
+  if (!is.null(final_area_sqkm)) {
+    attr(data_final_nogeom, "total_area_sqkm") <- as.numeric(final_area_sqkm)
+  }
+
+  print(sum(data_final_nogeom$obs))
 
   if (dim_type == "map") {
 

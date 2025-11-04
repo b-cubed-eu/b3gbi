@@ -92,22 +92,38 @@ calc_ci.occ_density <- function(x,
                   meant to be called directly.",
                   inherits(x, "occ_density"))
 
-  year <- cellid <- obs <- area <- NULL
+  total_area <- year <- obs <- area <- NULL
 
-  x <- x %>%
-    dplyr::arrange(year, cellid) %>%
-    dplyr::reframe(diversity_val = sum(obs) / area,
-                   .by = c("year", "cellid"))
+    # 1. Extract the total area from the attribute attached in compute_indicator_workflow
+    total_study_area_sqkm <- attr(x, "total_area_sqkm")
 
-  # Put individual observations into a list organized by year
-  ind_list <- list_org_by_year(x, "diversity_val")
+  if (is.null(total_study_area_sqkm) ||
+      !is.numeric(total_study_area_sqkm) ||
+      total_study_area_sqkm <= 0) {
+    stop(paste("The total area of the study region ('total_area_sqkm') is ",
+    "missing or invalid in the data attributes. Cannot calculate confidence ",
+    "intervals for occ_density."))
+  }
 
-  # Bootstrap indicator value
+    # Add the constant area column to the data frame
+    data_for_boot <- x %>%
+      dplyr::mutate(total_area = total_study_area_sqkm) %>%
+      dplyr::select(year, obs, total_area)
+
+    # Split the data frame into a list of data frames (one per year)
+    ind_list <- data_for_boot %>%
+      dplyr::group_by(year) %>%
+      dplyr::group_split()
+
+    # Name the list elements
+    names(ind_list) <- data_for_boot %>% dplyr::pull(year) %>% unique()
+
+  # Bootstrap indicator value for each year
   bootstraps <-
     ind_list %>%
     purrr::map(~boot::boot(
       data = .,
-      statistic = boot_statistic_mean,
+      statistic = boot_statistic_density,
       R = num_bootstrap))
 
   # Calculate confidence intervals and add to indicator values

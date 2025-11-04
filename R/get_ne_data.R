@@ -69,28 +69,28 @@ get_ne_data <- function(projected_crs,
     sf::st_transform(crs = "ESRI:54012") %>%
     sf::st_make_valid()
 
+  # Add a buffer around the bbox to ensure full coverage
+  expand_percent <- 0.5 # 50% buffer
+  lng_range <- unname(latlong_bbox["xmax"] - latlong_bbox["xmin"])
+  lat_range <- unname(latlong_bbox["ymax"] - latlong_bbox["ymin"])
+  min_lon <- unname(latlong_bbox["xmin"] - (expand_percent * lng_range))
+  max_lon <- unname(latlong_bbox["xmax"] + (expand_percent * lng_range))
+  min_lat <- unname(latlong_bbox["ymin"] - (expand_percent * lat_range))
+  max_lat <- unname(latlong_bbox["ymax"] + (expand_percent * lat_range))
+
+  # Create a bbox object
+  latlong_extent <- c("xmin" = min_lon,
+                      "xmax" = max_lon,
+                      "ymin" = min_lat,
+                      "ymax" = max_lat) %>%
+    sf::st_bbox(crs = sf::st_crs(4326))
+
+  # Project the extent
+  extent_projected <- latlong_extent %>%
+    sf::st_as_sfc() %>%
+    sf::st_transform(crs = "ESRI:54012")
+
   if (level == "cube") {
-
-    # Add a buffer around the bbox to ensure full coverage
-    expand_percent <- 0.5 # 50% buffer
-    lng_range <- unname(latlong_bbox["xmax"] - latlong_bbox["xmin"])
-    lat_range <- unname(latlong_bbox["ymax"] - latlong_bbox["ymin"])
-    min_lon <- unname(latlong_bbox["xmin"] - (expand_percent * lng_range))
-    max_lon <- unname(latlong_bbox["xmax"] + (expand_percent * lng_range))
-    min_lat <- unname(latlong_bbox["ymin"] - (expand_percent * lat_range))
-    max_lat <- unname(latlong_bbox["ymax"] + (expand_percent * lat_range))
-
-    # Create a bbox object
-    latlong_extent <- c("xmin" = min_lon,
-                        "xmax" = max_lon,
-                        "ymin" = min_lat,
-                        "ymax" = max_lat) %>%
-      sf::st_bbox(crs = sf::st_crs(4326))
-
-    # Project the extent
-    extent_projected <- latlong_extent %>%
-      sf::st_as_sfc() %>%
-      sf::st_transform(crs = "ESRI:54012")
 
     # Set attributes as spatially constant to avoid warnings when clipping
     sf::st_agr(map_data_projected) <- "constant"
@@ -109,6 +109,7 @@ get_ne_data <- function(projected_crs,
 
     # Validate and union the map data to avoid issues with overlaps
     map_data_projected <- sf::st_make_valid(map_data_projected) %>%
+
       sf::st_union() %>%
       sf::st_as_sf()
 
@@ -188,6 +189,18 @@ get_ne_data <- function(projected_crs,
   if (include_land == FALSE) {
     # just use the ocean layer
     map_data_combined <- map_data_ocean
+  }
+
+  if (level != "cube") {
+    extent_projected <- latlong_extent %>%
+      sf::st_as_sfc() %>%
+      sf::st_transform(crs = "ESRI:54012")
+
+    map_data_combined <- map_data_combined %>%
+      sf::st_crop(extent_projected) %>%
+      sf::st_make_valid() %>%
+      sf::st_union() %>%
+      sf::st_as_sf()
   }
 
   # convert to the desired projected CRS

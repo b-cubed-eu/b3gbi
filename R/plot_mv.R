@@ -23,6 +23,9 @@
 #' @return An interactive mapview plot.
 #'
 #' @export
+#'
+#' @importFrom grDevices colorRampPalette
+#'
 plot_mv <- function(x,
                     legend_title = NULL,
                     transparency = 0.8,
@@ -49,6 +52,8 @@ plot_mv <- function(x,
          Please install it using: install.packages('mapview')",
          call. = FALSE)
   }
+
+  indicator_value <- NULL
 
   # Check that the object is the correct class
   wrong_class(x, "indicator_map", reason = "incorrect")
