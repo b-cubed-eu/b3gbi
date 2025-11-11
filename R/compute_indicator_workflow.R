@@ -385,6 +385,18 @@ compute_indicator_workflow <- function(data,
     # Create an sf object from cube data
     if (data$grid_type == "mgrs") {
       df_sf_input <- create_sf_from_utm(df, "EPSG:4326")
+    } else if (data$grid_type == "eea") {
+      res_size <- as.numeric(stringr::str_extract(df$resolution, "[0-9.]+(?=km)"))
+      half_res_size <- res_size / 2
+      df_offset <- df %>%
+        dplyr::mutate(
+          xcoord_offset = xcoord - half_res_size,
+          ycoord_offset = ycoord - half_res_size
+        )
+      # Create an sf object from EEA data
+      df_sf_input <- sf::st_as_sf(df_offset,
+                                  coords = c("xcoord_offset", "ycoord_offset"),
+                                  crs = "EPSG:3035")
     } else {
       # Create an sf object from quarter-degree or EEA data
       df_sf_input <- sf::st_as_sf(df,
@@ -640,7 +652,7 @@ compute_indicator_workflow <- function(data,
     attr(data_final_nogeom, "total_area_sqkm") <- as.numeric(final_area_sqkm)
   }
 
-  print(sum(data_final_nogeom$obs))
+  # print(sum(data_final_nogeom$obs))
 
   if (dim_type == "map") {
 

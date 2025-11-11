@@ -1,3 +1,7 @@
+# b3gbi 0.8.10 - Minor update:
+
+* Fixed a bug that caused occurrences to be wrongly assigned in EEA grids as the coordinates were offset incorrectly.
+
 # b3gbi 0.8.9 - Minor update:
 
 * Fixed an important bug that caused observations to be assigned to multiple grid cells when level was set to 'cube' (no specific region was selected).
