@@ -155,6 +155,8 @@ compute_indicator_workflow <- function(data,
               class = c("processed_cube", "processed_cube_dsinfo", "sim_cube"),
               reason = "unrecognized")
 
+  xcoord <- ycoord <- NULL
+
   # Check for empty cube
   if (nrow(data$data) == 0) {
     stop("No data found in the cube.")
