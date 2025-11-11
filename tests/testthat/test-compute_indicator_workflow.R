@@ -204,6 +204,7 @@ test_that(
     data = data.frame(
       xcoord = c(9, 1, 5),
       ycoord = c(1, 9, 5),
+      resolution = c("10km", "10km", "10km"),
       cellCode = c(1, 2, 3),
       year = c(2000, 2000, 2000),
       scientificName = c("A", "A", "A"),
@@ -565,6 +566,7 @@ test_that(
       data = data.frame(
         xcoord = c(1, 5),
         ycoord = c(5, 1),
+        resolution = c("10km", "10km"),
         cellCode = c(1, 2),
         year = c(2000, 2000),
         scientificName = c("A", "A"),
