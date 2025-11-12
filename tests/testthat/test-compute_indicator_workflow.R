@@ -249,7 +249,7 @@ test_that(
         sf::st_polygon(
           list(
             matrix(
-              c(2, 2, 2, 8, 8, 8, 8, 2, 2, 2),
+              c(2, 2, 2, 5.4, 5.4, 8, 5.4, 2, 2, 2),
               ncol = 2,
               byrow = TRUE
             )
@@ -291,7 +291,7 @@ test_that(
         sf::st_polygon(
           list(
             matrix(
-              c(2, 2, 2, 8, 8, 8, 8, 2, 2, 2),
+              c(2, 2, 2, 5.4, 5.4, 8, 5.4, 2, 2, 2),
               ncol = 2,
               byrow = TRUE
             )
