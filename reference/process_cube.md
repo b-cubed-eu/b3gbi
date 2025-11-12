@@ -1,0 +1,190 @@
+# Process GBIF Data Cubes
+
+Processes a GBIF data cube and (if applicable) an associated taxonomic
+information file. If your cube includes a taxonomic info file it is
+likely a previous generation cube and should be processed using
+'process_cube_old'. The taxonomic info file must reside in the same
+directory as your cube and share a base file name (e.g.,
+'cubes/my_mammals_cube.csv', 'cubes/my_mammals_info.csv'). If your cube
+does NOT include a taxonomic info file then it is likely a current
+generation cube and should be processed using the standard process_cube
+function. The API used to generate the current generation cubes is very
+flexible and allows user-specified column names. Therefore, please check
+that the column names of your cube match the Darwin Core standard
+expected by the process_cube function. If they do not, you may need to
+enter them manually. The function will return an error if it cannot find
+all required columns.
+
+## Usage
+
+``` r
+process_cube(
+  cube_name,
+  grid_type = c("automatic", "eea", "mgrs", "eqdgc", "custom", "none"),
+  first_year = NULL,
+  last_year = NULL,
+  force_gridcode = FALSE,
+  cols_year = NULL,
+  cols_yearMonth = NULL,
+  cols_cellCode = NULL,
+  cols_occurrences = NULL,
+  cols_scientificName = NULL,
+  cols_minCoordinateUncertaintyInMeters = NULL,
+  cols_minTemporalUncertainty = NULL,
+  cols_kingdom = NULL,
+  cols_family = NULL,
+  cols_species = NULL,
+  cols_kingdomKey = NULL,
+  cols_familyKey = NULL,
+  cols_speciesKey = NULL,
+  cols_familyCount = NULL,
+  cols_sex = NULL,
+  cols_lifeStage = NULL,
+  separator = NULL
+)
+```
+
+## Arguments
+
+- cube_name:
+
+  The location and name of a data cube file (e.g.,
+  'inst/extdata/europe_species_cube.csv').
+
+- grid_type:
+
+  (Optional) Specify which grid reference system your cube uses. By
+  default the function will attempt to determine this automatically and
+  return an error if it fails. If you want to perform analysis on a cube
+  with custom grid codes (e.g. output from the gcube package) or a cube
+  without grid codes, select 'custom' or 'none', respectively.
+
+- first_year:
+
+  (Optional) The first year of occurrences to include. If not specified,
+  uses a default of 1600 to prevent false records (e.g. with year = 0).
+
+- last_year:
+
+  (Optional) The final year of occurrences to include. If not specified,
+  uses the latest year present in the cube.
+
+- force_gridcode:
+
+  (Optional) Force the function to assume a specific grid reference
+  system. This may cause unexpected downstream issues, so it is not
+  recommended. If you are getting errors related to grid cell codes,
+  check to make sure they are valid.
+
+- cols_year:
+
+  (Optional) The name of the column containing the year of occurrence
+  (if something other than 'year'). This column is required unless you
+  have a yearMonth column.
+
+- cols_yearMonth:
+
+  (Optional) The name of the column containing the year and month of
+  occurrence (if present and if other than 'yearMonth'). Use this only
+  if you do not have a year column. The b3gbi package does not use month
+  data, so the function will convert your yearMonth column to a year
+  column.
+
+- cols_cellCode:
+
+  (Optional) The name of the column containing the grid reference codes
+  (if other than 'cellCode'). This column is required.
+
+- cols_occurrences:
+
+  (Optional) The name of the column containing the number of occurrence
+  (if other than 'occurrences'). This column is required.
+
+- cols_scientificName:
+
+  (Optional) The name of the column containing the scientific name of
+  the species (if other than 'scientificName'). Note that it is not
+  necessary to have both a species column and a scientificName column.
+  One or the other is sufficient.
+
+- cols_minCoordinateUncertaintyInMeters:
+
+  (Optional) The name of the column containing the minimum coordinate
+  uncertainty of the occurrences (if other than
+  'minCoordinateUncertaintyinMeters').
+
+- cols_minTemporalUncertainty:
+
+  (Optional) The name of the column containing the minimum temporal
+  uncertainty of the occurrences (if other than
+  'minTemporalUncertainty').
+
+- cols_kingdom:
+
+  (Optional) The name of the column containing the kingdom the occurring
+  species belongs to (if other than 'kingdom').
+
+- cols_family:
+
+  (Optional) The name of the column containing the family the occurring
+  species belongs to (if other than 'family').
+
+- cols_species:
+
+  (Optional) The name of the column containing the name of the occurring
+  species (if other than 'species'). Note that it is not necessary to
+  have both a species column and a scientificName column. One or the
+  other is sufficient.
+
+- cols_kingdomKey:
+
+  (Optional) The name of the column containing the kingdom key of the
+  occurring species (if other than 'kingdomKey').
+
+- cols_familyKey:
+
+  (Optional) The name of the column containing the family key of the
+  occurring species (if other than 'familykey').
+
+- cols_speciesKey:
+
+  (Optional) The name of the column containing the species key of the
+  occurring species (if other than 'speciesKey'). The column is
+  required, but note that if you have a 'taxonKey' column you can
+  provide it as the speciesKey.
+
+- cols_familyCount:
+
+  (Optional) The name of the column containing the occurrence count by
+  family.
+
+- cols_sex:
+
+  (Optional) The name of the column containing the sex of the observed
+  individuals.
+
+- cols_lifeStage:
+
+  (Optional) The name of the column containing the life stage of the
+  observed individuals.
+
+- separator:
+
+  (Optional) The column-separating character in your csv file. This
+  should be automatically recognized, so only specify this if you are
+  having trouble.
+
+## Value
+
+A tibble containing the processed GBIF occurrence data.
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+cube_name <- system.file("extdata", "denmark_mammals_cube_eqdgc.csv",
+                         package = "b3gbi")
+denmark_example_cube <- process_cube(cube_name)
+denmark_example_cube
+} # }
+```

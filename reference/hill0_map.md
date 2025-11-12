@@ -1,0 +1,379 @@
+# Calculate Estimated Hill Diversity Over Space or Time
+
+Use coverage-based methods to estimate Hill diversity measures over a
+gridded map or as a time series. Three Hill diversity measures are
+covered:
+
+*Species richness* - `hill0_map()` and `hill0_ts()`
+
+*Hill-Shannon diversity* - `hill1_map()` and `hill1_ts()`
+
+*Hill-Simpson diversity* - `hill2_map()` and `hill2_ts()`
+
+(see 'Details' for more information).
+
+## Usage
+
+``` r
+hill0_map(
+  data,
+  coverage = 0.95,
+  cutoff_length = 5,
+  data_type = c("incidence", "abundance"),
+  assume_freq = FALSE,
+  ...
+)
+
+hill0_ts(data, coverage = 0.95, cutoff_length = 5, conf_level = 0.95, ...)
+
+hill1_map(
+  data,
+  cutoff_length = 5,
+  coverage = 0.95,
+  data_type = c("incidence", "abundance"),
+  assume_freq = FALSE,
+  ...
+)
+
+hill1_ts(data, cutoff_length = 5, coverage = 0.95, conf_level = 0.95, ...)
+
+hill2_map(
+  data,
+  cutoff_length = 5,
+  coverage = 0.95,
+  data_type = c("incidence", "abundance"),
+  assume_freq = FALSE,
+  ...
+)
+
+hill2_ts(data, cutoff_length = 5, coverage = 0.95, conf_level = 0.95, ...)
+```
+
+## Arguments
+
+- data:
+
+  A data cube object (class 'processed_cube').
+
+- coverage:
+
+  (Optional) The sample coverage value for the estimator. Default is
+  0.95.
+
+- cutoff_length:
+
+  (Optional) The minimum number of data points for each grid cell. Grid
+  cells with fewer data points will be removed before calculations to
+  avoid errors. Default is 5.
+
+- data_type:
+
+  (Optional) If set to "incidence", occurrences are converted to
+  incidence data. Observations are treated as presence/absence and years
+  are used as sampling units. The number of years in which a species was
+  observed within a grid cell are then summarized. If set to
+  "abundance", occurrences are summed across years for each species as a
+  proxy for abundance. Default is "incidence".
+
+- assume_freq:
+
+  (Optional) If TRUE, the sum of observations for a species within a
+  grid cell is assumed to be a sum of sampling sites in which that
+  species was observed. The maximum number of observations for any
+  species within a grid cell is then taken as a proxy for the total
+  number of sampling sites for that cell. This parameter is ignored if
+  data_type is set to "abundance". It is advisable to leave this on
+  FALSE unless you are certain of how your data is structured. Default
+  is FALSE.
+
+- ...:
+
+  Arguments passed on to
+  [`compute_indicator_workflow`](https://b-cubed-eu.github.io/b3gbi/reference/compute_indicator_workflow.md)
+
+  `ci_type`
+
+  :   (Optional) Type of bootstrap confidence intervals to calculate.
+      (Default: "norm"). Select "none" to avoid calculating bootstrap
+      CIs.
+
+  `cell_size`
+
+  :   (Optional) Length of grid cell sides, in km or degrees. If set to
+      "grid" (default), this will use the existing grid size of your
+      cube. If set to "auto", this will be automatically determined
+      according to the geographical level selected. This is 100 km or 1
+      degree for 'continent' or 'world', 10 km or (for a degree-based
+      CRS) the native resolution of the cube for 'country',
+      'sovereignty' or 'geounit'. If level is set to 'cube', cell size
+      will be the native resolution of the cube for a degree-based CRS,
+      or for a km-based CRS, the cell size will be determined by the
+      area of the cube: 100 km for cubes larger than 1 million sq km, 10
+      km for cubes between 10 thousand and 1 million sq km, 1 km for
+      cubes between 100 and 10 thousand sq km, and 0.1 km for cubes
+      smaller than 100 sq km. Alternatively, the user can manually
+      select the grid cell size (in km or degrees). Note that the cell
+      size must be a whole number multiple of the cube's resolution.
+
+  `level`
+
+  :   (Optional) Spatial level: 'cube', 'continent', 'country', 'world',
+      'sovereignty', or 'geounit'. (Default: 'cube')
+
+  `region`
+
+  :   (Optional) The region of interest (e.g., "Europe"). This parameter
+      is ignored if level is set to 'cube' or 'world'. (Default: NULL)
+
+  `ne_type`
+
+  :   (Optional) The type of Natural Earth data to download:
+      'countries', 'map_units', 'sovereignty', or 'tiny_countries'. This
+      parameter is ignored if level is set to 'cube' or 'world'.
+      (Default: "countries")
+
+  `ne_scale`
+
+  :   (Optional) The scale of Natural Earth data to download: 'small' -
+      110m, 'medium' - 50m, or 'large' - 10m. (Default: "medium")
+
+  `output_crs`
+
+  :   (Optional) The CRS you want for your calculated indicator. (Leave
+      blank to let the function choose a default based on grid reference
+      system.)
+
+  `first_year`
+
+  :   (Optional) Exclude data before this year. (Uses all data in the
+      cube by default.)
+
+  `last_year`
+
+  :   (Optional) Exclude data after this year. (Uses all data in the
+      cube by default.)
+
+  `spherical_geometry`
+
+  :   (Optional) If set to FALSE, will temporarily disable spherical
+      geometry while the function runs. Should only be used to solve
+      specific issues. (Default is TRUE).
+
+  `make_valid`
+
+  :   (Optional) Calls st_make_valid() from the sf package after
+      creating the grid. Increases processing time but may help if you
+      are getting polygon errors. (Default is FALSE).
+
+  `num_bootstrap`
+
+  :   (Optional) Set the number of bootstraps to calculate for
+      generating confidence intervals. (Default: 100)
+
+  `shapefile_path`
+
+  :   (optional) Path of an external shapefile to merge into the
+      workflow. For example, if you want to calculate your indicator
+      particular features such as protected areas or wetlands.
+
+  `shapefile_crs`
+
+  :   (Optional) CRS of a .wkt shapefile. If your shapefile is .wkt and
+      you do NOT use this parameter, the CRS will be assumed to be
+      EPSG:4326 and the coordinates will be read in as lat/long. If your
+      shape is NOT a .wkt the CRS will be determined automatically.
+
+  `invert`
+
+  :   (optional) Calculate an indicator over the inverse of the
+      shapefile (e.g. if you have a protected areas shapefile this would
+      calculate an indicator over all non protected areas within your
+      cube). Default is FALSE.
+
+  `include_land`
+
+  :   (Optional) Include occurrences which fall within the land area.
+      Default is TRUE. \*Note that this purely a geographic filter, and
+      does not filter based on whether the occurrence is actually
+      terrestrial. Grid cells which fall partially on land and partially
+      on ocean will be included even if include_land is FALSE. To
+      exclude terrestrial and/or freshwater taxa, you must manually
+      filter your data cube before calculating your indicator.
+
+  `include_ocean`
+
+  :   (Optional) Include occurrences which fall outside the land area.
+      Default is TRUE. Set as "buffered_coast" to include a set buffer
+      size around the land area rather than the entire ocean area.
+      \*Note that this is purely a geographic filter, and does not
+      filter based on whether the occurrence is actually marine. Grid
+      cells which fall partially on land and partially on ocean will be
+      included even if include_ocean is FALSE. To exclude marine taxa,
+      you must manually filter your data cube before calculating your
+      indicator.
+
+  `buffer_dist_km`
+
+  :   (Optional) The distance to buffer around the land if include_ocean
+      is set to "buffered_coast". Default is 50 km.
+
+  `force_grid`
+
+  :   (Optional) Forces the calculation of a grid even if this would not
+      normally be part of the pipeline, e.g. for time series. This
+      setting is required for the calculation of rarity or Hill
+      diversity, and is forced on by indicators that require it.
+      (Default: FALSE)
+
+- conf_level:
+
+  (Optional) Confidence level for bootstrap confidence intervals. Only
+  applies to temporal indicators. Default is 0.95.
+
+## Value
+
+An S3 object with the classes 'indicator_map' or 'indicator_ts' and
+'hill0' or 'hill1' or 'hill2' containing the calculated indicator values
+and metadata.
+
+## Details
+
+### Hill diversity
+
+Hill (1973) introduced the concept of Hill diversity, which assumes that
+the number and relative abundance of species are inseparable components
+of diversity. Hill diversity uses a single equation to calculate
+multiple measures of diversity by varying a single parameter ℓ, which
+changes the emphasis on rare vs common species (Roswell et al., 2019).
+It represents the mean rarity of sampled species, and is calculated as:
+\$\$ D = \left( \sum\_{i=1}^{S} p_i^\ell \right)^{1/(1-\ell)} \$\$where
+D is diversity, S is the number of species, pi is the proportion of
+individuals belonging to species i, ri is the rarity of species i, and ℓ
+determines the rarity scale for the mean. While ℓ can theoretically take
+almost any value, three common measures of diversity are special cases:
+species richness, and modified versions of the Shannon and Simpson
+diversity indices (Roswell et al., 2019). These three measures occur
+when ℓ takes the value of 1, 0 (or near-zero, as ℓ cannot actually take
+the value of 0), or -1, respectively.
+
+- **Species Richness (ℓ = 1):** \$\$ D = S \$\$
+
+- **Hill-Shannon Diversity (ℓ ≈ 0):** \$\$ D = e^{-\sum\_{i=1}^{S} p_i
+  \ln(p_i)} \$\$
+
+- **Hill-Simpson Diversity (ℓ = -1):** \$\$ D = \frac{1}{\sum\_{i=1}^{S}
+  p_i^2} \$\$
+
+Richness uses an arithmetic scale (the arithmetic mean), thus giving
+rare species a lot of leverage. By contrast, Hill-Shannon diversity uses
+a logarithmic scale (the geometric mean), treating common and rare
+species equally, and Hill-Simpson diversity uses a reciprocal scale (the
+harmonic mean), giving common species higher leverage.
+
+### Coverage-based estimation
+
+Hill diversity values can be estimated through different standardisation
+procedures as a way to mitigate the effects of sample size and sampling
+biases. One way to do this is by equalising sample size by calculating a
+species accumulation curve (a plot of cumulative species richness as a
+function of sample size) for each year or grid cell. The smallest sample
+size from among all the grid cells or years in the dataset is used as a
+reference to select richness values from each curve. This is called
+rarefaction. It is also possible to use a larger sample size as a
+reference, but this requires extrapolation of smaller samples, which is
+more prone to error than rarefaction.
+
+However, results from sample-size based estimation can be problematic as
+they depend on both richness and evenness. A sample from a community
+with a more even distribution of individuals across species is likely to
+show higher richness than a sample of the same size from a community
+where many species are rare, as the rare species are less likely to
+appear in the sample. Similarly, a community containing a lot of species
+will appear less rich than it actually is if the sample size used for
+comparison is too small. Detectability also plays an important part;
+hard to detect species are less likely to appear in the sample, so
+communities in which rare species are more easily detectable are likely
+to yield richer samples.
+
+Another way to estimate species richness is to standardise by coverage.
+The iNEXT package (Chao et al., 2014; Hsieh et al., 2016) for R is used
+to estimate species richness at an equal level of coverage (e.g. 0.95)
+for each cell or year in a biodiversity data cube. Coverage is the
+proportion of individuals in the community belonging to species in the
+sample. So, at a coverage of 0.95, 95% of individuals in the community
+belong to species detected in the sample while 5% belong to species that
+are not detected in the sample. Coverage is estimated based on the
+frequencies of species already in the sample. It can be illustrated
+using a species accumulation curve, the slope of which represents the
+probability of detecting a new species with the next individual you
+sample from a community. At a sample size of zero, the slope would be
+one, meaning the next individual sampled has a 100% probability of being
+a species not already in the sample. Therefore, a coverage value of one
+corresponds to the asymptote of a species accumulation curve (slope of
+zero), meaning no new species would be uncovered through further
+sampling.
+
+## Functions
+
+- `hill0_map()`:
+
+- `hill0_ts()`:
+
+- `hill1_map()`:
+
+- `hill1_ts()`:
+
+- `hill2_map()`:
+
+- `hill2_ts()`:
+
+## References
+
+Hill, M. O. (1973). Diversity and evenness: a unifying notation and its
+consequences. *Ecology*, *54*(2), 427-432.
+
+Roswell, M., Shipley, J., & Ewers, R. M. (2019). A conceptual guide to
+measuring and interpreting functional diversity. *Journal of Applied
+Ecology*, *56*(12), 2533-2543.
+
+Chao, A., Gotelli, N. J., Hsieh, T. C., Sander, E. L., Ma, K. H.,
+Colwell, R. K., & Ellison, A. M. (2014). Rarefaction and extrapolation
+with Hill numbers: a framework for sampling and estimation in species
+diversity studies. *Ecological monographs*, *84*(1), 45-67.
+
+Hsieh, T. C., Ma, K. H., & Chao, A. (2016). iNEXT: an R package for
+rarefaction and extrapolation of species diversity (Hill numbers).
+*Methods in Ecology and Evolution*, *7*(12), 1451-1456.
+
+## See also
+
+compute_indicator_workflow
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+h0_map <- hill0_map(example_cube_1, level = "country", region = "Denmark")
+plot(h0_map)
+} # }
+if (FALSE) { # \dontrun{
+h0_ts <- hill0_ts(example_cube_1, first_year = 1985)
+plot(h0_ts)
+} # }
+if (FALSE) { # \dontrun{
+h1_map <- hill1_map(example_cube_1, level = "country", region = "Denmark")
+plot(h1_map)
+} # }
+if (FALSE) { # \dontrun{
+h1_ts <- hill1_ts(example_cube_1, first_year = 1985)
+plot(h1_ts)
+} # }
+if (FALSE) { # \dontrun{
+h2_map <- hill2_map(example_cube_1, level = "country", region = "Denmark")
+plot(h2_map)
+} # }
+if (FALSE) { # \dontrun{
+h2_ts <- hill2_ts(example_cube_1, first_year = 1985)
+plot(h2_ts)
+} # }
+```

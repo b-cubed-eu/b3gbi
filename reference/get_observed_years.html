@@ -15,7 +15,7 @@ determines the years for which observation data exists.'><meta property="og:imag
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.9</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.10</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,7 +38,7 @@ determines the years for which observation data exists.'><meta property="og:imag
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Extract Years With Observations from an Indicator Map</h1>
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.8.9/R/get_observed_years.R" class="external-link"><code>R/get_observed_years.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/R/get_observed_years.R" class="external-link"><code>R/get_observed_years.R</code></a></small>
       <div class="d-none name"><code>get_observed_years.Rd</code></div>
     </div>
 
@@ -72,7 +72,6 @@ for each year (<code>TRUE</code> if present, <code>FALSE</code> if absent).</p><
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">total_occ_mammals_denmark</span> <span class="op">&lt;-</span> <span class="fu"><a href="total_occ_map.html">total_occ_map</a></span><span class="op">(</span><span class="va">example_cube_1</span>, level <span class="op">=</span> <span class="st">"country"</span>,</span></span>
 <span class="r-in"><span>                                           region <span class="op">=</span> <span class="st">"Denmark"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 191226</span>
 <span class="r-in"><span><span class="fu">get_observed_years</span><span class="op">(</span><span class="va">total_occ_mammals_denmark</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     years occurrences</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1    1862        TRUE</span>
@@ -248,7 +247,7 @@ for each year (<code>TRUE</code> if present, <code>FALSE</code> if absent).</p><
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>
