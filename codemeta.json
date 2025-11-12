@@ -7,13 +7,13 @@
   "relatedLink": "https://b-cubed-eu.github.io/b3gbi/",
   "codeRepository": "https://github.com/b-cubed-eu/b3gbi",
   "license": "https://spdx.org/licenses/MIT",
-  "version": "0.8.9",
+  "version": "0.8.10",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.3.1 (2023-06-16 ucrt)",
+  "runtimePlatform": "R version 4.5.1 (2025-06-13 ucrt)",
   "author": [
     {
       "@type": "Person",
@@ -377,7 +377,7 @@
     },
     "SystemRequirements": null
   },
-  "fileSize": "11970620.571KB",
+  "fileSize": "11975130.724KB",
   "releaseNotes": "https://github.com/b-cubed-eu/b3gbi/blob/main/NEWS.md",
   "readme": "https://github.com/b-cubed-eu/b3gbi/blob/main/README.md",
   "contIntegration": ["https://github.com/b-cubed-eu/b3gbi/actions/workflows/R-CMD-check.yaml", "https://app.codecov.io/gh/b-cubed-eu/b3gbi/"],

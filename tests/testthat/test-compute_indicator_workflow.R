@@ -202,8 +202,9 @@ test_that(
   "compute_indicator_workflow creates grids and performs spatial operations", {
   mock_cube <- list(
     data = data.frame(
-      xcoord = c(9, 1, 5),
-      ycoord = c(1, 9, 5),
+      xcoord = c(3, 2, 5),
+      ycoord = c(3, 6, 5),
+      resolution = c("1km", "1km", "1km"),
       cellCode = c(1, 2, 3),
       year = c(2000, 2000, 2000),
       scientificName = c("A", "A", "A"),
@@ -216,7 +217,7 @@ test_that(
                        "ymin" = 1,
                        "ymax" = 9),
     num_species = 1,
-    resolutions = "10km",
+    resolutions = "1km",
     grid_type = "eea"
   )
   class(mock_cube) <- c("processed_cube", "list")
@@ -232,7 +233,7 @@ test_that(
         dim_type = "map",
         level = "country",
         region = "Test",
-        cell_size = 10
+        cell_size = 1
       )
       expect_s3_class(result$data, "sf")
       expect_true("cellid" %in% names(result$data))
@@ -248,7 +249,7 @@ test_that(
         sf::st_polygon(
           list(
             matrix(
-              c(2, 2, 2, 8, 8, 8, 8, 2, 2, 2),
+              c(2, 2, 2, 5.4, 5.4, 8, 5.4, 2, 2, 2),
               ncol = 2,
               byrow = TRUE
             )
@@ -269,7 +270,7 @@ test_that(
         dim_type = "map",
         level = "country",
         region = "Test",
-        cell_size = 10,
+        cell_size = 1,
         shapefile_path = temp_shapefile,
         output_crs = "EPSG:3035"
       )
@@ -290,7 +291,7 @@ test_that(
         sf::st_polygon(
           list(
             matrix(
-              c(2, 2, 2, 8, 8, 8, 8, 2, 2, 2),
+              c(2, 2, 2, 5.4, 5.4, 8, 5.4, 2, 2, 2),
               ncol = 2,
               byrow = TRUE
             )
@@ -311,7 +312,7 @@ test_that(
         dim_type = "map",
         level = "country",
         region = "Test",
-        cell_size = 10,
+        cell_size = 1,
         shapefile_path = temp_shapefile,
         invert = TRUE,
         output_crs = "EPSG:3035"
@@ -335,7 +336,7 @@ test_that(
         dim_type = "map",
         level = "country",
         region = "Test",
-        cell_size = 10,
+        cell_size = 1,
         spherical_geometry = FALSE
       )
       expect_s3_class(result_spherical$data, "sf")
@@ -565,6 +566,7 @@ test_that(
       data = data.frame(
         xcoord = c(1, 5),
         ycoord = c(5, 1),
+        resolution = c("10km", "10km"),
         cellCode = c(1, 2),
         year = c(2000, 2000),
         scientificName = c("A", "A"),
