@@ -392,8 +392,8 @@ compute_indicator_workflow <- function(data,
       half_res_size <- res_size / 2
       df_offset <- df %>%
         dplyr::mutate(
-          xcoord_offset = xcoord - half_res_size,
-          ycoord_offset = ycoord - half_res_size
+          xcoord_offset = xcoord + half_res_size,
+          ycoord_offset = ycoord + half_res_size
         )
       # Create an sf object from EEA data
       df_sf_input <- sf::st_as_sf(df_offset,
