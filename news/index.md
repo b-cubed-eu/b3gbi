@@ -1,5 +1,11 @@
 # Changelog
 
+## b3gbi 0.8.11 - Minor update:
+
+- Increased unit test coverage for better reliability.
+- Improved error handling in several functions.
+- Added some missing information to DESCRIPTION file.
+
 ## b3gbi 0.8.10 - Minor update:
 
 - Fixed a bug that caused occurrences to be wrongly assigned in EEA

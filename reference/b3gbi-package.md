@@ -12,7 +12,15 @@ Useful links:
 
 - <https://b-cubed-eu.github.io/b3gbi/>
 
+- Report bugs at <https://github.com/b-cubed-eu/b3gbi/issues>
+
 ## Author
 
 **Maintainer**: Shawn Dove <Shawn.Dove@allzool.bio.uni-giessen.de>
 ([ORCID](https://orcid.org/0000-0001-9465-5638))
+
+Other contributors:
+
+- University of Giessen \[copyright holder\]
+
+- European Union \[funder\]

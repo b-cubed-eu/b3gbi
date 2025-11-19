@@ -28,8 +28,8 @@ plot_mv(
 - legend_title:
 
   (Optional) Legend title. Add your own custom legend title if you don't
-  like the automatically generated one. If set to the default of NA, the
-  function will provide a legend title based on the indicator being
+  like the automatically generated one. If set to the default of NULL,
+  the function will provide a legend title based on the indicator being
   plotted.
 
 - transparency:
