@@ -49,7 +49,10 @@ create_sf_from_utm <- function(df, output_crs = NULL) {
 
   # 4. Determine output CRS
   if (is.null(output_crs)) {
-    output_crs <- sf::st_crs(sf_list[[1]]) # simplified.
+    # If the input was empty, sf_list will be empty.
+    if (length(sf_list) > 0) {
+      output_crs <- sf::st_crs(sf_list[[1]])
+    }
   }
 
   # 5. Transform to a common CRS and combine
