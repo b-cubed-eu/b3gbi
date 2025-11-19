@@ -31,9 +31,15 @@ sanitize_geometries <- function(sf_object) {
       sf::st_cast("POLYGON")
 
   } else if (geom_type == "GEOMETRYCOLLECTION") {
-    # Cast to MULTIPOLYGON to extract polygons from the collection
+    # 1. Extract and clean the geometry (keeps only POLYGONs)
+    cleaned_geom <- sf_object %>%
+      sf::st_geometry() %>%            # Extract sfc object
+      sf::st_collection_extract("POLYGON") # Extract only POLYGONs
+
+    # 2. Re-assign the cleaned geometry to the sf object
     sf_object <- sf_object %>%
-      sf::st_cast("MULTIPOLYGON")
+      sf::st_set_geometry(cleaned_geom) %>%
+      dplyr::select(-dplyr::starts_with("geom")) # Remove old geometry columns if any
   }
 
   # Ensure the final output is a MULTIPOLYGON for consistency
