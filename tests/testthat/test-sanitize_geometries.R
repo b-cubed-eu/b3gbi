@@ -41,7 +41,9 @@ test_that("Handles null, empty, and sfc input correctly", {
   expect_null(sanitize_geometries(null_object))
 
   # 2. sfc to sf Conversion (Activates the !inherits(sf_object, "sf") branch)
-  result_sfc <- sanitize_geometries(sfc_input)
+  result_sfc <- suppressWarnings(
+    sanitize_geometries(sfc_input)
+  )
   expect_true(inherits(result_sfc, "sf"))
 
   # 3. Empty Check (Activates the nrow(sf_object) == 0 branch)
@@ -53,9 +55,13 @@ test_that("Handles null, empty, and sfc input correctly", {
 test_that("Point geometries are correctly converted to POLYGONs via buffer", {
 
   # 1. POINT (Activates the geom_type == "POINT" branch)
-  result_point <- sanitize_geometries(sf_point)
+  result_point <- suppressWarnings(
+    sanitize_geometries(sf_point)
+  )
+  # Transform to a projected CRS (e.g., 3857 Pseudo-Mercator) before area calc
+  result_projected <- sf::st_transform(result_point, 3857)
   expect_equal(as.character(sf::st_geometry_type(result_point, by_geometry = FALSE)), "MULTIPOLYGON")
-  expect_true(all(as.numeric(sf::st_area(result_point)) > 0)) # Check buffer successfully created area
+  expect_true(all(as.numeric(sf::st_area(result_projected)) > 0)) # Check buffer successfully created area
 
   # 2. MULTIPOINT (Activates the geom_type == "MULTIPOINT" branch)
   result_multipoint <- sanitize_geometries(sf_multipoint)

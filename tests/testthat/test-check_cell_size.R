@@ -93,14 +93,14 @@ test_that("check_cell_size throws error for non-multiple of resolution (degrees)
     interactive = mock_interactive_true,
     readline = mock_readline_y,
     .package = "base",
-    expect_error(
+    suppressWarnings(expect_error(
       check_cell_size(
         cell_size = 0.3,
         resolution = "0.25degrees",
         level = "world"
       ),
       "cell_size must be a whole number multiple"
-    )
+    ))
   )
 })
 
@@ -279,20 +279,22 @@ test_that("check_cell_size calculates warning threshold based on area and max_wa
   # raw threshold = sqrt(1000000/1000000) = 1 km
   # With resolution = 10km, should round up to 10 km
 
-  expect_message(
-    with_mocked_bindings(
-      interactive = mock_interactive_true,
-      readline = mock_readline_y,
-      .package = "base",
-      check_cell_size(
-        cell_size = 5,
-        resolution = "1km",
-        level = "cube",
-        area = 100000000,
-        max_warn_cells = 1000000
-      )
-    ),
-    "smaller than the recommended minimum"
+  suppressWarnings(
+    expect_message(
+      with_mocked_bindings(
+        interactive = mock_interactive_true,
+        readline = mock_readline_y,
+        .package = "base",
+        check_cell_size(
+          cell_size = 5,
+          resolution = "1km",
+          level = "cube",
+          area = 100000000,
+          max_warn_cells = 1000000
+        )
+      ),
+      "smaller than the recommended minimum"
+    )
   )
 })
 
@@ -382,15 +384,16 @@ test_that("check_cell_size handles degree resolution warning thresholds", {
     interactive = mock_interactive_true,
     readline = mock_readline_y,
     .package = "base",
-
-    expect_message(
-      check_cell_size(
-        cell_size = 0.5,
-        resolution = "0.25degrees",
-        level = "world",
-        max_warn_cells = 1000000
-      ),
-      "smaller than the recommended minimum"
+    suppressWarnings(
+      expect_message(
+        check_cell_size(
+          cell_size = 0.5,
+          resolution = "0.25degrees",
+          level = "world",
+          max_warn_cells = 1000000
+        ),
+        "smaller than the recommended minimum"
+      )
     )
   )
 
@@ -399,14 +402,16 @@ test_that("check_cell_size handles degree resolution warning thresholds", {
     readline = mock_readline_y,
     .package = "base",
     # Other levels should have 0.1 degree threshold
-    expect_message(
-      check_cell_size(
-        cell_size = 0.05,
-        resolution = "0.01degrees",
-        level = "country",
-        max_warn_cells = 1000000
-      ),
-      "smaller than the recommended minimum"
+    suppressWarnings(
+      expect_message(
+        check_cell_size(
+          cell_size = 0.05,
+          resolution = "0.01degrees",
+          level = "country",
+          max_warn_cells = 1000000
+        ),
+        "smaller than the recommended minimum"
+      )
     )
   )
 })
