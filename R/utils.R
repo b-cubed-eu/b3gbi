@@ -144,11 +144,6 @@ wrong_class <- function(object,
            paste(class, collapse = collapse), ".")
   }
 
-  # if (multiple == TRUE) {
-  #   if(!rlang::inherits_all(object, class)) stop(err_message)
-  # } else {
-  #   if(!inherits(object, class)) stop(err_message)
-  # }
   is_correct <- if (multiple) {
     # Check if the object inherits from ALL classes
     all(sapply(class, function(cl) inherits(object, cl)))
