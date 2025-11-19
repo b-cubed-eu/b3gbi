@@ -12,7 +12,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/b-cubed-eu/b3gbi/blob/main/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/b-cubed-eu/b3gbi/blob/v0.8.11/DESCRIPTION)
 
 Dove S (2025). *b3gbi: General Biodiversity Indicators for Biodiversity
 Data Cubes*. R package version 0.8.11,
