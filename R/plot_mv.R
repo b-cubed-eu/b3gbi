@@ -8,7 +8,7 @@
 #'  default.
 #' @param legend_title (Optional) Legend title. Add your own custom legend title
 #'  if you don't like the automatically generated one. If set to the default of
-#'  NA, the function will provide a legend title based on the indicator being
+#'  NULL, the function will provide a legend title based on the indicator being
 #'  plotted.
 #' @param transparency (Optional) Change the transparency of the grid fill.
 #'  Default is 0.8. A value of 0 is full transparency, 1 is solid fill.
@@ -48,7 +48,7 @@ plot_mv <- function(x,
   # Check if the RColorBrewer package is installed
   if (!requireNamespace("RColorBrewer", quietly = TRUE)) {
     # If not installed, stop and tell the user what to do
-    stop("The 'mapview' package is required for this function.
+    stop("The 'RColorBrewer' package is required for this function.
          Please install it using: install.packages('mapview')",
          call. = FALSE)
   }
