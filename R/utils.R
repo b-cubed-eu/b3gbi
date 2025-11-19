@@ -89,7 +89,13 @@ resample <- function(x, size, replace = TRUE) {
 # calculate the bootstraps (a data frame with a year column arranged in order)
 #' @noRd
 add_yearvals_to_boot <- function(boot, orig_data) {
-  names(boot) <- unique(orig_data$year)[2:length(unique(orig_data$year))]
+  unique_years <- unique(orig_data$year)
+  if (length(unique_years) <= 1) {
+    # Ensure a non-error path for single-year input
+    names(boot) <- NULL
+  } else {
+    names(boot) <- unique_years[2:length(unique_years)]
+  }
   return(boot)
 }
 
