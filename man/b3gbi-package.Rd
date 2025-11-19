@@ -15,11 +15,18 @@ Useful links:
 \itemize{
   \item \url{https://github.com/b-cubed-eu/b3gbi}
   \item \url{https://b-cubed-eu.github.io/b3gbi/}
+  \item Report bugs at \url{https://github.com/b-cubed-eu/b3gbi/issues}
 }
 
 }
 \author{
 \strong{Maintainer}: Shawn Dove \email{Shawn.Dove@allzool.bio.uni-giessen.de} (\href{https://orcid.org/0000-0001-9465-5638}{ORCID})
+
+Other contributors:
+\itemize{
+  \item University of Giessen [copyright holder]
+  \item European Union [funder]
+}
 
 }
 \keyword{internal}
