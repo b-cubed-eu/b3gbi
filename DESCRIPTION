@@ -1,7 +1,7 @@
 Type: Package
 Package: b3gbi
 Title: General Biodiversity Indicators for Biodiversity Data Cubes
-Version: 0.8.10
+Version: 0.8.11
 Authors@R: c(
     person("Shawn", "Dove", email = "Shawn.Dove@allzool.bio.uni-giessen.de",
            role = c("aut", "cre"), comment = c(ORCID = "0000-0001-9465-5638")),

@@ -8,7 +8,7 @@ message: 'To cite package "b3gbi" in publications use:'
 type: software
 license: MIT
 title: 'b3gbi: General Biodiversity Indicators for Biodiversity Data Cubes'
-version: 0.8.10
+version: 0.8.11
 abstract: Calculate general biodiversity indicators from GBIF data cubes. Includes
   many common indicators such as species richness and evenness, which can be calculated
   over time (trends) or space (maps).
@@ -396,6 +396,24 @@ references:
     email: stephan.woellauer@geo.uni-marburg.de
   year: '2025'
   doi: 10.32614/CRAN.package.mapview
+- type: software
+  title: mockery
+  abstract: 'mockery: Mocking Library for R'
+  notes: Suggests
+  url: https://github.com/r-lib/mockery
+  repository: https://CRAN.R-project.org/package=mockery
+  authors:
+  - family-names: Finkelstein
+    given-names: Noam
+  - family-names: Bartnik
+    given-names: Lukasz
+  - family-names: Hester
+    given-names: Jim
+  - family-names: Wickham
+    given-names: Hadley
+    email: hadley@posit.co
+  year: '2025'
+  doi: 10.32614/CRAN.package.mockery
 - type: software
   title: mockr
   abstract: 'mockr: Mocking in R'
