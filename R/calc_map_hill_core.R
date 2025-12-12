@@ -8,8 +8,8 @@ calc_map_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
                     rlang::inherits_any(x, c("hill0", "hill1", "hill2")))
 
   qD <- cellid <- Assemblage <- taxonKey <- m <- SC <- Order.q <- . <-
-    scientificName <- count <- year <- Y_i <- incidence <- NULL
-  Method <- obs <- NULL
+    scientificName <- count <- year <- Y_i <- incidence <- NULL <- everything <-
+  Method <- obs <- cellCode <- cellid_char <- diversity_val <- NULL
 
   type <- match.arg(type)
 

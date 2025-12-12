@@ -120,7 +120,7 @@ calc_map.occ_density <- function(x, ...) {
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.", inherits(x, "occ_density"))
 
-  diversity_val <- obs <- area <- cellid <- NULL
+  diversity_val <- obs <- area <- cellid <- cellCode <- NULL
 
   # Calculate density of occurrences over the grid (per square km)
   indicator <- x %>%
@@ -177,7 +177,7 @@ calc_map.ab_rarity <- function(x, ...) {
                   meant to be called directly.", inherits(x, "ab_rarity"))
 
   obs <- taxonKey <- cellid <- obs_taxon <- rarity <- NULL
-  obs_cell <- NULL
+  obs_cell <- cellCode <- NULL
 
   # Select relevant columns
   x <- x %>%
@@ -212,7 +212,7 @@ calc_map.area_rarity <- function(x, ...) {
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.", inherits(x, "area_rarity"))
 
-  cellid <- taxonKey <- rarity <- NULL
+  cellid <- taxonKey <- rarity <- cellCode <- NULL
   occ_by_taxa <- total_cells <- NULL
 
   # Select relevant columns
@@ -250,7 +250,8 @@ calc_map.spec_occ <- function(x, ...) {
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.", inherits(x, "spec_occ"))
 
-  diversity_val <- obs <- taxonKey <- cellid <- scientificName <- NULL
+  diversity_val <- obs <- taxonKey <- cellid <- scientificName <-
+    cellCode <- NULL
 
   # Calculate total occurrences for each species by grid cell
   indicator <- x %>%
@@ -271,7 +272,7 @@ calc_map.spec_range <- function(x, ...) {
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.", inherits(x, "spec_range"))
 
-  cellid <- taxonKey <- scientificName <- diversity_val <- NULL
+  cellid <- taxonKey <- scientificName <- diversity_val <- cellCode <- NULL
 
   # Flatten occurrences for each species by grid cell
   indicator <- x %>%
@@ -291,7 +292,7 @@ calc_map.tax_distinct <- function(x, ...) {
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.", inherits(x, "tax_distinct"))
 
-  cellid <- diversity_val <- NULL
+  cellid <- diversity_val <- cellCode <- NULL
 
   # Early check for empty input
   if (nrow(x) == 0) {
