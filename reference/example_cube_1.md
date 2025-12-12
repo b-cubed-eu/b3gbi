@@ -11,44 +11,61 @@ example_cube_1
 
 ## Format
 
-A 'processed_cube' object containing a tibble with 276,950 rows and 10
+A 'processed_cube' object containing a tibble with 31,632 rows and 15
 variables, as well as metadata
 
 - year:
 
   year occurrence was recorded
 
-- eea_cell_code:
+- cellCode:
 
-  code containing the cell resolution and coordinates on the EEA grid
+  code containing the cell resolution and coordinates on the Extended
+  Quarter Degree (eqdgc) grid
+
+- kingdomKey:
+
+  kingdom key associated with the species on GBIF
+
+- kingdom:
+
+  kingdom name
+
+- familyKey:
+
+  family key associated with the species on GBIF
+
+- family:
+
+  family name
 
 - taxonKey:
 
   taxonomic key associated with the species on GBIF
 
-- obs:
-
-  number of individuals observed
-
 - scientificName:
 
   scientific species name
 
-- rank:
+- obs:
 
-  taxonomic rank
+  number of individuals observed
 
-- kingdom:
+- minCoordinateUncertaintyInMeters:
 
-  kingdom
+  minimum coordinate uncertainty in meters
+
+- minTemporalUncertainty:
+
+  minimum temporal uncertainty in seconds
 
 - xcoord:
 
-  East-West coordinate on the EEA grid
+  East-West coordinate on the eqdgc grid
 
 - ycoord:
 
-  North-South coordinate on the EEA grid
+  North-South coordinate on the eqdgc grid
 
 - resolution:
 
@@ -68,7 +85,7 @@ variables, as well as metadata
                                                level = "country",
                                                region = "Denmark")
     plot(denmark_mammals_or_map,
-         title = "Mammals in Denmark (1751-2023): Observed Species Richness")
+         title = "Mammals in Denmark (1862-2024): Observed Species Richness")
   } # }
 }
 ```

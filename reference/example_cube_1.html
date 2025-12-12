@@ -15,7 +15,7 @@ GBIF as of 16.03.2024."><meta property="og:image" content="https://b-cubed-eu.gi
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.11</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.12</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,7 +38,7 @@ GBIF as of 16.03.2024."><meta property="og:image" content="https://b-cubed-eu.gi
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Cube of GBIF Mammal Occurrences in Denmark</h1>
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.8.11/R/data.R" class="external-link"><code>R/data.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/R/data.R" class="external-link"><code>R/data.R</code></a></small>
       <div class="d-none name"><code>example_cube_1.Rd</code></div>
     </div>
 
@@ -54,34 +54,47 @@ GBIF as of 16.03.2024.</p>
 
     <div class="section level2">
     <h2 id="format">Format<a class="anchor" aria-label="anchor" href="#format"></a></h2>
-    <p>A 'processed_cube' object containing a tibble with 276,950 rows and
-10 variables, as well as metadata</p><dl><dt>year</dt>
+    <p>A 'processed_cube' object containing a tibble with 31,632 rows and
+15 variables, as well as metadata</p><dl><dt>year</dt>
 <dd><p>year occurrence was recorded</p></dd>
 
-<dt>eea_cell_code</dt>
+<dt>cellCode</dt>
 <dd><p>code containing the cell resolution and coordinates
-on the EEA grid</p></dd>
+on the Extended Quarter Degree (eqdgc) grid</p></dd>
+
+<dt>kingdomKey</dt>
+<dd><p>kingdom key associated with the species on GBIF</p></dd>
+
+<dt>kingdom</dt>
+<dd><p>kingdom name</p></dd>
+
+<dt>familyKey</dt>
+<dd><p>family key associated with the species on GBIF</p></dd>
+
+<dt>family</dt>
+<dd><p>family name</p></dd>
 
 <dt>taxonKey</dt>
 <dd><p>taxonomic key associated with the species on GBIF</p></dd>
 
-<dt>obs</dt>
-<dd><p>number of individuals observed</p></dd>
-
 <dt>scientificName</dt>
 <dd><p>scientific species name</p></dd>
 
-<dt>rank</dt>
-<dd><p>taxonomic rank</p></dd>
+<dt>obs</dt>
+<dd><p>number of individuals observed</p></dd>
 
-<dt>kingdom</dt>
-<dd><p>kingdom</p></dd>
+<dt>minCoordinateUncertaintyInMeters</dt>
+<dd><p>minimum coordinate uncertainty in
+meters</p></dd>
+
+<dt>minTemporalUncertainty</dt>
+<dd><p>minimum temporal uncertainty in seconds</p></dd>
 
 <dt>xcoord</dt>
-<dd><p>East-West coordinate on the EEA grid</p></dd>
+<dd><p>East-West coordinate on the eqdgc grid</p></dd>
 
 <dt>ycoord</dt>
-<dd><p>North-South coordinate on the EEA grid</p></dd>
+<dd><p>North-South coordinate on the eqdgc grid</p></dd>
 
 <dt>resolution</dt>
 <dd><p>grid cell size</p></dd>
@@ -102,7 +115,7 @@ on the EEA grid</p></dd>
 <span class="r-in"><span>                                               level <span class="op">=</span> <span class="st">"country"</span>,</span></span>
 <span class="r-in"><span>                                               region <span class="op">=</span> <span class="st">"Denmark"</span><span class="op">)</span></span></span>
 <span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">denmark_mammals_or_map</span>,</span></span>
-<span class="r-in"><span>         title <span class="op">=</span> <span class="st">"Mammals in Denmark (1751-2023): Observed Species Richness"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>         title <span class="op">=</span> <span class="st">"Mammals in Denmark (1862-2024): Observed Species Richness"</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>

@@ -32,15 +32,15 @@ print(example_cube_1)
 #> 
 #> Processed data cube for calculating biodiversity indicators
 #> 
-#> Date Range: 1862 - 2023 
+#> Date Range: 1862 - 2024 
 #> Single-resolution cube with cell size 0.25degrees 
 #> Number of cells: 323 
 #> Grid reference system: eqdgc 
 #> Coordinate range:
-#>   xmin   xmax   ymin   ymax 
-#>  3.375 15.625 54.375 58.125 
+#>  xmin  xmax  ymin  ymax 
+#>  3.25 15.75 54.25 58.25 
 #> 
-#> Total number of observations: 204886 
+#> Total number of observations: 207342 
 #> Number of species represented: 106 
 #> Number of families represented: 31 
 #> 
@@ -48,7 +48,7 @@ print(example_cube_1)
 #> 
 #> First 10 rows of data (use n = to show more):
 #> 
-#> # A tibble: 30,902 × 15
+#> # A tibble: 31,632 × 15
 #>     year cellCode  kingdomKey kingdom  familyKey family  taxonKey scientificName
 #>    <dbl> <chr>          <dbl> <chr>        <dbl> <chr>      <dbl> <chr>         
 #>  1  1862 E009N57DD          1 Animalia      5510 Muridae  5219833 Micromys minu…
@@ -61,7 +61,7 @@ print(example_cube_1)
 #>  8  1884 E008N56AB          1 Animalia      9435 Dipodi…  2439449 Sicista betul…
 #>  9  1884 E014N55DD          1 Animalia      5510 Muridae  2437756 Apodemus flav…
 #> 10  1884 E014N55DD          1 Animalia      5510 Muridae  2437760 Apodemus sylv…
-#> # ℹ 30,892 more rows
+#> # ℹ 31,622 more rows
 #> # ℹ 7 more variables: obs <dbl>, minCoordinateUncertaintyInMeters <dbl>,
 #> #   minTemporalUncertainty <dbl>, familyCount <dbl>, xcoord <dbl>,
 #> #   ycoord <dbl>, resolution <chr>

@@ -1,7 +1,8 @@
 # Time Series of Observed Species Richness for Mammals in Denmark
 
 Example indicator containing a time series of observed species richness
-for mammal occurrences in Denmark (occurrences from GBIF: 16.03.2024).
+for mammal occurrences in Denmark, 1970-2024 (occurrences from GBIF:
+16.03.2024).
 
 ## Usage
 
@@ -11,7 +12,7 @@ example_indicator_ts1
 
 ## Format
 
-An 'indicator_ts' object containing a tibble with 54 rows and 2
+An 'indicator_ts' object containing a tibble with 55 rows and 2
 variables, as well as metadata
 
 - year:
@@ -22,6 +23,8 @@ variables, as well as metadata
 
   calculated richness value for the year
 
+ed
+
 ## Source
 
-<https://doi.org/10.15468/dl.qk4f2z>
+<https://doi.org/10.15468/dl.5mb887>

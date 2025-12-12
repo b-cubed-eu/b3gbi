@@ -11,12 +11,21 @@ example_indicator_map1
 
 ## Format
 
-An 'indicator_map' object containing a tibble with 374 rows and 3
+An 'indicator_map' object containing a tibble with 800 rows and 5
 variables, as well as metadata
 
 - cellid:
 
   id of a map cell the indicator was calculated for
+
+- area:
+
+  area of the map cell in square kilometers
+
+- cellCode:
+
+  code containing the cell coordinates in Extended Quarter Degree
+  (eqdgc) grid format
 
 - diversity_val:
 
@@ -28,4 +37,4 @@ variables, as well as metadata
 
 ## Source
 
-<https://doi.org/10.15468/dl.qk4f2z>
+<https://doi.org/10.15468/dl.5mb887>

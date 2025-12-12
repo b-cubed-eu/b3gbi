@@ -244,8 +244,8 @@ diversity_map
 #> Grid cell size: 0.25 degrees 
 #> Number of cells: 299 
 #> 
-#> Observation years: 1862 - 2023 
-#> Total years with observations: 125 
+#> Observation years: 1862 - 2024 
+#> Total years with observations: 126 
 #> 
 #> Number of species represented: 106 
 #> Number of families represented: 31 
@@ -256,18 +256,18 @@ diversity_map
 #> 
 #> First 10 rows of data (use n = to show more):
 #> 
-#> # A tibble: 299 × 3
-#>    cellid   area diversity_val
-#>     <int> [km^2]         <int>
-#>  1     68   447.            NA
-#>  2     69   447.            NA
-#>  3     70   447.            20
-#>  4     71   447.            NA
-#>  5     72   447.            NA
-#>  6     73   447.            34
-#>  7     74   447.            NA
-#>  8     75   447.            40
-#>  9     76   447.            37
-#> 10     77   447.            21
+#> # A tibble: 299 × 4
+#>    cellid   area cellCode diversity_val
+#>     <int> [km^2] <chr>            <int>
+#>  1     70   448. NA                  NA
+#>  2     71   448. NA                  NA
+#>  3     72   448. NA                  NA
+#>  4     73   448. NA                  NA
+#>  5     77   448. NA                  NA
+#>  6     78   448. NA                  NA
+#>  7     79   448. NA                  NA
+#>  8     80   448. NA                  NA
+#>  9     81   448. NA                  NA
+#> 10     82   448. NA                  NA
 #> # ℹ 289 more rows
 ```

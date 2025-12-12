@@ -1,5 +1,11 @@
 # Changelog
 
+## b3gbi 0.8.12 - Minor update:
+
+- The cellCode column from the cube is now retained in indicator map
+  outputs. This allows users to trace back grid cells to their original
+  codes in the cube.
+
 ## b3gbi 0.8.11 - Minor update:
 
 - Increased unit test coverage for better reliability.

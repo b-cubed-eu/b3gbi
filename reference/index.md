@@ -47,7 +47,8 @@
   : Time Series of Observed Species Richness for Mammals in Denmark
 
 - [`example_indicator_ts2`](https://b-cubed-eu.github.io/b3gbi/reference/example_indicator_ts2.md)
-  : Time Series of Cumulative Species Richness for Insects in Europe
+  : Time Series of Cumulative Species Richness for Bryophytes in South
+  Africa
 
 - [`get_bootstrap_ci()`](https://b-cubed-eu.github.io/b3gbi/reference/get_bootstrap_ci.md)
   :

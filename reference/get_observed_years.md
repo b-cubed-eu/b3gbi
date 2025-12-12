@@ -194,4 +194,5 @@ get_observed_years(total_occ_mammals_denmark)
 #> 160  2021        TRUE
 #> 161  2022        TRUE
 #> 162  2023        TRUE
+#> 163  2024        TRUE
 ```

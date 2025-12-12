@@ -15,7 +15,7 @@ occurrences in Denmark (occurrences from GBIF: 16.03.2024)."><meta property="og:
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.11</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.12</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,7 +38,7 @@ occurrences in Denmark (occurrences from GBIF: 16.03.2024)."><meta property="og:
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Map of Observed Species Richness for Mammals in Denmark</h1>
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.8.11/R/data.R" class="external-link"><code>R/data.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/R/data.R" class="external-link"><code>R/data.R</code></a></small>
       <div class="d-none name"><code>example_indicator_map1.Rd</code></div>
     </div>
 
@@ -54,9 +54,16 @@ occurrences in Denmark (occurrences from GBIF: 16.03.2024).</p>
 
     <div class="section level2">
     <h2 id="format">Format<a class="anchor" aria-label="anchor" href="#format"></a></h2>
-    <p>An 'indicator_map' object containing a tibble with 374 rows and 3
+    <p>An 'indicator_map' object containing a tibble with 800 rows and 5
 variables, as well as metadata</p><dl><dt>cellid</dt>
 <dd><p>id of a map cell the indicator was calculated for</p></dd>
+
+<dt>area</dt>
+<dd><p>area of the map cell in square kilometers</p></dd>
+
+<dt>cellCode</dt>
+<dd><p>code containing the cell coordinates in Extended Quarter
+Degree (eqdgc) grid format</p></dd>
 
 <dt>diversity_val</dt>
 <dd><p>calculated richness value for the cell</p></dd>
@@ -68,7 +75,7 @@ variables, as well as metadata</p><dl><dt>cellid</dt>
 </dl></div>
     <div class="section level2">
     <h2 id="source">Source<a class="anchor" aria-label="anchor" href="#source"></a></h2>
-    <p><a href="https://doi.org/10.15468/dl.qk4f2z" class="external-link">https://doi.org/10.15468/dl.qk4f2z</a></p>
+    <p><a href="https://doi.org/10.15468/dl.5mb887" class="external-link">https://doi.org/10.15468/dl.5mb887</a></p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
