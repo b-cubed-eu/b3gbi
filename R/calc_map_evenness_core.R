@@ -7,20 +7,31 @@ calc_map_evenness_core <- function(x,
                   internal function, not meant to be called directly.",
                   inherits(x, c("data.frame", "sf")))
 
-  num_occ <- obs <- cellid <- taxonKey <- . <- NULL
+  num_occ <- obs <- cellid <- taxonKey <- cellCode <- . <- NULL
 
-  type <- match.arg(type,
-                    names(available_indicators))
+  type <- match.arg(type, names(available_indicators))
 
   if (nrow(x) == 0) {
-    return(tibble::tibble(cellid = integer(0), diversity_val = numeric(0)))
+    return(tibble::tibble(cellid = integer(0),
+                          cellCode = character(0),
+                          diversity_val = numeric(0)))
   }
 
-  # Calculate adjusted evenness fo r each grid cell
+  # --- CRITICAL ADDITION 1: Create the cellid <-> cellCode mapping table ---
+  # We need a clean, unique mapping to join back at the end.
+  cell_map <- x %>%
+    dplyr::distinct(cellid, cellCode)
+
+  # Calculate adjusted evenness for each grid cell
   indicator <- x %>%
     dplyr::summarize(num_occ = sum(obs, na.rm = TRUE),
-                     .by = c(cellid, taxonKey)) %>%
+                     .by = c(cellid, cellCode, taxonKey)) %>%
     dplyr::arrange(cellid) %>%
+
+    # We must explicitly drop cellCode before pivoting so the data is clean
+    # for the calculation matrix, and rely only on the separate cell_map later.
+    dplyr::select(-cellCode) %>% # <--- CRITICAL CHANGE 2
+
     tidyr::pivot_wider(names_from = cellid,
                        values_from = num_occ) %>%
     replace(is.na(.), 0) %>%
@@ -31,9 +42,16 @@ calc_map_evenness_core <- function(x,
     as.data.frame() %>%
     dplyr::rename(diversity_val = ".") %>%
     tibble::rownames_to_column(var = "cellid") %>%
-    dplyr::mutate(cellid = as.integer(cellid),
-                  .keep = "unused")
+
+    # --- CRITICAL ADDITION 3: Join the original cellCode back ---
+    # Convert cellid to the correct type for the join.
+    dplyr::mutate(cellid = as.integer(cellid)) %>%
+
+    # Join the mapping table to the calculated results
+    dplyr::left_join(cell_map, by = "cellid") %>%
+
+    # Reorder columns for final output
+    dplyr::select(cellid, cellCode, diversity_val)
 
   return(indicator)
-
 }

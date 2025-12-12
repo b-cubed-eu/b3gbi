@@ -8,8 +8,8 @@ calc_map_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
                     rlang::inherits_any(x, c("hill0", "hill1", "hill2")))
 
   qD <- cellid <- Assemblage <- taxonKey <- m <- SC <- Order.q <- . <-
-    scientificName <- count <- year <- Y_i <- incidence <- NULL
-  Method <- obs <- NULL
+    scientificName <- count <- year <- Y_i <- incidence <- everything <-
+  Method <- obs <- cellCode <- cellid_char <- diversity_val <- NULL
 
   type <- match.arg(type)
 
@@ -20,19 +20,26 @@ calc_map_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
   data_type <- temp_opts$data_type
   data_type <- if (data_type == "incidence") "incidence_freq" else data_type
 
+  # Create cellid <-> cellCode mapping table
+  cell_map <- x %>%
+    dplyr::distinct(cellid, cellCode) %>%
+    # Convert cellid to character/string as it's used for list names
+    dplyr::mutate(cellid_char = as.character(cellid)) %>%
+    dplyr::select(cellid, cellCode, cellid_char)
+
   # Extract qvalue from hill diversity type
   qval <- as.numeric(gsub("hill", "", type))
 
   if (data_type == "abundance") {
 
     incidence_list <- x %>%
-      # 1. Select relevant columns (including 'species' for optional sorting/consistency)
-      dplyr::select(cellid, taxonKey, obs, scientificName) %>%
+      # 1. Select relevant columns
+      dplyr::select(cellid, cellCode, taxonKey, obs, scientificName) %>%
 
       # 2. Group by the spatial unit
       dplyr::group_by(cellid) %>%
 
-      # 3. FIX: Split the data and name the list elements correctly
+      # 3. Split the data and name the list elements
       {
         list_data <- dplyr::group_split(., .keep = FALSE)
         list_names <- dplyr::group_keys(.) %>% dplyr::pull(cellid) %>%
@@ -66,7 +73,7 @@ calc_map_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
     if (assume_freq == FALSE) {
 
       incidence_list <- x %>%
-        dplyr::select(taxonKey, obs, cellid, year) %>%
+        dplyr::select(taxonKey, obs, cellid, cellCode, year) %>%
 
         # Filter and setup the data structure
         dplyr::mutate(incidence = as.numeric(obs > 0)) %>%
@@ -107,7 +114,7 @@ calc_map_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
 
       incidence_list <- x %>%
         # 1. Select relevant columns
-        dplyr::select(cellid, taxonKey, obs, scientificName) %>%
+        dplyr::select(cellid, cellCode, taxonKey, obs, scientificName) %>%
 
         # 2. Group by the spatial unit
         dplyr::group_by(cellid) %>%
@@ -188,13 +195,18 @@ calc_map_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
   # Extract and format the results
   indicator <- diversity_estimates %>%
     dplyr::select(Assemblage, qD, m, SC, Order.q, Method) %>%
-    dplyr::rename(cellid = Assemblage,
+    dplyr::rename(cellid_char = Assemblage,
                   diversity_val = qD,
                   samp_size_est = m,
                   coverage = SC,
                   diversity_type = Order.q,
                   method = Method) %>%
+    # Join the cellCode back using the cellid string
+    dplyr::left_join(cell_map, by = "cellid_char") %>%
+    # Reorder and finalize the data frame
+    dplyr::select(cellid, cellCode, diversity_val, everything(), -cellid_char) %>%
     dplyr::mutate(cellid = as.integer(cellid), .keep = "unused")
+
 
   return(indicator)
 

@@ -3,9 +3,9 @@
 \docType{data}
 \name{example_indicator_ts2}
 \alias{example_indicator_ts2}
-\title{Time Series of Cumulative Species Richness for Insects in Europe}
+\title{Time Series of Cumulative Species Richness for Bryophytes in South Africa}
 \format{
-An 'indicator_ts' object containing a tibble with 89 rows and 2
+An 'indicator_ts' object containing a tibble with 110 rows and 2
 variables, as well as metadata
 \describe{
 \item{year}{a year the indicator was calculated for}
@@ -13,13 +13,14 @@ variables, as well as metadata
 }
 }
 \source{
-\url{https://doi.org/10.15468/dl.qk4f2z}
+\url{https://doi.org/10.15468/dl.yfzgja}
 }
 \usage{
 example_indicator_ts2
 }
 \description{
 Example indicator containing a time series of cumulative species richness for
-insect occurrences in Europe (occurrences from GBIF: 16.03.2024).
+bryophyte occurrences in South Africa, 1875-2024 (occurrences from GBIF:
+16.03.2024).
 }
 \keyword{datasets}

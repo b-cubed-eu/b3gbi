@@ -2,6 +2,7 @@
 # Mock input data for map functions (reused)
 mock_map_data <- data.frame(
   cellid = c(1, 1, 2, 2),
+  cellCode = c("A1", "A1", "A2", "A2"),
   scientificName = c("Species A", "Species B", "Species A", "Species C"),
   obs = c(1, 1, 1, 1),
   taxonKey = c("spA", "spB", "spA", "spC"),
@@ -23,7 +24,7 @@ test_that("calc_map.hill0 calculates correctly", {
         )
         expect_equal(data, expected_data)
         return(tibble::tibble(
-          Assemblage = c(1, 2),
+          Assemblage = c("1", "2"),
           qD = c(2, 2),
           m = c(2, 2),
           SC = c(level, level),
@@ -31,7 +32,7 @@ test_that("calc_map.hill0 calculates correctly", {
           Method = c("Extrapolation", "Extrapolation")
         ))
       } else {
-        return(tibble::tibble(Assemblage = numeric(),
+        return(tibble::tibble(Assemblage = character(),
                               qD = numeric(),
                               Order.q = numeric(),
                               m = numeric(),
@@ -53,6 +54,7 @@ test_that("calc_map.hill0 calculates correctly", {
 
   expected_result <- tibble::tibble(
     cellid = c(1, 2),
+    cellCode = c("A1","A2"),
     diversity_val = c(2, 2),
     samp_size_est = c(2, 2),
     coverage = c(0.8, 0.8),
@@ -73,7 +75,7 @@ test_that("calc_map.hill1 calculates correctly", {
         )
         expect_equal(data, expected_data)
         return(tibble::tibble(
-          Assemblage = c(1, 2),
+          Assemblage = c("1", "2"),
           qD = c(2, 2),
           Order.q = 1,
           m = c(2, 2),
@@ -81,7 +83,7 @@ test_that("calc_map.hill1 calculates correctly", {
           Method = c("Extrapolation", "Extrapolation")
         ))
       } else {
-        return(tibble::tibble(Assemblage = numeric(),
+        return(tibble::tibble(Assemblage = character(),
                               qD = numeric(),
                               m = numeric(),
                               SC = numeric(),
@@ -102,6 +104,7 @@ test_that("calc_map.hill1 calculates correctly", {
 
   expected_hill1 <- tibble::tibble(
     cellid = c(1, 2),
+    cellCode = c("A1", "A2"),
     diversity_val = c(2, 2),
     samp_size_est = c(2, 2),
     coverage = c(0.8, 0.8),
@@ -122,7 +125,7 @@ test_that("calc_map.hill2 calculates correctly", {
         )
         expect_equal(data, expected_data)
         return(tibble::tibble(
-          Assemblage = c(1, 2),
+          Assemblage = c("1", "2"),
           qD = c(2, 2),
           Order.q = 2,
           m = c(2, 2),
@@ -130,7 +133,7 @@ test_that("calc_map.hill2 calculates correctly", {
           Method = c("Extrapolation", "Extrapolation")
         ))
       } else {
-        return(tibble::tibble(Assemblage = numeric(),
+        return(tibble::tibble(Assemblage = character(),
                               qD = numeric(),
                               m = numeric(),
                               SC = numeric(),
@@ -150,6 +153,7 @@ test_that("calc_map.hill2 calculates correctly", {
 
   expected_hill2 <- tibble::tibble(
     cellid = c(1, 2),
+    cellCode = c("A1", "A2"),
     diversity_val = c(2, 2),
     samp_size_est = c(2, 2),
     coverage = c(0.8, 0.8),
@@ -163,7 +167,7 @@ test_that("calc_map.hill2 calculates correctly", {
 test_that("calc_map.hill0 handles empty data correctly", {
   mockr::with_mock(
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
-      return(tibble::tibble(Assemblage = numeric(),
+      return(tibble::tibble(Assemblage = character(),
                             qD = numeric(),
                             m = numeric(),
                             SC = numeric(),
@@ -183,6 +187,7 @@ test_that("calc_map.hill0 handles empty data correctly", {
 
   expected_result <- tibble::tibble(
     cellid = numeric(),
+    cellCode = character(),
     diversity_val = numeric(),
     samp_size_est = numeric(),
     coverage = numeric(),
@@ -196,7 +201,7 @@ test_that("calc_map.hill0 handles empty data correctly", {
 test_that("calc_map.hill1 handles empty data correctly", {
   mockr::with_mock(
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
-      return(tibble::tibble(Assemblage = numeric(),
+      return(tibble::tibble(Assemblage = character(),
                             qD = numeric(),
                             m = numeric(),
                             SC = numeric(),
@@ -216,6 +221,7 @@ test_that("calc_map.hill1 handles empty data correctly", {
 
   expected_hill1 <- tibble::tibble(
     cellid = numeric(),
+    cellCode = character(),
     diversity_val = numeric(),
     samp_size_est = numeric(),
     coverage = numeric(),
@@ -229,7 +235,7 @@ test_that("calc_map.hill1 handles empty data correctly", {
 test_that("calc_map.hill2 handles empty data correctly", {
   mockr::with_mock(
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
-      return(tibble::tibble(Assemblage = numeric(),
+      return(tibble::tibble(Assemblage = character(),
                             qD = numeric(),
                             m = numeric(),
                             SC = numeric(),
@@ -249,6 +255,7 @@ test_that("calc_map.hill2 handles empty data correctly", {
 
   expected_hill2 <- tibble::tibble(
     cellid = numeric(),
+    cellCode = character(),
     diversity_val = numeric(),
     samp_size_est = numeric(),
     coverage = numeric(),
@@ -262,7 +269,7 @@ test_that("calc_map.hill2 handles empty data correctly", {
 test_that("calc_map.hill0 handles NA values correctly", {
   mockr::with_mock(
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
-      return(tibble::tibble(Assemblage = numeric(),
+      return(tibble::tibble(Assemblage = character(),
                             qD = numeric(),
                             m = numeric(),
                             SC = numeric(),
@@ -282,6 +289,7 @@ test_that("calc_map.hill0 handles NA values correctly", {
 
   expected_result <- tibble::tibble(
     cellid = numeric(),
+    cellCode = character(),
     diversity_val = numeric(),
     samp_size_est = numeric(),
     coverage = numeric(),
@@ -295,7 +303,7 @@ test_that("calc_map.hill0 handles NA values correctly", {
 test_that("calc_map.hill1 handles NA values correctly", {
   mockr::with_mock(
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
-      return(tibble::tibble(Assemblage = numeric(),
+      return(tibble::tibble(Assemblage = character(),
                             qD = numeric(),
                             m = numeric(),
                             SC = numeric(),
@@ -315,6 +323,7 @@ test_that("calc_map.hill1 handles NA values correctly", {
 
   expected_hill1 <- tibble::tibble(
     cellid = numeric(),
+    cellCode = character(),
     diversity_val = numeric(),
     samp_size_est = numeric(),
     coverage = numeric(),
@@ -328,7 +337,7 @@ test_that("calc_map.hill1 handles NA values correctly", {
 test_that("calc_map.hill2 handles NA values correctly", {
   mockr::with_mock(
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
-      return(tibble::tibble(Assemblage = numeric(),
+      return(tibble::tibble(Assemblage = character(),
                             qD = numeric(),
                             m = numeric(),
                             SC = numeric(),
@@ -348,6 +357,7 @@ test_that("calc_map.hill2 handles NA values correctly", {
 
   expected_hill2 <- tibble::tibble(
     cellid = numeric(),
+    cellCode = character(),
     diversity_val = numeric(),
     samp_size_est = numeric(),
     coverage = numeric(),
@@ -361,7 +371,7 @@ test_that("calc_map.hill2 handles NA values correctly", {
 test_that("calc_map.hill0 handles non-numeric data correctly", {
   mockr::with_mock(
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
-      return(tibble::tibble(Assemblage = numeric(),
+      return(tibble::tibble(Assemblage = character(),
                             qD = numeric(),
                             m = numeric(),
                             SC = numeric(),
@@ -381,6 +391,7 @@ test_that("calc_map.hill0 handles non-numeric data correctly", {
 
   expected_result <- tibble::tibble(
     cellid = numeric(),
+    cellCode = character(),
     diversity_val = numeric(),
     samp_size_est = numeric(),
     coverage = numeric(),
@@ -394,7 +405,7 @@ test_that("calc_map.hill0 handles non-numeric data correctly", {
 test_that("calc_map.hill1 handles non-numeric data correctly", {
   mockr::with_mock(
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
-      return(tibble::tibble(Assemblage = numeric(),
+      return(tibble::tibble(Assemblage = character(),
                             qD = numeric(),
                             m = numeric(),
                             SC = numeric(),
@@ -414,6 +425,7 @@ test_that("calc_map.hill1 handles non-numeric data correctly", {
 
   expected_hill1 <- tibble::tibble(
     cellid = numeric(),
+    cellCode = character(),
     diversity_val = numeric(),
     samp_size_est = numeric(),
     coverage = numeric(),
@@ -427,7 +439,7 @@ test_that("calc_map.hill1 handles non-numeric data correctly", {
 test_that("calc_map.hill2 handles non-numeric data correctly", {
   mockr::with_mock(
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
-      return(tibble::tibble(Assemblage = numeric(),
+      return(tibble::tibble(Assemblage = character(),
                             qD = numeric(),
                             m = numeric(),
                             SC = numeric(),
@@ -447,6 +459,7 @@ test_that("calc_map.hill2 handles non-numeric data correctly", {
 
   expected_hill2 <- tibble::tibble(
     cellid = numeric(),
+    cellCode = character(),
     diversity_val = numeric(),
     samp_size_est = numeric(),
     coverage = numeric(),
@@ -460,7 +473,7 @@ test_that("calc_map.hill2 handles non-numeric data correctly", {
 test_that("calc_map.hill0 handles non-standard data types correctly", {
   mockr::with_mock(
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
-      return(tibble::tibble(Assemblage = numeric(),
+      return(tibble::tibble(Assemblage = character(),
                             qD = numeric(),
                             m = numeric(),
                             SC = numeric(),
@@ -480,6 +493,7 @@ test_that("calc_map.hill0 handles non-standard data types correctly", {
 
   expected_result <- tibble::tibble(
     cellid = numeric(),
+    cellCode = character(),
     diversity_val = numeric(),
     samp_size_est = numeric(),
     coverage = numeric(),
@@ -493,7 +507,7 @@ test_that("calc_map.hill0 handles non-standard data types correctly", {
 test_that("calc_map.hill1 handles non-standard data types correctly", {
   mockr::with_mock(
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
-      return(tibble::tibble(Assemblage = numeric(),
+      return(tibble::tibble(Assemblage = character(),
                             qD = numeric(),
                             m = numeric(),
                             SC = numeric(),
@@ -513,6 +527,7 @@ test_that("calc_map.hill1 handles non-standard data types correctly", {
 
   expected_hill1 <- tibble::tibble(
     cellid = numeric(),
+    cellCode = character(),
     diversity_val = numeric(),
     samp_size_est = numeric(),
     coverage = numeric(),
@@ -526,7 +541,7 @@ test_that("calc_map.hill1 handles non-standard data types correctly", {
 test_that("calc_map.hill2 handles non-standard data types correctly", {
   mockr::with_mock(
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
-      return(tibble::tibble(Assemblage = numeric(),
+      return(tibble::tibble(Assemblage = character(),
                             qD = numeric(),
                             m = numeric(),
                             SC = numeric(),
@@ -546,6 +561,7 @@ test_that("calc_map.hill2 handles non-standard data types correctly", {
 
   expected_hill2 <- tibble::tibble(
     cellid = numeric(),
+    cellCode = character(),
     diversity_val = numeric(),
     samp_size_est = numeric(),
     coverage = numeric(),
@@ -560,6 +576,7 @@ test_that("calc_map.hill2 handles non-standard data types correctly", {
 # Mock input data for other calc_map functions
 mock_map_data_other <- data.frame(
   cellid = c(1, 1, 2, 2, 1, 2),
+  cellCode = c("A1", "A1", "A2", "A2", "A1", "A2"),
   scientificName = c("Species A",
                      "Species B",
                      "Species A",
@@ -586,6 +603,7 @@ test_that("calc_map.obs_richness calculates correctly", {
   result <- calc_map.obs_richness(mock_obs_richness)
   expected_result <- data.frame(
     cellid = c(1, 2),
+    cellCode = c("A1", "A2"),
     diversity_val = c(2, 2)
   )
   expect_equal(result, expected_result)
@@ -597,6 +615,7 @@ test_that("calc_map.obs_richness handles NA values correctly", {
   result <- calc_map.obs_richness(mock_obs_richness_with_na)
   expected_result <- data.frame(
     cellid = c(1, 2),
+    cellCode = c("A1", "A2"),
     diversity_val = c(2, 2)
   )
   expect_equal(result, expected_result)
@@ -607,6 +626,7 @@ test_that("calc_map.obs_richness handles empty data correctly", {
   result <- calc_map.obs_richness(mock_obs_richness_empty)
   expected_result <- data.frame(
     cellid = numeric(),
+    cellCode = character(),
     diversity_val = numeric()
   )
   expect_equal(result, expected_result)
@@ -616,6 +636,7 @@ test_that("calc_map.total_occ calculates correctly", {
   result <- calc_map.total_occ(mock_total_occ)
   expected_result <- data.frame(
     cellid = c(1, 2),
+    cellCode = c("A1", "A2"),
     diversity_val = c(3, 3)
   )
   expect_equal(result, expected_result)
@@ -627,6 +648,7 @@ test_that("calc_map.total_occ handles NA values correctly", {
   result <- calc_map.total_occ(mock_total_occ_with_na)
   expected_result <- data.frame(
     cellid = c(1, 2),
+    cellCode = c("A1", "A2"),
     diversity_val = c(2, 3)
   )
   expect_equal(result, expected_result)
@@ -637,6 +659,7 @@ test_that("calc_map.total_occ handles empty data correctly", {
   result <- calc_map.total_occ(mock_total_occ_empty)
   expected_result <- data.frame(
     cellid = numeric(),
+    cellCode = character(),
     diversity_val = numeric()
   )
   expect_equal(result, expected_result)
@@ -646,6 +669,7 @@ test_that("calc_map.newness calculates correctly without min year", {
   result <- calc_map.newness(mock_newness)
   expected_result <- data.frame(
     cellid = c(1, 2),
+    cellCode = c("A1", "A2"),
     diversity_val = c(round(mean(c(2000, 2010, 2002))),
                       round(mean(c(2005, 2015, 2018))))
   )
@@ -660,6 +684,7 @@ test_that("calc_map.newness calculates correctly with min year", {
 
   expected_result <- data.frame(
     cellid = c(1, 2),
+    cellCode = c("A1", "A2"),
     diversity_val = c(ifelse(initial_mean_year_cell1 > 2006,
                              initial_mean_year_cell1, NA),
                       ifelse(initial_mean_year_cell2 > 2006,
@@ -674,6 +699,7 @@ test_that("calc_map.newness handles NA values correctly", {
   result <- calc_map.newness(mock_newness_with_na)
   expected_result <- data.frame(
     cellid = c(1, 2),
+    cellCode = c("A1", "A2"),
     diversity_val = c(round(mean(c(2010, 2002))),
                       round(mean(c(2005, 2015, 2018))))
   )
@@ -685,6 +711,7 @@ test_that("calc_map.newness handles empty data correctly", {
   result <- calc_map.newness(mock_newness_empty)
   expected_result <- data.frame(
     cellid = numeric(),
+    cellCode = character(),
     diversity_val = numeric()
   )
   expect_equal(result, expected_result)
@@ -694,6 +721,7 @@ test_that("calc_map.occ_density calculates correctly", {
   result <- calc_map.occ_density(mock_occ_density)
   expected_result <- data.frame(
     cellid = c(1, 2),
+    cellCode = c("A1", "A2"),
     diversity_val = c(3 / 100, 3 / 200)
   )
   expect_equal(result, expected_result, tolerance = 1e-6)
@@ -705,6 +733,7 @@ test_that("calc_map.occ_density handles NA values correctly", {
   result <- calc_map.occ_density(mock_occ_density_with_na)
   expected_result <- data.frame(
     cellid = c(1, 2),
+    cellCode = c("A1", "A2"),
     diversity_val = c(2 / 100, 3 / 200)
   )
   expect_equal(result, expected_result, tolerance = 1e-6)
@@ -715,6 +744,7 @@ test_that("calc_map.occ_density handles empty data correctly", {
   result <- calc_map.occ_density(mock_occ_density_empty)
   expected_result <- data.frame(
     cellid = numeric(),
+    cellCode = character(),
     diversity_val = numeric()
   )
   expect_equal(result, expected_result)
@@ -725,6 +755,7 @@ test_that("calc_map.occ_density handles empty data correctly", {
 # Mock input data for evenness calculations
 mock_evenness_data <- data.frame(
   cellid = c(1, 1, 1, 2, 2, 2),
+  cellCode = c("A1", "A1", "A1", "A2", "A2", "A2"),
   taxonKey = c("spA", "spB", "spA", "spA", "spB", "spC"),
   obs = c(2, 1, 1, 1, 1, 1)
 )
@@ -770,6 +801,7 @@ test_that("calc_map.williams_evenness calculates correctly", {
       result <- calc_map.williams_evenness(mock_williams_evenness)
       expected_result <- data.frame(
         cellid = c(1, 2),
+        cellCode = c("A1", "A2"),
         diversity_val = c((2 + 1 + 1) / 2, (1 + 1 + 1) / 3)
       )
       expect_equal(result, expected_result, tolerance = 1e-6)
@@ -784,6 +816,7 @@ test_that("calc_map.pielou_evenness calculates correctly", {
       result <- calc_map.pielou_evenness(mock_pielou_evenness)
       expected_result <- data.frame(
         cellid = c(1, 2),
+        cellCode = c("A1", "A2"),
         diversity_val = c(2 / log(2 + 1 + 1), 3 / log(1 + 1 + 1))
       )
       expect_equal(result, expected_result, tolerance = 1e-6)
@@ -794,6 +827,7 @@ test_that("calc_map.pielou_evenness calculates correctly", {
 test_that("calc_map_evenness_core handles cases with no occurrences", {
   mock_evenness_empty <- data.frame(
     cellid = integer(0),
+    cellCoe = character(0),
     taxonKey = character(0),
     obs = integer(0)
   )
@@ -809,6 +843,7 @@ test_that("calc_map_evenness_core handles cases with no occurrences", {
         calc_map.williams_evenness(mock_williams_evenness_empty)
       expected_result_empty <- tibble::tibble(
         cellid = integer(0),
+        cellCode = character(0),
         diversity_val = numeric(0)
       )
       expect_equal(result_williams, expected_result_empty)
@@ -822,6 +857,7 @@ test_that("calc_map_evenness_core handles cases with no occurrences", {
 test_that("calc_map_evenness_core handles NA values in obs correctly", {
   mock_evenness_core_na <- data.frame(
     cellid = c(1, 1, 2, 2),
+    cellCode = c("A1", "A1", "A2", "A2"),
     taxonKey = c("spA", "spB", "spA", "spC"),
     obs = c(2, NA, 1, 1)
   )
@@ -838,6 +874,7 @@ test_that("calc_map_evenness_core handles NA values in obs correctly", {
                                                 type = "williams_evenness")
       expected_result_williams <- data.frame(
         cellid = c(1, 2),
+        cellCode = c("A1", "A2"),
         diversity_val = c(2, 1)
       )
       expect_equal(result_williams, expected_result_williams, tolerance = 1e-6)
@@ -851,6 +888,7 @@ test_that("calc_map_evenness_core handles NA values in obs correctly", {
                                               type = "pielou_evenness")
       expected_result_pielou <- data.frame(
         cellid = c(1, 2),
+        cellCode = c("A1", "A2"),
         diversity_val = c(1 / log(2), 2 / log(2))
       )
       expect_equal(result_pielou, expected_result_pielou, tolerance = 1e-6)
@@ -862,6 +900,7 @@ test_that("calc_map_evenness_core handles NA values in obs correctly", {
 # Mock input data for abundance rarity
 mock_ab_rarity_data <- data.frame(
   cellid = c(1, 1, 2, 2, 1),
+  cellCode = c("A1", "A1", "A2", "A2", "A1"),
   taxonKey = c("spA", "spB", "spA", "spC", "spA"),
   obs = c(2, 1, 1, 1, 1)
 )
@@ -872,6 +911,7 @@ test_that("calc_map.ab_rarity calculates correctly", {
   result <- calc_map.ab_rarity(mock_ab_rarity)
   expected_result <- data.frame(
     cellid = c(1, 2),
+    cellCode = c("A1", "A2"),
     diversity_val = c(
       (1 / (3 / 4)) + (1 / (1 / 4)), # spA rarity + spB rarity in cell 1
       (1 / (1 / 2)) + (1 / (1 / 2))  # spA rarity + spC rarity in cell 2
@@ -883,6 +923,7 @@ test_that("calc_map.ab_rarity calculates correctly", {
 test_that("calc_map.ab_rarity handles NA values in obs correctly", {
   mock_ab_rarity_na <- data.frame(
     cellid = c(1, 1, 2, 2, 1),
+    cellCode = c("A1", "A1", "A2", "A2", "A1"),
     taxonKey = c("spA", "spB", "spA", "spC", "spA"),
     obs = c(2, NA, 1, 1, 1)
   )
@@ -891,6 +932,7 @@ test_that("calc_map.ab_rarity handles NA values in obs correctly", {
   result <- calc_map.ab_rarity(mock_ab_rarity_na_classed)
   expected_result <- data.frame(
     cellid = c(1, 2),
+    cellCode = c("A1", "A2"),
     diversity_val = c(
       (1 / (2 / 2)), # spA rarity in cell 1 (spB is removed due to NA in obs)
       (1 / (1 / 2)) + (1 / (1 / 2))  # spA rarity + spC rarity in cell 2
@@ -903,6 +945,7 @@ test_that("calc_map.ab_rarity handles NA values in obs correctly", {
 
 test_that("calc_map.ab_rarity handles empty input", {
   mock_ab_rarity_empty <- data.frame(cellid = integer(0),
+                                     cellCode = character(0),
                                      taxonKey = character(0),
                                      obs = numeric(0))
   mock_ab_rarity_empty_classed <- structure(mock_ab_rarity_empty,
@@ -910,6 +953,7 @@ test_that("calc_map.ab_rarity handles empty input", {
                                                       "data.frame"))
   result <- calc_map.ab_rarity(mock_ab_rarity_empty_classed)
   expected_result <- data.frame(cellid = integer(0),
+                                cellCode = character(0),
                                 diversity_val = numeric(0))
   expect_equal(result, expected_result)
 })
@@ -917,6 +961,7 @@ test_that("calc_map.ab_rarity handles empty input", {
 # Mock input data for area rarity
 mock_area_rarity_data <- data.frame(
   cellid = c(1, 1, 2, 2, 1),
+  cellCode = c("A1", "A1", "A2", "A2", "A1"),
   taxonKey = c("spA", "spB", "spA", "spC", "spA")
 )
 mock_area_rarity <- structure(mock_area_rarity_data,
@@ -927,6 +972,7 @@ test_that("calc_map.area_rarity calculates correctly", {
   result <- calc_map.area_rarity(mock_area_rarity)
   expected_result <- data.frame(
     cellid = c(1, 2),
+    cellCode = c("A1", "A2"),
     diversity_val = c(
       (1 / (2 / 2)) + (1 / (1 / 2)), # spA rarity + spB rarity in cell 1
       (1 / (2 / 2)) + (1 / (1 / 2))  # spA rarity + spC rarity in cell 2
@@ -938,6 +984,7 @@ test_that("calc_map.area_rarity calculates correctly", {
 test_that("calc_map.area_rarity handles NA values in cellid or taxonKey", {
   mock_area_rarity_na <- data.frame(
     cellid = c(1, NA, 2, 2, 1),
+    cellCode = c("A1", "A1", "A2", "A2", "A1"),
     taxonKey = c("spA", "spB", NA, "spC", "spA")
   )
   mock_area_rarity_na_classed <- structure(mock_area_rarity_na,
@@ -946,6 +993,7 @@ test_that("calc_map.area_rarity handles NA values in cellid or taxonKey", {
   result <- calc_map.area_rarity(mock_area_rarity_na_classed)
   expected_result <- data.frame(
     cellid = c(1, 2),
+    cellCode = c("A1", "A2"),
     diversity_val = c(
       (1 / (1 / 2)), # spA rarity (spB removed because cellid is NA)
       (1 / (1 / 2)) # spC rarity (NA taxonKey removed)
@@ -956,12 +1004,14 @@ test_that("calc_map.area_rarity handles NA values in cellid or taxonKey", {
 
 test_that("calc_map.area_rarity handles empty input", {
   mock_area_rarity_empty <- data.frame(cellid = integer(0),
+                                       cellCode = character(0),
                                        taxonKey = character(0))
   mock_area_rarity_empty_classed <- structure(mock_area_rarity_empty,
                                               class = c("area_rarity",
                                                         "data.frame"))
   result <- calc_map.area_rarity(mock_area_rarity_empty_classed)
   expected_result <- data.frame(cellid = integer(0),
+                                cellCode = character(0),
                                 diversity_val = numeric(0))
   expect_equal(result, expected_result)
 })
@@ -970,7 +1020,8 @@ test_that("calc_map.area_rarity handles empty input", {
 
 # Mock data for testing
 mock_spec_occ_data <- tibble::tibble(
-  cellid = c("A1", "A1", "A2", "B1", "B1", "B2"),
+  cellid = c(1, 1, 2, 3, 3, 4),
+  cellCode = c("A1", "A1", "A2", "B1", "B1", "B2"),
   taxonKey = c(1, 1, 2, 3, 3, 4),
   scientificName = c("Species A",
                      "Species A",
@@ -984,7 +1035,8 @@ mock_spec_occ_data <- structure(mock_spec_occ_data,
                                 class = c("spec_occ", "data.frame"))
 
 mock_spec_range_data <- tibble::tibble(
-  cellid = c("A1", "A1", "A2", "B1", "B1", "B2"),
+  cellid = c(1, 1, 2, 3, 3, 4),
+  cellCode = c("A1", "A1", "A2", "B1", "B1", "B2"),
   taxonKey = c(1, 1, 2, 3, 3, 4),
   scientificName = c("Species A",
                      "Species A",
@@ -1001,6 +1053,7 @@ test_that("calc_map.spec_occ returns correct output structure", {
   result <- calc_map.spec_occ(mock_spec_occ_data)
   expect_s3_class(result, "data.frame")
   expect_named(result, c("cellid",
+                         "cellCode",
                          "taxonKey",
                          "scientificName",
                          "diversity_val"))
@@ -1010,7 +1063,8 @@ test_that("calc_map.spec_occ calculates diversity_val correctly", {
   result <- calc_map.spec_occ(mock_spec_occ_data)
   expected_result <- structure(
     data.frame(
-      cellid = c("A1", "A2", "B1", "B2"),
+      cellid = c(1, 2, 3, 4),
+      cellCode = c("A1", "A2", "B1", "B2"),
       taxonKey = c(1, 2, 3, 4),
       scientificName = c("Species A",
                          "Species B",
@@ -1024,7 +1078,8 @@ test_that("calc_map.spec_occ calculates diversity_val correctly", {
 
 test_that("calc_map.spec_occ handles empty input", {
   empty_data <- tibble::tibble(
-    cellid = character(),
+    cellid = integer(),
+    cellCode = character(),
     taxonKey = integer(),
     scientificName = character(),
     obs = numeric()
@@ -1035,6 +1090,7 @@ test_that("calc_map.spec_occ handles empty input", {
   expect_equal(nrow(result), 0)
   expect_named(result,
                c("cellid",
+                 "cellCode",
                  "taxonKey",
                  "scientificName",
                  "diversity_val"))
@@ -1043,7 +1099,8 @@ test_that("calc_map.spec_occ handles empty input", {
 test_that("calc_map.spec_occ handles single row input", {
   single_row_data <- structure(
     tibble::tibble(
-      cellid = "C1",
+      cellid = 5,
+      cellCode = "C1",
       taxonKey = 5,
       scientificName = "Species E",
       obs = 10
@@ -1052,7 +1109,8 @@ test_that("calc_map.spec_occ handles single row input", {
   result <- calc_map.spec_occ(single_row_data)
   expected_result <- structure(
     tibble::tibble(
-      cellid = "C1",
+      cellid = 5,
+      cellCode = "C1",
       taxonKey = 5,
       scientificName = "Species E",
       diversity_val = 10
@@ -1065,15 +1123,18 @@ test_that("calc_map.spec_occ handles single row input", {
 test_that("calc_map.spec_range returns correct output structure", {
   result <- calc_map.spec_range(mock_spec_range_data)
   expect_s3_class(result, "data.frame")
-  expect_named(result,
-               c("cellid", "taxonKey", "scientificName", "diversity_val"))
+  expect_named(
+    result,
+    c("cellid", "cellCode", "taxonKey", "scientificName", "diversity_val")
+  )
 })
 
 test_that("calc_map.spec_range calculates diversity_val correctly (always 1)", {
   result <- calc_map.spec_range(mock_spec_range_data)
   expected_result <- structure(
     tibble::tibble(
-      cellid = c("A1", "A2", "B1", "B2"),
+      cellid = c(1, 2, 3, 4),
+      cellCode = c("A1", "A2", "B1", "B2"),
       taxonKey = c(1, 2, 3, 4),
       scientificName = c("Species A", "Species B", "Species C", "Species D"),
       diversity_val = c(1, 1, 1, 1)
@@ -1085,7 +1146,8 @@ test_that("calc_map.spec_range calculates diversity_val correctly (always 1)", {
 test_that("calc_map.spec_range handles empty input", {
   empty_data <- structure(
     tibble::tibble(
-      cellid = character(),
+      cellid = integer(),
+      cellCode = character(),
       taxonKey = integer(),
       scientificName = character()
     ), class = c("spec_range", "data.frame")
@@ -1093,14 +1155,17 @@ test_that("calc_map.spec_range handles empty input", {
   result <- calc_map.spec_range(empty_data)
   expect_s3_class(result, "data.frame")
   expect_equal(nrow(result), 0)
-  expect_named(result,
-               c("cellid", "taxonKey", "scientificName", "diversity_val"))
+  expect_named(
+    result,
+    c("cellid", "cellCode", "taxonKey", "scientificName", "diversity_val")
+  )
 })
 
 test_that("calc_map.spec_range handles single row input", {
   single_row_data <- structure(
     tibble::tibble(
-      cellid = "C1",
+      cellid = 5,
+      cellCode = "C1",
       taxonKey = 5,
       scientificName = "Species E"
     ), class = c("spec_range", "data.frame")
@@ -1108,7 +1173,8 @@ test_that("calc_map.spec_range handles single row input", {
   result <- calc_map.spec_range(single_row_data)
   expected_result <- structure(
     tibble::tibble(
-      cellid = "C1",
+      cellid = 5,
+      cellCode = "C1",
       taxonKey = 5,
       scientificName = "Species E",
       diversity_val = 1
@@ -1120,7 +1186,8 @@ test_that("calc_map.spec_range handles single row input", {
 test_that("calc_map.spec_range handles duplicate species in the same cell", {
   duplicate_data <- structure(
     tibble::tibble(
-      cellid = c("A1", "A1", "B2"),
+      cellid = c(1, 1, 2),
+      cellCode = c("A1", "A1", "B2"),
       taxonKey = c(1, 1, 2),
       scientificName = c("Species A", "Species A", "Species B")
     ), class = c("spec_range", "data.frame")
@@ -1128,7 +1195,8 @@ test_that("calc_map.spec_range handles duplicate species in the same cell", {
   result <- calc_map.spec_range(duplicate_data)
   expected_result <- structure(
     tibble::tibble(
-      cellid = c("A1", "B2"),
+      cellid = c(1, 2),
+      cellCode = c("A1", "B2"),
       taxonKey = c(1, 2),
       scientificName = c("Species A", "Species B"),
       diversity_val = c(1, 1)
@@ -1142,9 +1210,11 @@ test_that("calc_map.spec_range handles duplicate species in the same cell", {
 # Mock data for testing
 mock_tax_distinct_data <- structure(
   tibble::tibble(
-  cellid = c("A1", "A1", "A2", "B1", "B1", "B2"),
-  scientificName = c(
-    "Species A", "Species B", "Species C", "Species D", "Species E", "Species F"
+    cellid = c(1, 1, 2, 3, 3, 4),
+    cellCode = c("A1", "A1", "A2", "B1", "B1", "B2"),
+    scientificName = c(
+      "Species A", "Species B", "Species C", "Species D", "Species E",
+      "Species F"
     )),
   class = c("tax_distinct", "data.frame")
 )
@@ -1208,7 +1278,7 @@ with_mocked_bindings(
   test_that("calc_map.tax_distinct returns correct output structure", {
     result <- calc_map.tax_distinct(mock_tax_distinct_data)
     expect_s3_class(result, "data.frame")
-    expect_named(result, c("cellid", "diversity_val"))
+    expect_named(result, c("cellid", "cellCode", "diversity_val"))
   })
 )
 
@@ -1218,7 +1288,8 @@ with_mocked_bindings(
   test_that("calc_map.tax_distinct handles empty input", {
     empty_data <- structure(
       tibble::tibble(
-        cellid = character(),
+        cellid = integer(),
+        cellCode = character(),
         scientificName = character()
       ), class = c("tax_distinct", "data.frame")
     )
@@ -1226,7 +1297,7 @@ with_mocked_bindings(
     print(result)
     expect_s3_class(result, "data.frame")
     expect_equal(nrow(result), 0)
-    expect_named(result, c("cellid", "diversity_val"))
+    expect_named(result, c("cellid", "cellCode", "diversity_val"))
   })
 )
 
@@ -1276,9 +1347,10 @@ with_mocked_bindings(
   test_that("calc_map.tax_distinct handles single cellid input", {
     single_cell_data <- structure(
       tibble::tibble(
-      cellid = rep("C1", 3),
-      scientificName = c("Species A", "Species B", "Species C")
-    ), class = c("tax_distinct", "data.frame")
+        cellid = rep(5, 3),
+        cellCode = rep("C1", 3),
+        scientificName = c("Species A", "Species B", "Species C")
+      ), class = c("tax_distinct", "data.frame")
     )
 
     # Define a dummy compute_tax_distinct_formula for basic testing
@@ -1296,9 +1368,9 @@ with_mocked_bindings(
       {
         result <- calc_map.tax_distinct(single_cell_data)
         expect_equal(nrow(result), 1)
-        expect_named(result, c("cellid", "diversity_val"))
+        expect_named(result, c("cellid", "cellCode", "diversity_val"))
         expect_true(!is.na(result$diversity_val))
-        expect_equal(result$cellid, "C1")
+        expect_equal(result$cellid, 5)
       }
     )
   })

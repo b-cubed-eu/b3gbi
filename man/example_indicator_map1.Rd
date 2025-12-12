@@ -5,16 +5,19 @@
 \alias{example_indicator_map1}
 \title{Map of Observed Species Richness for Mammals in Denmark}
 \format{
-An 'indicator_map' object containing a tibble with 374 rows and 3
+An 'indicator_map' object containing a tibble with 800 rows and 5
 variables, as well as metadata
 \describe{
 \item{cellid}{id of a map cell the indicator was calculated for}
+\item{area}{area of the map cell in square kilometers}
+\item{cellCode}{code containing the cell coordinates in Extended Quarter
+Degree (eqdgc) grid format}
 \item{diversity_val}{calculated richness value for the cell}
 \item{geometry}{geometry of the map cell}
 }
 }
 \source{
-\url{https://doi.org/10.15468/dl.qk4f2z}
+\url{https://doi.org/10.15468/dl.5mb887}
 }
 \usage{
 example_indicator_map1

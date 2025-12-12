@@ -57,7 +57,7 @@ calc_map.obs_richness <- function(x, ...) {
   # Calculate observed species richness over the grid
   indicator <- x %>%
     dplyr::summarize(diversity_val = sum(dplyr::n_distinct(taxonKey)),
-                     .by = "cellid")
+                     .by = c("cellid", "cellCode"))
 
   return(indicator)
 
@@ -74,7 +74,8 @@ calc_map.total_occ <- function(x, ...) {
 
   # Calculate total number of occurrences over the grid
   indicator <- x %>%
-    dplyr::summarize(diversity_val = sum(obs, na.rm = TRUE), .by = "cellid")
+    dplyr::summarize(diversity_val = sum(obs, na.rm = TRUE),
+                     .by = c("cellid", "cellCode"))
 
   return(indicator)
 
@@ -99,7 +100,7 @@ calc_map.newness <- function(x,
   # Calculate mean year of occurrence over the grid
   indicator <- x %>%
     dplyr::summarize(diversity_val = round(mean(year, na.rm = TRUE)),
-                     .by = "cellid")
+                     .by = c("cellid", "cellCode"))
 
   if (!is.null(newness_min_year)) {
     indicator$diversity_val <- ifelse(
@@ -119,13 +120,13 @@ calc_map.occ_density <- function(x, ...) {
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.", inherits(x, "occ_density"))
 
-  diversity_val <- obs <- area <- cellid <- NULL
+  diversity_val <- obs <- area <- cellid <- cellCode <- NULL
 
   # Calculate density of occurrences over the grid (per square km)
   indicator <- x %>%
     dplyr::reframe(diversity_val = sum(obs, na.rm = TRUE) / area,
-                   .by = "cellid") %>%
-    dplyr::distinct(cellid, diversity_val) %>%
+                   .by = c("cellid", "cellCode")) %>%
+    dplyr::distinct(cellid, cellCode, diversity_val) %>%
     dplyr::mutate(diversity_val = as.numeric(diversity_val))
 
   return(indicator)
@@ -176,11 +177,11 @@ calc_map.ab_rarity <- function(x, ...) {
                   meant to be called directly.", inherits(x, "ab_rarity"))
 
   obs <- taxonKey <- cellid <- obs_taxon <- rarity <- NULL
-  obs_cell <- NULL
+  obs_cell <- cellCode <- NULL
 
   # Select relevant columns
   x <- x %>%
-    dplyr::select(cellid, taxonKey, obs)
+    dplyr::select(cellid, cellCode, taxonKey, obs)
 
   # Remove invalid rows
   x <- x[stats::complete.cases(x), ]
@@ -189,14 +190,14 @@ calc_map.ab_rarity <- function(x, ...) {
   indicator <- x %>%
     # calculate number of records for each species
     dplyr::summarise(obs_taxon = sum(obs, na.rm = TRUE),
-                     .by = c(cellid, taxonKey)) %>%
+                     .by = c(cellid, cellCode, taxonKey)) %>%
     # calculate number of records for each grid cell
     dplyr::mutate(obs_cell = sum(obs_taxon, na.rm = TRUE),
                   .by = cellid) %>%
     # calculate rarity for each species
     dplyr::mutate(rarity = 1 / (obs_taxon / obs_cell)) %>%
     # calculate total rarity for each grid cell
-    dplyr::summarise(diversity_val = sum(rarity), .by = cellid) %>%
+    dplyr::summarise(diversity_val = sum(rarity), .by = c(cellid, cellCode)) %>%
     # arrange by cellid
     dplyr::arrange(cellid)
 
@@ -211,12 +212,12 @@ calc_map.area_rarity <- function(x, ...) {
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.", inherits(x, "area_rarity"))
 
-  cellid <- taxonKey <- rarity <- NULL
+  cellid <- taxonKey <- rarity <- cellCode <- NULL
   occ_by_taxa <- total_cells <- NULL
 
   # Select relevant columns
   x <- x %>%
-    select(cellid, taxonKey)
+    select(cellid, cellCode, taxonKey)
 
   # Remove invalid rows
   x <- x[stats::complete.cases(x), ]
@@ -234,7 +235,7 @@ calc_map.area_rarity <- function(x, ...) {
     # calculate rarity for each species
     dplyr::mutate(rarity = 1 / (occ_by_taxa / total_cells)) %>%
     # calculate total rarity for each grid cell
-    dplyr::summarise(diversity_val = sum(rarity), .by = cellid) %>%
+    dplyr::summarise(diversity_val = sum(rarity), .by = c(cellid, cellCode)) %>%
     # arrange by cellid
     dplyr::arrange(cellid)
 
@@ -249,14 +250,16 @@ calc_map.spec_occ <- function(x, ...) {
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.", inherits(x, "spec_occ"))
 
-  diversity_val <- obs <- taxonKey <- cellid <- scientificName <- NULL
+  diversity_val <- obs <- taxonKey <- cellid <- scientificName <-
+    cellCode <- NULL
 
   # Calculate total occurrences for each species by grid cell
   indicator <- x %>%
-    dplyr::mutate(diversity_val = sum(obs), .by = c(taxonKey, cellid)) %>%
-    dplyr::distinct(cellid, scientificName, .keep_all = TRUE) %>%
+    dplyr::mutate(diversity_val = sum(obs),
+                  .by = c(taxonKey, cellid, cellCode)) %>%
+    dplyr::distinct(cellid, cellCode, scientificName, .keep_all = TRUE) %>%
     dplyr::arrange(cellid) %>%
-    dplyr::select(cellid, taxonKey, scientificName, diversity_val)
+    dplyr::select(cellid, cellCode, taxonKey, scientificName, diversity_val)
 
   return(indicator)
 
@@ -269,14 +272,14 @@ calc_map.spec_range <- function(x, ...) {
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.", inherits(x, "spec_range"))
 
-  cellid <- taxonKey <- scientificName <- diversity_val <- NULL
+  cellid <- taxonKey <- scientificName <- diversity_val <- cellCode <- NULL
 
   # Flatten occurrences for each species by grid cell
   indicator <- x %>%
     dplyr::mutate(diversity_val = 1) %>%
-    dplyr::distinct(cellid, scientificName, .keep_all = TRUE) %>%
+    dplyr::distinct(cellid, cellCode, scientificName, .keep_all = TRUE) %>%
     dplyr::arrange(cellid) %>%
-    dplyr::select(cellid, taxonKey, scientificName, diversity_val)
+    dplyr::select(cellid, cellCode, taxonKey, scientificName, diversity_val)
 
   return(indicator)
 
@@ -289,11 +292,12 @@ calc_map.tax_distinct <- function(x, ...) {
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.", inherits(x, "tax_distinct"))
 
-  cellid <- diversity_val <- NULL
+  cellid <- diversity_val <- cellCode <- NULL
 
   # Early check for empty input
   if (nrow(x) == 0) {
     return(tibble::tibble(cellid = character(),
+                          cellCode = character(),
                           diversity_val = numeric()))
   }
 
@@ -327,8 +331,8 @@ calc_map.tax_distinct <- function(x, ...) {
     }) %>%
     dplyr::bind_rows() %>%
     dplyr::filter(.data$diversity_val != 0) %>%
-    dplyr::distinct(cellid, diversity_val, .keep_all = TRUE) %>%
-    dplyr::select(cellid, diversity_val)
+    dplyr::distinct(cellid, cellCode, diversity_val, .keep_all = TRUE) %>%
+    dplyr::select(cellid, cellCode, diversity_val)
 
   return(indicator)
 

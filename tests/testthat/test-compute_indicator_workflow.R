@@ -350,7 +350,7 @@ test_that(
   # Create a mock processed_cube object
     mock_cube <- list(
       data = data.frame(
-        cellCode <- rep(seq(1000, 1100, length.out = 10), 10),
+        cellCode = rep(seq(1000, 1100, length.out = 10), 10),
         xcoord = rep(seq(4000000, 4100000, length.out = 10), 10),
         ycoord = rep(seq(3000000, 3100000, length.out = 10), 10),
         year = rep(2000:2009, 10),
@@ -380,6 +380,7 @@ test_that(
     )
     expect_equal(names(result_map$data), c("cellid",
                                            "area",
+                                           "cellCode",
                                            "diversity_val",
                                            "geometry")
     )

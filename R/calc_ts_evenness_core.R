@@ -5,7 +5,7 @@ calc_ts_evenness_core <- function(x, type, ...) {
                   internal function, not meant to be called directly.",
                   inherits(x, c("data.frame", "sf")))
 
-  num_occ <- obs <- year <- taxonKey <- NULL
+  num_occ <- obs <- year <- taxonKey <- cellCode <- NULL
 
   type <- match.arg(type, names(available_indicators))
 
