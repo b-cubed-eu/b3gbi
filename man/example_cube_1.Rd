@@ -5,19 +5,24 @@
 \alias{example_cube_1}
 \title{Cube of GBIF Mammal Occurrences in Denmark}
 \format{
-A 'processed_cube' object containing a tibble with 276,950 rows and
-10 variables, as well as metadata
+A 'processed_cube' object containing a tibble with 31,632 rows and
+15 variables, as well as metadata
 \describe{
 \item{year}{year occurrence was recorded}
-\item{eea_cell_code}{code containing the cell resolution and coordinates
-on the EEA grid}
+\item{cellCode}{code containing the cell resolution and coordinates
+on the Extended Quarter Degree (eqdgc) grid}
+\item{kingdomKey}{kingdom key associated with the species on GBIF}
+\item{kingdom}{kingdom name}
+\item{familyKey}{family key associated with the species on GBIF}
+\item{family}{family name}
 \item{taxonKey}{taxonomic key associated with the species on GBIF}
-\item{obs}{number of individuals observed}
 \item{scientificName}{scientific species name}
-\item{rank}{taxonomic rank}
-\item{kingdom}{kingdom}
-\item{xcoord}{East-West coordinate on the EEA grid}
-\item{ycoord}{North-South coordinate on the EEA grid}
+\item{obs}{number of individuals observed}
+\item{minCoordinateUncertaintyInMeters}{minimum coordinate uncertainty in
+meters}
+\item{minTemporalUncertainty}{minimum temporal uncertainty in seconds}
+\item{xcoord}{East-West coordinate on the eqdgc grid}
+\item{ycoord}{North-South coordinate on the eqdgc grid}
 \item{resolution}{grid cell size}
 }
 }
@@ -39,7 +44,7 @@ GBIF as of 16.03.2024.
                                                level = "country",
                                                region = "Denmark")
     plot(denmark_mammals_or_map,
-         title = "Mammals in Denmark (1751-2023): Observed Species Richness")
+         title = "Mammals in Denmark (1862-2024): Observed Species Richness")
   }
 }
 }
