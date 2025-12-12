@@ -1,5 +1,5 @@
 #' @noRd
-sanitize_geometries <- function(sf_object) {
+sanitize_geometries <- function(sf_object, buffer_dist_meters = 10) {
 
   # Check for null object
   if (is.null(sf_object)) {
@@ -20,10 +20,34 @@ sanitize_geometries <- function(sf_object) {
   geom_type <- sf::st_geometry_type(sf_object)
 
   if (geom_type == "POINT" || geom_type == "MULTIPOINT") {
-    # Cast to POLYGON by first creating a small buffer around the point(s)
-    # The buffer distance (e.g., 0.01) depends on your CRS and scale
-    sf_object <- sf_object %>%
-      sf::st_buffer(dist = 0.01)
+    # Check if the data is in Lon/Lat (unprojected)
+    if (sf::st_is_longlat(sf_object)) {
+
+      # 1. Store original CRS
+      original_crs <- sf::st_crs(sf_object)
+
+      # 2. Dynamically choose a suitable projected CRS (e.g., local UTM zone)
+      #    We use the centroid to find a suitable local projection.
+      center_point <- sf::st_centroid(sf::st_geometry(sf_object), of_largest_polygon = TRUE)
+      target_crs <- sf::st_crs(center_point)
+
+      # Fallback check (st_crs(point) can sometimes return 4326 if unprojected)
+      if (sf::st_is_longlat(target_crs) || is.na(target_crs)) {
+        target_crs <- sf::st_crs("EPSG:3395") # Global fallback (World Mercator)
+      }
+
+      # 3. Transform to projected CRS, apply buffer (in meters), and transform back
+      sf_object <- sf_object %>%
+        sf::st_transform(crs = target_crs) %>%
+        sf::st_buffer(dist = buffer_dist_meters) %>% # Use real-world distance
+        sf::st_transform(crs = original_crs)
+
+    } else {
+      # Data is already projected (e.g., UTM), so buffer directly using original units
+      # We assume the user's units align with the new buffer_dist_meters if it's projected.
+      sf_object <- sf_object %>%
+        sf::st_buffer(dist = buffer_dist_meters)
+    }
 
   } else if (geom_type == "LINESTRING" || geom_type == "MULTILINESTRING") {
     # Cast to POLYGON by closing the line(s)
