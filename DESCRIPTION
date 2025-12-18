@@ -19,6 +19,7 @@ Depends:
 Imports:
     boot,
     dplyr,
+    dubicube,
     ggplot2,
     iNEXT,
     labeling,
