@@ -26,9 +26,6 @@
 #'     rarefaction).
 #' @param dim_type (Optional) Dimension to calculate indicator over time: 'ts',
 #'  or space: 'map'. (Default: 'map')
-#' @param ci_type (Optional) Type of bootstrap confidence intervals to
-#'  calculate. (Default: "norm"). Select "none" to avoid calculating bootstrap
-#'  CIs.
 #' @param cell_size (Optional) Length of grid cell sides, in km or degrees.
 #'  If set to "grid" (default), this will use the existing grid size of your
 #'  cube. If set to "auto", this will be automatically determined according to
@@ -116,11 +113,6 @@ compute_indicator_workflow <- function(data,
                                        type,
                                        dim_type = c("map",
                                                     "ts"),
-                                       ci_type = c("norm",
-                                                   "basic",
-                                                   "perc",
-                                                   "bca",
-                                                   "none"),
                                        cell_size = "grid",
                                        level = c("cube",
                                                  "continent",
@@ -141,7 +133,6 @@ compute_indicator_workflow <- function(data,
                                        last_year = NULL,
                                        spherical_geometry = TRUE,
                                        make_valid = FALSE,
-                                       num_bootstrap = 100,
                                        shapefile_path = NULL,
                                        shapefile_crs = NULL,
                                        invert = FALSE,
@@ -194,6 +185,7 @@ compute_indicator_workflow <- function(data,
   ne_type <- match.arg(ne_type)
   ne_scale <- match.arg(ne_scale)
   level <- match.arg(level)
+  bootstrap_level <- match.arg(bootstrap_level)
 
   # Check that user is not trying to calculate an indicator that requires grid
   # cell assignment with a cube that lacks a supported grid system.
@@ -678,25 +670,6 @@ compute_indicator_workflow <- function(data,
     # Calculate indicator
     indicator <- calc_ts(data_final_nogeom, ...)
 
-    # Calculate confidence intervals
-    if (ci_type != "none") {
-      if (!type %in% noci_list) {
-        indicator <- calc_ci(data_final_nogeom,
-                             indicator = indicator,
-                             num_bootstrap = num_bootstrap,
-                             ci_type = ci_type,
-                             ...)
-      } else {
-        if (!type %in% c("hill0", "hill1", "hill2")) {
-          warning(
-            paste0(
-              "Bootstrapped confidence intervals cannot be calculated for the ",
-              "chosen indicator."
-            )
-          )
-        }
-      }
-    }
   }
 
   if (spherical_geometry == FALSE) {
@@ -741,7 +714,8 @@ compute_indicator_workflow <- function(data,
                                       num_species = num_species,
                                       num_years = num_years,
                                       species_names = species_names,
-                                      coord_range = map_lims)
+                                      coord_range = map_lims,
+                                      raw_cube_occurrences = data_final_nogeom)
   }
 
   return(diversity_obj)
