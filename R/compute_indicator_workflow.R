@@ -171,22 +171,11 @@ compute_indicator_workflow <- function(data,
                          "hill1",
                          "hill2")
 
-  # List of indicators for which bootstrapped confidence intervals should not
-  # be calculated
-  noci_list <- c("obs_richness",
-                 "cum_richness",
-                 "occ_turnover",
-                 "tax_distinct",
-                 "hill0",
-                 "hill1",
-                 "hill2")
-
   type <- match.arg(type, names(available_indicators))
   dim_type <- match.arg(dim_type)
   ne_type <- match.arg(ne_type)
   ne_scale <- match.arg(ne_scale)
   level <- match.arg(level)
-  bootstrap_level <- match.arg(bootstrap_level)
 
   # Check that user is not trying to calculate an indicator that requires grid
   # cell assignment with a cube that lacks a supported grid system.
