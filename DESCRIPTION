@@ -62,7 +62,7 @@ Remotes:
     github::ropensci/bold,
     github::ropensci/taxize,
     github::ropensci/rnaturalearthhires,
-    github::ropensci/dubicube
+    github::b-cubed-eu/dubicube
 BugReports: https://github.com/b-cubed-eu/b3gbi/issues
 Funding: This project receives funding from the European Union’s Horizon Europe 
     Research and Innovation Programme (ID No 101059592).
