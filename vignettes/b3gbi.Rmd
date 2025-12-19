@@ -104,13 +104,6 @@ All indicator wrapper functions (e.g., `obs_richness_map`, `occ_turnover_ts`) sh
 | `data` | The `processed_cube` object. Required. | |
 | `level` | The geographical scale ('country', 'continent', 'world'). | Automatically retrieves boundaries. |
 | `region` | The specific region name (e.g., 'Germany', 'Europe'). | Required if level is set. |
-| `ci_type` | Type of bootstrap confidence interval to calculate. Only relevant for time series. | 'norm', 'basic', 'perc', 'bca', or 'none'. Defaults to 'norm' for time series. |
-| `num_bootstrap` | Number of bootstrap runs for CI calculation. Only relevant for time series. | Defaults to 100. |
-
-⚠️ **Important Note on Confidence Intervals (CIs)**:
-
-- The `ci_type` argument is only used for calculating uncertainty in general time series indicators (e.g., `obs_richness_ts`) and is ignored for map indicators.
-- For indicators based on Hill diversity (e.g., `hill_ts()`), the `ci_type` is ignored because CIs are calculated internally using the iNEXT package. However, the `num_bootstrap` argument is still required to define the number of runs for iNEXT's internal uncertainty estimation.
 
 ### Example: Observed Species Richness Map
 
@@ -151,7 +144,7 @@ class(Denmark_total_occ_ts)
 Now let's add confidence intervals. To speed things up we will reduce the number of bootstrap samples from the default of 1000 to 100.
 
 ```{r add-ci}
-Denmark_total_occ_ts_with_ci <- add_ci(Denmark_total_occ_tsk, 
+Denmark_total_occ_ts_with_ci <- add_ci(Denmark_total_occ_ts, 
                                        num_bootstrap = 100)
 ```
 
