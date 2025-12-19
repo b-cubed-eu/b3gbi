@@ -8,7 +8,7 @@ message: 'To cite package "b3gbi" in publications use:'
 type: software
 license: MIT
 title: 'b3gbi: General Biodiversity Indicators for Biodiversity Data Cubes'
-version: 0.8.12
+version: 0.9.0
 abstract: Calculate general biodiversity indicators from GBIF data cubes. Includes
   many common indicators such as species richness and evenness, which can be calculated
   over time (trends) or space (maps).
@@ -78,6 +78,23 @@ references:
     orcid: https://orcid.org/0000-0003-4777-038X
   year: '2025'
   doi: 10.32614/CRAN.package.dplyr
+- type: software
+  title: dubicube
+  abstract: 'dubicube: Calculation and Interpretation of Data Cube Indicator Uncertainty'
+  notes: Imports
+  url: https://b-cubed-eu.github.io/dubicube/
+  authors:
+  - family-names: Langeraert
+    given-names: Ward
+    email: ward.langeraert@inbo.be
+    orcid: https://orcid.org/0000-0002-5900-8109
+    affiliation: Research Institute for Nature and Forest (INBO)
+  - family-names: Van Daele
+    given-names: Toon
+    email: toon.vandaele@inbo.be
+    orcid: https://orcid.org/0000-0002-1362-853X
+    affiliation: Research Institute for Nature and Forest (INBO)
+  year: '2025'
 - type: software
   title: ggplot2
   abstract: 'ggplot2: Create Elegant Data Visualisations Using the Grammar of Graphics'
