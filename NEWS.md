@@ -1,3 +1,9 @@
+# b3gbi 0.9.0 - Major update:
+
+* Confidence intervals are no longer calculated in the core indicator workflow, except for Hill diversity (Hill diversity is handled by the iNEXT package, which calculates confidence intervals internally). They are now calculated using a separaed function, add_ci(), which can be applied to any indicator_ts object for which reasonable confidence intervals can be calculated. This gives the user more freedom. After adding CIs, you can recalculate with different parameters by setting 'replace = TRUE' when you call add_ci().
+* Bootstrapping for confidence intervals is now done across the entire cube by default. This uses the dubicube package, which is now added as a dependency. The option to calculate at indicator level is still available by setting 'level = "indicator"' when calling add_ci(). Indicator level bootstrapping is a faster but less robust method.
+* The default number of bootstrap replicates when calculating confidence intervals is now 1000. This improves robustness at the sake of speed. This can still be changed using the 'num_bootstrap' parameter when calling add_ci().
+
 # b3gbi 0.8.12 - Minor update:
 
 * The cellCode column from the cube is now retained in indicator map outputs. This allows users to trace back grid cells to their original codes in the cube.
