@@ -62,7 +62,9 @@
 #'  after creating the grid. Increases processing time but may help if you are
 #'  getting polygon errors. (Default is FALSE).
 #' @param num_bootstrap (Optional) Set the number of bootstraps to calculate for
-#'  generating confidence intervals. (Default: 100)
+#'  generating confidence intervals for Hill diversity. (Default: 1000)
+#'  *Note that confidence intervals for all other indicators are now generated
+#'  separately by using the add_ci() function after calculating your indicator.
 #' @param shapefile_path (optional) Path of an external shapefile to merge into
 #'  the workflow. For example, if you want to calculate your indicator
 #'  particular features such as protected areas or wetlands.
@@ -181,7 +183,6 @@ compute_indicator_workflow <- function(data,
 
   type <- match.arg(type, names(available_indicators))
   dim_type <- match.arg(dim_type)
-  ci_type <- match.arg(ci_type)
   ne_type <- match.arg(ne_type)
   ne_scale <- match.arg(ne_scale)
   level <- match.arg(level)
@@ -216,18 +217,6 @@ compute_indicator_workflow <- function(data,
       level <- "cube"
       warning("Unsupported or missing grid system. Setting level to 'cube'.")
     }
-  }
-
-  if (type %in% c("hill0", "hill1", "hill2") &&
-      ci_type %in% c("norm", "basic", "bca")) {
-    message(
-      paste0(
-        "Note: Hill diversity measures are calculated by the iNEXT package, ",
-        "therefore bootstrap confidence intervals will be calculated using ",
-        "the standard iNEXT method, similar to the 'percentile' method of ",
-        "the 'boot' package."
-      )
-    )
   }
 
   # Ensure user has entered reasonable first and last years, then filter the
