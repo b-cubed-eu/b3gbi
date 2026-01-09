@@ -12,54 +12,50 @@
 #' @param num_bootstrap (Optional) Number of bootstrap replicates to perform.
 #'   (Default: 1000)
 #' @param bootstrap_level (Optional) Level at which to perform bootstrapping:
-#' \itemize{
-#'   \item \code{'cube'} (default): Bootstrapping is done by resampling the
+#'   * `cube` (default): Bootstrapping is done by resampling the
 #'     occurrence records in the cube. This is mathematically more robust as it
 #'     captures the underlying sampling uncertainty.
-#'   \item \code{'indicator'}: Bootstrapping is done by resampling indicator
+#'   * `indicator`: Bootstrapping is done by resampling indicator
 #'     values. This is faster for large cubes but less robust.
-#' }
+#'
 #' @param ci_type (Optional) Type of bootstrap confidence intervals to
-#'   calculate. (Default: \code{"norm"}). Supported options are:
-#' \itemize{
-#'   \item \code{'norm'}: Normal approximation intervals.
-#'   \item \code{'basic'}: Basic bootstrap intervals.
-#'   \item \code{'perc'}: Percentile intervals.
-#'   \item \code{'bca'}: Bias-corrected and accelerated intervals.
-#'   \item \code{'none'}: No confidence intervals calculated.
-#' }
+#'   calculate. (Default: `"norm"`). Supported options are:
+#'   * `norm`: Normal approximation intervals.
+#'   * `basic`: Basic bootstrap intervals.
+#'   * `perc`: Percentile intervals.
+#'   * `bca`: Bias-corrected and accelerated intervals.
+#'   * `none`: No confidence intervals calculated.
+#'
 #' @param trans (Optional) A function for transforming the indicator values
-#'   before calculating confidence intervals (e.g., \code{log}).
+#'   before calculating confidence intervals (e.g., `log`).
 #'   (Default: identity function)
 #' @param inv_trans (Optional) The inverse of the transformation function
-#'   \code{trans} (e.g., \code{exp}). Used to back-transform the intervals
+#'   `trans` (e.g., `exp`). Used to back-transform the intervals
 #'   to the original scale. (Default: identity function)
 #' @param confidence_level (Optional) The confidence level for the calculated
 #'   intervals (e.g., 0.95 for 95\% CIs). (Default: 0.95)
 #' @param overwrite (Optional) Logical. If the indicator already contains
-#'   confidence intervals (\code{ll} and \code{ul} columns), should they
+#'   confidence intervals (`ll` and `ul` columns), should they
 #'   be replaced? (Default: TRUE)
 #'
 #' @details
-#' The function acts as a bridge to the \code{dubicube} package for statistical
+#' The function acts as a bridge to the `dubicube` package for statistical
 #' heavy lifting. For certain indicators (e.g., Hill numbers), confidence
 #' intervals cannot be added post-hoc as they are calculated internally by
-#' the \code{iNext} package during the initial calculation. In such cases,
+#' the `iNext` package during the initial calculation. In such cases,
 #' a warning is issued and the original object is returned.
 #'
-#' @return An updated object of class \code{indicator_ts} containing the
+#' @return An updated object of class `indicator_ts` containing the
 #'   original data with the following additional columns:
-#' \itemize{
-#'   \item \code{ll}: Lower limit of the confidence interval.
-#'   \item \code{ul}: Upper limit of the confidence interval.
-#'   \item \code{est_boot}: The bootstrap estimate of the indicator value.
-#'   \item \code{se_boot}: The bootstrap standard error.
-#'   \item \code{bias_boot}: The bootstrap estimate of bias.
-#'   \item \code{int_type}: The type of interval calculated (e.g., 'perc').
-#'   \item \code{conf}: The confidence level used.
-#' }
+#'   * `ll`: Lower limit of the confidence interval.
+#'   * `ul`: Upper limit of the confidence interval.
+#'   * `est_boot`: The bootstrap estimate of the indicator value.
+#'   * `se_boot`: The bootstrap standard error.
+#'   \item `bias_boot`: The bootstrap estimate of bias.
+#'   \item `int_type`: The type of interval calculated (e.g., 'perc').
+#'   \item `conf`: The confidence level used.
 #'
-#' @seealso \code{\link[dubicube]{bootstrap_cube}}, \code{\link[dubicube]{calculate_bootstrap_ci}}
+#' @seealso [dubicube::bootstrap_cube()], [dubicube::calculate_bootstrap_ci()]
 #'
 #' @export
 add_ci <- function(indicator,

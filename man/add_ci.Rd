@@ -25,21 +25,21 @@ intervals should be added.}
 
 \item{bootstrap_level}{(Optional) Level at which to perform bootstrapping:
 \itemize{
-\item \code{'cube'} (default): Bootstrapping is done by resampling the
+\item \code{cube} (default): Bootstrapping is done by resampling the
 occurrence records in the cube. This is mathematically more robust as it
 captures the underlying sampling uncertainty.
-\item \code{'indicator'}: Bootstrapping is done by resampling indicator
+\item \code{indicator}: Bootstrapping is done by resampling indicator
 values. This is faster for large cubes but less robust.
 }}
 
 \item{ci_type}{(Optional) Type of bootstrap confidence intervals to
 calculate. (Default: \code{"norm"}). Supported options are:
 \itemize{
-\item \code{'norm'}: Normal approximation intervals.
-\item \code{'basic'}: Basic bootstrap intervals.
-\item \code{'perc'}: Percentile intervals.
-\item \code{'bca'}: Bias-corrected and accelerated intervals.
-\item \code{'none'}: No confidence intervals calculated.
+\item \code{norm}: Normal approximation intervals.
+\item \code{basic}: Basic bootstrap intervals.
+\item \code{perc}: Percentile intervals.
+\item \code{bca}: Bias-corrected and accelerated intervals.
+\item \code{none}: No confidence intervals calculated.
 }}
 
 \item{trans}{(Optional) A function for transforming the indicator values
@@ -85,5 +85,5 @@ the \code{iNext} package during the initial calculation. In such cases,
 a warning is issued and the original object is returned.
 }
 \seealso{
-\code{\link[dubicube]{bootstrap_cube}}, \code{\link[dubicube]{calculate_bootstrap_ci}}
+\code{\link[dubicube:bootstrap_cube]{dubicube::bootstrap_cube()}}, \code{\link[dubicube:calculate_bootstrap_ci]{dubicube::calculate_bootstrap_ci()}}
 }
