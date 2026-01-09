@@ -51,7 +51,7 @@ before calculating confidence intervals (e.g., \code{log}).
 to the original scale. (Default: identity function)}
 
 \item{confidence_level}{(Optional) The confidence level for the calculated
-intervals (e.g., 0.95 for 95\\% CIs). (Default: 0.95)}
+intervals (e.g., 0.95 for 95\% CIs). (Default: 0.95)}
 
 \item{overwrite}{(Optional) Logical. If the indicator already contains
 confidence intervals (\code{ll} and \code{ul} columns), should they

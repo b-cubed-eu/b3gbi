@@ -33,7 +33,7 @@
 #'   `trans` (e.g., `exp`). Used to back-transform the intervals
 #'   to the original scale. (Default: identity function)
 #' @param confidence_level (Optional) The confidence level for the calculated
-#'   intervals (e.g., 0.95 for 95\% CIs). (Default: 0.95)
+#'   intervals (e.g., 0.95 for 95% CIs). (Default: 0.95)
 #' @param overwrite (Optional) Logical. If the indicator already contains
 #'   confidence intervals (`ll` and `ul` columns), should they
 #'   be replaced? (Default: TRUE)
