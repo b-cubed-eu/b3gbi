@@ -635,7 +635,7 @@ hill0_ts <- function(data,
 
   # Check if num_bootstrap was provided, otherwise set a default
   num_bootstrap <- dot_params$num_bootstrap
-  if (is.null(num_bootstrap)) num_bootstrap <- 100
+  if (is.null(num_bootstrap)) num_bootstrap <- 1000
 
   # Check if ci_type is provided and set to "none". If so, set num_bootstrap = 0
   ci_type <- dot_params$ci_type
@@ -703,7 +703,7 @@ hill1_ts <- function(data,
 
   # Check if num_bootstrap was provided, otherwise set a default
   num_bootstrap <- dot_params$num_bootstrap
-  if (is.null(num_bootstrap)) num_bootstrap <- 100
+  if (is.null(num_bootstrap)) num_bootstrap <- 1000
 
   # Check if ci_type is provided and set to "none". If so, set num_bootstrap = 0
   ci_type <- dot_params$ci_type
@@ -770,7 +770,7 @@ hill2_ts <- function(data,
 
   # Check if num_bootstrap was provided, otherwise set a default
   num_bootstrap <- dot_params$num_bootstrap
-  if (is.null(num_bootstrap)) num_bootstrap <- 100
+  if (is.null(num_bootstrap)) num_bootstrap <- 1000
 
   # Check if ci_type is provided and set to "none". If so, set num_bootstrap = 0
   ci_type <- dot_params$ci_type
