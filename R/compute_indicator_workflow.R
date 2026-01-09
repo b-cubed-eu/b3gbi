@@ -61,10 +61,6 @@
 #' @param make_valid (Optional) Calls st_make_valid() from the sf package
 #'  after creating the grid. Increases processing time but may help if you are
 #'  getting polygon errors. (Default is FALSE).
-#' @param num_bootstrap (Optional) Set the number of bootstraps to calculate for
-#'  generating confidence intervals for Hill diversity. (Default: 1000)
-#'  *Note that confidence intervals for all other indicators are now generated
-#'  separately by using the add_ci() function after calculating your indicator.
 #' @param shapefile_path (optional) Path of an external shapefile to merge into
 #'  the workflow. For example, if you want to calculate your indicator
 #'  particular features such as protected areas or wetlands.
