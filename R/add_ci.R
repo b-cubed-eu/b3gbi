@@ -37,6 +37,7 @@
 #' @param overwrite (Optional) Logical. If the indicator already contains
 #'   confidence intervals (`ll` and `ul` columns), should they
 #'   be replaced? (Default: TRUE)
+#' @param ... Additional arguments passed to the underlying functions.
 #'
 #' @details
 #' The function acts as a bridge to the `dubicube` package for statistical
@@ -148,11 +149,20 @@ add_ci <- function(indicator,
 
   } else if (bootstrap_level == "cube") {
 
+    # Identify indicators that require species-level grouping
+    species_level_indicators <- c("spec_occ", "spec_range")
+
+    if (indicator$div_type %in% species_level_indicators) {
+      group_cols <- c("year", "taxonKey")
+    } else {
+      group_cols <- "year"
+    }
+
     # Bootstrap cube data
     bootstrap_results <- dubicube::bootstrap_cube(
       data_cube = raw_data,
       fun = calc_ts,
-      grouping_var = "year",
+      grouping_var = group_cols,
       samples = num_bootstrap,
       seed = 123,
       progress = TRUE,
@@ -163,7 +173,7 @@ add_ci <- function(indicator,
     # Calculate confidence intervals from bootstrap results
     ci_df <- dubicube::calculate_bootstrap_ci(
       bootstrap_samples_df = bootstrap_results,
-      grouping_var = "year",
+      grouping_var = group_cols,
       type = ci_type,
       h = trans,
       hinv = inv_trans,
@@ -174,14 +184,13 @@ add_ci <- function(indicator,
       dplyr::select(-est_original)
 
     # Join confidence intervals to indicator object
-    if (length(ci_df) > 0) {
+    if (nrow(ci_df) > 0) {
       # Convert negative values to zero as rarity cannot be less than zero
       ci_df$ll <- ifelse(ci_df$ll > 0, ci_df$ll, 0)
       # Join confidence intervals to indicator values by year
       x <- x %>%
         dplyr::full_join(ci_df,
-                         by = dplyr::join_by(year),
-                         relationship = "many-to-many")
+                         by = group_cols)
       indicator$data <- x
       return(indicator)
     } else {
