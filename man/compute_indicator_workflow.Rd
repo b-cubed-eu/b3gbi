@@ -143,7 +143,9 @@ forced on by indicators that require it. (Default: FALSE)}
 functions.}
 
 \item{num_bootstrap}{(Optional) Set the number of bootstraps to calculate for
-generating confidence intervals. (Default: 100)}
+generating confidence intervals for Hill diversity. (Default: 1000)
+*Note that confidence intervals for all other indicators are now generated
+separately by using the add_ci() function after calculating your indicator.}
 }
 \value{
 An S3 object containing the calculated indicator values and metadata.

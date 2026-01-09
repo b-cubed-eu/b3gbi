@@ -12,7 +12,8 @@ add_ci(
   trans = function(t) t,
   inv_trans = function(t) t,
   confidence_level = 0.95,
-  overwrite = TRUE
+  overwrite = TRUE,
+  ...
 )
 }
 \arguments{
@@ -28,7 +29,7 @@ intervals should be added.}
 occurrence records in the cube. This is mathematically more robust as it
 captures the underlying sampling uncertainty.
 \item \code{'indicator'}: Bootstrapping is done by resampling indicator
-values. This is faster for large cubes but less robust..
+values. This is faster for large cubes but less robust.
 }}
 
 \item{ci_type}{(Optional) Type of bootstrap confidence intervals to
