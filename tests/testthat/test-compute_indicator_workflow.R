@@ -48,17 +48,6 @@ test_that("compute_indicator_workflow handles input validation", {
     "'arg' should be one of"
   )
 
-  # Invalid ci_type
-  expect_error(
-    compute_indicator_workflow(
-      data = mock_cube,
-      type = "obs_richness",
-      dim_type = "map",
-      ci_type = "invalid"
-    ),
-    "'arg' should be one of"
-  )
-
   # Invalid level
   expect_error(
     compute_indicator_workflow(
@@ -405,11 +394,7 @@ test_that(
       all(
         c(
           "year",
-          "diversity_val",
-          "int_type",
-          "ll",
-          "ul",
-          "conf_level"
+          "diversity_val"
         ) %in% names(result_ci$data)
       )
     )

@@ -416,6 +416,8 @@ test_that("plot_ts correctly applies smoothing and confidence intervals", {
   total_occ_example <- total_occ_ts(example_cube_1,
                                    level = "country",
                                    region = "Denmark")
+  total_occ_example <- add_ci(total_occ_example,
+                              num_bootstrap = 10)
 
   # With confidence intervals
   p2 <- plot_ts(
@@ -514,8 +516,7 @@ test_that("plot_ts handles all parameters without error", {
 
 spec_occ_mammals_denmark_ts <- spec_occ_ts(example_cube_1,
                                            level = "country",
-                                           region = "Denmark",
-                                           ci_type = "none")
+                                           region = "Denmark")
 
 test_that(
   "plot_species_ts returns a ggplot or patchwork object with defaults", {
@@ -579,9 +580,8 @@ test_that("plot_species_ts applies custom aesthetics correctly", {
 
 spec_occ_mammals_denmark_ts_ci <- spec_occ_ts(example_cube_1,
                                            level = "country",
-                                           region = "Denmark",
-                                           ci_type = "norm",
-                                           num_bootstrap = 20)
+                                           region = "Denmark") %>%
+  add_ci(num_bootstrap = 10)
 
 test_that("plot_species_ts manages trends and confidence intervals", {
   # Verify presence of smoothed trend
