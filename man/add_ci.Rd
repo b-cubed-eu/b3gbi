@@ -56,6 +56,8 @@ intervals (e.g., 0.95 for 95\% CIs). (Default: 0.95)}
 \item{overwrite}{(Optional) Logical. If the indicator already contains
 confidence intervals (\code{ll} and \code{ul} columns), should they
 be replaced? (Default: TRUE)}
+
+\item{...}{Additional arguments passed to the underlying functions.}
 }
 \value{
 An updated object of class \code{indicator_ts} containing the
