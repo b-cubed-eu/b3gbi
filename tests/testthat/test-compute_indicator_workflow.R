@@ -501,8 +501,7 @@ test_that("compute_indicator_workflow handles sim_cube objects", {
   result_ts <- compute_indicator_workflow(
     data = mock_sim_cube,
     type = "total_occ",
-    dim_type = "ts",
-    ci_type = "none"
+    dim_type = "ts"
   )
   expect_s3_class(result_ts, "indicator_ts")
 
@@ -510,8 +509,8 @@ test_that("compute_indicator_workflow handles sim_cube objects", {
   result_ci <- compute_indicator_workflow(
     data = mock_sim_cube,
     type = "total_occ",
-    dim_type = "ts",
-    ci_type = "norm")
+    dim_type = "ts") %>%
+    add_ci(ci_type = "norm", num_bootstrap = 100)
   expect_true(
     all(
       c(
@@ -520,7 +519,7 @@ test_that("compute_indicator_workflow handles sim_cube objects", {
         "int_type",
         "ll",
         "ul",
-        "conf_level"
+        "conf"
       ) %in% names(result_ci$data)
     )
   )
