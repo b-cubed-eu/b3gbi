@@ -71,3 +71,5 @@ app.R
 .RDataTmp
 /doc/
 /Meta/
+.gemini/
+conductor/

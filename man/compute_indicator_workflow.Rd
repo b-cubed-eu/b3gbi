@@ -8,7 +8,6 @@ compute_indicator_workflow(
   data,
   type,
   dim_type = c("map", "ts"),
-  ci_type = c("norm", "basic", "perc", "bca", "none"),
   cell_size = "grid",
   level = c("cube", "continent", "country", "world", "sovereignty", "geounit"),
   region = "Europe",
@@ -19,7 +18,6 @@ compute_indicator_workflow(
   last_year = NULL,
   spherical_geometry = TRUE,
   make_valid = FALSE,
-  num_bootstrap = 100,
   shapefile_path = NULL,
   shapefile_crs = NULL,
   invert = FALSE,
@@ -56,10 +54,6 @@ rarefaction).
 
 \item{dim_type}{(Optional) Dimension to calculate indicator over time: 'ts',
 or space: 'map'. (Default: 'map')}
-
-\item{ci_type}{(Optional) Type of bootstrap confidence intervals to
-calculate. (Default: "norm"). Select "none" to avoid calculating bootstrap
-CIs.}
 
 \item{cell_size}{(Optional) Length of grid cell sides, in km or degrees.
 If set to "grid" (default), this will use the existing grid size of your
@@ -105,9 +99,6 @@ solve specific issues. (Default is TRUE).}
 \item{make_valid}{(Optional) Calls st_make_valid() from the sf package
 after creating the grid. Increases processing time but may help if you are
 getting polygon errors. (Default is FALSE).}
-
-\item{num_bootstrap}{(Optional) Set the number of bootstraps to calculate for
-generating confidence intervals. (Default: 100)}
 
 \item{shapefile_path}{(optional) Path of an external shapefile to merge into
 the workflow. For example, if you want to calculate your indicator

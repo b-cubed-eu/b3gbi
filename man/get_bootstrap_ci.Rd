@@ -19,8 +19,10 @@ function.}
 \value{
 The returned value is a dataframe containing the time point,
 the type of interval (\code{int_type}), the lower limit of the confidence
-interval (\code{ll}), the upper limit of the confidence interval (\code{ul}), and the
-confidence level of the intervals (\code{conf_level}).
+interval (\code{ll}), the upper limit of the confidence interval (\code{ul}), the
+bootstrap estimate (\code{est_boot}), the bootstrap standard error (\code{se_boot}),
+the bootstrap bias (\code{bias_boot}), and the confidence level of the
+intervals (\code{conf_level}).
 }
 \description{
 This function calculates confidence intervals for a list of objects of class

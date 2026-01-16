@@ -10,11 +10,12 @@
 #' @param ... Additional argument to be passed to the `boot::boot.ci()`
 #' function.
 #'
-#' @returns The returned value is a dataframe containing the time point,
+#' @return The returned value is a dataframe containing the time point,
 #' the type of interval (`int_type`), the lower limit of the confidence
-#' interval (`ll`), the upper limit of the confidence interval (`ul`), and the
-#' confidence level of the intervals (`conf_level`).
-
+#' interval (`ll`), the upper limit of the confidence interval (`ul`), the
+#' bootstrap estimate (`est_boot`), the bootstrap standard error (`se_boot`), 
+#' the bootstrap bias (`bias_boot`), and the confidence level of the 
+#' intervals (`conf_level`).
 get_bootstrap_ci <- function(bootstrap_list,
                              temporal_list_name = "year",
                              ...) {
@@ -51,10 +52,24 @@ get_bootstrap_ci <- function(bootstrap_list,
       vec[length(vec)]
     })
 
+    # Extract bootstrap summaries from original bootstrap list
+    est_boot <- sapply(names(conf_ints), function(name) {
+      mean(bootstrap_list[[name]]$t, na.rm = TRUE)
+    })
+    se_boot <- sapply(names(conf_ints), function(name) {
+      sd(bootstrap_list[[name]]$t, na.rm = TRUE)
+    })
+    bias_boot <- est_boot - sapply(names(conf_ints), function(name) {
+      bootstrap_list[[name]]$t0
+    })
+
     out_list[[i]] <- data.frame(time_point = as.numeric(names(conf_ints)),
                                 int_type = type,
                                 ll = ll,
-                                ul = ul)
+                                ul = ul,
+                                est_boot = est_boot,
+                                se_boot = se_boot,
+                                bias_boot = bias_boot)
   }
 
   # Create combined dataframe

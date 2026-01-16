@@ -1,7 +1,7 @@
 Type: Package
 Package: b3gbi
 Title: General Biodiversity Indicators for Biodiversity Data Cubes
-Version: 0.8.12
+Version: 0.9.0
 Authors@R: c(
     person("Shawn", "Dove", email = "Shawn.Dove@allzool.bio.uni-giessen.de",
            role = c("aut", "cre"), comment = c(ORCID = "0000-0001-9465-5638")),
@@ -19,6 +19,7 @@ Depends:
 Imports:
     boot,
     dplyr,
+    dubicube,
     ggplot2,
     iNEXT,
     labeling,
@@ -60,7 +61,8 @@ Remotes:
     github::hrbrmstr/mgrs,
     github::ropensci/bold,
     github::ropensci/taxize,
-    github::ropensci/rnaturalearthhires
+    github::ropensci/rnaturalearthhires,
+    github::b-cubed-eu/dubicube
 BugReports: https://github.com/b-cubed-eu/b3gbi/issues
 Funding: This project receives funding from the European Union’s Horizon Europe 
     Research and Innovation Programme (ID No 101059592).

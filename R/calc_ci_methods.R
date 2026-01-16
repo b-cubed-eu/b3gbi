@@ -44,7 +44,7 @@ calc_ci.default <- function(x,
 calc_ci.total_occ <- function(x,
                               indicator,
                               num_bootstrap = 1000,
-                              ci_type = ci_type,
+                              ci_type = "norm",
                               ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
@@ -85,7 +85,7 @@ calc_ci.total_occ <- function(x,
 calc_ci.occ_density <- function(x,
                                 indicator,
                                 num_bootstrap = 1000,
-                                ci_type = ci_type,
+                                ci_type = "norm",
                                 ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
@@ -143,7 +143,7 @@ calc_ci.occ_density <- function(x,
 calc_ci.newness <- function(x,
                             indicator,
                             num_bootstrap = 1000,
-                            ci_type = ci_type,
+                            ci_type = "norm",
                             ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
@@ -229,7 +229,7 @@ calc_ci.pielou_evenness <- function(x,
 calc_ci.ab_rarity <- function(x,
                               indicator,
                               num_bootstrap = 1000,
-                              ci_type = ci_type,
+                              ci_type = "norm",
                               ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
@@ -270,7 +270,7 @@ calc_ci.ab_rarity <- function(x,
 calc_ci.area_rarity <- function(x,
                                 indicator,
                                 num_bootstrap = 1000,
-                                ci_type = ci_type,
+                                ci_type = "norm",
                                 ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
@@ -316,7 +316,7 @@ calc_ci.area_rarity <- function(x,
 calc_ci.spec_occ <- function(x,
                              indicator,
                              num_bootstrap = 1000,
-                             ci_type = ci_type,
+                             ci_type = "norm",
                              ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
@@ -391,7 +391,7 @@ calc_ci.spec_occ <- function(x,
 calc_ci.spec_range <- function(x,
                                indicator,
                                num_bootstrap = 1000,
-                               ci_type = ci_type,
+                               ci_type = "norm",
                                ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not

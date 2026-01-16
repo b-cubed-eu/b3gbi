@@ -28,7 +28,9 @@ sanitize_geometries <- function(sf_object, buffer_dist_meters = 10) {
 
       # 2. Dynamically choose a suitable projected CRS (e.g., local UTM zone)
       #    We use the centroid to find a suitable local projection.
-      center_point <- sf::st_centroid(sf::st_geometry(sf_object), of_largest_polygon = TRUE)
+      center_point <- suppressWarnings(
+        sf::st_centroid(sf::st_geometry(sf_object), of_largest_polygon = TRUE)
+      )
       target_crs <- sf::st_crs(center_point)
 
       # Fallback check (st_crs(point) can sometimes return 4326 if unprojected)
