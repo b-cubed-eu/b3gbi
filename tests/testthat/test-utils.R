@@ -676,7 +676,7 @@ test_that("breaks_pretty_int handles empty/NA input gracefully", {
   generator <- breaks_pretty_int(n = 5)
 
   # pretty() returns numeric(0) for NA input
-  expect_equal(generator(NA), logical(0))
+  expect_equal(generator(NA), numeric(0))
 
   # pretty() returns a single 0 for c() input
   expect_equal(generator(numeric(0)), numeric(0))
