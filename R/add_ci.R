@@ -166,11 +166,12 @@ add_ci <- function(indicator,
   if (bootstrap_level == "indicator") {
 
     # Send data to calc_ci for indicator level bootstrapping
-    indicator <- calc_ci(raw_data,
-                         indicator = indicator,
-                         num_bootstrap = num_bootstrap,
-                         ci_type = ci_type,
-                         ...)
+    indicator$data <- calc_ci(raw_data,
+                              indicator = x,
+                              num_bootstrap = num_bootstrap,
+                              ci_type = ci_type,
+                              ...)
+    return(indicator)
 
   } else if (bootstrap_level == "cube") {
 

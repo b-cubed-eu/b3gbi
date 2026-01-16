@@ -51,10 +51,24 @@ get_bootstrap_ci <- function(bootstrap_list,
       vec[length(vec)]
     })
 
+    # Extract bootstrap summaries from original bootstrap list
+    est_boot <- sapply(names(conf_ints), function(name) {
+      mean(bootstrap_list[[name]]$t, na.rm = TRUE)
+    })
+    se_boot <- sapply(names(conf_ints), function(name) {
+      sd(bootstrap_list[[name]]$t, na.rm = TRUE)
+    })
+    bias_boot <- est_boot - sapply(names(conf_ints), function(name) {
+      bootstrap_list[[name]]$t0
+    })
+
     out_list[[i]] <- data.frame(time_point = as.numeric(names(conf_ints)),
                                 int_type = type,
                                 ll = ll,
-                                ul = ul)
+                                ul = ul,
+                                est_boot = est_boot,
+                                se_boot = se_boot,
+                                bias_boot = bias_boot)
   }
 
   # Create combined dataframe
