@@ -126,5 +126,5 @@ des Alpes et du Jura. \emph{Bulletin de la Société Vaudoise des}
 \emph{Science Naturelles}, \emph{37}(142), 547-579.
 }
 \seealso{
-compute_indicator_workflow
+\link{compute_indicator_workflow}, \link{add_ci}
 }

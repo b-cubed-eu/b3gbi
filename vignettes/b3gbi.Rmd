@@ -111,7 +111,7 @@ Let's calculate the observed richness spatially, covering the period from 1980 t
 
 ```{r richness-map}
 # Calculate a gridded map of observed species richness for Denmark
-# Note that ci_type is ignored for map indicators
+# Note that confidence intervals are not calculated for map indicators
 Denmark_observed_richness_map <- obs_richness_map(denmark_cube, 
                                                    level = "country", 
                                                    region = "Denmark") 
@@ -130,6 +130,7 @@ Now, let's calculate the same indicator temporally for a trend analysis.
 
 ```{r total-occ-ts}
 # Calculate a time series of total occurrences for Denmark
+# By default, confidence intervals are NOT calculated during this step
 Denmark_total_occ_ts <- total_occ_ts(denmark_cube, 
                                      level = "country", 
                                      region = "Denmark")
@@ -141,9 +142,10 @@ The result is an `indicator_ts` object.
 class(Denmark_total_occ_ts)
 ```
 
-Now let's add confidence intervals. To speed things up we will reduce the number of bootstrap samples from the default of 1000 to 100.
+Now let's add confidence intervals using the `add_ci()` function. To speed things up we will reduce the number of bootstrap samples from the default of 1000 to 100.
 
 ```{r add-ci}
+# Add confidence intervals to the time series
 Denmark_total_occ_ts_with_ci <- add_ci(Denmark_total_occ_ts, 
                                        num_bootstrap = 100)
 ```
@@ -171,18 +173,11 @@ plot(Denmark_observed_richness_map,
 
 ### Plotting the Time Series
 
-| Argument | Description | Common Use |
-|----------|-------------|------------|
-| `smoothed_trend` | If TRUE, displays a smoothed trend line (LOESS). | Defaults to TRUE. |
-| `linecolour` | Sets the color of the indicator line/points. | e.g., "blue" |
-| `ribboncolour` | Sets the color of the indicator confidence interval. | e.g., "skyblue" |
-| `trendlinecolour` | Sets the color of the trend line. | e.g., "darkorange" |
-| `envelopecolour` | Sets the color of the trend line confidence intervals. | e.g., "orange" |
-| `x_label` / `y_label` | Custom labels for the axes. | |
+If your `indicator_ts` object contains confidence intervals, the `plot()` function will automatically display them as ribbons or error bars.
 
 ```{r plot-ts}
-# Plotting the time series object
-plot(Denmark_total_occ_ts, 
+# Plotting the time series object with confidence intervals
+plot(Denmark_total_occ_ts_with_ci, 
      title = "Temporal Trend of Total Mammal Occurrences in Denmark",
      linecolour = "blue",
      ribboncolour = "skyblue",

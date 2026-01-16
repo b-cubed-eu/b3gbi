@@ -38,6 +38,8 @@ test_that("add_ci returns original object with warning for excluded indicators",
 })
 
 test_that("add_ci calls dubicube for cube-level bootstrapping", {
+  skip_if_not_installed("dubicube")
+  
   # Mock raw data
   mock_raw_data <- data.frame(
     year = c(2000, 2000),
@@ -87,6 +89,8 @@ test_that("add_ci calls dubicube for cube-level bootstrapping", {
 })
 
 test_that("add_ci determines boot_method correctly (pseudocoded test)", {
+  skip_if_not_installed("dubicube")
+  
   # This test verifies the logic exists in add_ci, even if the parameter 
   # is currently commented out in the bootstrap_cube call.
   
@@ -138,6 +142,8 @@ test_that("add_ci determines boot_method correctly (pseudocoded test)", {
 })
 
 test_that("add_ci respects boot_args and ci_args", {
+  skip_if_not_installed("dubicube")
+  
   # Mock raw data
   mock_raw_data <- data.frame(
     year = c(2000, 2000),

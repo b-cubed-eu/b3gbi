@@ -150,5 +150,5 @@ of biodiversity: weighting of step lengths between hierarchical levels.
 Marine Ecology Progress Series, 184, 21-29.
 }
 \seealso{
-compute_indicator_workflow
+\link{compute_indicator_workflow}, \link{add_ci}
 }

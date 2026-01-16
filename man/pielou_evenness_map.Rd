@@ -198,5 +198,5 @@ Kvålseth, T. O. (2015). Evenness indices once again: critical analysis
 of properties. \emph{SpringerPlus}, \emph{4}, 1-12.
 }
 \seealso{
-compute_indicator_workflow
+\link{compute_indicator_workflow}, \link{add_ci}
 }

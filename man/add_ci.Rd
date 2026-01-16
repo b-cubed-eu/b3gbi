@@ -13,6 +13,8 @@ add_ci(
   inv_trans = function(t) t,
   confidence_level = 0.95,
   overwrite = TRUE,
+  boot_args = list(),
+  ci_args = list(),
   ...
 )
 }
@@ -57,6 +59,12 @@ intervals (e.g., 0.95 for 95\% CIs). (Default: 0.95)}
 confidence intervals (\code{ll} and \code{ul} columns), should they
 be replaced? (Default: TRUE)}
 
+\item{boot_args}{(Optional) Named list of additional arguments passed to
+\code{dubicube::bootstrap_cube()}. (Default: \code{list()})}
+
+\item{ci_args}{(Optional) Named list of additional arguments passed to
+\code{dubicube::calculate_bootstrap_ci()}. (Default: \code{list()})}
+
 \item{...}{Additional arguments passed to the underlying functions.}
 }
 \value{
@@ -81,10 +89,33 @@ CI calculation process.
 }
 \details{
 The function acts as a bridge to the \code{dubicube} package for statistical
-heavy lifting. For certain indicators (e.g., Hill numbers), confidence
+heavy lifting.
+
+Confidence intervals can be calculated for the following indicators:
+\itemize{
+\item \code{total_occ}
+\item \code{occ_density}
+\item \code{newness}
+\item \code{williams_evenness}
+\item \code{pielou_evenness}
+\item \code{ab_rarity}
+\item \code{area_rarity}
+\item \code{spec_occ}
+\item \code{spec_range}
+}
+
+For certain indicators (e.g., Hill numbers), confidence
 intervals cannot be added post-hoc as they are calculated internally by
 the \code{iNext} package during the initial calculation. In such cases,
-a warning is issued and the original object is returned.
+a warning is issued and the original object is returned. The following
+indicators cannot have confidence intervals added via \code{add_ci()}:
+\itemize{
+\item \code{hill0}, \code{hill1}, \code{hill2} (calculated internally)
+\item \code{obs_richness}
+\item \code{cum_richness}
+\item \code{occ_turnover}
+\item \code{tax_distinct}
+}
 }
 \seealso{
 \code{\link[dubicube:bootstrap_cube]{dubicube::bootstrap_cube()}}, \code{\link[dubicube:calculate_bootstrap_ci]{dubicube::calculate_bootstrap_ci()}}

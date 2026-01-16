@@ -120,5 +120,5 @@ plot(so_ts, c(2435767, 2434793))
 
 }
 \seealso{
-compute_indicator_workflow
+\link{compute_indicator_workflow}, \link{add_ci}
 }

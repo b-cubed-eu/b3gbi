@@ -41,7 +41,7 @@
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
-#' @seealso compute_indicator_workflow
+#' @seealso [compute_indicator_workflow], [add_ci]
 #'
 #' @return An S3 object with the classes 'indicator_map' or 'indicator_ts' and
 #'  'obs_richness' containing the calculated indicator values and metadata.
@@ -100,7 +100,7 @@ obs_richness_ts <- function(data, ...) {
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
-#' @seealso compute_indicator_workflow
+#' @seealso [compute_indicator_workflow], [add_ci]
 #'
 #' @return An S3 object with the classes 'indicator_map' or 'indicator_ts' and
 #'  'total_occ' containing the calculated indicator values and metadata.
@@ -215,7 +215,7 @@ total_occ_ts <- function(data, ...) {
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
-#' @seealso compute_indicator_workflow
+#' @seealso [compute_indicator_workflow], [add_ci]
 #'
 #' @return An S3 object with the classes 'indicator_map' or 'indicator_ts' and
 #'  'pielou_evenness' or 'williams_evenness' containing the calculated indicator
@@ -351,7 +351,7 @@ williams_evenness_ts <- function(data, ...) {
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
-#' @seealso compute_indicator_workflow
+#' @seealso [compute_indicator_workflow], [add_ci]
 #'
 #' @return An S3 object with the classes 'indicator_map' or 'indicator_ts' and
 #'  'area_rarity' or 'ab_rarity' containing the calculated indicator values and
@@ -579,7 +579,7 @@ hill_diversity_details <- paste0(
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
-#' @seealso compute_indicator_workflow
+#' @seealso [compute_indicator_workflow], [add_ci]
 #'
 #' @return An S3 object with the classes 'indicator_map' or 'indicator_ts' and
 #'  'hill0' or 'hill1' or 'hill2' containing the calculated indicator values and
@@ -823,7 +823,7 @@ hill2_ts <- function(data,
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
-#' @seealso compute_indicator_workflow
+#' @seealso [compute_indicator_workflow], [add_ci]
 #'
 #' @return An S3 object with the classes 'indicator_ts' and 'cum_richness'
 #'  containing the calculated indicator values and metadata.
@@ -863,7 +863,7 @@ cum_richness_ts <- function(data, ...) {
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
-#' @seealso compute_indicator_workflow
+#' @seealso [compute_indicator_workflow], [add_ci]
 #'
 #' @return An S3 object with the classes 'indicator_map' or 'indicator_ts' and
 #'  'newness' containing the calculated indicator values and metadata.
@@ -918,7 +918,7 @@ newness_ts <- function(data, ...) {
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
-#' @seealso compute_indicator_workflow
+#' @seealso [compute_indicator_workflow], [add_ci]
 #'
 #' @return An S3 object with the classes 'indicator_map' or 'indicator_ts' and
 #'  'occ_density' containing the calculated indicator values and metadata.
@@ -978,7 +978,7 @@ occ_density_ts <- function(data, ...) {
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
-#' @seealso compute_indicator_workflow
+#' @seealso [compute_indicator_workflow], [add_ci]
 #'
 #' @return An S3 object with the classes 'indicator_map' or 'indicator_ts' and
 #'  'spec_occ' containing the calculated indicator values and metadata.
@@ -1027,7 +1027,7 @@ spec_occ_ts <- function(data, ...) {
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
-#' @seealso compute_indicator_workflow
+#' @seealso [compute_indicator_workflow], [add_ci]
 #'
 #' @return An S3 object with the classes 'indicator_map' or 'indicator_ts' and
 #'  'spec_range' containing the calculated indicator values and metadata.
@@ -1110,7 +1110,7 @@ spec_range_ts <- function(data, ...) {
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
-#' @seealso compute_indicator_workflow
+#' @seealso [compute_indicator_workflow], [add_ci]
 #'
 #' @return An S3 object with the classes 'indicator_map' or 'indicator_ts' and
 #'  'tax_distinct' containing the calculated indicator values and metadata.
@@ -1202,7 +1202,7 @@ tax_distinct_ts <- function(data, rows = 1, ...) {
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
-#' @seealso compute_indicator_workflow
+#' @seealso [compute_indicator_workflow], [add_ci]
 #'
 #' @return An S3 object with the classes 'indicator_ts' and 'occ_turnover'
 #'  containing the calculated indicator values and metadata.

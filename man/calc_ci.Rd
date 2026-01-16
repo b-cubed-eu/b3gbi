@@ -18,23 +18,23 @@ calc_ci(x, indicator, ...)
 
 \method{calc_ci}{default}(x, indicator, ...)
 
-\method{calc_ci}{total_occ}(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
+\method{calc_ci}{total_occ}(x, indicator, num_bootstrap = 1000, ci_type = "norm", ...)
 
-\method{calc_ci}{occ_density}(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
+\method{calc_ci}{occ_density}(x, indicator, num_bootstrap = 1000, ci_type = "norm", ...)
 
-\method{calc_ci}{newness}(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
+\method{calc_ci}{newness}(x, indicator, num_bootstrap = 1000, ci_type = "norm", ...)
 
 \method{calc_ci}{williams_evenness}(x, ...)
 
 \method{calc_ci}{pielou_evenness}(x, ...)
 
-\method{calc_ci}{ab_rarity}(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
+\method{calc_ci}{ab_rarity}(x, indicator, num_bootstrap = 1000, ci_type = "norm", ...)
 
-\method{calc_ci}{area_rarity}(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
+\method{calc_ci}{area_rarity}(x, indicator, num_bootstrap = 1000, ci_type = "norm", ...)
 
-\method{calc_ci}{spec_occ}(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
+\method{calc_ci}{spec_occ}(x, indicator, num_bootstrap = 1000, ci_type = "norm", ...)
 
-\method{calc_ci}{spec_range}(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
+\method{calc_ci}{spec_range}(x, indicator, num_bootstrap = 1000, ci_type = "norm", ...)
 }
 \arguments{
 \item{x}{A data cube object}
