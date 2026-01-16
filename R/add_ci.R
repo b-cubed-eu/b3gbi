@@ -175,28 +175,16 @@ add_ci <- function(indicator,
 
   } else if (bootstrap_level == "cube") {
 
-    # Identify indicators that require species-level grouping
+    # Determine grouping and bootstrap method
+    # Species-level indicators (spec_occ, spec_range) are group-specific.
+    # Aggregate indicators (evenness, rarity, density, etc.) are whole-cube.
     species_level_indicators <- c("spec_occ", "spec_range")
 
     if (indicator$div_type %in% species_level_indicators) {
       group_cols <- c("year", "taxonKey")
-    } else {
-      group_cols <- "year"
-    }
-
-    # Identify indicators that require group-specific bootstrapping
-    group_specific_indicators <- c("pielou_evenness",
-                                   "williams_evenness",
-                                   "cum_richness",
-                                   "occ_density",
-                                   "ab_rarity",
-                                   "area_rarity",
-                                   "newness",
-                                   "occ_turnover")
-
-    if (indicator$div_type %in% group_specific_indicators) {
       boot_method <- "group_specific"
     } else {
+      group_cols <- "year"
       boot_method <- "whole_cube"
     }
 
