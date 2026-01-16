@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 
 ## Introduction 🛡️
 
-Quantifying uncertainty is crucial for robust biodiversity assessments. The **b3gbi** package provides a flexible and powerful way to calculate confidence intervals (CIs) for biodiversity indicators using bootstrapping methods.
+Quantifying uncertainty is crucial for robust biodiversity assessments. The **b3gbi** package provides a flexible and powerful way to calculate confidence intervals (CIs) for biodiversity indicators using bootstrapping methods, leveraging the **dubicube** package for robust cube-level resampling.
 
 To maintain a clean and efficient workflow, uncertainty calculation is decoupled from the initial indicator calculation. This "two-step" process allows users to first explore their data and indicators quickly, and then perform computationally intensive bootstrapping only when needed.
 
@@ -121,6 +121,12 @@ Certain indicators cannot have confidence intervals added via `add_ci()`:
 *   **Cumulative Richness** (`cum_richness`): The cumulative nature of this metric makes standard bootstrapping inappropriate.
 *   **Occurrence Turnover** (`occ_turnover`): Similar to cumulative richness, the temporal dependency requires specialized methods.
 *   **Taxonomic Distinctness** (`tax_distinct`): Requires specialized randomization tests rather than standard bootstrapping.
+
+## Data Exploration with dubicube 🔍
+
+While **b3gbi** focuses on indicator calculation and visualization, the underlying **dubicube** package offers powerful functions for initial data exploration and quality assessment of your biodiversity data cubes.
+
+To learn more about the full capabilities of **dubicube**, including in-depth tutorials and advanced data processing techniques, please visit the [dubicube documentation](https://docs.b-cubed.eu/software/dubicube/readme/).
 
 ## Summary
 
