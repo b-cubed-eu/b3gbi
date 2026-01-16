@@ -75,9 +75,9 @@
 #'   * `ul`: Upper limit of the confidence interval.
 #'   * `est_boot`: The bootstrap estimate of the indicator value.
 #'   * `se_boot`: The bootstrap standard error.
-#'   \item `bias_boot`: The bootstrap estimate of bias.
-#'   \item `int_type`: The type of interval calculated (e.g., 'perc').
-#'   \item `conf`: The confidence level used.
+#'   * `bias_boot`: The bootstrap estimate of bias.
+#'   * `int_type`: The type of interval calculated (e.g., 'perc').
+#'   * `conf`: The confidence level used.
 #'
 #' @seealso [dubicube::bootstrap_cube()], [dubicube::calculate_bootstrap_ci()]
 #'
