@@ -37,14 +37,37 @@
 #' @param overwrite (Optional) Logical. If the indicator already contains
 #'   confidence intervals (`ll` and `ul` columns), should they
 #'   be replaced? (Default: TRUE)
+#' @param boot_args (Optional) Named list of additional arguments passed to
+#'   `dubicube::bootstrap_cube()`. (Default: `list()`)
+#' @param ci_args (Optional) Named list of additional arguments passed to
+#'   `dubicube::calculate_bootstrap_ci()`. (Default: `list()`)
 #' @param ... Additional arguments passed to the underlying functions.
 #'
 #' @details
 #' The function acts as a bridge to the `dubicube` package for statistical
-#' heavy lifting. For certain indicators (e.g., Hill numbers), confidence
+#' heavy lifting.
+#'
+#' Confidence intervals can be calculated for the following indicators:
+#' * `total_occ`
+#' * `occ_density`
+#' * `newness`
+#' * `williams_evenness`
+#' * `pielou_evenness`
+#' * `ab_rarity`
+#' * `area_rarity`
+#' * `spec_occ`
+#' * `spec_range`
+#'
+#' For certain indicators (e.g., Hill numbers), confidence
 #' intervals cannot be added post-hoc as they are calculated internally by
 #' the `iNext` package during the initial calculation. In such cases,
-#' a warning is issued and the original object is returned.
+#' a warning is issued and the original object is returned. The following
+#' indicators cannot have confidence intervals added via `add_ci()`:
+#' * `hill0`, `hill1`, `hill2` (calculated internally)
+#' * `obs_richness`
+#' * `cum_richness`
+#' * `occ_turnover`
+#' * `tax_distinct`
 #'
 #' @return An updated object of class `indicator_ts` containing the
 #'   original data with the following additional columns:
@@ -72,6 +95,8 @@ add_ci <- function(indicator,
                    inv_trans = function(t) t,
                    confidence_level = 0.95,
                    overwrite = TRUE,
+                   boot_args = list(),
+                   ci_args = list(),
                    ...) {
 
   # Check for correct object class
@@ -158,20 +183,42 @@ add_ci <- function(indicator,
       group_cols <- "year"
     }
 
-    # Bootstrap cube data
-    bootstrap_results <- dubicube::bootstrap_cube(
+    # Identify indicators that require group-specific bootstrapping
+    group_specific_indicators <- c("pielou_evenness",
+                                   "williams_evenness",
+                                   "cum_richness",
+                                   "occ_density",
+                                   "ab_rarity",
+                                   "area_rarity",
+                                   "newness",
+                                   "occ_turnover")
+
+    if (indicator$div_type %in% group_specific_indicators) {
+      boot_method <- "group_specific"
+    } else {
+      boot_method <- "whole_cube"
+    }
+
+    # Prepare arguments for bootstrap_cube
+    bootstrap_params <- list(
       data_cube = raw_data,
       fun = calc_ts,
       grouping_var = group_cols,
       samples = num_bootstrap,
       seed = 123,
       progress = TRUE,
-      processed_cube = FALSE,
-      #method = "whole_cube",
+      processed_cube = FALSE
+      # method = boot_method
     )
 
-    # Calculate confidence intervals from bootstrap results
-    ci_df <- dubicube::calculate_bootstrap_ci(
+    # Override with user-provided boot_args
+    bootstrap_params <- utils::modifyList(bootstrap_params, boot_args)
+
+    # Bootstrap cube data
+    bootstrap_results <- do.call(dubicube::bootstrap_cube, bootstrap_params)
+
+    # Prepare arguments for calculate_bootstrap_ci
+    ci_params <- list(
       bootstrap_samples_df = bootstrap_results,
       grouping_var = group_cols,
       type = ci_type,
@@ -180,7 +227,13 @@ add_ci <- function(indicator,
       conf = confidence_level,
       data_cube = raw_data,
       fun = calc_ts
-    ) %>%
+    )
+
+    # Override with user-provided ci_args
+    ci_params <- utils::modifyList(ci_params, ci_args)
+
+    # Calculate confidence intervals from bootstrap results
+    ci_df <- do.call(dubicube::calculate_bootstrap_ci, ci_params) %>%
       dplyr::select(-est_original)
 
     # Join confidence intervals to indicator object
