@@ -12,16 +12,16 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/b-cubed-eu/b3gbi/blob/v0.8.12/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/b-cubed-eu/b3gbi/blob/main/DESCRIPTION)
 
-Dove S (2025). *b3gbi: General Biodiversity Indicators for Biodiversity
-Data Cubes*. R package version 0.8.12,
+Dove S (2026). *b3gbi: General Biodiversity Indicators for Biodiversity
+Data Cubes*. R package version 0.8.13,
 <https://github.com/b-cubed-eu/b3gbi>.
 
     @Manual{,
       title = {b3gbi: General Biodiversity Indicators for Biodiversity Data Cubes},
       author = {Shawn Dove},
-      year = {2025},
-      note = {R package version 0.8.12},
+      year = {2026},
+      note = {R package version 0.8.13},
       url = {https://github.com/b-cubed-eu/b3gbi},
     }
