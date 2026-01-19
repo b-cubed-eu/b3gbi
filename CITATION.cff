@@ -8,7 +8,7 @@ message: 'To cite package "b3gbi" in publications use:'
 type: software
 license: MIT
 title: 'b3gbi: General Biodiversity Indicators for Biodiversity Data Cubes'
-version: 0.8.12
+version: 0.8.13
 abstract: Calculate general biodiversity indicators from GBIF data cubes. Includes
   many common indicators such as species richness and evenness, which can be calculated
   over time (trends) or space (maps).
@@ -37,7 +37,7 @@ references:
   institution:
     name: R Foundation for Statistical Computing
     address: Vienna, Austria
-  year: '2025'
+  year: '2026'
   version: '>= 3.5.0'
 - type: software
   title: boot
@@ -51,7 +51,7 @@ references:
   - family-names: Ripley
     given-names: Brian
     email: Brian.Ripley@R-project.org
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.boot
 - type: software
   title: dplyr
@@ -76,7 +76,7 @@ references:
     given-names: Davis
     email: davis@posit.co
     orcid: https://orcid.org/0000-0003-4777-038X
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.dplyr
 - type: software
   title: ggplot2
@@ -116,7 +116,7 @@ references:
     given-names: Teun
     name-particle: van den
     orcid: https://orcid.org/0000-0002-9335-7468
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.ggplot2
 - type: software
   title: iNEXT
@@ -133,7 +133,7 @@ references:
   - family-names: Chao
     given-names: Anne
     email: chao@stat.nthu.edu.tw
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.iNEXT
 - type: software
   title: labeling
@@ -143,7 +143,7 @@ references:
   authors:
   - family-names: Talbot
     given-names: Justin
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.labeling
 - type: software
   title: magrittr
@@ -158,7 +158,7 @@ references:
   - family-names: Wickham
     given-names: Hadley
     email: hadley@posit.co
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.magrittr
 - type: software
   title: mgrs
@@ -171,7 +171,7 @@ references:
     given-names: Bob
     email: bob@rud.is
     orcid: https://orcid.org/0000-0001-5670-2640
-  year: '2025'
+  year: '2026'
   version: '>= 0.2.4'
 - type: software
   title: patchwork
@@ -184,7 +184,7 @@ references:
     given-names: Thomas Lin
     email: thomasp85@gmail.com
     orcid: https://orcid.org/0000-0002-5147-4711
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.patchwork
 - type: software
   title: permute
@@ -197,7 +197,7 @@ references:
     given-names: Gavin L.
     email: ucfagls@gmail.com
     orcid: https://orcid.org/0000-0002-9084-8413
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.permute
 - type: software
   title: purrr
@@ -213,7 +213,7 @@ references:
   - family-names: Henry
     given-names: Lionel
     email: lionel@posit.co
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.purrr
 - type: software
   title: readr
@@ -231,7 +231,7 @@ references:
     given-names: Jennifer
     email: jenny@posit.co
     orcid: https://orcid.org/0000-0002-6983-2759
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.readr
 - type: software
   title: rlang
@@ -246,7 +246,7 @@ references:
   - family-names: Wickham
     given-names: Hadley
     email: hadley@posit.co
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.rlang
 - type: software
   title: rnaturalearth
@@ -262,7 +262,7 @@ references:
   - family-names: South
     given-names: Andy
     email: southandy@gmail.com
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.rnaturalearth
 - type: software
   title: scales
@@ -280,7 +280,7 @@ references:
     orcid: https://orcid.org/0000-0002-5147-4711
   - family-names: Seidel
     given-names: Dana
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.scales
 - type: software
   title: sf
@@ -293,7 +293,7 @@ references:
     given-names: Edzer
     email: edzer.pebesma@uni-muenster.de
     orcid: https://orcid.org/0000-0001-8049-7069
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.sf
 - type: software
   title: stringr
@@ -305,7 +305,7 @@ references:
   - family-names: Wickham
     given-names: Hadley
     email: hadley@posit.co
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.stringr
 - type: software
   title: tibble
@@ -321,7 +321,7 @@ references:
   - family-names: Wickham
     given-names: Hadley
     email: hadley@rstudio.com
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.tibble
 - type: software
   title: tidyr
@@ -338,7 +338,7 @@ references:
     email: davis@posit.co
   - family-names: Girlich
     given-names: Maximilian
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.tidyr
 - type: software
   title: units
@@ -360,7 +360,7 @@ references:
     given-names: Iñaki
     email: iucar@fedoraproject.org
     orcid: https://orcid.org/0000-0001-6403-5550
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.units
 - type: software
   title: knitr
@@ -373,7 +373,7 @@ references:
     given-names: Yihui
     email: xie@yihui.name
     orcid: https://orcid.org/0000-0003-0645-5666
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.knitr
 - type: software
   title: mapview
@@ -394,7 +394,7 @@ references:
   - family-names: Woellauer
     given-names: Stefan
     email: stephan.woellauer@geo.uni-marburg.de
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.mapview
 - type: software
   title: mockery
@@ -412,7 +412,7 @@ references:
   - family-names: Wickham
     given-names: Hadley
     email: hadley@posit.co
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.mockery
 - type: software
   title: mockr
@@ -424,7 +424,7 @@ references:
   - family-names: Müller
     given-names: Kirill
     email: kirill@cynkra.com
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.mockr
 - type: software
   title: RColorBrewer
@@ -435,7 +435,7 @@ references:
   - family-names: Neuwirth
     given-names: Erich
     email: erich.neuwirth@univie.ac.at
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.RColorBrewer
 - type: software
   title: rmarkdown
@@ -479,7 +479,7 @@ references:
     given-names: Richard
     email: rich@posit.co
     orcid: https://orcid.org/0000-0003-3925-190X
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.rmarkdown
 - type: software
   title: rnaturalearthdata
@@ -499,7 +499,7 @@ references:
     given-names: Philippe
     email: pmassicotte@hotmail.com
     orcid: https://orcid.org/0000-0002-5919-4116
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.rnaturalearthdata
 - type: software
   title: rnaturalearthhires
@@ -519,7 +519,7 @@ references:
     given-names: Philippe
     email: pmassicotte@hotmail.com
     orcid: https://orcid.org/0000-0002-5919-4116
-  year: '2025'
+  year: '2026'
 - type: software
   title: taxize
   abstract: 'taxize: Taxonomic Information from Around the Web'
@@ -537,7 +537,7 @@ references:
     email: zacharyfoster1989@gmail.com
   - family-names: Arendsee
     given-names: Zebulun
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.taxize
   version: '>= 0.9.99'
 - type: software
@@ -550,7 +550,7 @@ references:
   - family-names: Wickham
     given-names: Hadley
     email: hadley@posit.co
-  year: '2025'
+  year: '2026'
   doi: 10.32614/CRAN.package.testthat
   version: '>= 3.0.0'
 
