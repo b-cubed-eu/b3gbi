@@ -7,7 +7,7 @@ calc_map_evenness_core <- function(x,
                   internal function, not meant to be called directly.",
                   inherits(x, c("data.frame", "sf")))
 
-  num_occ <- obs <- cellid <- taxonKey <- cellCode <- . <- NULL
+  num_occ <- obs <- cellid <- taxonKey <- cellCode <- diversity_val <- . <- NULL
 
   type <- match.arg(type, names(available_indicators))
 
