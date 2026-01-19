@@ -112,10 +112,12 @@ add_yearvals_to_boot <- function(boot, orig_data) {
 #' @noRd
 stopifnot_error <- function(err_message, ...) {
   n <- length(ll <- list(...))
-  for (i in 1:n)
-    if (!(is.logical(r <- ll[[i]]) && !anyNA(r) && all(r))) {
+  for (i in 1:n) {
+    r <- ll[[i]]
+    if (!(is.logical(r) && !anyNA(r) && all(r))) {
       stop(err_message)
     }
+  }
 }
 
 #' Stop with an error message if the object is not the correct class
@@ -146,13 +148,13 @@ wrong_class <- function(object,
 
   is_correct <- if (multiple) {
     # Check if the object inherits from ALL classes
-    all(sapply(class, function(cl) inherits(object, cl)))
+    all(sapply(class, function(cl) my_inherits(object, cl)))
   } else {
     # Check if the object inherits from ANY of the classes
-    inherits(object, class)
+    my_inherits(object, class)
   }
 
-  if (!is_correct) {
+  if (length(is_correct) == 0 || is.na(is_correct) || !is_correct) {
     stop(err_message)
   }
 }
@@ -465,9 +467,10 @@ getPermuteMatrix <- function (perm, N, strata = NULL) {
       stop("permutation matrix must be strictly integers: use round()")
   }
   if (is.null(attr(perm, "control")))
-    attr(perm, "control") <- structure(list(
-      within = list(type = "supplied matrix"),
-      nperm = nrow(perm)),
+    attr(perm, "control") <- structure(
+      list(
+        within = list(type = "supplied matrix"),
+        nperm = nrow(perm)),
       class = "how"
     )
   perm
@@ -697,4 +700,10 @@ my_classification <- function(x, ...) {
 #' @noRd
 my_estimateD <- function(...) {
   iNEXT::estimateD(...)
+}
+
+# Wrapper of function inherits. This is for mocking in testthat tests.
+#' @noRd
+my_inherits <- function(x, what) {
+  inherits(x, what)
 }

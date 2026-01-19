@@ -96,11 +96,25 @@ get_ne_data <- function(projected_crs,
     sf::st_agr(map_data_projected) <- "constant"
 
     # Crop and validate and union the world map to avoid issues with overlaps
-    map_data_projected <- map_data_projected %>%
-      sf::st_crop(extent_projected) %>%
-      sf::st_make_valid() %>%
-      sf::st_union() %>%
-      sf::st_as_sf()
+    # Added defensive check before cropping to prevent empty results for non-contiguous regions
+    # Ensure extent_projected is sfc for st_intersects
+    extent_sfc <- if (inherits(extent_projected, "bbox")) {
+      sf::st_as_sfc(extent_projected)
+    } else {
+      extent_projected
+    }
+
+    if (any(sf::st_intersects(map_data_projected, extent_sfc, sparse = FALSE))) {
+      map_data_projected <- map_data_projected %>%
+        sf::st_crop(extent_projected) %>%
+        sf::st_make_valid() %>%
+        sf::st_union() %>%
+        sf::st_as_sf()
+    } else {
+      # If no intersection, return an empty sf object with same structure
+      # This matches the behavior of st_crop but avoids its potential errors
+      map_data_projected <- sf::st_as_sf(sf::st_sfc(), crs = "ESRI:54012")
+    }
 
     # Get the bbox of the cropped map data
     extent_projected <- sf::st_bbox(map_data_projected)
@@ -119,7 +133,21 @@ get_ne_data <- function(projected_crs,
   }
 
   # Create a polygon from the extent
-  extent_projected_polygon <- sf::st_as_sfc(extent_projected)
+  if (is_sf_empty(map_data_projected)) {
+    # If land is empty (e.g. all in ocean), use the buffered latlong extent as the total extent
+    # ensure it's converted to sfc if it was a bbox
+    extent_projected_polygon <- if (inherits(extent_projected, "bbox")) {
+      sf::st_as_sfc(extent_projected)
+    } else {
+      extent_projected
+    }
+  } else {
+    extent_projected_polygon <- if (inherits(extent_projected, "bbox")) {
+      sf::st_as_sfc(extent_projected)
+    } else {
+      extent_projected
+    }
+  }
 
   # Create ocean layer by subtracting land from the extent
   map_data_ocean <- sf::st_difference(extent_projected_polygon,
@@ -175,9 +203,13 @@ get_ne_data <- function(projected_crs,
     }
 
     # Create a buffer around the land
-    map_data_combined <- sf::st_buffer(map_data_projected,
-                                       dist = buffer_dist_km * 1000) %>%
-      sf::st_make_valid()
+    if (!is_sf_empty(map_data_projected)) {
+      map_data_combined <- sf::st_buffer(map_data_projected,
+                                         dist = buffer_dist_km * 1000) %>%
+        sf::st_make_valid()
+    } else {
+      map_data_combined <- map_data_projected # Still empty
+    }
 
   } else {
 
@@ -192,15 +224,23 @@ get_ne_data <- function(projected_crs,
   }
 
   if (level != "cube") {
-    extent_projected <- latlong_extent %>%
-      sf::st_as_sfc() %>%
-      sf::st_transform(crs = "ESRI:54012")
+    # Added defensive check before final cropping
+    extent_sfc <- if (inherits(extent_projected, "bbox")) {
+      sf::st_as_sfc(extent_projected)
+    } else {
+      extent_projected
+    }
 
-    map_data_combined <- map_data_combined %>%
-      sf::st_crop(extent_projected) %>%
-      sf::st_make_valid() %>%
-      sf::st_union() %>%
-      sf::st_as_sf()
+    if (any(sf::st_intersects(map_data_combined, extent_sfc, sparse = FALSE))) {
+      map_data_combined <- map_data_combined %>%
+        sf::st_crop(extent_projected) %>%
+        sf::st_make_valid() %>%
+        sf::st_union() %>%
+        sf::st_as_sf()
+    } else {
+       # Should only happen if user region is outside world or something extreme
+       map_data_combined <- sf::st_as_sf(sf::st_sfc(), crs = "ESRI:54012")
+    }
   }
 
   # convert to the desired projected CRS

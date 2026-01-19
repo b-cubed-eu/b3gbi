@@ -1,3 +1,9 @@
+# b3gbi 0.8.13
+
+* Fixed issues with spatial intersection for Australia and USA maps by adding defensive checks in get_ne_data.
+* Improved wrong_class and stopifnot_error to handle NA logical values more robustly.
+* Added unit tests for NA handling in utility functions.
+
 # b3gbi 0.8.12 - Minor update:
 
 * The cellCode column from the cube is now retained in indicator map outputs. This allows users to trace back grid cells to their original codes in the cube.

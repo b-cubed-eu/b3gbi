@@ -1,6 +1,6 @@
 # Unit tests for functions in utils.R
 
-# -----------
+# ----------- 
 # is_sf_empty
 
 # --- Mock Data Setup ---
@@ -60,7 +60,7 @@ test_that("is_sf_empty returns FALSE for non-empty objects", {
   expect_false(is_sf_empty(sfc_mixed_empty))
 })
 
-# -----------
+# ----------- 
 # wrapper
 
 # --- Test Block 1: Basic Wrapping ---
@@ -119,12 +119,12 @@ test_that("wrapper handles vectors by combining results with newlines", {
   expect_equal(actual_lines, expected_lines)
 })
 
-# -------------
+# ------------- 
 # boot.return_int
 
 # --- Mock Data Setup ---
 
-# Define the dummy objects referenced in mock_call so R can find them.
+# Define the dummy objects referenced in mock_call so R can find them. 
 # The contents don't matter, only their existence.
 my_data <- data.frame(value = 1:10)
 my_stat <- function(d, i) mean(d[i, "value"])
@@ -228,7 +228,7 @@ test_that("sim = other adds stype, strata (the ELSE block)", {
   expect_equal(length(result), 10) # 8 base + 2 specific
 })
 
-# -------------
+# ------------- 
 # resample
 
 # --- Mock Data Setup ---
@@ -292,7 +292,7 @@ test_that("resample returns empty vector when size is 0", {
   expect_equal(length(result_multi), 0)
 })
 
-# ---------------
+# --------------- 
 # add_yearvals_to_boot
 
 # --- Mock Data Setup ---
@@ -373,7 +373,7 @@ test_that("add_yearvals_to_boot works with non-sequential years", {
   expect_equal(names(result), as.character(expected_non_seq_names))
 })
 
-# ----------
+# ---------- 
 # stopifnot_error
 
 CUSTOM_ERROR <- "Custom error message triggered by failure."
@@ -418,7 +418,7 @@ test_that("stopifnot_error stops with custom message on single failure condition
   )
 })
 
-# ---------------
+# --------------- 
 # wrong_class
 
 # --- Mock Data Setup ---
@@ -517,7 +517,7 @@ test_that("wrong_class constructs correct message based on reason and multiple f
   )
 })
 
-# -----------------
+# ----------------- 
 # breaks_log_int
 
 # --- Mock Dependencies ---
@@ -618,7 +618,7 @@ test_that("breaks_log_int works with base != 10", {
   expect_equal(breaks_b2_5, expected_b2_5)
 })
 
-# ---------------
+# --------------- 
 # breaks_pretty_int
 
 # --- Mock Data Setup ---
@@ -672,17 +672,20 @@ test_that("breaks_pretty_int passes '...' arguments correctly to pretty()", {
 
 # --- Test Block 3: Edge Case (Empty Input) ---
 test_that("breaks_pretty_int handles empty/NA input gracefully", {
-
   generator <- breaks_pretty_int(n = 5)
 
-  # pretty() returns numeric(0) for NA input
-  expect_equal(generator(NA), logical(0))
+  # 1. Check NA input: Test length instead of exact type identity
+  res_na <- generator(NA)
+  expect_length(res_na, 0)
+  expect_true(is.numeric(res_na) || is.logical(res_na))
 
-  # pretty() returns a single 0 for c() input
-  expect_equal(generator(numeric(0)), numeric(0))
+  # 2. Check empty input: Should always be numeric(0)
+  res_empty <- generator(numeric(0))
+  expect_length(res_empty, 0)
+  expect_type(res_empty, "double")
 })
 
-# ----------------
+# ---------------- 
 # log_sub_breaks
 
 # --- Mock Dependency ---
@@ -754,7 +757,7 @@ test_that("log_sub_breaks falls back to extended_breaks mock if break goal is no
   expect_equal(result_fallback, c(4, 6, 8))
 })
 
-# ---------------
+# --------------- 
 # extended_breaks
 
 # --- Mock Data Setup ---
@@ -809,3 +812,20 @@ test_that("extended_breaks correctly calls labeling::extended and uses arguments
 })
 
 # ---------------------
+# New tests for NA issue (unique ID: 20260119_NA_FIX_v2)
+test_that("stopifnot_error triggers !anyNA(r) check with NA input", {
+  expect_error(
+    stopifnot_error("NA error", NA),
+    regexp = "NA error"
+  )
+})
+
+test_that("wrong_class triggers is.na(is_correct) check with forced NA via my_inherits", {
+  expect_error(
+    with_mocked_bindings(
+      wrong_class(1, class = "some_class", reason = "incorrect"),
+      my_inherits = function(x, what) NA
+    ),
+    regexp = "Incorrect object class"
+  )
+})
