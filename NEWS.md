@@ -1,3 +1,9 @@
+# b3gbi 0.8.14
+
+* Updated print.indicator_map to filter out rows with NA diversity_val to reduce console clutter.
+* Verified that cellCode is correctly preserved in the output of all calc_map functions.
+* Added unit tests to verify the presence of cellCode and absence of NA clutter in printed output.
+
 # b3gbi 0.8.13
 
 * Fixed issues with spatial intersection for Australia and USA maps by adding defensive checks in get_ne_data.

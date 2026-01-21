@@ -4,12 +4,15 @@
 \alias{print.indicator_map}
 \title{Print an Indicator Map Object}
 \usage{
-\method{print}{indicator_map}(x, n = 10, ...)
+\method{print}{indicator_map}(x, n = 10, include_na = FALSE, ...)
 }
 \arguments{
 \item{x}{An indicator_map object.}
 
 \item{n}{Integer specifying the number of rows of data to display.}
+
+\item{include_na}{Logical. If TRUE, includes rows with NA diversity values
+in the printed output. Default is FALSE.}
 
 \item{...}{Additional arguments.}
 }
