@@ -296,7 +296,7 @@ calc_map.tax_distinct <- function(x, ...) {
 
   # Early check for empty input
   if (nrow(x) == 0) {
-    return(tibble::tibble(cellid = character(),
+    return(tibble::tibble(cellid = integer(),
                           cellCode = character(),
                           diversity_val = numeric()))
   }
