@@ -110,6 +110,49 @@ calc_ts.total_occ <- function(x, ...) {
 
 }
 
+
+#' @export
+#' @rdname calc_ts
+calc_ts.spec_richness_density <- function(x, ...) {
+
+  stopifnot_error("Wrong data class. This is an internal function and is not
+                  meant to be called directly.",
+                  inherits(x, "spec_richness_density"))
+
+  total_richness <- year <- diversity_val <- taxonKey <- area <- NULL
+
+  # Extract the total area from the attribute
+  total_study_area_sqkm <- attr(x, "total_area_sqkm")
+
+  # Critical Check: Ensure the total area attribute was found and is valid
+  if (is.null(total_study_area_sqkm) ||
+      !is.numeric(total_study_area_sqkm) ||
+      total_study_area_sqkm <= 0) {
+    stop(paste("The total area of the study region ('total_area_sqkm') is ",
+    "missing or invalid in the data attributes. Ensure the area is correctly ",
+    "calculated and attached to the data in the workflow."))
+  }
+
+  # Calculate density of species richness over the grid (per square km)
+  indicator <- x %>%
+    dplyr::reframe(
+      # Numerator: Unique species richness across all occupied cells for the year
+      total_richness = dplyr::n_distinct(taxonKey),
+      .by = "year"
+    ) %>%
+    dplyr::mutate(
+      # Denominator: Use the constant Total Study Area
+      diversity_val = total_richness / total_study_area_sqkm
+    ) %>%
+    # Final Formatting
+    dplyr::select(year, diversity_val) %>%
+    dplyr::mutate(diversity_val = as.numeric(diversity_val)) %>%
+    dplyr::arrange(year)
+
+  return(indicator)
+
+}
+
 #' @export
 #' @rdname calc_ts
 calc_ts.occ_density <- function(x, ...) {

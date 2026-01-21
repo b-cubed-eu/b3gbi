@@ -959,6 +959,63 @@ occ_density_ts <- function(data, ...) {
 
 }
 
+
+#' @title Calculate Species Richness Density Over Space or Time
+#'
+#' @description This function calculates the density of unique species over a
+#'  gridded map or as a time series (see 'Details' for more information).
+#'
+#' @details
+#' Density is calculated by dividing the total number of unique species per
+#' square kilometre for each cell or year. This provides similar information to
+#' observed species richness, but is adjusted for cell area.
+#'
+#' @param data A data cube object (class 'processed_cube').
+#'
+#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
+#'
+#' @seealso compute_indicator_workflow
+#'
+#' @return An S3 object with the classes 'indicator_map' or 'indicator_ts' and
+#'  'spec_richness_density' containing the calculated indicator values and
+#'  metadata.
+#'
+#' @describeIn spec_richness_density_map
+#'
+#' @examples
+#' \dontrun{
+#' srd_map <- spec_richness_density_map(example_cube_1, level = "country",
+#'                                      region = "Denmark")
+#' plot(srd_map)
+#' }
+#' @export
+spec_richness_density_map <- function(data, ...) {
+
+  compute_indicator_workflow(data,
+                             type = "spec_richness_density",
+                             dim_type = "map",
+                             ...)
+
+}
+
+
+#' @describeIn spec_richness_density_map
+#'
+#' @examples
+#' \dontrun{
+#' srd_ts <- spec_richness_density_ts(example_cube_1, first_year = 1985)
+#' plot(srd_ts)
+#' }
+#' @export
+spec_richness_density_ts <- function(data, ...) {
+
+  compute_indicator_workflow(data,
+                             type = "spec_richness_density",
+                             dim_type = "ts",
+                             ...)
+
+}
+
 #' @title Calculate Species Occurrences Over Space or Time
 #'
 #' @description This function calculates the number of occurrences for

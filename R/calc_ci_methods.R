@@ -133,6 +133,66 @@ calc_ci.occ_density <- function(x,
 
 }
 
+#' @describeIn calc_ci Calculate confidence intervals for species richness density
+#' @param num_bootstrap (Optional) Set the number of bootstraps to calculate for
+#'  generating confidence intervals. (Default: 1000)
+#' @param ci_type (Optional) Type of bootstrap confidence intervals to
+#'  calculate. (Default: "norm". Select "none" to avoid calculating bootstrap
+#'  CIs.)
+#' @export
+calc_ci.spec_richness_density <- function(x,
+                                          indicator,
+                                          num_bootstrap = 1000,
+                                          ci_type = ci_type,
+                                          ...) {
+
+  stopifnot_error("Wrong data class. This is an internal function and is not
+                  meant to be called directly.",
+                  inherits(x, "spec_richness_density"))
+
+  total_area <- year <- taxonKey <- NULL
+
+  # 1. Extract the total area from the attribute attached in compute_indicator_workflow
+  total_study_area_sqkm <- attr(x, "total_area_sqkm")
+
+  if (is.null(total_study_area_sqkm) ||
+      !is.numeric(total_study_area_sqkm) ||
+      total_study_area_sqkm <= 0) {
+    stop(paste("The total area of the study region ('total_area_sqkm') is ",
+    "missing or invalid in the data attributes. Cannot calculate confidence ",
+    "intervals for spec_richness_density."))
+  }
+
+  # Add the constant area column to the data frame
+  data_for_boot <- x %>%
+    dplyr::mutate(total_area = total_study_area_sqkm) %>%
+    dplyr::select(year, taxonKey, total_area)
+
+  # Split the data frame into a list of data frames (one per year)
+  ind_list <- data_for_boot %>%
+    dplyr::group_by(year) %>%
+    dplyr::group_split()
+
+  # Name the list elements
+  names(ind_list) <- data_for_boot %>%
+    dplyr::pull(year) %>%
+    unique()
+
+  # Bootstrap indicator value for each year
+  bootstraps <-
+    ind_list %>%
+    purrr::map(~boot::boot(
+      data = .,
+      statistic = boot_statistic_richness_density,
+      R = num_bootstrap))
+
+  # Calculate confidence intervals and add to indicator values
+  ci <- calc_ci_core(bootstraps, indicator, ci_type, ...)
+
+  return(ci)
+
+}
+
 #' @describeIn calc_ci Calculate confidence intervals for newness
 #' @param num_bootstrap (Optional) Set the number of bootstraps to calculate for
 #'  generating confidence intervals. (Default: 1000)

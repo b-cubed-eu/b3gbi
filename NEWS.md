@@ -1,3 +1,10 @@
+# b3gbi 0.8.15
+
+* Added new indicator 'species richness density' which calculates the density of unique species per square kilometer.
+* Added wrapper functions `spec_richness_density_map` and `spec_richness_density_ts`.
+* Implemented S3 methods for `calc_map`, `calc_ts`, `calc_ci`, and `plot` for the new indicator.
+* Added unit tests for species richness density.
+
 # b3gbi 0.8.14
 
 * Updated print.indicator_map to filter out rows with NA diversity_val to reduce console clutter.
