@@ -9,8 +9,9 @@ Authors@R: c(
     person("European Union", role = "fnd")
   )
 Description: Calculate general biodiversity indicators from GBIF data
-    cubes.  Includes many common indicators such as species richness and
-    evenness, which can be calculated over time (trends) or space (maps).
+    cubes. Includes many common indicators such as species richness,
+    evenness, and completeness, which can be calculated over time (trends)
+    or space (maps). Now also supports retaining original cell IDs.
 License: MIT + file LICENSE
 URL: https://github.com/b-cubed-eu/b3gbi,
     https://b-cubed-eu.github.io/b3gbi/
