@@ -1,4 +1,4 @@
-# b3gbi 0.8.13 - Bug fix update:
+# b3gbi 0.8.14 - Bug fix update:
 
 * Fixed a bug in `pielou_evenness_map` where use of a `cell_size` larger than the native cube resolution caused a crash due to non-unique row identifiers during pivoting (#102).
 
