@@ -1,6 +1,8 @@
-# b3gbi 0.8.12 - Minor update:
+# b3gbi 0.8.13 - Bug fix update:
 
-* The cellCode column from the cube is now retained in indicator map outputs. This allows users to trace back grid cells to their original codes in the cube.
+* Fixed a bug in `pielou_evenness_map` where use of a `cell_size` larger than the native cube resolution caused a crash due to non-unique row identifiers during pivoting (#102).
+
+# b3gbi 0.8.12 - Minor update:
 
 # b3gbi 0.8.11 - Minor update:
 
