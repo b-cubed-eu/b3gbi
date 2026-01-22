@@ -40,12 +40,15 @@ print.indicator_ts <- function(x, n = 10, ...) {
 #'
 #' @param x An indicator_map object.
 #' @param n Integer specifying the number of rows of data to display.
+#' @param include_na Logical. If TRUE, includes rows with NA diversity values
+#'  in the printed output. Default is FALSE.
 #' @param ... Additional arguments.
 #'
 #' @export
-print.indicator_map <- function(x, n = 10, ...) {
+print.indicator_map <- function(x, n = 10, include_na = FALSE, ...) {
 
   geometry <- NULL
+  diversity_val <- NULL
 
   cat("Gridded biodiversity indicator map\n\n")
   cat("Name of Indicator:", x$div_name, "\n\n")
@@ -68,7 +71,14 @@ print.indicator_map <- function(x, n = 10, ...) {
   cat("Kingdoms represented:", paste(x$kingdoms, collapse = ", "), "\n\n")
   cat("Map layers:", paste(x$map_layers, collapse = ", "), "\n\n")
   cat("First", n, "rows of data (use n = to show more):\n\n")
-  tibble::as_tibble(x$data) %>%
+  
+  out_data <- tibble::as_tibble(x$data)
+  
+  if (!include_na) {
+    out_data <- dplyr::filter(out_data, !is.na(diversity_val))
+  }
+  
+  out_data %>%
     dplyr::select(-geometry) %>%
     print(n = n, ...)
 }

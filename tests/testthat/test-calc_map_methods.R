@@ -827,7 +827,7 @@ test_that("calc_map.pielou_evenness calculates correctly", {
 test_that("calc_map_evenness_core handles cases with no occurrences", {
   mock_evenness_empty <- data.frame(
     cellid = integer(0),
-    cellCoe = character(0),
+    cellCode = character(0),
     taxonKey = character(0),
     obs = integer(0)
   )
