@@ -319,6 +319,8 @@ compute_indicator_workflow <- function(data,
       cube_crs <- "EPSG:4326"
     } else if (data$grid_type == "mgrs") {
       cube_crs <- guess_utm_epsg(data)
+    } else if (data$grid_type == "isea3h") {
+      cube_crs <- "EPSG:4326"
     } else {
       stop("Grid reference system not found.")
     }
@@ -344,6 +346,8 @@ compute_indicator_workflow <- function(data,
       projected_crs <- "ESRI:54012"
     } else if (data$grid_type == "mgrs") {
       projected_crs <- guess_utm_epsg(cube_bbox_latlong)
+    } else if (data$grid_type == "isea3h") {
+      projected_crs <- "EPSG:4326"
     } else {
       stop("Grid reference system not found.")
     }
@@ -374,6 +378,8 @@ compute_indicator_workflow <- function(data,
         output_crs <- projected_crs
       } else if (data$grid_type == "eqdgc") {
         output_crs <- "EPSG:4326"
+      } else if (data$grid_type == "isea3h") {
+        output_crs <- "EPSG:4326"
       } else {
         stop("Grid reference system not found.")
       }
@@ -402,6 +408,7 @@ compute_indicator_workflow <- function(data,
                                   crs = "EPSG:3035")
     } else {
       # Create an sf object from quarter-degree or EEA data
+      # For ISEA3H, the coordinates are centroids in EPSG:4326
       df_sf_input <- sf::st_as_sf(df,
                                   coords = c("xcoord", "ycoord"),
                                   crs = cube_crs)

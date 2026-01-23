@@ -92,6 +92,7 @@ process_cube <- function(cube_name,
                                        "eea",
                                        "mgrs",
                                        "eqdgc",
+                                       "isea3h",
                                        "custom",
                                        "none"),
                          first_year = NULL,
@@ -375,7 +376,11 @@ process_cube <- function(cube_name,
               occurrence_data[[cols_cellCode]],
               "^[EW]{1}[0-9]{3}[NS]{1}[0-9]{2}[A-D]{0,6}$"
             ),
-            NA
+            ifelse(
+              grid_type == "isea3h",
+              stringr::str_detect(occurrence_data[[cols_cellCode]], "^[0-9]{15,}$"),
+              NA
+            )
           )
         )
       )
@@ -673,6 +678,29 @@ process_cube <- function(cube_name,
     occurrence_data$resolution <- rep(paste0(
      resolution_deg, "degrees"
     ), nrow(occurrence_data))
+
+  } else if (grid_type == "isea3h") {
+
+    if (force_gridcode == FALSE) {
+      # Basic validation for ISEA3H codes (long numeric strings)
+      if (!ifelse(
+        stringr::str_detect(occurrence_data$cellCode[1], "^[0-9]{15,}$"),
+        TRUE,
+        FALSE
+      )) {
+        stop(paste0(
+          "Cell codes do not match the expected format for ISEA3H. ",
+          "Are you sure you have specified the correct grid system?"
+        ))
+      }
+    }
+
+    # Convert cell codes to coordinates
+    coords <- isea3h_code_to_coords(occurrence_data$cellCode)
+    
+    occurrence_data$xcoord <- coords$xcoord
+    occurrence_data$ycoord <- coords$ycoord
+    occurrence_data$resolution <- coords$resolution
 
   }
 
