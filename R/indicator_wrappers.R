@@ -519,6 +519,93 @@ hill_diversity_details <- paste0(
   "zero), meaning no new species would be uncovered through further sampling."
 )
 
+completeness_details <- paste0(
+  "<h3>Completeness (Sample Coverage)</h3>",
+  "\n\n",
+  "Completeness is measured as <b>Sample Coverage</b>, a concept developed by ",
+  "Turing and Good (1953) and further popularized in ecology by Chao and Jost ",
+  "(2012). Sample coverage estimates the proportion of the total individuals ",
+  "in an ecological community that belong to the species detected in a sample. ",
+  "\n\nA coverage value of 1.0 indicates that no new species are expected to be ",
+  "uncovered through further sampling, meaning the sample is perfectly complete. ",
+  "A value of 0.8, for example, suggests that 20% of the individuals in the ",
+  "community belong to species that have not yet been detected in the sample. ",
+  "\n\nCalculating sample coverage is a prerequisite for reliable comparisons of ",
+  "biodiversity across different areas or time periods, as it provides a ",
+  "standardized measure of sample completeness that is independent of sample size ",
+  "alone (Chao et al., 2014).",
+  "\n\nIn this package, completeness is calculated using the <code>iNEXT</code> ",
+  "package based on the observed data in each grid cell or time point."
+)
+
+#' @title Calculate Completeness (Sample Coverage) Over Space or Time
+#'
+#' @description This function calculates the completeness of biodiversity data
+#'  over a gridded map or as a time series using the Sample Coverage metric
+#'  from the iNEXT package.
+#'
+#' @details `r completeness_details`
+#'
+#' @param data A data cube object (class 'processed_cube').
+#' @param cutoff_length (Optional) The minimum number of species or observations
+#'  required for a grid cell or time point to be included. Default is 5.
+#' @param data_type The type of data: "incidence" or "abundance". Default is "incidence".
+#' @param assume_freq (Optional) Whether to assume frequency data if using
+#'  incidence. Default is FALSE.
+#'
+#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
+#'
+#' @return An S3 object with the classes 'indicator_map' or 'indicator_ts' and
+#'  'completeness' containing the calculated indicator values and metadata.
+#'
+#' @describeIn completeness_map
+#'
+#' @examples
+#' \dontrun{
+#' comp_map <- completeness_map(example_cube_1)
+#' plot(comp_map)
+#' }
+#' @export
+completeness_map <- function(data,
+                             cutoff_length = 5,
+                             data_type = c("incidence", "abundance"),
+                             assume_freq = FALSE,
+                             ...) {
+
+  data_type <- match.arg(data_type)
+
+  compute_indicator_workflow(data,
+                             type = "completeness",
+                             dim_type = "map",
+                             cutoff_length = cutoff_length,
+                             data_type = data_type,
+                             assume_freq = assume_freq,
+                             ...)
+
+}
+
+
+#' @describeIn completeness_map
+#'
+#' @examples
+#' \dontrun{
+#' comp_ts <- completeness_ts(example_cube_1, first_year = 1985)
+#' plot(comp_ts)
+#' }
+#' @export
+completeness_ts <- function(data,
+                            cutoff_length = 5,
+                            ...) {
+
+  compute_indicator_workflow(data,
+                             type = "completeness",
+                             dim_type = "ts",
+                             cutoff_length = cutoff_length,
+                             ...)
+
+}
+
+
 #' @title Calculate Estimated Hill Diversity Over Space or Time
 #'
 #' @description Use coverage-based methods to estimate Hill diversity measures

@@ -2,6 +2,7 @@
 % Please edit documentation in R/calc_ts_methods.R, R/generic_functions.R
 \name{calc_ts.default}
 \alias{calc_ts.default}
+\alias{calc_ts.completeness}
 \alias{calc_ts.hill0}
 \alias{calc_ts.hill1}
 \alias{calc_ts.hill2}
@@ -22,6 +23,8 @@
 \title{Calculate Biodiversity Indicators Over Time}
 \usage{
 \method{calc_ts}{default}(x, ...)
+
+\method{calc_ts}{completeness}(x, ...)
 
 \method{calc_ts}{hill0}(x, ...)
 

@@ -9,6 +9,19 @@ calc_map.default <- function(x, ...) {
 
 #' @export
 #' @rdname calc_map
+calc_map.completeness <- function(x, ...) {
+
+  stopifnot_error("Wrong data class. This is an internal function and is not
+                  meant to be called directly.", inherits(x, "completeness"))
+
+  indicator <- calc_map_completeness_core(x = x, ...)
+
+  return(indicator)
+
+}
+
+#' @export
+#' @rdname calc_map
 calc_map.hill0 <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not

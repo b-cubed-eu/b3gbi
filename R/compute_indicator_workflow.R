@@ -186,7 +186,8 @@ compute_indicator_workflow <- function(data,
                  "tax_distinct",
                  "hill0",
                  "hill1",
-                 "hill2")
+                 "hill2",
+                 "completeness")
 
   type <- match.arg(type, names(available_indicators))
   dim_type <- match.arg(dim_type)

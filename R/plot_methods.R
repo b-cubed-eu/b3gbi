@@ -201,6 +201,23 @@ plot.ab_rarity <- function(x, ...) {
 }
 
 #' @export
+plot.completeness <- function(x, ...) {
+
+  wrong_class(x, "completeness", reason = "incorrect")
+  wrong_class(x, c("indicator_ts", "indicator_map"), reason = "incorrect")
+
+  call_plot(
+    x,
+    "Sample Coverage",
+    "Trend of Sample Coverage",
+    "Sample Coverage",
+    "Sample Coverage",
+    ...
+  )
+
+}
+
+#' @export
 plot.hill2 <- function(x, ...) {
 
   wrong_class(x, "hill2", reason = "incorrect")

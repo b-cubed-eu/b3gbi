@@ -11,6 +11,19 @@ calc_ts.default <- function(x, ...) {
 
 #' @export
 #' @rdname calc_ts
+calc_ts.completeness <- function(x, ...) {
+
+  stopifnot_error("Wrong data class. This is an internal function and is not
+                  meant to be called directly.", inherits(x, "completeness"))
+
+  indicator <- calc_ts_completeness_core(x = x, ...)
+
+  return(indicator)
+
+}
+
+#' @export
+#' @rdname calc_ts
 calc_ts.hill0 <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
