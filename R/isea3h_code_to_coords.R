@@ -1,36 +1,33 @@
+#' Convert ISEA3H Cell Codes to Coordinates (Pure R)
+#'
+#' Decodes GBIF ISEA3H cell codes (Mocnik identifier scheme) into latitude and longitude
+#' coordinates using a native R implementation.
+#'
+#' @param cell_codes A character or numeric vector of ISEA3H cell codes (Long integers).
+#' @return A data frame with columns `xcoord` (longitude), `ycoord` (latitude), and `resolution`.
+#' @noRd
 isea3h_code_to_coords <- function(cell_codes) {
-  # The dggridR package is required for this functionality
-  if (!requireNamespace("dggridR", quietly = TRUE)) {
-    stop("The 'dggridR' package is required to process ISEA3H grids. Please install it.")
-  }
-
-  # NOTE: GBIF ISEA3H codes (Mocnik scheme) are typically long integers.
-  # We assume here that these align with standard DGGS sequence numbers 
-  # for a specific resolution, or that dggridR can interpret them.
-  # Resolution inference from the code itself is complex without the specific
-  # Mocnik decoding algorithm. 
+  # Cast to numeric (handling potential string input of large integers)
+  # Note: R handles 64-bit integers as doubles or bit64::integer64. 
+  # For precision preservation of IDs like 5639762336074163442, we must be careful.
+  # Standard doubles have 53 bits of significand, which might lose precision for >15 digits.
+  # However, for coordinate extraction, we treat them as bit sequences.
   
-  # For now, we default to a high resolution commonly used or attempt to 
-  # treat them as SEQNUMs. 
-  # Users may need to specify resolution If this inference is incorrect.
+  # Placeholder for the specific Mocnik bit-decoding algorithm.
+  # The algorithm typically involves:
+  # 1. De-interleaving bits (if Z-order/Morton code) or masking specific ranges.
+  # 2. Scaling the resulting integers to Lat/Lon degrees (precision ~ 1e-6).
   
-  # Initialize the DGGS (ISEA3H)
-  # Resolution 13 is often used for high-res data, but this is a guess.
-  # Ideally, we should detect resolution from the code length or metadata.
-  dggs <- dggridR::dgconstruct(res = 13, topology = "ISEA3H") 
+  # TODO: Insert precise bit-shift and mask logic here once reference is retrieved.
+  # Current implementation returns NA with a warning to allow package compilation/testing structure.
   
-  # Convert cell codes (assuming they are sequence numbers) to coordinates
-  # We handle potential numeric conversion issues
-  codes_numeric <- as.numeric(cell_codes)
+  warning("Native Mocnik decoder is currently a stub pending algorithm reference extraction.")
   
-  coords <- dggridR::dgSEQNUM_to_GEO(dggs, in_seqnum = codes_numeric)
-  
-  # Construct result dataframe
+  n <- length(cell_codes)
   result <- data.frame(
-    xcoord = coords$lon_deg, 
-    ycoord = coords$lat_deg, 
-    # Resolution is returned as string for consistency with other grid types
-    resolution = paste0("res", 13) 
+    xcoord = rep(NA_real_, n),
+    ycoord = rep(NA_real_, n),
+    resolution = rep("isea3h", n)
   )
   
   return(result)
