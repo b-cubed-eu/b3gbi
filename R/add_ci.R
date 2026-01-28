@@ -176,16 +176,32 @@ add_ci <- function(indicator,
   } else if (bootstrap_level == "cube") {
 
     # Determine grouping and bootstrap method
-    # Species-level indicators (spec_occ, spec_range) are group-specific.
-    # Aggregate indicators (evenness, rarity, density, etc.) are whole-cube.
-    species_level_indicators <- c("spec_occ", "spec_range")
-
-    if (indicator$div_type %in% species_level_indicators) {
+    # Identify groups
+    if (indicator$div_type %in% c("spec_occ", "spec_range")) {
       group_cols <- c("year", "taxonKey")
-      boot_method <- "group_specific"
     } else {
       group_cols <- "year"
-      boot_method <- "whole_cube"
+    }
+
+    # Determine bootstrap method
+    indicator_div_type <- list(
+      total_occ = TRUE,
+      pielou_evenness = FALSE,
+      williams_evenness = FALSE,
+      occ_density = FALSE,
+      ab_rarity = FALSE,
+      area_rarity = FALSE,
+      newness = FALSE,
+      spec_occ = TRUE,
+      spec_range = TRUE
+    )
+    boot_method <- ifelse(
+      indicator_div_type[[indicator$div_type]],
+      "group_specific",
+      "whole_cube"
+    )
+    if (length(group_cols) == 1) {
+      boot_method <- paste0("boot_", boot_method)
     }
 
     # Prepare arguments for bootstrap_cube
@@ -196,8 +212,8 @@ add_ci <- function(indicator,
       samples = num_bootstrap,
       seed = 123,
       progress = TRUE,
-      processed_cube = FALSE
-      # method = boot_method
+      processed_cube = FALSE,
+      method = boot_method
     )
 
     # Override with user-provided boot_args
