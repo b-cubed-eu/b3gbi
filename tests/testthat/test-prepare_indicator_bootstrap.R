@@ -29,11 +29,11 @@ indicator_occ_ts <- list(div_type = "occ_ts", raw_data = iris)
 indicator_expectations <- list(
   total_occ = list(
     indicator = indicator_total_occ,
-    method = "boot_group_specific",
+    method = "group_specific",
     grouping = "year",
     trans = function(t) t,
     inv_trans = function(t) t,
-    no_bias = FALSE
+    no_bias = TRUE
   ),
   pielou_evenness = list(
     indicator = indicator_pielou_evenness,
@@ -166,3 +166,24 @@ test_that("prepare_indicator_bootstrap returns correct params for all div_types"
     )
   }
 })
+
+test_that("", {
+  params <- prepare_indicator_bootstrap(
+    indicator = indicator_expectations[["total_occ"]]$indicator,
+    num_bootstrap = 1000,
+    ci_type = c("perc", "bca"),
+    confidence_level = 0.9,
+    ci_args = list(no_bias = FALSE)
+  )
+
+  expect_identical(
+    params$bootstrap_params$method,
+    "boot_group_specific"
+  )
+
+  expect_identical(
+    params$ci_params$no_bias,
+    FALSE
+  )
+})
+

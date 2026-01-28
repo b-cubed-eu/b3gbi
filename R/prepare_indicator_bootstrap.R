@@ -29,6 +29,8 @@
 #'   \item{ci_params}{List of parameters for \code{calculate_bootstrap_ci()}}
 #' }
 #'
+#' @importFrom utils modifyList
+#'
 #' @examples
 #' \dontrun{
 #' params <- prepare_indicator_bootstrap(
@@ -60,7 +62,7 @@ prepare_indicator_bootstrap <- function(
       group_specific = TRUE,
       trans = trans,
       inv_trans = inv_trans,
-      no_bias = FALSE
+      no_bias = TRUE
     ),
     pielou_evenness = list(
       group_specific = FALSE,
@@ -109,12 +111,6 @@ prepare_indicator_bootstrap <- function(
       trans = trans,
       inv_trans = inv_trans,
       no_bias = FALSE
-    ),
-    occ_ts = list(
-      group_specific = FALSE,
-      trans = trans,
-      inv_trans = inv_trans,
-      no_bias = TRUE
     )
   )
 
@@ -122,6 +118,9 @@ prepare_indicator_bootstrap <- function(
   if (is.null(rule)) {
     stop("Unknown indicator$div_type: ", indicator$div_type)
   }
+  ## Allow user-supplied arguments to override defaults
+  rule <- utils::modifyList(rule, boot_args)
+  rule <- utils::modifyList(rule, ci_args)
 
   ## ------------------------------------------------------------------
   ## Determine grouping variables
