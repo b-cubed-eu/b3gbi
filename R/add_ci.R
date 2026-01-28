@@ -145,7 +145,7 @@ add_ci <- function(indicator,
   x <- indicator$data
   raw_data <- indicator$raw_data
 
-  if(any(c("ll", "ul") %in% names(x)) & !overwrite) {
+  if (any(c("ll", "ul") %in% names(x)) & !overwrite) {
     warning(
       paste0(
         "Indicator already contains confidence intervals. Returning indicator
