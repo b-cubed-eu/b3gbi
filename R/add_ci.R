@@ -174,71 +174,27 @@ add_ci <- function(indicator,
     return(indicator)
 
   } else if (bootstrap_level == "cube") {
-
-    # Determine grouping and bootstrap method
-    # Identify groups
-    if (indicator$div_type %in% c("spec_occ", "spec_range")) {
-      group_cols <- c("year", "taxonKey")
-    } else {
-      group_cols <- "year"
-    }
-
-    # Determine bootstrap method
-    indicator_div_type <- list(
-      total_occ = TRUE,
-      pielou_evenness = FALSE,
-      williams_evenness = FALSE,
-      occ_density = FALSE,
-      ab_rarity = FALSE,
-      area_rarity = FALSE,
-      newness = FALSE,
-      spec_occ = TRUE,
-      spec_range = TRUE
+    # Get dubicube function parameters
+    params_total  <- prepare_indicator_bootstrap(
+      indicator = indicator,
+      num_bootstrap = num_bootstrap,
+      ci_type = ci_type,
+      trans = trans,
+      inv_trans = inv_trans,
+      confidence_level = confidence_level,
+      boot_args = boot_args,
+      ci_args = ci_args
     )
-    boot_method <- ifelse(
-      indicator_div_type[[indicator$div_type]],
-      "group_specific",
-      "whole_cube"
-    )
-    if (length(group_cols) == 1) {
-      boot_method <- paste0("boot_", boot_method)
-    }
-
-    # Prepare arguments for bootstrap_cube
-    bootstrap_params <- list(
-      data_cube = raw_data,
-      fun = calc_ts,
-      grouping_var = group_cols,
-      samples = num_bootstrap,
-      seed = 123,
-      progress = TRUE,
-      processed_cube = FALSE,
-      method = boot_method
-    )
-
-    # Override with user-provided boot_args
-    bootstrap_params <- utils::modifyList(bootstrap_params, boot_args)
 
     # Bootstrap cube data
-    bootstrap_results <- do.call(dubicube::bootstrap_cube, bootstrap_params)
-
-    # Prepare arguments for calculate_bootstrap_ci
-    ci_params <- list(
-      bootstrap_samples_df = bootstrap_results,
-      grouping_var = group_cols,
-      type = ci_type,
-      h = trans,
-      hinv = inv_trans,
-      conf = confidence_level,
-      data_cube = raw_data,
-      fun = calc_ts
-    )
-
-    # Override with user-provided ci_args
-    ci_params <- utils::modifyList(ci_params, ci_args)
+    bootstrap_results <- do.call(dubicube::bootstrap_cube,
+                                 params_total$bootstrap_params)
 
     # Calculate confidence intervals from bootstrap results
-    ci_df <- do.call(dubicube::calculate_bootstrap_ci, ci_params) %>%
+    ci_df <- do.call(
+      dubicube::calculate_bootstrap_ci,
+      c(bootstrap_samples_df = bootstrap_results, params_total$ci_params)
+    ) %>%
       dplyr::select(-est_original)
 
     # Join confidence intervals to indicator object
