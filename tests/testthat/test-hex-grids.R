@@ -44,6 +44,10 @@ test_that("indicator wrappers handle isea3h cubes correctly (structure check)", 
   mock_cube <- list(
     data = mock_data,
     grid_type = "isea3h",
+    first_year = 2020,
+    last_year = 2020,
+    num_species = 2,
+    species_names = c("Species A", "Species B"),
     coord_range = list(10.0, 10.1, 50.0, 50.1), 
     resolution = "isea3h"
   )
@@ -53,12 +57,13 @@ test_that("indicator wrappers handle isea3h cubes correctly (structure check)", 
   result <- obs_richness_map(mock_cube)
   
   # Checks
-  expect_s3_class(result, "sf")
-  expect_s3_class(result, "diversity_grid")
-  expect_equal(nrow(result), 2) 
-  expect_true("richness" %in% names(result))
+  expect_s3_class(result, "indicator_map")
+  expect_s3_class(result$data, "sf")
+  expect_s3_class(result$data, "indicator_data")
+  expect_equal(nrow(result$data), 2) 
+  expect_true("diversity_val" %in% names(result$data))
   
   # Verify CRS is WGS84 as expected for ISEA3H
-  input_crs <- sf::st_crs(result)
+  input_crs <- sf::st_crs(result$data)
   expect_equal(input_crs$epsg, 4326)
 })

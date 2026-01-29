@@ -20,9 +20,9 @@ detect_grid <- function(grid_code, stop_on_fail = FALSE) {
         ),
         "eqdgc",
         ifelse(
-            stringr::str_detect(grid_code, "^[0-9]{15,}$"),
-            "isea3h",
-            NA
+          stringr::str_detect(grid_code, "^-?[0-9]{15,}$"),
+          "isea3h",
+          NA
         )
       )
     )

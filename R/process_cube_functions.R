@@ -122,9 +122,12 @@ process_cube <- function(cube_name,
   if (is.character(cube_name) && length(cube_name == 1)) {
     if (is.null(separator)) {
       # Read in data cube
+      # We first read a sample to detect the column name, or just read all as character
+      # To be safe and efficient, we read everything as character and convert later
       occurrence_data <- readr::read_delim(
         file = cube_name,
         na = "",
+        col_types = readr::cols(.default = "c"),
         show_col_types = FALSE
       )
     } else {
@@ -133,6 +136,7 @@ process_cube <- function(cube_name,
         file = cube_name,
         delim = separator,
         na = "",
+        col_types = readr::cols(.default = "c"),
         show_col_types = FALSE
       )
     }
@@ -378,7 +382,7 @@ process_cube <- function(cube_name,
             ),
             ifelse(
               grid_type == "isea3h",
-              stringr::str_detect(occurrence_data[[cols_cellCode]], "^[0-9]{15,}$"),
+              stringr::str_detect(occurrence_data[[cols_cellCode]], "^-?[0-9]{15,}$"),
               NA
             )
           )
@@ -684,7 +688,7 @@ process_cube <- function(cube_name,
     if (force_gridcode == FALSE) {
       # Basic validation for ISEA3H codes (long numeric strings)
       if (!ifelse(
-        stringr::str_detect(occurrence_data$cellCode[1], "^[0-9]{15,}$"),
+        stringr::str_detect(occurrence_data$cellCode[1], "^-?[0-9]{15,}$"),
         TRUE,
         FALSE
       )) {

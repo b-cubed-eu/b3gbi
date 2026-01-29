@@ -198,13 +198,13 @@ compute_indicator_workflow <- function(data,
 
   # Check that user is not trying to calculate an indicator that requires grid
   # cell assignment with a cube that lacks a supported grid system.
-  if (!data$grid_type %in% c("eea", "mgrs", "eqdgc")) {
+  if (!data$grid_type %in% c("eea", "mgrs", "eqdgc", "isea3h")) {
     if (dim_type == "map") {
       stop(
         paste0(
           "Grid system is either unsupported or missing. Spatial ",
           "indicators require a supported grid system. Currently ",
-          "supported grid systems are: EEA, MGRS, EQDGC"
+          "supported grid systems are: EEA, MGRS, EQDGC, ISEA3H"
         )
       )
     } else if (type %in% ind_req_grid_list) {
@@ -270,6 +270,19 @@ compute_indicator_workflow <- function(data,
   years_with_obs <- unique(df$year)
   kingdoms <- data$kingdoms
   num_families <- data$num_families
+  
+  # Ensure coord_range is valid for ISEA3H or other grids
+  if (is.null(data$coord_range) || any(is.na(unlist(data$coord_range)))) {
+    if (nrow(df) > 0) {
+       data$coord_range <- list(
+         xmin = min(df$xcoord, na.rm = TRUE),
+         xmax = max(df$xcoord, na.rm = TRUE),
+         ymin = min(df$ycoord, na.rm = TRUE),
+         ymax = max(df$ycoord, na.rm = TRUE)
+       )
+    }
+  }
+  
   coord_range <- data$coord_range
   map_lims <- if (is.list(coord_range)) {
     unlist(coord_range)
@@ -592,10 +605,21 @@ compute_indicator_workflow <- function(data,
   if (dim_type == "map" || force_grid == TRUE) {
 
     # Create grid
-    grid <- create_grid(bbox_for_grid,
-                        cell_size,
-                        projected_crs,
-                        make_valid)
+    if (data$grid_type == "isea3h") {
+       # Use pre-existing centroids to build hexagonal polygons
+       grid <- create_isea3h_grid(df)
+       # Transform grid to projected crs for intersection consistency
+       grid <- sf::st_transform(grid, projected_crs)
+       # Add area if missing
+       if (!"area" %in% colnames(grid)) {
+         grid$area <- grid %>% sf::st_area() %>% units::set_units("km^2")
+       }
+    } else {
+      grid <- create_grid(bbox_for_grid,
+                          cell_size,
+                          projected_crs,
+                          make_valid)
+    }
 
     sf::st_agr(grid) <- "constant"
 
