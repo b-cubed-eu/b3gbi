@@ -90,31 +90,67 @@ CI calculation process.
 \details{
 The function acts as a bridge to the \code{dubicube} package for statistical
 heavy lifting.
+\subsection{Indicator-specific defaults}{
 
-Confidence intervals can be calculated for the following indicators:
+Depending on the indicator, default settings are internally applied when
+calculating bootstrap confidence intervals. These defaults control whether
+bootstrapping is performed per group, which transformation is used, and
+whether bias correction is disabled.
+
+The following defaults are used unless explicitly overridden via
+\code{trans}, \code{inv_trans}, \code{boot_args}, or \code{ci_args}:
 \itemize{
-\item \code{total_occ}
-\item \code{occ_density}
-\item \code{newness}
-\item \code{williams_evenness}
-\item \code{pielou_evenness}
-\item \code{ab_rarity}
-\item \code{area_rarity}
-\item \code{spec_occ}
-\item \code{spec_range}
+\item \strong{\code{total_occ}}
+\itemize{
+\item Group-specific bootstrapping: \strong{yes}
+\item Transformation: \strong{none (identity)}
+\item Bias correction: \strong{disabled} (\code{no_bias = TRUE})
+}
+\item \strong{\code{spec_occ}, \code{spec_range}}
+\itemize{
+\item Group-specific bootstrapping: \strong{yes}
+\item Transformation: \strong{none (identity)}
+\item Bias correction: enabled
+}
+\item \strong{\code{pielou_evenness}, \code{williams_evenness}}
+\itemize{
+\item Group-specific bootstrapping: \strong{no}
+\item Transformation: \strong{logit}
+\item Inverse transformation: \strong{inverse logit}
+\item Bias correction: enabled
+}
+\item \strong{\code{occ_density}, \code{ab_rarity}, \code{area_rarity}, \code{newness}}
+\itemize{
+\item Group-specific bootstrapping: \strong{no}
+\item Transformation: \strong{none (identity)}
+\item Bias correction: enabled
+}
 }
 
-For certain indicators (e.g., Hill numbers), confidence
-intervals cannot be added post-hoc as they are calculated internally by
-the \code{iNext} package during the initial calculation. In such cases,
-a warning is issued and the original object is returned. The following
-indicators cannot have confidence intervals added via \code{add_ci()}:
+Group-specific bootstrapping means that resampling is performed within each
+group (e.g., species or year), which is required for indicators that are
+inherently group-based. This in contrast to whole-cube bootstrapping
+where resampling is performed across the whole dataset; applicable for
+indicators that combine information across groups
+
+Transformations are applied prior to confidence interval calculation and
+inverted afterwards to return intervals on the original scale.
+}
+
+\subsection{Indicators outside scope of this function}{
+
+For certain indicators, confidence intervals cannot be
+added post-hoc as they are calculated internally via the \code{iNext} package, or
+if they are not relevant. In such cases, a warning is issued and the
+original object is returned. The following indicators cannot have confidence
+intervals added via \code{add_ci()}:
 \itemize{
 \item \code{hill0}, \code{hill1}, \code{hill2} (calculated internally)
 \item \code{obs_richness}
 \item \code{cum_richness}
 \item \code{occ_turnover}
 \item \code{tax_distinct}
+}
 }
 }
 \seealso{

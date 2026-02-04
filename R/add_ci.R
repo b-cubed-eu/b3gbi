@@ -17,7 +17,6 @@
 #'     captures the underlying sampling uncertainty.
 #'   * `indicator`: Bootstrapping is done by resampling indicator
 #'     values. This is faster for large cubes but less robust.
-#'
 #' @param ci_type (Optional) Type of bootstrap confidence intervals to
 #'   calculate. (Default: `"norm"`). Supported options are:
 #'   * `norm`: Normal approximation intervals.
@@ -25,7 +24,6 @@
 #'   * `perc`: Percentile intervals.
 #'   * `bca`: Bias-corrected and accelerated intervals.
 #'   * `none`: No confidence intervals calculated.
-#'
 #' @param trans (Optional) A function for transforming the indicator values
 #'   before calculating confidence intervals (e.g., `log`).
 #'   (Default: identity function)
@@ -47,22 +45,53 @@
 #' The function acts as a bridge to the `dubicube` package for statistical
 #' heavy lifting.
 #'
-#' Confidence intervals can be calculated for the following indicators:
-#' * `total_occ`
-#' * `occ_density`
-#' * `newness`
-#' * `williams_evenness`
-#' * `pielou_evenness`
-#' * `ab_rarity`
-#' * `area_rarity`
-#' * `spec_occ`
-#' * `spec_range`
+#' ## Indicator-specific defaults
 #'
-#' For certain indicators (e.g., Hill numbers), confidence
-#' intervals cannot be added post-hoc as they are calculated internally by
-#' the `iNext` package during the initial calculation. In such cases,
-#' a warning is issued and the original object is returned. The following
-#' indicators cannot have confidence intervals added via `add_ci()`:
+#' Depending on the indicator, default settings are internally applied when
+#' calculating bootstrap confidence intervals. These defaults control whether
+#' bootstrapping is performed per group, which transformation is used, and
+#' whether bias correction is disabled.
+#'
+#' The following defaults are used unless explicitly overridden via
+#' `trans`, `inv_trans`, `boot_args`, or `ci_args`:
+#'
+#' - **`total_occ`**
+#'   - Group-specific bootstrapping: **yes**
+#'   - Transformation: **none (identity)**
+#'   - Bias correction: **disabled** (`no_bias = TRUE`)
+#'
+#' - **`spec_occ`, `spec_range`**
+#'   - Group-specific bootstrapping: **yes**
+#'   - Transformation: **none (identity)**
+#'   - Bias correction: enabled
+#'
+#' - **`pielou_evenness`, `williams_evenness`**
+#'   - Group-specific bootstrapping: **no**
+#'   - Transformation: **logit**
+#'   - Inverse transformation: **inverse logit**
+#'   - Bias correction: enabled
+#'
+#' - **`occ_density`, `ab_rarity`, `area_rarity`, `newness`**
+#'   - Group-specific bootstrapping: **no**
+#'   - Transformation: **none (identity)**
+#'   - Bias correction: enabled
+#'
+#' Group-specific bootstrapping means that resampling is performed within each
+#' group (e.g., species or year), which is required for indicators that are
+#' inherently group-based. This in contrast to whole-cube bootstrapping
+#' where resampling is performed across the whole dataset; applicable for
+#' indicators that combine information across groups
+#'
+#' Transformations are applied prior to confidence interval calculation and
+#' inverted afterwards to return intervals on the original scale.
+#'
+#' ## Indicators outside scope of this function
+#'
+#' For certain indicators, confidence intervals cannot be
+#' added post-hoc as they are calculated internally via the `iNext` package, or
+#' if they are not relevant. In such cases, a warning is issued and the
+#' original object is returned. The following indicators cannot have confidence
+#' intervals added via `add_ci()`:
 #' * `hill0`, `hill1`, `hill2` (calculated internally)
 #' * `obs_richness`
 #' * `cum_richness`
