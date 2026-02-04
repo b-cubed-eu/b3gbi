@@ -143,7 +143,7 @@ prepare_indicator_bootstrap <- function(
   }
 
   ## Whole-cube bootstrapping requires the "boot_" prefix
-  if (length(group_cols) == 1 & !rule$no_bias) {
+  if (length(group_cols) == 1) {
     boot_method <- paste0("boot_", boot_method)
   }
 

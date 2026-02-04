@@ -29,7 +29,7 @@ indicator_occ_ts <- list(div_type = "occ_ts", raw_data = iris)
 indicator_expectations <- list(
   total_occ = list(
     indicator = indicator_total_occ,
-    method = "group_specific",
+    method = "boot_group_specific",
     grouping = "year",
     trans = function(t) t,
     inv_trans = function(t) t,
@@ -167,7 +167,7 @@ test_that("prepare_indicator_bootstrap returns correct params for all div_types"
   }
 })
 
-test_that("", {
+test_that("Test parsing of no_bias argument", {
   params <- prepare_indicator_bootstrap(
     indicator = indicator_expectations[["total_occ"]]$indicator,
     num_bootstrap = 1000,
@@ -186,4 +186,3 @@ test_that("", {
     FALSE
   )
 })
-
