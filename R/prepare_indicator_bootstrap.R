@@ -156,9 +156,13 @@ prepare_indicator_bootstrap <- function(
     grouping_var = group_cols,
     samples = num_bootstrap,
     processed_cube = FALSE,
-    method = boot_method,
-    seed = seed
+    method = boot_method
   )
+
+  # Only add seed if it's actually provided
+  if (!is.null(seed)) {
+    bootstrap_params$seed <- seed
+  }
 
   ## Allow user-supplied arguments to override defaults
   bootstrap_params <- utils::modifyList(bootstrap_params, boot_args)
