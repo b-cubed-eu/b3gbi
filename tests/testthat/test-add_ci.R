@@ -39,7 +39,7 @@ test_that("add_ci returns original object with warning for excluded indicators",
 
 test_that("add_ci calls dubicube for cube-level bootstrapping", {
   skip_if_not_installed("dubicube")
-  
+
   # Mock raw data
   mock_raw_data <- data.frame(
     year = c(2000, 2000),
@@ -88,13 +88,10 @@ test_that("add_ci calls dubicube for cube-level bootstrapping", {
   )
 })
 
-test_that("add_ci determines boot_method correctly (pseudocoded test)", {
+test_that("add_ci determines boot_method correctly for pielou_evenness", {
   skip_if_not_installed("dubicube")
-  
-  # This test verifies the logic exists in add_ci, even if the parameter 
-  # is currently commented out in the bootstrap_cube call.
-  
-  # Mock raw data
+
+  # 1. Setup Mock Data
   mock_raw_data <- data.frame(
     year = c(2000, 2000),
     scientificName = c("Sp A", "Sp B"),
@@ -103,6 +100,7 @@ test_that("add_ci determines boot_method correctly (pseudocoded test)", {
   )
 
   # Mock indicator_ts object for pielou_evenness
+  # Note: Pielou evenness is a 'whole_cube' indicator in the rule book
   mock_ts <- list(
     data = data.frame(year = 2000, diversity_val = 0.8),
     raw_data = mock_raw_data,
@@ -110,16 +108,29 @@ test_that("add_ci determines boot_method correctly (pseudocoded test)", {
   )
   class(mock_ts) <- c("indicator_ts", "pielou_evenness")
 
-  # Capture arguments passed to bootstrap_cube
-  # We use ... to avoid errors when method is NOT passed
+  # 2. Define Mock Functions
+  # Capture and inspect arguments passed from b3gbi to dubicube
   mock_bootstrap_cube <- function(...) {
     args <- list(...)
-    # In the current implementation, 'method' should NOT be in args because it's commented out
-    expect_false("method" %in% names(args))
+
+    # VERIFY: 'method' should now be present and correctly set to 'boot_whole_cube'
+    # based on the logic in prepare_indicator_bootstrap
+    expect_true("method" %in% names(args),
+                info = "The 'method' argument should be passed to bootstrap_cube")
+
+    expect_equal(args$method, "boot_whole_cube",
+                 info = "Pielou evenness should use 'boot_whole_cube' method")
+
+    # VERIFY: 'seed' is passed correctly (if provided in add_ci)
+    expect_true("seed" %in% names(args),
+                info = "The 'seed' argument should be passed to bootstrap_cube")
+
+    # Return a dummy bootstrap result
     data.frame(year = 2000, sample_id = 1, diversity_val = 0.8)
   }
 
   mock_calculate_bootstrap_ci <- function(...) {
+    # Return a dummy CI result
     data.frame(year = 2000,
                ll = 0.7,
                ul = 0.9,
@@ -131,19 +142,21 @@ test_that("add_ci determines boot_method correctly (pseudocoded test)", {
                est_original = 0.8)
   }
 
+  # 3. Execute Test with Mocked Bindings
   testthat::with_mocked_bindings(
     bootstrap_cube = mock_bootstrap_cube,
     calculate_bootstrap_ci = mock_calculate_bootstrap_ci,
     .package = "dubicube",
     {
-      add_ci(mock_ts, bootstrap_level = "cube")
+      # We provide a seed here to test the new functionality
+      add_ci(mock_ts, bootstrap_level = "cube", seed = 123)
     }
   )
 })
 
 test_that("add_ci respects boot_args and ci_args", {
   skip_if_not_installed("dubicube")
-  
+
   # Mock raw data
   mock_raw_data <- data.frame(
     year = c(2000, 2000),

@@ -416,9 +416,8 @@ test_that("plot_ts correctly applies smoothing and confidence intervals", {
   total_occ_example <- total_occ_ts(example_cube_1,
                                    level = "country",
                                    region = "Denmark")
-  total_occ_example <- add_ci(total_occ_example,
-                              num_bootstrap = 10)
-
+  total_occ_example <- suppressWarnings(add_ci(total_occ_example,
+                                              num_bootstrap = 10))
   # With confidence intervals
   p2 <- plot_ts(
     total_occ_example,
