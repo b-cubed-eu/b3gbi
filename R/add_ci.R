@@ -218,7 +218,7 @@ add_ci <- function(indicator,
                                  params_total$bootstrap_params)
 
     # Calculate confidence intervals from bootstrap results
-    params_total$ci_params$bootstrap_samples_df <- bootstrap_results
+    params_total$ci_params$bootstrap_results <- bootstrap_results
     group_cols <- params_total$ci_params$grouping_var
     ci_df <- do.call(
       dubicube::calculate_bootstrap_ci,
