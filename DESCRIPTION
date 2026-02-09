@@ -60,13 +60,13 @@ Additional_repositories: https://b-cubed-eu.r-universe.dev,
     https://ropensci.r-universe.dev
 Config/Needs/check: ropensci/wikitaxa
 Remotes: 
-    github::hrbrmstr/mgrs,
-    github::ropensci/bold,
-    any::WikidataR,
-    github::ropensci/wikitaxa,
-    github::ropensci/taxize,
-    github::ropensci/rnaturalearthhires,
-    github::b-cubed-eu/dubicube
+    hrbrmstr/mgrs,
+    ropensci/bold,
+    Ironholds/WikidataR,
+    ropensci/wikitaxa,
+    ropensci/taxize,
+    ropensci/rnaturalearthhires,
+    b-cubed-eu/dubicube
 BugReports: https://github.com/b-cubed-eu/b3gbi/issues
 Funding: This project receives funding from the European Union’s Horizon Europe 
     Research and Innovation Programme (ID No 101059592).
