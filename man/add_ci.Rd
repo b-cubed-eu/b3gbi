@@ -8,14 +8,13 @@ add_ci(
   indicator,
   num_bootstrap = 1000,
   bootstrap_level = c("cube", "indicator"),
-  ci_type = c("norm", "basic", "perc", "bca", "none"),
+  ci_type = c("perc", "bca", "norm", "basic", "none"),
   trans = function(t) t,
   inv_trans = function(t) t,
   confidence_level = 0.95,
   overwrite = TRUE,
   boot_args = list(),
-  ci_args = list(),
-  ...
+  ci_args = list()
 )
 }
 \arguments{
@@ -37,10 +36,10 @@ values. This is faster for large cubes but less robust.
 \item{ci_type}{(Optional) Type of bootstrap confidence intervals to
 calculate. (Default: \code{"norm"}). Supported options are:
 \itemize{
-\item \code{norm}: Normal approximation intervals.
-\item \code{basic}: Basic bootstrap intervals.
 \item \code{perc}: Percentile intervals.
 \item \code{bca}: Bias-corrected and accelerated intervals.
+\item \code{norm}: Normal approximation intervals.
+\item \code{basic}: Basic bootstrap intervals.
 \item \code{none}: No confidence intervals calculated.
 }}
 
@@ -64,8 +63,6 @@ be replaced? (Default: TRUE)}
 
 \item{ci_args}{(Optional) Named list of additional arguments passed to
 \code{dubicube::calculate_bootstrap_ci()}. (Default: \code{list()})}
-
-\item{...}{Additional arguments passed to the underlying functions.}
 }
 \value{
 An updated object of class \code{indicator_ts} containing the
@@ -88,8 +85,8 @@ calculated values), allowing for advanced transformations during the
 CI calculation process.
 }
 \details{
-The function acts as a bridge to the \code{dubicube} package for statistical
-heavy lifting.
+The function acts as a bridge to the \pkg{dubicube} package to calculate
+bootstrap confidence intervals.
 \subsection{Indicator-specific defaults}{
 
 Depending on the indicator, default settings are internally applied when

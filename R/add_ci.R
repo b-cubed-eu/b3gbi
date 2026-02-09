@@ -19,10 +19,10 @@
 #'     values. This is faster for large cubes but less robust.
 #' @param ci_type (Optional) Type of bootstrap confidence intervals to
 #'   calculate. (Default: `"norm"`). Supported options are:
-#'   * `norm`: Normal approximation intervals.
-#'   * `basic`: Basic bootstrap intervals.
 #'   * `perc`: Percentile intervals.
 #'   * `bca`: Bias-corrected and accelerated intervals.
+#'   * `norm`: Normal approximation intervals.
+#'   * `basic`: Basic bootstrap intervals.
 #'   * `none`: No confidence intervals calculated.
 #' @param trans (Optional) A function for transforming the indicator values
 #'   before calculating confidence intervals (e.g., `log`).
@@ -39,11 +39,10 @@
 #'   `dubicube::bootstrap_cube()`. (Default: `list()`)
 #' @param ci_args (Optional) Named list of additional arguments passed to
 #'   `dubicube::calculate_bootstrap_ci()`. (Default: `list()`)
-#' @param ... Additional arguments passed to the underlying functions.
 #'
 #' @details
-#' The function acts as a bridge to the `dubicube` package for statistical
-#' heavy lifting.
+#' The function acts as a bridge to the \pkg{dubicube} package to calculate
+#' bootstrap confidence intervals.
 #'
 #' ## Indicator-specific defaults
 #'
@@ -115,18 +114,17 @@ add_ci <- function(indicator,
                    num_bootstrap = 1000,
                    bootstrap_level = c("cube",
                                        "indicator"),
-                   ci_type = c("norm",
-                               "basic",
-                               "perc",
+                   ci_type = c("perc",
                                "bca",
+                               "norm",
+                               "basic",
                                "none"),
                    trans = function(t) t,
                    inv_trans = function(t) t,
                    confidence_level = 0.95,
                    overwrite = TRUE,
                    boot_args = list(),
-                   ci_args = list(),
-                   ...) {
+                   ci_args = list()) {
 
   # Check for correct object class
   if (!inherits(indicator, "indicator_ts")) {
