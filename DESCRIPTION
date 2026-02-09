@@ -62,7 +62,7 @@ Config/Needs/check: ropensci/wikitaxa
 Remotes: 
     github::hrbrmstr/mgrs,
     github::ropensci/bold,
-    github::Ironholds/WikidataR,
+    any::WikidataR=github::Ironholds/WikidataR,
     github::ropensci/wikitaxa,
     github::ropensci/taxize,
     github::ropensci/rnaturalearthhires,
