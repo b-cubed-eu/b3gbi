@@ -58,11 +58,10 @@ RoxygenNote: 7.3.3
 VignetteBuilder: knitr, rmarkdown
 Additional_repositories: https://b-cubed-eu.r-universe.dev,
     https://ropensci.r-universe.dev
-Config/Needs/check: ropensci/wikitaxa
+Config/Needs/check: Ironholds/WikidataR, ropensci/wikitaxa
 Remotes: 
     hrbrmstr/mgrs,
     ropensci/bold,
-    Ironholds/WikidataR,
     ropensci/wikitaxa,
     ropensci/taxize,
     ropensci/rnaturalearthhires,
