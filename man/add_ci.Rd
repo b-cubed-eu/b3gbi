@@ -14,7 +14,8 @@ add_ci(
   confidence_level = 0.95,
   overwrite = TRUE,
   boot_args = list(),
-  ci_args = list()
+  ci_args = list(),
+  ...
 )
 }
 \arguments{
@@ -63,6 +64,8 @@ be replaced? (Default: TRUE)}
 
 \item{ci_args}{(Optional) Named list of additional arguments passed to
 \code{dubicube::calculate_bootstrap_ci()}. (Default: \code{list()})}
+
+\item{...}{(Optional) Additional arguments passed to calc_ci().}
 }
 \value{
 An updated object of class \code{indicator_ts} containing the
