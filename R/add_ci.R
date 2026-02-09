@@ -231,7 +231,7 @@ add_ci <- function(indicator,
     # Join confidence intervals to indicator object
     if (nrow(ci_df) > 0) {
       # This handles cases where dubicube returns year as character
-      if ("year" %in% names(ci_df) && is.double(x$year)) {
+      if ("year" %in% names(ci_df) && is.numeric(x$year)) {
         ci_df$year <- as.numeric(ci_df$year)
       }
       # Convert negative values to zero as rarity cannot be less than zero
