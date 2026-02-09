@@ -46,17 +46,11 @@ jobs:
           rm -rf ~/.cache/R/renv/library/*/b3gbi || true
         shell: bash
 
-      # Install dubicube fresh from GitHub
-      - name: Install dubicube from GitHub
-        run: |
-          Rscript -e 'remotes::install_github("b-cubed-eu/dubicube", force = TRUE)'
-        shell: bash
-
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::rcmdcheck
+          extra-packages: any::rcmdcheck, b-cubed-eu/dubicube
           needs: check
-          cache-version: 2  # Bust the cache
+          cache-version: 3  # Bust the cache
 
       - uses: r-lib/actions/check-r-package@v2
         with:
