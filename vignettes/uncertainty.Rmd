@@ -61,7 +61,7 @@ The `add_ci()` function supports two levels of bootstrapping, selectable via the
 
 ### 1. Cube-Level Bootstrapping (`bootstrap_level = "cube"`)
 
-This is the **default and recommended method**. It resamples the raw occurrence records within the data cube. 
+This is the **default and recommended method**. It resamples the raw occurrence records within the data cube. The function automatically determines whether to use group-specific resampling (for species-level indicators) or whole-cube resampling (for aggregate indicators) based on the indicator type.
 
 *   **Pros**: Mathematically more robust; captures the underlying sampling uncertainty of the original data.
 *   **Cons**: Computationally more intensive, especially for large cubes.
@@ -74,6 +74,18 @@ This method resamples the calculated indicator values themselves.
 
 *   **Pros**: Very fast, even for massive datasets.
 *   **Cons**: Less robust; assumes that the calculated indicator values are independent and identically distributed, which is often not strictly true for biodiversity metrics.
+
+## Automatic Indicator Configuration
+
+The `add_ci()` function automatically applies appropriate bootstrapping strategies based on the indicator type. This ensures statistically correct confidence intervals without requiring manual configuration:
+
+*   **Group-Specific Bootstrapping**: Species-level indicators (`total_occ`, `spec_occ`, `spec_range`) automatically resample within each species-year combination. This is essential when indicators are calculated per species.
+
+*   **Whole-Cube Bootstrapping**: Aggregate indicators (evenness, rarity, density metrics) resample across the entire cube, treating the data as a single population.
+
+*   **Bounded Indicators**: Evenness metrics (`pielou_evenness`, `williams_evenness`) automatically use logit transformation to ensure confidence intervals remain within valid [0, 1] bounds.
+
+These defaults are applied internally, but can be overridden using `boot_args` if needed.
 
 ## Advanced Configuration
 
@@ -97,6 +109,28 @@ occ_ts_custom <- add_ci(occ_ts,
                         boot_args = list(seed = 42),
                         ci_args = list(type = "perc"))
 ```
+
+### Overriding Indicator Defaults
+
+While `add_ci()` automatically selects appropriate settings, you can override these defaults using `boot_args` and `ci_args`. This is useful when you need specialized behavior:
+
+```{r override, eval = FALSE}
+# Example: Calculate CIs for evenness on raw scale (no logit transformation)
+evenness_raw <- add_ci(my_evenness_indicator,
+                       num_bootstrap = 1000,
+                       boot_args = list(trans = identity, 
+                                        inv_trans = identity))
+
+# Example: Force bias correction for total_occ
+occ_with_bias <- add_ci(my_occ_indicator,
+                        num_bootstrap = 1000,
+                        ci_args = list(no_bias = FALSE))
+```
+
+Common override parameters include:
+- `trans` / `inv_trans`: Transformation functions
+- `no_bias`: Logical, disable bias correction (default varies by indicator)
+- `group_specific`: Logical, force group-specific vs whole-cube bootstrapping
 
 ## Supported Indicators
 
@@ -131,3 +165,5 @@ To learn more about the full capabilities of **dubicube**, including in-depth tu
 ## Summary
 
 The `add_ci()` function provides a unified and robust interface for adding uncertainty to your biodiversity assessments. By leveraging the power of `dubicube`, **b3gbi** ensures that your results are not just numbers, but scientifically grounded estimates with clearly defined confidence boundaries.
+
+With automatic indicator configuration, most users can rely on sensible defaults while advanced users retain full control over the bootstrapping process through the `boot_args` and `ci_args` parameters.
