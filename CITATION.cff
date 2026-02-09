@@ -562,7 +562,6 @@ references:
   - family-names: Arendsee
     given-names: Zebulun
   year: '2026'
-  doi: 10.32614/CRAN.package.taxize
   version: '>= 0.9.99'
 - type: software
   title: testthat
