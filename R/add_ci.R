@@ -17,7 +17,6 @@
 #'     captures the underlying sampling uncertainty.
 #'   * `indicator`: Bootstrapping is done by resampling indicator
 #'     values. This is faster for large cubes but less robust.
-#'
 #' @param ci_type (Optional) Type of bootstrap confidence intervals to
 #'   calculate. (Default: `"norm"`). Supported options are:
 #'   * `norm`: Normal approximation intervals.
@@ -25,7 +24,6 @@
 #'   * `perc`: Percentile intervals.
 #'   * `bca`: Bias-corrected and accelerated intervals.
 #'   * `none`: No confidence intervals calculated.
-#'
 #' @param trans (Optional) A function for transforming the indicator values
 #'   before calculating confidence intervals (e.g., `log`).
 #'   (Default: identity function)
@@ -47,22 +45,53 @@
 #' The function acts as a bridge to the `dubicube` package for statistical
 #' heavy lifting.
 #'
-#' Confidence intervals can be calculated for the following indicators:
-#' * `total_occ`
-#' * `occ_density`
-#' * `newness`
-#' * `williams_evenness`
-#' * `pielou_evenness`
-#' * `ab_rarity`
-#' * `area_rarity`
-#' * `spec_occ`
-#' * `spec_range`
+#' ## Indicator-specific defaults
 #'
-#' For certain indicators (e.g., Hill numbers), confidence
-#' intervals cannot be added post-hoc as they are calculated internally by
-#' the `iNext` package during the initial calculation. In such cases,
-#' a warning is issued and the original object is returned. The following
-#' indicators cannot have confidence intervals added via `add_ci()`:
+#' Depending on the indicator, default settings are internally applied when
+#' calculating bootstrap confidence intervals. These defaults control whether
+#' bootstrapping is performed per group, which transformation is used, and
+#' whether bias correction is disabled.
+#'
+#' The following defaults are used unless explicitly overridden via
+#' `trans`, `inv_trans`, `boot_args`, or `ci_args`:
+#'
+#' - **`total_occ`**
+#'   - Group-specific bootstrapping: **yes**
+#'   - Transformation: **none (identity)**
+#'   - Bias correction: **disabled** (`no_bias = TRUE`)
+#'
+#' - **`spec_occ`, `spec_range`**
+#'   - Group-specific bootstrapping: **yes**
+#'   - Transformation: **none (identity)**
+#'   - Bias correction: enabled
+#'
+#' - **`pielou_evenness`, `williams_evenness`**
+#'   - Group-specific bootstrapping: **no**
+#'   - Transformation: **logit**
+#'   - Inverse transformation: **inverse logit**
+#'   - Bias correction: enabled
+#'
+#' - **`occ_density`, `ab_rarity`, `area_rarity`, `newness`**
+#'   - Group-specific bootstrapping: **no**
+#'   - Transformation: **none (identity)**
+#'   - Bias correction: enabled
+#'
+#' Group-specific bootstrapping means that resampling is performed within each
+#' group (e.g., species or year), which is required for indicators that are
+#' inherently group-based. This in contrast to whole-cube bootstrapping
+#' where resampling is performed across the whole dataset; applicable for
+#' indicators that combine information across groups
+#'
+#' Transformations are applied prior to confidence interval calculation and
+#' inverted afterwards to return intervals on the original scale.
+#'
+#' ## Indicators outside scope of this function
+#'
+#' For certain indicators, confidence intervals cannot be
+#' added post-hoc as they are calculated internally via the `iNext` package, or
+#' if they are not relevant. In such cases, a warning is issued and the
+#' original object is returned. The following indicators cannot have confidence
+#' intervals added via `add_ci()`:
 #' * `hill0`, `hill1`, `hill2` (calculated internally)
 #' * `obs_richness`
 #' * `cum_richness`
@@ -145,7 +174,7 @@ add_ci <- function(indicator,
   x <- indicator$data
   raw_data <- indicator$raw_data
 
-  if(any(c("ll", "ul") %in% names(x)) & !overwrite) {
+  if (any(c("ll", "ul") %in% names(x)) & !overwrite) {
     warning(
       paste0(
         "Indicator already contains confidence intervals. Returning indicator
@@ -174,55 +203,27 @@ add_ci <- function(indicator,
     return(indicator)
 
   } else if (bootstrap_level == "cube") {
-
-    # Determine grouping and bootstrap method
-    # Species-level indicators (spec_occ, spec_range) are group-specific.
-    # Aggregate indicators (evenness, rarity, density, etc.) are whole-cube.
-    species_level_indicators <- c("spec_occ", "spec_range")
-
-    if (indicator$div_type %in% species_level_indicators) {
-      group_cols <- c("year", "taxonKey")
-      boot_method <- "group_specific"
-    } else {
-      group_cols <- "year"
-      boot_method <- "whole_cube"
-    }
-
-    # Prepare arguments for bootstrap_cube
-    bootstrap_params <- list(
-      data_cube = raw_data,
-      fun = calc_ts,
-      grouping_var = group_cols,
-      samples = num_bootstrap,
-      seed = 123,
-      progress = TRUE,
-      processed_cube = FALSE
-      # method = boot_method
+    # Get dubicube function parameters
+    params_total  <- prepare_indicator_bootstrap(
+      indicator = indicator,
+      num_bootstrap = num_bootstrap,
+      ci_type = ci_type,
+      trans = trans,
+      inv_trans = inv_trans,
+      confidence_level = confidence_level,
+      boot_args = boot_args,
+      ci_args = ci_args
     )
-
-    # Override with user-provided boot_args
-    bootstrap_params <- utils::modifyList(bootstrap_params, boot_args)
 
     # Bootstrap cube data
-    bootstrap_results <- do.call(dubicube::bootstrap_cube, bootstrap_params)
-
-    # Prepare arguments for calculate_bootstrap_ci
-    ci_params <- list(
-      bootstrap_samples_df = bootstrap_results,
-      grouping_var = group_cols,
-      type = ci_type,
-      h = trans,
-      hinv = inv_trans,
-      conf = confidence_level,
-      data_cube = raw_data,
-      fun = calc_ts
-    )
-
-    # Override with user-provided ci_args
-    ci_params <- utils::modifyList(ci_params, ci_args)
+    bootstrap_results <- do.call(dubicube::bootstrap_cube,
+                                 params_total$bootstrap_params)
 
     # Calculate confidence intervals from bootstrap results
-    ci_df <- do.call(dubicube::calculate_bootstrap_ci, ci_params) %>%
+    ci_df <- do.call(
+      dubicube::calculate_bootstrap_ci,
+      c(bootstrap_samples_df = bootstrap_results, params_total$ci_params)
+    ) %>%
       dplyr::select(-est_original)
 
     # Join confidence intervals to indicator object
