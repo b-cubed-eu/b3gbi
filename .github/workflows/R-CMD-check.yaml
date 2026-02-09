@@ -50,7 +50,14 @@ jobs:
         with:
           extra-packages: any::rcmdcheck, b-cubed-eu/dubicube
           needs: check
-          cache-version: 3  # Bust the cache
+          cache-version: 4  # Bust the cache
+
+      # Force install local package to ensure latest code is used
+      - name: Install local b3gbi
+        run: |
+          R CMD build . --no-manual
+          R CMD INSTALL b3gbi_*.tar.gz
+        shell: bash
 
       - uses: r-lib/actions/check-r-package@v2
         with:
