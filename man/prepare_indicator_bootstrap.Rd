@@ -11,6 +11,7 @@ prepare_indicator_bootstrap(
   trans = function(t) t,
   inv_trans = function(t) t,
   confidence_level = 0.95,
+  seed = NULL,
   boot_args = list(),
   ci_args = list()
 )
@@ -31,13 +32,13 @@ Will be overridden if specified by the indicator rule book.}
 
 \item{confidence_level}{Numeric between 0 and 1. Confidence level.}
 
+\item{seed}{Integer. Random seed for bootstrapping.}
+
 \item{boot_args}{Named list of additional arguments passed to
 \code{bootstrap_cube()}, overriding defaults.}
 
 \item{ci_args}{Named list of additional arguments passed to
 \code{calculate_bootstrap_ci()}, overriding defaults.}
-
-\item{seed}{Integer. Random seed for bootstrapping.}
 }
 \value{
 A named list with two elements:
