@@ -39,6 +39,7 @@
 #'   `dubicube::bootstrap_cube()`. (Default: `list()`)
 #' @param ci_args (Optional) Named list of additional arguments passed to
 #'   `dubicube::calculate_bootstrap_ci()`. (Default: `list()`)
+#' @param ... (Optional) Additional arguments passed to calc_ci().
 #'
 #' @details
 #' The function acts as a bridge to the \pkg{dubicube} package to calculate
@@ -124,7 +125,8 @@ add_ci <- function(indicator,
                    confidence_level = 0.95,
                    overwrite = TRUE,
                    boot_args = list(),
-                   ci_args = list()) {
+                   ci_args = list(),
+                   ...) {
 
   # Check for correct object class
   if (!inherits(indicator, "indicator_ts")) {
@@ -228,6 +230,10 @@ add_ci <- function(indicator,
 
     # Join confidence intervals to indicator object
     if (nrow(ci_df) > 0) {
+      # This handles cases where dubicube returns year as character
+      if ("year" %in% names(ci_df) && is.double(x$year)) {
+        ci_df$year <- as.numeric(ci_df$year)
+      }
       # Convert negative values to zero as rarity cannot be less than zero
       ci_df$ll <- ifelse(ci_df$ll > 0, ci_df$ll, 0)
       # Join confidence intervals to indicator values by year
