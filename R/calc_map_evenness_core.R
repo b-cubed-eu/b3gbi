@@ -31,7 +31,7 @@ calc_map_evenness_core <- function(x,
 
     # We must explicitly drop cellCode before pivoting so the data is clean
     # for the calculation matrix, and rely only on the separate cell_map later.
-    dplyr::select(-cellCode) %>% # <--- CRITICAL CHANGE 2
+    dplyr::select(-all_of("cellCode")) %>% # <--- CRITICAL CHANGE 2
 
     tidyr::pivot_wider(names_from = cellid,
                        values_from = num_occ) %>%
