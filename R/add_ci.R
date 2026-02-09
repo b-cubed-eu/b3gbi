@@ -220,7 +220,7 @@ add_ci <- function(indicator,
     # Calculate confidence intervals from bootstrap results
     ci_df <- do.call(
       dubicube::calculate_bootstrap_ci,
-      c(bootstrap_samples_df = bootstrap_results, params_total$ci_params)
+      c(list(bootstrap_samples_df = bootstrap_results), params_total$ci_params)
     ) %>%
       dplyr::select(-est_original)
 
