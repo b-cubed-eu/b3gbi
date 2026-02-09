@@ -7,7 +7,7 @@ calc_map_evenness_core <- function(x,
                   internal function, not meant to be called directly.",
                   inherits(x, c("data.frame", "sf")))
 
-  num_occ <- obs <- cellid <- taxonKey <- diversity_val <- cellCode <- . <- NULL
+  num_occ <- obs <- cellid <- taxonKey <- cellCode <- diversity_val <- . <- NULL
 
   type <- match.arg(type, names(available_indicators))
 
@@ -20,12 +20,13 @@ calc_map_evenness_core <- function(x,
   # --- CRITICAL ADDITION 1: Create the cellid <-> cellCode mapping table ---
   # We need a clean, unique mapping to join back at the end.
   cell_map <- x %>%
-    dplyr::distinct(cellid, cellCode)
+    dplyr::distinct(cellid, .keep_all = TRUE) %>%
+    dplyr::select(cellid, cellCode)
 
   # Calculate adjusted evenness for each grid cell
   indicator <- x %>%
     dplyr::summarize(num_occ = sum(obs, na.rm = TRUE),
-                     .by = c(cellid, cellCode, taxonKey)) %>%
+                     .by = c(cellid, taxonKey)) %>%
     dplyr::arrange(cellid) %>%
 
     # We must explicitly drop cellCode before pivoting so the data is clean

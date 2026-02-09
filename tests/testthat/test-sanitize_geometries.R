@@ -60,12 +60,16 @@ test_that("Point geometries are correctly converted to POLYGONs via buffer", {
   )
   # Transform to a projected CRS (e.g., 3857 Pseudo-Mercator) before area calc
   result_projected <- sf::st_transform(result_point, 3857)
-  expect_equal(as.character(sf::st_geometry_type(result_point, by_geometry = FALSE)), "MULTIPOLYGON")
+  expect_equal(as.character(sf::st_geometry_type(
+    result_point, by_geometry = FALSE
+  )), "MULTIPOLYGON")
   expect_true(all(as.numeric(sf::st_area(result_projected)) > 0)) # Check buffer successfully created area
 
   # 2. MULTIPOINT (Activates the geom_type == "MULTIPOINT" branch)
-  result_multipoint <- sanitize_geometries(sf_multipoint)
-  expect_equal(as.character(sf::st_geometry_type(result_multipoint, by_geometry = FALSE)), "MULTIPOLYGON")
+  result_multipoint <- suppressWarnings(sanitize_geometries(sf_multipoint))
+  expect_equal(as.character(sf::st_geometry_type(
+    result_multipoint, by_geometry = FALSE
+  )), "MULTIPOLYGON")
 })
 
 # --- Test Block 3: Line Geometries and Collections ---

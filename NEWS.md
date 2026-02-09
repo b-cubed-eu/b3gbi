@@ -15,7 +15,6 @@
 * Added a new conceptual vignette: "Uncertainty in Biodiversity Indicators".
 * Added comprehensive unit and integration tests for the decoupled uncertainty workflow.
 
-
 # b3gbi 0.8.14 - Minor update:
 
 * Fixed a bug in `pielou_evenness_map` where use of a `cell_size` larger than the native cube resolution caused a crash due to non-unique row identifiers during pivoting (#102).

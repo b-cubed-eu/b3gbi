@@ -50,7 +50,7 @@ references:
     email: cantya@mcmaster.ca
   - family-names: Ripley
     given-names: Brian
-    email: ripley@stats.ox.ac.uk
+    email: Brian.Ripley@R-project.org
   year: '2026'
   doi: 10.32614/CRAN.package.boot
 - type: software
@@ -149,6 +149,7 @@ references:
     given-names: K. H.
   - family-names: Chao
     given-names: Anne
+    email: chao@stat.nthu.edu.tw
   year: '2026'
   doi: 10.32614/CRAN.package.iNEXT
 - type: software
@@ -173,7 +174,7 @@ references:
     email: stefan@stefanbache.dk
   - family-names: Wickham
     given-names: Hadley
-    email: hadley@rstudio.com
+    email: hadley@posit.co
   year: '2026'
   doi: 10.32614/CRAN.package.magrittr
 - type: software
@@ -228,7 +229,7 @@ references:
     orcid: https://orcid.org/0000-0003-4757-117X
   - family-names: Henry
     given-names: Lionel
-    email: lionel@rstudio.com
+    email: lionel@posit.co
   year: '2026'
   doi: 10.32614/CRAN.package.purrr
 - type: software
@@ -522,6 +523,14 @@ references:
   - family-names: South
     given-names: Andy
     email: southandy@gmail.com
+    orcid: https://orcid.org/0000-0003-4051-6135
+  - family-names: Michael
+    given-names: Schramm
+    email: mpschramm@gmail.com
+  - family-names: Massicotte
+    given-names: Philippe
+    email: pmassicotte@hotmail.com
+    orcid: https://orcid.org/0000-0002-5919-4116
   year: '2026'
   doi: 10.32614/CRAN.package.rnaturalearthdata
 - type: software
@@ -562,6 +571,7 @@ references:
   - family-names: Arendsee
     given-names: Zebulun
   year: '2026'
+  doi: 10.32614/CRAN.package.taxize
   version: '>= 0.9.99'
 - type: software
   title: testthat
