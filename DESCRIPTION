@@ -62,7 +62,7 @@ Config/Needs/check: ropensci/wikitaxa
 Remotes: 
     github::hrbrmstr/mgrs,
     github::ropensci/bold,
-    github: ropensci/wikitaxa,
+    github::ropensci/wikitaxa,
     github::ropensci/taxize,
     github::ropensci/rnaturalearthhires,
     github::b-cubed-eu/dubicube
