@@ -577,10 +577,10 @@ test_that("plot_species_ts applies custom aesthetics correctly", {
   expect_equal(point_geom$aes_params$size, 4)
 })
 
-spec_occ_mammals_denmark_ts_ci <- spec_occ_ts(example_cube_1,
+spec_occ_mammals_denmark_ts_ci <- suppressWarnings(spec_occ_ts(example_cube_1,
                                            level = "country",
                                            region = "Denmark") %>%
-  add_ci(num_bootstrap = 10)
+  add_ci(num_bootstrap = 10))
 
 test_that("plot_species_ts manages trends and confidence intervals", {
   # Verify presence of smoothed trend
