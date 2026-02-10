@@ -11,7 +11,7 @@
 #'   \code{div_type} and \code{raw_data}.
 #' @param num_bootstrap Integer. Number of bootstrap samples.
 #' @param ci_type Character. Type of confidence interval.
-#' @param seed Integer. Random seed for bootstrapping.
+#' @param seed Optional integer. Random seed for bootstrapping. (Default: 123)
 #' @param trans Optional transformation function applied to the statistic.
 #'   Will be overridden if specified by the indicator rule book.
 #' @param inv_trans Optional inverse transformation function.
@@ -44,12 +44,19 @@ prepare_indicator_bootstrap <- function(
     indicator,
     num_bootstrap,
     ci_type,
+    seed = 123,
     trans = function(t) t,
     inv_trans = function(t) t,
     confidence_level = 0.95,
-    seed = NULL,
     boot_args = list(),
     ci_args = list()) {
+
+  # First, adjust logit to avoid failure when evenness is zero.
+  logit = function(p) {
+    p <- pmax(pmin(p, 1 - 1e-6), 1e-6) # Clamp values between ~0 and ~1
+    log(p / (1 - p))
+  }
+
   ## ------------------------------------------------------------------
   ## Indicator rule book
   ## ------------------------------------------------------------------
@@ -57,6 +64,7 @@ prepare_indicator_bootstrap <- function(
   ## - whether group-specific bootstrapping is used
   ## - which transformation (if any) is applied
   ## - whether bias correction is disabled (no_bias)
+
   indicator_rules <- list(
     total_occ = list(
       group_specific = TRUE,
@@ -156,13 +164,9 @@ prepare_indicator_bootstrap <- function(
     grouping_var = group_cols,
     samples = num_bootstrap,
     processed_cube = FALSE,
-    method = boot_method
+    method = boot_method,
+    seed = seed
   )
-
-  # Only add seed if it's actually provided
-  if (!is.null(seed)) {
-    bootstrap_params$seed <- seed
-  }
 
   ## Allow user-supplied arguments to override defaults
   bootstrap_params <- utils::modifyList(bootstrap_params, boot_args)
