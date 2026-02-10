@@ -142,6 +142,22 @@ prepare_indicator_bootstrap <- function(
   }
 
   ## ------------------------------------------------------------------
+  ## Handle multiple grouping variables for dubicube compatibility
+  ## ------------------------------------------------------------------
+  ## dubicube only accepts a single grouping variable, so we create a
+  ## composite key when multiple grouping columns are needed
+  if (length(group_cols) > 1) {
+    # Create composite key by pasting grouping variables together
+    indicator$raw_data$group_key <- apply(
+      indicator$raw_data[, group_cols, drop = FALSE],
+      1,
+      paste,
+      collapse = "_"
+    )
+    group_cols <- "group_key"
+  }
+
+  ## ------------------------------------------------------------------
   ## Determine bootstrap method
   ## ------------------------------------------------------------------
   boot_method <- if (rule$group_specific) {
