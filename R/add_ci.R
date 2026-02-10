@@ -35,6 +35,7 @@
 #' @param overwrite (Optional) Logical. If the indicator already contains
 #'   confidence intervals (`ll` and `ul` columns), should they
 #'   be replaced? (Default: TRUE)
+#' @param seed (Optional) Integer. Random seed for bootstrapping. (Default: 123)
 #' @param boot_args (Optional) Named list of additional arguments passed to
 #'   `dubicube::bootstrap_cube()`. (Default: `list()`)
 #' @param ci_args (Optional) Named list of additional arguments passed to
@@ -126,6 +127,7 @@ add_ci <- function(indicator,
                    overwrite = TRUE,
                    boot_args = list(),
                    ci_args = list(),
+                   seed = 123,
                    ...) {
 
   # Check for correct object class
@@ -212,7 +214,8 @@ add_ci <- function(indicator,
       inv_trans = inv_trans,
       confidence_level = confidence_level,
       boot_args = boot_args,
-      ci_args = ci_args
+      ci_args = ci_args,
+      seed = seed
     )
 
     # Bootstrap cube data
