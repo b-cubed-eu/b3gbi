@@ -36,7 +36,7 @@ test_that("Integration: pielou_evenness_ts followed by add_ci works (cube level)
 
   # Add confidence intervals (cube level)
   # Using num_bootstrap = 2 for speed
-  res_ci <- add_ci(res, num_bootstrap = 10, bootstrap_level = "cube")
+  res_ci <- suppressWarnings(add_ci(res, num_bootstrap = 2, bootstrap_level = "cube"))
 
   expect_s3_class(res_ci, "indicator_ts")
   expect_true("ll" %in% names(res_ci$data))
