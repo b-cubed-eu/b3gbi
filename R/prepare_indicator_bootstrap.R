@@ -181,7 +181,30 @@ prepare_indicator_bootstrap <- function(
   
   # Apply indicator class to data for S3 method dispatch in calc_ts
   data_for_bootstrap <- indicator$raw_data
+  
+  # Debug: Check what we're working with
+  if (getOption("b3gbi.debug", FALSE)) {
+    message("DEBUG: indicator$div_type = ", indicator$div_type)
+    message("DEBUG: class(data_for_bootstrap) before = ", paste(class(data_for_bootstrap), collapse = ", "))
+  }
+  
   class(data_for_bootstrap) <- c(indicator$div_type, class(data_for_bootstrap))
+  
+  # Ensure the indicator class is first for proper S3 dispatch
+  current_classes <- class(data_for_bootstrap)
+  if (current_classes[1] != indicator$div_type) {
+    # Move indicator class to front
+    class(data_for_bootstrap) <- c(
+      indicator$div_type,
+      setdiff(current_classes, indicator$div_type)
+    )
+  }
+  
+  if (getOption("b3gbi.debug", FALSE)) {
+    message("DEBUG: class(data_for_bootstrap) after = ", paste(class(data_for_bootstrap), collapse = ", "))
+    message("DEBUG: method exists for ", indicator$div_type, ": ", 
+            exists(paste0("calc_ts.", indicator$div_type), mode = "function"))
+  }
   
   bootstrap_params <- list(
     data_cube = data_for_bootstrap,
