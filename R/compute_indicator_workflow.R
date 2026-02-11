@@ -610,6 +610,9 @@ compute_indicator_workflow <- function(data,
 
   }
 
+  # Save raw data before adding classes (for bootstrapping later)
+  raw_data_for_bootstrap <- data_final_nogeom
+  
   # Assign classes to send data to correct calculator function
   subtype <- paste0(type, "_", dim_type)
   class(data_final_nogeom) <- append(type, class(data_final_nogeom))
@@ -689,7 +692,7 @@ compute_indicator_workflow <- function(data,
                                       num_years = num_years,
                                       species_names = species_names,
                                       coord_range = map_lims,
-                                      raw_cube_occurrences = data_final_nogeom)
+                                       raw_cube_occurrences = raw_data_for_bootstrap)
   }
 
   return(diversity_obj)
