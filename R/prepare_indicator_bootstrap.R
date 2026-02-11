@@ -178,8 +178,13 @@ prepare_indicator_bootstrap <- function(
   ## ------------------------------------------------------------------
   ## Prepare bootstrap_cube parameters
   ## ------------------------------------------------------------------
+  
+  # Apply indicator class to data for S3 method dispatch in calc_ts
+  data_for_bootstrap <- indicator$raw_data
+  class(data_for_bootstrap) <- c(indicator$div_type, class(data_for_bootstrap))
+  
   bootstrap_params <- list(
-    data_cube = indicator$raw_data,
+    data_cube = data_for_bootstrap,
     fun = calc_ts,
     grouping_var = group_cols,
     samples = num_bootstrap,
