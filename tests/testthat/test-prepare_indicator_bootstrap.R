@@ -99,16 +99,16 @@ indicator_expectations <- list(
   ),
   spec_occ = list(
     indicator = indicator_spec_occ,
-    method = "group_specific",
-    grouping = c("year", "taxonKey"),
+    method = "boot_group_specific",
+    grouping = "group_key",
     trans = function(t) t,
     inv_trans = function(t) t,
     no_bias = FALSE
   ),
   spec_range = list(
     indicator = indicator_spec_range,
-    method = "group_specific",
-    grouping = c("year", "taxonKey"),
+    method = "boot_group_specific",
+    grouping = "group_key",
     trans = function(t) t,
     inv_trans = function(t) t,
     no_bias = FALSE
