@@ -26,9 +26,6 @@
 #'     rarefaction).
 #' @param dim_type (Optional) Dimension to calculate indicator over time: 'ts',
 #'  or space: 'map'. (Default: 'map')
-#' @param ci_type (Optional) Type of bootstrap confidence intervals to
-#'  calculate. (Default: "norm"). Select "none" to avoid calculating bootstrap
-#'  CIs.
 #' @param cell_size (Optional) Length of grid cell sides, in km or degrees.
 #'  If set to "grid" (default), this will use the existing grid size of your
 #'  cube. If set to "auto", this will be automatically determined according to
@@ -64,8 +61,6 @@
 #' @param make_valid (Optional) Calls st_make_valid() from the sf package
 #'  after creating the grid. Increases processing time but may help if you are
 #'  getting polygon errors. (Default is FALSE).
-#' @param num_bootstrap (Optional) Set the number of bootstraps to calculate for
-#'  generating confidence intervals. (Default: 100)
 #' @param shapefile_path (optional) Path of an external shapefile to merge into
 #'  the workflow. For example, if you want to calculate your indicator
 #'  particular features such as protected areas or wetlands.
@@ -116,11 +111,6 @@ compute_indicator_workflow <- function(data,
                                        type,
                                        dim_type = c("map",
                                                     "ts"),
-                                       ci_type = c("norm",
-                                                   "basic",
-                                                   "perc",
-                                                   "bca",
-                                                   "none"),
                                        cell_size = "grid",
                                        level = c("cube",
                                                  "continent",
@@ -141,7 +131,6 @@ compute_indicator_workflow <- function(data,
                                        last_year = NULL,
                                        spherical_geometry = TRUE,
                                        make_valid = FALSE,
-                                       num_bootstrap = 100,
                                        shapefile_path = NULL,
                                        shapefile_crs = NULL,
                                        invert = FALSE,
@@ -178,19 +167,8 @@ compute_indicator_workflow <- function(data,
                          "hill1",
                          "hill2")
 
-  # List of indicators for which bootstrapped confidence intervals should not
-  # be calculated
-  noci_list <- c("obs_richness",
-                 "cum_richness",
-                 "occ_turnover",
-                 "tax_distinct",
-                 "hill0",
-                 "hill1",
-                 "hill2")
-
   type <- match.arg(type, names(available_indicators))
   dim_type <- match.arg(dim_type)
-  ci_type <- match.arg(ci_type)
   ne_type <- match.arg(ne_type)
   ne_scale <- match.arg(ne_scale)
   level <- match.arg(level)
@@ -224,18 +202,6 @@ compute_indicator_workflow <- function(data,
       level <- "cube"
       warning("Unsupported or missing grid system. Setting level to 'cube'.")
     }
-  }
-
-  if (type %in% c("hill0", "hill1", "hill2") &&
-      ci_type %in% c("norm", "basic", "bca")) {
-    message(
-      paste0(
-        "Note: Hill diversity measures are calculated by the iNEXT package, ",
-        "therefore bootstrap confidence intervals will be calculated using ",
-        "the standard iNEXT method, similar to the 'percentile' method of ",
-        "the 'boot' package."
-      )
-    )
   }
 
   # Ensure user has entered reasonable first and last years, then filter the
@@ -644,6 +610,9 @@ compute_indicator_workflow <- function(data,
 
   }
 
+  # Save raw data before adding classes (for bootstrapping later)
+  raw_data_for_bootstrap <- data_final_nogeom
+  
   # Assign classes to send data to correct calculator function
   subtype <- paste0(type, "_", dim_type)
   class(data_final_nogeom) <- append(type, class(data_final_nogeom))
@@ -678,25 +647,6 @@ compute_indicator_workflow <- function(data,
     # Calculate indicator
     indicator <- calc_ts(data_final_nogeom, ...)
 
-    # Calculate confidence intervals
-    if (ci_type != "none") {
-      if (!type %in% noci_list) {
-        indicator <- calc_ci(data_final_nogeom,
-                             indicator = indicator,
-                             num_bootstrap = num_bootstrap,
-                             ci_type = ci_type,
-                             ...)
-      } else {
-        if (!type %in% c("hill0", "hill1", "hill2")) {
-          warning(
-            paste0(
-              "Bootstrapped confidence intervals cannot be calculated for the ",
-              "chosen indicator."
-            )
-          )
-        }
-      }
-    }
   }
 
   if (spherical_geometry == FALSE) {
@@ -741,7 +691,8 @@ compute_indicator_workflow <- function(data,
                                       num_species = num_species,
                                       num_years = num_years,
                                       species_names = species_names,
-                                      coord_range = map_lims)
+                                      coord_range = map_lims,
+                                       raw_cube_occurrences = raw_data_for_bootstrap)
   }
 
   return(diversity_obj)

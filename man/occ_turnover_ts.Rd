@@ -12,9 +12,6 @@ occ_turnover_ts(data, ...)
 \item{...}{
   Arguments passed on to \code{\link[=compute_indicator_workflow]{compute_indicator_workflow}}
   \describe{
-    \item{\code{ci_type}}{(Optional) Type of bootstrap confidence intervals to
-calculate. (Default: "norm"). Select "none" to avoid calculating bootstrap
-CIs.}
     \item{\code{cell_size}}{(Optional) Length of grid cell sides, in km or degrees.
 If set to "grid" (default), this will use the existing grid size of your
 cube. If set to "auto", this will be automatically determined according to
@@ -50,8 +47,6 @@ solve specific issues. (Default is TRUE).}
     \item{\code{make_valid}}{(Optional) Calls st_make_valid() from the sf package
 after creating the grid. Increases processing time but may help if you are
 getting polygon errors. (Default is FALSE).}
-    \item{\code{num_bootstrap}}{(Optional) Set the number of bootstraps to calculate for
-generating confidence intervals. (Default: 100)}
     \item{\code{shapefile_path}}{(optional) Path of an external shapefile to merge into
 the workflow. For example, if you want to calculate your indicator
 particular features such as protected areas or wetlands.}
@@ -131,5 +126,5 @@ des Alpes et du Jura. \emph{Bulletin de la Société Vaudoise des}
 \emph{Science Naturelles}, \emph{37}(142), 547-579.
 }
 \seealso{
-compute_indicator_workflow
+\link{compute_indicator_workflow}, \link{add_ci}
 }

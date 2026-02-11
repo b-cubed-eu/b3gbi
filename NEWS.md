@@ -1,3 +1,20 @@
+# b3gbi 0.9.0 - Major update:
+
+* Confidence intervals are no longer calculated in the core indicator workflow, except for Hill diversity (Hill diversity is handled by the iNEXT package, which calculates confidence intervals internally). They are now calculated using a separated function, add_ci(), which can be applied to any indicator_ts object for which reasonable confidence intervals can be calculated. This gives the user more freedom. After adding CIs, you can recalculate with different parameters by setting 'replace = TRUE' when you call add_ci().
+* **Indicator-specific bootstrap defaults**: add_ci() now applies different default behaviors based on indicator type to ensure statistically appropriate confidence intervals:
+  - Species-level indicators (`spec_occ`, `spec_range`, `total_occ`) use group-specific bootstrapping (resampling within each species/year combination)
+  - Aggregate indicators (evenness, rarity, density) use whole-cube bootstrapping
+  - Evenness indicators (`pielou_evenness`, `williams_evenness`) automatically apply logit transformation to keep confidence intervals within valid [0,1] bounds
+  - Total occurrences (`total_occ`) has bias correction disabled by default
+* Bootstrapping for confidence intervals is now done across the entire cube by default. This uses the dubicube package, which is now added as a dependency. The option to calculate at indicator level is still available by setting 'level = "indicator"' when calling add_ci(). Indicator level bootstrapping is a faster but less robust method.
+* The default number of bootstrap replicates when calculating confidence intervals is now 1000. This improves robustness at the sake of speed. This can still be changed using the 'num_bootstrap' parameter when calling add_ci().
+* Added `boot_args` and `ci_args` parameters to `add_ci()` to allow fine-tuning of the underlying `dubicube` calls. These can be used to override the indicator-specific defaults if needed.
+* Implemented `group_specific` vs `whole_cube` resampling logic in `add_ci()` to handle different indicator calculation requirements. Species-level indicators are automatically detected and handled appropriately.
+* Added new internal helper function `prepare_indicator_bootstrap()` to centralize bootstrap parameter configuration. This function implements a "rule book" pattern that defines appropriate defaults for each indicator type.
+* Included detailed bootstrap summary statistics (`est_boot`, `se_boot`, `bias_boot`) in the output of `add_ci()`.
+* Added a new conceptual vignette: "Uncertainty in Biodiversity Indicators".
+* Added comprehensive unit and integration tests for the decoupled uncertainty workflow.
+
 # b3gbi 0.8.14 - Minor update:
 
 * Fixed a bug in `pielou_evenness_map` where use of a `cell_size` larger than the native cube resolution caused a crash due to non-unique row identifiers during pivoting (#102).

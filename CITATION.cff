@@ -8,7 +8,7 @@ message: 'To cite package "b3gbi" in publications use:'
 type: software
 license: MIT
 title: 'b3gbi: General Biodiversity Indicators for Biodiversity Data Cubes'
-version: 0.8.13
+version: 0.9.0
 abstract: Calculate general biodiversity indicators from GBIF data cubes. Includes
   many common indicators such as species richness and evenness, which can be calculated
   over time (trends) or space (maps).
@@ -41,7 +41,7 @@ references:
   version: '>= 3.5.0'
 - type: software
   title: boot
-  abstract: 'boot: Bootstrap Functions'
+  abstract: 'boot: Bootstrap Functions (Originally by Angelo Canty for S)'
   notes: Imports
   repository: https://CRAN.R-project.org/package=boot
   authors:
@@ -78,6 +78,24 @@ references:
     orcid: https://orcid.org/0000-0003-4777-038X
   year: '2026'
   doi: 10.32614/CRAN.package.dplyr
+- type: software
+  title: dubicube
+  abstract: 'dubicube: Calculation and Interpretation of Data Cube Indicator Uncertainty'
+  notes: Imports
+  url: https://b-cubed-eu.github.io/dubicube/
+  repository: https://b-cubed-eu.r-universe.dev
+  authors:
+  - family-names: Langeraert
+    given-names: Ward
+    email: ward.langeraert@inbo.be
+    orcid: https://orcid.org/0000-0002-5900-8109
+    affiliation: Research Institute for Nature and Forest (INBO)
+  - family-names: Van Daele
+    given-names: Toon
+    email: toon.vandaele@inbo.be
+    orcid: https://orcid.org/0000-0002-1362-853X
+    affiliation: Research Institute for Nature and Forest (INBO)
+  year: '2026'
 - type: software
   title: ggplot2
   abstract: 'ggplot2: Create Elegant Data Visualisations Using the Grammar of Graphics'
@@ -122,12 +140,11 @@ references:
   title: iNEXT
   abstract: 'iNEXT: Interpolation and Extrapolation for Species Diversity'
   notes: Imports
-  url: https://sites.google.com/view/chao-lab-website/software/inext
+  url: http://chao.stat.nthu.edu.tw/wordpress/software_download/
   repository: https://CRAN.R-project.org/package=iNEXT
   authors:
   - family-names: Hsieh
     given-names: T. C.
-    email: euler96@gmail.com
   - family-names: Ma
     given-names: K. H.
   - family-names: Chao
@@ -208,7 +225,7 @@ references:
   authors:
   - family-names: Wickham
     given-names: Hadley
-    email: hadley@posit.co
+    email: hadley@rstudio.com
     orcid: https://orcid.org/0000-0003-4757-117X
   - family-names: Henry
     given-names: Lionel
@@ -363,6 +380,21 @@ references:
   year: '2026'
   doi: 10.32614/CRAN.package.units
 - type: software
+  title: bold
+  abstract: 'bold: Interface to Bold Systems API'
+  notes: Suggests
+  url: https://docs.ropensci.org/bold/
+  authors:
+  - family-names: Dubois
+    given-names: Salix
+    email: salixdubois+bold@gmail.com
+  - family-names: Chamberlain
+    given-names: Scott
+    email: myrmecocystus@gmail.com
+    orcid: https://orcid.org/0000-0003-1444-9135
+  year: '2026'
+  version: '>= 1.3.0'
+- type: software
   title: knitr
   abstract: 'knitr: A General-Purpose Package for Dynamic Report Generation in R'
   notes: Suggests
@@ -485,7 +517,7 @@ references:
   title: rnaturalearthdata
   abstract: 'rnaturalearthdata: World Vector Map Data from Natural Earth Used in ''rnaturalearth'''
   notes: Suggests
-  url: https://docs.ropensci.org/rnaturalearthdata/
+  url: https://github.com/ropenscilabs/rnaturalearthdata
   repository: https://CRAN.R-project.org/package=rnaturalearthdata
   authors:
   - family-names: South
@@ -530,6 +562,7 @@ references:
   - family-names: Chamberlain
     given-names: Scott
     email: myrmecocystus@gmail.com
+    orcid: https://orcid.org/0000-0003-1444-9135
   - family-names: Szoecs
     given-names: Eduard
   - family-names: Foster

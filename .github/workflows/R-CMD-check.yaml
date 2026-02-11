@@ -2,7 +2,7 @@
 # Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
 on:
   push:
-    branches: [main, master]
+    branches: [main, master, outsource_uncertainty]
   pull_request:
     branches: [main, master]
 
@@ -39,10 +39,25 @@ jobs:
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
 
+      # Clear cache to ensure fresh package install
+      - name: Clear R package cache
+        run: |
+          Rscript -e 'try(remove.packages("b3gbi"), silent=TRUE)' || true
+          rm -rf ~/.cache/R/renv/library/*/b3gbi || true
+        shell: bash
+
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          extra-packages: any::rcmdcheck
+          extra-packages: any::rcmdcheck, b-cubed-eu/dubicube
           needs: check
+          cache-version: 4  # Bust the cache
+
+      # Force install local package to ensure latest code is used
+      - name: Install local b3gbi
+        run: |
+          R CMD build . --no-manual
+          R CMD INSTALL b3gbi_*.tar.gz
+        shell: bash
 
       - uses: r-lib/actions/check-r-package@v2
         with:
