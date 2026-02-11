@@ -144,16 +144,20 @@ prepare_indicator_bootstrap <- function(
   ## ------------------------------------------------------------------
   ## Handle multiple grouping variables for dubicube compatibility
   ## ------------------------------------------------------------------
-  ## dubicube only accepts a single grouping variable, so we create a
-  ## composite key when multiple grouping columns are needed
   if (length(group_cols) > 1) {
-    # Create composite key by pasting grouping variables together
-    indicator$raw_data$group_key <- apply(
-      indicator$raw_data[, group_cols, drop = FALSE],
-      1,
-      paste,
-      collapse = "_"
-    )
+    # Check if all grouping columns exist in the data
+    missing_cols <- setdiff(group_cols, names(indicator$raw_data))
+    if (length(missing_cols) > 0) {
+      stop("Missing required grouping columns: ", paste(missing_cols, collapse = ", "))
+    }
+    
+    # Use tidyr::unite for a safe, fast composite key
+    # 'remove = FALSE' ensures we keep the original year/taxonKey columns
+    # for the internal calc_ts call
+    indicator$raw_data <- indicator$raw_data %>%
+      tidyr::unite("group_key", dplyr::all_of(group_cols),
+                   sep = "_", remove = FALSE)
+
     group_cols <- "group_key"
   }
 
