@@ -1,7 +1,12 @@
 ## ------------------------------------------------------------------
 ## Helper transformations
 ## ------------------------------------------------------------------
-logit <- function(p) {
+# logit <- function(p) {
+#   log(p / (1 - p))
+# }
+
+logit = function(p) {
+  p <- pmax(pmin(p, 1 - 1e-6), 1e-6) # Clamp values between ~0 and ~1
   log(p / (1 - p))
 }
 
@@ -12,16 +17,25 @@ inv_logit <- function(l) {
 ## ------------------------------------------------------------------
 ## Indicator objects for unit tests
 ## ------------------------------------------------------------------
-indicator_total_occ <- list(div_type = "total_occ", raw_data = iris)
-indicator_pielou_evenness <- list(div_type = "pielou_evenness", raw_data = iris)
-indicator_williams_evenness <- list(div_type = "williams_evenness", raw_data = iris)
-indicator_occ_density <- list(div_type = "occ_density", raw_data = iris)
-indicator_ab_rarity <- list(div_type = "ab_rarity", raw_data = iris)
-indicator_area_rarity <- list(div_type = "area_rarity", raw_data = iris)
-indicator_newness <- list(div_type = "newness", raw_data = iris)
-indicator_spec_occ <- list(div_type = "spec_occ", raw_data = iris)
-indicator_spec_range <- list(div_type = "spec_range", raw_data = iris)
-indicator_occ_ts <- list(div_type = "occ_ts", raw_data = iris)
+# Create mock data with required columns
+mock_data_basic <- iris
+mock_data_basic$year <- 2020
+mock_data_basic$taxonKey <- 1
+
+mock_data_species <- iris
+mock_data_species$year <- 2020
+mock_data_species$taxonKey <- seq_len(nrow(iris))
+
+indicator_total_occ <- list(div_type = "total_occ", raw_data = mock_data_basic)
+indicator_pielou_evenness <- list(div_type = "pielou_evenness", raw_data = mock_data_basic)
+indicator_williams_evenness <- list(div_type = "williams_evenness", raw_data = mock_data_basic)
+indicator_occ_density <- list(div_type = "occ_density", raw_data = mock_data_basic)
+indicator_ab_rarity <- list(div_type = "ab_rarity", raw_data = mock_data_basic)
+indicator_area_rarity <- list(div_type = "area_rarity", raw_data = mock_data_basic)
+indicator_newness <- list(div_type = "newness", raw_data = mock_data_basic)
+indicator_spec_occ <- list(div_type = "spec_occ", raw_data = mock_data_species)
+indicator_spec_range <- list(div_type = "spec_range", raw_data = mock_data_species)
+indicator_occ_ts <- list(div_type = "occ_ts", raw_data = mock_data_basic)
 
 ## ------------------------------------------------------------------
 ## Expected behaviour per div_type
