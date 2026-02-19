@@ -6,11 +6,12 @@
 #' @return A data frame with year and completeness (sample coverage) values.
 #' @noRd
 calc_ts_completeness_core <- function(x, ...) {
-
-  stopifnot_error("Please check the class and structure of your data. This is an
+  stopifnot_error(
+    "Please check the class and structure of your data. This is an
                   internal function, not meant to be called directly.",
-                  inherits(x, c("data.frame", "sf")) &
-                    inherits(x, "completeness"))
+    inherits(x, c("data.frame", "sf")) &
+      inherits(x, "completeness")
+  )
 
   scientificName <- year <- obs <- cellCode <- Assemblage <- SC <- NULL
 
@@ -33,7 +34,7 @@ calc_ts_completeness_core <- function(x, ...) {
         dplyr::select(-year, -cellCode) %>%
         as.matrix() %>%
         t()
-      m[m > 1] <- 1
+      m <- (m > 0) * 1L
       return(m)
     })
 
@@ -59,7 +60,7 @@ calc_ts_completeness_core <- function(x, ...) {
   }
 
   # Calculate completeness using iNEXT::DataInfo
-  info <- my_DataInfo(species_records_filtered, datatype = "incidence_raw")
+  info <- suppressWarnings(my_DataInfo(species_records_filtered, datatype = "incidence_raw"))
 
   # Extract result
   indicator <- info %>%
