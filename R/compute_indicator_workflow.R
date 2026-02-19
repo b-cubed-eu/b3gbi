@@ -577,6 +577,7 @@ compute_indicator_workflow <- function(data,
     final_area_sqkm <-
       final_study_polygon %>%
       sf::st_union() %>% # Union handles multi-polygons (e.g., countries)
+      sf::st_transform(crs = "ESRI:54012") %>% # Mollweide equal-area projection
       sf::st_area() %>%
       units::set_units("km^2")
 
@@ -615,7 +616,7 @@ compute_indicator_workflow <- function(data,
 
       final_area_sqkm <-
         sf::st_as_sfc(cube_bbox) %>%
-        sf::st_transform(crs = "EPSG:4326") %>%
+        sf::st_transform(crs = "ESRI:54012") %>% # Mollweide equal-area projection
         sf::st_area() %>%
         units::set_units("km^2")
     } else {
