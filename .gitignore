@@ -72,3 +72,5 @@ app.R
 /doc/
 /Meta/
 /conductor
+/.gemini
+/shiny
