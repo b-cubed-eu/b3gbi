@@ -2,45 +2,118 @@ test_that("detect_grid identifies isea3h codes", {
   # Example ISEA3H code (Mocnik style - long integer)
   isea3h_code <- "5639762336074163442"
   expect_equal(detect_grid(isea3h_code), "isea3h")
+
+  # Negative codes (pentagon cells) should also be detected
+  expect_equal(detect_grid("-458282525011250000"), "isea3h")
 })
 
 test_that("isea3h_code_to_coords structure is correct", {
-  
-  # Example code from GBIF
-  isea3h_code <- "5639762336074163442"
-  
-  # Attempt conversion
+  # A real GBIF code from Denmark
+  isea3h_code <- "-458282525011250000"
+
   coords <- isea3h_code_to_coords(isea3h_code)
-  
+
   # Check structure
   expect_s3_class(coords, "data.frame")
   expect_true("xcoord" %in% names(coords))
   expect_true("ycoord" %in% names(coords))
   expect_true("resolution" %in% names(coords))
-  
-  # Validation check for STUB implementation:
-  # Since the native decoder is a placeholder returning NAs, we verify that behavior.
-  # Once implemented, these should revert to range checks.
-  expect_true(all(is.na(coords$xcoord)))
-  expect_true(all(is.na(coords$ycoord)))
+
+  # Coordinates should be valid numbers (not NAs)
+  expect_false(is.na(coords$xcoord))
+  expect_false(is.na(coords$ycoord))
+})
+
+test_that("isea3h_code_to_coords decodes Denmark pentagon", {
+  # Real GBIF Denmark code: pentagon near Skagerrak
+  coords <- isea3h_code_to_coords("-458282525011250000")
+  expect_equal(coords$ycoord, 58.282525, tolerance = 0.001)
+  expect_equal(coords$xcoord, 11.250000, tolerance = 0.001)
+  expect_equal(coords$resolution, "4")
+})
+
+test_that("isea3h_code_to_coords decodes European hexagon", {
+  # Real GBIF code: hexagon near Netherlands
+  coords <- isea3h_code_to_coords("452583359004665569")
+  expect_equal(coords$ycoord, 52.583359, tolerance = 0.001)
+  expect_equal(coords$xcoord, 4.665569, tolerance = 0.001)
+  expect_equal(coords$resolution, "4")
+})
+
+test_that("isea3h_code_to_coords handles negative longitude", {
+  # Real GBIF code: negative longitude (west of Greenwich)
+  coords <- isea3h_code_to_coords("4859758557001684287")
+  expect_equal(coords$ycoord, 59.758557, tolerance = 0.001)
+  expect_equal(coords$xcoord, -1.684287, tolerance = 0.001)
+  expect_equal(coords$resolution, "4")
+})
+
+test_that("isea3h_code_to_coords handles Southern Hemisphere", {
+  # Constructed: Australia lat=-25.0, lon=135.0, res=4
+  # res_code = 4 + 22 = 26 (negative lat)
+  # id = 26 * 10^17 + 25000000 * 10^9 + 135000000
+  coords <- isea3h_code_to_coords("2625000000135000000")
+  expect_equal(coords$ycoord, -25.0, tolerance = 0.001)
+  expect_equal(coords$xcoord, 135.0, tolerance = 0.001)
+  expect_equal(coords$resolution, "4")
+})
+
+test_that("isea3h_code_to_coords handles negative lat and lon", {
+  # Constructed: Brazil lat=-15.0, lon=-47.0, res=4
+  # res_code = 4 + 22 + 44 = 70 (negative lat AND lon)
+  # id = 70 * 10^17 + 15000000 * 10^9 + 47000000
+  coords <- isea3h_code_to_coords("7015000000047000000")
+  expect_equal(coords$ycoord, -15.0, tolerance = 0.001)
+  expect_equal(coords$xcoord, -47.0, tolerance = 0.001)
+  expect_equal(coords$resolution, "4")
+})
+
+test_that("isea3h_code_to_coords handles USA (negative lon only)", {
+  # Constructed: Washington DC area lat=39.0, lon=-77.0, res=4
+  # res_code = 4 + 44 = 48 (negative lon)
+  # id = 48 * 10^17 + 39000000 * 10^9 + 77000000
+  coords <- isea3h_code_to_coords("4839000000077000000")
+  expect_equal(coords$ycoord, 39.0, tolerance = 0.001)
+  expect_equal(coords$xcoord, -77.0, tolerance = 0.001)
+  expect_equal(coords$resolution, "4")
+})
+
+test_that("isea3h_code_to_coords handles vectors correctly", {
+  ids <- c(
+    "-458282525011250000",
+    "452583359004665569",
+    "465090030011250000"
+  )
+  coords <- isea3h_code_to_coords(ids)
+  expect_equal(nrow(coords), 3)
+  expect_false(any(is.na(coords$xcoord)))
+  expect_false(any(is.na(coords$ycoord)))
+})
+
+test_that("isea3h_code_to_coords handles empty and NA input", {
+  # Empty input
+  coords_empty <- isea3h_code_to_coords(character(0))
+  expect_equal(nrow(coords_empty), 0)
+
+  # NA input
+  coords_na <- isea3h_code_to_coords(NA)
+  expect_true(is.na(coords_na$xcoord))
+  expect_true(is.na(coords_na$ycoord))
 })
 
 test_that("indicator wrappers handle isea3h cubes correctly (structure check)", {
-  
   # Mock a processed cube with isea3h data
   mock_data <- tibble::tibble(
-    cellCode = c("5639762336074163442", "5639762336074163443"), 
+    cellCode = c("-458282525011250000", "452583359004665569"),
     year = c(2020, 2020),
     obs = c(10, 5),
-    taxonKey = c(123, 456), 
+    taxonKey = c(123, 456),
     scientificName = c("Species A", "Species B"),
-    # Mock behavior of current stub: coords might be NA if not manually supplied
-    # But for this test, let's simulate that if coordinates WERE there, it works.
-    xcoord = c(10.0, 10.1),
-    ycoord = c(50.0, 50.1),
+    xcoord = c(11.25, 4.67),
+    ycoord = c(58.28, 52.58),
     resolution = c("isea3h", "isea3h")
   )
-  
+
   mock_cube <- list(
     data = mock_data,
     grid_type = "isea3h",
@@ -48,21 +121,21 @@ test_that("indicator wrappers handle isea3h cubes correctly (structure check)", 
     last_year = 2020,
     num_species = 2,
     species_names = c("Species A", "Species B"),
-    coord_range = list(10.0, 10.1, 50.0, 50.1), 
+    coord_range = list(4.67, 11.25, 52.58, 58.28),
     resolution = "isea3h"
   )
   class(mock_cube) <- c("processed_cube", "list")
-  
+
   # Run an indicator (Observed Richness)
   result <- obs_richness_map(mock_cube)
-  
+
   # Checks
   expect_s3_class(result, "indicator_map")
   expect_s3_class(result$data, "sf")
   expect_s3_class(result$data, "indicator_data")
-  expect_equal(nrow(result$data), 2) 
+  expect_equal(nrow(result$data), 2)
   expect_true("diversity_val" %in% names(result$data))
-  
+
   # Verify CRS is WGS84 as expected for ISEA3H
   input_crs <- sf::st_crs(result$data)
   expect_equal(input_crs$epsg, 4326)
