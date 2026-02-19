@@ -9,14 +9,16 @@
 #' @return A data frame with cell IDs and completeness (sample coverage) values.
 #' @noRd
 calc_map_completeness_core <- function(x, ...) {
-
-  stopifnot_error("Please check the class and structure of your data. This is an
+  stopifnot_error(
+    "Please check the class and structure of your data. This is an
                   internal function, not meant to be called directly.",
-                  inherits(x, c("data.frame", "sf")) &
-                    inherits(x, "completeness"))
+    inherits(x, c("data.frame", "sf")) &
+      inherits(x, "completeness")
+  )
 
-  n <- S.obs <- SC <- cellid <- cellCode <- cellid_char <- diversity_val <-
-    taxonKey <- obs <- scientificName <- year <- incidence <- Y_i <- NULL
+  SC <- cellid <- cellCode <- cellid_char <- diversity_val <-
+    taxonKey <- obs <- scientificName <- year <- incidence <- Y_i <-
+    Assemblage <- . <- NULL
 
   temp_opts <- list(...)
   cutoff_length <- temp_opts$cutoff_length
@@ -36,7 +38,8 @@ calc_map_completeness_core <- function(x, ...) {
       dplyr::group_by(cellid) %>%
       {
         list_data <- dplyr::group_split(., .keep = FALSE)
-        list_names <- dplyr::group_keys(.) %>% dplyr::pull(cellid) %>%
+        list_names <- dplyr::group_keys(.) %>%
+          dplyr::pull(cellid) %>%
           as.character()
         names(list_data) <- list_names
         list_data
@@ -57,7 +60,8 @@ calc_map_completeness_core <- function(x, ...) {
         dplyr::group_by(cellid) %>%
         {
           list_data <- dplyr::group_split(., .keep = FALSE)
-          list_names <- dplyr::group_keys(.) %>% dplyr::pull(cellid) %>%
+          list_names <- dplyr::group_keys(.) %>%
+            dplyr::pull(cellid) %>%
             as.character()
           names(list_data) <- list_names
           list_data
@@ -76,7 +80,8 @@ calc_map_completeness_core <- function(x, ...) {
         dplyr::group_by(cellid) %>%
         {
           list_data <- dplyr::group_split(., .keep = FALSE)
-          list_names <- dplyr::group_keys(.) %>% dplyr::pull(cellid) %>%
+          list_names <- dplyr::group_keys(.) %>%
+            dplyr::pull(cellid) %>%
             as.character()
           names(list_data) <- list_names
           list_data
@@ -97,7 +102,7 @@ calc_map_completeness_core <- function(x, ...) {
 
   # Filter based on cutoff_length
   incidence_list_processed <- purrr::keep(incidence_list, function(vec) {
-    if (!is.null(vec) && is.vector(vec) && length(vec) > (if(data_type == "abundance") 0 else 1)) {
+    if (!is.null(vec) && is.vector(vec) && length(vec) > (if (data_type == "abundance") 0 else 1)) {
       species_count <- if (data_type == "abundance") length(vec) else length(vec) - 1
       return(species_count >= cutoff_length)
     }
@@ -109,7 +114,7 @@ calc_map_completeness_core <- function(x, ...) {
   }
 
   # Calculate completeness using iNEXT::DataInfo
-  info <- my_DataInfo(incidence_list_processed, datatype = data_type)
+  info <- suppressWarnings(my_DataInfo(incidence_list_processed, datatype = data_type))
 
   # Extract result
   indicator <- info %>%
