@@ -50,18 +50,19 @@
 #'
 #' @examples
 #' \dontrun{
-#' or_map <- obs_richness_map(example_cube_1, level = "country",
-#'                            region = "Denmark")
+#' or_map <- obs_richness_map(example_cube_1,
+#'   level = "country",
+#'   region = "Denmark"
+#' )
 #' plot(or_map)
 #' }
 #' @export
 obs_richness_map <- function(data, ...) {
-
   compute_indicator_workflow(data,
-                             type = "obs_richness",
-                             dim_type = "map",
-                             ...)
-
+    type = "obs_richness",
+    dim_type = "map",
+    ...
+  )
 }
 
 
@@ -74,12 +75,11 @@ obs_richness_map <- function(data, ...) {
 #' }
 #' @export
 obs_richness_ts <- function(data, ...) {
-
   compute_indicator_workflow(data,
-                             type = "obs_richness",
-                             dim_type = "ts",
-                             ...)
-
+    type = "obs_richness",
+    dim_type = "ts",
+    ...
+  )
 }
 
 
@@ -109,18 +109,19 @@ obs_richness_ts <- function(data, ...) {
 #'
 #' @examples
 #' \dontrun{
-#' to_map <- total_occ_map(example_cube_1, level = "country",
-#'                                         region = "Denmark")
+#' to_map <- total_occ_map(example_cube_1,
+#'   level = "country",
+#'   region = "Denmark"
+#' )
 #' plot(to_map)
 #' }
 #' @export
 total_occ_map <- function(data, ...) {
-
   compute_indicator_workflow(data,
-                             type = "total_occ",
-                             dim_type = "map",
-                             ...)
-
+    type = "total_occ",
+    dim_type = "map",
+    ...
+  )
 }
 
 
@@ -133,12 +134,11 @@ total_occ_map <- function(data, ...) {
 #' }
 #' @export
 total_occ_ts <- function(data, ...) {
-
   compute_indicator_workflow(data,
-                             type = "total_occ",
-                             dim_type = "ts",
-                             ...)
-
+    type = "total_occ",
+    dim_type = "ts",
+    ...
+  )
 }
 
 
@@ -225,18 +225,19 @@ total_occ_ts <- function(data, ...) {
 #'
 #' @examples
 #' \dontrun{
-#' pe_map <- pielou_evenness_map(example_cube_1, level = "country",
-#'                               region = "Denmark")
+#' pe_map <- pielou_evenness_map(example_cube_1,
+#'   level = "country",
+#'   region = "Denmark"
+#' )
 #' plot(pe_map)
 #' }
 #' @export
 pielou_evenness_map <- function(data, ...) {
-
   compute_indicator_workflow(data,
-                             type = "pielou_evenness",
-                             dim_type = "map",
-                             ...)
-
+    type = "pielou_evenness",
+    dim_type = "map",
+    ...
+  )
 }
 
 
@@ -249,12 +250,11 @@ pielou_evenness_map <- function(data, ...) {
 #' }
 #' @export
 pielou_evenness_ts <- function(data, ...) {
-
   compute_indicator_workflow(data,
-                             type = "pielou_evenness",
-                             dim_type = "ts",
-                             ...)
-
+    type = "pielou_evenness",
+    dim_type = "ts",
+    ...
+  )
 }
 
 
@@ -262,18 +262,19 @@ pielou_evenness_ts <- function(data, ...) {
 #'
 #' @examples
 #' \dontrun{
-#' we_map <- williams_evenness_map(example_cube_1, level = "country",
-#'                                 region = "Denmark")
+#' we_map <- williams_evenness_map(example_cube_1,
+#'   level = "country",
+#'   region = "Denmark"
+#' )
 #' plot(we_map)
 #' }
 #' @export
 williams_evenness_map <- function(data, ...) {
-
   compute_indicator_workflow(data,
-                             type = "williams_evenness",
-                             dim_type = "map",
-                             ...)
-
+    type = "williams_evenness",
+    dim_type = "map",
+    ...
+  )
 }
 
 #' @describeIn pielou_evenness_map
@@ -285,12 +286,11 @@ williams_evenness_map <- function(data, ...) {
 #' }
 #' @export
 williams_evenness_ts <- function(data, ...) {
-
   compute_indicator_workflow(data,
-                             type = "williams_evenness",
-                             dim_type = "ts",
-                             ...)
-
+    type = "williams_evenness",
+    dim_type = "ts",
+    ...
+  )
 }
 
 
@@ -361,18 +361,19 @@ williams_evenness_ts <- function(data, ...) {
 #'
 #' @examples
 #' \dontrun{
-#' arr_map <- area_rarity_map(example_cube_1, level = "country",
-#'                            region = "Denmark")
+#' arr_map <- area_rarity_map(example_cube_1,
+#'   level = "country",
+#'   region = "Denmark"
+#' )
 #' plot(arr_map)
 #' }
 #' @export
 area_rarity_map <- function(data, ...) {
-
   compute_indicator_workflow(data,
-                             type = "area_rarity",
-                             dim_type = "map",
-                             ...)
-
+    type = "area_rarity",
+    dim_type = "map",
+    ...
+  )
 }
 
 
@@ -385,13 +386,12 @@ area_rarity_map <- function(data, ...) {
 #' }
 #' @export
 area_rarity_ts <- function(data, ...) {
-
   compute_indicator_workflow(data,
-                             type = "area_rarity",
-                             dim_type = "ts",
-                             force_grid = TRUE,
-                             ...)
-
+    type = "area_rarity",
+    dim_type = "ts",
+    force_grid = TRUE,
+    ...
+  )
 }
 
 
@@ -399,18 +399,19 @@ area_rarity_ts <- function(data, ...) {
 #'
 #' @examples
 #' \dontrun{
-#' abr_map <- ab_rarity_map(example_cube_1, level = "country",
-#'                          region = "Denmark")
+#' abr_map <- ab_rarity_map(example_cube_1,
+#'   level = "country",
+#'   region = "Denmark"
+#' )
 #' plot(abr_map)
 #' }
 #' @export
 ab_rarity_map <- function(data, ...) {
-
   compute_indicator_workflow(data,
-                             type = "ab_rarity",
-                             dim_type = "map",
-                             ...)
-
+    type = "ab_rarity",
+    dim_type = "map",
+    ...
+  )
 }
 
 
@@ -423,12 +424,11 @@ ab_rarity_map <- function(data, ...) {
 #' }
 #' @export
 ab_rarity_ts <- function(data, ...) {
-
   compute_indicator_workflow(data,
-                             type = "ab_rarity",
-                             dim_type = "ts",
-                             ...)
-
+    type = "ab_rarity",
+    dim_type = "ts",
+    ...
+  )
 }
 
 #' @noRd
@@ -599,20 +599,19 @@ hill0_map <- function(data,
                       data_type = c("incidence", "abundance"),
                       assume_freq = FALSE,
                       ...) {
-
   data_type <- match.arg(data_type)
 
   compute_indicator_workflow(data,
-                             type = "hill0",
-                             dim_type = "map",
-                             cutoff_length = cutoff_length,
-                             coverage = coverage,
-                             assume_freq = assume_freq,
-                             data_type = data_type,
-                             nboot = 0,
-                             conf = 0.95,
-                             ...)
-
+    type = "hill0",
+    dim_type = "map",
+    cutoff_length = cutoff_length,
+    coverage = coverage,
+    assume_freq = assume_freq,
+    data_type = data_type,
+    nboot = 0,
+    conf = 0.95,
+    ...
+  )
 }
 
 
@@ -630,7 +629,6 @@ hill0_ts <- function(data,
                      cutoff_length = 5,
                      conf_level = 0.95,
                      ...) {
-
   dot_params <- list(...)
 
   # Check if num_bootstrap was provided, otherwise set a default
@@ -642,15 +640,15 @@ hill0_ts <- function(data,
   if (!is.null(ci_type) && ci_type == "none") num_bootstrap <- 0
 
   compute_indicator_workflow(data,
-                             type = "hill0",
-                             dim_type = "ts",
-                             cutoff_length = cutoff_length,
-                             coverage = coverage,
-                             conf = conf_level,
-                             nboot = num_bootstrap,
-                             force_grid = TRUE,
-                             ...)
-
+    type = "hill0",
+    dim_type = "ts",
+    cutoff_length = cutoff_length,
+    coverage = coverage,
+    conf = conf_level,
+    nboot = num_bootstrap,
+    force_grid = TRUE,
+    ...
+  )
 }
 
 
@@ -668,20 +666,19 @@ hill1_map <- function(data,
                       data_type = c("incidence", "abundance"),
                       assume_freq = FALSE,
                       ...) {
-
-  data_type = match.arg(data_type)
+  data_type <- match.arg(data_type)
 
   compute_indicator_workflow(data,
-                             type = "hill1",
-                             dim_type = "map",
-                             cutoff_length = cutoff_length,
-                             coverage = coverage,
-                             assume_freq = assume_freq,
-                             data_type = data_type,
-                             nboot = 0,
-                             conf = 0.95,
-                             ...)
-
+    type = "hill1",
+    dim_type = "map",
+    cutoff_length = cutoff_length,
+    coverage = coverage,
+    assume_freq = assume_freq,
+    data_type = data_type,
+    nboot = 0,
+    conf = 0.95,
+    ...
+  )
 }
 
 
@@ -698,7 +695,6 @@ hill1_ts <- function(data,
                      coverage = 0.95,
                      conf_level = 0.95,
                      ...) {
-
   dot_params <- list(...)
 
   # Check if num_bootstrap was provided, otherwise set a default
@@ -710,15 +706,15 @@ hill1_ts <- function(data,
   if (!is.null(ci_type) && ci_type == "none") num_bootstrap <- 0
 
   compute_indicator_workflow(data,
-                             type = "hill1",
-                             dim_type = "ts",
-                             cutoff_length = cutoff_length,
-                             coverage = coverage,
-                             conf = conf_level,
-                             nboot = num_bootstrap,
-                             force_grid = TRUE,
-                             ...)
-
+    type = "hill1",
+    dim_type = "ts",
+    cutoff_length = cutoff_length,
+    coverage = coverage,
+    conf = conf_level,
+    nboot = num_bootstrap,
+    force_grid = TRUE,
+    ...
+  )
 }
 
 
@@ -736,20 +732,19 @@ hill2_map <- function(data,
                       data_type = c("incidence", "abundance"),
                       assume_freq = FALSE,
                       ...) {
-
-  data_type = match.arg(data_type)
+  data_type <- match.arg(data_type)
 
   compute_indicator_workflow(data,
-                             type = "hill2",
-                             dim_type = "map",
-                             cutoff_length = cutoff_length,
-                             coverage = coverage,
-                             assume_freq = assume_freq,
-                             data_type = data_type,
-                             nboot = 0,
-                             conf = 0.95,
-                             ...)
-
+    type = "hill2",
+    dim_type = "map",
+    cutoff_length = cutoff_length,
+    coverage = coverage,
+    assume_freq = assume_freq,
+    data_type = data_type,
+    nboot = 0,
+    conf = 0.95,
+    ...
+  )
 }
 
 #' @describeIn hill0_map
@@ -765,7 +760,6 @@ hill2_ts <- function(data,
                      coverage = 0.95,
                      conf_level = 0.95,
                      ...) {
-
   dot_params <- list(...)
 
   # Check if num_bootstrap was provided, otherwise set a default
@@ -777,15 +771,15 @@ hill2_ts <- function(data,
   if (!is.null(ci_type) && ci_type == "none") num_bootstrap <- 0
 
   compute_indicator_workflow(data,
-                             type = "hill2",
-                             dim_type = "ts",
-                             cutoff_length = cutoff_length,
-                             coverage = coverage,
-                             conf = conf_level,
-                             nboot = num_bootstrap,
-                             force_grid = TRUE,
-                             ...)
-
+    type = "hill2",
+    dim_type = "ts",
+    cutoff_length = cutoff_length,
+    coverage = coverage,
+    conf = conf_level,
+    nboot = num_bootstrap,
+    force_grid = TRUE,
+    ...
+  )
 }
 
 
@@ -835,12 +829,11 @@ hill2_ts <- function(data,
 #' }
 #' @export
 cum_richness_ts <- function(data, ...) {
-
   compute_indicator_workflow(data,
-                             type = "cum_richness",
-                             dim_type = "ts",
-                             ...)
-
+    type = "cum_richness",
+    dim_type = "ts",
+    ...
+  )
 }
 
 
@@ -877,12 +870,11 @@ cum_richness_ts <- function(data, ...) {
 #' }
 #' @export
 newness_map <- function(data, ...) {
-
   compute_indicator_workflow(data,
-                             type = "newness",
-                             dim_type = "map",
-                             ...)
-
+    type = "newness",
+    dim_type = "map",
+    ...
+  )
 }
 
 
@@ -895,12 +887,11 @@ newness_map <- function(data, ...) {
 #' }
 #' @export
 newness_ts <- function(data, ...) {
-
   compute_indicator_workflow(data,
-                             type = "newness",
-                             dim_type = "ts",
-                             ...)
-
+    type = "newness",
+    dim_type = "ts",
+    ...
+  )
 }
 
 
@@ -927,18 +918,19 @@ newness_ts <- function(data, ...) {
 #'
 #' @examples
 #' \dontrun{
-#' od_map <- occ_density_map(example_cube_1, level = "country",
-#'                                           region = "Denmark")
+#' od_map <- occ_density_map(example_cube_1,
+#'   level = "country",
+#'   region = "Denmark"
+#' )
 #' plot(od_map)
 #' }
 #' @export
 occ_density_map <- function(data, ...) {
-
   compute_indicator_workflow(data,
-                             type = "occ_density",
-                             dim_type = "map",
-                             ...)
-
+    type = "occ_density",
+    dim_type = "map",
+    ...
+  )
 }
 
 
@@ -951,12 +943,11 @@ occ_density_map <- function(data, ...) {
 #' }
 #' @export
 occ_density_ts <- function(data, ...) {
-
   compute_indicator_workflow(data,
-                             type = "occ_density",
-                             dim_type = "ts",
-                             ...)
-
+    type = "occ_density",
+    dim_type = "ts",
+    ...
+  )
 }
 
 
@@ -968,7 +959,10 @@ occ_density_ts <- function(data, ...) {
 #' @details
 #' Density is calculated by dividing the total number of unique species per
 #' square kilometre for each cell or year. This provides similar information to
-#' observed species richness, but is adjusted for cell area.
+#' observed species richness, but is adjusted for cell area. Like observed
+#' richness, bootstrapped confidence intervals are not calculated for this
+#' indicator because they are statistically inappropriate at the indicator
+#' level.
 #'
 #' @param data A data cube object (class 'processed_cube').
 #'
@@ -984,18 +978,19 @@ occ_density_ts <- function(data, ...) {
 #'
 #' @examples
 #' \dontrun{
-#' srd_map <- spec_richness_density_map(example_cube_1, level = "country",
-#'                                      region = "Denmark")
+#' srd_map <- spec_richness_density_map(example_cube_1,
+#'   level = "country",
+#'   region = "Denmark"
+#' )
 #' plot(srd_map)
 #' }
 #' @export
 spec_richness_density_map <- function(data, ...) {
-
   compute_indicator_workflow(data,
-                             type = "spec_richness_density",
-                             dim_type = "map",
-                             ...)
-
+    type = "spec_richness_density",
+    dim_type = "map",
+    ...
+  )
 }
 
 
@@ -1008,12 +1003,11 @@ spec_richness_density_map <- function(data, ...) {
 #' }
 #' @export
 spec_richness_density_ts <- function(data, ...) {
-
   compute_indicator_workflow(data,
-                             type = "spec_richness_density",
-                             dim_type = "ts",
-                             ...)
-
+    type = "spec_richness_density",
+    dim_type = "ts",
+    ...
+  )
 }
 
 #' @title Calculate Species Occurrences Over Space or Time
@@ -1044,18 +1038,19 @@ spec_richness_density_ts <- function(data, ...) {
 #'
 #' @examples
 #' \dontrun{
-#' so_map <- spec_occ_map(example_cube_1, level = "country",
-#'                        region = "Denmark", include_ocean = FALSE)
+#' so_map <- spec_occ_map(example_cube_1,
+#'   level = "country",
+#'   region = "Denmark", include_ocean = FALSE
+#' )
 #' plot(so_map, c(2440728, 4265185))
 #' }
 #' @export
 spec_occ_map <- function(data, ...) {
-
   compute_indicator_workflow(data,
-                             type = "spec_occ",
-                             dim_type = "map",
-                             ...)
-
+    type = "spec_occ",
+    dim_type = "map",
+    ...
+  )
 }
 
 #' @describeIn spec_occ_map
@@ -1066,12 +1061,11 @@ spec_occ_map <- function(data, ...) {
 #'
 #' @export
 spec_occ_ts <- function(data, ...) {
-
   compute_indicator_workflow(data,
-                             type = "spec_occ",
-                             dim_type = "ts",
-                             ...)
-
+    type = "spec_occ",
+    dim_type = "ts",
+    ...
+  )
 }
 
 #' @title Plot Species Ranges Over Space or Time
@@ -1092,18 +1086,19 @@ spec_occ_ts <- function(data, ...) {
 #' @describeIn spec_range_map
 #'
 #' @examples
-#' sr_map <- spec_range_map(example_cube_1, level = "country",
-#'                          region = "Denmark", include_ocean = FALSE)
+#' sr_map <- spec_range_map(example_cube_1,
+#'   level = "country",
+#'   region = "Denmark", include_ocean = FALSE
+#' )
 #' plot(sr_map, c(2440728, 4265185))
 #'
 #' @export
 spec_range_map <- function(data, ...) {
-
   compute_indicator_workflow(data,
-                             type = "spec_range",
-                             dim_type = "map",
-                             ...)
-
+    type = "spec_range",
+    dim_type = "map",
+    ...
+  )
 }
 
 #' @describeIn spec_range_map
@@ -1115,12 +1110,11 @@ spec_range_map <- function(data, ...) {
 #' }
 #' @export
 spec_range_ts <- function(data, ...) {
-
   compute_indicator_workflow(data,
-                             type = "spec_range",
-                             dim_type = "ts",
-                             ...)
-
+    type = "spec_range",
+    dim_type = "ts",
+    ...
+  )
 }
 
 #' @title Calculate Taxonomic Distinctness Over Space or Time
@@ -1176,47 +1170,49 @@ spec_range_ts <- function(data, ...) {
 #'
 #' @examples
 #' \dontrun{
-#' td_map <- tax_distinct_map(example_cube_1, level = "country",
-#'                                            region = "Denmark")
+#' td_map <- tax_distinct_map(example_cube_1,
+#'   level = "country",
+#'   region = "Denmark"
+#' )
 #' plot(td_map)
 #' }
 #'
 #' @export
 tax_distinct_map <- function(data, rows = 1, ...) {
-
   if (!requireNamespace("taxize", quietly = TRUE)) {
     stop("The package {taxize} is required for this action")
   }
 
   compute_indicator_workflow(data,
-                             type = "tax_distinct",
-                             dim_type = "map",
-                             rows = rows,
-                             ...)
-
+    type = "tax_distinct",
+    dim_type = "map",
+    rows = rows,
+    ...
+  )
 }
 
 #' @describeIn tax_distinct_map
 #'
 #' @examples
 #' \dontrun{
-#' td_ts <- tax_distinct_ts(example_cube_1, level = "country",
-#'                          region = "Denmark")
+#' td_ts <- tax_distinct_ts(example_cube_1,
+#'   level = "country",
+#'   region = "Denmark"
+#' )
 #' plot(td_ts)
 #' }
 #' @export
 tax_distinct_ts <- function(data, rows = 1, ...) {
-
   if (!requireNamespace("taxize", quietly = TRUE)) {
     stop("The package {taxize} is required for this action")
   }
 
   compute_indicator_workflow(data,
-                             type = "tax_distinct",
-                             dim_type = "ts",
-                             rows = rows,
-                             ...)
-
+    type = "tax_distinct",
+    dim_type = "ts",
+    rows = rows,
+    ...
+  )
 }
 
 #' @title Calculate Occupancy Turnover
@@ -1270,10 +1266,9 @@ tax_distinct_ts <- function(data, rows = 1, ...) {
 #'
 #' @export
 occ_turnover_ts <- function(data, ...) {
-
   compute_indicator_workflow(data,
-                             type = "occ_turnover",
-                             dim_type = "ts",
-                             ...)
-
+    type = "occ_turnover",
+    dim_type = "ts",
+    ...
+  )
 }
