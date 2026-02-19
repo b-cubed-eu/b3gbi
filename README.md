@@ -43,8 +43,8 @@ b3gbi empowers biodiversity analysis with:
 - **Standardized Workflows:** Simplify the process of calculating common
   biodiversity indicators from GBIF data cubes.
 - **Flexibility:** Calculate richness, evenness, rarity, taxonomic
-  distinctness, Shannon-Hill diversity, Simpson-Hill diversity, and
-  more.
+  distinctness, Shannon-Hill diversity, Simpson-Hill diversity,
+  completeness, and more.
 - **Analysis Options:** Explore temporal trends or create spatial maps.
 - **Visualization Tools:** Generate publication-ready plots of your
   biodiversity metrics.

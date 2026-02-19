@@ -1,5 +1,7 @@
 # b3gbi 0.8.14 - Minor update:
 
+* Added support for the sample completeness (Sample Coverage) indicator via `completeness_map()` and `completeness_ts()` (#98).
+
 * Fixed a bug in `pielou_evenness_map` where use of a `cell_size` larger than the native cube resolution caused a crash due to non-unique row identifiers during pivoting (#102).
 * Updated `print.indicator_map` to filter out rows with NA `diversity_val` to reduce console clutter.
 * Verified that `cellCode` is correctly preserved in the output of all `calc_map` functions.

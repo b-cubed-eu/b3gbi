@@ -52,6 +52,7 @@ scores.
 rarefaction).
 \item 'hill2': Hill-Simpson diversity (estimated by coverage-based
 rarefaction).
+\item 'completeness': Sample completeness (Sample Coverage).
 }}
 
 \item{dim_type}{(Optional) Dimension to calculate indicator over time: 'ts',
@@ -162,10 +163,11 @@ output into an appropriate S3 object ('indicator_map' or 'indicator_ts').
 }
 \examples{
 diversity_map <- compute_indicator_workflow(example_cube_1,
-                                            type = "obs_richness",
-                                            dim_type = "map",
-                                            level = "country",
-                                            region = "Denmark")
+  type = "obs_richness",
+  dim_type = "map",
+  level = "country",
+  region = "Denmark"
+)
 diversity_map
 
 }
