@@ -8,6 +8,7 @@
 \alias{calc_ts.obs_richness}
 \alias{calc_ts.cum_richness}
 \alias{calc_ts.total_occ}
+\alias{calc_ts.spec_richness_density}
 \alias{calc_ts.occ_density}
 \alias{calc_ts.newness}
 \alias{calc_ts.williams_evenness}
@@ -34,6 +35,8 @@
 \method{calc_ts}{cum_richness}(x, ...)
 
 \method{calc_ts}{total_occ}(x, ...)
+
+\method{calc_ts}{spec_richness_density}(x, ...)
 
 \method{calc_ts}{occ_density}(x, ...)
 
