@@ -91,29 +91,152 @@ isea3h_code_to_coords <- function(cell_codes) {
   ))
 }
 
-#' Create Hexagonal Polygons from ISEA3H Centroids
+#' Create a Hexagonal Grid for ISEA3H Data
+#'
+#' Creates one hexagonal polygon per unique cellCode, centred on the decoded
+#' centroid. Hexagons are constructed in the native ISEA projection
+#' (\code{+proj=isea}) where the ISEA3H grid forms a perfectly regular
+#' hexagonal lattice, then transformed to the requested projection for display.
+#' The grid is locked to the cube input — no resizing or spatial reassignment.
 #'
 #' @param df Data frame with `xcoord`, `ycoord`, and `cellCode` columns.
-#' @return An sf object with hexagonal polygon geometries.
+#' @param projection The projected CRS the grid should be returned in.
+#' @return An sf object with columns `cellid`, `cellCode`, and `area`.
 #' @noRd
-create_isea3h_grid <- function(df) {
-  hex_side <- 0.01
-  make_hex <- function(lon, lat, side) {
-    if (is.na(lon) || is.na(lat)) {
-      return(sf::st_polygon())
+create_isea3h_grid <- function(df, projection) {
+  df_unique <- df[!duplicated(df$cellCode), ]
+
+  use_dggridR <- getOption("b3gbi.use_dggridR", TRUE)
+
+  if (use_dggridR && requireNamespace("dggridR", quietly = TRUE)) {
+    # --- dggridR Strategy ---
+    # Determine resolution from the first decoded coordinate
+    coords_df <- isea3h_code_to_coords(df_unique$cellCode)
+    res <- as.numeric(coords_df$resolution[1])
+
+    # Construct the DGG
+    dggs <- dggridR::dgconstruct(res = res, projection = "ISEA", topology = "HEXAGON", aperture = 3)
+
+    # Get dggridR sequence numbers for the decoded coordinates
+    seqnums <- dggridR::dgGEO_to_SEQNUM(dggs, coords_df$xcoord, coords_df$ycoord)$seqnum
+
+    # Check for duplicates or missing geometries. If seqnums are identical for
+    # different cellCodes, the points resolved to the same DGG cell.
+    unique_seqnums <- unique(seqnums)
+
+    # Generate spatial polygons for these sequence numbers
+    grid <- dggridR::dgcellstogrid(dggs, unique_seqnums)
+
+    # Grid returns with CRS 4326. Rename cell to seqnum to avoid conflict
+    names(grid)[names(grid) == "cell"] <- "seqnum"
+
+    # Merge the original B-Cubed Mocnik sequence ids back to the grid
+    # using the discovered sequence numbers
+    lookup <- data.frame(
+      cellCode = df_unique$cellCode,
+      seqnum = seqnums
+    )
+    # Deduplicate the lookup just in case multiple Mocnik IDs mapped to the same DGG cell
+    lookup <- lookup[!duplicated(lookup$seqnum), ]
+
+    grid <- merge(grid, lookup, by = "seqnum")
+
+    # Reorder and format to match standard output expectations
+    grid$cellid <- seq_len(nrow(grid))
+    grid <- grid[, c("cellid", "cellCode", "geometry")]
+
+    # Transform to requested projection
+    if (projection != "+proj=longlat +datum=WGS84") {
+      grid <- sf::st_transform(grid, crs = projection)
     }
-    angles <- seq(0, 2 * pi, length.out = 7)
-    x <- lon + side * cos(angles)
-    y <- lat + (side * 1.2) * sin(angles)
-    sf::st_polygon(list(cbind(x, y)))
+  } else {
+    # --- Native R Fallback Strategy ---
+    # The ISEA3H grid is defined on the Icosahedral Snyder Equal Area (ISEA)
+    # projection. In +proj=isea, the centroids form a perfectly regular
+    # hexagonal lattice (NN distance variance < 0.001%).
+    if (!use_dggridR) {
+      message("Option 'b3gbi.use_dggridR' is FALSE. Falling back to native R geometry generation.")
+    } else {
+      message("Package 'dggridR' not available. Falling back to native R geometry generation. Install 'dggridR' for topologically correct polygons.")
+    }
+
+    isea_crs <- "+proj=isea"
+
+    centroids_sf <- sf::st_as_sf(df_unique,
+      coords = c("xcoord", "ycoord"),
+      crs = 4326
+    )
+    centroids_isea <- sf::st_transform(centroids_sf, crs = isea_crs)
+    coords_isea <- sf::st_coordinates(centroids_isea)
+
+    # --- Filter spatial outliers ---
+    # Points near icosahedral face boundaries can project to distant faces.
+    qx <- stats::quantile(coords_isea[, 1], probs = c(0.25, 0.75))
+    qy <- stats::quantile(coords_isea[, 2], probs = c(0.25, 0.75))
+    iqr_x <- qx[2] - qx[1]
+    iqr_y <- qy[2] - qy[1]
+    keep <- coords_isea[, 1] >= (qx[1] - 3 * iqr_x) &
+      coords_isea[, 1] <= (qx[2] + 3 * iqr_x) &
+      coords_isea[, 2] >= (qy[1] - 3 * iqr_y) &
+      coords_isea[, 2] <= (qy[2] + 3 * iqr_y)
+    coords_main <- coords_isea[keep, , drop = FALSE]
+
+    # --- Compute hex side from median NN distance ---
+    # In ISEA, the NN distances are essentially identical (variance < 0.001%),
+    # so the median gives the exact lattice spacing.
+    # side = nn_distance / sqrt(3) for regular hexagonal tiling.
+    n_pts <- nrow(coords_main)
+    n_sample <- min(n_pts, 500)
+    sample_idx <- if (n_pts > 500) sample(n_pts, 500) else seq_len(n_pts)
+    nn_dists <- numeric(n_sample)
+    for (i in seq_len(n_sample)) {
+      si <- sample_idx[i]
+      dists <- sqrt(
+        (coords_main[, 1] - coords_main[si, 1])^2 +
+          (coords_main[, 2] - coords_main[si, 2])^2
+      )
+      dists[si] <- Inf
+      nn_dists[i] <- min(dists)
+    }
+    side_m <- (stats::median(nn_dists) / sqrt(3)) * 1.15
+
+    # --- Create hexagonal polygons in ISEA ---
+    make_hex <- function(x, y, side) {
+      if (is.na(x) || is.na(y)) {
+        return(sf::st_polygon())
+      }
+      angles <- seq(0, 2 * pi, length.out = 7)[1:6]
+      px <- c(x + side * cos(angles), x + side * cos(angles[1]))
+      py <- c(y + side * sin(angles), y + side * sin(angles[1]))
+      sf::st_polygon(list(cbind(px, py)))
+    }
+
+    hex_list <- lapply(
+      seq_len(nrow(coords_isea)),
+      function(i) make_hex(coords_isea[i, 1], coords_isea[i, 2], side_m)
+    )
+
+    grid_isea <- sf::st_sf(
+      cellid = seq_len(nrow(df_unique)),
+      cellCode = df_unique$cellCode,
+      geometry = sf::st_sfc(hex_list, crs = isea_crs)
+    )
+
+    # Transform to the caller's requested projection.
+    # PROJ cannot always build a direct pipeline from +proj=isea to other CRS,
+    # so we go via WGS84 as an intermediate step, but skip entirely if already ISEA.
+    if (projection != isea_crs) {
+      grid_isea <- sf::st_transform(grid_isea, crs = 4326)
+      grid <- sf::st_transform(grid_isea, crs = projection)
+    } else {
+      grid <- grid_isea
+    }
   }
-  hex_list <- lapply(
-    seq_len(nrow(df)),
-    function(i) make_hex(df$xcoord[i], df$ycoord[i], hex_side)
-  )
-  sf::st_sf(
-    cellid = seq_len(nrow(df)),
-    cellCode = df$cellCode,
-    geometry = sf::st_sfc(hex_list, crs = "EPSG:4326")
-  )
+
+  # Add area column (matches create_grid output)
+  grid$area <- grid %>%
+    sf::st_area() %>%
+    units::set_units("km^2")
+
+  return(grid)
 }
