@@ -105,37 +105,48 @@
 #'
 #' @examples
 #' diversity_map <- compute_indicator_workflow(example_cube_1,
-#'                                             type = "obs_richness",
-#'                                             dim_type = "map",
-#'                                             level = "country",
-#'                                             region = "Denmark")
+#'   type = "obs_richness",
+#'   dim_type = "map",
+#'   level = "country",
+#'   region = "Denmark"
+#' )
 #' diversity_map
 #'
 #' @export
 compute_indicator_workflow <- function(data,
                                        type,
-                                       dim_type = c("map",
-                                                    "ts"),
-                                       ci_type = c("norm",
-                                                   "basic",
-                                                   "perc",
-                                                   "bca",
-                                                   "none"),
+                                       dim_type = c(
+                                         "map",
+                                         "ts"
+                                       ),
+                                       ci_type = c(
+                                         "norm",
+                                         "basic",
+                                         "perc",
+                                         "bca",
+                                         "none"
+                                       ),
                                        cell_size = "grid",
-                                       level = c("cube",
-                                                 "continent",
-                                                 "country",
-                                                 "world",
-                                                 "sovereignty",
-                                                 "geounit"),
+                                       level = c(
+                                         "cube",
+                                         "continent",
+                                         "country",
+                                         "world",
+                                         "sovereignty",
+                                         "geounit"
+                                       ),
                                        region = "Europe",
-                                       ne_type = c("countries",
-                                                   "map_units",
-                                                   "sovereignty",
-                                                   "tiny_countries"),
-                                       ne_scale = c("medium",
-                                                    "small",
-                                                    "large"),
+                                       ne_type = c(
+                                         "countries",
+                                         "map_units",
+                                         "sovereignty",
+                                         "tiny_countries"
+                                       ),
+                                       ne_scale = c(
+                                         "medium",
+                                         "small",
+                                         "large"
+                                       ),
                                        output_crs = NULL,
                                        first_year = NULL,
                                        last_year = NULL,
@@ -150,10 +161,10 @@ compute_indicator_workflow <- function(data,
                                        buffer_dist_km = 50,
                                        force_grid = FALSE,
                                        ...) {
-
   wrong_class(data,
-              class = c("processed_cube", "processed_cube_dsinfo", "sim_cube"),
-              reason = "unrecognized")
+    class = c("processed_cube", "processed_cube_dsinfo", "sim_cube"),
+    reason = "unrecognized"
+  )
 
   xcoord <- ycoord <- NULL
 
@@ -173,21 +184,25 @@ compute_indicator_workflow <- function(data,
   }
 
   # List of indicators that require grid cells for temporal calculations
-  ind_req_grid_list <- c("area_rarity",
-                         "hill0",
-                         "hill1",
-                         "hill2")
+  ind_req_grid_list <- c(
+    "area_rarity",
+    "hill0",
+    "hill1",
+    "hill2"
+  )
 
   # List of indicators for which bootstrapped confidence intervals should not
   # be calculated
-  noci_list <- c("obs_richness",
-                 "cum_richness",
-                 "occ_turnover",
-                 "tax_distinct",
-                 "hill0",
-                 "hill1",
-                 "hill2",
-                 "completeness")
+  noci_list <- c(
+    "obs_richness",
+    "cum_richness",
+    "occ_turnover",
+    "tax_distinct",
+    "hill0",
+    "hill1",
+    "hill2",
+    "completeness"
+  )
 
   type <- match.arg(type, names(available_indicators))
   dim_type <- match.arg(dim_type)
@@ -228,7 +243,7 @@ compute_indicator_workflow <- function(data,
   }
 
   if (type %in% c("hill0", "hill1", "hill2") &&
-      ci_type %in% c("norm", "basic", "bca")) {
+    ci_type %in% c("norm", "basic", "bca")) {
     message(
       paste0(
         "Note: Hill diversity measures are calculated by the iNEXT package, ",
@@ -248,8 +263,9 @@ compute_indicator_workflow <- function(data,
   # Set first year
   if (!is.null(first_year)) {
     first_year <- ifelse(first_year > data$first_year,
-                         first_year,
-                         data$first_year)
+      first_year,
+      data$first_year
+    )
   } else {
     first_year <- data$first_year
   }
@@ -261,7 +277,7 @@ compute_indicator_workflow <- function(data,
   }
   # Filter years
   df <- data$data[(data$data$year >= first_year) &
-                    (data$data$year <= last_year), ]
+    (data$data$year <= last_year), ]
 
   # Collect information to add to final object
   num_species <- data$num_species
@@ -270,19 +286,19 @@ compute_indicator_workflow <- function(data,
   years_with_obs <- unique(df$year)
   kingdoms <- data$kingdoms
   num_families <- data$num_families
-  
+
   # Ensure coord_range is valid for ISEA3H or other grids
   if (is.null(data$coord_range) || any(is.na(unlist(data$coord_range)))) {
     if (nrow(df) > 0) {
-       data$coord_range <- list(
-         xmin = min(df$xcoord, na.rm = TRUE),
-         xmax = max(df$xcoord, na.rm = TRUE),
-         ymin = min(df$ycoord, na.rm = TRUE),
-         ymax = max(df$ycoord, na.rm = TRUE)
-       )
+      data$coord_range <- list(
+        xmin = min(df$xcoord, na.rm = TRUE),
+        xmax = max(df$xcoord, na.rm = TRUE),
+        ymin = min(df$ycoord, na.rm = TRUE),
+        ymax = max(df$ycoord, na.rm = TRUE)
+      )
     }
   }
-  
+
   coord_range <- data$coord_range
   map_lims <- if (is.list(coord_range)) {
     unlist(coord_range)
@@ -308,10 +324,12 @@ compute_indicator_workflow <- function(data,
           shapefile_crs <- "EPSG:4326"
           warning(paste(
             "You have provided the location to a .wkt shapefile without",
-            "specifying the CRS. Assuming CRS to be EPSG:4326."))
+            "specifying the CRS. Assuming CRS to be EPSG:4326."
+          ))
         }
         shapefile <- sf::st_as_sfc(readLines(shapefile_path),
-                                   crs = shapefile_crs)
+          crs = shapefile_crs
+        )
       } else {
         shapefile <- sf::read_sf(shapefile_path)
       }
@@ -321,10 +339,9 @@ compute_indicator_workflow <- function(data,
   }
 
   if (!is.null(shapefile) ||
-      dim_type == "map" ||
-      level != "cube" ||
-      force_grid == TRUE) {
-
+    dim_type == "map" ||
+    level != "cube" ||
+    force_grid == TRUE) {
     # Determine cube CRS
     if (data$grid_type == "eea") {
       cube_crs <- "EPSG:3035"
@@ -342,11 +359,15 @@ compute_indicator_workflow <- function(data,
     if (data$grid_type == "mgrs") {
       cube_bbox_latlong <- mgrs_to_latlong_bbox(df)
     } else {
-      cube_bbox <- sf::st_bbox(c(xmin = coord_range[[1]],
-                                 xmax = coord_range[[2]],
-                                 ymin = coord_range[[3]],
-                                 ymax = coord_range[[4]]),
-                               crs = cube_crs)
+      cube_bbox <- sf::st_bbox(
+        c(
+          xmin = coord_range[[1]],
+          xmax = coord_range[[2]],
+          ymin = coord_range[[3]],
+          ymax = coord_range[[4]]
+        ),
+        crs = cube_crs
+      )
       cube_bbox_latlong <- sf::st_as_sfc(cube_bbox) %>%
         sf::st_transform(crs = "EPSG:4326") %>%
         sf::st_bbox()
@@ -360,7 +381,7 @@ compute_indicator_workflow <- function(data,
     } else if (data$grid_type == "mgrs") {
       projected_crs <- guess_utm_epsg(cube_bbox_latlong)
     } else if (data$grid_type == "isea3h") {
-      projected_crs <- "EPSG:4326"
+      projected_crs <- "ESRI:54012"
     } else {
       stop("Grid reference system not found.")
     }
@@ -417,14 +438,16 @@ compute_indicator_workflow <- function(data,
         )
       # Create an sf object from EEA data
       df_sf_input <- sf::st_as_sf(df_offset,
-                                  coords = c("xcoord_offset", "ycoord_offset"),
-                                  crs = "EPSG:3035")
+        coords = c("xcoord_offset", "ycoord_offset"),
+        crs = "EPSG:3035"
+      )
     } else {
       # Create an sf object from quarter-degree or EEA data
       # For ISEA3H, the coordinates are centroids in EPSG:4326
       df_sf_input <- sf::st_as_sf(df,
-                                  coords = c("xcoord", "ycoord"),
-                                  crs = cube_crs)
+        coords = c("xcoord", "ycoord"),
+        crs = cube_crs
+      )
     }
 
     df_sf_projected <- sf::st_transform(df_sf_input, crs = projected_crs)
@@ -439,8 +462,9 @@ compute_indicator_workflow <- function(data,
       shapefile_bbox_latlong_sfc <- sf::st_as_sfc(shapefile_bbox_latlong)
       cube_bbox_latlong_sfc <- sf::st_as_sfc(cube_bbox_latlong)
       if (sf::st_intersects(shapefile_bbox_latlong_sfc,
-                            cube_bbox_latlong_sfc,
-                            sparse = FALSE)[1, 1] == FALSE) {
+        cube_bbox_latlong_sfc,
+        sparse = FALSE
+      )[1, 1] == FALSE) {
         stop("Shapefile bounding box does not intersect the cube's area.")
       }
 
@@ -451,11 +475,15 @@ compute_indicator_workflow <- function(data,
         shapefile_projected <- sf::st_transform(shapefile, crs = projected_crs)
       }
       if (invert) {
-        shapefile_merge <- sf::st_difference(cube_polygon_projected,
-                                             sf::st_union(shapefile_projected))
+        shapefile_merge <- sf::st_difference(
+          cube_polygon_projected,
+          sf::st_union(shapefile_projected)
+        )
       } else {
-        shapefile_merge <- sf::st_union(cube_polygon_projected,
-                                        shapefile_projected)
+        shapefile_merge <- sf::st_union(
+          cube_polygon_projected,
+          shapefile_projected
+        )
       }
 
       # Handle empty geometries after spatial operations
@@ -475,18 +503,25 @@ compute_indicator_workflow <- function(data,
       # Initialize filtered_sf as NULL to capture the result of the
       # intersection
       filtered_sf <- NULL
-      tryCatch({
-        # Attempt without altering the spherical geometry setting
-        filtered_sf <- sf::st_filter(df_sf_projected,
-                                     sf::st_union(shapefile_merge))
-      }, error = function(e) {
-        if (grepl("Error in wk_handle.wk_wkb", e)) {
-          message(paste("Encountered a geometry error during intersection. ",
-                        "This may be due to invalid polygons in the grid."))
-        } else {
-          stop(e)
+      tryCatch(
+        {
+          # Attempt without altering the spherical geometry setting
+          filtered_sf <- sf::st_filter(
+            df_sf_projected,
+            sf::st_union(shapefile_merge)
+          )
+        },
+        error = function(e) {
+          if (grepl("Error in wk_handle.wk_wkb", e)) {
+            message(paste(
+              "Encountered a geometry error during intersection. ",
+              "This may be due to invalid polygons in the grid."
+            ))
+          } else {
+            stop(e)
+          }
         }
-      })
+      )
       if (is.null(filtered_sf)) {
         # If intersection failed, turn off spherical geometry
         message(
@@ -494,8 +529,10 @@ compute_indicator_workflow <- function(data,
         )
         sf::sf_use_s2(FALSE)
         # Retry the intersection operation
-        filtered_sf <- sf::st_filter(df_sf_projected,
-                                     sf::st_union(shapefile_merge))
+        filtered_sf <- sf::st_filter(
+          df_sf_projected,
+          sf::st_union(shapefile_merge)
+        )
         # Notify success after retry
         message("Intersection succeeded with spherical geometry turned off.")
       }
@@ -507,6 +544,53 @@ compute_indicator_workflow <- function(data,
       df <- df[df$cellCode %in% filtered_sf$cellCode, ]
       if (nrow(df) == 0) {
         stop("No data points remain after spatial filtering.")
+      }
+    } else if (level != "cube") {
+      # Early filtering for non-cube levels without shapefile
+      # This ensures 'df' used for grid creation is limited to the region
+      df_sf_temp <- sf::st_as_sf(df, coords = c("xcoord", "ycoord"), crs = cube_crs)
+      df_sf_temp <- sf::st_transform(df_sf_temp, crs = projected_crs)
+
+      # We need map_data to filter
+      map_data_list_temp <- get_ne_data(
+        projected_crs,
+        cube_bbox_latlong,
+        region,
+        level,
+        ne_type,
+        ne_scale,
+        include_land,
+        include_ocean,
+        buffer_dist_km
+      )
+
+      filtered_sf_temp <- sf::st_filter(df_sf_temp, map_data_list_temp$combined)
+
+      df <- df[df$cellCode %in% filtered_sf_temp$cellCode, ]
+      if (nrow(df) == 0) {
+        # Don't stop yet, maybe they are just outside the land but in ocean
+        # Actually get_ne_data should handle ocean if include_ocean=TRUE
+        stop("No data points remain in the specified region after spatial filtering.")
+      }
+
+      # Update coord_range to match the filtered data
+      data$coord_range <- list(
+        xmin = min(df$xcoord, na.rm = TRUE),
+        xmax = max(df$xcoord, na.rm = TRUE),
+        ymin = min(df$ycoord, na.rm = TRUE),
+        ymax = max(df$ycoord, na.rm = TRUE)
+      )
+      coord_range <- data$coord_range
+    } else {
+      # For level = 'cube', also ensure coord_range matches the filtered 'df'
+      if (nrow(df) > 0) {
+        data$coord_range <- list(
+          xmin = min(df$xcoord, na.rm = TRUE),
+          xmax = max(df$xcoord, na.rm = TRUE),
+          ymin = min(df$ycoord, na.rm = TRUE),
+          ymax = max(df$ycoord, na.rm = TRUE)
+        )
+        coord_range <- data$coord_range
       }
     }
 
@@ -532,15 +616,17 @@ compute_indicator_workflow <- function(data,
     }
 
     # Retrieve and validate Natural Earth data
-    map_data_list <- get_ne_data(projected_crs,
-                                 bbox_latlong,
-                                 region,
-                                 level,
-                                 ne_type,
-                                 ne_scale,
-                                 include_land,
-                                 include_ocean,
-                                 buffer_dist_km)
+    map_data_list <- get_ne_data(
+      projected_crs,
+      bbox_latlong,
+      region,
+      level,
+      ne_type,
+      ne_scale,
+      include_land,
+      include_ocean,
+      buffer_dist_km
+    )
     map_data <- map_data_list$combined
     saved_layer <- map_data_list$saved
 
@@ -562,18 +648,21 @@ compute_indicator_workflow <- function(data,
 
     if (dim_type == "map" || force_grid == TRUE) {
       # Set output cell size (or if user provided one, check if it makes sense)
-      cell_size <- check_cell_size(cell_size,
-                                   data$resolution,
-                                   level,
-                                   final_area_sqkm)
+      # Compatibility fix: check both plural and singular resolution slots
+      res_val <- data$resolutions[1] %||% data$resolution
+      resolution_arg <- if (data$grid_type == "isea3h") "isea3h" else res_val
+
+      cell_size <- check_cell_size(
+        cell_size,
+        resolution_arg,
+        level,
+        final_area_sqkm
+      )
     }
-
-
   } else {
     # This block handles level == "cube", no shapefile, dim_type != "map"
 
     if (!"sim_cube" %in% class(data)) {
-
       # Determine cube CRS
       cube_crs <- if (data$grid_type == "eea") {
         "EPSG:3035"
@@ -584,41 +673,44 @@ compute_indicator_workflow <- function(data,
       }
 
       # Calculate the area of the cube's extent
-      cube_bbox <- sf::st_bbox(c(xmin = coord_range[[1]],
-                                 xmax = coord_range[[2]],
-                                 ymin = coord_range[[3]],
-                                 ymax = coord_range[[4]]),
-                               crs = cube_crs)
+      cube_bbox <- sf::st_bbox(
+        c(
+          xmin = coord_range[[1]],
+          xmax = coord_range[[2]],
+          ymin = coord_range[[3]],
+          ymax = coord_range[[4]]
+        ),
+        crs = cube_crs
+      )
 
       final_area_sqkm <-
         sf::st_as_sfc(cube_bbox) %>%
         sf::st_transform(crs = "EPSG:4326") %>%
         sf::st_area() %>%
         units::set_units("km^2")
-
     } else {
       final_area_sqkm <- NA
     }
-
   }
 
   if (dim_type == "map" || force_grid == TRUE) {
-
     # Create grid
     if (data$grid_type == "isea3h") {
-       # Use pre-existing centroids to build hexagonal polygons
-       grid <- create_isea3h_grid(df)
-       # Transform grid to projected crs for intersection consistency
-       grid <- sf::st_transform(grid, projected_crs)
-       # Add area if missing
-       if (!"area" %in% colnames(grid)) {
-         grid$area <- grid %>% sf::st_area() %>% units::set_units("km^2")
-       }
+      # Use pre-existing centroids to build hexagonal polygons
+      grid <- create_isea3h_grid(df, projected_crs)
+      # Add area if missing
+      if (!"area" %in% colnames(grid)) {
+        grid$area <- grid %>%
+          sf::st_area() %>%
+          units::set_units("km^2")
+      }
     } else {
-      grid <- create_grid(bbox_for_grid,
-                          cell_size,
-                          projected_crs,
-                          make_valid)
+      grid <- create_grid(
+        bbox_for_grid,
+        cell_size,
+        projected_crs,
+        make_valid
+      )
     }
 
     sf::st_agr(grid) <- "constant"
@@ -655,25 +747,38 @@ compute_indicator_workflow <- function(data,
 
     # Filter data to only those within the intersection target
     data_filtered <- sf::st_filter(data_projected, intersection_target)
+
     # Assign data to grid
-    data_final <- data_filtered %>%
-      sf::st_join(clipped_grid, join = sf::st_nearest_feature)
-    data_final_nogeom <- sf::st_drop_geometry(data_final)
-    map_lims <- sf::st_transform(data_final, crs = output_crs) %>%
-      sf::st_bbox()
-
+    if (data$grid_type == "isea3h") {
+      # ISEA3H: the cube already assigns data to cells via cellCode.
+      # Join by cellCode instead of spatial join to preserve this assignment.
+      cell_lookup <- sf::st_drop_geometry(clipped_grid[, c("cellCode", "cellid")])
+      data_final <- dplyr::left_join(
+        sf::st_drop_geometry(data_filtered), cell_lookup,
+        by = "cellCode"
+      )
+      data_final <- data_final[!is.na(data_final$cellid), ]
+    } else {
+      data_final <- data_filtered %>%
+        sf::st_join(clipped_grid, join = sf::st_nearest_feature)
+    }
+    data_final_nogeom <- if (inherits(data_final, "sf")) {
+      sf::st_drop_geometry(data_final)
+    } else {
+      data_final
+    }
+    map_lims <- sf::st_transform(
+      clipped_grid,
+      crs = output_crs
+    ) %>% sf::st_bbox()
   } else if (level != "cube") {
-
     data_final <- sf::st_filter(data_projected, map_data)
     data_final_nogeom <- sf::st_drop_geometry(data_final)
     map_lims <- sf::st_transform(data_final, crs = output_crs) %>%
       sf::st_bbox()
-
   } else {
-
     data_final <- df
     data_final_nogeom <- df
-
   }
 
   # Assign classes to send data to correct calculator function
@@ -689,7 +794,6 @@ compute_indicator_workflow <- function(data,
   # print(sum(data_final_nogeom$obs))
 
   if (dim_type == "map") {
-
     # Calculate indicator
     indicator <- calc_map(data_final_nogeom, ...)
 
@@ -704,9 +808,7 @@ compute_indicator_workflow <- function(data,
 
     # Transform to output CRS
     diversity_grid <- sf::st_transform(diversity_grid, crs = output_crs)
-
   } else {
-
     # Calculate indicator
     indicator <- calc_ts(data_final_nogeom, ...)
 
@@ -714,10 +816,11 @@ compute_indicator_workflow <- function(data,
     if (ci_type != "none") {
       if (!type %in% noci_list) {
         indicator <- calc_ci(data_final_nogeom,
-                             indicator = indicator,
-                             num_bootstrap = num_bootstrap,
-                             ci_type = ci_type,
-                             ...)
+          indicator = indicator,
+          num_bootstrap = num_bootstrap,
+          ci_type = ci_type,
+          ...
+        )
       } else {
         if (!type %in% c("hill0", "hill1", "hill2")) {
           warning(
@@ -738,44 +841,44 @@ compute_indicator_workflow <- function(data,
 
   # Create indicator object
   if (dim_type == "map") {
-
     if (data$grid_type != "eqdgc") {
       cell_size <- cell_size / 1000
     }
 
     # Build indicator_map object
     diversity_obj <- new_indicator_map(diversity_grid,
-                                       div_type = type,
-                                       cell_size = cell_size,
-                                       cell_size_units = output_units,
-                                       map_level = level,
-                                       map_region = region,
-                                       map_type = ne_type,
-                                       kingdoms = kingdoms,
-                                       num_families = num_families,
-                                       num_species = num_species,
-                                       first_year = first_year,
-                                       last_year = last_year,
-                                       num_years = num_years,
-                                       species_names = species_names,
-                                       years_with_obs = years_with_obs,
-                                       original_bbox = original_bbox)
+      div_type = type,
+      cell_size = cell_size,
+      cell_size_units = output_units,
+      map_level = level,
+      map_region = region,
+      map_type = ne_type,
+      kingdoms = kingdoms,
+      num_families = num_families,
+      num_species = num_species,
+      first_year = first_year,
+      last_year = last_year,
+      num_years = num_years,
+      species_names = species_names,
+      years_with_obs = years_with_obs,
+      original_bbox = original_bbox,
+      grid_type = data$grid_type
+    )
   } else {
-
     # Build indicator_ts object
     diversity_obj <- new_indicator_ts(dplyr::as_tibble(indicator),
-                                      div_type = type,
-                                      map_level = level,
-                                      map_region = region,
-                                      map_type = ne_type,
-                                      kingdoms = kingdoms,
-                                      num_families = num_families,
-                                      num_species = num_species,
-                                      num_years = num_years,
-                                      species_names = species_names,
-                                      coord_range = map_lims)
+      div_type = type,
+      map_level = level,
+      map_region = region,
+      map_type = ne_type,
+      kingdoms = kingdoms,
+      num_families = num_families,
+      num_species = num_species,
+      num_years = num_years,
+      species_names = species_names,
+      coord_range = map_lims
+    )
   }
 
   return(diversity_obj)
-
 }

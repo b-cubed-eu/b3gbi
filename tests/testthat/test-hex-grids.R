@@ -104,39 +104,39 @@ test_that("isea3h_code_to_coords handles empty and NA input", {
 test_that("indicator wrappers handle isea3h cubes correctly (structure check)", {
   # Mock a processed cube with isea3h data
   mock_data <- tibble::tibble(
-    cellCode = c("-458282525011250000", "452583359004665569"),
-    year = c(2020, 2020),
-    obs = c(10, 5),
-    taxonKey = c(123, 456),
-    scientificName = c("Species A", "Species B"),
-    xcoord = c(11.25, 4.67),
-    ycoord = c(58.28, 52.58),
-    resolution = c("isea3h", "isea3h")
+    cellCode = c("-458282525011250000", "452583359004665569", "-458282525011250000"),
+    year = c(2020, 2020, 2021),
+    obs = c(10, 5, 8),
+    taxonKey = c(123, 456, 123),
+    scientificName = c("Species A", "Species B", "Species A"),
+    xcoord = c(11.25, 4.67, 11.25),
+    ycoord = c(58.28, 52.58, 58.28),
+    resolution = c("4", "4", "4")
   )
 
   mock_cube <- list(
     data = mock_data,
     grid_type = "isea3h",
     first_year = 2020,
-    last_year = 2020,
+    last_year = 2021,
     num_species = 2,
     species_names = c("Species A", "Species B"),
-    coord_range = list(4.67, 11.25, 52.58, 58.28),
-    resolution = "isea3h"
+    coord_range = list(xmin=4.67, xmax=11.25, ymin=52.58, ymax=58.28),
+    resolution = "4"
   )
   class(mock_cube) <- c("processed_cube", "list")
 
-  # Run an indicator (Observed Richness)
-  result <- obs_richness_map(mock_cube)
+  # Run an indicator (Observed Richness Map)
+  result_map <- obs_richness_map(mock_cube)
+  expect_s3_class(result_map, "indicator_map")
+  expect_equal(result_map$grid_type, "isea3h")
 
-  # Checks
-  expect_s3_class(result, "indicator_map")
-  expect_s3_class(result$data, "sf")
-  expect_s3_class(result$data, "indicator_data")
-  expect_equal(nrow(result$data), 2)
-  expect_true("diversity_val" %in% names(result$data))
+  # Run an indicator (Observed Richness Time Series)
+  result_ts <- obs_richness_ts(mock_cube)
+  expect_s3_class(result_ts, "indicator_ts")
+  expect_equal(nrow(result_ts$data), 2) # 2020 and 2021
 
   # Verify CRS is WGS84 as expected for ISEA3H
-  input_crs <- sf::st_crs(result$data)
+  input_crs <- sf::st_crs(result_map$data)
   expect_equal(input_crs$epsg, 4326)
 })

@@ -56,7 +56,7 @@ The first step is importing your GBIF occurrence cube (a .csv file) and converti
 | Argument | Description | Default/Details |
 |----------|-------------|-----------------|
 | `data` | Path to the .csv file containing the GBIF cube. Required. | |
-| `grid_type` | The grid system used (e.g., 'eea', 'mgrs', 'eqdgc', 'custom'). | Autodetected if possible. |
+| `grid_type` | The grid system used (e.g., 'eea', 'mgrs', 'eqdgc', 'isea3h', 'custom'). | Autodetected if possible. |
 | `first_year` | Filters the cube to start at this year. | First year in the data. |
 | `last_year` | Filters the cube to end at this year. | Last year in the data. |
 

@@ -7,26 +7,31 @@ intersect_grid_with_polygon <- function(grid,
   # operation with spherical geometry turned off. This often succeeds.
 
   # Try to intersect grid with intersection_target
-  result <- NULL  # Initialize to capture result of intersection
-  tryCatch({
-    # Attempt without altering the spherical geometry setting
-    result <- grid %>%
-      sf::st_intersection(intersection_target) %>%
-      dplyr::select(dplyr::all_of(c("cellid", "geometry")),
-                    dplyr::any_of("area"))
-  }, error = function(e) {
-    if (grepl("Error in wk_handle.wk_wkb", e) ||
-        grepl("TopologyException", e)) {
-      message(
-        paste0(
-          "Encountered a geometry error during intersection. This may be ",
-          "due to invalid polygons in the grid."
+  result <- NULL # Initialize to capture result of intersection
+  tryCatch(
+    {
+      # Attempt without altering the spherical geometry setting
+      result <- grid %>%
+        sf::st_intersection(intersection_target) %>%
+        dplyr::select(
+          dplyr::all_of(c("cellid", "geometry")),
+          dplyr::any_of(c("area", "cellCode"))
         )
-      )
-    } else {
-      stop(e)
+    },
+    error = function(e) {
+      if (grepl("Error in wk_handle.wk_wkb", e) ||
+        grepl("TopologyException", e)) {
+        message(
+          paste0(
+            "Encountered a geometry error during intersection. This may be ",
+            "due to invalid polygons in the grid."
+          )
+        )
+      } else {
+        stop(e)
+      }
     }
-  })
+  )
   if (is.null(result)) {
     # If intersection failed, turn off spherical geometry
     message("Retrying the intersection with spherical geometry turned off.")
@@ -34,8 +39,10 @@ intersect_grid_with_polygon <- function(grid,
     # Retry the intersection operation
     result <- grid %>%
       sf::st_intersection(intersection_target) %>%
-      dplyr::select(dplyr::all_of(c("cellid", "geometry")),
-                    dplyr::any_of("area"))
+      dplyr::select(
+        dplyr::all_of(c("cellid", "geometry")),
+        dplyr::any_of(c("area", "cellCode"))
+      )
     # Notify success after retry
     message("Intersection succeeded with spherical geometry turned off.")
   }

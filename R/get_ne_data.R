@@ -73,10 +73,11 @@ get_ne_data <- function(projected_crs,
   expand_percent <- 0.5 # 50% buffer
   lng_range <- unname(latlong_bbox["xmax"] - latlong_bbox["xmin"])
   lat_range <- unname(latlong_bbox["ymax"] - latlong_bbox["ymin"])
-  min_lon <- unname(latlong_bbox["xmin"] - (expand_percent * lng_range))
-  max_lon <- unname(latlong_bbox["xmax"] + (expand_percent * lng_range))
-  min_lat <- unname(latlong_bbox["ymin"] - (expand_percent * lat_range))
-  max_lat <- unname(latlong_bbox["ymax"] + (expand_percent * lat_range))
+  # cap lat/long to valid ranges
+  min_lon <- max(unname(latlong_bbox["xmin"] - (expand_percent * lng_range)), -180)
+  max_lon <- min(unname(latlong_bbox["xmax"] + (expand_percent * lng_range)), 180)
+  min_lat <- max(unname(latlong_bbox["ymin"] - (expand_percent * lat_range)), -90)
+  max_lat <- min(unname(latlong_bbox["ymax"] + (expand_percent * lat_range)), 90)
 
   # Create a bbox object
   latlong_extent <- c("xmin" = min_lon,
@@ -86,7 +87,7 @@ get_ne_data <- function(projected_crs,
     sf::st_bbox(crs = sf::st_crs(4326))
 
   # Project the extent
-  extent_projected <- latlong_extent %>%
+  cube_extent_projected <- latlong_extent %>%
     sf::st_as_sfc() %>%
     sf::st_transform(crs = "ESRI:54012")
 
@@ -97,16 +98,16 @@ get_ne_data <- function(projected_crs,
 
     # Crop and validate and union the world map to avoid issues with overlaps
     # Added defensive check before cropping to prevent empty results for non-contiguous regions
-    # Ensure extent_projected is sfc for st_intersects
-    extent_sfc <- if (inherits(extent_projected, "bbox")) {
-      sf::st_as_sfc(extent_projected)
+    # Ensure cube_extent_projected is sfc for st_intersects
+    extent_sfc <- if (inherits(cube_extent_projected, "bbox")) {
+      sf::st_as_sfc(cube_extent_projected)
     } else {
-      extent_projected
+      cube_extent_projected
     }
 
     if (any(sf::st_intersects(map_data_projected, extent_sfc, sparse = FALSE))) {
       map_data_projected <- map_data_projected %>%
-        sf::st_crop(extent_projected) %>%
+        sf::st_crop(cube_extent_projected) %>%
         sf::st_make_valid() %>%
         sf::st_union() %>%
         sf::st_as_sf()
@@ -117,7 +118,7 @@ get_ne_data <- function(projected_crs,
     }
 
     # Get the bbox of the cropped map data
-    extent_projected <- sf::st_bbox(map_data_projected)
+    map_bbox_projected <- sf::st_bbox(map_data_projected)
 
   } else {
 
@@ -128,25 +129,16 @@ get_ne_data <- function(projected_crs,
       sf::st_as_sf()
 
     # Use the full extent of the projected map data
-    extent_projected <- sf::st_bbox(map_data_projected)
+    map_bbox_projected <- sf::st_bbox(map_data_projected)
 
   }
 
   # Create a polygon from the extent
   if (is_sf_empty(map_data_projected)) {
     # If land is empty (e.g. all in ocean), use the buffered latlong extent as the total extent
-    # ensure it's converted to sfc if it was a bbox
-    extent_projected_polygon <- if (inherits(extent_projected, "bbox")) {
-      sf::st_as_sfc(extent_projected)
-    } else {
-      extent_projected
-    }
+    extent_projected_polygon <- cube_extent_projected
   } else {
-    extent_projected_polygon <- if (inherits(extent_projected, "bbox")) {
-      sf::st_as_sfc(extent_projected)
-    } else {
-      extent_projected
-    }
+    extent_projected_polygon <- sf::st_as_sfc(map_bbox_projected)
   }
 
   # Create ocean layer by subtracting land from the extent
@@ -225,15 +217,15 @@ get_ne_data <- function(projected_crs,
 
   if (level != "cube") {
     # Added defensive check before final cropping
-    extent_sfc <- if (inherits(extent_projected, "bbox")) {
-      sf::st_as_sfc(extent_projected)
+    final_extent_sfc <- if (is_sf_empty(map_data_projected)) {
+      cube_extent_projected
     } else {
-      extent_projected
+      sf::st_as_sfc(map_bbox_projected)
     }
 
-    if (any(sf::st_intersects(map_data_combined, extent_sfc, sparse = FALSE))) {
+    if (any(sf::st_intersects(map_data_combined, final_extent_sfc, sparse = FALSE))) {
       map_data_combined <- map_data_combined %>%
-        sf::st_crop(extent_projected) %>%
+        sf::st_crop(final_extent_sfc) %>%
         sf::st_make_valid() %>%
         sf::st_union() %>%
         sf::st_as_sf()

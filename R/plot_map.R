@@ -129,7 +129,7 @@ plot_map <- function(x,
                      visible_grid_outline = FALSE,
                      visible_panel_gridlines = FALSE,
                      complete_grid_outline = FALSE,
-                     map_expansion_factor = 0.5,
+                     map_expansion_factor = 0.1,
                      layers = NULL,
                      layer_colours = NULL,
                      layer_fill_colours = NULL,
@@ -188,6 +188,11 @@ plot_map <- function(x,
 
   # Unpack the list
   list2env(map_data_list, envir= environment())
+
+  # Set default grid line width based on grid type
+  if (is.null(grid_line_width)) {
+    grid_line_width <- if (!is.null(x$grid_type) && x$grid_type == "isea3h") 0.5 else 0.1
+  }
 
   # Create plot using the helper function
   plot <- create_map_plot(

@@ -461,3 +461,13 @@ test_that("check_cell_size handles edge case with very small areas", {
 
   expect_equal(result, 100) # Should default to 0.1 km = 100 meters
 })
+
+test_that('check_cell_size handles isea3h resolution', {
+  result <- check_cell_size(
+    cell_size = 5,
+    resolution = 'isea3h',
+    level = 'country'
+  )
+  
+  expect_equal(result, 5) # For isea3h it should just return the value as is (degrees/unitless)
+})

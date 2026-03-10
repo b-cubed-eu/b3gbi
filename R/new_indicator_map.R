@@ -47,7 +47,8 @@ new_indicator_map <- function(x,
                           num_years,
                           species_names,
                           years_with_obs,
-                          original_bbox) {
+                          original_bbox,
+                          grid_type) {
   # check that x is both a data frame and sf object
   # and all necessary columns are present
   stopifnot(inherits(x, c("sf", "data.frame")),
@@ -63,6 +64,7 @@ new_indicator_map <- function(x,
     div_type = div_type,
     num_cells = length(x$cellid),
     cell_size = cell_size,
+    grid_type = grid_type,
     map_level = map_level,
     map_region = map_region,
     map_type = map_type,
