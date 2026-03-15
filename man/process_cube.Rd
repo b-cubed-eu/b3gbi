@@ -6,7 +6,7 @@
 \usage{
 process_cube(
   cube_name,
-  grid_type = c("automatic", "eea", "mgrs", "eqdgc", "custom", "none"),
+  grid_type = c("automatic", "eea", "mgrs", "eqdgc", "isea3h", "custom", "none"),
   first_year = NULL,
   last_year = NULL,
   force_gridcode = FALSE,
