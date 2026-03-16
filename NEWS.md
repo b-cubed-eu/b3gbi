@@ -1,3 +1,11 @@
+# b3gbi 0.8.15 - Minor update:
+
+* Added new indicator 'species richness density' which calculates the density of unique species per square kilometer.
+* Added wrapper functions `spec_richness_density_map()` and `spec_richness_density_ts()`.
+* Added new indicator 'completeness' which estimates the proportion of the total individuals in an ecological community that belong to the species detected in the sample.
+* Added wrapper functions `completeness_map()` and `completeness_ts()`.
+* Added unit tests for species richness density and completeness.
+
 # b3gbi 0.8.14 - Minor update:
 
 * Fixed a bug in `pielou_evenness_map` where use of a `cell_size` larger than the native cube resolution caused a crash due to non-unique row identifiers during pivoting (#102).
@@ -12,6 +20,8 @@
 * Added unit tests for NA handling in utility functions.
 
 # b3gbi 0.8.12 - Minor update:
+
+* The cellCode column from the cube is now retained in indicator map outputs. This allows users to trace back grid cells to their original codes in the cube.
 
 # b3gbi 0.8.11 - Minor update:
 

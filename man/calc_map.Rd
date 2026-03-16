@@ -8,6 +8,7 @@
 \alias{calc_map.obs_richness}
 \alias{calc_map.total_occ}
 \alias{calc_map.newness}
+\alias{calc_map.spec_richness_density}
 \alias{calc_map.occ_density}
 \alias{calc_map.williams_evenness}
 \alias{calc_map.pielou_evenness}
@@ -32,6 +33,8 @@
 \method{calc_map}{total_occ}(x, ...)
 
 \method{calc_map}{newness}(x, newness_min_year = NULL, ...)
+
+\method{calc_map}{spec_richness_density}(x, ...)
 
 \method{calc_map}{occ_density}(x, ...)
 

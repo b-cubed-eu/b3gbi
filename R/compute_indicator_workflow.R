@@ -11,6 +11,7 @@
 #'   * 'total_occ': Total number of occurrences.
 #'   * 'newness': Mean year of occurrence.
 #'   * 'occ_density': Density of occurrences.
+#'   * 'spec_richness_density': Species richness density (richness / area).
 #'   * 'williams_evenness', 'pielou_evenness': Evenness measures.
 #'   * 'ab_rarity', 'area_rarity':  Abundance-based and area-based rarity
 #'     scores.
@@ -24,6 +25,7 @@
 #'     rarefaction).
 #'   * 'hill2': Hill-Simpson diversity (estimated by coverage-based
 #'     rarefaction).
+#'   * 'completeness': Sample completeness (Sample Coverage).
 #' @param dim_type (Optional) Dimension to calculate indicator over time: 'ts',
 #'  or space: 'map'. (Default: 'map')
 #' @param ci_type (Optional) Type of bootstrap confidence intervals to
@@ -195,6 +197,7 @@ compute_indicator_workflow <- function(data,
   # be calculated
   noci_list <- c(
     "obs_richness",
+    "spec_richness_density",
     "cum_richness",
     "occ_turnover",
     "tax_distinct",
@@ -643,6 +646,7 @@ compute_indicator_workflow <- function(data,
     final_area_sqkm <-
       final_study_polygon %>%
       sf::st_union() %>% # Union handles multi-polygons (e.g., countries)
+      sf::st_transform(crs = "ESRI:54012") %>% # Mollweide equal-area projection
       sf::st_area() %>%
       units::set_units("km^2")
 
@@ -685,7 +689,7 @@ compute_indicator_workflow <- function(data,
 
       final_area_sqkm <-
         sf::st_as_sfc(cube_bbox) %>%
-        sf::st_transform(crs = "EPSG:4326") %>%
+        sf::st_transform(crs = "ESRI:54012") %>% # Mollweide equal-area projection
         sf::st_area() %>%
         units::set_units("km^2")
     } else {
@@ -822,7 +826,7 @@ compute_indicator_workflow <- function(data,
           ...
         )
       } else {
-        if (!type %in% c("hill0", "hill1", "hill2")) {
+        if (!type %in% c("hill0", "hill1", "hill2", "completeness")) {
           warning(
             paste0(
               "Bootstrapped confidence intervals cannot be calculated for the ",

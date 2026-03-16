@@ -164,8 +164,10 @@ cells, and ni is the number of grid cells occupied by species i.
 }}
 \examples{
 \dontrun{
-arr_map <- area_rarity_map(example_cube_1, level = "country",
-                           region = "Denmark")
+arr_map <- area_rarity_map(example_cube_1,
+  level = "country",
+  region = "Denmark"
+)
 plot(arr_map)
 }
 \dontrun{
@@ -173,8 +175,10 @@ arr_ts <- area_rarity_ts(example_cube_1, first_year = 1985)
 plot(arr_ts)
 }
 \dontrun{
-abr_map <- ab_rarity_map(example_cube_1, level = "country",
-                         region = "Denmark")
+abr_map <- ab_rarity_map(example_cube_1,
+  level = "country",
+  region = "Denmark"
+)
 plot(abr_map)
 }
 \dontrun{
