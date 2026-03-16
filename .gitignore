@@ -63,6 +63,7 @@ vs_script.R
 *.gif
 *.jpg
 *.jpeg
+*.txt
 /inst/doc
 /inst/extdata
 /inst/figures

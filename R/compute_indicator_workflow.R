@@ -11,6 +11,7 @@
 #'   * 'total_occ': Total number of occurrences.
 #'   * 'newness': Mean year of occurrence.
 #'   * 'occ_density': Density of occurrences.
+#'   * 'spec_richness_density': Species richness density (richness / area).
 #'   * 'williams_evenness', 'pielou_evenness': Evenness measures.
 #'   * 'ab_rarity', 'area_rarity':  Abundance-based and area-based rarity
 #'     scores.
@@ -196,6 +197,7 @@ compute_indicator_workflow <- function(data,
   # be calculated
   noci_list <- c(
     "obs_richness",
+    "spec_richness_density",
     "cum_richness",
     "occ_turnover",
     "tax_distinct",
@@ -577,6 +579,7 @@ compute_indicator_workflow <- function(data,
     final_area_sqkm <-
       final_study_polygon %>%
       sf::st_union() %>% # Union handles multi-polygons (e.g., countries)
+      sf::st_transform(crs = "ESRI:54012") %>% # Mollweide equal-area projection
       sf::st_area() %>%
       units::set_units("km^2")
 
@@ -615,7 +618,7 @@ compute_indicator_workflow <- function(data,
 
       final_area_sqkm <-
         sf::st_as_sfc(cube_bbox) %>%
-        sf::st_transform(crs = "EPSG:4326") %>%
+        sf::st_transform(crs = "ESRI:54012") %>% # Mollweide equal-area projection
         sf::st_area() %>%
         units::set_units("km^2")
     } else {

@@ -18,9 +18,17 @@
 get_bootstrap_ci <- function(bootstrap_list,
                              temporal_list_name = "year",
                              ...) {
-
   # Calculate nonparametric confidence intervals
-  conf_ints <- lapply(bootstrap_list, boot::boot.ci, ...)
+  conf_ints <- lapply(bootstrap_list, function(b) {
+    tryCatch(
+      {
+        boot::boot.ci(b, ...)
+      },
+      error = function(e) {
+        NULL
+      }
+    )
+  })
 
   # Remove null values
   conf_ints[sapply(conf_ints, is.null)] <- NULL
@@ -51,16 +59,20 @@ get_bootstrap_ci <- function(bootstrap_list,
       vec[length(vec)]
     })
 
-    out_list[[i]] <- data.frame(time_point = as.numeric(names(conf_ints)),
-                                int_type = type,
-                                ll = ll,
-                                ul = ul)
+    out_list[[i]] <- data.frame(
+      time_point = as.numeric(names(conf_ints)),
+      int_type = type,
+      ll = ll,
+      ul = ul
+    )
   }
 
   # Create combined dataframe
   conf_df_out <- do.call(rbind.data.frame, out_list) %>%
-    tidyr::complete("time_point" = as.numeric(names(bootstrap_list)),
-                    .data$int_type) %>%
+    tidyr::complete(
+      "time_point" = as.numeric(names(bootstrap_list)),
+      .data$int_type
+    ) %>%
     dplyr::arrange(.data$time_point, .data$int_type) %>%
     dplyr::mutate(conf_level = conf_level) %>%
     dplyr::rename({{ temporal_list_name }} := "time_point")

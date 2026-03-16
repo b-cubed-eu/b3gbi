@@ -39,6 +39,7 @@ compute_indicator_workflow(
 \item 'total_occ': Total number of occurrences.
 \item 'newness': Mean year of occurrence.
 \item 'occ_density': Density of occurrences.
+\item 'spec_richness_density': Species richness density (richness / area).
 \item 'williams_evenness', 'pielou_evenness': Evenness measures.
 \item 'ab_rarity', 'area_rarity':  Abundance-based and area-based rarity
 scores.
