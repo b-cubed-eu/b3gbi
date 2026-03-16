@@ -1,14 +1,21 @@
-# Calculate Occurrence Density Over Space or Time
+# Calculate Completeness (Sample Coverage) Over Space or Time
 
-This function calculates the density of records over a gridded map or as
-a time series (see 'Details' for more information).
+This function calculates the completeness of biodiversity data over a
+gridded map or as a time series using the Sample Coverage metric from
+the iNEXT package.
 
 ## Usage
 
 ``` r
-occ_density_map(data, ...)
+completeness_map(
+  data,
+  cutoff_length = 5,
+  data_type = c("incidence", "abundance"),
+  assume_freq = FALSE,
+  ...
+)
 
-occ_density_ts(data, ...)
+completeness_ts(data, cutoff_length = 5, ...)
 ```
 
 ## Arguments
@@ -16,6 +23,20 @@ occ_density_ts(data, ...)
 - data:
 
   A data cube object (class 'processed_cube').
+
+- cutoff_length:
+
+  (Optional) The minimum number of species or observations required for
+  a grid cell or time point to be included. Default is 5.
+
+- data_type:
+
+  The type of data: "incidence" or "abundance". Default is "incidence".
+
+- assume_freq:
+
+  (Optional) Whether to assume frequency data if using incidence.
+  Default is FALSE.
 
 - ...:
 
@@ -159,36 +180,47 @@ occ_density_ts(data, ...)
 ## Value
 
 An S3 object with the classes 'indicator_map' or 'indicator_ts' and
-'occ_density' containing the calculated indicator values and metadata.
+'completeness' containing the calculated indicator values and metadata.
 
 ## Details
 
-Density is calculated by summing the total number of occurrences per
-square kilometre for each cell or year. This provides similar
-information to total occurrences, but is adjusted for cell area.
+### Completeness (Sample Coverage)
+
+Completeness is measured as **Sample Coverage**, a concept developed by
+Turing and Good (1953) and further popularized in ecology by Chao and
+Jost (2012). Sample coverage estimates the proportion of the total
+individuals in an ecological community that belong to the species
+detected in a sample.
+
+A coverage value of 1.0 indicates that no new species are expected to be
+uncovered through further sampling, meaning the sample is perfectly
+complete. A value of 0.8, for example, suggests that 20% of the
+individuals in the community belong to species that have not yet been
+detected in the sample.
+
+Calculating sample coverage is a prerequisite for reliable comparisons
+of biodiversity across different areas or time periods, as it provides a
+standardized measure of sample completeness that is independent of
+sample size alone (Chao et al., 2014).
+
+In this package, completeness is calculated using the `iNEXT` package
+based on the observed data in each grid cell or time point.
 
 ## Functions
 
-- `occ_density_map()`:
+- `completeness_map()`:
 
-- `occ_density_ts()`:
-
-## See also
-
-compute_indicator_workflow
+- `completeness_ts()`:
 
 ## Examples
 
 ``` r
 if (FALSE) { # \dontrun{
-od_map <- occ_density_map(example_cube_1,
-  level = "country",
-  region = "Denmark"
-)
-plot(od_map)
+comp_map <- completeness_map(example_cube_1)
+plot(comp_map)
 } # }
 if (FALSE) { # \dontrun{
-od_ts <- occ_density_ts(example_cube_1, first_year = 1985)
-plot(od_ts)
+comp_ts <- completeness_ts(example_cube_1, first_year = 1985)
+plot(comp_ts)
 } # }
 ```

@@ -212,8 +212,10 @@ compute_indicator_workflow
 
 ``` r
 if (FALSE) { # \dontrun{
-or_map <- obs_richness_map(example_cube_1, level = "country",
-                           region = "Denmark")
+or_map <- obs_richness_map(example_cube_1,
+  level = "country",
+  region = "Denmark"
+)
 plot(or_map)
 } # }
 if (FALSE) { # \dontrun{

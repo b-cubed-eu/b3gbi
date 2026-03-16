@@ -1,11 +1,41 @@
 # Changelog
 
-## b3gbi 0.8.13
+## b3gbi 0.8.15 - Minor update:
+
+- Added new indicator ‘species richness density’ which calculates the
+  density of unique species per square kilometer.
+- Added wrapper functions
+  [`spec_richness_density_map()`](https://b-cubed-eu.github.io/b3gbi/reference/spec_richness_density_map.md)
+  and
+  [`spec_richness_density_ts()`](https://b-cubed-eu.github.io/b3gbi/reference/spec_richness_density_map.md).
+- Added new indicator ‘completeness’ which estimates the proportion of
+  the total individuals in an ecological community that belong to the
+  species detected in the sample.
+- Added wrapper functions
+  [`completeness_map()`](https://b-cubed-eu.github.io/b3gbi/reference/completeness_map.md)
+  and
+  [`completeness_ts()`](https://b-cubed-eu.github.io/b3gbi/reference/completeness_map.md).
+- Added unit tests for species richness density and completeness.
+
+## b3gbi 0.8.14 - Minor update:
+
+- Fixed a bug in `pielou_evenness_map` where use of a `cell_size` larger
+  than the native cube resolution caused a crash due to non-unique row
+  identifiers during pivoting
+  ([\#102](https://github.com/b-cubed-eu/b3gbi/issues/102)).
+- Updated `print.indicator_map` to filter out rows with NA
+  `diversity_val` to reduce console clutter.
+- Verified that `cellCode` is correctly preserved in the output of all
+  `calc_map` functions.
+- Added unit tests to verify the presence of `cellCode` and absence of
+  NA clutter in printed output.
+
+## b3gbi 0.8.13 - Minor update:
 
 - Fixed issues with spatial intersection for Australia and USA maps by
-  adding defensive checks in get_ne_data.
-- Improved wrong_class and stopifnot_error to handle NA logical values
-  more robustly.
+  adding defensive checks in `get_ne_data`.
+- Improved `wrong_class` and `stopifnot_error` to handle NA logical
+  values more robustly.
 - Added unit tests for NA handling in utility functions.
 
 ## b3gbi 0.8.12 - Minor update:

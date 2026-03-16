@@ -12,6 +12,9 @@ indicator types are provided using the appropriate wrappers.
 # Default S3 method
 calc_ts(x, ...)
 
+# S3 method for class 'completeness'
+calc_ts(x, ...)
+
 # S3 method for class 'hill0'
 calc_ts(x, ...)
 
@@ -28,6 +31,9 @@ calc_ts(x, ...)
 calc_ts(x, ...)
 
 # S3 method for class 'total_occ'
+calc_ts(x, ...)
+
+# S3 method for class 'spec_richness_density'
 calc_ts(x, ...)
 
 # S3 method for class 'occ_density'

@@ -7,7 +7,7 @@ for user-friendly display in the console.
 
 ``` r
 # S3 method for class 'indicator_map'
-print(x, n = 10, ...)
+print(x, n = 10, include_na = FALSE, ...)
 ```
 
 ## Arguments
@@ -19,6 +19,11 @@ print(x, n = 10, ...)
 - n:
 
   Integer specifying the number of rows of data to display.
+
+- include_na:
+
+  Logical. If TRUE, includes rows with NA diversity values in the
+  printed output. Default is FALSE.
 
 - ...:
 

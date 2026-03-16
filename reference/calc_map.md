@@ -10,6 +10,9 @@ appropriate wrappers.
 ## Usage
 
 ``` r
+# S3 method for class 'completeness'
+calc_map(x, ...)
+
 # S3 method for class 'hill0'
 calc_map(x, ...)
 
@@ -27,6 +30,9 @@ calc_map(x, ...)
 
 # S3 method for class 'newness'
 calc_map(x, newness_min_year = NULL, ...)
+
+# S3 method for class 'spec_richness_density'
+calc_map(x, ...)
 
 # S3 method for class 'occ_density'
 calc_map(x, ...)

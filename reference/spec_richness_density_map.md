@@ -1,14 +1,14 @@
-# Calculate Occurrence Density Over Space or Time
+# Calculate Species Richness Density Over Space or Time
 
-This function calculates the density of records over a gridded map or as
-a time series (see 'Details' for more information).
+This function calculates the density of unique species over a gridded
+map or as a time series (see 'Details' for more information).
 
 ## Usage
 
 ``` r
-occ_density_map(data, ...)
+spec_richness_density_map(data, ...)
 
-occ_density_ts(data, ...)
+spec_richness_density_ts(data, ...)
 ```
 
 ## Arguments
@@ -159,19 +159,23 @@ occ_density_ts(data, ...)
 ## Value
 
 An S3 object with the classes 'indicator_map' or 'indicator_ts' and
-'occ_density' containing the calculated indicator values and metadata.
+'spec_richness_density' containing the calculated indicator values and
+metadata.
 
 ## Details
 
-Density is calculated by summing the total number of occurrences per
+Density is calculated by dividing the total number of unique species per
 square kilometre for each cell or year. This provides similar
-information to total occurrences, but is adjusted for cell area.
+information to observed species richness, but is adjusted for cell area.
+Like observed richness, bootstrapped confidence intervals are not
+calculated for this indicator because they are statistically
+inappropriate at the indicator level.
 
 ## Functions
 
-- `occ_density_map()`:
+- `spec_richness_density_map()`:
 
-- `occ_density_ts()`:
+- `spec_richness_density_ts()`:
 
 ## See also
 
@@ -181,14 +185,14 @@ compute_indicator_workflow
 
 ``` r
 if (FALSE) { # \dontrun{
-od_map <- occ_density_map(example_cube_1,
+srd_map <- spec_richness_density_map(example_cube_1,
   level = "country",
   region = "Denmark"
 )
-plot(od_map)
+plot(srd_map)
 } # }
 if (FALSE) { # \dontrun{
-od_ts <- occ_density_ts(example_cube_1, first_year = 1985)
-plot(od_ts)
+srd_ts <- spec_richness_density_ts(example_cube_1, first_year = 1985)
+plot(srd_ts)
 } # }
 ```

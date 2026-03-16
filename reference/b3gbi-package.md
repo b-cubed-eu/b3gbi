@@ -1,8 +1,9 @@
 # b3gbi: General Biodiversity Indicators for Biodiversity Data Cubes
 
 Calculate general biodiversity indicators from GBIF data cubes. Includes
-many common indicators such as species richness and evenness, which can
-be calculated over time (trends) or space (maps).
+many common indicators such as species richness, evenness, and
+completeness, which can be calculated over time (trends) or space
+(maps). Now also supports retaining original cell IDs.
 
 ## See also
 

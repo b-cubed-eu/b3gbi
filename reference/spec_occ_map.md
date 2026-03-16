@@ -186,8 +186,10 @@ compute_indicator_workflow
 
 ``` r
 if (FALSE) { # \dontrun{
-so_map <- spec_occ_map(example_cube_1, level = "country",
-                       region = "Denmark", include_ocean = FALSE)
+so_map <- spec_occ_map(example_cube_1,
+  level = "country",
+  region = "Denmark", include_ocean = FALSE
+)
 plot(so_map, c(2440728, 4265185))
 } # }
 so_ts <- spec_occ_ts(example_cube_1, first_year = 1985)

@@ -54,6 +54,8 @@ compute_indicator_workflow(
 
   - 'occ_density': Density of occurrences.
 
+  - 'spec_richness_density': Species richness density (richness / area).
+
   - 'williams_evenness', 'pielou_evenness': Evenness measures.
 
   - 'ab_rarity', 'area_rarity': Abundance-based and area-based rarity
@@ -76,6 +78,8 @@ compute_indicator_workflow(
 
   - 'hill2': Hill-Simpson diversity (estimated by coverage-based
     rarefaction).
+
+  - 'completeness': Sample completeness (Sample Coverage).
 
 - dim_type:
 
@@ -224,10 +228,11 @@ An S3 object containing the calculated indicator values and metadata.
 
 ``` r
 diversity_map <- compute_indicator_workflow(example_cube_1,
-                                            type = "obs_richness",
-                                            dim_type = "map",
-                                            level = "country",
-                                            region = "Denmark")
+  type = "obs_richness",
+  dim_type = "map",
+  level = "country",
+  region = "Denmark"
+)
 diversity_map
 #> Gridded biodiversity indicator map
 #> 
@@ -256,18 +261,18 @@ diversity_map
 #> 
 #> First 10 rows of data (use n = to show more):
 #> 
-#> # A tibble: 299 × 4
-#>    cellid   area cellCode diversity_val
-#>     <int> [km^2] <chr>            <int>
-#>  1     70   448. NA                  NA
-#>  2     71   448. NA                  NA
-#>  3     72   448. NA                  NA
-#>  4     73   448. NA                  NA
-#>  5     77   448. NA                  NA
-#>  6     78   448. NA                  NA
-#>  7     79   448. NA                  NA
-#>  8     80   448. NA                  NA
-#>  9     81   448. NA                  NA
-#> 10     82   448. NA                  NA
-#> # ℹ 289 more rows
+#> # A tibble: 200 × 4
+#>    cellid   area cellCode  diversity_val
+#>     <int> [km^2] <chr>             <int>
+#>  1    122   446. E008N54BA            20
+#>  2    124   446. E009N54AA            18
+#>  3    125   446. E009N54AB            32
+#>  4    126   446. E009N54BA            40
+#>  5    127   446. E009N54BB            37
+#>  6    128   446. E010N54AA            16
+#>  7    129   446. E010N54AB            13
+#>  8    130   446. E010N54BA            28
+#>  9    131   446. E010N54BB            16
+#> 10    132   446. E011N54AA            24
+#> # ℹ 190 more rows
 ```

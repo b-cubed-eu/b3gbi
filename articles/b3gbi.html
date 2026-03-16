@@ -33,7 +33,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.13</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.16</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -68,7 +68,7 @@
                         <h4 data-toc-skip class="author">Shawn Dove</h4>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.8.13/vignettes/b3gbi.Rmd" class="external-link"><code>vignettes/b3gbi.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/vignettes/b3gbi.Rmd" class="external-link"><code>vignettes/b3gbi.Rmd</code></a></small>
       <div class="d-none name"><code>b3gbi.Rmd</code></div>
     </div>
 
@@ -83,8 +83,10 @@ reproducible workflows for calculating essential spatial and temporal
 biodiversity indicators. Developed as part of the EU-funded B3
 (Biodiversity Building Blocks for Policy) project, b3gbi takes
 pre-processed GBIF occurrence cubes as input and quickly transforms them
-into actionable metrics, complete with integrated uncertainty estimation
-using robust bootstrapping methods.</p>
+into actionable metrics, including richness, evenness, rarity, taxonomic
+distinctness, Shannon-Hill diversity, Simpson-Hill diversity, and
+completeness, complete with integrated uncertainty estimation using
+robust bootstrapping methods.</p>
 <p>This tutorial will guide you through the three core steps of the
 b3gbi workflow:</p>
 <ol style="list-style-type: decimal">
@@ -169,10 +171,13 @@ standards.</p>
 data to start from 1980.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Function 1: process_cube()</span></span>
-<span><span class="va">denmark_cube</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/process_cube.html">process_cube</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, </span>
-<span>                                         <span class="st">"denmark_mammals_cube_eqdgc.csv"</span>, </span>
-<span>                                         package <span class="op">=</span> <span class="st">"b3gbi"</span><span class="op">)</span>,</span>
-<span>                             first_year <span class="op">=</span> <span class="fl">1980</span><span class="op">)</span> <span class="co"># Filter the cube to start at 1980</span></span>
+<span><span class="va">denmark_cube</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/process_cube.html">process_cube</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>,</span>
+<span>    <span class="st">"denmark_mammals_cube_eqdgc.csv"</span>,</span>
+<span>    package <span class="op">=</span> <span class="st">"b3gbi"</span></span>
+<span>  <span class="op">)</span>,</span>
+<span>  first_year <span class="op">=</span> <span class="fl">1980</span></span>
+<span><span class="op">)</span> <span class="co"># Filter the cube to start at 1980</span></span>
 <span></span>
 <span><span class="co"># Printing the object shows key metadata</span></span>
 <span><span class="va">denmark_cube</span></span>
@@ -379,6 +384,20 @@ indicators and their associated wrapper functions (e.g.,
 <span><span class="co">#&gt;     Calculate map: no</span></span>
 <span><span class="co">#&gt;     Calculate time series: yes, e.g. occ_turnover_ts(my_data_cube)</span></span>
 <span><span class="co">#&gt;     Additional map function arguments: none</span></span>
+<span><span class="co">#&gt;     Additional time series function arguments: none</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; 17. <span style="color: #BB0000;">Species Richness Density</span></span></span>
+<span><span class="co">#&gt;     Class: spec_richness_density</span></span>
+<span><span class="co">#&gt;     Calculate map: yes, e.g. spec_richness_density_map(my_data_cube)</span></span>
+<span><span class="co">#&gt;     Calculate time series: yes, e.g. spec_richness_density_ts(my_data_cube)</span></span>
+<span><span class="co">#&gt;     Additional map function arguments: none</span></span>
+<span><span class="co">#&gt;     Additional time series function arguments: none</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; 18. <span style="color: #BB0000;">Completeness (Sample Coverage)</span></span></span>
+<span><span class="co">#&gt;     Class: completeness</span></span>
+<span><span class="co">#&gt;     Calculate map: yes, e.g. completeness_map(my_data_cube)</span></span>
+<span><span class="co">#&gt;     Calculate time series: yes, e.g. completeness_ts(my_data_cube)</span></span>
+<span><span class="co">#&gt;     Additional map function arguments: none</span></span>
 <span><span class="co">#&gt;     Additional time series function arguments: none</span></span></code></pre></div>
 </div>
 <div class="section level3">
@@ -448,9 +467,10 @@ from 1980 to the end of the cube’s data.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate a gridded map of observed species richness for Denmark</span></span>
 <span><span class="co"># Note that ci_type is ignored for map indicators</span></span>
-<span><span class="va">Denmark_observed_richness_map</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/obs_richness_map.html">obs_richness_map</a></span><span class="op">(</span><span class="va">denmark_cube</span>, </span>
-<span>                                                   level <span class="op">=</span> <span class="st">"country"</span>, </span>
-<span>                                                   region <span class="op">=</span> <span class="st">"Denmark"</span><span class="op">)</span> </span></code></pre></div>
+<span><span class="va">Denmark_observed_richness_map</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/obs_richness_map.html">obs_richness_map</a></span><span class="op">(</span><span class="va">denmark_cube</span>,</span>
+<span>  level <span class="op">=</span> <span class="st">"country"</span>,</span>
+<span>  region <span class="op">=</span> <span class="st">"Denmark"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p>The result is an <code>indicator_map</code> object (the data within
 it is also an <code>sf</code> object, containing geographical
 information).</p>
@@ -468,11 +488,12 @@ analysis. We will use the default <code>ci_type = "norm"</code> and
 <code>num_bootstrap = 100</code>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate a time series of total occurrences for Denmark</span></span>
-<span><span class="va">Denmark_total_occ_ts</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/total_occ_map.html">total_occ_ts</a></span><span class="op">(</span><span class="va">denmark_cube</span>, </span>
-<span>                                                 level <span class="op">=</span> <span class="st">"country"</span>, </span>
-<span>                                                 region <span class="op">=</span> <span class="st">"Denmark"</span>, </span>
-<span>                                                 ci_type <span class="op">=</span> <span class="st">"norm"</span>, <span class="co"># Include confidence intervals</span></span>
-<span>                                                 num_bootstrap <span class="op">=</span> <span class="fl">100</span><span class="op">)</span> <span class="co"># Using the default number of runs</span></span></code></pre></div>
+<span><span class="va">Denmark_total_occ_ts</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/total_occ_map.html">total_occ_ts</a></span><span class="op">(</span><span class="va">denmark_cube</span>,</span>
+<span>  level <span class="op">=</span> <span class="st">"country"</span>,</span>
+<span>  region <span class="op">=</span> <span class="st">"Denmark"</span>,</span>
+<span>  ci_type <span class="op">=</span> <span class="st">"norm"</span>, <span class="co"># Include confidence intervals</span></span>
+<span>  num_bootstrap <span class="op">=</span> <span class="fl">100</span></span>
+<span><span class="op">)</span> <span class="co"># Using the default number of runs</span></span></code></pre></div>
 <p>The result is an <code>indicator_ts</code> object.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">Denmark_total_occ_ts</span><span class="op">)</span></span>
@@ -526,9 +547,10 @@ indicator calculation, rather than the data.</td>
 </table>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plotting the map object</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">Denmark_observed_richness_map</span>, </span>
-<span>     legend_title <span class="op">=</span> <span class="st">"Mammal Species Count"</span>,</span>
-<span>     title <span class="op">=</span> <span class="st">"Observed Mammal Richness (1980-Present)"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">Denmark_observed_richness_map</span>,</span>
+<span>  legend_title <span class="op">=</span> <span class="st">"Mammal Species Count"</span>,</span>
+<span>  title <span class="op">=</span> <span class="st">"Observed Mammal Richness (1980-Present)"</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p><img src="b3gbi_files/figure-html/plot-map-1.png" class="r-plt" alt="" width="95%"></p>
 </div>
 <div class="section level3">
@@ -582,13 +604,14 @@ indicator calculation, rather than the data.</td>
 </table>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plotting the time series object</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">Denmark_total_occ_ts</span>, </span>
-<span>     title <span class="op">=</span> <span class="st">"Temporal Trend of Total Mammal Occurrences in Denmark"</span>,</span>
-<span>     linecolour <span class="op">=</span> <span class="st">"blue"</span>,</span>
-<span>     ribboncolour <span class="op">=</span> <span class="st">"skyblue"</span>,</span>
-<span>     trendlinecolour <span class="op">=</span> <span class="st">"darkorange"</span>,</span>
-<span>     envelopecolour <span class="op">=</span> <span class="st">"orange"</span>,</span>
-<span>     smoothed_trend <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">Denmark_total_occ_ts</span>,</span>
+<span>  title <span class="op">=</span> <span class="st">"Temporal Trend of Total Mammal Occurrences in Denmark"</span>,</span>
+<span>  linecolour <span class="op">=</span> <span class="st">"blue"</span>,</span>
+<span>  ribboncolour <span class="op">=</span> <span class="st">"skyblue"</span>,</span>
+<span>  trendlinecolour <span class="op">=</span> <span class="st">"darkorange"</span>,</span>
+<span>  envelopecolour <span class="op">=</span> <span class="st">"orange"</span>,</span>
+<span>  smoothed_trend <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
 <p><img src="b3gbi_files/figure-html/plot-ts-1.png" class="r-plt" alt="" width="95%"></p>
 </div>
 </div>

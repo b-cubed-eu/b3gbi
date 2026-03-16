@@ -7,7 +7,9 @@ is to provide standardized, automated, and reproducible workflows for
 calculating essential spatial and temporal biodiversity indicators.
 Developed as part of the EU-funded B3 (Biodiversity Building Blocks for
 Policy) project, b3gbi takes pre-processed GBIF occurrence cubes as
-input and quickly transforms them into actionable metrics, complete with
+input and quickly transforms them into actionable metrics, including
+richness, evenness, rarity, taxonomic distinctness, Shannon-Hill
+diversity, Simpson-Hill diversity, and completeness, complete with
 integrated uncertainty estimation using robust bootstrapping methods.
 
 This tutorial will guide you through the three core steps of the b3gbi
@@ -64,10 +66,13 @@ to start from 1980.
 
 ``` r
 # Function 1: process_cube()
-denmark_cube <- process_cube(system.file("extdata", 
-                                         "denmark_mammals_cube_eqdgc.csv", 
-                                         package = "b3gbi"),
-                             first_year = 1980) # Filter the cube to start at 1980
+denmark_cube <- process_cube(
+  system.file("extdata",
+    "denmark_mammals_cube_eqdgc.csv",
+    package = "b3gbi"
+  ),
+  first_year = 1980
+) # Filter the cube to start at 1980
 
 # Printing the object shows key metadata
 denmark_cube
@@ -276,6 +281,20 @@ available_indicators
 #>     Calculate time series: yes, e.g. occ_turnover_ts(my_data_cube)
 #>     Additional map function arguments: none
 #>     Additional time series function arguments: none
+#> 
+#> 17. Species Richness Density
+#>     Class: spec_richness_density
+#>     Calculate map: yes, e.g. spec_richness_density_map(my_data_cube)
+#>     Calculate time series: yes, e.g. spec_richness_density_ts(my_data_cube)
+#>     Additional map function arguments: none
+#>     Additional time series function arguments: none
+#> 
+#> 18. Completeness (Sample Coverage)
+#>     Class: completeness
+#>     Calculate map: yes, e.g. completeness_map(my_data_cube)
+#>     Calculate time series: yes, e.g. completeness_ts(my_data_cube)
+#>     Additional map function arguments: none
+#>     Additional time series function arguments: none
 ```
 
 ### Core Arguments for Wrapper Functions
@@ -310,9 +329,10 @@ from 1980 to the end of the cube’s data.
 ``` r
 # Calculate a gridded map of observed species richness for Denmark
 # Note that ci_type is ignored for map indicators
-Denmark_observed_richness_map <- obs_richness_map(denmark_cube, 
-                                                   level = "country", 
-                                                   region = "Denmark") 
+Denmark_observed_richness_map <- obs_richness_map(denmark_cube,
+  level = "country",
+  region = "Denmark"
+)
 ```
 
 The result is an `indicator_map` object (the data within it is also an
@@ -332,11 +352,12 @@ We will use the default `ci_type = "norm"` and `num_bootstrap = 100`.
 
 ``` r
 # Calculate a time series of total occurrences for Denmark
-Denmark_total_occ_ts <- total_occ_ts(denmark_cube, 
-                                                 level = "country", 
-                                                 region = "Denmark", 
-                                                 ci_type = "norm", # Include confidence intervals
-                                                 num_bootstrap = 100) # Using the default number of runs
+Denmark_total_occ_ts <- total_occ_ts(denmark_cube,
+  level = "country",
+  region = "Denmark",
+  ci_type = "norm", # Include confidence intervals
+  num_bootstrap = 100
+) # Using the default number of runs
 ```
 
 The result is an `indicator_ts` object.
@@ -366,9 +387,10 @@ and applies smart defaults for titles, colors, and layout.
 
 ``` r
 # Plotting the map object
-plot(Denmark_observed_richness_map, 
-     legend_title = "Mammal Species Count",
-     title = "Observed Mammal Richness (1980-Present)")
+plot(Denmark_observed_richness_map,
+  legend_title = "Mammal Species Count",
+  title = "Observed Mammal Richness (1980-Present)"
+)
 ```
 
 ![](b3gbi_files/figure-html/plot-map-1.png)
@@ -386,13 +408,14 @@ plot(Denmark_observed_richness_map,
 
 ``` r
 # Plotting the time series object
-plot(Denmark_total_occ_ts, 
-     title = "Temporal Trend of Total Mammal Occurrences in Denmark",
-     linecolour = "blue",
-     ribboncolour = "skyblue",
-     trendlinecolour = "darkorange",
-     envelopecolour = "orange",
-     smoothed_trend = TRUE)
+plot(Denmark_total_occ_ts,
+  title = "Temporal Trend of Total Mammal Occurrences in Denmark",
+  linecolour = "blue",
+  ribboncolour = "skyblue",
+  trendlinecolour = "darkorange",
+  envelopecolour = "orange",
+  smoothed_trend = TRUE
+)
 ```
 
 ![](b3gbi_files/figure-html/plot-ts-1.png)

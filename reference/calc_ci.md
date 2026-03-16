@@ -18,6 +18,9 @@ calc_ci(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
 # S3 method for class 'occ_density'
 calc_ci(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
 
+# S3 method for class 'spec_richness_density'
+calc_ci(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
+
 # S3 method for class 'newness'
 calc_ci(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
 
@@ -73,6 +76,9 @@ calc_ci(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
 
 - `calc_ci(occ_density)`: Calculate confidence intervals for occurrence
   density
+
+- `calc_ci(spec_richness_density)`: Calculate confidence intervals for
+  species richness density
 
 - `calc_ci(newness)`: Calculate confidence intervals for newness
 

@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.13</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.16</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,13 +36,28 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.8.13/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.8.13" id="b3gbi-0813">b3gbi 0.8.13<a class="anchor" aria-label="anchor" href="#b3gbi-0813"></a></h2>
-<ul><li>Fixed issues with spatial intersection for Australia and USA maps by adding defensive checks in get_ne_data.</li>
-<li>Improved wrong_class and stopifnot_error to handle NA logical values more robustly.</li>
+<h2 class="pkg-version" data-toc-text="0.8.15" id="b3gbi-0815---minor-update">b3gbi 0.8.15 - Minor update:<a class="anchor" aria-label="anchor" href="#b3gbi-0815---minor-update"></a></h2>
+<ul><li>Added new indicator ‘species richness density’ which calculates the density of unique species per square kilometer.</li>
+<li>Added wrapper functions <code><a href="../reference/spec_richness_density_map.html">spec_richness_density_map()</a></code> and <code><a href="../reference/spec_richness_density_map.html">spec_richness_density_ts()</a></code>.</li>
+<li>Added new indicator ‘completeness’ which estimates the proportion of the total individuals in an ecological community that belong to the species detected in the sample.</li>
+<li>Added wrapper functions <code><a href="../reference/completeness_map.html">completeness_map()</a></code> and <code><a href="../reference/completeness_map.html">completeness_ts()</a></code>.</li>
+<li>Added unit tests for species richness density and completeness.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.8.14" id="b3gbi-0814---minor-update">b3gbi 0.8.14 - Minor update:<a class="anchor" aria-label="anchor" href="#b3gbi-0814---minor-update"></a></h2>
+<ul><li>Fixed a bug in <code>pielou_evenness_map</code> where use of a <code>cell_size</code> larger than the native cube resolution caused a crash due to non-unique row identifiers during pivoting (<a href="https://github.com/b-cubed-eu/b3gbi/issues/102" class="external-link">#102</a>).</li>
+<li>Updated <code>print.indicator_map</code> to filter out rows with NA <code>diversity_val</code> to reduce console clutter.</li>
+<li>Verified that <code>cellCode</code> is correctly preserved in the output of all <code>calc_map</code> functions.</li>
+<li>Added unit tests to verify the presence of <code>cellCode</code> and absence of NA clutter in printed output.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.8.13" id="b3gbi-0813---minor-update">b3gbi 0.8.13 - Minor update:<a class="anchor" aria-label="anchor" href="#b3gbi-0813---minor-update"></a></h2>
+<ul><li>Fixed issues with spatial intersection for Australia and USA maps by adding defensive checks in <code>get_ne_data</code>.</li>
+<li>Improved <code>wrong_class</code> and <code>stopifnot_error</code> to handle NA logical values more robustly.</li>
 <li>Added unit tests for NA handling in utility functions.</li>
 </ul></div>
     <div class="section level2">

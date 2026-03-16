@@ -184,8 +184,10 @@ compute_indicator_workflow
 
 ``` r
 if (FALSE) { # \dontrun{
-to_map <- total_occ_map(example_cube_1, level = "country",
-                                        region = "Denmark")
+to_map <- total_occ_map(example_cube_1,
+  level = "country",
+  region = "Denmark"
+)
 plot(to_map)
 } # }
 if (FALSE) { # \dontrun{

@@ -23,6 +23,10 @@
 - [`check_crs_units()`](https://b-cubed-eu.github.io/b3gbi/reference/check_crs_units.md)
   : Check if a given CRS is in meters or degrees.
 
+- [`completeness_map()`](https://b-cubed-eu.github.io/b3gbi/reference/completeness_map.md)
+  [`completeness_ts()`](https://b-cubed-eu.github.io/b3gbi/reference/completeness_map.md)
+  : Calculate Completeness (Sample Coverage) Over Space or Time
+
 - [`compute_indicator_workflow()`](https://b-cubed-eu.github.io/b3gbi/reference/compute_indicator_workflow.md)
   : Calculate Biodiversity Indicators Over Space or Time
 
@@ -136,6 +140,10 @@
 - [`spec_range_map()`](https://b-cubed-eu.github.io/b3gbi/reference/spec_range_map.md)
   [`spec_range_ts()`](https://b-cubed-eu.github.io/b3gbi/reference/spec_range_map.md)
   : Plot Species Ranges Over Space or Time
+
+- [`spec_richness_density_map()`](https://b-cubed-eu.github.io/b3gbi/reference/spec_richness_density_map.md)
+  [`spec_richness_density_ts()`](https://b-cubed-eu.github.io/b3gbi/reference/spec_richness_density_map.md)
+  : Calculate Species Richness Density Over Space or Time
 
 - [`tax_distinct_map()`](https://b-cubed-eu.github.io/b3gbi/reference/tax_distinct_map.md)
   [`tax_distinct_ts()`](https://b-cubed-eu.github.io/b3gbi/reference/tax_distinct_map.md)

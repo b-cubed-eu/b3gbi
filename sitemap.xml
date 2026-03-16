@@ -16,6 +16,7 @@
 <url><loc>https://b-cubed-eu.github.io/b3gbi/reference/calc_map.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/b3gbi/reference/calc_ts.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/b3gbi/reference/check_crs_units.html</loc></url>
+<url><loc>https://b-cubed-eu.github.io/b3gbi/reference/completeness_map.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/b3gbi/reference/compute_indicator_workflow.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/b3gbi/reference/convert_eqdgc_latlong.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/b3gbi/reference/create_sf_from_utm.html</loc></url>
@@ -50,6 +51,7 @@
 <url><loc>https://b-cubed-eu.github.io/b3gbi/reference/process_cube.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/b3gbi/reference/spec_occ_map.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/b3gbi/reference/spec_range_map.html</loc></url>
+<url><loc>https://b-cubed-eu.github.io/b3gbi/reference/spec_richness_density_map.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/b3gbi/reference/tax_distinct_map.html</loc></url>
 <url><loc>https://b-cubed-eu.github.io/b3gbi/reference/total_occ_map.html</loc></url>
 </urlset>

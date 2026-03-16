@@ -211,14 +211,18 @@ compute_indicator_workflow
 
 ``` r
 if (FALSE) { # \dontrun{
-td_map <- tax_distinct_map(example_cube_1, level = "country",
-                                           region = "Denmark")
+td_map <- tax_distinct_map(example_cube_1,
+  level = "country",
+  region = "Denmark"
+)
 plot(td_map)
 } # }
 
 if (FALSE) { # \dontrun{
-td_ts <- tax_distinct_ts(example_cube_1, level = "country",
-                         region = "Denmark")
+td_ts <- tax_distinct_ts(example_cube_1,
+  level = "country",
+  region = "Denmark"
+)
 plot(td_ts)
 } # }
 ```
