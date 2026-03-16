@@ -121,7 +121,7 @@ test_that("indicator wrappers handle isea3h cubes correctly (structure check)", 
     last_year = 2021,
     num_species = 2,
     species_names = c("Species A", "Species B"),
-    coord_range = list(xmin=4.67, xmax=11.25, ymin=52.58, ymax=58.28),
+    coord_range = list(xmin = 4.67, xmax = 11.25, ymin = 52.58, ymax = 58.28),
     resolution = "4"
   )
   class(mock_cube) <- c("processed_cube", "list")
@@ -139,4 +139,70 @@ test_that("indicator wrappers handle isea3h cubes correctly (structure check)", 
   # Verify CRS is WGS84 as expected for ISEA3H
   input_crs <- sf::st_crs(result_map$data)
   expect_equal(input_crs$epsg, 4326)
+})
+
+test_that("plot_map uses wider grid_line_width for isea3h grids", {
+  # Build a minimal indicator_map with grid_type = "isea3h"
+  mock_data <- tibble::tibble(
+    cellCode = c("-458282525011250000", "452583359004665569", "-458282525011250000"),
+    year = c(2020, 2020, 2021),
+    obs = c(10, 5, 8),
+    taxonKey = c(123, 456, 123),
+    scientificName = c("Species A", "Species B", "Species A"),
+    xcoord = c(11.25, 4.67, 11.25),
+    ycoord = c(58.28, 52.58, 58.28),
+    resolution = c("4", "4", "4")
+  )
+
+  mock_cube <- list(
+    data = mock_data,
+    grid_type = "isea3h",
+    first_year = 2020,
+    last_year = 2021,
+    num_species = 2,
+    species_names = c("Species A", "Species B"),
+    coord_range = list(xmin = 4.67, xmax = 11.25, ymin = 52.58, ymax = 58.28),
+    resolution = "4"
+  )
+  class(mock_cube) <- c("processed_cube", "list")
+
+  result_map <- obs_richness_map(mock_cube)
+
+  # Plot without setting grid_line_width - should use the isea3h default (0.5)
+  p <- suppressWarnings(plot_map(result_map))
+  expect_s3_class(p, "ggplot")
+})
+
+test_that("plot_map filter_outliers removes extreme cells", {
+  # Use the built-in example map
+  data(example_indicator_map1, package = "b3gbi")
+
+  # filter_outliers = TRUE should not error on a normal dataset
+  p <- suppressWarnings(plot_map(example_indicator_map1, filter_outliers = TRUE))
+  expect_s3_class(p, "ggplot")
+
+  # Inject an extreme outlier cell into the data
+  outlier_map <- example_indicator_map1
+  outlier_geom <- sf::st_sfc(sf::st_point(c(1e7, 1e7)),
+    crs = sf::st_crs(outlier_map$data)
+  )
+  outlier_row <- sf::st_sf(
+    cellid = 9999L,
+    diversity_val = 1,
+    geometry = outlier_geom
+  )
+  # Match columns to avoid bind errors
+  missing_cols <- setdiff(names(outlier_map$data), names(outlier_row))
+  for (col in missing_cols) {
+    outlier_row[[col]] <- NA
+  }
+  outlier_map$data <- rbind(outlier_map$data, outlier_row[, names(outlier_map$data)])
+
+  # With filter_outliers = TRUE, the outlier should be removed
+  p_filtered <- suppressWarnings(plot_map(outlier_map, filter_outliers = TRUE))
+  expect_s3_class(p_filtered, "ggplot")
+
+  # The filtered plot data should have fewer rows than the unfiltered
+  p_unfiltered <- suppressWarnings(plot_map(outlier_map, filter_outliers = FALSE))
+  expect_true(nrow(p_filtered$data) <= nrow(p_unfiltered$data))
 })
