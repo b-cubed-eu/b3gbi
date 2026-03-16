@@ -5,6 +5,7 @@
 \alias{calc_ci.default}
 \alias{calc_ci.total_occ}
 \alias{calc_ci.occ_density}
+\alias{calc_ci.spec_richness_density}
 \alias{calc_ci.newness}
 \alias{calc_ci.williams_evenness}
 \alias{calc_ci.pielou_evenness}
@@ -21,6 +22,8 @@ calc_ci(x, indicator, ...)
 \method{calc_ci}{total_occ}(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
 
 \method{calc_ci}{occ_density}(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
+
+\method{calc_ci}{spec_richness_density}(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
 
 \method{calc_ci}{newness}(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
 
@@ -62,6 +65,8 @@ biodiversity indicator over time unless you choose 'none' for ci_type.
 \item \code{calc_ci(total_occ)}: Calculate confidence intervals for total occurrences
 
 \item \code{calc_ci(occ_density)}: Calculate confidence intervals for occurrence density
+
+\item \code{calc_ci(spec_richness_density)}: Calculate confidence intervals for species richness density
 
 \item \code{calc_ci(newness)}: Calculate confidence intervals for newness
 

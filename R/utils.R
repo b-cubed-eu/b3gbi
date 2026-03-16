@@ -707,3 +707,9 @@ my_estimateD <- function(...) {
 my_inherits <- function(x, what) {
   inherits(x, what)
 }
+# Wrapper of function iNEXT::DataInfo. This is for mocking in testthat tests.
+#' @noRd
+my_DataInfo <- function(...) {
+  iNEXT::DataInfo(...)
+}
+

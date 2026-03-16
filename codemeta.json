@@ -2,19 +2,19 @@
   "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
   "@type": "SoftwareSourceCode",
   "identifier": "b3gbi",
-  "description": "Calculate general biodiversity indicators from GBIF data cubes. Includes many common indicators such as species richness and evenness, which can be calculated over time (trends) or space (maps).",
+  "description": "Calculate general biodiversity indicators from GBIF data cubes. Includes many common indicators such as species richness, evenness, and completeness, which can be calculated over time (trends) or space (maps). Now also supports retaining original cell IDs.",
   "name": "b3gbi: General Biodiversity Indicators for Biodiversity Data Cubes",
   "relatedLink": "https://b-cubed-eu.github.io/b3gbi/",
   "codeRepository": "https://github.com/b-cubed-eu/b3gbi",
   "issueTracker": "https://github.com/b-cubed-eu/b3gbi/issues",
   "license": "https://spdx.org/licenses/MIT",
-  "version": "0.8.13",
+  "version": "0.8.16",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
     "url": "https://r-project.org"
   },
-  "runtimePlatform": "R version 4.5.1 (2025-06-13 ucrt)",
+  "runtimePlatform": "R version 4.3.1 (2023-06-16 ucrt)",
   "author": [
     {
       "@type": "Person",
@@ -402,10 +402,8 @@
     },
     "SystemRequirements": null
   },
-  "fileSize": "12363777.507KB",
-  "releaseNotes": "https://github.com/b-cubed-eu/b3gbi/blob/main/NEWS.md",
-  "readme": "https://github.com/b-cubed-eu/b3gbi/blob/main/README.md",
+  "fileSize": "352235.521KB",
+  "releaseNotes": "https://github.com/b-cubed-eu/b3gbi/blob/master/NEWS.md",
   "contIntegration": ["https://github.com/b-cubed-eu/b3gbi/actions/workflows/R-CMD-check.yaml", "https://app.codecov.io/gh/b-cubed-eu/b3gbi/"],
-  "developmentStatus": "https://www.repostatus.org/#wip",
-  "keywords": ["biodiversity-indicators", "data-cubes"]
+  "developmentStatus": "https://www.repostatus.org/#wip"
 }
