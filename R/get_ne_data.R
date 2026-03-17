@@ -89,6 +89,8 @@ get_ne_data <- function(projected_crs,
   # For 'cube' level, we crop the map in 4326 first to avoid projection artifacts
   if (level == "cube") {
     # Crop in 4326
+    # Indicate attributes are constant to prevent st_crop warnings
+    sf::st_agr(map_data) <- "constant"
     map_data <- map_data %>%
       sf::st_crop(latlong_extent) %>%
       sf::st_make_valid()
@@ -224,6 +226,8 @@ get_ne_data <- function(projected_crs,
     }
 
     if (any(sf::st_intersects(map_data_combined, final_extent_sfc, sparse = FALSE))) {
+      # Indicate attributes are constant to prevent st_crop warnings
+      sf::st_agr(map_data_combined) <- "constant"
       map_data_combined <- map_data_combined %>%
         sf::st_crop(final_extent_sfc) %>%
         sf::st_make_valid() %>%
