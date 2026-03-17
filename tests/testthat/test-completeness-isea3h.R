@@ -1,22 +1,10 @@
-# Helper: checks if the native ISEA3H fallback can produce a non-empty grid.
-# Returns TRUE if the grid has rows, FALSE otherwise.
-.isea3h_proj_works <- function() {
-    grid <- suppressWarnings(suppressMessages(
-        create_isea3h_grid(
-            data.frame(
-                cellCode = c("-458282525011250000", "452583359004665569"),
-                xcoord = c(11.25, 4.67), ycoord = c(58.28, 52.58)
-            ),
-            projection = "+proj=longlat +datum=WGS84"
-        )
-    ))
-    nrow(grid) > 0
-}
-
 test_that("completeness_map works with isea3h cube", {
+    # These tests require dggridR for safe grid creation.
+    # Without dggridR, the native ISEA3H fallback uses LAEA->WGS84
+    # transforms that can crash R on some PROJ installations.
     skip_if_not(
-        .isea3h_proj_works(),
-        "PROJ cannot round-trip LAEA on this system"
+        requireNamespace("dggridR", quietly = TRUE),
+        "dggridR not available for safe ISEA3H grid creation"
     )
 
     # Mock a processed cube with isea3h data
@@ -53,8 +41,8 @@ test_that("completeness_map works with isea3h cube", {
 
 test_that("indicator_ts for completeness works with isea3h", {
     skip_if_not(
-        .isea3h_proj_works(),
-        "PROJ cannot round-trip LAEA on this system"
+        requireNamespace("dggridR", quietly = TRUE),
+        "dggridR not available for safe ISEA3H grid creation"
     )
 
     mock_data <- tibble::tibble(

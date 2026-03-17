@@ -213,7 +213,8 @@ test_that("plot_map filter_outliers removes extreme cells", {
 })
 
 test_that("create_isea3h_grid works with native R fallback", {
-  # Force native R fallback by disabling dggridR
+  # Native fallback uses LAEA transforms that can segfault on some PROJ versions
+  skip_on_ci()
   withr::local_options(b3gbi.use_dggridR = FALSE)
 
   df <- data.frame(
@@ -242,6 +243,7 @@ test_that("create_isea3h_grid works with native R fallback", {
 })
 
 test_that("create_isea3h_grid native fallback handles projection transform", {
+  skip_on_ci()
   withr::local_options(b3gbi.use_dggridR = FALSE)
 
   df <- data.frame(
@@ -250,7 +252,6 @@ test_that("create_isea3h_grid native fallback handles projection transform", {
     ycoord = c(58.28, 52.58)
   )
 
-  # Request a non-WGS84 projection to test the transform path
   grid <- suppressWarnings(suppressMessages(
     create_isea3h_grid(df, projection = "EPSG:3857")
   ))
@@ -261,6 +262,7 @@ test_that("create_isea3h_grid native fallback handles projection transform", {
 })
 
 test_that("obs_richness_map with isea3h uses native R fallback correctly", {
+  skip_on_ci()
   withr::local_options(b3gbi.use_dggridR = FALSE)
 
   # Pre-check: can the native fallback produce a non-empty grid?
