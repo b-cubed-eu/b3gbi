@@ -234,13 +234,11 @@ test_that("create_isea3h_grid works with native R fallback", {
   expect_true("cellCode" %in% names(grid))
   expect_true("area" %in% names(grid))
 
-  # The LAEA->WGS84 round-trip may produce empty geometries on some PROJ
-
-  # installations. If the grid is non-empty, verify geometry types.
-  if (nrow(grid) > 0) {
-    geom_types <- sf::st_geometry_type(grid)
-    expect_true(all(geom_types %in% c("POLYGON", "MULTIPOLYGON")))
-  }
+  # On some PROJ installations the LAEA->WGS84 round-trip produces empty geoms
+  skip_if(nrow(grid) == 0, "PROJ cannot round-trip LAEA to WGS84 on this system")
+  expect_equal(nrow(grid), 3)
+  geom_types <- sf::st_geometry_type(grid)
+  expect_true(all(geom_types %in% c("POLYGON", "MULTIPOLYGON")))
 })
 
 test_that("create_isea3h_grid native fallback handles projection transform", {
@@ -258,11 +256,22 @@ test_that("create_isea3h_grid native fallback handles projection transform", {
   ))
 
   expect_s3_class(grid, "sf")
-  # nrow may be 0 on systems where PROJ can't handle the LAEA->3857 pipeline
+  skip_if(nrow(grid) == 0, "PROJ cannot round-trip LAEA to EPSG:3857 on this system")
+  expect_equal(nrow(grid), 2)
 })
 
 test_that("obs_richness_map with isea3h uses native R fallback correctly", {
   withr::local_options(b3gbi.use_dggridR = FALSE)
+
+  # Pre-check: can the native fallback produce a non-empty grid?
+  probe_df <- data.frame(
+    cellCode = c("-458282525011250000", "452583359004665569"),
+    xcoord = c(11.25, 4.67), ycoord = c(58.28, 52.58)
+  )
+  probe_grid <- suppressWarnings(suppressMessages(
+    create_isea3h_grid(probe_df, projection = "+proj=longlat +datum=WGS84")
+  ))
+  skip_if(nrow(probe_grid) == 0, "PROJ cannot round-trip LAEA on this system")
 
   mock_data <- tibble::tibble(
     cellCode = c(
@@ -290,16 +299,9 @@ test_that("obs_richness_map with isea3h uses native R fallback correctly", {
   )
   class(mock_cube) <- c("processed_cube", "list")
 
-  # This may error on systems where the PROJ LAEA round-trip fails,
-  # producing an empty grid that can't intersect with Natural Earth.
-  result_map <- tryCatch(
-    suppressWarnings(suppressMessages(obs_richness_map(mock_cube))),
-    error = function(e) NULL
-  )
-  if (!is.null(result_map)) {
-    expect_s3_class(result_map, "indicator_map")
-    expect_equal(result_map$grid_type, "isea3h")
-  }
+  result_map <- suppressWarnings(suppressMessages(obs_richness_map(mock_cube)))
+  expect_s3_class(result_map, "indicator_map")
+  expect_equal(result_map$grid_type, "isea3h")
 })
 
 test_that("plot_species_map filter_outliers works", {
