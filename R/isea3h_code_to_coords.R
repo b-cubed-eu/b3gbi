@@ -281,11 +281,26 @@ create_isea3h_grid <- function(df, projection) {
       stringsAsFactors = FALSE
     )
 
-    # Transform to requested projection
-    grid <- grid %>%
-      sf::st_transform(crs = projection) %>%
-      sf::st_make_valid() %>%
-      sf::st_cast("POLYGON", warn = FALSE)
+    # Transform to requested projection — tryCatch prevents PROJ crashes
+    # (some PROJ installations segfault on certain LAEA pipelines)
+    grid <- tryCatch(
+      {
+        grid %>%
+          sf::st_transform(crs = projection) %>%
+          sf::st_make_valid() %>%
+          sf::st_cast("POLYGON", warn = FALSE)
+      },
+      error = function(e) {
+        warning("PROJ transform failed for ISEA3H grid: ", e$message)
+        # Return empty sf with correct schema
+        sf::st_sf(
+          cellid = integer(0),
+          cellCode = character(0),
+          geometry = sf::st_sfc(crs = projection),
+          stringsAsFactors = FALSE
+        )
+      }
+    )
 
     # Ensure it's not empty after transform
     if (nrow(grid) > 0 && any(sf::st_is_empty(grid))) {
