@@ -1,73 +1,81 @@
 #' @noRd
 intersect_grid_with_polygon <- function(grid,
                                         intersection_target) {
-  # The following intersection operation requires special error handling
-  # because it fails when the grid contains invalid geometries.
-  # Therefore when invalid geometries are encountered, it will retry the
-  # operation with spherical geometry turned off. This often succeeds.
+  # The following intersection operation can be slow when clipping large numbers
+  # of cells. We optimize by identifying cells that are completely within the
+  # target and only clipping those that cross boundaries.
+  # NOTE: We no longer force S2 toggling here to respect global settings.
 
-  # Try to intersect grid with intersection_target
-  original_s2 <- sf::sf_use_s2()
-  on.exit(sf::sf_use_s2(original_s2))
+  # Ensure geometries are valid before intersection
+  grid_v <- grid
+  target_v <- intersection_target
 
-  result <- NULL
-  tryCatch(
-    {
-      # Ensure geometries are valid before intersection
-      grid_v <- sf::st_make_valid(grid)
-      target_v <- sf::st_make_valid(intersection_target)
+  # Helper function for optimized intersection
+  do_intersection <- function(g, t) {
+    # 1. Quick filter: find which cells intersect at all
+    intersects_idx <- sf::st_intersects(g, t, sparse = TRUE)
+    touching_any <- lengths(intersects_idx) > 0
+    if (!any(touching_any)) {
+      return(NULL)
+    }
 
-      result <- grid_v %>%
-        sf::st_intersection(target_v) %>%
+    g_candidate <- g[touching_any, ]
+
+    # 2. Identify cells COMPLETELY WITHIN the target
+    # (These don't need clipping, preserving their original area/geometry)
+    within_idx <- sf::st_within(g_candidate, t, sparse = TRUE)
+    is_within <- lengths(within_idx) > 0
+
+    # Separate into fully-enclosed and boundary cells
+    grid_within <- g_candidate[is_within, ]
+    grid_boundary <- g_candidate[!is_within, ]
+
+    # 3. Clip only the boundary cells
+    if (nrow(grid_boundary) > 0) {
+      grid_clipped <- sf::st_intersection(grid_boundary, t) %>%
         dplyr::select(
           dplyr::all_of(c("cellid", "geometry")),
           dplyr::any_of(c("area", "cellCode"))
         )
+    } else {
+      grid_clipped <- NULL
+    }
+
+    # 4. Result is everything within plus everything clipped
+    res <- grid_within %>%
+      dplyr::select(
+        dplyr::all_of(c("cellid", "geometry")),
+        dplyr::any_of(c("area", "cellCode"))
+      )
+
+    if (!is.null(grid_clipped)) {
+      res <- rbind(res, grid_clipped)
+    }
+
+    return(res)
+  }
+
+  # Try intersection
+  result <- NULL
+  tryCatch(
+    {
+      result <- do_intersection(sf::st_make_valid(grid), sf::st_make_valid(intersection_target))
     },
     error = function(e) {
-      # Log issue but don't stop yet, we will retry with S2 OFF
-      message(paste0("Intersection failed with: ", e$message))
+      message(paste0("Optimized intersection failed: ", e$message))
     }
   )
 
+  # Final fallback if failed or returning empty
   if (is.null(result) || nrow(result) == 0) {
-    # If intersection failed or returned empty with S2, retry with S2 OFF
-    message("Retrying intersection with S2 disabled and additional validation...")
-    sf::sf_use_s2(FALSE)
-
-    tryCatch(
-      {
-        grid_v <- sf::st_make_valid(grid)
-        target_v <- sf::st_make_valid(intersection_target)
-
-        result <- grid_v %>%
-          sf::st_intersection(target_v) %>%
-          dplyr::select(
-            dplyr::all_of(c("cellid", "geometry")),
-            dplyr::any_of(c("area", "cellCode"))
-          )
-        message("Intersection succeeded with spherical geometry turned off.")
-      },
-      error = function(e) {
-        message("Intersection failed even with S2 off. Falling back to non-clipping intersection.")
-        # Last resort: just find which cells intersect, don't clip them.
-        # This avoids most GEOS topology errors.
-        intersecting_indices <- sf::st_intersects(grid, intersection_target, sparse = FALSE)
-        # st_intersects returns a logical matrix if sparse=FALSE
-        row_intersects <- apply(intersecting_indices, 1, any)
-        result <<- grid[row_intersects, ]
-        # Area remains the full cell area
-      }
-    )
+    message("Optimized intersection failed or returned empty. Falling back to st_filter.")
+    # Last resort: just find which cells intersect, don't clip them.
+    # This avoids most clipping/S2/GEOS bottlenecks.
+    result <- sf::st_filter(grid, intersection_target)
   }
 
-  if (is.null(result)) {
-    # This should technically not be reached now, but for safety:
-    stop("Persistent geometry error in intersection.")
-  }
-
-  # Check if there is any spatial intersection
-  if (nrow(result) == 0) {
+  # Final check
+  if (is.null(result) || nrow(result) == 0) {
     stop("No spatial intersection between map data and grid.")
   }
 
