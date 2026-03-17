@@ -1,15 +1,16 @@
 #' @param type Which Hill diversity to calculate ("hill0", "hill1", "hill2")
 #' @noRd
 calc_map_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
-
-  stopifnot_error("Please check the class and structure of your data. This is an
+  stopifnot_error(
+    "Please check the class and structure of your data. This is an
                   internal function, not meant to be called directly.",
-                  inherits(x, c("data.frame", "sf")) &
-                    rlang::inherits_any(x, c("hill0", "hill1", "hill2")))
+    inherits(x, c("data.frame", "sf")) &
+      rlang::inherits_any(x, c("hill0", "hill1", "hill2"))
+  )
 
   qD <- cellid <- Assemblage <- taxonKey <- m <- SC <- Order.q <- . <-
     scientificName <- count <- year <- Y_i <- incidence <- everything <-
-  Method <- obs <- cellCode <- cellid_char <- diversity_val <- NULL
+    Method <- obs <- cellCode <- cellid_char <- diversity_val <- NULL
 
   type <- match.arg(type)
 
@@ -31,33 +32,28 @@ calc_map_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
   qval <- as.numeric(gsub("hill", "", type))
 
   if (data_type == "abundance") {
-
     incidence_list <- x %>%
       # 1. Select relevant columns
       dplyr::select(cellid, cellCode, taxonKey, obs, scientificName) %>%
-
       # 2. Group by the spatial unit
       dplyr::group_by(cellid) %>%
-
       # 3. Split the data and name the list elements
       {
         list_data <- dplyr::group_split(., .keep = FALSE)
-        list_names <- dplyr::group_keys(.) %>% dplyr::pull(cellid) %>%
+        list_names <- dplyr::group_keys(.) %>%
+          dplyr::pull(cellid) %>%
           as.character()
         names(list_data) <- list_names
         list_data
       } %>%
-
       # 4. Process each cell's data frame to calculate total abundance
       purrr::map(function(cell_data) {
-
         # Calculate Total Abundance (sum of obs) for each species
         abundance_summary <- cell_data %>%
           # Group by both keys to maintain the species name for sorting
           dplyr::group_by(taxonKey, scientificName) %>%
           # Sum 'obs' to get the total abundance (Y_i)
           dplyr::summarise(count = sum(obs, na.rm = TRUE), .groups = "drop") %>%
-
           # Sort by 'species' alphabetically for consistency (optional but recommended)
           dplyr::arrange(scientificName)
 
@@ -67,33 +63,27 @@ calc_map_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
 
         return(abundance_vector)
       })
-
   } else {
-
     if (assume_freq == FALSE) {
-
       incidence_list <- x %>%
         dplyr::select(taxonKey, obs, cellid, cellCode, year) %>%
-
         # Filter and setup the data structure
         dplyr::mutate(incidence = as.numeric(obs > 0)) %>%
         dplyr::filter(incidence > 0) %>% # Keep only detections
 
         # Group the data
         dplyr::group_by(cellid) %>%
-
         # Split the data and name the list elements
         {
           list_data <- dplyr::group_split(., .keep = FALSE)
-          list_names <- dplyr::group_keys(.) %>% dplyr::pull(cellid) %>%
+          list_names <- dplyr::group_keys(.) %>%
+            dplyr::pull(cellid) %>%
             as.character()
           names(list_data) <- list_names
           list_data
         } %>%
-
         # Process each cell's data frame to calculate T and Y_i
         purrr::map(function(cell_data) {
-
           # T_units: Total unique years (T)
           T_units <- dplyr::n_distinct(cell_data$year)
 
@@ -109,29 +99,24 @@ calc_map_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
 
           return(incidence_vector)
         })
-
     } else {
-
       incidence_list <- x %>%
         # 1. Select relevant columns
         dplyr::select(cellid, cellCode, taxonKey, obs, scientificName) %>%
-
         # 2. Group by the spatial unit
         dplyr::group_by(cellid) %>%
-
         # 3. Split the data frame into a list of data frames (one per cell)
         #  Use group_keys() and pull the cellid to name the list
         {
           list_data <- dplyr::group_split(., .keep = FALSE)
-          list_names <- dplyr::group_keys(.) %>% dplyr::pull(cellid) %>%
+          list_names <- dplyr::group_keys(.) %>%
+            dplyr::pull(cellid) %>%
             as.character()
           names(list_data) <- list_names
           list_data
         } %>%
-
         # 4. Process each cell's data frame
         purrr::map(function(cell_data) {
-
           # Calculate Incidence Frequencies (Y_i)
           freq_summary <- cell_data %>%
             dplyr::group_by(taxonKey, scientificName) %>%
@@ -160,54 +145,62 @@ calc_map_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
   }
 
   incidence_list_processed <-
-    purrr::keep(incidence_list,
-                function(vec) {
-                  # Check if the vector exists and has more than 1 element
-                  # (T plus at least one species)
-                  if (!is.null(vec) && is.vector(vec) && length(vec) > 1) {
-                    # The number of species is the length of the vector minus the T value
-                    if (data_type == "abundance") {
-                      species_count <- length(vec)
-                    } else {
-                      species_count <- length(vec) - 1
-                    }
-                    return(species_count >= cutoff_length)
-                  }
-                  # Return FALSE for empty or invalid vectors
-                  return(FALSE)
-                })
+    purrr::keep(
+      incidence_list,
+      function(vec) {
+        # Check if the vector exists and has more than 1 element
+        # (T plus at least one species)
+        if (!is.null(vec) && is.vector(vec) && length(vec) > 1) {
+          # The number of species is the length of the vector minus the T value
+          if (data_type == "abundance") {
+            species_count <- length(vec)
+          } else {
+            species_count <- length(vec) - 1
+          }
+          return(species_count >= cutoff_length)
+        }
+        # Return FALSE for empty or invalid vectors
+        return(FALSE)
+      }
+    )
 
   if (length(incidence_list_processed) == 0) {
-    stop(paste0("There are no grid cells left to process after filtering. ",
-                "Try setting the cutoff_length lower."))
-
+    stop(paste0(
+      "There are no grid cells left to process after filtering. ",
+      "Try setting the cutoff_length lower."
+    ))
   }
 
   # Compute Hill diversity using a wrapper for iNEXT::estimateD
   diversity_estimates <- incidence_list_processed %>%
-    my_estimateD(datatype = data_type,
-                 base = "coverage",
-                 level = coverage,
-                 q = qval,
-                 conf = 0.95,
-                 nboot = 0)
+    my_estimateD(
+      datatype = data_type,
+      base = "coverage",
+      level = coverage,
+      q = qval,
+      conf = 0.95,
+      nboot = 0
+    )
 
   # Extract and format the results
   indicator <- diversity_estimates %>%
-    dplyr::select(Assemblage, qD, m, SC, Order.q, Method) %>%
-    dplyr::rename(cellid_char = Assemblage,
-                  diversity_val = qD,
-                  samp_size_est = m,
-                  coverage = SC,
-                  diversity_type = Order.q,
-                  method = Method) %>%
+    dplyr::select(dplyr::any_of(c("Assemblage", "qD", "m", "SC", "Order.q", "Method"))) %>%
+    dplyr::rename_with(.fn = ~"cellid_char", .cols = dplyr::any_of("Assemblage")) %>%
+    dplyr::rename_with(.fn = ~"diversity_val", .cols = dplyr::any_of("qD")) %>%
+    dplyr::rename_with(.fn = ~"samp_size_est", .cols = dplyr::any_of("m")) %>%
+    dplyr::rename_with(.fn = ~"coverage", .cols = dplyr::any_of("SC")) %>%
+    dplyr::rename_with(.fn = ~"diversity_type", .cols = dplyr::any_of("Order.q")) %>%
+    dplyr::rename_with(.fn = ~"method", .cols = dplyr::any_of("Method")) %>%
     # Join the cellCode back using the cellid string
     dplyr::left_join(cell_map, by = "cellid_char") %>%
     # Reorder and finalize the data frame
-    dplyr::select(cellid, cellCode, diversity_val, everything(), -cellid_char) %>%
+    dplyr::select(
+      dplyr::any_of(c("cellid", "cellCode", "diversity_val")),
+      dplyr::everything(),
+      -dplyr::any_of("cellid_char")
+    ) %>%
     dplyr::mutate(cellid = as.integer(cellid), .keep = "unused")
 
 
   return(indicator)
-
 }
