@@ -4,7 +4,9 @@ intersect_grid_with_polygon <- function(grid,
   # The following intersection operation can be slow when clipping large numbers
   # of cells. We optimize by identifying cells that are completely within the
   # target and only clipping those that cross boundaries.
-  # NOTE: We no longer force S2 toggling here to respect global settings.
+
+  original_s2 <- sf::sf_use_s2()
+  on.exit(sf::sf_use_s2(original_s2))
 
   # Ensure geometries are valid before intersection
   grid_v <- grid
@@ -55,16 +57,31 @@ intersect_grid_with_polygon <- function(grid,
     return(res)
   }
 
-  # Try intersection
+  # Try with current S2 setting
   result <- NULL
   tryCatch(
     {
       result <- do_intersection(sf::st_make_valid(grid), sf::st_make_valid(intersection_target))
     },
     error = function(e) {
-      message(paste0("Optimized intersection failed: ", e$message))
+      # Log issue but don't stop yet, we will retry with S2 OFF
+      message(paste0("Intersection failed with: ", e$message))
     }
   )
+
+  # Retry with S2 OFF if failed or returning empty
+  if (is.null(result) || nrow(result) == 0) {
+    message("Retrying intersection with S2 disabled...")
+    sf::sf_use_s2(FALSE)
+    tryCatch(
+      {
+        result <- do_intersection(sf::st_make_valid(grid), sf::st_make_valid(intersection_target))
+      },
+      error = function(e) {
+        message(paste0("Intersection failed even with S2 off: ", e$message))
+      }
+    )
+  }
 
   # Final fallback if failed or returning empty
   if (is.null(result) || nrow(result) == 0) {
