@@ -742,7 +742,14 @@ compute_indicator_workflow <- function(data,
     sf::st_agr(intersection_target) <- "constant"
 
     # Intersect grid with intersection target
-    clipped_grid <- intersect_grid_with_polygon(grid, intersection_target)
+    if (data$grid_type == "isea3h") {
+      # ISEA3H requires accurate clipping for dateline/pole handling
+      clipped_grid <- intersect_grid_with_polygon(grid, intersection_target)
+    } else {
+      # For standard grids, use fast spatial filtering instead of expensive clipping.
+      # This keeps whole cells and significantly speeds up the workflow.
+      clipped_grid <- sf::st_filter(grid, intersection_target)
+    }
 
     if (spherical_geometry == TRUE) {
       # Restore original spherical setting
@@ -807,8 +814,13 @@ compute_indicator_workflow <- function(data,
       dplyr::left_join(indicator, by = "cellid")
 
     # Get bbox of original grid before transformation
-    original_bbox <- intersect_grid_with_polygon(grid, saved_layer) %>%
-      sf::st_union()
+    if (data$grid_type == "isea3h") {
+      original_bbox <- intersect_grid_with_polygon(grid, saved_layer) %>%
+        sf::st_union()
+    } else {
+      original_bbox <- sf::st_filter(grid, saved_layer) %>%
+        sf::st_union()
+    }
 
     # Transform to output CRS
     diversity_grid <- sf::st_transform(diversity_grid, crs = output_crs)
