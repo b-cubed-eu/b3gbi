@@ -184,13 +184,16 @@ calc_map_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
 
   # Extract and format the results
   indicator <- diversity_estimates %>%
-    dplyr::select(dplyr::any_of(c("Assemblage", "qD", "m", "SC", "Order.q", "Method"))) %>%
-    dplyr::rename_with(.fn = ~"cellid_char", .cols = dplyr::any_of("Assemblage")) %>%
-    dplyr::rename_with(.fn = ~"diversity_val", .cols = dplyr::any_of("qD")) %>%
-    dplyr::rename_with(.fn = ~"samp_size_est", .cols = dplyr::any_of("m")) %>%
-    dplyr::rename_with(.fn = ~"coverage", .cols = dplyr::any_of("SC")) %>%
-    dplyr::rename_with(.fn = ~"diversity_type", .cols = dplyr::any_of("Order.q")) %>%
-    dplyr::rename_with(.fn = ~"method", .cols = dplyr::any_of("Method")) %>%
+    dplyr::select(dplyr::any_of(c("Assemblage", "qD", "m", "SC", "Order.q", "Method")))
+
+  if ("Assemblage" %in% names(indicator)) indicator <- dplyr::rename(indicator, cellid_char = "Assemblage")
+  if ("qD" %in% names(indicator)) indicator <- dplyr::rename(indicator, diversity_val = "qD")
+  if ("m" %in% names(indicator)) indicator <- dplyr::rename(indicator, samp_size_est = "m")
+  if ("SC" %in% names(indicator)) indicator <- dplyr::rename(indicator, coverage = "SC")
+  if ("Order.q" %in% names(indicator)) indicator <- dplyr::rename(indicator, diversity_type = "Order.q")
+  if ("Method" %in% names(indicator)) indicator <- dplyr::rename(indicator, method = "Method")
+
+  indicator <- indicator %>%
     # Join the cellCode back using the cellid string
     dplyr::left_join(cell_map, by = "cellid_char") %>%
     # Reorder and finalize the data frame
