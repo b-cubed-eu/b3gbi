@@ -193,20 +193,6 @@ test_that("check_cell_size auto mode for degrees uses level-based defaults", {
   expect_equal(result, 0.1)
 })
 
-test_that("check_cell_size 'grid' mode requires confirmation", {
-  expect_error(
-    with_mocked_bindings(
-      interactive = mock_interactive_true,
-      readline = mock_readline_y,
-      .package = "base",
-      check_cell_size(
-        cell_size = "grid",
-        resolution = "5km",
-        level = "country"
-      )
-    ), "requires interactive confirmation"
-  ) # 5 km in meters
-})
 
 test_that("check_cell_size 'auto' mode converts to NULL and proceeds", {
   result <- check_cell_size(

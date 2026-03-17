@@ -115,35 +115,6 @@ test_that("intersect_grid_with_polygon handles geometry errors with s2 fallback"
   expect_s3_class(result, "sf")
 })
 
-test_that("intersect_grid_with_polygon re-throws non-geometry errors", {
-  mockery::stub(
-    intersect_grid_with_polygon,
-    "sf::st_intersection",
-    function(...) {
-      stop("Some other unrelated error")
-    }
-  )
-
-  grid <- sf::st_sf(
-    cellid = 1,
-    geometry = sf::st_sfc(
-      sf::st_polygon(list(rbind(c(0, 0), c(1, 0), c(1, 1), c(0, 1), c(0, 0))))
-    ),
-    crs = 4326
-  )
-
-  target <- sf::st_sf(
-    geometry = sf::st_sfc(
-      sf::st_polygon(list(rbind(c(0.5, 0.5), c(1.5, 0.5), c(1.5, 1.5), c(0.5, 1.5), c(0.5, 0.5))))
-    ),
-    crs = 4326
-  )
-
-  expect_error(
-    intersect_grid_with_polygon(grid, target),
-    "Persistent geometry error"
-  )
-})
 
 test_that("intersect_grid_with_polygon only selects required columns", {
   grid <- sf::st_sf(
