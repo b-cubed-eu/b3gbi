@@ -9,6 +9,19 @@ calc_map.default <- function(x, ...) {
 
 #' @export
 #' @rdname calc_map
+calc_map.completeness <- function(x, ...) {
+
+  stopifnot_error("Wrong data class. This is an internal function and is not
+                  meant to be called directly.", inherits(x, "completeness"))
+
+  indicator <- calc_map_completeness_core(x = x, ...)
+
+  return(indicator)
+
+}
+
+#' @export
+#' @rdname calc_map
 calc_map.hill0 <- function(x, ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
@@ -108,6 +121,27 @@ calc_map.newness <- function(x,
       indicator$diversity_val,
       NA)
   }
+
+  return(indicator)
+
+}
+
+#' @export
+#' @rdname calc_map
+calc_map.spec_richness_density <- function(x, ...) {
+
+  stopifnot_error("Wrong data class. This is an internal function and is not
+                  meant to be called directly.",
+                  inherits(x, "spec_richness_density"))
+
+  diversity_val <- taxonKey <- area <- cellid <- cellCode <- NULL
+
+  # Calculate density of species richness over the grid (per square km)
+  indicator <- x %>%
+    dplyr::reframe(diversity_val = dplyr::n_distinct(taxonKey) / area,
+                   .by = c("cellid", "cellCode")) %>%
+    dplyr::distinct(cellid, cellCode, diversity_val) %>%
+    dplyr::mutate(diversity_val = as.numeric(diversity_val))
 
   return(indicator)
 

@@ -15,6 +15,19 @@
 * Added a new conceptual vignette: "Uncertainty in Biodiversity Indicators".
 * Added comprehensive unit and integration tests for the decoupled uncertainty workflow.
 
+# b3gbi 0.8.16 - Minor update:
+
+* Added support for ISEA3H hexagonal grids
+* Added 'filter_outliers' option to plot_map() and plot_species_map) functions. Use it to remove geographical outliers. Use this if your plot covers a larger geographical area than you expected..
+
+# b3gbi 0.8.15 - Minor update:
+
+* Added new indicator 'species richness density' which calculates the density of unique species per square kilometer.
+* Added wrapper functions `spec_richness_density_map()` and `spec_richness_density_ts()`.
+* Added new indicator 'completeness' which estimates the proportion of the total individuals in an ecological community that belong to the species detected in the sample.
+* Added wrapper functions `completeness_map()` and `completeness_ts()`.
+* Added unit tests for species richness density and completeness.
+
 # b3gbi 0.8.14 - Minor update:
 
 * Fixed a bug in `pielou_evenness_map` where use of a `cell_size` larger than the native cube resolution caused a crash due to non-unique row identifiers during pivoting (#102).

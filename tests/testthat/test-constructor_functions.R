@@ -159,11 +159,13 @@ test_that("new_indicator_map creates indicator_map object correctly", {
     num_years = 11,
     species_names = NULL,
     years_with_obs = 11,
-    original_bbox = list(xmin = 1, xmax = 2, ymin = 3, ymax = 4)
+    original_bbox = list(xmin = 1, xmax = 2, ymin = 3, ymax = 4),
+    grid_type = "eea"
   )
   expect_s3_class(im, c("indicator_map", "obs_richness"))
   expect_equal(im$div_type, "obs_richness")
   expect_equal(im$cell_size, "10 km^2")
+  expect_equal(im$grid_type, "eea")
   expect_equal(im$first_year, 2000)
   expect_equal(im$last_year, 2010)
 })
@@ -171,7 +173,8 @@ test_that("new_indicator_map creates indicator_map object correctly", {
 test_that("new_indicator_map handles missing columns", {
   expect_error(
     new_indicator_map(
-      mock_indicator_map_sf[, -1], "obs_richness", 10, "km"
+      mock_indicator_map_sf[, -1], "obs_richness", 10, "km",
+      grid_type = "eea"
     )
   )
 })

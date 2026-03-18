@@ -2,12 +2,14 @@
 % Please edit documentation in R/calc_ts_methods.R, R/generic_functions.R
 \name{calc_ts.default}
 \alias{calc_ts.default}
+\alias{calc_ts.completeness}
 \alias{calc_ts.hill0}
 \alias{calc_ts.hill1}
 \alias{calc_ts.hill2}
 \alias{calc_ts.obs_richness}
 \alias{calc_ts.cum_richness}
 \alias{calc_ts.total_occ}
+\alias{calc_ts.spec_richness_density}
 \alias{calc_ts.occ_density}
 \alias{calc_ts.newness}
 \alias{calc_ts.williams_evenness}
@@ -23,6 +25,8 @@
 \usage{
 \method{calc_ts}{default}(x, ...)
 
+\method{calc_ts}{completeness}(x, ...)
+
 \method{calc_ts}{hill0}(x, ...)
 
 \method{calc_ts}{hill1}(x, ...)
@@ -34,6 +38,8 @@
 \method{calc_ts}{cum_richness}(x, ...)
 
 \method{calc_ts}{total_occ}(x, ...)
+
+\method{calc_ts}{spec_richness_density}(x, ...)
 
 \method{calc_ts}{occ_density}(x, ...)
 

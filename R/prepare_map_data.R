@@ -69,8 +69,8 @@ prepare_map_data <- function(data,
   # This should ensure that the map surrounds the data
   # even if the projection is quite extreme
     expand_percent <- map_expansion_factor
-    lon_range <- latlong_extent["xmax"] - latlong_extent["xmin"]
-    lat_range <- latlong_extent["ymax"] - latlong_extent["ymin"]
+    lon_range <- max(latlong_extent["xmax"] - latlong_extent["xmin"], 0.1)
+    lat_range <- max(latlong_extent["ymax"] - latlong_extent["ymin"], 0.1)
     latlong_extent <- sf::st_bbox(c(
       latlong_extent["xmin"] - (expand_percent * lon_range),
       latlong_extent["ymin"] - (expand_percent * lat_range),

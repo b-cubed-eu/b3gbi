@@ -16,12 +16,11 @@ knitr::opts_chunk$set(
   fig.height = 6,
   out.width = "95%"
 )
-
 ```
 
-## Introduction 🌍
+## Introduction
 
-The goal of the **b3gbi** package (B3 General Biodiversity Indicators) is to provide standardized, automated, and reproducible workflows for calculating essential spatial and temporal biodiversity indicators. Developed as part of the EU-funded B3 (Biodiversity Building Blocks for Policy) project, b3gbi takes pre-processed GBIF occurrence cubes as input and quickly transforms them into actionable metrics, complete with integrated uncertainty estimation using robust bootstrapping methods.
+The goal of the **b3gbi** package (B3 General Biodiversity Indicators) is to provide standardized, automated, and reproducible workflows for calculating essential spatial and temporal biodiversity indicators. Developed as part of the EU-funded B3 (Biodiversity Building Blocks for Policy) project, b3gbi takes pre-processed GBIF occurrence cubes as input and quickly transforms them into actionable metrics, including richness, evenness, rarity, taxonomic distinctness, Shannon-Hill diversity, Simpson-Hill diversity, and completeness, complete with integrated uncertainty estimation using robust bootstrapping methods.
 
 This tutorial will guide you through the three core steps of the b3gbi workflow:
 
@@ -56,11 +55,11 @@ The first step is importing your GBIF occurrence cube (a .csv file) and converti
 | Argument | Description | Default/Details |
 |----------|-------------|-----------------|
 | `data` | Path to the .csv file containing the GBIF cube. Required. | |
-| `grid_type` | The grid system used (e.g., 'eea', 'mgrs', 'eqdgc', 'custom'). | Autodetected if possible. |
+| `grid_type` | The grid system used (e.g., 'eea', 'mgrs', 'eqdgc', 'isea3h', 'custom'). | Autodetected if possible. |
 | `first_year` | Filters the cube to start at this year. | First year in the data. |
 | `last_year` | Filters the cube to end at this year. | Last year in the data. |
 
-💡 **Note on Column Names**: The function automatically attempts to detect required columns (like cell code, year, species key). You only need to manually specify arguments like `cols_year` or `cols_cellCode` if your column names deviate from expected standards.
+**Note on Column Names**: The function automatically attempts to detect required columns (like cell code, year, species key). You only need to manually specify arguments like `cols_year` or `cols_cellCode` if your column names deviate from expected standards.
 
 ### Example: Import Data and Filter by Time
 
@@ -68,10 +67,13 @@ Here we import an example cube of mammals in Denmark, filtering the data to star
 
 ```{r process-cube}
 # Function 1: process_cube()
-denmark_cube <- process_cube(system.file("extdata", 
-                                         "denmark_mammals_cube_eqdgc.csv", 
-                                         package = "b3gbi"),
-                             first_year = 1980) # Filter the cube to start at 1980
+denmark_cube <- process_cube(
+  system.file("extdata",
+    "denmark_mammals_cube_eqdgc.csv",
+    package = "b3gbi"
+  ),
+  first_year = 1980
+) # Filter the cube to start at 1980
 
 # Printing the object shows key metadata
 denmark_cube
@@ -166,9 +168,10 @@ The generic `plot()` function automatically calls the appropriate helper functio
 
 ```{r plot-map}
 # Plotting the map object
-plot(Denmark_observed_richness_map, 
-     legend_title = "Mammal Species Count",
-     title = "Observed Mammal Richness (1980-Present)")
+plot(Denmark_observed_richness_map,
+  legend_title = "Mammal Species Count",
+  title = "Observed Mammal Richness (1980-Present)"
+)
 ```
 
 ### Plotting the Time Series
@@ -176,12 +179,13 @@ plot(Denmark_observed_richness_map,
 If your `indicator_ts` object contains confidence intervals, the `plot()` function will automatically display them as ribbons or error bars.
 
 ```{r plot-ts}
-# Plotting the time series object with confidence intervals
-plot(Denmark_total_occ_ts_with_ci, 
-     title = "Temporal Trend of Total Mammal Occurrences in Denmark",
-     linecolour = "blue",
-     ribboncolour = "skyblue",
-     trendlinecolour = "darkorange",
-     envelopecolour = "orange",
-     smoothed_trend = TRUE)
+# Plotting the time series object
+plot(Denmark_total_occ_ts,
+  title = "Temporal Trend of Total Mammal Occurrences in Denmark",
+  linecolour = "blue",
+  ribboncolour = "skyblue",
+  trendlinecolour = "darkorange",
+  envelopecolour = "orange",
+  smoothed_trend = TRUE
+)
 ```

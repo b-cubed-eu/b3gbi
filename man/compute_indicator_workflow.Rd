@@ -37,6 +37,7 @@ compute_indicator_workflow(
 \item 'total_occ': Total number of occurrences.
 \item 'newness': Mean year of occurrence.
 \item 'occ_density': Density of occurrences.
+\item 'spec_richness_density': Species richness density (richness / area).
 \item 'williams_evenness', 'pielou_evenness': Evenness measures.
 \item 'ab_rarity', 'area_rarity':  Abundance-based and area-based rarity
 scores.
@@ -50,6 +51,7 @@ scores.
 rarefaction).
 \item 'hill2': Hill-Simpson diversity (estimated by coverage-based
 rarefaction).
+\item 'completeness': Sample completeness (Sample Coverage).
 }}
 
 \item{dim_type}{(Optional) Dimension to calculate indicator over time: 'ts',
@@ -153,10 +155,11 @@ output into an appropriate S3 object ('indicator_map' or 'indicator_ts').
 }
 \examples{
 diversity_map <- compute_indicator_workflow(example_cube_1,
-                                            type = "obs_richness",
-                                            dim_type = "map",
-                                            level = "country",
-                                            region = "Denmark")
+  type = "obs_richness",
+  dim_type = "map",
+  level = "country",
+  region = "Denmark"
+)
 diversity_map
 
 }

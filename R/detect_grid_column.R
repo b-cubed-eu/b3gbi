@@ -17,6 +17,10 @@ detect_grid_column <- function(df, grid_type) {
           valid_values,
           "^[EW]{1}[0-9]{3}[NS]{1}[0-9]{2}[A-D]{0,6}$"
         ),
+        "isea3h" = stringr::str_detect(
+          valid_values,
+          "^-?[0-9]{15,}$"
+        ),
         NA
       )
 

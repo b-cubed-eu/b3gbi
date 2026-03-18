@@ -43,7 +43,8 @@ plot_species_map(
   layers = NULL,
   layer_colours = NULL,
   layer_fill_colours = NULL,
-  scale = c("medium", "small", "large")
+  scale = c("medium", "small", "large"),
+  filter_outliers = FALSE
 )
 }
 \arguments{
@@ -179,6 +180,12 @@ Must be the same length as 'layers'.}
 
 \item{scale}{(Optional) Scale of Natural Earth data ("small", "medium", or
 "large"). Default is 'medium'.}
+
+\item{filter_outliers}{(Optional) If TRUE, removes geographical outliers
+from the plot extent using an Interquartile Range (IQR) method based on the
+centroid coordinates of the indicator_map cells. This is particularly useful
+for discrete global grids like ISEA3H where stray data points from coordinate
+errors can force the map bounds to expand globally. Default is FALSE.}
 }
 \value{
 A ggplot object representing the map of species range or occurrences.
@@ -193,8 +200,9 @@ multi-species indicators (e.g., species richness or evenness), use the
 }
 \examples{
 spec_occ_mammals_denmark <- spec_occ_map(example_cube_1,
-                                    level = "country",
-                                    region = "Denmark")
+  level = "country",
+  region = "Denmark"
+)
 plot_species_map(x = spec_occ_mammals_denmark, c(2440728, 4265185))
 
 }

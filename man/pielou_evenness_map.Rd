@@ -171,8 +171,10 @@ represented by species i.
 }}
 \examples{
 \dontrun{
-pe_map <- pielou_evenness_map(example_cube_1, level = "country",
-                              region = "Denmark")
+pe_map <- pielou_evenness_map(example_cube_1,
+  level = "country",
+  region = "Denmark"
+)
 plot(pe_map)
 }
 \dontrun{
@@ -180,8 +182,10 @@ pe_ts <- pielou_evenness_ts(example_cube_1, first_year = 1985)
 plot(pe_ts)
 }
 \dontrun{
-we_map <- williams_evenness_map(example_cube_1, level = "country",
-                                region = "Denmark")
+we_map <- williams_evenness_map(example_cube_1,
+  level = "country",
+  region = "Denmark"
+)
 plot(we_map)
 }
 \dontrun{

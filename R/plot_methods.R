@@ -115,6 +115,23 @@ plot.tax_distinct <- function(x, ...) {
 
 
 #' @export
+plot.spec_richness_density <- function(x, ...) {
+
+  wrong_class(x, "spec_richness_density", reason = "incorrect")
+  wrong_class(x, c("indicator_ts", "indicator_map"), reason = "incorrect")
+
+  call_plot(
+    x,
+    "Mean Unique Species \nper km^2",
+    "Trend of Mean Species Richness Density",
+    "Unique Species \nper km^2",
+    "Density of Species Richness",
+    ...
+  )
+
+}
+
+#' @export
 plot.occ_density <- function(x, ...) {
 
   wrong_class(x, "occ_density", reason = "incorrect")
@@ -195,6 +212,23 @@ plot.ab_rarity <- function(x, ...) {
     "Abundance-Based Rarity Trend",
     "Summed Rarity",
     "Abundance-Based Rarity",
+    ...
+  )
+
+}
+
+#' @export
+plot.completeness <- function(x, ...) {
+
+  wrong_class(x, "completeness", reason = "incorrect")
+  wrong_class(x, c("indicator_ts", "indicator_map"), reason = "incorrect")
+
+  call_plot(
+    x,
+    "Sample Coverage",
+    "Trend of Sample Coverage",
+    "Sample Coverage",
+    "Sample Coverage",
     ...
   )
 
