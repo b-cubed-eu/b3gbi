@@ -143,9 +143,11 @@ add_ci <- function(indicator,
                  "cum_richness",
                  "occ_turnover",
                  "tax_distinct",
+                 "spec_richness_density",
                  "hill0",
                  "hill1",
-                 "hill2")
+                 "hill2",
+                 "coverage")
 
   # Match ci_type argument
   ci_type <- match.arg(ci_type)
@@ -175,6 +177,10 @@ add_ci <- function(indicator,
   # Extract data from indicator object
   x <- indicator$data
   raw_data <- indicator$raw_data
+
+  # Add appropriate class
+  class(raw_data) <- append(class(raw_data), indicator$div_type)
+  class(x) <- setdiff(class(x), "indicator_data")
 
   if (any(c("ll", "ul") %in% names(x)) & !overwrite) {
     warning(
