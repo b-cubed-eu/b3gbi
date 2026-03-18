@@ -1,5 +1,12 @@
 # Changelog
 
+## b3gbi 0.8.16 - Minor update:
+
+- Added support for ISEA3H hexagonal grids
+- Added ‘filter_outliers’ option to plot_map() and plot_species_map)
+  functions. Use it to remove geographical outliers, which are common in
+  ISEA3H grids.
+
 ## b3gbi 0.8.15 - Minor update:
 
 - Added new indicator ‘species richness density’ which calculates the

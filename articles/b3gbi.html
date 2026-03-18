@@ -68,14 +68,14 @@
                         <h4 data-toc-skip class="author">Shawn Dove</h4>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.8.15/vignettes/b3gbi.Rmd" class="external-link"><code>vignettes/b3gbi.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/vignettes/b3gbi.Rmd" class="external-link"><code>vignettes/b3gbi.Rmd</code></a></small>
       <div class="d-none name"><code>b3gbi.Rmd</code></div>
     </div>
 
     
     
 <div class="section level2">
-<h2 id="introduction">Introduction 🌍<a class="anchor" aria-label="anchor" href="#introduction"></a>
+<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
 <p>The goal of the <strong>b3gbi</strong> package (B3 General
 Biodiversity Indicators) is to provide standardized, automated, and
@@ -143,7 +143,8 @@ autodetect column names and grid types.</p>
 </tr>
 <tr class="even">
 <td><code>grid_type</code></td>
-<td>The grid system used (e.g., ‘eea’, ‘mgrs’, ‘eqdgc’, ‘custom’).</td>
+<td>The grid system used (e.g., ‘eea’, ‘mgrs’, ‘eqdgc’, ‘isea3h’,
+‘custom’).</td>
 <td>Autodetected if possible.</td>
 </tr>
 <tr class="odd">
@@ -158,7 +159,7 @@ autodetect column names and grid types.</p>
 </tr>
 </tbody>
 </table>
-<p>💡 <strong>Note on Column Names</strong>: The function automatically
+<p><strong>Note on Column Names</strong>: The function automatically
 attempts to detect required columns (like cell code, year, species key).
 You only need to manually specify arguments like <code>cols_year</code>
 or <code>cols_cellCode</code> if your column names deviate from expected
@@ -447,7 +448,7 @@ series.</td>
 </tr>
 </tbody>
 </table>
-<p>⚠️ <strong>Important Note on Confidence Intervals (CIs)</strong>:</p>
+<p><strong>Important Note on Confidence Intervals (CIs)</strong>:</p>
 <ul>
 <li>The <code>ci_type</code> argument is only used for calculating
 uncertainty in general time series indicators (e.g.,

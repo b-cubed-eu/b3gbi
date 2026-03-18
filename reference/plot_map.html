@@ -42,7 +42,7 @@ instead."><meta property="og:image" content="https://b-cubed-eu.github.io/b3gbi/
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Plot Biodiversity Indicator Map</h1>
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.8.15/R/plot_map.R" class="external-link"><code>R/plot_map.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/R/plot_map.R" class="external-link"><code>R/plot_map.R</code></a></small>
       <div class="d-none name"><code>plot_map.Rd</code></div>
     </div>
 
@@ -86,11 +86,12 @@ instead.</p>
 <span>  visible_grid_outline <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  visible_panel_gridlines <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  complete_grid_outline <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  map_expansion_factor <span class="op">=</span> <span class="fl">0.5</span>,</span>
+<span>  map_expansion_factor <span class="op">=</span> <span class="fl">0.1</span>,</span>
 <span>  layers <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  layer_colours <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  layer_fill_colours <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  scale <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"medium"</span>, <span class="st">"small"</span>, <span class="st">"large"</span><span class="op">)</span></span>
+<span>  scale <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"medium"</span>, <span class="st">"small"</span>, <span class="st">"large"</span><span class="op">)</span>,</span>
+<span>  filter_outliers <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -283,6 +284,14 @@ Must be the same length as 'layers'.</p></dd>
 <dd><p>(Optional) Scale of Natural Earth data ("small", "medium", or
 "large"). Default is 'medium'.</p></dd>
 
+
+<dt id="arg-filter-outliers">filter_outliers<a class="anchor" aria-label="anchor" href="#arg-filter-outliers"></a></dt>
+<dd><p>(Optional) If TRUE, removes geographical outliers
+from the plot extent using an Interquartile Range (IQR) method based on the
+centroid coordinates of the indicator_map cells. This is particularly useful
+for discrete global grids like ISEA3H where stray data points from coordinate
+errors can force the map bounds to expand globally. Default is FALSE.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -293,11 +302,14 @@ Can be customized using ggplot2 functions.</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">evenness_map</span> <span class="op">&lt;-</span> <span class="fu"><a href="pielou_evenness_map.html">pielou_evenness_map</a></span><span class="op">(</span><span class="va">example_cube_1</span>,</span></span>
-<span class="r-in"><span>                                    level <span class="op">=</span> <span class="st">"country"</span>,</span></span>
-<span class="r-in"><span>                                    region <span class="op">=</span> <span class="st">"Denmark"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">plot_map</span><span class="op">(</span>x <span class="op">=</span> <span class="va">evenness_map</span>,</span></span>
-<span class="r-in"><span>         title <span class="op">=</span> <span class="st">"Map of Species Evenness in Denmark"</span>,</span></span>
-<span class="r-in"><span>         legend_title <span class="op">=</span> <span class="st">"Evenness"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  level <span class="op">=</span> <span class="st">"country"</span>,</span></span>
+<span class="r-in"><span>  region <span class="op">=</span> <span class="st">"Denmark"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">plot_map</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  x <span class="op">=</span> <span class="va">evenness_map</span>,</span></span>
+<span class="r-in"><span>  title <span class="op">=</span> <span class="st">"Map of Species Evenness in Denmark"</span>,</span></span>
+<span class="r-in"><span>  legend_title <span class="op">=</span> <span class="st">"Evenness"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot_map-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

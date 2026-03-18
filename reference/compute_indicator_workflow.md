@@ -243,8 +243,8 @@ diversity_map
 #> Projected CRS: EPSG:4326 
 #> 
 #> Coordinate range:
-#>      xmin      ymin      xmax      ymax 
-#>  8.016236 54.628857 15.272695 57.736914 
+#>  xmin  ymin  xmax  ymax 
+#>  8.00 54.50 15.50 57.75 
 #> 
 #> Grid cell size: 0.25 degrees 
 #> Number of cells: 299 

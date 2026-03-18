@@ -1,6 +1,6 @@
 # A Gentle Introduction to b3gbi: Data Cubes to Biodiversity Indicators
 
-## Introduction 🌍
+## Introduction
 
 The goal of the **b3gbi** package (B3 General Biodiversity Indicators)
 is to provide standardized, automated, and reproducible workflows for
@@ -47,17 +47,17 @@ names and grid types.
 
 ### Key `process_cube()` Arguments
 
-| Argument     | Description                                                    | Default/Details           |
-|--------------|----------------------------------------------------------------|---------------------------|
-| `data`       | Path to the .csv file containing the GBIF cube. Required.      |                           |
-| `grid_type`  | The grid system used (e.g., ‘eea’, ‘mgrs’, ‘eqdgc’, ‘custom’). | Autodetected if possible. |
-| `first_year` | Filters the cube to start at this year.                        | First year in the data.   |
-| `last_year`  | Filters the cube to end at this year.                          | Last year in the data.    |
+| Argument     | Description                                                              | Default/Details           |
+|--------------|--------------------------------------------------------------------------|---------------------------|
+| `data`       | Path to the .csv file containing the GBIF cube. Required.                |                           |
+| `grid_type`  | The grid system used (e.g., ‘eea’, ‘mgrs’, ‘eqdgc’, ‘isea3h’, ‘custom’). | Autodetected if possible. |
+| `first_year` | Filters the cube to start at this year.                                  | First year in the data.   |
+| `last_year`  | Filters the cube to end at this year.                                    | Last year in the data.    |
 
-💡 **Note on Column Names**: The function automatically attempts to
-detect required columns (like cell code, year, species key). You only
-need to manually specify arguments like `cols_year` or `cols_cellCode`
-if your column names deviate from expected standards.
+**Note on Column Names**: The function automatically attempts to detect
+required columns (like cell code, year, species key). You only need to
+manually specify arguments like `cols_year` or `cols_cellCode` if your
+column names deviate from expected standards.
 
 ### Example: Import Data and Filter by Time
 
@@ -310,7 +310,7 @@ All indicator wrapper functions (e.g., `obs_richness_map`,
 | `ci_type`       | Type of bootstrap confidence interval to calculate. Only relevant for time series. | ‘norm’, ‘basic’, ‘perc’, ‘bca’, or ‘none’. Defaults to ‘norm’ for time series. |
 | `num_bootstrap` | Number of bootstrap runs for CI calculation. Only relevant for time series.        | Defaults to 100.                                                               |
 
-⚠️ **Important Note on Confidence Intervals (CIs)**:
+**Important Note on Confidence Intervals (CIs)**:
 
 - The `ci_type` argument is only used for calculating uncertainty in
   general time series indicators (e.g., `obs_richness_ts`) and is
