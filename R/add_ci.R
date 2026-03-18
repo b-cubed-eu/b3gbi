@@ -179,8 +179,10 @@ add_ci <- function(indicator,
   raw_data <- indicator$raw_data
 
   # Add appropriate class
-  class(raw_data) <- append(class(raw_data), indicator$div_type)
-  class(x) <- setdiff(class(x), "indicator_data")
+  type <- indicator$div_type
+  subtype <- paste0(type, "_", attributes(indicator)$type)
+  class(raw_data) <- append(type, class(raw_data))
+  class(raw_data) <- append(subtype, class(raw_data))
 
   if (any(c("ll", "ul") %in% names(x)) & !overwrite) {
     warning(
@@ -240,9 +242,31 @@ add_ci <- function(indicator,
 
     # Join confidence intervals to indicator object
     if (nrow(ci_df) > 0) {
+
+      ## ------------------------------------------------------------------
+      ## REVERSE COMPOSITE KEY: Separate group_key back into original cols
+      ## ------------------------------------------------------------------
+      if ("group_key" %in% names(ci_df)) {
+        # We retrieve the original column names from our saved list
+        # (Assuming group_cols_original is the vector you had before the unite)
+        ci_df <- ci_df %>%
+          tidyr::separate_wider_delim(
+            cols = "group_key",
+            delim = "_",
+            names = c("year", "taxonKey"), # Use the original vector here
+            cols_remove = TRUE
+          )
+
+        # Reset group_cols so the join happens on the original variables
+        group_cols <- c("year", "taxonKey")
+      }
+
       # This handles cases where dubicube returns year as character
       if ("year" %in% names(ci_df) && is.numeric(x$year)) {
         ci_df$year <- as.numeric(ci_df$year)
+      }
+      if ("taxonKey" %in% names(ci_df) && is.numeric(x$taxonKey)) {
+        ci_df$taxonKey <- as.numeric(ci_df$taxonKey)
       }
       # Convert negative values to zero as rarity cannot be less than zero
       ci_df$ll <- ifelse(ci_df$ll > 0, ci_df$ll, 0)
