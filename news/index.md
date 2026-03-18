@@ -4,8 +4,8 @@
 
 - Added support for ISEA3H hexagonal grids
 - Added ‘filter_outliers’ option to plot_map() and plot_species_map)
-  functions. Use it to remove geographical outliers, which are common in
-  ISEA3H grids.
+  functions. Use it to remove geographical outliers. Use this if your
+  plot covers a larger geographical area than you expected..
 
 ## b3gbi 0.8.15 - Minor update:
 
