@@ -8,10 +8,10 @@ prepare_indicator_bootstrap(
   indicator,
   num_bootstrap,
   ci_type,
+  seed = 123,
   trans = function(t) t,
   inv_trans = function(t) t,
   confidence_level = 0.95,
-  seed = NULL,
   boot_args = list(),
   ci_args = list()
 )
@@ -24,6 +24,8 @@ prepare_indicator_bootstrap(
 
 \item{ci_type}{Character. Type of confidence interval.}
 
+\item{seed}{Optional integer. Random seed for bootstrapping. (Default: 123)}
+
 \item{trans}{Optional transformation function applied to the statistic.
 Will be overridden if specified by the indicator rule book.}
 
@@ -31,8 +33,6 @@ Will be overridden if specified by the indicator rule book.}
 Will be overridden if specified by the indicator rule book.}
 
 \item{confidence_level}{Numeric between 0 and 1. Confidence level.}
-
-\item{seed}{Integer. Random seed for bootstrapping.}
 
 \item{boot_args}{Named list of additional arguments passed to
 \code{bootstrap_cube()}, overriding defaults.}

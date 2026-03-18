@@ -23,9 +23,9 @@ calc_ci(x, indicator, ...)
 
 \method{calc_ci}{occ_density}(x, indicator, num_bootstrap = 1000, ci_type = "norm", ...)
 
+\method{calc_ci}{spec_richness_density}(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
+
 \method{calc_ci}{newness}(x, indicator, num_bootstrap = 1000, ci_type = "norm", ...)
-  
-\method{calc_ci}{spec_richness_density}(x, indicator, num_bootstrap = 1000, ci_type = "norm", ...)
 
 \method{calc_ci}{williams_evenness}(x, ...)
 

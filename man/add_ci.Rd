@@ -15,6 +15,7 @@ add_ci(
   overwrite = TRUE,
   boot_args = list(),
   ci_args = list(),
+  seed = 123,
   ...
 )
 }
@@ -64,6 +65,8 @@ be replaced? (Default: TRUE)}
 
 \item{ci_args}{(Optional) Named list of additional arguments passed to
 \code{dubicube::calculate_bootstrap_ci()}. (Default: \code{list()})}
+
+\item{seed}{(Optional) Integer. Random seed for bootstrapping. (Default: 123)}
 
 \item{...}{(Optional) Additional arguments passed to calc_ci().}
 }
