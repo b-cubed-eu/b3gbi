@@ -35,11 +35,12 @@ plot_map(
   visible_grid_outline = FALSE,
   visible_panel_gridlines = FALSE,
   complete_grid_outline = FALSE,
-  map_expansion_factor = 0.5,
+  map_expansion_factor = 0.1,
   layers = NULL,
   layer_colours = NULL,
   layer_fill_colours = NULL,
-  scale = c("medium", "small", "large")
+  scale = c("medium", "small", "large"),
+  filter_outliers = FALSE
 )
 }
 \arguments{
@@ -158,6 +159,12 @@ Must be the same length as 'layers'.}
 
 \item{scale}{(Optional) Scale of Natural Earth data ("small", "medium", or
 "large"). Default is 'medium'.}
+
+\item{filter_outliers}{(Optional) If TRUE, removes geographical outliers
+from the plot extent using an Interquartile Range (IQR) method based on the
+centroid coordinates of the indicator_map cells. This is particularly useful
+for discrete global grids like ISEA3H where stray data points from coordinate
+errors can force the map bounds to expand globally. Default is FALSE.}
 }
 \value{
 A ggplot object representing the biodiversity indicator map.
@@ -171,10 +178,13 @@ instead.
 }
 \examples{
 evenness_map <- pielou_evenness_map(example_cube_1,
-                                    level = "country",
-                                    region = "Denmark")
-plot_map(x = evenness_map,
-         title = "Map of Species Evenness in Denmark",
-         legend_title = "Evenness")
+  level = "country",
+  region = "Denmark"
+)
+plot_map(
+  x = evenness_map,
+  title = "Map of Species Evenness in Denmark",
+  legend_title = "Evenness"
+)
 
 }

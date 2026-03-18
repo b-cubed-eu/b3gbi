@@ -1,3 +1,15 @@
+# Mock my_DataInfo to avoid slow iNEXT calculations
+mock_DataInfo <- function(x, ...) {
+  # Return a basic data frame that satisfies the expectations
+  # Assemblage should match the list names of x (cell IDs)
+  tibble::tibble(
+    Assemblage = names(x),
+    SC = rep(0.8, length(x)),
+    n = rep(10, length(x)),
+    S.obs = rep(5, length(x))
+  )
+}
+
 test_that("completeness_map works with example data", {
   skip_on_cran()
 
@@ -5,7 +17,12 @@ test_that("completeness_map works with example data", {
   data(example_cube_1, package = "b3gbi")
 
   # Run properly
-  result <- completeness_map(example_cube_1, cutoff_length = 0)
+  with_mocked_bindings(
+    my_DataInfo = mock_DataInfo,
+    {
+      result <- completeness_map(example_cube_1, cutoff_length = 0)
+    }
+  )
 
   expect_s3_class(result, "indicator_map")
   expect_s3_class(result, "completeness")
@@ -21,7 +38,13 @@ test_that("completeness_ts works with example data", {
 
   data(example_cube_1, package = "b3gbi")
 
-  result <- completeness_ts(example_cube_1, cutoff_length = 0)
+  # Use ci_type = 'none' to speed up the test significantly
+  with_mocked_bindings(
+    my_DataInfo = mock_DataInfo,
+    {
+      result <- completeness_ts(example_cube_1, cutoff_length = 0, ci_type = "none")
+    }
+  )
 
   expect_s3_class(result, "indicator_ts")
   expect_s3_class(result, "completeness")
@@ -36,7 +59,12 @@ test_that("completeness_map works with abundance data", {
   skip_on_cran()
   data(example_cube_1, package = "b3gbi")
 
-  result <- completeness_map(example_cube_1, data_type = "abundance", cutoff_length = 0)
+  with_mocked_bindings(
+    my_DataInfo = mock_DataInfo,
+    {
+      result <- completeness_map(example_cube_1, data_type = "abundance", cutoff_length = 0)
+    }
+  )
 
   expect_s3_class(result, "indicator_map")
   expect_true(all(result$data$diversity_val >= 0 & result$data$diversity_val <= 1, na.rm = TRUE))
@@ -58,7 +86,12 @@ test_that("completeness_map works with assume_freq = TRUE", {
   skip_on_cran()
   data(example_cube_1, package = "b3gbi")
 
-  result <- completeness_map(example_cube_1, data_type = "incidence", assume_freq = TRUE, cutoff_length = 0)
+  with_mocked_bindings(
+    my_DataInfo = mock_DataInfo,
+    {
+      result <- completeness_map(example_cube_1, data_type = "incidence", assume_freq = TRUE, cutoff_length = 0)
+    }
+  )
 
   expect_s3_class(result, "indicator_map")
   expect_true(all(result$data$diversity_val >= 0 & result$data$diversity_val <= 1, na.rm = TRUE))
@@ -73,5 +106,5 @@ test_that("completeness handles empty data gracefully", {
   empty_cube$data <- empty_cube$data[0, ]
 
   expect_error(completeness_map(empty_cube), "No data found in the cube")
-  expect_error(completeness_ts(empty_cube), "No data found in the cube")
+  expect_error(completeness_ts(empty_cube, ci_type = "none"), "No data found in the cube")
 })

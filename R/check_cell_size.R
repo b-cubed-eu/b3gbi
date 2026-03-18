@@ -64,6 +64,15 @@ check_cell_size <- function(cell_size,
       num_multiples <- ceiling(final_warning_threshold / res_size)
       final_warning_threshold <- num_multiples * res_size
     }
+  } else if (resolution == "isea3h") {
+    res_unit <- "isea3h"
+    res_size <- 1 # Placeholder for hex grid "size"
+    
+    if (level == "world" || level == "continent") {
+      final_warning_threshold <- 1
+    } else {
+      final_warning_threshold <- 0.1
+    }
   } else {
     stop(paste0("Resolution units not recognized."))
   }

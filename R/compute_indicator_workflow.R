@@ -216,13 +216,13 @@ compute_indicator_workflow <- function(data,
 
   # Check that user is not trying to calculate an indicator that requires grid
   # cell assignment with a cube that lacks a supported grid system.
-  if (!data$grid_type %in% c("eea", "mgrs", "eqdgc")) {
+  if (!data$grid_type %in% c("eea", "mgrs", "eqdgc", "isea3h")) {
     if (dim_type == "map") {
       stop(
         paste0(
           "Grid system is either unsupported or missing. Spatial ",
           "indicators require a supported grid system. Currently ",
-          "supported grid systems are: EEA, MGRS, EQDGC"
+          "supported grid systems are: EEA, MGRS, EQDGC, ISEA3H"
         )
       )
     } else if (type %in% ind_req_grid_list) {
@@ -289,6 +289,19 @@ compute_indicator_workflow <- function(data,
   years_with_obs <- unique(df$year)
   kingdoms <- data$kingdoms
   num_families <- data$num_families
+
+  # Ensure coord_range is valid for ISEA3H or other grids
+  if (is.null(data$coord_range) || any(is.na(unlist(data$coord_range)))) {
+    if (nrow(df) > 0) {
+      data$coord_range <- list(
+        xmin = min(df$xcoord, na.rm = TRUE),
+        xmax = max(df$xcoord, na.rm = TRUE),
+        ymin = min(df$ycoord, na.rm = TRUE),
+        ymax = max(df$ycoord, na.rm = TRUE)
+      )
+    }
+  }
+
   coord_range <- data$coord_range
   map_lims <- if (is.list(coord_range)) {
     unlist(coord_range)
@@ -339,6 +352,8 @@ compute_indicator_workflow <- function(data,
       cube_crs <- "EPSG:4326"
     } else if (data$grid_type == "mgrs") {
       cube_crs <- guess_utm_epsg(data)
+    } else if (data$grid_type == "isea3h") {
+      cube_crs <- "EPSG:4326"
     } else {
       stop("Grid reference system not found.")
     }
@@ -368,6 +383,8 @@ compute_indicator_workflow <- function(data,
       projected_crs <- "ESRI:54012"
     } else if (data$grid_type == "mgrs") {
       projected_crs <- guess_utm_epsg(cube_bbox_latlong)
+    } else if (data$grid_type == "isea3h") {
+      projected_crs <- "ESRI:54012"
     } else {
       stop("Grid reference system not found.")
     }
@@ -398,6 +415,8 @@ compute_indicator_workflow <- function(data,
         output_crs <- projected_crs
       } else if (data$grid_type == "eqdgc") {
         output_crs <- "EPSG:4326"
+      } else if (data$grid_type == "isea3h") {
+        output_crs <- "EPSG:4326"
       } else {
         stop("Grid reference system not found.")
       }
@@ -427,6 +446,7 @@ compute_indicator_workflow <- function(data,
       )
     } else {
       # Create an sf object from quarter-degree or EEA data
+      # For ISEA3H, the coordinates are centroids in EPSG:4326
       df_sf_input <- sf::st_as_sf(df,
         coords = c("xcoord", "ycoord"),
         crs = cube_crs
@@ -528,6 +548,53 @@ compute_indicator_workflow <- function(data,
       if (nrow(df) == 0) {
         stop("No data points remain after spatial filtering.")
       }
+    } else if (level != "cube") {
+      # Early filtering for non-cube levels without shapefile
+      # This ensures 'df' used for grid creation is limited to the region
+      df_sf_temp <- sf::st_as_sf(df, coords = c("xcoord", "ycoord"), crs = cube_crs)
+      df_sf_temp <- sf::st_transform(df_sf_temp, crs = projected_crs)
+
+      # We need map_data to filter
+      map_data_list_temp <- get_ne_data(
+        projected_crs,
+        cube_bbox_latlong,
+        region,
+        level,
+        ne_type,
+        ne_scale,
+        include_land,
+        include_ocean,
+        buffer_dist_km
+      )
+
+      filtered_sf_temp <- sf::st_filter(df_sf_temp, map_data_list_temp$combined)
+
+      df <- df[df$cellCode %in% filtered_sf_temp$cellCode, ]
+      if (nrow(df) == 0) {
+        # Don't stop yet, maybe they are just outside the land but in ocean
+        # Actually get_ne_data should handle ocean if include_ocean=TRUE
+        stop("No data points remain in the specified region after spatial filtering.")
+      }
+
+      # Update coord_range to match the filtered data
+      data$coord_range <- list(
+        xmin = min(df$xcoord, na.rm = TRUE),
+        xmax = max(df$xcoord, na.rm = TRUE),
+        ymin = min(df$ycoord, na.rm = TRUE),
+        ymax = max(df$ycoord, na.rm = TRUE)
+      )
+      coord_range <- data$coord_range
+    } else {
+      # For level = 'cube', also ensure coord_range matches the filtered 'df'
+      if (nrow(df) > 0) {
+        data$coord_range <- list(
+          xmin = min(df$xcoord, na.rm = TRUE),
+          xmax = max(df$xcoord, na.rm = TRUE),
+          ymin = min(df$ycoord, na.rm = TRUE),
+          ymax = max(df$ycoord, na.rm = TRUE)
+        )
+        coord_range <- data$coord_range
+      }
     }
 
     # Unify object names
@@ -585,9 +652,13 @@ compute_indicator_workflow <- function(data,
 
     if (dim_type == "map" || force_grid == TRUE) {
       # Set output cell size (or if user provided one, check if it makes sense)
+      # Compatibility fix: check both plural and singular resolution slots
+      res_val <- data$resolutions[1] %||% data$resolution
+      resolution_arg <- if (data$grid_type == "isea3h") "isea3h" else res_val
+
       cell_size <- check_cell_size(
         cell_size,
-        data$resolution,
+        resolution_arg,
         level,
         final_area_sqkm
       )
@@ -628,12 +699,23 @@ compute_indicator_workflow <- function(data,
 
   if (dim_type == "map" || force_grid == TRUE) {
     # Create grid
-    grid <- create_grid(
-      bbox_for_grid,
-      cell_size,
-      projected_crs,
-      make_valid
-    )
+    if (data$grid_type == "isea3h") {
+      # Use pre-existing centroids to build hexagonal polygons
+      grid <- create_isea3h_grid(df, projected_crs)
+      # Add area if missing
+      if (!"area" %in% colnames(grid)) {
+        grid$area <- grid %>%
+          sf::st_area() %>%
+          units::set_units("km^2")
+      }
+    } else {
+      grid <- create_grid(
+        bbox_for_grid,
+        cell_size,
+        projected_crs,
+        make_valid
+      )
+    }
 
     sf::st_agr(grid) <- "constant"
 
@@ -660,7 +742,14 @@ compute_indicator_workflow <- function(data,
     sf::st_agr(intersection_target) <- "constant"
 
     # Intersect grid with intersection target
-    clipped_grid <- intersect_grid_with_polygon(grid, intersection_target)
+    if (data$grid_type == "isea3h") {
+      # ISEA3H requires accurate clipping for dateline/pole handling
+      clipped_grid <- intersect_grid_with_polygon(grid, intersection_target)
+    } else {
+      # For standard grids, use fast spatial filtering instead of expensive clipping.
+      # This keeps whole cells and significantly speeds up the workflow.
+      clipped_grid <- sf::st_filter(grid, intersection_target)
+    }
 
     if (spherical_geometry == TRUE) {
       # Restore original spherical setting
@@ -669,12 +758,30 @@ compute_indicator_workflow <- function(data,
 
     # Filter data to only those within the intersection target
     data_filtered <- sf::st_filter(data_projected, intersection_target)
+
     # Assign data to grid
-    data_final <- data_filtered %>%
-      sf::st_join(clipped_grid, join = sf::st_nearest_feature)
-    data_final_nogeom <- sf::st_drop_geometry(data_final)
-    map_lims <- sf::st_transform(data_final, crs = output_crs) %>%
-      sf::st_bbox()
+    if (data$grid_type == "isea3h") {
+      # ISEA3H: the cube already assigns data to cells via cellCode.
+      # Join by cellCode instead of spatial join to preserve this assignment.
+      cell_lookup <- sf::st_drop_geometry(clipped_grid[, c("cellCode", "cellid")])
+      data_final <- dplyr::left_join(
+        sf::st_drop_geometry(data_filtered), cell_lookup,
+        by = "cellCode"
+      )
+      data_final <- data_final[!is.na(data_final$cellid), ]
+    } else {
+      data_final <- data_filtered %>%
+        sf::st_join(clipped_grid, join = sf::st_nearest_feature)
+    }
+    data_final_nogeom <- if (inherits(data_final, "sf")) {
+      sf::st_drop_geometry(data_final)
+    } else {
+      data_final
+    }
+    map_lims <- sf::st_transform(
+      clipped_grid,
+      crs = output_crs
+    ) %>% sf::st_bbox()
   } else if (level != "cube") {
     data_final <- sf::st_filter(data_projected, map_data)
     data_final_nogeom <- sf::st_drop_geometry(data_final)
@@ -707,8 +814,13 @@ compute_indicator_workflow <- function(data,
       dplyr::left_join(indicator, by = "cellid")
 
     # Get bbox of original grid before transformation
-    original_bbox <- intersect_grid_with_polygon(grid, saved_layer) %>%
-      sf::st_union()
+    if (data$grid_type == "isea3h") {
+      original_bbox <- intersect_grid_with_polygon(grid, saved_layer) %>%
+        sf::st_union()
+    } else {
+      original_bbox <- sf::st_filter(grid, saved_layer) %>%
+        sf::st_union()
+    }
 
     # Transform to output CRS
     diversity_grid <- sf::st_transform(diversity_grid, crs = output_crs)
@@ -765,7 +877,8 @@ compute_indicator_workflow <- function(data,
       num_years = num_years,
       species_names = species_names,
       years_with_obs = years_with_obs,
-      original_bbox = original_bbox
+      original_bbox = original_bbox,
+      grid_type = data$grid_type
     )
   } else {
     # Build indicator_ts object

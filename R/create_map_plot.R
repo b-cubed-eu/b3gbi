@@ -34,7 +34,6 @@ create_map_plot <- function(data,
                             suppress_legend,
                             title_label,
                             title_face = "plain") {
-
   # Set necessary variables to NULL to avoid R CMD check notes
   geometry <- diversity_val <- NULL
 
@@ -77,8 +76,8 @@ create_map_plot <- function(data,
   cust_leg <- function(scale.params = list()) {
     do.call("scale_fill_gradient", modifyList(
       list(low = "gold", high = "firebrick4", na.value = "transparent"),
-      scale.params)
-    )
+      scale.params
+    ))
   }
 
   # Set up transformation if specified
@@ -115,8 +114,8 @@ create_map_plot <- function(data,
   # Step 3: Add additional layers, with ocean and lakes in blue
   for (i in seq_along(layer_list)) {
     layer_data <- layer_list[[i]]
-    layer_fill_colour <- if(names(layer_list)[[i]] %in% c("ocean", "lakes") &&
-                            is.null(layer_fill_colours)) {
+    layer_fill_colour <- if (names(layer_list)[[i]] %in% c("ocean", "lakes") &&
+      is.null(layer_fill_colours)) {
       "#92c5f0"
     } else if (!is.null(layer_fill_colours)) {
       layer_fill_colours[[i]]
@@ -126,23 +125,31 @@ create_map_plot <- function(data,
     layer_colour <- if (!is.null(layer_colours)) layer_colours[[i]] else "black"
 
     plot <- plot +
-      ggplot2::geom_sf(data = layer_data,
-                       aes(geometry = geometry),
-                       fill = layer_fill_colour,
-                       colour = layer_colour,
-                       inherit.aes = FALSE)
+      ggplot2::geom_sf(
+        data = layer_data,
+        aes(geometry = geometry),
+        fill = layer_fill_colour,
+        colour = layer_colour,
+        inherit.aes = FALSE
+      )
   }
 
   # Step 4: Add indicator values
   plot <- plot +
-    geom_sf(aes(fill = diversity_val,
-                geometry = geometry),
-            colour = alpha(grid_line_colour, grid_line_transparency),
-            linewidth = grid_line_width) +
-    cust_leg(list(trans = trans,
-                  breaks = breaks,
-                  labels = labels,
-                  limits = legend_limits)) +
+    geom_sf(
+      aes(
+        fill = diversity_val,
+        geometry = geometry
+      ),
+      colour = alpha(grid_line_colour, grid_line_transparency),
+      linewidth = grid_line_width
+    ) +
+    cust_leg(list(
+      trans = trans,
+      breaks = breaks,
+      labels = labels,
+      limits = legend_limits
+    )) +
     theme_bw() +
     theme(
       panel.background = element_rect(fill = ocean_fill_colour),
@@ -151,8 +158,10 @@ create_map_plot <- function(data,
       plot.title = ggplot2::element_text(face = title_face)
     ) +
     # Wrap legend title if longer than user-specified wrap length
-    labs(fill = wrapper(legend_title %||% leg_label_default,
-                                                    legend_title_wrap_length)) +
+    labs(fill = wrapper(
+      legend_title %||% leg_label_default,
+      legend_title_wrap_length
+    )) +
     if (suppress_legend) theme(legend.position = "none")
 
   # Step 5: Re-create lines from layers
@@ -161,11 +170,13 @@ create_map_plot <- function(data,
   for (i in names(layer_list)) {
     layer_data <- layer_list[[i]]
     plot <- plot +
-      ggplot2::geom_sf(data = layer_data,
-                       aes(geometry = geometry),
-                       fill = "transparent",
-                       colour = "black",
-                       inherit.aes = FALSE)
+      ggplot2::geom_sf(
+        data = layer_data,
+        aes(geometry = geometry),
+        fill = "transparent",
+        colour = "black",
+        inherit.aes = FALSE
+      )
   }
 
   # Step 6: Add the grid outline and fill
@@ -173,20 +184,31 @@ create_map_plot <- function(data,
     grid_outline <- original_bbox
   } else if (complete_grid_outline == "transformed") {
     grid_outline <- sf::st_as_sfc(sf::st_bbox(map_lims_original,
-                                              crs = sf::st_crs(data))) %>%
+      crs = sf::st_crs(data)
+    )) %>%
       sf::st_transform(crs = projection)
-
   } else {
-    grid_outline <- sf::st_union(data)
+    grid_outline <- tryCatch(
+      sf::st_union(sf::st_make_valid(data)),
+      error = function(e) {
+        # S2 may reject self-intersecting polygons (e.g. from ISEA3H fallback).
+        # Retry with S2 off.
+        old_s2 <- sf::sf_use_s2()
+        sf::sf_use_s2(FALSE)
+        on.exit(sf::sf_use_s2(old_s2))
+        sf::st_union(sf::st_make_valid(data))
+      }
+    )
   }
 
   plot <- plot +
-    ggplot2::geom_sf(data = grid_outline,
-                     colour = grid_outline_colour,
-                     linewidth = grid_outline_width,
-                     fill = grid_fill_colour,
-                     alpha = grid_fill_transparency,
-                     inherit.aes = FALSE
+    ggplot2::geom_sf(
+      data = grid_outline,
+      colour = grid_outline_colour,
+      linewidth = grid_outline_width,
+      fill = grid_fill_colour,
+      alpha = grid_fill_transparency,
+      inherit.aes = FALSE
     )
 
   # Step 7: Expand the plot if crop_to_grid is not set
@@ -194,11 +216,16 @@ create_map_plot <- function(data,
   plot <- plot +
     coord_sf(
       crs = projection,
-      xlim = c(map_lims["xmin"],
-               map_lims["xmax"]),
-      ylim = c(map_lims["ymin"],
-               map_lims["ymax"]),
-      expand = expand_val)
+      xlim = c(
+        map_lims["xmin"],
+        map_lims["xmax"]
+      ),
+      ylim = c(
+        map_lims["ymin"],
+        map_lims["ymax"]
+      ),
+      expand = expand_val
+    )
 
   # Step 8: Add title
   if (!is.null(title_label)) {
@@ -214,5 +241,4 @@ create_map_plot <- function(data,
 
   # Exit function
   return(plot)
-
 }

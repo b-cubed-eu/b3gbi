@@ -86,17 +86,25 @@
 #'  Must be the same length as 'layers'.
 #' @param scale (Optional) Scale of Natural Earth data ("small", "medium", or
 #'  "large"). Default is 'medium'.
+#' @param filter_outliers (Optional) If TRUE, removes geographical outliers
+#'  from the plot extent using an Interquartile Range (IQR) method based on the
+#'  centroid coordinates of the indicator_map cells. This is particularly useful
+#'  for discrete global grids like ISEA3H where stray data points from coordinate
+#'  errors can force the map bounds to expand globally. Default is FALSE.
 #'
 #' @return A ggplot object representing the biodiversity indicator map.
 #' Can be customized using ggplot2 functions.
 #'
 #' @examples
 #' evenness_map <- pielou_evenness_map(example_cube_1,
-#'                                     level = "country",
-#'                                     region = "Denmark")
-#' plot_map(x = evenness_map,
-#'          title = "Map of Species Evenness in Denmark",
-#'          legend_title = "Evenness")
+#'   level = "country",
+#'   region = "Denmark"
+#' )
+#' plot_map(
+#'   x = evenness_map,
+#'   title = "Map of Species Evenness in Denmark",
+#'   legend_title = "Evenness"
+#' )
 #'
 #' @export
 plot_map <- function(x,
@@ -129,13 +137,12 @@ plot_map <- function(x,
                      visible_grid_outline = FALSE,
                      visible_panel_gridlines = FALSE,
                      complete_grid_outline = FALSE,
-                     map_expansion_factor = 0.5,
+                     map_expansion_factor = 0.1,
                      layers = NULL,
                      layer_colours = NULL,
                      layer_fill_colours = NULL,
-                     scale = c("medium", "small", "large")
-) {
-
+                     scale = c("medium", "small", "large"),
+                     filter_outliers = FALSE) {
   # Set variable definitions to NULL where required
   diversity_val <- geometry <- map_surround <- layer_list <- map_lims <- NULL
 
@@ -160,7 +167,7 @@ plot_map <- function(x,
   }
 
   if (crop_by_region == TRUE &&
-      any(x$map_region %in% c("cube", "world"))) {
+    any(x$map_region %in% c("cube", "world"))) {
     stop("crop_by_region is set to TRUE, but no region was specified when
          calculating the indicator_map. Please recalculate the indicator_map
          with a region specified.")
@@ -171,7 +178,7 @@ plot_map <- function(x,
     stop("If layer_colours is provided, it must be the same length as layers.")
   }
   if (length(layer_fill_colours) != length(layers) &&
-      !is.null(layer_fill_colours)) {
+    !is.null(layer_fill_colours)) {
     stop(
       "If layer_fill_colours is provided, it must be the same length as layers."
     )
@@ -180,6 +187,31 @@ plot_map <- function(x,
   # Get plot title (if set to "auto")
   title <- if (title == "auto") auto_title else title
 
+  # Filter spatial outliers if requested
+  if (filter_outliers) {
+    # Extract coordinates from the geometry centroids
+    coords <- do.call(rbind, lapply(sf::st_geometry(x$data), function(geom) {
+      sf::st_coordinates(sf::st_centroid(geom))
+    }))
+
+    qx <- stats::quantile(coords[, 1], probs = c(0.25, 0.75), na.rm = TRUE)
+    qy <- stats::quantile(coords[, 2], probs = c(0.25, 0.75), na.rm = TRUE)
+    iqr_x <- qx[2] - qx[1]
+    iqr_y <- qy[2] - qy[1]
+
+    # Standard 1.5 IQR could be too restrictive for clustered maps, use 3 IQR for extreme outliers
+    keep <- coords[, 1] >= (qx[1] - 3 * iqr_x) &
+      coords[, 1] <= (qx[2] + 3 * iqr_x) &
+      coords[, 2] >= (qy[1] - 3 * iqr_y) &
+      coords[, 2] <= (qy[2] + 3 * iqr_y)
+
+    x$data <- x$data[keep, ]
+
+    # Recalculate original bbox based on the filtered data
+    x$coord_range <- sf::st_bbox(x$data)[c("xmin", "ymin", "xmax", "ymax")]
+    x$original_bbox <- sf::st_as_sfc(sf::st_bbox(x$data))
+  }
+
   # Prepare data and layers for plotting
   map_data_list <- prepare_map_for_plot(
     x, xlims, ylims, layers, scale, crop_to_grid, crop_by_region, projection,
@@ -187,7 +219,12 @@ plot_map <- function(x,
   )
 
   # Unpack the list
-  list2env(map_data_list, envir= environment())
+  list2env(map_data_list, envir = environment())
+
+  # Set default grid line width based on grid type
+  if (is.null(grid_line_width)) {
+    grid_line_width <- if (!is.null(x$grid_type) && x$grid_type == "isea3h") 0.5 else 0.1
+  }
 
   # Create plot using the helper function
   plot <- create_map_plot(
@@ -230,5 +267,4 @@ plot_map <- function(x,
 
   # Exit function
   return(plot)
-
 }

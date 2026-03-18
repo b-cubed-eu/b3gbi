@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-## Introduction 🌍
+## Introduction
 
 The goal of the **b3gbi** package (B3 General Biodiversity Indicators) is to provide standardized, automated, and reproducible workflows for calculating essential spatial and temporal biodiversity indicators. Developed as part of the EU-funded B3 (Biodiversity Building Blocks for Policy) project, b3gbi takes pre-processed GBIF occurrence cubes as input and quickly transforms them into actionable metrics, including richness, evenness, rarity, taxonomic distinctness, Shannon-Hill diversity, Simpson-Hill diversity, and completeness, complete with integrated uncertainty estimation using robust bootstrapping methods.
 
@@ -55,11 +55,11 @@ The first step is importing your GBIF occurrence cube (a .csv file) and converti
 | Argument | Description | Default/Details |
 |----------|-------------|-----------------|
 | `data` | Path to the .csv file containing the GBIF cube. Required. | |
-| `grid_type` | The grid system used (e.g., 'eea', 'mgrs', 'eqdgc', 'custom'). | Autodetected if possible. |
+| `grid_type` | The grid system used (e.g., 'eea', 'mgrs', 'eqdgc', 'isea3h', 'custom'). | Autodetected if possible. |
 | `first_year` | Filters the cube to start at this year. | First year in the data. |
 | `last_year` | Filters the cube to end at this year. | Last year in the data. |
 
-💡 **Note on Column Names**: The function automatically attempts to detect required columns (like cell code, year, species key). You only need to manually specify arguments like `cols_year` or `cols_cellCode` if your column names deviate from expected standards.
+**Note on Column Names**: The function automatically attempts to detect required columns (like cell code, year, species key). You only need to manually specify arguments like `cols_year` or `cols_cellCode` if your column names deviate from expected standards.
 
 ### Example: Import Data and Filter by Time
 
@@ -109,7 +109,7 @@ All indicator wrapper functions (e.g., `obs_richness_map`, `occ_turnover_ts`) sh
 | `ci_type` | Type of bootstrap confidence interval to calculate. Only relevant for time series. | 'norm', 'basic', 'perc', 'bca', or 'none'. Defaults to 'norm' for time series. |
 | `num_bootstrap` | Number of bootstrap runs for CI calculation. Only relevant for time series. | Defaults to 100. |
 
-⚠️ **Important Note on Confidence Intervals (CIs)**:
+**Important Note on Confidence Intervals (CIs)**:
 
 - The `ci_type` argument is only used for calculating uncertainty in general time series indicators (e.g., `obs_richness_ts`) and is ignored for map indicators.
 - For indicators based on Hill diversity (e.g., `hill_ts()`), the `ci_type` is ignored because CIs are calculated internally using the iNEXT package. However, the `num_bootstrap` argument is still required to define the number of runs for iNEXT's internal uncertainty estimation.

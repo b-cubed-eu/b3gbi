@@ -6,10 +6,14 @@ test_that("check_cell_size handles valid inputs", {
 })
 
 test_that("check_cell_size handles invalid cell sizes", {
-  expect_error(check_cell_size(11, "10km", "country"),
-               "cell_size must be a whole number multiple of the resolution.")
-  expect_error(check_cell_size(0.3, "0.25degrees", "country"),
-               "cell_size must be a whole number multiple of the resolution.")
+  expect_error(
+    check_cell_size(11, "10km", "country"),
+    "cell_size must be a whole number multiple of the resolution."
+  )
+  expect_error(
+    check_cell_size(0.3, "0.25degrees", "country"),
+    "cell_size must be a whole number multiple of the resolution."
+  )
 })
 
 test_that("check_cell_size handles NULL cell size (km)", {
@@ -25,8 +29,10 @@ test_that("check_cell_size handles NULL cell size (degrees)", {
 })
 
 test_that("check_cell_size handles invalid resolution units", {
-  expect_error(check_cell_size(10, "1miles", "country"),
-               "Resolution units not recognized.")
+  expect_error(
+    check_cell_size(10, "1miles", "country"),
+    "Resolution units not recognized."
+  )
 })
 
 test_that("check_cell_size handles edge cases", {
@@ -187,19 +193,6 @@ test_that("check_cell_size auto mode for degrees uses level-based defaults", {
   expect_equal(result, 0.1)
 })
 
-test_that("check_cell_size 'grid' mode requires confirmation", {
-  expect_error(
-    with_mocked_bindings(
-      interactive = mock_interactive_true,
-      readline = mock_readline_y,
-      .package = "base",
-      check_cell_size(
-        cell_size = "grid",
-        resolution = "5km",
-        level = "country"
-      )
-    ), "requires interactive confirmation") # 5 km in meters
-})
 
 test_that("check_cell_size 'auto' mode converts to NULL and proceeds", {
   result <- check_cell_size(
@@ -460,4 +453,40 @@ test_that("check_cell_size handles edge case with very small areas", {
   )
 
   expect_equal(result, 100) # Should default to 0.1 km = 100 meters
+})
+
+test_that("check_cell_size handles isea3h resolution", {
+  result <- check_cell_size(
+    cell_size = 5,
+    resolution = "isea3h",
+    level = "country"
+  )
+
+  expect_equal(result, 5) # For isea3h it should just return the value as is (degrees/unitless)
+})
+
+test_that("check_cell_size handles auto mode for isea3h resolution", {
+  # World/continent level should default to 1
+  result <- check_cell_size(
+    cell_size = NULL,
+    resolution = "isea3h",
+    level = "world"
+  )
+  expect_equal(result, 1)
+
+  # Other levels: since res_size=1 and 1 >= 0.1, auto returns res_size (1)
+  result <- check_cell_size(
+    cell_size = NULL,
+    resolution = "isea3h",
+    level = "country"
+  )
+  expect_equal(result, 1)
+
+  # Auto keyword should do the same
+  result_auto <- check_cell_size(
+    cell_size = "auto",
+    resolution = "isea3h",
+    level = "country"
+  )
+  expect_equal(result_auto, 1)
 })

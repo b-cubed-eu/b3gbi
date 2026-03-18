@@ -64,6 +64,7 @@ vs_script.R
 *.jpg
 *.jpeg
 *.txt
+*.pdf
 /inst/doc
 /inst/extdata
 /inst/figures
@@ -72,6 +73,7 @@ app.R
 .RDataTmp
 /doc/
 /Meta/
-/conductor
 /.gemini
+/conductor
 /shiny
+/lib
