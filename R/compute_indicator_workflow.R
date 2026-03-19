@@ -848,6 +848,13 @@ compute_indicator_workflow <- function(data,
         }
       }
     }
+
+    if (ci_type == "none" &&
+        type %in% c("hill0", "hill1", "hill2")) {
+      if ("ll" %in% names(indicator)) {
+        indicator <- indicator %>% select(c(-ll, -ul))
+      }
+    }
   }
 
   if (spherical_geometry == FALSE) {
