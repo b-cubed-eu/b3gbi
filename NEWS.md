@@ -1,3 +1,7 @@
+# b3gbi 0.8.17 - Minor update:
+
+* Fixed a bug where Hill diversity calculated confidence intervals even when `ci_type` was set to `none`.
+
 # b3gbi 0.8.16 - Minor update:
 
 * Added support for ISEA3H hexagonal grids
