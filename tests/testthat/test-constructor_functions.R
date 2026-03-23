@@ -158,7 +158,6 @@ test_that("new_indicator_map creates indicator_map object correctly", {
     num_years = 11,
     species_names = NULL,
     years_with_obs = 11,
-    original_bbox = list(xmin = 1, xmax = 2, ymin = 3, ymax = 4),
     grid_type = "eea"
   )
   expect_s3_class(im, c("indicator_map", "obs_richness"))

@@ -94,6 +94,8 @@ grid cells will be coloured according to their indicator value). Default is
 "black". If visible_gridlines is set to FALSE, this setting will have no
 effect.}
 
+\item{grid_line_width}{(Optional) Width of the grid lines. Default is 0.1.}
+
 \item{grid_fill_transparency}{(Optional) Transparency of the grid fill colour
 for empty grid cells (0 = fully transparent, 1 = fully opaque). If
 visible_gridlines is set to TRUE, default is 0.2. Otherwise, default is 0.
