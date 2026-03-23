@@ -379,8 +379,8 @@ test_that(
       dim_type = "map"
     )
     expect_equal(names(result_map$data), c("cellid",
-                                           "area",
                                            "cellCode",
+                                           "area",
                                            "diversity_val",
                                            "geometry")
     )
@@ -609,3 +609,4 @@ test_that(
       expect_true(sf::sf_use_s2())
     })
 })
+
