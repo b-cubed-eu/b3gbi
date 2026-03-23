@@ -171,7 +171,8 @@ compute_indicator_workflow <- function(data,
     reason = "unrecognized"
   )
 
-  xcoord <- ycoord <- NULL
+  # Null assignments
+  xcoord <- ycoord <- ll <- ul <- NULL
 
   # Check for empty cube
   if (nrow(data$data) == 0) {
@@ -774,11 +775,11 @@ compute_indicator_workflow <- function(data,
       # These grids have a native cellCode mapping.
       # Join by cellCode instead of spatial join to preserve this assignment.
       # This avoids aliasing and gaps when using different projections.
-      
+
       # Include area in the lookup as some indicators (e.g. density) require it
       lookup_cols <- c("cellCode", "cellid")
       if ("area" %in% names(clipped_grid)) lookup_cols <- c(lookup_cols, "area")
-      
+
       cell_lookup <- sf::st_drop_geometry(clipped_grid[, lookup_cols])
       data_final <- dplyr::left_join(
         sf::st_drop_geometry(data_filtered), cell_lookup,
