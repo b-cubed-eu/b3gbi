@@ -42,12 +42,8 @@
 #' @param grid_line_colour (Optional) Colour for the grid lines. Default is
 #'  "black". If visible_gridlines is set to FALSE, this setting will have no
 #'  effect.
-#' @param grid_outline_colour (Optional) Colour for the grid outline. Default is
-#'  "black". If visible_grid_outline is set to FALSE, this setting will have no
-#'  effect.
 #' @param grid_line_width (Optional) Width of the grid lines. Default is 0.1.
-#' @param grid_outline_width (Optional) Width of the grid outline. Default is
-#'  0.5.
+
 #' @param grid_fill_transparency (Optional) Transparency of the grid fill colour
 #'  for empty grid cells (0 = fully transparent, 1 = fully opaque). If
 #'  visible_gridlines is set to TRUE, default is 0.2. Otherwise, default is 0.
@@ -64,12 +60,8 @@
 #'  new line.
 #' @param visible_gridlines (Optional) Show gridlines between cells. Default is
 #'  TRUE.
-#' @param visible_grid_outline (Optional) Show outline around grid. Default is
-#'  FALSE.
 #' @param visible_panel_gridlines (Optional) Show ggplot panel gridlines.
 #'  Default is FALSE.
-#' @param complete_grid_outline (Optional) If TRUE, the grid outline will be
-#'  extended as a complete rectangle, even if the grid is not. Default is FALSE.
 #' @param map_expansion_factor (Optional) Factor to expand the map limits
 #' beyond the grid limits. This does NOT expand the boundaries of the plot, it
 #' only affects where the crop is applied. If this value is too small, some
@@ -124,9 +116,7 @@ plot_map <- function(x,
                      land_fill_colour = NULL,
                      grid_fill_colour = NULL,
                      grid_line_colour = NULL,
-                     grid_outline_colour = NULL,
                      grid_line_width = NULL,
-                     grid_outline_width = NULL,
                      grid_fill_transparency = NULL,
                      grid_line_transparency = NULL,
                      legend_title = NULL,
@@ -134,9 +124,7 @@ plot_map <- function(x,
                      legend_title_wrap_length = 10,
                      title_wrap_length = 60,
                      visible_gridlines = TRUE,
-                     visible_grid_outline = FALSE,
                      visible_panel_gridlines = FALSE,
-                     complete_grid_outline = FALSE,
                      map_expansion_factor = 0.1,
                      layers = NULL,
                      layer_colours = NULL,
@@ -237,9 +225,7 @@ plot_map <- function(x,
     ocean_fill_colour = ocean_fill_colour,
     grid_fill_colour = grid_fill_colour,
     grid_line_colour = grid_line_colour,
-    grid_outline_colour = grid_outline_colour,
     grid_line_width = grid_line_width,
-    grid_outline_width = grid_outline_width,
     grid_fill_transparency = grid_fill_transparency,
     grid_line_transparency = grid_line_transparency,
     trans = trans,
@@ -249,14 +235,11 @@ plot_map <- function(x,
     legend_limits = legend_limits,
     map_level = x$map_level,
     visible_gridlines = visible_gridlines,
-    visible_grid_outline = visible_grid_outline,
     visible_panel_gridlines = visible_panel_gridlines,
-    complete_grid_outline = complete_grid_outline,
     crop_to_grid = crop_to_grid,
     map_lims = map_lims,
     map_lims_original = x$coord_range,
     projection = projection,
-    original_bbox = x$original_bbox,
     leg_label_default = leg_label_default,
     legend_title = legend_title,
     legend_title_wrap_length = legend_title_wrap_length,
