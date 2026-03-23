@@ -4,6 +4,7 @@
 * Addressed `S2` geometry degenerate vertex errors related to incorrect geographic subset orientations for exact-matching map boundary points.
 * Added native sf boundaries for MGRS, EEA, and EQDGC, vastly improving boundary and grid visualization.
 * Removed redundant plotting parameters `complete_grid_outline` and `visible_grid_outline` from `plot_map` and `plot_species_map`.
+* Fixed a bug where Hill diversity calculated confidence intervals even when `ci_type` was set to `none`.
 
 # b3gbi 0.8.16 - Minor update:
 

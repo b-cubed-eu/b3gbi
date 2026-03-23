@@ -609,3 +609,39 @@ test_that(
       expect_true(sf::sf_use_s2())
     })
 })
+
+test_that("Confidence intervals are stripped from Hill diversity when ci_type = 'none'", {
+
+  result <- hill0_ts(
+    data = example_cube_1,
+    ci_type = "none",
+    first_year = 1999,
+    last_year = 2001
+  )
+  expect_true(
+    !any(
+      c(
+        "ll",
+        "ul"
+      ) %in% names(result$data)
+    )
+  )
+})
+
+test_that("Confidence intervals are not stripped from Hill diversity when ci_type != 'none'", {
+
+  result <- hill0_ts(
+    data = example_cube_1,
+    ci_type = "perc",
+    first_year = 1999,
+    last_year = 2001
+  )
+  expect_true(
+    all(
+      c(
+        "ll",
+        "ul"
+      ) %in% names(result$data)
+    )
+  )
+})
