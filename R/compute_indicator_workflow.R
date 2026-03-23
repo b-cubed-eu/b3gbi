@@ -825,9 +825,10 @@ compute_indicator_workflow <- function(data,
     indicator <- calc_map(data_final_nogeom, ...)
 
     # Add indicator values to grid
+    join_cols <- unique(c("cellid", intersect(names(clipped_grid), names(indicator))))
     diversity_grid <-
       clipped_grid %>%
-      dplyr::left_join(indicator, by = "cellid")
+      dplyr::left_join(indicator, by = join_cols)
 
 
 
