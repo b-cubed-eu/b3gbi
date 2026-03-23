@@ -1,3 +1,10 @@
+# b3gbi 0.8.17 - Patch update:
+
+* Fixed a regression introduced in version 0.8.0 where `compute_indicator_workflow` produced erroneous empty cell lines for certain bounding boxes across MGRS, EEA, and EQDGC datasets by correcting spatial matching workflows to rely on native `cellCode` joins.
+* Addressed `S2` geometry degenerate vertex errors related to incorrect geographic subset orientations for exact-matching map boundary points.
+* Added native sf boundaries for MGRS, EEA, and EQDGC, vastly improving boundary and grid visualization.
+* Removed redundant plotting parameters `complete_grid_outline` and `visible_grid_outline` from `plot_map` and `plot_species_map`.
+
 # b3gbi 0.8.16 - Minor update:
 
 * Added support for ISEA3H hexagonal grids
