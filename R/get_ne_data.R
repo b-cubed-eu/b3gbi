@@ -69,11 +69,15 @@ get_ne_data <- function(projected_crs,
   expand_percent <- 0.5 # 50% buffer
   lng_range <- unname(latlong_bbox["xmax"] - latlong_bbox["xmin"])
   lat_range <- unname(latlong_bbox["ymax"] - latlong_bbox["ymin"])
+  
+  expand_lng <- max(expand_percent * lng_range, 0.1)
+  expand_lat <- max(expand_percent * lat_range, 0.1)
+
   # cap lat/long to valid ranges
-  min_lon <- max(unname(latlong_bbox["xmin"] - (expand_percent * lng_range)), -180)
-  max_lon <- min(unname(latlong_bbox["xmax"] + (expand_percent * lng_range)), 180)
-  min_lat <- max(unname(latlong_bbox["ymin"] - (expand_percent * lat_range)), -90)
-  max_lat <- min(unname(latlong_bbox["ymax"] + (expand_percent * lat_range)), 90)
+  min_lon <- max(unname(latlong_bbox["xmin"] - expand_lng), -180)
+  max_lon <- min(unname(latlong_bbox["xmax"] + expand_lng), 180)
+  min_lat <- max(unname(latlong_bbox["ymin"] - expand_lat), -90)
+  max_lat <- min(unname(latlong_bbox["ymax"] + expand_lat), 90)
 
   # Create a bbox object
   latlong_extent <- c(
