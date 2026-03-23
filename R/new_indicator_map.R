@@ -47,7 +47,6 @@ new_indicator_map <- function(x,
                           num_years,
                           species_names,
                           years_with_obs,
-                          original_bbox,
                           grid_type) {
   # check that x is both a data frame and sf object
   # and all necessary columns are present
@@ -78,7 +77,6 @@ new_indicator_map <- function(x,
     num_families = num_families,
     species_names = species_names,
     years_with_obs = years_with_obs,
-    original_bbox = original_bbox,
     data = x
   ),
   class = c("indicator_map", div_type),
