@@ -163,6 +163,9 @@ compute_indicator_workflow <- function(data,
                                        buffer_dist_km = 50,
                                        force_grid = FALSE,
                                        ...) {
+  # Save original cell_size to determine whether to use native grid later
+  original_cell_size <- cell_size
+
   wrong_class(data,
     class = c("processed_cube", "processed_cube_dsinfo", "sim_cube"),
     reason = "unrecognized"
@@ -708,6 +711,12 @@ compute_indicator_workflow <- function(data,
           sf::st_area() %>%
           units::set_units("km^2")
       }
+    } else if (original_cell_size == "grid" &&
+               data$grid_type %in% c("mgrs", "eea", "eqdgc")) {
+      # Use native grid polygons to avoid aliasing issues (#104)
+      # Extract resolution from cube if not in data frame
+      res_info <- if (!is.null(data$resolutions)) data$resolutions[1] else NULL
+      grid <- create_native_grid(df, projected_crs, data$grid_type, res_info)
     } else {
       grid <- create_grid(
         bbox_for_grid,
@@ -760,10 +769,17 @@ compute_indicator_workflow <- function(data,
     data_filtered <- sf::st_filter(data_projected, intersection_target)
 
     # Assign data to grid
-    if (data$grid_type == "isea3h") {
-      # ISEA3H: the cube already assigns data to cells via cellCode.
+    if (data$grid_type %in% c("isea3h", "mgrs", "eea", "eqdgc") &&
+        "cellCode" %in% colnames(clipped_grid)) {
+      # These grids have a native cellCode mapping.
       # Join by cellCode instead of spatial join to preserve this assignment.
-      cell_lookup <- sf::st_drop_geometry(clipped_grid[, c("cellCode", "cellid")])
+      # This avoids aliasing and gaps when using different projections.
+      
+      # Include area in the lookup as some indicators (e.g. density) require it
+      lookup_cols <- c("cellCode", "cellid")
+      if ("area" %in% names(clipped_grid)) lookup_cols <- c(lookup_cols, "area")
+      
+      cell_lookup <- sf::st_drop_geometry(clipped_grid[, lookup_cols])
       data_final <- dplyr::left_join(
         sf::st_drop_geometry(data_filtered), cell_lookup,
         by = "cellCode"
@@ -813,14 +829,7 @@ compute_indicator_workflow <- function(data,
       clipped_grid %>%
       dplyr::left_join(indicator, by = "cellid")
 
-    # Get bbox of original grid before transformation
-    if (data$grid_type == "isea3h") {
-      original_bbox <- intersect_grid_with_polygon(grid, saved_layer) %>%
-        sf::st_union()
-    } else {
-      original_bbox <- sf::st_filter(grid, saved_layer) %>%
-        sf::st_union()
-    }
+
 
     # Transform to output CRS
     diversity_grid <- sf::st_transform(diversity_grid, crs = output_crs)
@@ -877,7 +886,6 @@ compute_indicator_workflow <- function(data,
       num_years = num_years,
       species_names = species_names,
       years_with_obs = years_with_obs,
-      original_bbox = original_bbox,
       grid_type = data$grid_type
     )
   } else {
