@@ -379,8 +379,8 @@ test_that(
       dim_type = "map"
     )
     expect_equal(names(result_map$data), c("cellid",
-                                           "area",
                                            "cellCode",
+                                           "area",
                                            "diversity_val",
                                            "geometry")
     )
@@ -425,7 +425,7 @@ test_that("compute_indicator_workflow creates output objects correctly", {
   # Create a mock processed_cube object
   mock_cube <- list(
     data = data.frame(
-      cellCode = sprintf("10kmE%04dN%04d", 4000:4009, 3000:3009),
+      cellCode = sprintf("10kmE%dN%d", 400:409, 300:309),
       xcoord = seq(xmin, xmax, length.out = 10),
       ycoord = seq(ymin, ymax, length.out = 10),
       obs = 1:10,
