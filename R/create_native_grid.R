@@ -46,13 +46,13 @@ create_mgrs_grid <- function(df, projection, resolution = NULL) {
     # Handle padding for zones 1-9
     epsg_code <- if (hemi %in% c("North", "N")) 32600 + zone else 32700 + zone
     
-    make_square <- function(e, n) {
+    make_square <- function(e_ll, n_ll) {
       pts <- matrix(c(
-        e - half_res, n - half_res,
-        e + half_res, n - half_res,
-        e + half_res, n + half_res,
-        e - half_res, n + half_res,
-        e - half_res, n - half_res
+        e_ll, n_ll,
+        e_ll + res_m, n_ll,
+        e_ll + res_m, n_ll + res_m,
+        e_ll, n_ll + res_m,
+        e_ll, n_ll
       ), ncol = 2, byrow = TRUE)
       sf::st_polygon(list(pts))
     }
@@ -107,15 +107,16 @@ create_eea_grid <- function(df, projection, resolution = NULL) {
     res_unit <- gsub("[0-9.]", "", res_str)
     res_m <- if (res_unit == "km") res_val * 1000 else res_val
   }
-  half_res <- res_m / 2
+  # res_m is used for polygon creation
+  # half_res is not needed as EEA codes represent lower-left corners
   
-  make_square <- function(x, y) {
+  make_square <- function(x_ll, y_ll) {
     pts <- matrix(c(
-      x - half_res, y - half_res,
-      x + half_res, y - half_res,
-      x + half_res, y + half_res,
-      x - half_res, y + half_res,
-      x - half_res, y - half_res
+      x_ll, y_ll,
+      x_ll + res_m, y_ll,
+      x_ll + res_m, y_ll + res_m,
+      x_ll, y_ll + res_m,
+      x_ll, y_ll
     ), ncol = 2, byrow = TRUE)
     sf::st_polygon(list(pts))
   }
