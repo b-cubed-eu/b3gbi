@@ -174,7 +174,7 @@ create_eea_grid <- function(df, projection, resolution = NULL) {
   }
 
   # 2. Get data extent in EEA CRS (EPSG:3035)
-  coords <- b3gbi:::eea_code_to_coords(unique(df$cellCode))
+  coords <- eea_code_to_coords(unique(df$cellCode))
 
   # If parsing failed (e.g. mock data), fallback to xcoord/ycoord if available
   if (all(is.na(coords$xcoord)) && "xcoord" %in% names(df) && "ycoord" %in% names(df)) {
@@ -253,7 +253,7 @@ create_eqdgc_grid <- function(df, projection, resolution = NULL) {
 
   # 2. Get data extent in lat/long (EPSG:4326)
   unique_codes <- unique(df$cellCode)
-  latlong <- b3gbi:::convert_eqdgc_latlong(unique_codes)
+  latlong <- convert_eqdgc_latlong(unique_codes)
   latlong_df <- as.data.frame(latlong)
   latlong_df$cellCode <- unique_codes
 
