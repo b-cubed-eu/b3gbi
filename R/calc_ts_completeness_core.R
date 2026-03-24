@@ -14,7 +14,7 @@ calc_ts_completeness_core <- function(x, ...) {
   )
 
   scientificName <- year <- obs <- cellCode <- Assemblage <- SC <- NULL
-  cellid <- diversity_val <- NULL
+  diversity_val <- NULL
 
   dots <- list(...)
   cutoff_length <- if ("cutoff_length" %in% names(dots)) dots$cutoff_length else 5
@@ -24,21 +24,22 @@ calc_ts_completeness_core <- function(x, ...) {
     FALSE
   }
 
-  # If gridded_average is TRUE, we expect a cellid column from the workflow
-  if (gridded_average && !"cellid" %in% names(x)) {
-    warning("gridded_average requested but no cellid found. Calculating over whole area.")
+  # If gridded_average is TRUE, we need cellCode to group by native grid cells
+  if (gridded_average && !"cellCode" %in% names(x)) {
+    warning("gridded_average requested but no cellCode found. Calculating over whole area.")
     gridded_average <- FALSE
   }
 
   if (gridded_average) {
     # 1. Calculate completeness PER CELL PER YEAR
-    # Each row in 'x' is already assigned to a cellid
+    # Group by cellCode (native cell identifier, always present in the data)
+    # rather than cellid (which depends on grid creation and may not cover all cells)
     grid_completeness <- x %>%
-      dplyr::group_by(year, cellid) %>%
+      dplyr::group_by(year, cellCode) %>%
       dplyr::group_split() %>%
       purrr::map_dfr(function(df) {
         current_year <- df$year[1]
-        current_cell <- df$cellid[1]
+        current_cell <- df$cellCode[1]
 
         # Prepare incidence-raw for this cell-year
         m <- df %>%
@@ -60,11 +61,11 @@ calc_ts_completeness_core <- function(x, ...) {
         m <- (m > 0) * 1L
 
         if (length(m) <= cutoff_length) {
-          return(NULL)
+          return(tibble::tibble(year = current_year, cellCode = current_cell, diversity_val = 0))
         }
 
         info <- suppressWarnings(my_DataInfo(list(m), datatype = "incidence_raw"))
-        return(tibble::tibble(year = current_year, cellid = current_cell, diversity_val = info$SC))
+        return(tibble::tibble(year = current_year, cellCode = current_cell, diversity_val = info$SC))
       })
 
     # 2. Average by year
