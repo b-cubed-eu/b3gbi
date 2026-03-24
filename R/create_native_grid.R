@@ -123,10 +123,8 @@ create_mgrs_grid <- function(df, projection, resolution = NULL) {
       sf::st_sf()
 
     # Assign cellCode if resolution matches native (approx)
-    if (is.null(resolution) || resolution == "grid") {
         group_grid <- group_grid %>%
-          sf::st_join(pts_centers %>% dplyr::select(cellCode), join = sf::st_intersects)
-    }
+          sf::st_join(pts_centers %>% dplyr::select(cellCode), join = sf::st_nearest_feature)
 
     sf::st_transform(group_grid, projection)
   })
@@ -216,7 +214,7 @@ create_eea_grid <- function(df, projection, resolution = NULL) {
 
   # 5. Assign cellCode if resolution matches native
     grid <- grid %>%
-        sf::st_join(pts_centers %>% dplyr::select(.data$cellCode), join = sf::st_intersects)
+        sf::st_join(pts_centers %>% dplyr::select("cellCode"), join = sf::st_nearest_feature)
 
   grid <- sf::st_transform(grid, projection)
   grid$cellid <- seq_len(nrow(grid))
@@ -226,7 +224,7 @@ create_eea_grid <- function(df, projection, resolution = NULL) {
 
   # Match the order expected by workflow
   grid <- grid %>%
-    dplyr::select(.data$cellid, tidyselect::any_of("cellCode"), .data$area, tidyselect::everything())
+    dplyr::select("cellid", tidyselect::any_of("cellCode"), "area", tidyselect::everything())
 
   return(grid)
 }
@@ -272,6 +270,10 @@ create_eqdgc_grid <- function(df, projection, resolution = NULL) {
   xmax <- as.numeric(ceiling((bbox["xmax"] - half_res) / res_deg) * res_deg + half_res)
   ymax <- as.numeric(ceiling((bbox["ymax"] - half_res) / res_deg) * res_deg + half_res)
 
+  # Ensure bbox covers at least one full cell (single-point case)
+  if (xmax <= xmin) xmax <- xmin + res_deg
+  if (ymax <= ymin) ymax <- ymin + res_deg
+
   # 4. Create aligned grid
   grid_bbox <- sf::st_bbox(c(xmin=xmin, ymin=ymin, xmax=xmax, ymax=ymax), crs = "EPSG:4326")
   grid <- sf::st_make_grid(
@@ -291,7 +293,7 @@ create_eqdgc_grid <- function(df, projection, resolution = NULL) {
       if (nrow(df_unique) > 0) {
           pts_unique <- sf::st_as_sf(df_unique, coords = c("long", "lat"), crs = "EPSG:4326")
           grid <- grid %>%
-            sf::st_join(pts_unique %>% dplyr::select(cellCode), join = sf::st_intersects)
+            sf::st_join(pts_unique %>% dplyr::select(cellCode), join = sf::st_nearest_feature)
       }
 
   grid <- sf::st_transform(grid, projection)
