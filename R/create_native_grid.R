@@ -165,7 +165,7 @@ create_eea_grid <- function(df, projection, resolution = NULL) {
 
   if (is.null(res_str) || is.na(res_str)) {
     # Extract from existing cellCodes if available
-    coords_temp <- b3gbi:::eea_code_to_coords(df$cellCode[1])
+    coords_temp <- eea_code_to_coords(df$cellCode[1])
     res_m <- as.numeric(gsub("km", "", coords_temp$resolution[1])) * 1000
   } else {
     res_val <- as.numeric(gsub("[a-zA-Z]", "", res_str))
@@ -216,7 +216,7 @@ create_eea_grid <- function(df, projection, resolution = NULL) {
 
   # 5. Assign cellCode if resolution matches native
     grid <- grid %>%
-        sf::st_join(pts_centers %>% dplyr::select(cellCode), join = sf::st_intersects)
+        sf::st_join(pts_centers %>% dplyr::select(.data$cellCode), join = sf::st_intersects)
 
   grid <- sf::st_transform(grid, projection)
   grid$cellid <- seq_len(nrow(grid))
@@ -226,7 +226,7 @@ create_eea_grid <- function(df, projection, resolution = NULL) {
 
   # Match the order expected by workflow
   grid <- grid %>%
-    dplyr::select(cellid, tidyselect::any_of("cellCode"), area, tidyselect::everything())
+    dplyr::select(.data$cellid, tidyselect::any_of("cellCode"), .data$area, tidyselect::everything())
 
   return(grid)
 }
