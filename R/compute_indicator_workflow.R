@@ -712,11 +712,19 @@ compute_indicator_workflow <- function(data,
           sf::st_area() %>%
           units::set_units("km^2")
       }
-    } else if (original_cell_size == "grid" &&
-               data$grid_type %in% c("mgrs", "eea", "eqdgc")) {
+    } else if (data$grid_type %in% c("mgrs", "eea", "eqdgc")) {
       # Use native grid polygons to avoid aliasing issues (#104)
       # Extract resolution from cube if not in data frame
-      res_info <- if (!is.null(data$resolutions)) data$resolutions[1] else NULL
+      res_info <- if (original_cell_size == "grid") {
+        if (!is.null(data$resolutions)) data$resolutions[1] else NULL
+      } else {
+        # check_cell_size returns meters for km-based grids
+        if (data$grid_type %in% c("mgrs", "eea")) {
+          paste0(cell_size / 1000, "km")
+        } else {
+          paste0(cell_size, "degrees")
+        }
+      }
       grid <- create_native_grid(df, projected_crs, data$grid_type, res_info)
     } else {
       grid <- create_grid(
@@ -771,7 +779,7 @@ compute_indicator_workflow <- function(data,
 
     # Assign data to grid
     if (data$grid_type %in% c("isea3h", "mgrs", "eea", "eqdgc") &&
-        "cellCode" %in% colnames(clipped_grid)) {
+      "cellCode" %in% colnames(clipped_grid)) {
       # These grids have a native cellCode mapping.
       # Join by cellCode instead of spatial join to preserve this assignment.
       # This avoids aliasing and gaps when using different projections.
@@ -861,7 +869,7 @@ compute_indicator_workflow <- function(data,
     }
 
     if (ci_type == "none" &&
-        type %in% c("hill0", "hill1", "hill2")) {
+      type %in% c("hill0", "hill1", "hill2")) {
       if ("ll" %in% names(indicator)) {
         indicator <- indicator %>% select(c(-ll, -ul))
       }
