@@ -798,7 +798,8 @@ compute_indicator_workflow <- function(data,
       cell_lookup <- sf::st_drop_geometry(clipped_grid[, lookup_cols])
       data_final <- dplyr::left_join(
         sf::st_drop_geometry(data_filtered), cell_lookup,
-        by = "cellCode"
+        by = "cellCode",
+        relationship = "many-to-one"
       )
       data_final <- data_final[!is.na(data_final$cellid), ]
     } else {
