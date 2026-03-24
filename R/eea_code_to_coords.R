@@ -22,7 +22,7 @@ eea_code_to_coords <- function(cellCodes) {
       km_multiplier = dplyr::case_when(
         stringr::str_detect(resolution_text, "km") ~ resolution_value,
         stringr::str_detect(resolution_text, "m")  ~ resolution_value / 1000,
-        TRUE ~ NA_real_
+        TRUE ~ 1
       ),
 
       # 4. Extract x-coordinate base value (e.g., 420 from E420)
@@ -46,6 +46,7 @@ eea_code_to_coords <- function(cellCodes) {
     ) %>%
     # Select only the final columns needed
     dplyr::select(
+      cellCode,
       xcoord,
       ycoord,
       resolution = resolution_final
