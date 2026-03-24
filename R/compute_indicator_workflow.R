@@ -165,6 +165,14 @@ compute_indicator_workflow <- function(data,
                                        ...) {
   # Save original cell_size to determine whether to use native grid later
   original_cell_size <- cell_size
+  
+  # Extract gridded_average from dots if present
+  dots <- list(...)
+  gridded_average <- if ("gridded_average" %in% names(dots)) {
+    dots$gridded_average
+  } else {
+    FALSE
+  }
 
   wrong_class(data,
     class = c("processed_cube", "processed_cube_dsinfo", "sim_cube"),
@@ -196,6 +204,11 @@ compute_indicator_workflow <- function(data,
     "hill1",
     "hill2"
   )
+
+  if (type == "completeness" && gridded_average == TRUE) {
+    ind_req_grid_list <- c(ind_req_grid_list, "completeness")
+    force_grid <- TRUE
+  }
 
   # List of indicators for which bootstrapped confidence intervals should not
   # be calculated
@@ -706,12 +719,6 @@ compute_indicator_workflow <- function(data,
     if (data$grid_type == "isea3h") {
       # Use pre-existing centroids to build hexagonal polygons
       grid <- create_isea3h_grid(df, projected_crs)
-      # Add area if missing
-      if (!"area" %in% colnames(grid)) {
-        grid$area <- grid %>%
-          sf::st_area() %>%
-          units::set_units("km^2")
-      }
     } else if (data$grid_type %in% c("mgrs", "eea", "eqdgc")) {
       # Use native grid polygons to avoid aliasing issues (#104)
       # Extract resolution from cube if not in data frame
