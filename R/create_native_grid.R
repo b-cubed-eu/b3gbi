@@ -124,7 +124,9 @@ create_mgrs_grid <- function(df, projection, resolution = NULL) {
 
     # Assign cellCode if resolution matches native (approx)
         group_grid <- group_grid %>%
-          sf::st_join(pts_centers %>% dplyr::select(cellCode), join = sf::st_nearest_feature)
+          sf::st_join(pts_centers %>% dplyr::select(cellCode), join = sf::st_nearest_feature) %>%
+          dplyr::filter(!is.na(cellCode)) %>%
+          dplyr::distinct(cellCode, .keep_all = TRUE)
 
     sf::st_transform(group_grid, projection)
   })
@@ -214,7 +216,9 @@ create_eea_grid <- function(df, projection, resolution = NULL) {
 
   # 5. Assign cellCode if resolution matches native
     grid <- grid %>%
-        sf::st_join(pts_centers %>% dplyr::select("cellCode"), join = sf::st_nearest_feature)
+        sf::st_join(pts_centers %>% dplyr::select("cellCode"), join = sf::st_nearest_feature) %>%
+        dplyr::filter(!is.na(cellCode)) %>%
+        dplyr::distinct(cellCode, .keep_all = TRUE)
 
   grid <- sf::st_transform(grid, projection)
   grid$cellid <- seq_len(nrow(grid))
@@ -293,7 +297,9 @@ create_eqdgc_grid <- function(df, projection, resolution = NULL) {
       if (nrow(df_unique) > 0) {
           pts_unique <- sf::st_as_sf(df_unique, coords = c("long", "lat"), crs = "EPSG:4326")
           grid <- grid %>%
-            sf::st_join(pts_unique %>% dplyr::select(cellCode), join = sf::st_nearest_feature)
+            sf::st_join(pts_unique %>% dplyr::select(cellCode), join = sf::st_nearest_feature) %>%
+            dplyr::filter(!is.na(cellCode)) %>%
+            dplyr::distinct(cellCode, .keep_all = TRUE)
       }
 
   grid <- sf::st_transform(grid, projection)
