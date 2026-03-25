@@ -142,7 +142,7 @@ get_ne_data <- function(projected_crs,
   }
 
   # Create a polygon from the extent
-  if (is_sf_empty(map_data_projected)) {
+  if (is_sf_empty(map_data_projected) || level == "cube") {
     # If land is empty (e.g. all in ocean), use the buffered latlong extent as the total extent
     extent_projected_polygon <- cube_extent_projected
   } else {
