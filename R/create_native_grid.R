@@ -1,11 +1,17 @@
 create_native_grid <- function(df, projection, grid_type, resolution = NULL) {
-  if (grid_type == "mgrs") {
+  res <- if (grid_type == "mgrs") {
     create_mgrs_grid(df, projection, resolution)
   } else if (grid_type == "eea") {
     create_eea_grid(df, projection, resolution)
   } else if (grid_type == "eqdgc") {
     create_eqdgc_grid(df, projection, resolution)
   }
+  
+  if (!is.null(res) && "cellCode" %in% colnames(res)) {
+    res <- res %>% dplyr::distinct(cellCode, .keep_all = TRUE)
+  }
+  
+  return(res)
 }
 
 #' @noRd
@@ -228,7 +234,8 @@ create_eea_grid <- function(df, projection, resolution = NULL) {
 
   # Match the order expected by workflow
   grid <- grid %>%
-    dplyr::select("cellid", tidyselect::any_of("cellCode"), "area", tidyselect::everything())
+    dplyr::select("cellid", tidyselect::any_of("cellCode"), "area", tidyselect::everything()) %>%
+    dplyr::distinct(cellCode, .keep_all = TRUE)
 
   return(grid)
 }
