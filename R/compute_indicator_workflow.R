@@ -205,10 +205,9 @@ compute_indicator_workflow <- function(data,
     "hill2"
   )
 
-  if (type == "completeness" && gridded_average == TRUE) {
-    ind_req_grid_list <- c(ind_req_grid_list, "completeness")
-    force_grid <- TRUE
-  }
+  # Gridded average completeness uses cellCode (always present in data) for
+  # grouping, so it does NOT need grid cell assignment from the workflow.
+  # Do not add it to ind_req_grid_list or force_grid.
 
   # List of indicators for which bootstrapped confidence intervals should not
   # be calculated
@@ -760,16 +759,22 @@ compute_indicator_workflow <- function(data,
       # Convert to sf if not already
       intersection_target <- sf::st_as_sf(intersection_target)
     } else {
-      # No shapefile provided, so we intersect with the Natural Earth data
       intersection_target <- map_data
     }
 
+    # Ensure intersection target is valid and buffered slightly to avoid precision losses
+    intersection_target <- sf::st_make_valid(intersection_target) %>%
+      sf::st_buffer(dist = 1) # 1 meter/degree safety buffer
+    
     sf::st_agr(intersection_target) <- "constant"
 
     # Intersect grid with intersection target
     if (data$grid_type == "isea3h") {
       # ISEA3H requires accurate clipping for dateline/pole handling
       clipped_grid <- intersect_grid_with_polygon(grid, intersection_target)
+    } else if (level == "cube" && is.null(shapefile)) {
+      # For cube level without shapefile, skip spatial filtering to prevent outlier loss
+      clipped_grid <- grid
     } else {
       # For standard grids, use fast spatial filtering instead of expensive clipping.
       # This keeps whole cells and significantly speeds up the workflow.
@@ -782,7 +787,11 @@ compute_indicator_workflow <- function(data,
     }
 
     # Filter data to only those within the intersection target
-    data_filtered <- sf::st_filter(data_projected, intersection_target)
+    data_filtered <- if (level == "cube" && is.null(shapefile)) {
+      data_projected
+    } else {
+      sf::st_filter(data_projected, intersection_target)
+    }
 
     # Assign data to grid
     if (data$grid_type %in% c("isea3h", "mgrs", "eea", "eqdgc") &&
