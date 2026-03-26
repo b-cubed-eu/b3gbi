@@ -150,10 +150,15 @@ get_ne_data <- function(projected_crs,
   }
 
   # Create ocean layer by subtracting land from the extent
+  # Disable s2 to avoid topology errors with complex geometries
+  orig_s2_ocean <- sf::sf_use_s2()
+  sf::sf_use_s2(FALSE)
   map_data_ocean <- sf::st_difference(
     extent_projected_polygon,
     map_data_projected
-  )
+  ) %>%
+    sf::st_make_valid()
+  sf::sf_use_s2(orig_s2_ocean)
 
   # Save the new layer for later use before removing unwanted land
   map_data_save <- map_data_ocean
@@ -224,8 +229,9 @@ get_ne_data <- function(projected_crs,
   }
 
   if (include_land == FALSE) {
-    # just use the ocean layer
-    map_data_combined <- map_data_ocean
+    # just use the ocean layer — ensure it's an sf object, not sfc, and valid
+    map_data_combined <- sf::st_as_sf(map_data_ocean) %>%
+      sf::st_make_valid()
   }
 
   if (level != "cube") {
