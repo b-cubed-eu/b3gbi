@@ -179,6 +179,21 @@ compute_indicator_workflow <- function(data,
     reason = "unrecognized"
   )
 
+  # For gridded average completeness, we MUST have a grid coarser than the native
+  # cube resolution to ensure multiple native cells (samples) per grid cell.
+  if (type == "completeness" && gridded_average == TRUE && is.null(cell_size)) {
+    native_res_str <- if ("resolution" %in% names(data$data)) data$data$resolution[1] else NULL
+    if (!is.null(native_res_str)) {
+      res_val <- as.numeric(gsub("[a-zA-Z]", "", native_res_str))
+      res_unit <- gsub("[0-9.]", "", native_res_str)
+      
+      # Force a 4x coarser grid (16 native cells per grid cell)
+      coarser_res <- res_val * 4
+      cell_size <- paste0(coarser_res, res_unit)
+      message("Forcing coarser grid resolution for completeness: ", cell_size)
+    }
+  }
+
   # Null assignments
   xcoord <- ycoord <- ll <- ul <- NULL
 
@@ -205,9 +220,10 @@ compute_indicator_workflow <- function(data,
     "hill2"
   )
 
-  # Gridded average completeness uses cellCode (always present in data) for
-  # grouping, so it does NOT need grid cell assignment from the workflow.
-  # Do not add it to ind_req_grid_list or force_grid.
+  if (type == "completeness" && gridded_average == TRUE) {
+    ind_req_grid_list <- c(ind_req_grid_list, "completeness")
+    force_grid <- TRUE
+  }
 
   # List of indicators for which bootstrapped confidence intervals should not
   # be calculated
@@ -795,10 +811,13 @@ compute_indicator_workflow <- function(data,
 
     # Assign data to grid
     if (data$grid_type %in% c("isea3h", "mgrs", "eea", "eqdgc") &&
-      "cellCode" %in% colnames(clipped_grid)) {
+      "cellCode" %in% colnames(clipped_grid) &&
+      gridded_average == FALSE) {
       # These grids have a native cellCode mapping.
       # Join by cellCode instead of spatial join to preserve this assignment.
       # This avoids aliasing and gaps when using different projections.
+      # SKIP this if gridded_average is TRUE, as we are aggregating to a
+      # different (coarser) scale where native cellCodes won't match perfectly.
 
       # Include area in the lookup as some indicators (e.g. density) require it
       lookup_cols <- c("cellCode", "cellid")
@@ -812,8 +831,13 @@ compute_indicator_workflow <- function(data,
       )
       data_final <- data_final[!is.na(data_final$cellid), ]
     } else {
+      # For spatial join, only keep cellid and area from the grid to avoid
+      # renaming conflicts with data columns (like cellCode).
+      lookup_cols <- "cellid"
+      if ("area" %in% names(clipped_grid)) lookup_cols <- c(lookup_cols, "area")
+      
       data_final <- data_filtered %>%
-        sf::st_join(clipped_grid, join = sf::st_nearest_feature)
+        sf::st_join(clipped_grid[, lookup_cols], join = sf::st_nearest_feature)
     }
     data_final_nogeom <- if (inherits(data_final, "sf")) {
       sf::st_drop_geometry(data_final)
