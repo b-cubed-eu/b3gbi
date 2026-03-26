@@ -38,8 +38,14 @@ eea_code_to_coords <- function(cellCodes) {
       )),
 
       # 6. Calculate the final coordinates in METERS
-      xcoord = xcoord_base * km_multiplier * 1000,
-      ycoord = ycoord_base * km_multiplier * 1000,
+      # Heuristic: If base coordinates are > 10,000, they are likely already in meters.
+      # Standard EEA IDs use km-scale integers (e.g. E4321 for 4,321,000m).
+      xcoord = dplyr::if_else(abs(xcoord_base) > 10000,
+                             xcoord_base,
+                             xcoord_base * km_multiplier * 1000),
+      ycoord = dplyr::if_else(abs(ycoord_base) > 10000,
+                             ycoord_base,
+                             ycoord_base * km_multiplier * 1000),
 
       # 7. Create the final resolution string: e.g., 0.25 + "km" -> "0.25km"
       resolution_final = paste0(km_multiplier, "km")
