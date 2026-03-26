@@ -15,8 +15,9 @@
 #' @param filter_NA (Optional) Filter out NA values so NA grid cells do not
 #'  appear. Default is TRUE.
 #' @param basemap_list (Optional) A list of basemaps you want mapview to display
-#'  as options to select from. If NULL (the default), mapview will use its
-#'  built-in basemaps. Example: c("OpenStreetMap", "Esri.WorldImagery").
+#'  as options to select from. The first one in the list will be shown when the
+#'  map loads. Default is c("OpenStreetMap", "OpenTopoMap", "CartoDB.Positron",
+#'  "Esri.WorldImagery").
 #' @param ... (Optional) Pass additional parameters to the mapview package.
 #'
 #' @return An interactive mapview plot.
@@ -29,7 +30,10 @@ plot_mv <- function(x,
                     legend_title = NULL,
                     transparency = 0.8,
                     filter_NA = TRUE,
-                    basemap_list = NULL,
+                    basemap_list = c("OpenStreetMap",
+                                     "OpenTopoMap",
+                                     "CartoDB.Positron",
+                                     "Esri.WorldImagery"),
                     ...
                     ){
 
@@ -54,14 +58,8 @@ plot_mv <- function(x,
   # Check that the object is the correct class
   wrong_class(x, "indicator_map", reason = "incorrect")
 
-  # Set basemaps only if user provided a custom list (not the default)
-  # The default NULL lets mapview use its own built-in basemaps
-  if (!is.null(basemap_list)) {
-    tryCatch(
-      mapview::mapviewOptions(basemaps = c(basemap_list)),
-      error = function(e) NULL
-    )
-  }
+  # Set basemaps to display as options in mapview
+  mapview::mapviewOptions(basemaps = c(basemap_list))
 
   # Get geometry and indicator values
   mv_geometry <- x$data$geometry

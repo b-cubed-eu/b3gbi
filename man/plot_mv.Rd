@@ -9,8 +9,7 @@ plot_mv(
   legend_title = NULL,
   transparency = 0.8,
   filter_NA = TRUE,
-  basemap_list = c("OpenStreetMap", "OpenTopoMap", "CartoDB.Positron",
-    "Esri.WorldImagery"),
+  basemap_list = NULL,
   ...
 )
 }
@@ -31,9 +30,8 @@ Default is 0.8. A value of 0 is full transparency, 1 is solid fill.}
 appear. Default is TRUE.}
 
 \item{basemap_list}{(Optional) A list of basemaps you want mapview to display
-as options to select from. The first one in the list will be shown when the
-map loads. Default is c("OpenStreetMap", "OpenTopoMap", "CartoDB.Positron",
-"Esri.WorldImagery").}
+as options to select from. If NULL (the default), mapview will use its
+built-in basemaps. Example: c("OpenStreetMap", "Esri.WorldImagery").}
 
 \item{...}{(Optional) Pass additional parameters to the mapview package.}
 }
