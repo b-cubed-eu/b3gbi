@@ -583,8 +583,13 @@ compute_indicator_workflow <- function(data,
     } else if (level != "cube") {
       # Early filtering for non-cube levels without shapefile
       # This ensures 'df' used for grid creation is limited to the region
-      df_sf_temp <- sf::st_as_sf(df, coords = c("xcoord", "ycoord"), crs = cube_crs)
-      df_sf_temp <- sf::st_transform(df_sf_temp, crs = projected_crs)
+      if (data$grid_type == "mgrs") {
+        # Use create_sf_from_utm to correctly handle multi-zone MGRS data
+        df_sf_temp <- create_sf_from_utm(df, output_crs = projected_crs)
+      } else {
+        df_sf_temp <- sf::st_as_sf(df, coords = c("xcoord", "ycoord"), crs = cube_crs)
+        df_sf_temp <- sf::st_transform(df_sf_temp, crs = projected_crs)
+      }
 
       # We need map_data to filter
       map_data_list_temp <- get_ne_data(
@@ -599,7 +604,11 @@ compute_indicator_workflow <- function(data,
         buffer_dist_km
       )
 
+      # Disable s2 to avoid topology exceptions with complex map geometries
+      original_s2_early <- sf::sf_use_s2()
+      sf::sf_use_s2(FALSE)
       filtered_sf_temp <- sf::st_filter(df_sf_temp, map_data_list_temp$combined)
+      sf::sf_use_s2(original_s2_early)
 
       df <- df[df$cellCode %in% filtered_sf_temp$cellCode, ]
       if (nrow(df) == 0) {
@@ -736,17 +745,11 @@ compute_indicator_workflow <- function(data,
       grid <- create_isea3h_grid(df, projected_crs)
     } else if (data$grid_type %in% c("mgrs", "eea", "eqdgc")) {
       # Use native grid polygons to avoid aliasing issues (#104)
-      # Extract resolution from cube if not in data frame
-      res_info <- if (original_cell_size == "grid") {
-        if (!is.null(data$resolutions)) data$resolutions[1] else NULL
-      } else {
-        # check_cell_size returns meters for km-based grids
-        if (data$grid_type %in% c("mgrs", "eea")) {
-          paste0(cell_size / 1000, "km")
-        } else {
-          paste0(cell_size, "degrees")
-        }
-      }
+      # ALWAYS use the native data resolution for grid creation.
+      # User-specified cell_size is handled at the aggregation level,
+      # not at the grid geometry level, to ensure every data cellCode
+      # has a matching grid cell.
+      res_info <- if (!is.null(data$resolutions)) data$resolutions[1] else NULL
       grid <- create_native_grid(df, projected_crs, data$grid_type, res_info)
     } else {
       grid <- create_grid(
@@ -779,9 +782,16 @@ compute_indicator_workflow <- function(data,
     }
 
     # Ensure intersection target is valid and buffered slightly to avoid precision losses
-    intersection_target <- sf::st_make_valid(intersection_target) %>%
-      sf::st_buffer(dist = 1) # 1 meter/degree safety buffer
-    
+    # Disable s2 to avoid topology exceptions with complex geometries
+    original_s2_for_target <- sf::sf_use_s2()
+    sf::sf_use_s2(FALSE)
+    intersection_target <- sf::st_make_valid(intersection_target)
+    # Only apply safety buffer if in a projected CRS (meters), not geographic (degrees)
+    if (!sf::st_is_longlat(intersection_target)) {
+      intersection_target <- sf::st_buffer(intersection_target, dist = 1) %>%
+        sf::st_make_valid()
+    }
+    sf::sf_use_s2(original_s2_for_target)
     sf::st_agr(intersection_target) <- "constant"
 
     # Intersect grid with intersection target
@@ -824,11 +834,38 @@ compute_indicator_workflow <- function(data,
       if ("area" %in% names(clipped_grid)) lookup_cols <- c(lookup_cols, "area")
 
       cell_lookup <- sf::st_drop_geometry(clipped_grid[, lookup_cols])
+      data_pre_join <- sf::st_drop_geometry(data_filtered)
+      n_pre_join <- nrow(data_pre_join)
       data_final <- dplyr::left_join(
-        sf::st_drop_geometry(data_filtered), cell_lookup,
+        data_pre_join, cell_lookup,
         by = "cellCode",
         relationship = "many-to-one"
       )
+      n_unmatched <- sum(is.na(data_final$cellid))
+      if (n_unmatched > 0) {
+        unmatched_codes <- unique(data_final$cellCode[is.na(data_final$cellid)])
+        n_obs_lost <- sum(data_final$obs[is.na(data_final$cellid)], na.rm = TRUE)
+        warning(
+          sprintf(
+            paste0(
+              "%s of %s data rows (%s occurrences) could not be matched to a ",
+              "grid cell. This affects %s unique cell codes. ",
+              "This may be due to cell codes that could not be parsed into ",
+              "grid coordinates. Use `options(warn=1)` to see the specific ",
+              "cell codes on the next line."
+            ),
+            format(n_unmatched, big.mark = ","),
+            format(n_pre_join, big.mark = ","),
+            format(n_obs_lost, big.mark = ","),
+            format(length(unmatched_codes), big.mark = ",")
+          )
+        )
+        if (length(unmatched_codes) <= 20) {
+          warning(paste("Unmatched cell codes:", paste(unmatched_codes, collapse = ", ")))
+        } else {
+          warning(paste("First 20 unmatched cell codes:", paste(head(unmatched_codes, 20), collapse = ", ")))
+        }
+      }
       data_final <- data_final[!is.na(data_final$cellid), ]
     } else {
       # For spatial join, only keep cellid and area from the grid to avoid
@@ -880,10 +917,41 @@ compute_indicator_workflow <- function(data,
       clipped_grid %>%
       dplyr::left_join(indicator, by = join_cols)
 
-
-
     # Transform to output CRS
     diversity_grid <- sf::st_transform(diversity_grid, crs = output_crs)
+
+    # Aggregate to coarser grid if user specified a larger cell_size
+    # Only applies when grid has native cellCode (EEA/MGRS/EQDGC)
+    # MUST happen before clipping to avoid double-counting split cells
+    if (original_cell_size != "grid" &&
+        data$grid_type %in% c("eea", "mgrs", "eqdgc") &&
+        "cellCode" %in% names(diversity_grid)) {
+      # cell_size is in meters for EEA/MGRS, degrees for EQDGC
+      aggregate_crs <- if (data$grid_type == "eqdgc") "EPSG:4326" else projected_crs
+      diversity_grid <- aggregate_to_coarser_grid(
+        diversity_grid, cell_size, aggregate_crs, output_crs, type
+      )
+    }
+
+    # Clip grid cells to study region boundary
+    # Skip for cube level without shapefile (data IS the extent)
+    # Skip if aggregation was done (coarser grid cells don't need clipping)
+    if (!(level == "cube" && is.null(shapefile)) &&
+        original_cell_size == "grid") {
+      clip_target <- sf::st_transform(intersection_target, crs = output_crs)
+      clip_target <- sf::st_make_valid(clip_target)
+      sf::st_agr(diversity_grid) <- "constant"
+      diversity_grid <- sf::st_intersection(
+        diversity_grid,
+        sf::st_union(clip_target)
+      )
+      # Recalculate area after clipping
+      if ("area" %in% names(diversity_grid)) {
+        diversity_grid$area <- diversity_grid %>%
+          sf::st_area() %>%
+          units::set_units("km^2")
+      }
+    }
   } else {
     # Calculate indicator
     indicator <- calc_ts(data_final_nogeom, ...)
