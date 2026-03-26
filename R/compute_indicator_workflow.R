@@ -592,6 +592,9 @@ compute_indicator_workflow <- function(data,
       }
 
       # We need map_data to filter
+      # Disable s2 during map data retrieval to avoid topology errors
+      orig_s2_ne_early <- sf::sf_use_s2()
+      sf::sf_use_s2(FALSE)
       map_data_list_temp <- get_ne_data(
         projected_crs,
         cube_bbox_latlong,
@@ -603,12 +606,8 @@ compute_indicator_workflow <- function(data,
         include_ocean,
         buffer_dist_km
       )
-
-      # Disable s2 to avoid topology exceptions with complex map geometries
-      original_s2_early <- sf::sf_use_s2()
-      sf::sf_use_s2(FALSE)
       filtered_sf_temp <- sf::st_filter(df_sf_temp, map_data_list_temp$combined)
-      sf::sf_use_s2(original_s2_early)
+      sf::sf_use_s2(orig_s2_ne_early)
 
       df <- df[df$cellCode %in% filtered_sf_temp$cellCode, ]
       if (nrow(df) == 0) {
@@ -660,6 +659,9 @@ compute_indicator_workflow <- function(data,
     }
 
     # Retrieve and validate Natural Earth data
+    # Disable s2 during map data retrieval to avoid topology errors
+    orig_s2_ne <- sf::sf_use_s2()
+    sf::sf_use_s2(FALSE)
     map_data_list <- get_ne_data(
       projected_crs,
       bbox_latlong,
@@ -671,6 +673,7 @@ compute_indicator_workflow <- function(data,
       include_ocean,
       buffer_dist_km
     )
+    sf::sf_use_s2(orig_s2_ne)
     map_data <- map_data_list$combined
     saved_layer <- map_data_list$saved
 
@@ -795,6 +798,7 @@ compute_indicator_workflow <- function(data,
     sf::st_agr(intersection_target) <- "constant"
 
     # Intersect grid with intersection target
+    # Keep s2 disabled for spatial operations on complex map geometries
     if (data$grid_type == "isea3h") {
       # ISEA3H requires accurate clipping for dateline/pole handling
       clipped_grid <- intersect_grid_with_polygon(grid, intersection_target)
@@ -802,9 +806,17 @@ compute_indicator_workflow <- function(data,
       # For cube level without shapefile, skip spatial filtering to prevent outlier loss
       clipped_grid <- grid
     } else {
-      # For standard grids, use fast spatial filtering instead of expensive clipping.
-      # This keeps whole cells and significantly speeds up the workflow.
-      clipped_grid <- sf::st_filter(grid, intersection_target)
+      # Use st_intersection to clip grid cells to the map boundary.
+      # Unlike st_filter (which removes cells), st_intersection clips cells
+      # at the boundary, preserving coastal cells that partially overlap land.
+      sf::sf_use_s2(FALSE)
+      clipped_grid <- sf::st_intersection(
+        grid,
+        sf::st_union(intersection_target)
+      )
+      sf::sf_use_s2(original_s2_for_target)
+      # Remove empty results from cells entirely outside the boundary
+      clipped_grid <- clipped_grid[!sf::st_is_empty(clipped_grid), ]
     }
 
     if (spherical_geometry == TRUE) {
@@ -816,7 +828,10 @@ compute_indicator_workflow <- function(data,
     data_filtered <- if (level == "cube" && is.null(shapefile)) {
       data_projected
     } else {
-      sf::st_filter(data_projected, intersection_target)
+      sf::sf_use_s2(FALSE)
+      result <- sf::st_filter(data_projected, intersection_target)
+      sf::sf_use_s2(original_s2_for_target)
+      result
     }
 
     # Assign data to grid
@@ -876,6 +891,19 @@ compute_indicator_workflow <- function(data,
       data_final <- data_filtered %>%
         sf::st_join(clipped_grid[, lookup_cols], join = sf::st_nearest_feature)
     }
+
+    # If user specified a coarser cell_size, aggregate data to coarser grid
+    # BEFORE indicator calculation so indicators are calculated correctly
+    if (original_cell_size != "grid" &&
+        data$grid_type %in% c("eea", "mgrs", "eqdgc")) {
+      agg_result <- aggregate_data_to_coarser_grid(
+        data_final, clipped_grid, cell_size,
+        if (data$grid_type == "eqdgc") "EPSG:4326" else projected_crs
+      )
+      data_final <- agg_result$data
+      clipped_grid <- agg_result$grid
+    }
+
     data_final_nogeom <- if (inherits(data_final, "sf")) {
       sf::st_drop_geometry(data_final)
     } else {
@@ -920,37 +948,11 @@ compute_indicator_workflow <- function(data,
     # Transform to output CRS
     diversity_grid <- sf::st_transform(diversity_grid, crs = output_crs)
 
-    # Aggregate to coarser grid if user specified a larger cell_size
-    # Only applies when grid has native cellCode (EEA/MGRS/EQDGC)
-    # MUST happen before clipping to avoid double-counting split cells
-    if (original_cell_size != "grid" &&
-        data$grid_type %in% c("eea", "mgrs", "eqdgc") &&
-        "cellCode" %in% names(diversity_grid)) {
-      # cell_size is in meters for EEA/MGRS, degrees for EQDGC
-      aggregate_crs <- if (data$grid_type == "eqdgc") "EPSG:4326" else projected_crs
-      diversity_grid <- aggregate_to_coarser_grid(
-        diversity_grid, cell_size, aggregate_crs, output_crs, type
-      )
-    }
-
-    # Clip grid cells to study region boundary
-    # Skip for cube level without shapefile (data IS the extent)
-    # Skip if aggregation was done (coarser grid cells don't need clipping)
-    if (!(level == "cube" && is.null(shapefile)) &&
-        original_cell_size == "grid") {
-      clip_target <- sf::st_transform(intersection_target, crs = output_crs)
-      clip_target <- sf::st_make_valid(clip_target)
-      sf::st_agr(diversity_grid) <- "constant"
-      diversity_grid <- sf::st_intersection(
-        diversity_grid,
-        sf::st_union(clip_target)
-      )
-      # Recalculate area after clipping
-      if ("area" %in% names(diversity_grid)) {
-        diversity_grid$area <- diversity_grid %>%
-          sf::st_area() %>%
-          units::set_units("km^2")
-      }
+    # Recalculate area (grid cells were already clipped to boundary above)
+    if ("area" %in% names(diversity_grid)) {
+      diversity_grid$area <- diversity_grid %>%
+        sf::st_area() %>%
+        units::set_units("km^2")
     }
   } else {
     # Calculate indicator
