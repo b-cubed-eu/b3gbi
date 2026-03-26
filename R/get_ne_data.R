@@ -213,7 +213,14 @@ get_ne_data <- function(projected_crs,
     }
   } else {
     # just use the land layer
-    map_data_combined <- map_data_projected
+    # Buffer slightly to capture coastal grid cells that may not perfectly
+    # intersect simplified Natural Earth coastlines
+    if (!is_sf_empty(map_data_projected)) {
+      map_data_combined <- sf::st_buffer(map_data_projected, dist = 100) %>% # 100m buffer
+        sf::st_make_valid()
+    } else {
+      map_data_combined <- map_data_projected
+    }
   }
 
   if (include_land == FALSE) {
