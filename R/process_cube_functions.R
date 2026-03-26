@@ -542,9 +542,17 @@ process_cube <- function(cube_name,
   if (grid_type != "none") {
 
     # Remove NA values in cell code column
-    occurrence_data <-
+    occurrence_data_filtered <-
       occurrence_data %>%
       dplyr::filter(!is.na(cellCode))
+
+    # Check and report filtered out rows
+    if (nrow(occurrence_data_filtered) != nrow(occurrence_data)) {
+      n_filtered_rows <- nrow(occurrence_data_filtered) - nrow(occurrence_data)
+      message("Removed ", n_filtered_rows, " rows with missing cell codes")
+    }
+
+    occurrence_data <- occurrence_data_filtered
 
   }
 
@@ -702,7 +710,7 @@ process_cube <- function(cube_name,
 
     # Convert cell codes to coordinates
     coords <- isea3h_code_to_coords(occurrence_data$cellCode)
-    
+
     occurrence_data$xcoord <- coords$xcoord
     occurrence_data$ycoord <- coords$ycoord
     occurrence_data$resolution <- coords$resolution
