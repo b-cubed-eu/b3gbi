@@ -99,27 +99,19 @@ create_mgrs_grid <- function(df, projection, resolution = NULL) {
         res_u <- gsub("[0-9.]", "", group_df$resolution[1])
         if (res_u == "km") res_v * 1000 else res_v
     } else {
-        1000 # Default to 1km
+        res_m
     }
 
-    group_df$x_center <- group_df$x_nat + (data_res_m / 2)
-    group_df$y_center <- group_df$y_nat + (data_res_m / 2)
-
-    # Filter out NAs for robustness
-    group_df <- group_df[!is.na(group_df$x_center) & !is.na(group_df$y_center), ]
-    if (nrow(group_df) == 0) return(NULL)
-
-    pts_centers <- sf::st_as_sf(group_df, coords = c("x_center", "y_center"), crs = epsg_code)
+    pts_centers <- sf::st_as_sf(group_df, coords = c("x_nat", "y_nat"), crs = epsg_code)
     bbox <- sf::st_bbox(pts_centers)
 
-    # Snap bbox to resolution for perfect alignment
-    # We want to cover the whole cells, so we round the edges
+    # 4. Snap bbox to resolution for perfect alignment
     xmin <- as.numeric(floor((bbox["xmin"] - data_res_m/2) / res_m) * res_m)
     ymin <- as.numeric(floor((bbox["ymin"] - data_res_m/2) / res_m) * res_m)
     xmax <- as.numeric(ceiling((bbox["xmax"] + data_res_m/2) / res_m) * res_m)
     ymax <- as.numeric(ceiling((bbox["ymax"] + data_res_m/2) / res_m) * res_m)
 
-    # Create aligned grid
+    # 5. Create aligned grid
     grid_bbox <- sf::st_bbox(c(xmin=xmin, ymin=ymin, xmax=xmax, ymax=ymax), crs = epsg_code)
     group_grid <- sf::st_make_grid(
       grid_bbox,
@@ -128,11 +120,11 @@ create_mgrs_grid <- function(df, projection, resolution = NULL) {
     ) %>%
       sf::st_sf()
 
-    # Assign cellCode if resolution matches native (approx)
-        group_grid <- group_grid %>%
-          sf::st_join(pts_centers %>% dplyr::select(cellCode), join = sf::st_nearest_feature) %>%
-          dplyr::filter(!is.na(cellCode)) %>%
-          dplyr::distinct(cellCode, .keep_all = TRUE)
+    # 6. Assign cellCode if resolution matches native
+    group_grid <- group_grid %>%
+        sf::st_join(pts_centers %>% dplyr::select(cellCode), join = sf::st_nearest_feature) %>%
+        dplyr::filter(!is.na(cellCode)) %>%
+        dplyr::distinct(cellCode, .keep_all = TRUE)
 
     sf::st_transform(group_grid, projection)
   })
