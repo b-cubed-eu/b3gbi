@@ -256,5 +256,7 @@ plot_map(
   title = "Map of Species Evenness in Denmark",
   legend_title = "Evenness"
 )
+#> Warning: 'x' is NULL so the result will be NULL
+#> Warning: 'x' is NULL so the result will be NULL
 
 ```

@@ -243,8 +243,8 @@ diversity_map
 #> Projected CRS: EPSG:4326 
 #> 
 #> Coordinate range:
-#>  xmin  ymin  xmax  ymax 
-#>  8.00 54.50 15.50 57.75 
+#>      xmin      ymin      xmax      ymax 
+#>  8.016236 54.628857 15.272695 57.736914 
 #> 
 #> Grid cell size: 0.25 degrees 
 #> Number of cells: 299 
@@ -264,15 +264,15 @@ diversity_map
 #> # A tibble: 200 × 4
 #>    cellid   area cellCode  diversity_val
 #>     <int> [km^2] <chr>             <int>
-#>  1    122   446. E008N54BA            20
-#>  2    124   446. E009N54AA            18
-#>  3    125   446. E009N54AB            32
-#>  4    126   446. E009N54BA            40
-#>  5    127   446. E009N54BB            37
-#>  6    128   446. E010N54AA            16
-#>  7    129   446. E010N54AB            13
-#>  8    130   446. E010N54BA            28
-#>  9    131   446. E010N54BB            16
-#> 10    132   446. E011N54AA            24
+#>  1    129   446. E010N54AB            13
+#>  2    137   446. E012N54AB            28
+#>  3    138   446. E012N54BA            32
+#>  4    172   443. E008N55DC            32
+#>  5    173   443. E008N55DD            33
+#>  6    174   443. E009N55CC            21
+#>  7    178   443. E010N55CC            25
+#>  8    179   443. E010N55CD            31
+#>  9    180   443. E010N55DC            39
+#> 10    182   443. E011N55CC            21
 #> # ℹ 190 more rows
 ```

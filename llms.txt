@@ -211,6 +211,9 @@ For a more in-depth introduction, see the tutorial:
   [`spec_richness_density_ts()`](https://b-cubed-eu.github.io/b3gbi/reference/spec_richness_density_map.md)
   : Calculate Species Richness Density Over Space or Time
 
+- [`sum_by_taxon()`](https://b-cubed-eu.github.io/b3gbi/reference/sum_by_taxon.md)
+  : Sum Observations by Taxonomic Rank
+
 - [`tax_distinct_map()`](https://b-cubed-eu.github.io/b3gbi/reference/tax_distinct_map.md)
   [`tax_distinct_ts()`](https://b-cubed-eu.github.io/b3gbi/reference/tax_distinct_map.md)
   : Calculate Taxonomic Distinctness Over Space or Time
