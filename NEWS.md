@@ -1,3 +1,9 @@
+# b3gbi 0.8.17 - Minor update:
+
+* Fixed error that prevented rnaturalearth layers from downloading.
+* Revert a previous update that mistakenly turned off polygon intersects for all except ISEA3H grids.
+* Added sum_by_taxon() function to summarize the number of occurrences by taxon at a user-chosen rank in a processed_cube object.
+
 # b3gbi 0.8.16 - Minor update:
 
 * Added support for ISEA3H hexagonal grids
