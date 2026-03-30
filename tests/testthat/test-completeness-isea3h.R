@@ -6,17 +6,25 @@ mock_DataInfo <- function(x, ...) {
     )
 }
 
+# Mock get_ne_data to avoid slow NE downloads
+mock_get_ne_data <- function(projected_crs, latlong_bbox, region, level,
+                              ne_type, ne_scale, include_land, include_ocean,
+                              buffer_dist_km) {
+    bbox <- sf::st_bbox(latlong_bbox, crs = 4326)
+    bbox_poly <- sf::st_as_sfc(bbox)
+    bbox_proj <- sf::st_transform(bbox_poly, crs = projected_crs)
+    list(
+        combined = sf::st_sf(geometry = bbox_proj),
+        saved = sf::st_sf(geometry = bbox_proj)
+    )
+}
+
 test_that("completeness_map works with isea3h cube", {
-    # These tests require dggridR for safe grid creation.
-    # Without dggridR, the native ISEA3H fallback uses LAEA->WGS84
-    # transforms that can crash R on some PROJ installations.
     skip_if_not(
         requireNamespace("dggridR", quietly = TRUE),
         "dggridR not available for safe ISEA3H grid creation"
     )
 
-    # Mock a processed cube with isea3h data
-    # Need enough species to pass the default cutoff_length filter
     mock_data <- tibble::tibble(
         cellCode = rep(c("-458282525011250000", "452583359004665569"), each = 10),
         year = rep(2020:2021, 10),
@@ -40,11 +48,19 @@ test_that("completeness_map works with isea3h cube", {
     )
     class(mock_cube) <- c("processed_cube", "completeness", "list")
 
-    # Test completeness_map
-    with_mocked_bindings(
+    testthat::with_mocked_bindings(
         my_DataInfo = mock_DataInfo,
+        .env = asNamespace("b3gbi"),
         {
-            result <- suppressWarnings(suppressMessages(completeness_map(mock_cube, scale = "small")))
+            testthat::with_mocked_bindings(
+                get_ne_data = mock_get_ne_data,
+                .env = asNamespace("b3gbi"),
+                {
+                    result <- suppressWarnings(suppressMessages(
+                        completeness_map(mock_cube)
+                    ))
+                }
+            )
         }
     )
     expect_s3_class(result, "indicator_map")
@@ -81,11 +97,19 @@ test_that("indicator_ts for completeness works with isea3h", {
     )
     class(mock_cube) <- c("processed_cube", "completeness", "list")
 
-    # Add ci_type = 'none' to speed up the test significantly
-    with_mocked_bindings(
+    testthat::with_mocked_bindings(
         my_DataInfo = mock_DataInfo,
+        .env = asNamespace("b3gbi"),
         {
-            result <- suppressWarnings(suppressMessages(completeness_ts(mock_cube, ci_type = "none", scale = "small")))
+            testthat::with_mocked_bindings(
+                get_ne_data = mock_get_ne_data,
+                .env = asNamespace("b3gbi"),
+                {
+                    result <- suppressWarnings(suppressMessages(
+                        completeness_ts(mock_cube, ci_type = "none")
+                    ))
+                }
+            )
         }
     )
     expect_s3_class(result, "indicator_ts")
