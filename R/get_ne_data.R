@@ -91,9 +91,12 @@ get_ne_data <- function(projected_crs,
     # Crop in 4326
     # Indicate attributes are constant to prevent st_crop warnings
     sf::st_agr(map_data) <- "constant"
+    orig_s2_crop <- sf::sf_use_s2()
+    sf::sf_use_s2(FALSE)
     map_data <- map_data %>%
       sf::st_crop(latlong_extent) %>%
       sf::st_make_valid()
+    sf::sf_use_s2(orig_s2_crop)
 
     has_intersection <- nrow(map_data) > 0
   } else {
