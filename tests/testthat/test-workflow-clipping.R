@@ -84,6 +84,8 @@ test_that("intersect_grid_with_polygon produces clipped cells", {
   )
 
   # Clipped cells should have varying areas (some clipped, some not)
+  sf::sf_use_s2(FALSE)
   areas <- as.numeric(sf::st_area(result$data))
+  sf::sf_use_s2(TRUE)
   expect_gt(length(unique(round(areas, 4))), 1)
 })
