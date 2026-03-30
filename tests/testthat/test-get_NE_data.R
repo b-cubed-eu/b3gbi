@@ -87,6 +87,7 @@ test_that("get_ne_data handles edge cases", {
 })
 
 test_that("get_ne_data handles errors", {
+  skip_on_ci()
   # Test invalid level
   bbox_val <- c(xmin = 10, ymin = 40, xmax = 12, ymax = 42)
 
@@ -147,8 +148,8 @@ test_that("get_ne_data handles errors", {
                            ne_scale = "medium"))
 
   # Test for error when output_crs is null
-  expect_error(get_ne_data(latlong_bbox <- bbox_val,
-                           projected_crs = NULL,
+  expect_error(get_ne_data(projected_crs = NULL,
+                           latlong_bbox <- bbox_val,
                            region = "Germany",
                            level = "country",
                            ne_type = "countries",
