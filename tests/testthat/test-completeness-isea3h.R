@@ -35,7 +35,7 @@ test_that("completeness_map works with isea3h cube", {
         last_year = 2021,
         num_species = 10,
         species_names = paste("Species", 1:10),
-        coord_range = c(xmin = -20, xmax = 40, ymin = 30, ymax = 75),
+        coord_range = c(xmin = 3, xmax = 13, ymin = 51, ymax = 60),
         resolution = "4"
     )
     class(mock_cube) <- c("processed_cube", "completeness", "list")
@@ -44,7 +44,7 @@ test_that("completeness_map works with isea3h cube", {
     with_mocked_bindings(
         my_DataInfo = mock_DataInfo,
         {
-            result <- suppressWarnings(suppressMessages(completeness_map(mock_cube)))
+            result <- suppressWarnings(suppressMessages(completeness_map(mock_cube, scale = "small")))
         }
     )
     expect_s3_class(result, "indicator_map")
@@ -76,7 +76,7 @@ test_that("indicator_ts for completeness works with isea3h", {
         last_year = 2021,
         num_species = 10,
         species_names = paste("Species", 1:10),
-        coord_range = c(xmin = -20, xmax = 40, ymin = 30, ymax = 75),
+        coord_range = c(xmin = 3, xmax = 13, ymin = 51, ymax = 60),
         resolution = "4"
     )
     class(mock_cube) <- c("processed_cube", "completeness", "list")
@@ -85,7 +85,7 @@ test_that("indicator_ts for completeness works with isea3h", {
     with_mocked_bindings(
         my_DataInfo = mock_DataInfo,
         {
-            result <- suppressWarnings(suppressMessages(completeness_ts(mock_cube, ci_type = "none")))
+            result <- suppressWarnings(suppressMessages(completeness_ts(mock_cube, ci_type = "none", scale = "small")))
         }
     )
     expect_s3_class(result, "indicator_ts")
