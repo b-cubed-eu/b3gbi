@@ -27,7 +27,7 @@ sum_by_taxon <- function(object, rank) {
     stop("rank must be a single character string")
   }
 
-  total_observations <- NULL
+  total_observations <- obs <- NULL
 
   data <- object$data
 
