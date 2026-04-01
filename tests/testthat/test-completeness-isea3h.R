@@ -6,23 +6,6 @@ mock_DataInfo <- function(x, ...) {
     )
 }
 
-# Mock get_ne_data to avoid slow NE downloads and PROJ issues on CI
-mock_get_ne_data <- function(projected_crs, latlong_bbox = NULL, ...) {
-    if (is.null(projected_crs)) stop("No projected CRS provided.")
-    # Create polygon directly in the target CRS to avoid st_transform on CI
-    # Use the coord_range from the mock cube (Denmark area in EPSG:4326)
-    dummy_geom <- sf::st_sfc(
-        sf::st_polygon(list(matrix(c(
-            3, 51, 13, 51, 13, 60, 3, 60, 3, 51
-        ), ncol = 2, byrow = TRUE))),
-        crs = 4326
-    )
-    list(
-        combined = sf::st_sf(geometry = sf::st_transform(dummy_geom, projected_crs)),
-        saved = sf::st_sf(geometry = sf::st_transform(dummy_geom, projected_crs))
-    )
-}
-
 test_that("completeness_map works with isea3h cube", {
     skip_if_not(
         requireNamespace("dggridR", quietly = TRUE),
@@ -54,7 +37,6 @@ test_that("completeness_map works with isea3h cube", {
 
     testthat::local_mocked_bindings(
         my_DataInfo = mock_DataInfo,
-        get_ne_data = mock_get_ne_data,
         .package = "b3gbi"
     )
     result <- suppressWarnings(suppressMessages(
@@ -96,7 +78,6 @@ test_that("indicator_ts for completeness works with isea3h", {
 
     testthat::local_mocked_bindings(
         my_DataInfo = mock_DataInfo,
-        get_ne_data = mock_get_ne_data,
         .package = "b3gbi"
     )
     result <- suppressWarnings(suppressMessages(
