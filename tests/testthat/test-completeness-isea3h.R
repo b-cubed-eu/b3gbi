@@ -52,21 +52,14 @@ test_that("completeness_map works with isea3h cube", {
     )
     class(mock_cube) <- c("processed_cube", "completeness", "list")
 
-    testthat::with_mocked_bindings(
+    testthat::local_mocked_bindings(
         my_DataInfo = mock_DataInfo,
-        .env = asNamespace("b3gbi"),
-        {
-            testthat::with_mocked_bindings(
-                get_ne_data = mock_get_ne_data,
-                .env = asNamespace("b3gbi"),
-                {
-                    result <- suppressWarnings(suppressMessages(
-                        completeness_map(mock_cube)
-                    ))
-                }
-            )
-        }
+        get_ne_data = mock_get_ne_data,
+        .package = "b3gbi"
     )
+    result <- suppressWarnings(suppressMessages(
+        completeness_map(mock_cube)
+    ))
     expect_s3_class(result, "indicator_map")
     expect_equal(result$grid_type, "isea3h")
     expect_true("diversity_val" %in% names(result$data))
@@ -101,21 +94,14 @@ test_that("indicator_ts for completeness works with isea3h", {
     )
     class(mock_cube) <- c("processed_cube", "completeness", "list")
 
-    testthat::with_mocked_bindings(
+    testthat::local_mocked_bindings(
         my_DataInfo = mock_DataInfo,
-        .env = asNamespace("b3gbi"),
-        {
-            testthat::with_mocked_bindings(
-                get_ne_data = mock_get_ne_data,
-                .env = asNamespace("b3gbi"),
-                {
-                    result <- suppressWarnings(suppressMessages(
-                        completeness_ts(mock_cube, ci_type = "none")
-                    ))
-                }
-            )
-        }
+        get_ne_data = mock_get_ne_data,
+        .package = "b3gbi"
     )
+    result <- suppressWarnings(suppressMessages(
+        completeness_ts(mock_cube, ci_type = "none")
+    ))
     expect_s3_class(result, "indicator_ts")
     expect_equal(nrow(result$data), 2)
 })
