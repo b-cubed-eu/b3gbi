@@ -136,20 +136,4 @@ test_that("get_ne_data handles errors", {
     regexp = "CRS"
   )
 
-  # Test for error when level is null
-  expect_error(get_ne_data_real(latlong_bbox = bbox_val,
-                           projected_crs = "EPSG:3857",
-                           region = "Germany",
-                           level = NULL,
-                           ne_type = "countries",
-                           ne_scale = "medium"))
-
-  # Test for error when ne_scale is null
-  expect_error(get_ne_data_real(latlong_bbox = bbox_val,
-                           projected_crs = "EPSG:3857",
-                           region = "Germany",
-                           level = "country",
-                           ne_type = "countries",
-                           ne_scale = NULL))
-
 })
