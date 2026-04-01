@@ -87,6 +87,15 @@ test_that("get_ne_data handles edge cases", {
                              ne_type = "countries",
                              ne_scale = "medium")
   expect_s3_class(germany_map[[1]], "sf")
+
+  # Test cube level (triggers st_crop branch)
+  cube_map <- get_ne_data(latlong_bbox = c(xmin = 10, ymin = 40, xmax = 12, ymax = 42),
+                          projected_crs = "EPSG:3857",
+                          region = NULL,
+                          level = "cube",
+                          ne_type = "countries",
+                          ne_scale = "medium")
+  expect_s3_class(cube_map[[1]], "sf")
 })
 
 test_that("get_ne_data handles errors", {
