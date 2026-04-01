@@ -1,6 +1,3 @@
-# These tests need the real get_ne_data, so disable the test shortcut
-Sys.unsetenv("B3GBI_TESTING")
-
 test_that("get_ne_data retrieves map data correctly", {
   # Use real get_ne_data for this test only
   Sys.unsetenv("B3GBI_TESTING")
@@ -105,6 +102,9 @@ test_that("get_ne_data cube level triggers st_crop branch", {
 })
 
 test_that("get_ne_data handles errors", {
+  # Need real function for error validation tests
+  Sys.unsetenv("B3GBI_TESTING")
+  on.exit(Sys.setenv(B3GBI_TESTING = "TRUE"))
   bbox_val <- c(xmin = 10, ymin = 40, xmax = 12, ymax = 42)
 
   # Test invalid level
