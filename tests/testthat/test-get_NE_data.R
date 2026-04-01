@@ -87,10 +87,12 @@ test_that("get_ne_data handles edge cases", {
 })
 
 test_that("get_ne_data handles errors", {
+  # Ensure we use the real function, not any leaked mock
+  get_ne_data_real <- get("get_ne_data", envir = asNamespace("b3gbi"))
   bbox_val <- c(xmin = 10, ymin = 40, xmax = 12, ymax = 42)
 
   # Test invalid level
-  expect_error(get_ne_data(latlong_bbox = bbox_val,
+  expect_error(get_ne_data_real(latlong_bbox = bbox_val,
                            projected_crs = "EPSG:3857",
                            region = "France",
                            level = "invalid",
@@ -100,7 +102,7 @@ test_that("get_ne_data handles errors", {
   # Test that when region is NULL and level is not cube/world we get an error
   for (lvl in c("country", "continent", "sovereignty", "geounit")) {
     expect_error(
-      get_ne_data(
+      get_ne_data_real(
         latlong_bbox = bbox_val,
         projected_crs = "EPSG:3857",
         region = NULL,
@@ -114,7 +116,7 @@ test_that("get_ne_data handles errors", {
   }
 
   expect_error(
-    get_ne_data(latlong_bbox = bbox_val,
+    get_ne_data_real(latlong_bbox = bbox_val,
                 projected_crs = "EPSG:3857",
                 region = NULL,
                 level = "country",
@@ -125,7 +127,7 @@ test_that("get_ne_data handles errors", {
 
   # Test for error when projected_crs is null
   expect_error(
-    get_ne_data(projected_crs = NULL,
+    get_ne_data_real(projected_crs = NULL,
                 latlong_bbox = bbox_val,
                 region = "Germany",
                 level = "country",
@@ -135,7 +137,7 @@ test_that("get_ne_data handles errors", {
   )
 
   # Test for error when level is null
-  expect_error(get_ne_data(latlong_bbox = bbox_val,
+  expect_error(get_ne_data_real(latlong_bbox = bbox_val,
                            projected_crs = "EPSG:3857",
                            region = "Germany",
                            level = NULL,
@@ -143,7 +145,7 @@ test_that("get_ne_data handles errors", {
                            ne_scale = "medium"))
 
   # Test for error when ne_scale is null
-  expect_error(get_ne_data(latlong_bbox = bbox_val,
+  expect_error(get_ne_data_real(latlong_bbox = bbox_val,
                            projected_crs = "EPSG:3857",
                            region = "Germany",
                            level = "country",
