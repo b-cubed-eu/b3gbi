@@ -6,26 +6,20 @@ mock_DataInfo <- function(x, ...) {
     )
 }
 
-# Mock get_ne_data to avoid slow NE downloads
-# Must replicate validation from real function to avoid leaking bad mocks
-mock_get_ne_data <- function(projected_crs, latlong_bbox = NULL, region = NULL,
-                              level = "cube", ne_type = "countries",
-                              ne_scale = "medium", include_land = TRUE,
-                              include_ocean = TRUE, buffer_dist_km = NULL) {
-    level <- match.arg(level, c("cube", "continent", "country",
-                                 "geounit", "sovereignty", "world"))
-    if (!(level %in% c("cube", "world")) && is.null(region)) {
-        stop("You must provide a region unless level is set to 'cube' or 'world'.")
-    }
-    if (is.null(projected_crs)) {
-        stop("No projected CRS provided.")
-    }
-    bbox <- sf::st_bbox(latlong_bbox, crs = 4326)
-    bbox_poly <- sf::st_as_sfc(bbox)
-    bbox_proj <- sf::st_transform(bbox_poly, crs = projected_crs)
+# Mock get_ne_data to avoid slow NE downloads and PROJ issues on CI
+mock_get_ne_data <- function(projected_crs, latlong_bbox = NULL, ...) {
+    if (is.null(projected_crs)) stop("No projected CRS provided.")
+    # Create polygon directly in the target CRS to avoid st_transform on CI
+    # Use the coord_range from the mock cube (Denmark area in EPSG:4326)
+    dummy_geom <- sf::st_sfc(
+        sf::st_polygon(list(matrix(c(
+            3, 51, 13, 51, 13, 60, 3, 60, 3, 51
+        ), ncol = 2, byrow = TRUE))),
+        crs = 4326
+    )
     list(
-        combined = sf::st_sf(geometry = bbox_proj),
-        saved = sf::st_sf(geometry = bbox_proj)
+        combined = sf::st_sf(geometry = sf::st_transform(dummy_geom, projected_crs)),
+        saved = sf::st_sf(geometry = sf::st_transform(dummy_geom, projected_crs))
     )
 }
 
