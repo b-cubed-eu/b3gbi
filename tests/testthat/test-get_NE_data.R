@@ -1,7 +1,5 @@
 # These tests need the real get_ne_data, so disable the test shortcut
-old_test_env <- Sys.getenv("B3GBI_TESTING")
 Sys.unsetenv("B3GBI_TESTING")
-withr::defer(Sys.setenv(B3GBI_TESTING = old_test_env), envir = parent.frame())
 
 test_that("get_ne_data retrieves map data correctly", {
   # Test country level
