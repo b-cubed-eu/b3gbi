@@ -7,9 +7,19 @@ mock_DataInfo <- function(x, ...) {
 }
 
 # Mock get_ne_data to avoid slow NE downloads
-mock_get_ne_data <- function(projected_crs, latlong_bbox, region, level,
-                              ne_type, ne_scale, include_land, include_ocean,
-                              buffer_dist_km) {
+# Must replicate validation from real function to avoid leaking bad mocks
+mock_get_ne_data <- function(projected_crs, latlong_bbox = NULL, region = NULL,
+                              level = "cube", ne_type = "countries",
+                              ne_scale = "medium", include_land = TRUE,
+                              include_ocean = TRUE, buffer_dist_km = NULL) {
+    level <- match.arg(level, c("cube", "continent", "country",
+                                 "geounit", "sovereignty", "world"))
+    if (!(level %in% c("cube", "world")) && is.null(region)) {
+        stop("You must provide a region unless level is set to 'cube' or 'world'.")
+    }
+    if (is.null(projected_crs)) {
+        stop("No projected CRS provided.")
+    }
     bbox <- sf::st_bbox(latlong_bbox, crs = 4326)
     bbox_poly <- sf::st_as_sfc(bbox)
     bbox_proj <- sf::st_transform(bbox_poly, crs = projected_crs)
