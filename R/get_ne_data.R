@@ -55,12 +55,16 @@ get_ne_data <- function(projected_crs,
     stop("No projected CRS provided.")
   }
 
-  # During testing, return a fast dummy instead of downloading NE data
+  # During testing, return a fast dummy instead of downloading NE data.
+  # This avoids 30+ minute test runs from Natural Earth downloads.
+  # The real function is tested in test-get_NE_data.R which unsets this env var.
   if (isTRUE(as.logical(Sys.getenv("B3GBI_TESTING")))) {
     if (!is.null(latlong_bbox)) {
       bbox_poly <- sf::st_as_sfc(sf::st_bbox(latlong_bbox, crs = 4326))
     } else {
-      bbox_poly <- sf::st_as_sfc(sf::st_bbox(c(xmin = -180, ymin = -90, xmax = 180, ymax = 90), crs = 4326))
+      bbox_poly <- sf::st_as_sfc(
+        sf::st_bbox(c(xmin = -180, ymin = -90, xmax = 180, ymax = 90), crs = 4326)
+      )
     }
     bbox_proj <- tryCatch(
       sf::st_transform(bbox_poly, projected_crs),
@@ -75,12 +79,12 @@ get_ne_data <- function(projected_crs,
   # Download the map data
   map_data <-
     download_ne_data(
-        region = region,
-        level = level,
-        ne_scale = ne_scale,
-        ne_type = ne_type
-      ) %>%
-      sf::st_make_valid()
+      region = region,
+      level = level,
+      ne_scale = ne_scale,
+      ne_type = ne_type
+    ) %>%
+    sf::st_make_valid()
 
   # Add a buffer around the bbox to ensure full coverage
   expand_percent <- 0.5 # 50% buffer
