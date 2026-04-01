@@ -2,8 +2,12 @@
 Sys.unsetenv("B3GBI_TESTING")
 
 test_that("get_ne_data retrieves map data correctly", {
+  # Use real get_ne_data for this test only
+  Sys.unsetenv("B3GBI_TESTING")
+  on.exit(Sys.setenv(B3GBI_TESTING = "TRUE"))
+
   # Test country level
-  france_map <- get_ne_data(latlong_bbox <- c(xmin = 10, ymin = 40, xmax = 12, ymax = 42),
+  france_map <- get_ne_data(latlong_bbox = c(xmin = 10, ymin = 40, xmax = 12, ymax = 42),
                             projected_crs = "EPSG:3857",
                             region = "France",
                             level = "country",
@@ -87,8 +91,10 @@ test_that("get_ne_data handles edge cases", {
                              ne_type = "countries",
                              ne_scale = "medium")
   expect_s3_class(germany_map[[1]], "sf")
+})
 
-  # Test cube level (triggers st_crop branch)
+test_that("get_ne_data cube level triggers st_crop branch", {
+  # Use the fast mock from setup.R (B3GBI_TESTING=TRUE)
   cube_map <- get_ne_data(latlong_bbox = c(xmin = 10, ymin = 40, xmax = 12, ymax = 42),
                           projected_crs = "EPSG:3857",
                           region = NULL,
