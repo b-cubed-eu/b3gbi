@@ -163,12 +163,24 @@ compute_indicator_workflow <- function(data,
                                        buffer_dist_km = 50,
                                        force_grid = FALSE,
                                        ...) {
+  # Save original cell_size to determine whether to use native grid later
+  original_cell_size <- cell_size
+  
+  # Extract gridded_average from dots if present
+  dots <- list(...)
+  gridded_average <- if ("gridded_average" %in% names(dots)) {
+    dots$gridded_average
+  } else {
+    FALSE
+  }
+
   wrong_class(data,
     class = c("processed_cube", "processed_cube_dsinfo", "sim_cube"),
     reason = "unrecognized"
   )
 
-  xcoord <- ycoord <- NULL
+  # Null assignments
+  xcoord <- ycoord <- ll <- ul <- NULL
 
   # Check for empty cube
   if (nrow(data$data) == 0) {
@@ -192,6 +204,10 @@ compute_indicator_workflow <- function(data,
     "hill1",
     "hill2"
   )
+
+  # Gridded average completeness uses cellCode (always present in data) for
+  # grouping, so it does NOT need grid cell assignment from the workflow.
+  # Do not add it to ind_req_grid_list or force_grid.
 
   # List of indicators for which bootstrapped confidence intervals should not
   # be calculated
@@ -702,12 +718,20 @@ compute_indicator_workflow <- function(data,
     if (data$grid_type == "isea3h") {
       # Use pre-existing centroids to build hexagonal polygons
       grid <- create_isea3h_grid(df, projected_crs)
-      # Add area if missing
-      if (!"area" %in% colnames(grid)) {
-        grid$area <- grid %>%
-          sf::st_area() %>%
-          units::set_units("km^2")
+    } else if (data$grid_type %in% c("mgrs", "eea", "eqdgc")) {
+      # Use native grid polygons to avoid aliasing issues (#104)
+      # Extract resolution from cube if not in data frame
+      res_info <- if (original_cell_size == "grid") {
+        if (!is.null(data$resolutions)) data$resolutions[1] else NULL
+      } else {
+        # check_cell_size returns meters for km-based grids
+        if (data$grid_type %in% c("mgrs", "eea")) {
+          paste0(cell_size / 1000, "km")
+        } else {
+          paste0(cell_size, "degrees")
+        }
       }
+      grid <- create_native_grid(df, projected_crs, data$grid_type, res_info)
     } else {
       grid <- create_grid(
         bbox_for_grid,
@@ -735,14 +759,27 @@ compute_indicator_workflow <- function(data,
       # Convert to sf if not already
       intersection_target <- sf::st_as_sf(intersection_target)
     } else {
-      # No shapefile provided, so we intersect with the Natural Earth data
       intersection_target <- map_data
     }
 
+    # Ensure intersection target is valid and buffered slightly to avoid precision losses
+    intersection_target <- sf::st_make_valid(intersection_target) %>%
+      sf::st_buffer(dist = 1) # 1 meter/degree safety buffer
+    
     sf::st_agr(intersection_target) <- "constant"
 
     # Intersect grid with intersection target
-    clipped_grid <- intersect_grid_with_polygon(grid, intersection_target)
+    if (data$grid_type == "isea3h") {
+      # ISEA3H requires accurate clipping for dateline/pole handling
+      clipped_grid <- intersect_grid_with_polygon(grid, intersection_target)
+    } else if (level == "cube" && is.null(shapefile)) {
+      # For cube level without shapefile, skip spatial filtering to prevent outlier loss
+      clipped_grid <- grid
+    } else {
+      # For standard grids, use fast spatial filtering instead of expensive clipping.
+      # This keeps whole cells and significantly speeds up the workflow.
+      clipped_grid <- sf::st_filter(grid, intersection_target)
+    }
 
     if (spherical_geometry == TRUE) {
       # Restore original spherical setting
@@ -750,16 +787,28 @@ compute_indicator_workflow <- function(data,
     }
 
     # Filter data to only those within the intersection target
-    data_filtered <- sf::st_filter(data_projected, intersection_target)
+    data_filtered <- if (level == "cube" && is.null(shapefile)) {
+      data_projected
+    } else {
+      sf::st_filter(data_projected, intersection_target)
+    }
 
     # Assign data to grid
-    if (data$grid_type == "isea3h") {
-      # ISEA3H: the cube already assigns data to cells via cellCode.
+    if (data$grid_type %in% c("isea3h", "mgrs", "eea", "eqdgc") &&
+      "cellCode" %in% colnames(clipped_grid)) {
+      # These grids have a native cellCode mapping.
       # Join by cellCode instead of spatial join to preserve this assignment.
-      cell_lookup <- sf::st_drop_geometry(clipped_grid[, c("cellCode", "cellid")])
+      # This avoids aliasing and gaps when using different projections.
+
+      # Include area in the lookup as some indicators (e.g. density) require it
+      lookup_cols <- c("cellCode", "cellid")
+      if ("area" %in% names(clipped_grid)) lookup_cols <- c(lookup_cols, "area")
+
+      cell_lookup <- sf::st_drop_geometry(clipped_grid[, lookup_cols])
       data_final <- dplyr::left_join(
         sf::st_drop_geometry(data_filtered), cell_lookup,
-        by = "cellCode"
+        by = "cellCode",
+        relationship = "many-to-one"
       )
       data_final <- data_final[!is.na(data_final$cellid), ]
     } else {
@@ -802,18 +851,12 @@ compute_indicator_workflow <- function(data,
     indicator <- calc_map(data_final_nogeom, ...)
 
     # Add indicator values to grid
+    join_cols <- unique(c("cellid", intersect(names(clipped_grid), names(indicator))))
     diversity_grid <-
       clipped_grid %>%
-      dplyr::left_join(indicator, by = "cellid")
+      dplyr::left_join(indicator, by = join_cols)
 
-    # Get bbox of original grid before transformation
-    if (data$grid_type == "isea3h") {
-      original_bbox <- intersect_grid_with_polygon(grid, saved_layer) %>%
-        sf::st_union()
-    } else {
-      original_bbox <- sf::st_filter(grid, saved_layer) %>%
-        sf::st_union()
-    }
+
 
     # Transform to output CRS
     diversity_grid <- sf::st_transform(diversity_grid, crs = output_crs)
@@ -839,6 +882,13 @@ compute_indicator_workflow <- function(data,
             )
           )
         }
+      }
+    }
+
+    if (ci_type == "none" &&
+      type %in% c("hill0", "hill1", "hill2")) {
+      if ("ll" %in% names(indicator)) {
+        indicator <- indicator %>% select(c(-ll, -ul))
       }
     }
   }
@@ -870,7 +920,6 @@ compute_indicator_workflow <- function(data,
       num_years = num_years,
       species_names = species_names,
       years_with_obs = years_with_obs,
-      original_bbox = original_bbox,
       grid_type = data$grid_type
     )
   } else {

@@ -597,7 +597,8 @@ process_cube <- function(cube_name,
 
     occurrence_data <- occurrence_data %>%
       dplyr::bind_cols(
-        eea_code_to_coords(.$cellCode)
+        eea_code_to_coords(.$cellCode) %>%
+          dplyr::select(-cellCode)
       )
 
   } else if (grid_type == "mgrs") {

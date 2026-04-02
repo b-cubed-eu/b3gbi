@@ -9,8 +9,6 @@ intersect_grid_with_polygon <- function(grid,
   on.exit(sf::sf_use_s2(original_s2))
 
   # Ensure geometries are valid before intersection
-  grid_v <- grid
-  target_v <- intersection_target
 
   # Helper function for optimized intersection
   do_intersection <- function(g, t) {
@@ -94,6 +92,11 @@ intersect_grid_with_polygon <- function(grid,
   # Final check
   if (is.null(result) || nrow(result) == 0) {
     stop("No spatial intersection between map data and grid.")
+  }
+
+  # Deduplicate by cellCode to ensure a clean one-to-one mapping for joins
+  if ("cellCode" %in% names(result)) {
+    result <- dplyr::distinct(result, .data[["cellCode"]], .keep_all = TRUE)
   }
 
   return(result)
