@@ -878,7 +878,7 @@ compute_indicator_workflow <- function(data,
         if (length(unmatched_codes) <= 20) {
           warning(paste("Unmatched cell codes:", paste(unmatched_codes, collapse = ", ")))
         } else {
-          warning(paste("First 20 unmatched cell codes:", paste(head(unmatched_codes, 20), collapse = ", ")))
+          warning(paste("First 20 unmatched cell codes:", paste(utils::head(unmatched_codes, 20), collapse = ", ")))
         }
       }
       data_final <- data_final[!is.na(data_final$cellid), ]
