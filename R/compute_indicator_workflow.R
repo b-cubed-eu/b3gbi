@@ -165,7 +165,7 @@ compute_indicator_workflow <- function(data,
                                        ...) {
   # Save original cell_size to determine whether to use native grid later
   original_cell_size <- cell_size
-  
+
   # Extract gridded_average from dots if present
   dots <- list(...)
   gridded_average <- if ("gridded_average" %in% names(dots)) {
@@ -186,7 +186,7 @@ compute_indicator_workflow <- function(data,
     if (!is.null(native_res_str)) {
       res_val <- as.numeric(gsub("[a-zA-Z]", "", native_res_str))
       res_unit <- gsub("[0-9.]", "", native_res_str)
-      
+
       # Force a 4x coarser grid (16 native cells per grid cell)
       coarser_res <- res_val * 4
       cell_size <- paste0(coarser_res, res_unit)
@@ -887,7 +887,7 @@ compute_indicator_workflow <- function(data,
       # renaming conflicts with data columns (like cellCode).
       lookup_cols <- "cellid"
       if ("area" %in% names(clipped_grid)) lookup_cols <- c(lookup_cols, "area")
-      
+
       data_final <- data_filtered %>%
         sf::st_join(clipped_grid[, lookup_cols], join = sf::st_nearest_feature)
     }
