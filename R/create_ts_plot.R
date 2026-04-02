@@ -75,8 +75,8 @@ create_ts_plot <- function(data,
                     formula = "y ~ x",
                     se = FALSE,
                     na.rm = TRUE) +
-        geom_ribbon(aes(ymin = predict(loess(ll ~ year, na.action = na.exclude)),
-                        ymax = predict(loess(ul ~ year, na.action = na.exclude))),
+        geom_ribbon(aes(ymin = predict(loess(ll ~ year, na.action = stats::na.exclude)),
+                        ymax = predict(loess(ul ~ year, na.action = stats::na.exclude))),
                     alpha = envelopealpha,
                     fill = envelopecolour,
                     na.rm = TRUE)
