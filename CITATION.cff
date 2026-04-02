@@ -266,7 +266,7 @@ references:
   abstract: 'rnaturalearth: World Map Data from Natural Earth'
   notes: Imports
   url: https://docs.ropensci.org/rnaturalearth/
-  repository: https://ropensci.r-universe.dev
+  repository: https://CRAN.R-project.org/package=rnaturalearth
   authors:
   - family-names: Massicotte
     given-names: Philippe

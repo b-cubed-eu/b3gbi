@@ -1,10 +1,16 @@
-# b3gbi 0.8.17 - Patch update:
+# b3gbi 0.8.18 - Minor update:
 
 * Fixed a regression introduced in version 0.8.0 where `compute_indicator_workflow` produced erroneous empty cell lines for certain bounding boxes across MGRS, EEA, and EQDGC datasets by correcting spatial matching workflows to rely on native `cellCode` joins.
 * Addressed `S2` geometry degenerate vertex errors related to incorrect geographic subset orientations for exact-matching map boundary points.
 * Added native sf boundaries for MGRS, EEA, and EQDGC, vastly improving boundary and grid visualization.
 * Removed redundant plotting parameters `complete_grid_outline` and `visible_grid_outline` from `plot_map` and `plot_species_map`.
 * Fixed a bug where Hill diversity calculated confidence intervals even when `ci_type` was set to `none`.
+
+# b3gbi 0.8.17 - Minor update:
+
+* Fixed error that prevented rnaturalearth layers from downloading.
+* Revert a previous update that mistakenly turned off polygon intersects for all except ISEA3H grids.
+* Added sum_by_taxon() function to summarize the number of occurrences by taxon at a user-chosen rank in a processed_cube object.
 
 # b3gbi 0.8.16 - Minor update:
 
