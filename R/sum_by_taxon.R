@@ -36,7 +36,7 @@ sum_by_taxon <- function(object, rank) {
   }
 
   summed_data <- data %>%
-    dplyr::group_by(all_of(rank)) %>%
+    dplyr::group_by(.data[[rank]]) %>%
     dplyr::summarize(total_observations = sum(obs, na.rm = TRUE)) %>%
     dplyr::select(total_observations, all_of(rank))
 
