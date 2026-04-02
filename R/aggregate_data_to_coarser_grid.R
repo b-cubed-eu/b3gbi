@@ -58,10 +58,10 @@ aggregate_data_to_coarser_grid <- function(data_assigned, clipped_grid,
     data_df <- data_assigned
   }
 
-  # Reassign each data row's cellid and cellCode to the coarse cell
+  # Reassign each data row's cellid to the coarse cell
+  # Keep the original cellCode so gridded indicators have multiple values per coarse cell
   data_df$cellid <- cellid_map[as.character(data_df$cellid)]
   data_df <- data_df[!is.na(data_df$cellid), ]
-  data_df$cellCode <- paste0("coarse_", data_df$cellid)
 
   if (nrow(data_df) == 0) {
     warning("Aggregation failed: no data mapped to coarse grid cells.")
@@ -84,18 +84,13 @@ aggregate_data_to_coarser_grid <- function(data_assigned, clipped_grid,
     data_df$area <- NULL
   }
 
-  # Build output data
+  # Build output data — use coarse cellid, keep native cellCode
   sf::st_agr(coarse_grid_out) <- "constant"
   if (has_geom) {
     # Create sf with coarse grid cell centroids as point geometries
     coarse_centers <- sf::st_centroid(coarse_grid_out)
-    data_out <- merge(
-      data_df,
-      sf::st_drop_geometry(coarse_centers[, c("cellid", "cellCode")]),
-      by = c("cellid", "cellCode")
-    )
-    data_out <- sf::st_sf(data_out, geometry = sf::st_geometry(
-      coarse_centers[match(data_out$cellid, coarse_centers$cellid), ]
+    data_out <- sf::st_sf(data_df, geometry = sf::st_geometry(
+      coarse_centers[match(data_df$cellid, coarse_centers$cellid), ]
     ))
   } else {
     data_out <- data_df
