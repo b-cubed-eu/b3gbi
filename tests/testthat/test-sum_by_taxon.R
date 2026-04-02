@@ -57,6 +57,8 @@ test_that("sum_by_taxon errors when rank column does not exist", {
     sum_by_taxon(example_cube_1, "nonexistent_column"),
     "rank 'nonexistent_column' not found"
   )
+})
+
 test_that("sum_by_taxon works correctly", {
   # Mock data
   df <- data.frame(
