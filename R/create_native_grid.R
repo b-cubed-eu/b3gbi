@@ -1,4 +1,9 @@
+# Dispatch to the correct function to build a native grid for MGRS, EEA, or EQDGC cubes
+#' @noRd
 create_native_grid <- function(df, projection, grid_type, resolution = NULL) {
+
+  cellCode <- NULL
+
   res <- if (grid_type == "mgrs") {
     create_mgrs_grid(df, projection, resolution)
   } else if (grid_type == "eea") {
@@ -151,6 +156,9 @@ create_mgrs_grid <- function(df, projection, resolution = NULL) {
 #' @param projection The projected CRS the grid should be returned in.
 #' @noRd
 create_eea_grid <- function(df, projection, resolution = NULL) {
+
+  cellCode <- NULL
+
   # 1. Determine resolution in meters
   res_str <- if (is.null(resolution) && "resolution" %in% names(df)) {
     df$resolution[1]
