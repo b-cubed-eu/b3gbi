@@ -13,7 +13,7 @@ calc_ts_completeness_core <- function(x, ...) {
       inherits(x, "completeness")
   )
 
-  scientificName <- year <- obs <- cellCode <- Assemblage <- SC <- NULL
+  scientificName <- year <- obs <- cellCode <- cellid <- Assemblage <- SC <- NULL
   diversity_val <- NULL
 
   dots <- list(...)
@@ -39,7 +39,7 @@ calc_ts_completeness_core <- function(x, ...) {
       purrr::map(function(df) {
         current_year <- df$year[1]
         current_cell <- df$cellid[1]
-        
+
         m <- df %>%
           tidyr::pivot_wider(
             id_cols = "cellCode",
@@ -58,12 +58,12 @@ calc_ts_completeness_core <- function(x, ...) {
           as.matrix() %>%
           t()
         m <- (m > 0) * 1L
-        
+
         # Check for sufficient samples
         if (ncol(m) < 2 || ncol(m) <= cutoff_length) {
           return(NULL)
         }
-        
+
         # We need a unique name for this assemblage to avoid iNEXT naming conflicts
         # Use year__cellid as the name
         attr(m, "assemblage_name") <- paste0(current_year, "__", current_cell)
@@ -106,7 +106,7 @@ calc_ts_completeness_core <- function(x, ...) {
     if (non_na_count == 0) {
       message("Gridded completeness returned no results. Try lowering 'cutoff_length' or using a coarser grid.")
     } else {
-      message(sprintf("Gridded completeness calculated for %d out of %d years.", 
+      message(sprintf("Gridded completeness calculated for %d out of %d years.",
                       non_na_count, nrow(all_years)))
     }
   } else {
