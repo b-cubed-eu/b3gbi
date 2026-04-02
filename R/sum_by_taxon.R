@@ -19,6 +19,8 @@
 #' @export
 sum_by_taxon <- function(object, rank) {
 
+  obs <- total_observations <- NULL
+
   if (!inherits(object, "processed_cube")) {
     stop("object must be of class 'processed_cube'")
   }
