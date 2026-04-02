@@ -69,15 +69,15 @@ aggregate_data_to_coarser_grid <- function(data_assigned, clipped_grid,
   }
 
   # Build coarse grid with matching identifiers
+  # Do NOT include cellCode — the data keeps native cellCode for gridded indicators
   coarse_grid_out <- coarse_grid[coarse_grid$coarse_id %in% data_df$cellid, ]
-  coarse_grid_out$cellCode <- paste0("coarse_", coarse_grid_out$coarse_id)
   coarse_grid_out$cellid <- coarse_grid_out$coarse_id
   coarse_grid_out$area <- coarse_grid_out %>%
     sf::st_area() %>%
     units::set_units("km^2")
 
-  # Keep only needed columns in grid
-  coarse_grid_out <- coarse_grid_out[, c("cellid", "cellCode", "area", "geometry")]
+  # Keep only needed columns in grid (no cellCode — join uses cellid only)
+  coarse_grid_out <- coarse_grid_out[, c("cellid", "area", "geometry")]
 
   # Remove old area column from data if present (will be joined from grid later)
   if ("area" %in% names(data_df)) {
