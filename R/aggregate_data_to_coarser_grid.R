@@ -30,6 +30,8 @@ aggregate_data_to_coarser_grid <- function(data_assigned, clipped_grid,
   # Assign each native grid cell to a coarse cell via spatial intersection
   orig_s2 <- sf::sf_use_s2()
   sf::sf_use_s2(FALSE)
+  sf::st_agr(grid_proj) <- "constant"
+  sf::st_agr(coarse_grid) <- "constant"
   overlaps <- sf::st_intersection(
     grid_proj[, c("orig_cellid", "geometry")],
     coarse_grid[, c("coarse_id", "geometry")]
@@ -83,6 +85,7 @@ aggregate_data_to_coarser_grid <- function(data_assigned, clipped_grid,
   }
 
   # Build output data
+  sf::st_agr(coarse_grid_out) <- "constant"
   if (has_geom) {
     # Create sf with coarse grid cell centroids as point geometries
     coarse_centers <- sf::st_centroid(coarse_grid_out)
