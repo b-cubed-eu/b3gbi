@@ -53,7 +53,8 @@ create_ts_plot <- function(data,
         linetype = smooth_linetype,
         method = "loess",
         formula = "y ~ x",
-        se = FALSE)
+        se = FALSE,
+        na.rm = TRUE)
 
     # Add smooth trends for confidence limits if available
     if ("ll" %in% colnames(data) && "ul" %in% colnames(data)) {
@@ -64,18 +65,21 @@ create_ts_plot <- function(data,
                     linetype = "dashed",
                     method = "loess",
                     formula = "y ~ x",
-                    se = FALSE) +
+                    se = FALSE,
+                    na.rm = TRUE) +
         geom_smooth(aes(y = ll),
                     colour = alpha(envelopecolour, smooth_cialpha),
                     lwd = smooth_cilinewidth,
                     linetype = "dashed",
                     method = "loess",
                     formula = "y ~ x",
-                    se = FALSE) +
-        geom_ribbon(aes(ymin = predict(loess(ll ~ year)),
-                        ymax = predict(loess(ul ~ year))),
+                    se = FALSE,
+                    na.rm = TRUE) +
+        geom_ribbon(aes(ymin = predict(loess(ll ~ year, na.action = na.exclude)),
+                        ymax = predict(loess(ul ~ year, na.action = na.exclude))),
                     alpha = envelopealpha,
-                    fill = envelopecolour)
+                    fill = envelopecolour,
+                    na.rm = TRUE)
     }
   }
 
@@ -87,12 +91,14 @@ create_ts_plot <- function(data,
                       colour = ribboncolour,
                       alpha = error_alpha,
                       width = error_width,
-                      linewidth = error_thickness)
+                      linewidth = error_thickness,
+                      na.rm = TRUE)
     } else {
       plot <- plot +
         geom_ribbon(aes(ymin = ll, ymax = ul),
                     alpha = ribbonalpha,
-                    fill = ribboncolour)
+                    fill = ribboncolour,
+                    na.rm = TRUE)
     }
 
   }
@@ -101,13 +107,15 @@ create_ts_plot <- function(data,
     plot <- plot +
       geom_point(colour = linecolour,
                  alpha = linealpha,
-                 size = pointsize)
+                 size = pointsize,
+                 na.rm = TRUE)
   } else {
     plot <- plot +
       geom_line(aes(group = 1),
                 colour = linecolour,
                 alpha = linealpha,
-                lwd = linewidth)
+                lwd = linewidth,
+                na.rm = TRUE)
   }
 
 
