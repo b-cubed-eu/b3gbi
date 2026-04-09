@@ -9,10 +9,12 @@
 #' @param clipped_grid sf object with native grid cells (clipped to boundary)
 #' @param cell_size Coarser cell size (meters for EEA/MGRS, degrees for EQDGC)
 #' @param grid_crs CRS for grid creation
+#' @param is_gridded_completeness TRUE if this is for gridded completeness (keep original cellCode)
 #' @return List with $data and $grid (coarser sf grid)
 #' @noRd
 aggregate_data_to_coarser_grid <- function(data_assigned, clipped_grid,
-                                            cell_size, grid_crs) {
+                                            cell_size, grid_crs,
+                                            is_gridded_completeness = FALSE) {
   has_geom <- inherits(data_assigned, "sf")
 
   # Transform grid to the CRS used for coarse grid creation
@@ -28,15 +30,17 @@ aggregate_data_to_coarser_grid <- function(data_assigned, clipped_grid,
     dplyr::mutate(coarse_id = dplyr::row_number())
 
   # Assign each native grid cell to a coarse cell via spatial intersection
- # orig_s2 <- sf::sf_use_s2()
- # sf::sf_use_s2(FALSE)
+  original_s2 <- sf::sf_use_s2()
+  on.exit(suppressMessages(sf::sf_use_s2(original_s2)))
+  suppressMessages(sf::sf_use_s2(FALSE))
+
   sf::st_agr(grid_proj) <- "constant"
   sf::st_agr(coarse_grid) <- "constant"
   overlaps <- sf::st_intersection(
     grid_proj[, c("orig_cellid", "geometry")],
     coarse_grid[, c("coarse_id", "geometry")]
   )
- # sf::sf_use_s2(orig_s2)
+  suppressMessages(sf::sf_use_s2(original_s2))
 
   if (nrow(overlaps) == 0) {
     warning("Aggregation failed: no overlap between native and coarse grid.")
@@ -59,9 +63,14 @@ aggregate_data_to_coarser_grid <- function(data_assigned, clipped_grid,
   }
 
   # Reassign each data row's cellid to the coarse cell
-  # Keep the original cellCode so gridded indicators have multiple values per coarse cell
+  # For most indicators: reset cellCode to match coarse cellid (enables proper aggregation)
+  # For gridded completeness: keep original cellCode (iNEXT needs native cells as samples)
   data_df$cellid <- cellid_map[as.character(data_df$cellid)]
   data_df <- data_df[!is.na(data_df$cellid), ]
+  if (!is_gridded_completeness) {
+    data_df$cellCode <- as.character(data_df$cellid)
+  }
+  # else: keep original cellCode - will have multiple rows per coarse cellid
 
   if (nrow(data_df) == 0) {
     warning("Aggregation failed: no data mapped to coarse grid cells.")
@@ -84,15 +93,19 @@ aggregate_data_to_coarser_grid <- function(data_assigned, clipped_grid,
     data_df$area <- NULL
   }
 
-  # Build output data — use coarse cellid, keep native cellCode
+  # Check if we're in geographic coordinates (st_centroid doesn't work well)
+  is_geographic <- sf::st_is_longlat(coarse_grid_out)
+
+  # Build output data
   sf::st_agr(coarse_grid_out) <- "constant"
-  if (has_geom) {
+  if (has_geom && !is_geographic) {
     # Create sf with coarse grid cell centroids as point geometries
     coarse_centers <- sf::st_centroid(coarse_grid_out)
     data_out <- sf::st_sf(data_df, geometry = sf::st_geometry(
       coarse_centers[match(data_df$cellid, coarse_centers$cellid), ]
     ))
   } else {
+    # For geographic coords or non-sf input, return as data.frame
     data_out <- data_df
   }
 
