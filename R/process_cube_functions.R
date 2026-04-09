@@ -100,6 +100,7 @@ process_cube <- function(cube_name,
                          force_gridcode = FALSE,
                          cols_year = NULL,
                          cols_yearMonth = NULL,
+                         cols_yearMonthDay = NULL,
                          cols_cellCode = NULL,
                          cols_occurrences = NULL,
                          cols_scientificName = NULL,
@@ -165,6 +166,7 @@ process_cube <- function(cube_name,
   user_provided_cols <- list(
     "year" = cols_year,
     "yearMonth" = cols_yearMonth,
+    "yearMonthDay" = cols_yearMonthDay,
     "cellCode" = cols_cellCode,
     "occurrences" = cols_occurrences,
     "scientificName" = cols_scientificName,
@@ -205,48 +207,6 @@ process_cube <- function(cube_name,
       )
     )
   }
-
-  # check that years provided for filtering by year are valid
-  if (!is.null(first_year)) {
-
-    if (!is.numeric(first_year)) {
-
-      stop("`first_year` should be a number.")
-
-    }
-
-    if (first_year >= max(occurrence_data$year, na.rm = TRUE)) {
-
-      stop("`first_year` should be less than the max year in the data cube.")
-
-    }
-  }
-
-  if (!is.null(last_year)) {
-
-    if (!is.numeric(last_year)) {
-
-      stop("`last_year` should be a number.")
-
-    }
-
-    if (last_year <= min(occurrence_data$year, na.rm = TRUE)) {
-
-      stop("`last_year` should be greater than the min year in the data cube.")
-
-    }
-  }
-
-  if (!is.null(first_year) && !is.null(last_year)) {
-
-    if (last_year < first_year) {
-
-      stop("`last_year` should not be less than `first_year`.")
-
-    }
-
-  }
-
 
   if (grid_type == "automatic") {
 
@@ -382,7 +342,10 @@ process_cube <- function(cube_name,
             ),
             ifelse(
               grid_type == "isea3h",
-              stringr::str_detect(occurrence_data[[cols_cellCode]], "^-?[0-9]{15,}$"),
+              stringr::str_detect(
+                occurrence_data[[cols_cellCode]],
+                "^-?[0-9]{15,}$"
+              ),
               NA
             )
           )
@@ -414,6 +377,7 @@ process_cube <- function(cube_name,
   # make a list of other user provided column names
   col_names_userlist <- list(cols_year,
                              cols_yearMonth,
+                             cols_yearMonthDay,
                              cols_occurrences,
                              cols_scientificName,
                              cols_minCoordinateUncertaintyInMeters,
@@ -434,6 +398,7 @@ process_cube <- function(cube_name,
   # list default column names to replace them with
   col_names_defaultlist <- list("year",
                                 "yearMonth",
+                                "yearMonthDay",
                                 "occurrences",
                                 "scientificName",
                                 "minCoordinateUncertaintyInMeters",
@@ -479,27 +444,61 @@ process_cube <- function(cube_name,
   }
 
   # If year column missing but yearMonth present, convert yearMonth to year
-  if (!"year" %in% colnames(occurrence_data) &&
-      "yearMonth" %in% colnames(occurrence_data)) {
+  if (!"year" %in% colnames(occurrence_data)) {
+    if ("yearMonth" %in% colnames(occurrence_data)) {
+      occurrence_data <-
+        occurrence_data %>%
+        dplyr::mutate(year = as.numeric(stringr::str_extract(
+          yearMonth, "(\\d{4})"))
+        ) %>%
+        dplyr::select(-yearMonth)
+      # If year and yearMonth columns are both missing but yearMonthDay present,
+      # convert yearMonthDay to year
+    } else if ("yearMonthDay" %in% colnames(occurrence_data)) {
+      occurrence_data <-
+        occurrence_data %>%
+        dplyr::mutate(year = as.numeric(stringr::str_extract(
+          yearMonthDay, "(\\d{4})"))
+        ) %>%
+        dplyr::select(-yearMonthDay)
+    } else {
+      stop("No year, yearMonth, or yearMonthDay column found in cube. Please ",
+           "specify column name manually.")
+    }
+  }
 
-    occurrence_data <-
-      occurrence_data %>%
-      dplyr::mutate(year = as.numeric(stringr::str_extract(
-        yearMonth, "(\\d{4})"))
-      ) %>%
-      dplyr::select(-yearMonth)
+  # check that years provided for filtering by year are valid
+  if (!is.null(first_year)) {
+    if (!is.numeric(first_year)) {
+      stop("`first_year` should be a number.")
+    }
+    if (first_year >= max(occurrence_data$year, na.rm = TRUE)) {
+      stop("`first_year` should be less than the max year in the data cube.")
+    }
+  }
 
+  if (!is.null(last_year)) {
+    if (!is.numeric(last_year)) {
+      stop("`last_year` should be a number.")
+    }
+    if (last_year <= min(occurrence_data$year, na.rm = TRUE)) {
+      stop("`last_year` should be greater than the min year in the data cube.")
+    }
+  }
+
+  if (!is.null(first_year) && !is.null(last_year)) {
+    if (last_year < first_year) {
+      stop("`last_year` should not be less than `first_year`.")
+    }
   }
 
   # If scientificName column missing but species column present, copy species
   # to scientificName
   if ("species" %in% colnames(occurrence_data) &&
       !("scientificName" %in% colnames(occurrence_data))) {
-
     occurrence_data <-
       occurrence_data %>%
       dplyr::rename(scientificName = species)
-
   }
 
   # check if any essential columns (required by package functions) are missing
@@ -509,13 +508,11 @@ process_cube <- function(cube_name,
   )]
 
   if (length(missing_colnames) >= 1) {
-
     stop(paste0(
       "\nThe following columns could not be detected in cube:",
       missing_colnames, "\nPlease supply the missing column names as ",
       "arguments to the function.\n"
     ))
-
   }
 
   essential_cols <- c("year",
@@ -526,11 +523,11 @@ process_cube <- function(cube_name,
                       "familyKey",
                       "speciesKey",
                       "familyCount")
+
   # make sure that essential columns are the correct type
   occurrence_data <-
     occurrence_data %>%
     dplyr::mutate(across(any_of(essential_cols), as.numeric))
-
 
   # rename occurrences and speciesKey columns to be consistent with the other
   # package functions (should maybe change this throughout package?)
@@ -540,26 +537,20 @@ process_cube <- function(cube_name,
     dplyr::rename(taxonKey = speciesKey)
 
   if (grid_type != "none") {
-
     # Remove NA values in cell code column
     occurrence_data_filtered <-
       occurrence_data %>%
       dplyr::filter(!is.na(cellCode))
-
     # Check and report filtered out rows
     if (nrow(occurrence_data_filtered) != nrow(occurrence_data)) {
       n_filtered_rows <- nrow(occurrence_data_filtered) - nrow(occurrence_data)
       message("Removed ", n_filtered_rows, " rows with missing cell codes")
     }
-
     occurrence_data <- occurrence_data_filtered
-
   }
 
   if (grid_type == "eea") {
-
     if (force_gridcode == FALSE) {
-
       if (!ifelse(
         stringr::str_detect(
           occurrence_data$cellCode[1],
@@ -568,7 +559,6 @@ process_cube <- function(cube_name,
         TRUE,
         FALSE
       )) {
-
         stop(paste0(
           "Cell codes do not match the expected format. Are you sure you have ",
           "specified the correct grid system? It is recommended to leave ",
@@ -576,32 +566,13 @@ process_cube <- function(cube_name,
           "'force_gridecode = TRUE' to attempt to translate them anyway, but ",
           "this could lead to unexpected downstream errors."
         ))
-
       }
-
     }
 
     occurrence_data <-
       occurrence_data %>%
       dplyr::mutate(cellCode = stringr::str_replace(cellCode, "W", "W-")) %>%
       dplyr::mutate(cellCode = stringr::str_replace(cellCode, "S", "S-"))
-
-    # Separate cell code into resolution, coordinates
-    # occurrence_data <- occurrence_data %>%
-    #   dplyr::mutate(
-    #     xcoord = as.numeric(stringr::str_extract(
-    #       cellCode,
-    #       "(?<=[EW])-?\\d+"
-    #     )) * 1000,
-    #     ycoord = as.numeric(stringr::str_extract(
-    #       cellCode,
-    #       "(?<=[NS])-?\\d+"
-    #     )) * 1000,
-    #     resolution = stringr::str_replace_all(
-    #       cellCode,
-    #       "(E\\d+)|(N\\d+)|(W-\\d+)|(S-\\d+)",
-    #       ""
-    #     ))
 
     occurrence_data <- occurrence_data %>%
       dplyr::bind_cols(
@@ -610,9 +581,7 @@ process_cube <- function(cube_name,
       )
 
   } else if (grid_type == "mgrs") {
-
     if (force_gridcode == FALSE) {
-
       if (!ifelse(
         stringr::str_detect(
           occurrence_data$cellCode[1],
@@ -621,7 +590,6 @@ process_cube <- function(cube_name,
         TRUE,
         FALSE
       )) {
-
         stop(paste0(
           "Cell codes do not match the expected format. Are you sure you have ",
           "specified the correct grid system? It is recommended to leave ",
@@ -629,9 +597,7 @@ process_cube <- function(cube_name,
           "'force_gridecode = TRUE' to attempt to translate them anyway, but ",
           "this could lead to unexpected downstream errors."
         ))
-
       }
-
     }
 
     utm <- mgrs::mgrs_to_utm(occurrence_data$cellCode)
@@ -646,9 +612,7 @@ process_cube <- function(cube_name,
     )
 
   } else if (grid_type == "eqdgc") {
-
     if (force_gridcode == FALSE) {
-
       if (!ifelse(
         stringr::str_detect(
           occurrence_data$cellCode[1],
@@ -657,7 +621,6 @@ process_cube <- function(cube_name,
         TRUE,
         FALSE
       )) {
-
         stop(paste0(
           "Cell codes do not match the expected format. Are you sure you have ",
           "specified the correct grid system? It is recommended to leave ",
@@ -665,15 +628,8 @@ process_cube <- function(cube_name,
           "'force_gridecode = TRUE' to attempt to translate them anyway, but ",
           "this could lead to unexpected downstream errors."
         ))
-
       }
-
     }
-
-    # occurrence_data <-
-    #   occurrence_data %>%
-    #   dplyr::mutate(cellCode = stringr::str_replace(cellCode, "W", "W-")) %>%
-    #   dplyr::mutate(cellCode = stringr::str_replace(cellCode, "S", "S-"))
 
     # Determine the resolution from the cellCode length (e.g., 0.125 for 1/8 degree)
     resolution_deg <- 1 / (2^(nchar(occurrence_data$cellCode[1]) - 7))
@@ -693,7 +649,6 @@ process_cube <- function(cube_name,
     ), nrow(occurrence_data))
 
   } else if (grid_type == "isea3h") {
-
     if (force_gridcode == FALSE) {
       # Basic validation for ISEA3H codes (long numeric strings)
       if (!ifelse(
@@ -710,22 +665,17 @@ process_cube <- function(cube_name,
 
     # Convert cell codes to coordinates
     coords <- isea3h_code_to_coords(occurrence_data$cellCode)
-
     occurrence_data$xcoord <- coords$xcoord
     occurrence_data$ycoord <- coords$ycoord
     occurrence_data$resolution <- coords$resolution
-
   }
 
   if (min(occurrence_data$year, na.rm = TRUE)==max(occurrence_data$year,
                                                    na.rm = TRUE)) {
-
     first_year <- min(occurrence_data$year)
     last_year <- first_year
-
     warning(paste0("Cannot create trends with this dataset, as occurrences ",
     "are all from the same year."))
-
   } else {
 
     # Check whether start and end years are within dataset
@@ -748,7 +698,6 @@ process_cube <- function(cube_name,
       occurrence_data %>%
       dplyr::filter(year >= first_year) %>%
       dplyr::filter(year <= last_year)
-
   }
 
   # Remove any duplicate rows
@@ -758,16 +707,11 @@ process_cube <- function(cube_name,
     dplyr::arrange(year)
 
   if (grid_type == "none" || grid_type == "custom") {
-
     cube <- new_sim_cube(occurrence_data, grid_type)
-
   } else {
-
     cube <- new_processed_cube(occurrence_data, grid_type)
   }
-
   return(cube)
-
 }
 
 #' @noRd
