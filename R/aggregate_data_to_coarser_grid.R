@@ -28,15 +28,15 @@ aggregate_data_to_coarser_grid <- function(data_assigned, clipped_grid,
     dplyr::mutate(coarse_id = dplyr::row_number())
 
   # Assign each native grid cell to a coarse cell via spatial intersection
-  orig_s2 <- sf::sf_use_s2()
-  sf::sf_use_s2(FALSE)
+ # orig_s2 <- sf::sf_use_s2()
+ # sf::sf_use_s2(FALSE)
   sf::st_agr(grid_proj) <- "constant"
   sf::st_agr(coarse_grid) <- "constant"
   overlaps <- sf::st_intersection(
     grid_proj[, c("orig_cellid", "geometry")],
     coarse_grid[, c("coarse_id", "geometry")]
   )
-  sf::sf_use_s2(orig_s2)
+ # sf::sf_use_s2(orig_s2)
 
   if (nrow(overlaps) == 0) {
     warning("Aggregation failed: no overlap between native and coarse grid.")

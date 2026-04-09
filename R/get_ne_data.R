@@ -90,7 +90,7 @@ get_ne_data <- function(projected_crs,
   expand_percent <- 0.5 # 50% buffer
   lng_range <- unname(latlong_bbox["xmax"] - latlong_bbox["xmin"])
   lat_range <- unname(latlong_bbox["ymax"] - latlong_bbox["ymin"])
-  
+
   expand_lng <- max(expand_percent * lng_range, 0.1)
   expand_lat <- max(expand_percent * lat_range, 0.1)
 
@@ -116,8 +116,8 @@ get_ne_data <- function(projected_crs,
     # Crop in 4326
     # Indicate attributes are constant to prevent st_crop warnings
     sf::st_agr(map_data) <- "constant"
-    orig_s2_crop <- sf::sf_use_s2()
-    sf::sf_use_s2(FALSE)
+   # orig_s2_crop <- sf::sf_use_s2()
+   # sf::sf_use_s2(FALSE)
     map_data <- tryCatch(
       map_data %>%
         sf::st_crop(latlong_extent) %>%
@@ -127,11 +127,13 @@ get_ne_data <- function(projected_crs,
         map_data
       }
     )
-    sf::sf_use_s2(orig_s2_crop)
+   # sf::sf_use_s2(orig_s2_crop)
 
     has_intersection <- nrow(map_data) > 0
   } else {
-    has_intersection <- any(sf::st_intersects(map_data, latlong_extent_sfc, sparse = FALSE))
+    has_intersection <- any(suppressMessages(
+      sf::st_intersects(map_data, latlong_extent_sfc, sparse = FALSE))
+    )
   }
 
   # Project the (possibly cropped) map
@@ -181,14 +183,14 @@ get_ne_data <- function(projected_crs,
 
   # Create ocean layer by subtracting land from the extent
   # Disable s2 to avoid topology errors with complex geometries
-  orig_s2_ocean <- sf::sf_use_s2()
-  sf::sf_use_s2(FALSE)
+ # orig_s2_ocean <- sf::sf_use_s2()
+ # sf::sf_use_s2(FALSE)
   map_data_ocean <- sf::st_difference(
     extent_projected_polygon,
     map_data_projected
   ) %>%
     sf::st_make_valid()
-  sf::sf_use_s2(orig_s2_ocean)
+ # sf::sf_use_s2(orig_s2_ocean)
 
   # Save the new layer for later use before removing unwanted land
   map_data_save <- map_data_ocean
@@ -271,7 +273,6 @@ get_ne_data <- function(projected_crs,
     } else {
       sf::st_as_sfc(map_bbox_projected)
     }
-
     if (any(sf::st_intersects(map_data_combined, final_extent_sfc, sparse = FALSE))) {
       # Indicate attributes are constant to prevent st_crop warnings
       sf::st_agr(map_data_combined) <- "constant"

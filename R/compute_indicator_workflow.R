@@ -348,6 +348,17 @@ compute_indicator_workflow <- function(data,
     region
   }
 
+  # Turn off spherical geometry to avoid topography errors and set it to
+  # return to user settings on exit (even if function fails)
+
+  # 1. Record the original state so we can restore it exactly
+  old_s2 <- sf::sf_use_s2()
+  # 2. Use on.exit to ensure restoration even if the code fails
+  # This is much safer than manual toggling. Also suppress "switched" on message
+  on.exit(suppressMessages(sf::sf_use_s2(old_s2)), add = TRUE)
+  # 3. Switch off and suppress the "switched off" message
+  suppressMessages(sf::sf_use_s2(FALSE))
+
   # Check shapefile path and load if found
   if (!is.null(shapefile_path)) {
     if (!file.exists(shapefile_path)) {
@@ -422,12 +433,12 @@ compute_indicator_workflow <- function(data,
     }
 
     # Store the current spherical geometry setting
-    original_s2_setting <- sf::sf_use_s2()
+   # original_s2_setting <- sf::sf_use_s2()
 
-    if (spherical_geometry == FALSE) {
+   # if (spherical_geometry == FALSE) {
       # Temporarily disable spherical geometry
-      sf::sf_use_s2(FALSE)
-    }
+   #   sf::sf_use_s2(FALSE)
+   # }
 
     # Get cube extent in projected crs
     if (data$grid_type == "mgrs") {
@@ -562,7 +573,7 @@ compute_indicator_workflow <- function(data,
         message(
           "Retrying the intersection with spherical geometry turned off."
         )
-        sf::sf_use_s2(FALSE)
+      #  sf::sf_use_s2(FALSE)
         # Retry the intersection operation
         filtered_sf <- sf::st_filter(
           df_sf_projected,
@@ -571,10 +582,10 @@ compute_indicator_workflow <- function(data,
         # Notify success after retry
         message("Intersection succeeded with spherical geometry turned off.")
       }
-      if (spherical_geometry == TRUE) {
+    #  if (spherical_geometry == TRUE) {
         # Restore original spherical setting
-        sf::sf_use_s2(original_s2_setting)
-      }
+     #   sf::sf_use_s2(original_s2_setting)
+     # }
       # Filter the original data frame
       df <- df[df$cellCode %in% filtered_sf$cellCode, ]
       if (nrow(df) == 0) {
@@ -593,8 +604,8 @@ compute_indicator_workflow <- function(data,
 
       # We need map_data to filter
       # Disable s2 during map data retrieval to avoid topology errors
-      orig_s2_ne_early <- sf::sf_use_s2()
-      sf::sf_use_s2(FALSE)
+     # orig_s2_ne_early <- sf::sf_use_s2()
+     # sf::sf_use_s2(FALSE)
       map_data_list_temp <- get_ne_data(
         projected_crs,
         cube_bbox_latlong,
@@ -607,7 +618,7 @@ compute_indicator_workflow <- function(data,
         buffer_dist_km
       )
       filtered_sf_temp <- sf::st_filter(df_sf_temp, map_data_list_temp$combined)
-      sf::sf_use_s2(orig_s2_ne_early)
+     # sf::sf_use_s2(orig_s2_ne_early)
 
       df <- df[df$cellCode %in% filtered_sf_temp$cellCode, ]
       if (nrow(df) == 0) {
@@ -660,8 +671,8 @@ compute_indicator_workflow <- function(data,
 
     # Retrieve and validate Natural Earth data
     # Disable s2 during map data retrieval to avoid topology errors
-    orig_s2_ne <- sf::sf_use_s2()
-    sf::sf_use_s2(FALSE)
+  #  orig_s2_ne <- sf::sf_use_s2()
+  #  sf::sf_use_s2(FALSE)
     map_data_list <- get_ne_data(
       projected_crs,
       bbox_latlong,
@@ -673,7 +684,7 @@ compute_indicator_workflow <- function(data,
       include_ocean,
       buffer_dist_km
     )
-    sf::sf_use_s2(orig_s2_ne)
+  #  sf::sf_use_s2(orig_s2_ne)
     map_data <- map_data_list$combined
     saved_layer <- map_data_list$saved
 
@@ -689,6 +700,7 @@ compute_indicator_workflow <- function(data,
     # Calculate the final, correct area of the study region
     final_area_sqkm <-
       final_study_polygon %>%
+      sf::st_make_valid() %>%
       sf::st_union() %>% # Union handles multi-polygons (e.g., countries)
       sf::st_transform(crs = "ESRI:54012") %>% # Mollweide equal-area projection
       sf::st_area() %>%
@@ -786,15 +798,15 @@ compute_indicator_workflow <- function(data,
 
     # Ensure intersection target is valid and buffered slightly to avoid precision losses
     # Disable s2 to avoid topology exceptions with complex geometries
-    original_s2_for_target <- sf::sf_use_s2()
-    sf::sf_use_s2(FALSE)
+   # original_s2_for_target <- sf::sf_use_s2()
+   # sf::sf_use_s2(FALSE)
     intersection_target <- sf::st_make_valid(intersection_target)
     # Only apply safety buffer if in a projected CRS (meters), not geographic (degrees)
     if (!sf::st_is_longlat(intersection_target)) {
       intersection_target <- sf::st_buffer(intersection_target, dist = 1) %>%
         sf::st_make_valid()
     }
-    sf::sf_use_s2(original_s2_for_target)
+  #  sf::sf_use_s2(original_s2_for_target)
     sf::st_agr(intersection_target) <- "constant"
 
     # Intersect grid with intersection target
@@ -809,28 +821,28 @@ compute_indicator_workflow <- function(data,
       # Use st_intersection to clip grid cells to the map boundary.
       # Unlike st_filter (which removes cells), st_intersection clips cells
       # at the boundary, preserving coastal cells that partially overlap land.
-      sf::sf_use_s2(FALSE)
+    #  sf::sf_use_s2(FALSE)
       clipped_grid <- sf::st_intersection(
         grid,
         sf::st_union(intersection_target)
       )
-      sf::sf_use_s2(original_s2_for_target)
+    #  sf::sf_use_s2(original_s2_for_target)
       # Remove empty results from cells entirely outside the boundary
       clipped_grid <- clipped_grid[!sf::st_is_empty(clipped_grid), ]
     }
 
-    if (spherical_geometry == TRUE) {
+   # if (spherical_geometry == TRUE) {
       # Restore original spherical setting
-      sf::sf_use_s2(original_s2_setting)
-    }
+   #   sf::sf_use_s2(original_s2_setting)
+   # }
 
     # Filter data to only those within the intersection target
     data_filtered <- if (level == "cube" && is.null(shapefile)) {
       data_projected
     } else {
-      sf::sf_use_s2(FALSE)
+    #  sf::sf_use_s2(FALSE)
       result <- sf::st_filter(data_projected, intersection_target)
-      sf::sf_use_s2(original_s2_for_target)
+    #  sf::sf_use_s2(original_s2_for_target)
       result
     }
 
@@ -987,10 +999,10 @@ compute_indicator_workflow <- function(data,
     }
   }
 
-  if (spherical_geometry == FALSE) {
+ # if (spherical_geometry == FALSE) {
     # restore the original spherical geometry setting
-    sf::sf_use_s2(original_s2_setting)
-  }
+ #   sf::sf_use_s2(original_s2_setting)
+ # }
 
   # Create indicator object
   if (dim_type == "map") {
