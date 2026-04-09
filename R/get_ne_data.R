@@ -55,6 +55,10 @@ get_ne_data <- function(projected_crs,
     stop("No projected CRS provided.")
   }
 
+  # store s2 setting for use later
+  original_s2 <- sf::sf_use_s2()
+  on.exit(suppressMessages(sf::sf_use_s2(original_s2)))
+
   # During testing, return a fast dummy instead of downloading NE data.
   # This avoids 30+ minute test runs from Natural Earth downloads.
   # The real function is tested in test-get_NE_data.R which unsets this env var.
@@ -116,8 +120,9 @@ get_ne_data <- function(projected_crs,
     # Crop in 4326
     # Indicate attributes are constant to prevent st_crop warnings
     sf::st_agr(map_data) <- "constant"
-   # orig_s2_crop <- sf::sf_use_s2()
-   # sf::sf_use_s2(FALSE)
+
+    suppressMessages(sf::sf_use_s2(FALSE))
+
     map_data <- tryCatch(
       map_data %>%
         sf::st_crop(latlong_extent) %>%
@@ -127,7 +132,7 @@ get_ne_data <- function(projected_crs,
         map_data
       }
     )
-   # sf::sf_use_s2(orig_s2_crop)
+    suppressMessages(sf::sf_use_s2(original_s2))
 
     has_intersection <- nrow(map_data) > 0
   } else {
@@ -183,14 +188,14 @@ get_ne_data <- function(projected_crs,
 
   # Create ocean layer by subtracting land from the extent
   # Disable s2 to avoid topology errors with complex geometries
- # orig_s2_ocean <- sf::sf_use_s2()
- # sf::sf_use_s2(FALSE)
+  suppressMessages(sf::sf_use_s2(FALSE))
+
   map_data_ocean <- sf::st_difference(
     extent_projected_polygon,
     map_data_projected
   ) %>%
     sf::st_make_valid()
- # sf::sf_use_s2(orig_s2_ocean)
+    suppressMessages(sf::sf_use_s2(original_s2))
 
   # Save the new layer for later use before removing unwanted land
   map_data_save <- map_data_ocean
