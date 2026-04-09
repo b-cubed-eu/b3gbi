@@ -37,6 +37,11 @@
 #'  and month of occurrence (if present and if other than 'yearMonth'). Use this
 #'  only if you do not have a year column. The b3gbi package does not use month
 #'  data, so the function will convert your yearMonth column to a year column.
+#' @param cols_yearMonthDay (Optional) The name of the column containing the
+#'  year, month and day of occurrence (if present and if other than
+#'  'yearMonthDay'). Use this only if you do not have year or yearMonth columns.
+#'  The b3gbi package does not use day or month data, so the function will
+#'  convert your yearMonthDay column to a year column.
 #' @param cols_cellCode (Optional) The name of the column containing the grid
 #' reference codes (if other than 'cellCode'). This column is required.
 #' @param cols_occurrences (Optional) The name of the column containing the

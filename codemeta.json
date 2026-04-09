@@ -426,6 +426,18 @@
     },
     "21": {
       "@type": "SoftwareApplication",
+      "identifier": "tidyselect",
+      "name": "tidyselect",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=tidyselect"
+    },
+    "22": {
+      "@type": "SoftwareApplication",
       "identifier": "units",
       "name": "units",
       "provider": {
@@ -438,7 +450,7 @@
     },
     "SystemRequirements": null
   },
-  "fileSize": "354500.761KB",
+  "fileSize": "402260.735KB",
   "releaseNotes": "https://github.com/b-cubed-eu/b3gbi/blob/main/NEWS.md",
   "contIntegration": ["https://github.com/b-cubed-eu/b3gbi/actions/workflows/R-CMD-check.yaml", "https://app.codecov.io/gh/b-cubed-eu/b3gbi/"],
   "developmentStatus": "https://www.repostatus.org/#wip"
