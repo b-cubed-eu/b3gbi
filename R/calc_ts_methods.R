@@ -370,6 +370,43 @@ calc_ts.spec_range <- function(x, ...) {
 
 }
 
+#' @export
+#' @rdname calc_ts
+calc_ts.relative_occupancy <- function(x, ...) {
+
+  stopifnot_error("Wrong data class. This is an internal function and is not
+                  meant to be called directly.",
+                  inherits(x, "relative_occupancy"))
+
+  year <- taxonKey <- scientificName <- diversity_val <- NULL
+  total_num_cells <- attr(x, "total_num_cells")
+
+  if (is.null(total_num_cells)) {
+    stop("total_num_cells attribute not found. Cannot calculate relative occupancy.")
+  }
+
+  # Calculate number of occupied cells per species per year
+  occupied_cells <- x %>%
+    dplyr::distinct(year, cellid, scientificName) %>%
+    dplyr::count(year, scientificName, name = "occupied_cells")
+
+  # Calculate relative occupancy (proportion of total cells occupied)
+  indicator <- occupied_cells %>%
+    dplyr::mutate(diversity_val = occupied_cells / total_num_cells) %>%
+    dplyr::left_join(
+      x %>% dplyr::distinct(year, scientificName, taxonKey),
+      by = c("year", "scientificName")
+    ) %>%
+    dplyr::select(year, taxonKey, scientificName, diversity_val) %>%
+    dplyr::arrange(year, taxonKey)
+
+  # Add the 'relative_occupancy' class back to the object
+  class(indicator) <- c("relative_occupancy", class(indicator))
+
+  return(indicator)
+
+}
+
 #' @param set_rows Automatically select which taxonomic information to keep when
 #'  there are multiple options. Default value of 1 keeps the first option,
 #'  which is usually the best.

@@ -54,8 +54,41 @@ calc_map.hill2 <- function(x, ...) {
                   meant to be called directly.", inherits(x, "hill2"))
 
   indicator <- calc_map_hill_core(x = x, type = "hill2", ...)
+  return(indicator)
+
+}
+
+#' @export
+#' @rdname calc_map
+calc_map.relative_occupancy <- function(x, ...) {
+
+  stopifnot_error("Wrong data class. This is an internal function and is not
+                  meant to be called directly.", inherits(x, "relative_occupancy"))
+
+  cellid <- taxonKey <- scientificName <- diversity_val <- cellCode <- NULL
+  total_num_cells <- attr(x, "total_num_cells")
+
+  if (is.null(total_num_cells)) {
+    stop("total_num_cells attribute not found. Cannot calculate relative occupancy.")
+  }
+
+  # Calculate number of occupied cells per species
+  occupied_cells <- x %>%
+    dplyr::distinct(cellid, scientificName) %>%
+    dplyr::count(scientificName, name = "occupied_cells")
+
+  # Calculate relative occupancy (proportion of total cells occupied)
+  indicator <- occupied_cells %>%
+    dplyr::mutate(diversity_val = occupied_cells / total_num_cells) %>%
+    dplyr::left_join(
+      x %>% dplyr::distinct(cellid, cellCode, scientificName, taxonKey),
+      by = "scientificName"
+    ) %>%
+    dplyr::select(cellid, cellCode, taxonKey, scientificName, diversity_val) %>%
+    dplyr::arrange(cellid)
 
   return(indicator)
+
 }
 
 #' @export

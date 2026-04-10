@@ -1208,6 +1208,57 @@ spec_range_ts <- function(data, ...) {
   )
 }
 
+
+#' Calculate Species Relative Occupancy Over Space
+#'
+#' This function calculates the relative occupancy of each species by dividing
+#' the number of grid cells occupied by the species by the total number of cells
+#' in the study area (including cells with no data). This provides a measure of
+#' how widely distributed each species is relative to the total available area.
+#'
+#' @param data A processed data cube (processed_cube object).
+#' @param ... Additional arguments passed to \code{\link{compute_indicator_workflow}}.
+#'
+#' @return An 'indicator_map' object with class 'relative_occupancy' containing:
+#'   * \strong{cellid}: Grid cell IDs.
+#'   * \strong{cellCode}: Grid cell codes (if available).
+#'   * \strong{taxonKey}: GBIF taxon keys.
+#'   * \strong{scientificName}: Species scientific names.
+#'   * \strong{diversity_val}: Relative occupancy values (0-1).
+#'
+#' @family species-based indicators
+#' @export
+relative_occupancy_map <- function(data, ...) {
+  compute_indicator_workflow(data,
+    type = "relative_occupancy",
+    dim_type = "map",
+    ...
+  )
+}
+
+#' Calculate Species Relative Occupancy Over Time
+#'
+#' This function calculates the relative occupancy of each species over time
+#' by dividing the number of grid cells occupied by the species in each year
+#' by the total number of cells in the study area (including cells with no data).
+#'
+#' @param data A processed data cube (processed_cube object).
+#' @param ... Additional arguments passed to \code{\link{compute_indicator_workflow}}.
+#'
+#' @return An 'indicator_ts' object with class 'relative_occupancy' containing:
+#'   * \strong{year}: Years.
+#'   * \strong{diversity_val}: Relative occupancy values (0-1).
+#'
+#' @family species-based indicators
+#' @export
+relative_occupancy_ts <- function(data, ...) {
+  compute_indicator_workflow(data,
+    type = "relative_occupancy",
+    dim_type = "ts",
+    ...
+  )
+}
+
 #' @title Calculate Taxonomic Distinctness Over Space or Time
 #'
 #' @description This function calculates the taxonomic distinctness index (TDI)

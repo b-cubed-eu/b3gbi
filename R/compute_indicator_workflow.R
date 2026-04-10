@@ -19,6 +19,7 @@
 #'   * 'occ_turnover': Occupancy turnover.
 #'   * 'spec_range': Species range size.
 #'   * 'spec_occ': Species occurrences.
+#'   * 'relative_occupancy': Species relative occupancy.
 #'   * 'tax_distinct': Taxonomic distinctness.
 #'   * 'hill0': Species richness (estimated by coverage-based rarefaction).
 #'   * 'hill1': Hill-Shannon diversity (estimated by coverage-based
@@ -222,6 +223,10 @@ compute_indicator_workflow <- function(data,
 
   if (type == "completeness" && gridded_average == TRUE) {
     ind_req_grid_list <- c(ind_req_grid_list, "completeness")
+    force_grid <- TRUE
+  }
+
+  if (type == "relative_occupancy") {
     force_grid <- TRUE
   }
 
@@ -932,6 +937,8 @@ compute_indicator_workflow <- function(data,
     data_final_nogeom <- sf::st_drop_geometry(data_final)
     map_lims <- sf::st_transform(data_final, crs = output_crs) %>%
       sf::st_bbox()
+    # Also get clipped_grid for ts to have total_num_cells
+    clipped_grid <- data_final
   } else {
     data_final <- df
     data_final_nogeom <- df
@@ -945,6 +952,12 @@ compute_indicator_workflow <- function(data,
   # Make total area available for use in certain indicator calculations
   if (!is.null(final_area_sqkm)) {
     attr(data_final_nogeom, "total_area_sqkm") <- as.numeric(final_area_sqkm)
+  }
+
+  # Make total number of cells available for relative occupancy calculation
+  # Only when clipped_grid is available (not in "cube" level)
+  if (exists("clipped_grid") && !is.null(clipped_grid)) {
+    attr(data_final_nogeom, "total_num_cells") <- nrow(clipped_grid)
   }
 
   # print(sum(data_final_nogeom$obs))
