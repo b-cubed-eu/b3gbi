@@ -19,6 +19,8 @@
 #' @export
 sum_by_taxon <- function(object, rank) {
 
+  obs <- total_observations <- NULL
+
   if (!inherits(object, "processed_cube")) {
     stop("object must be of class 'processed_cube'")
   }
@@ -36,7 +38,7 @@ sum_by_taxon <- function(object, rank) {
   summed_data <- data %>%
     dplyr::group_by(.data[[rank]]) %>%
     dplyr::summarize(total_observations = sum(obs, na.rm = TRUE)) %>%
-    dplyr::select(total_observations, .data[[rank]])
+    dplyr::select(total_observations, tidyselect::all_of(rank))
 
   return(summed_data)
 }

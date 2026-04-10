@@ -6,7 +6,7 @@ intersect_grid_with_polygon <- function(grid,
   # target and only clipping those that cross boundaries.
 
   original_s2 <- sf::sf_use_s2()
-  on.exit(sf::sf_use_s2(original_s2))
+  on.exit(suppressMessages(sf::sf_use_s2(original_s2)))
 
   # Ensure geometries are valid before intersection
 
@@ -70,7 +70,7 @@ intersect_grid_with_polygon <- function(grid,
   # Retry with S2 OFF if failed or returning empty
   if (is.null(result) || nrow(result) == 0) {
     message("Retrying intersection with S2 disabled...")
-    sf::sf_use_s2(FALSE)
+    suppressMessages(sf::sf_use_s2(FALSE))
     tryCatch(
       {
         result <- do_intersection(sf::st_make_valid(grid), sf::st_make_valid(intersection_target))

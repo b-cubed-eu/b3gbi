@@ -55,6 +55,31 @@ get_ne_data <- function(projected_crs,
     stop("No projected CRS provided.")
   }
 
+  # store s2 setting for use later
+  original_s2 <- sf::sf_use_s2()
+  on.exit(suppressMessages(sf::sf_use_s2(original_s2)))
+
+  # During testing, return a fast dummy instead of downloading NE data.
+  # This avoids 30+ minute test runs from Natural Earth downloads.
+  # The real function is tested in test-get_NE_data.R which unsets this env var.
+  if (isTRUE(as.logical(Sys.getenv("B3GBI_TESTING")))) {
+    if (!is.null(latlong_bbox)) {
+      bbox_poly <- sf::st_as_sfc(sf::st_bbox(latlong_bbox, crs = 4326))
+    } else {
+      bbox_poly <- sf::st_as_sfc(
+        sf::st_bbox(c(xmin = -180, ymin = -90, xmax = 180, ymax = 90), crs = 4326)
+      )
+    }
+    bbox_proj <- tryCatch(
+      sf::st_transform(bbox_poly, projected_crs),
+      error = function(e) bbox_poly
+    )
+    return(list(
+      combined = sf::st_sf(geometry = bbox_proj),
+      saved = sf::st_sf(geometry = bbox_proj)
+    ))
+  }
+
   # Download the map data
   map_data <-
     download_ne_data(
@@ -69,7 +94,7 @@ get_ne_data <- function(projected_crs,
   expand_percent <- 0.5 # 50% buffer
   lng_range <- unname(latlong_bbox["xmax"] - latlong_bbox["xmin"])
   lat_range <- unname(latlong_bbox["ymax"] - latlong_bbox["ymin"])
-  
+
   expand_lng <- max(expand_percent * lng_range, 0.1)
   expand_lat <- max(expand_percent * lat_range, 0.1)
 
@@ -95,13 +120,25 @@ get_ne_data <- function(projected_crs,
     # Crop in 4326
     # Indicate attributes are constant to prevent st_crop warnings
     sf::st_agr(map_data) <- "constant"
-    map_data <- map_data %>%
-      sf::st_crop(latlong_extent) %>%
-      sf::st_make_valid()
+
+    suppressMessages(sf::sf_use_s2(FALSE))
+
+    map_data <- tryCatch(
+      map_data %>%
+        sf::st_crop(latlong_extent) %>%
+        sf::st_make_valid(),
+      error = function(e) {
+        # st_crop can fail on invalid geometries; fall back to uncropped
+        map_data
+      }
+    )
+    suppressMessages(sf::sf_use_s2(original_s2))
 
     has_intersection <- nrow(map_data) > 0
   } else {
-    has_intersection <- any(sf::st_intersects(map_data, latlong_extent_sfc, sparse = FALSE))
+    has_intersection <- any(suppressMessages(
+      sf::st_intersects(map_data, latlong_extent_sfc, sparse = FALSE))
+    )
   }
 
   # Project the (possibly cropped) map
@@ -151,14 +188,14 @@ get_ne_data <- function(projected_crs,
 
   # Create ocean layer by subtracting land from the extent
   # Disable s2 to avoid topology errors with complex geometries
-  orig_s2_ocean <- sf::sf_use_s2()
-  sf::sf_use_s2(FALSE)
+  suppressMessages(sf::sf_use_s2(FALSE))
+
   map_data_ocean <- sf::st_difference(
     extent_projected_polygon,
     map_data_projected
   ) %>%
     sf::st_make_valid()
-  sf::sf_use_s2(orig_s2_ocean)
+    suppressMessages(sf::sf_use_s2(original_s2))
 
   # Save the new layer for later use before removing unwanted land
   map_data_save <- map_data_ocean
@@ -241,7 +278,6 @@ get_ne_data <- function(projected_crs,
     } else {
       sf::st_as_sfc(map_bbox_projected)
     }
-
     if (any(sf::st_intersects(map_data_combined, final_extent_sfc, sparse = FALSE))) {
       # Indicate attributes are constant to prevent st_crop warnings
       sf::st_agr(map_data_combined) <- "constant"

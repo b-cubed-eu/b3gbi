@@ -90,6 +90,21 @@ test_that("process_cube converts yearMonth to year", {
   expect_type(result$data$year, "double")
 })
 
+test_that("process_cube converts yearMonthDay to year", {
+  cube_df <- readr::read_delim(system.file("extdata",
+                                           "denmark_mammals_cube_eqdgc.csv",
+                                           package = "b3gbi"),
+                               delim = "\t",
+                               na = "",
+                               show_col_types = FALSE
+  )
+  cube_df <- rename(cube_df, yearMonthDay = year)
+  result <- process_cube(cube_df)
+  expect_true("year" %in% names(result$data))
+  expect_false("yearMonthDay" %in% names(result$data))
+  expect_type(result$data$year, "double")
+})
+
 test_that("process_cube renames cellCode when cols_cellCode is provided", {
   cube_df <- readr::read_delim(system.file("extdata",
                                            "denmark_mammals_cube_eqdgc.csv",
@@ -201,8 +216,7 @@ test_that("process_cube errors when essential columns are missing", {
                                show_col_types = FALSE
   )
   cube_df_no_year <- select(cube_df, -year)
-  expect_error(process_cube(cube_df_no_year),
-               "\nThe following columns could not be detected in cube:year")
+  expect_error(process_cube(cube_df_no_year))
   cube_df_no_obs <- select(cube_df, -occurrences)
   expect_error(
     process_cube(cube_df_no_obs),

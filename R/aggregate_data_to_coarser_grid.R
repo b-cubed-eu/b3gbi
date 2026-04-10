@@ -9,10 +9,12 @@
 #' @param clipped_grid sf object with native grid cells (clipped to boundary)
 #' @param cell_size Coarser cell size (meters for EEA/MGRS, degrees for EQDGC)
 #' @param grid_crs CRS for grid creation
+#' @param is_gridded_completeness TRUE if this is for gridded completeness (keep original cellCode)
 #' @return List with $data and $grid (coarser sf grid)
 #' @noRd
 aggregate_data_to_coarser_grid <- function(data_assigned, clipped_grid,
-                                            cell_size, grid_crs) {
+                                            cell_size, grid_crs,
+                                            is_gridded_completeness = FALSE) {
   has_geom <- inherits(data_assigned, "sf")
 
   # Transform grid to the CRS used for coarse grid creation
@@ -28,13 +30,17 @@ aggregate_data_to_coarser_grid <- function(data_assigned, clipped_grid,
     dplyr::mutate(coarse_id = dplyr::row_number())
 
   # Assign each native grid cell to a coarse cell via spatial intersection
-  orig_s2 <- sf::sf_use_s2()
-  sf::sf_use_s2(FALSE)
+  original_s2 <- sf::sf_use_s2()
+  on.exit(suppressMessages(sf::sf_use_s2(original_s2)))
+  suppressMessages(sf::sf_use_s2(FALSE))
+
+  sf::st_agr(grid_proj) <- "constant"
+  sf::st_agr(coarse_grid) <- "constant"
   overlaps <- sf::st_intersection(
     grid_proj[, c("orig_cellid", "geometry")],
     coarse_grid[, c("coarse_id", "geometry")]
   )
-  sf::sf_use_s2(orig_s2)
+  suppressMessages(sf::sf_use_s2(original_s2))
 
   if (nrow(overlaps) == 0) {
     warning("Aggregation failed: no overlap between native and coarse grid.")
@@ -56,10 +62,15 @@ aggregate_data_to_coarser_grid <- function(data_assigned, clipped_grid,
     data_df <- data_assigned
   }
 
-  # Reassign each data row's cellid and cellCode to the coarse cell
+  # Reassign each data row's cellid to the coarse cell
+  # For most indicators: reset cellCode to match coarse cellid (enables proper aggregation)
+  # For gridded completeness: keep original cellCode (iNEXT needs native cells as samples)
   data_df$cellid <- cellid_map[as.character(data_df$cellid)]
   data_df <- data_df[!is.na(data_df$cellid), ]
-  data_df$cellCode <- paste0("coarse_", data_df$cellid)
+  if (!is_gridded_completeness) {
+    data_df$cellCode <- as.character(data_df$cellid)
+  }
+  # else: keep original cellCode - will have multiple rows per coarse cellid
 
   if (nrow(data_df) == 0) {
     warning("Aggregation failed: no data mapped to coarse grid cells.")
@@ -67,34 +78,34 @@ aggregate_data_to_coarser_grid <- function(data_assigned, clipped_grid,
   }
 
   # Build coarse grid with matching identifiers
+  # Do NOT include cellCode — the data keeps native cellCode for gridded indicators
   coarse_grid_out <- coarse_grid[coarse_grid$coarse_id %in% data_df$cellid, ]
-  coarse_grid_out$cellCode <- paste0("coarse_", coarse_grid_out$coarse_id)
   coarse_grid_out$cellid <- coarse_grid_out$coarse_id
   coarse_grid_out$area <- coarse_grid_out %>%
     sf::st_area() %>%
     units::set_units("km^2")
 
-  # Keep only needed columns in grid
-  coarse_grid_out <- coarse_grid_out[, c("cellid", "cellCode", "area", "geometry")]
+  # Keep only needed columns in grid (no cellCode — join uses cellid only)
+  coarse_grid_out <- coarse_grid_out[, c("cellid", "area", "geometry")]
 
   # Remove old area column from data if present (will be joined from grid later)
   if ("area" %in% names(data_df)) {
     data_df$area <- NULL
   }
 
+  # Check if we're in geographic coordinates (st_centroid doesn't work well)
+  is_geographic <- sf::st_is_longlat(coarse_grid_out)
+
   # Build output data
-  if (has_geom) {
+  sf::st_agr(coarse_grid_out) <- "constant"
+  if (has_geom && !is_geographic) {
     # Create sf with coarse grid cell centroids as point geometries
     coarse_centers <- sf::st_centroid(coarse_grid_out)
-    data_out <- merge(
-      data_df,
-      sf::st_drop_geometry(coarse_centers[, c("cellid", "cellCode")]),
-      by = c("cellid", "cellCode")
-    )
-    data_out <- sf::st_sf(data_out, geometry = sf::st_geometry(
-      coarse_centers[match(data_out$cellid, coarse_centers$cellid), ]
+    data_out <- sf::st_sf(data_df, geometry = sf::st_geometry(
+      coarse_centers[match(data_df$cellid, coarse_centers$cellid), ]
     ))
   } else {
+    # For geographic coords or non-sf input, return as data.frame
     data_out <- data_df
   }
 

@@ -266,7 +266,7 @@ references:
   abstract: 'rnaturalearth: World Map Data from Natural Earth'
   notes: Imports
   url: https://docs.ropensci.org/rnaturalearth/
-  repository: https://CRAN.R-project.org/package=rnaturalearth
+  repository: https://ropensci.r-universe.dev
   authors:
   - family-names: Massicotte
     given-names: Philippe
@@ -353,6 +353,21 @@ references:
     given-names: Maximilian
   year: '2026'
   doi: 10.32614/CRAN.package.tidyr
+- type: software
+  title: tidyselect
+  abstract: 'tidyselect: Select from a Set of Strings'
+  notes: Imports
+  url: https://tidyselect.r-lib.org
+  repository: https://CRAN.R-project.org/package=tidyselect
+  authors:
+  - family-names: Henry
+    given-names: Lionel
+    email: lionel@posit.co
+  - family-names: Wickham
+    given-names: Hadley
+    email: hadley@posit.co
+  year: '2026'
+  doi: 10.32614/CRAN.package.tidyselect
 - type: software
   title: units
   abstract: 'units: Measurement Units for R Vectors'
