@@ -241,7 +241,8 @@ compute_indicator_workflow <- function(data,
     "hill0",
     "hill1",
     "hill2",
-    "completeness"
+    "completeness",
+    "relative_occupancy"
   )
 
   type <- match.arg(type, names(available_indicators))
