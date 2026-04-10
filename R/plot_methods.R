@@ -316,3 +316,28 @@ plot.occ_turnover <- function(x, auccolour = NULL,  ...) {
             ...)
 
 }
+
+#' @export
+plot.relative_occupancy <- function(x, species, ...) {
+
+  wrong_class(x, "relative_occupancy", reason = "incorrect")
+  wrong_class(x, c("indicator_ts", "indicator_map"), reason = "incorrect")
+
+  # Prepare a list of default arguments for call_plot
+  plot_args <- list(
+    x = x,
+    species = species,
+    y_label_default = "Relative Occupancy",
+    auto_title_ts = "Species Relative Occupancy Trend",
+    leg_label_default = "Relative Occupancy",
+    auto_title_map = "Species Relative Occupancy"
+  )
+
+  # Add any additional arguments passed via ...
+  dots <- list(...)
+  plot_args <- c(plot_args, dots)
+
+  # Call the central plotting function
+  do.call(call_plot, plot_args)
+
+}
