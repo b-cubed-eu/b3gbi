@@ -26,7 +26,6 @@ process_cube(
   force_gridcode = FALSE,
   cols_year = NULL,
   cols_yearMonth = NULL,
-  cols_yearMonthDay = NULL,
   cols_cellCode = NULL,
   cols_occurrences = NULL,
   cols_scientificName = NULL,
@@ -90,14 +89,6 @@ process_cube(
   if you do not have a year column. The b3gbi package does not use month
   data, so the function will convert your yearMonth column to a year
   column.
-
-- cols_yearMonthDay:
-
-  (Optional) The name of the column containing the year, month and day
-  of occurrence (if present and if other than 'yearMonthDay'). Use this
-  only if you do not have year or yearMonth columns. The b3gbi package
-  does not use day or month data, so the function will convert your
-  yearMonthDay column to a year column.
 
 - cols_cellCode:
 

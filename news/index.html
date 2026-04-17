@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.18</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.17</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -36,20 +36,9 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.8.18/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
-    <div class="section level2">
-<h2 class="pkg-version" data-toc-text="0.8.18" id="b3gbi-0818---minor-update">b3gbi 0.8.18 - Minor update:<a class="anchor" aria-label="anchor" href="#b3gbi-0818---minor-update"></a></h2>
-<ul><li>Addressed <code>S2</code> geometry degenerate vertex errors related to incorrect geographic subset orientations for exact-matching map boundary points.</li>
-<li>Added native sf boundaries for MGRS, EEA, and EQDGC, vastly improving boundary and grid visualization.</li>
-<li>Added function to replace NA values with zeroes in a calculated indicator map or time series. Example: x_filled &lt;- replace_na(x).</li>
-<li>Removed redundant plotting parameters <code>complete_grid_outline</code> and <code>visible_grid_outline</code> from <code>plot_map</code> and <code>plot_species_map</code>.</li>
-<li>Fixed a bug introduced in version 0.8.0 where <code>compute_indicator_workflow</code> produced erroneous empty cell lines for certain bounding boxes across MGRS, EEA, and EQDGC datasets by correcting spatial matching workflows to rely on native <code>cellCode</code> joins.</li>
-<li>Fixed a bug where Hill diversity calculated confidence intervals even when <code>ci_type</code> was set to <code>none</code>.</li>
-<li>Fixed a bug where topology exceptions were causing indicator calculations to fail for some cubes.</li>
-<li>Fixed a bug where aggregating to a larger grid size than the native cube grid gave incorrect output by leaving the original cell codes intact.</li>
-</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.8.17" id="b3gbi-0817---minor-update">b3gbi 0.8.17 - Minor update:<a class="anchor" aria-label="anchor" href="#b3gbi-0817---minor-update"></a></h2>
 <ul><li>Fixed error that prevented rnaturalearth layers from downloading.</li>

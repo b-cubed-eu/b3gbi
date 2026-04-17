@@ -91,5 +91,7 @@ indicator values and metadata.
 observed_richness_map <- obs_richness_map(example_cube_1, level = "country",
                                           region = "Denmark")
 plot(observed_richness_map)
+#> Warning: 'x' is NULL so the result will be NULL
+#> Warning: 'x' is NULL so the result will be NULL
 
 ```
