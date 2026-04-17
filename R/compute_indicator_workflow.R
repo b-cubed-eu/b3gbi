@@ -163,12 +163,39 @@ compute_indicator_workflow <- function(data,
                                        buffer_dist_km = 50,
                                        force_grid = FALSE,
                                        ...) {
+  # Save original cell_size to determine whether to use native grid later
+  original_cell_size <- cell_size
+
+  # Extract gridded_average from dots if present
+  dots <- list(...)
+  gridded_average <- if ("gridded_average" %in% names(dots)) {
+    dots$gridded_average
+  } else {
+    FALSE
+  }
+
   wrong_class(data,
     class = c("processed_cube", "processed_cube_dsinfo", "sim_cube"),
     reason = "unrecognized"
   )
 
-  xcoord <- ycoord <- NULL
+  # For gridded average completeness, we MUST have a grid coarser than the native
+  # cube resolution to ensure multiple native cells (samples) per grid cell.
+  if (type == "completeness" && gridded_average == TRUE && is.null(cell_size)) {
+    native_res_str <- if ("resolution" %in% names(data$data)) data$data$resolution[1] else NULL
+    if (!is.null(native_res_str)) {
+      res_val <- as.numeric(gsub("[a-zA-Z]", "", native_res_str))
+      res_unit <- gsub("[0-9.]", "", native_res_str)
+
+      # Force a 4x coarser grid (16 native cells per grid cell)
+      coarser_res <- res_val * 4
+      cell_size <- paste0(coarser_res, res_unit)
+      message("Forcing coarser grid resolution for completeness: ", cell_size)
+    }
+  }
+
+  # Null assignments
+  xcoord <- ycoord <- ll <- ul <- NULL
 
   # Check for empty cube
   if (nrow(data$data) == 0) {
@@ -192,6 +219,11 @@ compute_indicator_workflow <- function(data,
     "hill1",
     "hill2"
   )
+
+  if (type == "completeness" && gridded_average == TRUE) {
+    ind_req_grid_list <- c(ind_req_grid_list, "completeness")
+    force_grid <- TRUE
+  }
 
   # List of indicators for which bootstrapped confidence intervals should not
   # be calculated
@@ -316,6 +348,15 @@ compute_indicator_workflow <- function(data,
     region
   }
 
+  # Turn off spherical geometry to avoid topography errors and set it to
+  # return to user settings on exit (even if function fails)
+
+  # 1. Record the original state so we can restore it exactly
+  original_s2 <- sf::sf_use_s2()
+  # 2. Use on.exit to ensure restoration even if the code fails
+  # This is much safer than manual toggling. Also suppress "switched" on message
+  on.exit(suppressMessages(sf::sf_use_s2(original_s2)), add = TRUE)
+
   # Check shapefile path and load if found
   if (!is.null(shapefile_path)) {
     if (!file.exists(shapefile_path)) {
@@ -389,13 +430,10 @@ compute_indicator_workflow <- function(data,
       stop("Grid reference system not found.")
     }
 
-    # Store the current spherical geometry setting
-    original_s2_setting <- sf::sf_use_s2()
-
-    if (spherical_geometry == FALSE) {
-      # Temporarily disable spherical geometry
-      sf::sf_use_s2(FALSE)
-    }
+   if (spherical_geometry == FALSE) {
+   # Temporarily disable spherical geometry
+     suppressMessages(sf::sf_use_s2(FALSE))
+   }
 
     # Get cube extent in projected crs
     if (data$grid_type == "mgrs") {
@@ -530,7 +568,6 @@ compute_indicator_workflow <- function(data,
         message(
           "Retrying the intersection with spherical geometry turned off."
         )
-        sf::sf_use_s2(FALSE)
         # Retry the intersection operation
         filtered_sf <- sf::st_filter(
           df_sf_projected,
@@ -539,10 +576,10 @@ compute_indicator_workflow <- function(data,
         # Notify success after retry
         message("Intersection succeeded with spherical geometry turned off.")
       }
-      if (spherical_geometry == TRUE) {
-        # Restore original spherical setting
-        sf::sf_use_s2(original_s2_setting)
-      }
+
+      # Restore original spherical setting
+      suppressMessages(sf::sf_use_s2(original_s2))
+
       # Filter the original data frame
       df <- df[df$cellCode %in% filtered_sf$cellCode, ]
       if (nrow(df) == 0) {
@@ -551,10 +588,18 @@ compute_indicator_workflow <- function(data,
     } else if (level != "cube") {
       # Early filtering for non-cube levels without shapefile
       # This ensures 'df' used for grid creation is limited to the region
-      df_sf_temp <- sf::st_as_sf(df, coords = c("xcoord", "ycoord"), crs = cube_crs)
-      df_sf_temp <- sf::st_transform(df_sf_temp, crs = projected_crs)
+      if (data$grid_type == "mgrs") {
+        # Use create_sf_from_utm to correctly handle multi-zone MGRS data
+        df_sf_temp <- create_sf_from_utm(df, output_crs = projected_crs)
+      } else {
+        df_sf_temp <- sf::st_as_sf(df, coords = c("xcoord", "ycoord"), crs = cube_crs)
+        df_sf_temp <- sf::st_transform(df_sf_temp, crs = projected_crs)
+      }
 
       # We need map_data to filter
+      # Disable s2 during map data retrieval to avoid topology errors
+      suppressMessages(sf::sf_use_s2(FALSE))
+
       map_data_list_temp <- get_ne_data(
         projected_crs,
         cube_bbox_latlong,
@@ -566,8 +611,9 @@ compute_indicator_workflow <- function(data,
         include_ocean,
         buffer_dist_km
       )
-
       filtered_sf_temp <- sf::st_filter(df_sf_temp, map_data_list_temp$combined)
+
+      suppressMessages(sf::sf_use_s2(original_s2))
 
       df <- df[df$cellCode %in% filtered_sf_temp$cellCode, ]
       if (nrow(df) == 0) {
@@ -619,6 +665,9 @@ compute_indicator_workflow <- function(data,
     }
 
     # Retrieve and validate Natural Earth data
+    # Disable s2 during map data retrieval to avoid topology errors
+    suppressMessages(sf::sf_use_s2(FALSE))
+
     map_data_list <- get_ne_data(
       projected_crs,
       bbox_latlong,
@@ -630,6 +679,8 @@ compute_indicator_workflow <- function(data,
       include_ocean,
       buffer_dist_km
     )
+    suppressMessages(sf::sf_use_s2(original_s2))
+
     map_data <- map_data_list$combined
     saved_layer <- map_data_list$saved
 
@@ -645,6 +696,7 @@ compute_indicator_workflow <- function(data,
     # Calculate the final, correct area of the study region
     final_area_sqkm <-
       final_study_polygon %>%
+      sf::st_make_valid() %>%
       sf::st_union() %>% # Union handles multi-polygons (e.g., countries)
       sf::st_transform(crs = "ESRI:54012") %>% # Mollweide equal-area projection
       sf::st_area() %>%
@@ -702,12 +754,14 @@ compute_indicator_workflow <- function(data,
     if (data$grid_type == "isea3h") {
       # Use pre-existing centroids to build hexagonal polygons
       grid <- create_isea3h_grid(df, projected_crs)
-      # Add area if missing
-      if (!"area" %in% colnames(grid)) {
-        grid$area <- grid %>%
-          sf::st_area() %>%
-          units::set_units("km^2")
-      }
+    } else if (data$grid_type %in% c("mgrs", "eea", "eqdgc")) {
+      # Use native grid polygons to avoid aliasing issues (#104)
+      # ALWAYS use the native data resolution for grid creation.
+      # User-specified cell_size is handled at the aggregation level,
+      # not at the grid geometry level, to ensure every data cellCode
+      # has a matching grid cell.
+      res_info <- if (!is.null(data$resolutions)) data$resolutions[1] else NULL
+      grid <- create_native_grid(df, projected_crs, data$grid_type, res_info)
     } else {
       grid <- create_grid(
         bbox_for_grid,
@@ -735,37 +789,135 @@ compute_indicator_workflow <- function(data,
       # Convert to sf if not already
       intersection_target <- sf::st_as_sf(intersection_target)
     } else {
-      # No shapefile provided, so we intersect with the Natural Earth data
       intersection_target <- map_data
     }
+
+    # Ensure intersection target is valid and buffered slightly to avoid precision losses
+    # Disable s2 to avoid topology exceptions with complex geometries
+    suppressMessages(sf::sf_use_s2(FALSE))
+
+    intersection_target <- sf::st_make_valid(intersection_target)
+    # Only apply safety buffer if in a projected CRS (meters), not geographic (degrees)
+    if (!sf::st_is_longlat(intersection_target)) {
+      intersection_target <- sf::st_buffer(intersection_target, dist = 1) %>%
+        sf::st_make_valid()
+    }
+
+    suppressMessages(sf::sf_use_s2(original_s2))
 
     sf::st_agr(intersection_target) <- "constant"
 
     # Intersect grid with intersection target
-    clipped_grid <- intersect_grid_with_polygon(grid, intersection_target)
+    # Keep s2 disabled for spatial operations on complex map geometries
+    if (data$grid_type == "isea3h") {
+      # ISEA3H requires accurate clipping for dateline/pole handling
+      clipped_grid <- intersect_grid_with_polygon(grid, intersection_target)
+    } else if (level == "cube" && is.null(shapefile)) {
+      # For cube level without shapefile, skip spatial filtering to prevent outlier loss
+      clipped_grid <- grid
+    } else {
+      # Use st_intersection to clip grid cells to the map boundary.
+      # Unlike st_filter (which removes cells), st_intersection clips cells
+      # at the boundary, preserving coastal cells that partially overlap land.
+      suppressMessages(sf::sf_use_s2(FALSE))
 
-    if (spherical_geometry == TRUE) {
-      # Restore original spherical setting
-      sf::sf_use_s2(original_s2_setting)
+      clipped_grid <- sf::st_intersection(
+        grid,
+        sf::st_union(intersection_target)
+      )
+
+      suppressMessages(sf::sf_use_s2(original_s2))
+
+      # Remove empty results from cells entirely outside the boundary
+      clipped_grid <- clipped_grid[!sf::st_is_empty(clipped_grid), ]
     }
 
     # Filter data to only those within the intersection target
-    data_filtered <- sf::st_filter(data_projected, intersection_target)
+    data_filtered <- if (level == "cube" && is.null(shapefile)) {
+      data_projected
+    } else {
+
+      suppressMessages(sf::sf_use_s2(FALSE))
+
+      result <- sf::st_filter(data_projected, intersection_target)
+
+      suppressMessages(sf::sf_use_s2(original_s2))
+
+      result
+    }
 
     # Assign data to grid
-    if (data$grid_type == "isea3h") {
-      # ISEA3H: the cube already assigns data to cells via cellCode.
+    if (data$grid_type %in% c("isea3h", "mgrs", "eea", "eqdgc") &&
+      "cellCode" %in% colnames(clipped_grid) &&
+      gridded_average == FALSE) {
+      # These grids have a native cellCode mapping.
       # Join by cellCode instead of spatial join to preserve this assignment.
-      cell_lookup <- sf::st_drop_geometry(clipped_grid[, c("cellCode", "cellid")])
+      # This avoids aliasing and gaps when using different projections.
+      # SKIP this if gridded_average is TRUE, as we are aggregating to a
+      # different (coarser) scale where native cellCodes won't match perfectly.
+
+      # Include area in the lookup as some indicators (e.g. density) require it
+      lookup_cols <- c("cellCode", "cellid")
+      if ("area" %in% names(clipped_grid)) lookup_cols <- c(lookup_cols, "area")
+
+      cell_lookup <- sf::st_drop_geometry(clipped_grid[, lookup_cols])
+      data_pre_join <- sf::st_drop_geometry(data_filtered)
+      n_pre_join <- nrow(data_pre_join)
       data_final <- dplyr::left_join(
-        sf::st_drop_geometry(data_filtered), cell_lookup,
-        by = "cellCode"
+        data_pre_join, cell_lookup,
+        by = "cellCode",
+        relationship = "many-to-one"
       )
+      n_unmatched <- sum(is.na(data_final$cellid))
+      if (n_unmatched > 0) {
+        unmatched_codes <- unique(data_final$cellCode[is.na(data_final$cellid)])
+        n_obs_lost <- sum(data_final$obs[is.na(data_final$cellid)], na.rm = TRUE)
+        warning(
+          sprintf(
+            paste0(
+              "%s of %s data rows (%s occurrences) could not be matched to a ",
+              "grid cell. This affects %s unique cell codes. ",
+              "This may be due to cell codes that could not be parsed into ",
+              "grid coordinates. Use `options(warn=1)` to see the specific ",
+              "cell codes on the next line."
+            ),
+            format(n_unmatched, big.mark = ","),
+            format(n_pre_join, big.mark = ","),
+            format(n_obs_lost, big.mark = ","),
+            format(length(unmatched_codes), big.mark = ",")
+          )
+        )
+        if (length(unmatched_codes) <= 20) {
+          warning(paste("Unmatched cell codes:", paste(unmatched_codes, collapse = ", ")))
+        } else {
+          warning(paste("First 20 unmatched cell codes:", paste(utils::head(unmatched_codes, 20), collapse = ", ")))
+        }
+      }
       data_final <- data_final[!is.na(data_final$cellid), ]
     } else {
+      # For spatial join, only keep cellid and area from the grid to avoid
+      # renaming conflicts with data columns (like cellCode).
+      lookup_cols <- "cellid"
+      if ("area" %in% names(clipped_grid)) lookup_cols <- c(lookup_cols, "area")
+
       data_final <- data_filtered %>%
-        sf::st_join(clipped_grid, join = sf::st_nearest_feature)
+        sf::st_join(clipped_grid[, lookup_cols], join = sf::st_nearest_feature)
     }
+
+    # If user specified a coarser cell_size, aggregate data to coarser grid
+    # BEFORE indicator calculation so indicators are calculated correctly
+    if (original_cell_size != "grid" &&
+        data$grid_type %in% c("eea", "mgrs", "eqdgc")) {
+      is_gridded_comp <- (type == "completeness" && gridded_average == TRUE)
+      agg_result <- aggregate_data_to_coarser_grid(
+        data_final, clipped_grid, cell_size,
+        if (data$grid_type == "eqdgc") "EPSG:4326" else projected_crs,
+        is_gridded_completeness = is_gridded_comp
+      )
+      data_final <- agg_result$data
+      clipped_grid <- agg_result$grid
+    }
+
     data_final_nogeom <- if (inherits(data_final, "sf")) {
       sf::st_drop_geometry(data_final)
     } else {
@@ -802,21 +954,20 @@ compute_indicator_workflow <- function(data,
     indicator <- calc_map(data_final_nogeom, ...)
 
     # Add indicator values to grid
+    join_cols <- unique(c("cellid", intersect(names(clipped_grid), names(indicator))))
     diversity_grid <-
       clipped_grid %>%
-      dplyr::left_join(indicator, by = "cellid")
-
-    # Get bbox of original grid before transformation
-    if (data$grid_type == "isea3h") {
-      original_bbox <- intersect_grid_with_polygon(grid, saved_layer) %>%
-        sf::st_union()
-    } else {
-      original_bbox <- sf::st_filter(grid, saved_layer) %>%
-        sf::st_union()
-    }
+      dplyr::left_join(indicator, by = join_cols)
 
     # Transform to output CRS
     diversity_grid <- sf::st_transform(diversity_grid, crs = output_crs)
+
+    # Recalculate area (grid cells were already clipped to boundary above)
+    if ("area" %in% names(diversity_grid)) {
+      diversity_grid$area <- diversity_grid %>%
+        sf::st_area() %>%
+        units::set_units("km^2")
+    }
   } else {
     # Calculate indicator
     indicator <- calc_ts(data_final_nogeom, ...)
@@ -841,12 +992,17 @@ compute_indicator_workflow <- function(data,
         }
       }
     }
+
+    if (ci_type == "none" &&
+      type %in% c("hill0", "hill1", "hill2")) {
+      if ("ll" %in% names(indicator)) {
+        indicator <- indicator %>% select(c(-ll, -ul))
+      }
+    }
   }
 
-  if (spherical_geometry == FALSE) {
-    # restore the original spherical geometry setting
-    sf::sf_use_s2(original_s2_setting)
-  }
+  # restore the original spherical geometry setting
+  suppressMessages(sf::sf_use_s2(original_s2))
 
   # Create indicator object
   if (dim_type == "map") {
@@ -870,7 +1026,6 @@ compute_indicator_workflow <- function(data,
       num_years = num_years,
       species_names = species_names,
       years_with_obs = years_with_obs,
-      original_bbox = original_bbox,
       grid_type = data$grid_type
     )
   } else {

@@ -13,7 +13,7 @@ completeness_map(
   ...
 )
 
-completeness_ts(data, cutoff_length = 5, ...)
+completeness_ts(data, cutoff_length = 5, gridded_average = FALSE, ...)
 }
 \arguments{
 \item{data}{A data cube object (class 'processed_cube').}
@@ -102,6 +102,10 @@ would not normally be part of the pipeline, e.g. for time series. This
 setting is required for the calculation of rarity or Hill diversity, and is
 forced on by indicators that require it. (Default: FALSE)}
   }}
+
+\item{gridded_average}{(Optional) For time series, calculate completeness
+for each grid cell and average the results, rather than calculating for
+the entire area at once. Default is FALSE.}
 }
 \value{
 An S3 object with the classes 'indicator_map' or 'indicator_ts' and

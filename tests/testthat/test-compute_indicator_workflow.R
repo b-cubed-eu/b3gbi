@@ -350,9 +350,9 @@ test_that(
   # Create a mock processed_cube object
     mock_cube <- list(
       data = data.frame(
-        cellCode = rep(seq(1000, 1100, length.out = 10), 10),
-        xcoord = rep(seq(4000000, 4100000, length.out = 10), 10),
-        ycoord = rep(seq(3000000, 3100000, length.out = 10), 10),
+        cellCode = sprintf("10kmE%04dN%04d", rep(4000:4009, 10), rep(3000:3009, each = 10)),
+        xcoord = rep(seq(4000000, 4090000, by = 10000), 10),
+        ycoord = rep(seq(3000000, 3090000, by = 10000), each = 10),
         year = rep(2000:2009, 10),
         scientificName = rep(
           c("A", "B", "C", "D", "E", "F", "G", "H", "I", "J"),
@@ -379,8 +379,8 @@ test_that(
       dim_type = "map"
     )
     expect_equal(names(result_map$data), c("cellid",
-                                           "area",
                                            "cellCode",
+                                           "area",
                                            "diversity_val",
                                            "geometry")
     )
@@ -425,7 +425,7 @@ test_that("compute_indicator_workflow creates output objects correctly", {
   # Create a mock processed_cube object
   mock_cube <- list(
     data = data.frame(
-      cellCode = seq(1000, 1100, length.out = 10),
+      cellCode = sprintf("10kmE%dN%d", 400:409, 300:309),
       xcoord = seq(xmin, xmax, length.out = 10),
       ycoord = seq(ymin, ymax, length.out = 10),
       obs = 1:10,
@@ -568,7 +568,7 @@ test_that(
         xcoord = c(1, 5),
         ycoord = c(5, 1),
         resolution = c("10km", "10km"),
-        cellCode = c(1, 2),
+        cellCode = c("10kmE4000N3000", "10kmE4001N3001"),
         year = c(2000, 2000),
         scientificName = c("A", "A"),
         obs = c(1, 1)
@@ -608,4 +608,40 @@ test_that(
       )
       expect_true(sf::sf_use_s2())
     })
+})
+
+test_that("Confidence intervals are stripped from Hill diversity when ci_type = 'none'", {
+
+  result <- hill0_ts(
+    data = example_cube_1,
+    ci_type = "none",
+    first_year = 1999,
+    last_year = 2001
+  )
+  expect_true(
+    !any(
+      c(
+        "ll",
+        "ul"
+      ) %in% names(result$data)
+    )
+  )
+})
+
+test_that("Confidence intervals are not stripped from Hill diversity when ci_type != 'none'", {
+
+  result <- hill0_ts(
+    data = example_cube_1,
+    ci_type = "perc",
+    first_year = 1999,
+    last_year = 2001
+  )
+  expect_true(
+    all(
+      c(
+        "ll",
+        "ul"
+      ) %in% names(result$data)
+    )
+  )
 })

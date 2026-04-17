@@ -552,6 +552,9 @@ completeness_details <- paste0(
 #' @param data_type The type of data: "incidence" or "abundance". Default is "incidence".
 #' @param assume_freq (Optional) Whether to assume frequency data if using
 #'  incidence. Default is FALSE.
+#' @param gridded_average (Optional) For time series, calculate completeness
+#'  for each grid cell and average the results, rather than calculating for
+#'  the entire area at once. Default is FALSE.
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
@@ -595,14 +598,15 @@ completeness_map <- function(data,
 #' @export
 completeness_ts <- function(data,
                             cutoff_length = 5,
+                            gridded_average = FALSE,
                             ...) {
 
   compute_indicator_workflow(data,
                              type = "completeness",
                              dim_type = "ts",
                              cutoff_length = cutoff_length,
+                             gridded_average = gridded_average,
                              ...)
-
 }
 
 

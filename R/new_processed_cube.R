@@ -26,26 +26,37 @@ new_processed_cube <- function(x, grid_type) {
                   "taxonKey",
                   "obs",
                   "scientificName",
-                  "xcoord",
-                  "ycoord",
                   "resolution") %in% names(x)))
+                  
+  # Coordinate-dependent summary
+  has_coords <- all(c("xcoord", "ycoord") %in% names(x))
   res_num <- as.numeric(stringr::str_extract(x$resolution[1],
                                              "^[+-]?\\d*\\.?\\d+"))
-  if (grid_type == "eqdgc") {
-    coord_range = list("xmin" = min(x$xcoord) - (res_num / 2),
-                       "xmax" = max(x$xcoord) + (res_num / 2),
-                       "ymin" = min(x$ycoord) - (res_num / 2),
-                       "ymax" = max(x$ycoord) + (res_num / 2))
-  } else if (grid_type == "eea") {
-    coord_range = list("xmin" = min(x$xcoord),
-                       "xmax" = max(x$xcoord) + res_num,
-                       "ymin" = min(x$ycoord),
-                       "ymax" = max(x$ycoord) + res_num)
+  
+  if (has_coords) {
+    if (grid_type == "eqdgc") {
+      coord_range = list("xmin" = min(x$xcoord, na.rm = TRUE) - (res_num / 2),
+                         "xmax" = max(x$xcoord, na.rm = TRUE) + (res_num / 2),
+                         "ymin" = min(x$ycoord, na.rm = TRUE) - (res_num / 2),
+                         "ymax" = max(x$ycoord, na.rm = TRUE) + (res_num / 2))
+    } else if (grid_type == "eea") {
+      coord_range = list("xmin" = min(x$xcoord, na.rm = TRUE),
+                         "xmax" = max(x$xcoord, na.rm = TRUE) + res_num,
+                         "ymin" = min(x$ycoord, na.rm = TRUE),
+                         "ymax" = max(x$ycoord, na.rm = TRUE) + res_num)
+    } else if (grid_type == "mgrs") {
+      coord_range = list("xmin" = min(x$xcoord, na.rm = TRUE) - (res_num / 2),
+                         "xmax" = max(x$xcoord, na.rm = TRUE) + (res_num / 2),
+                         "ymin" = min(x$ycoord, na.rm = TRUE) - (res_num / 2),
+                         "ymax" = max(x$ycoord, na.rm = TRUE) + (res_num / 2))
+    } else {
+      coord_range = list("xmin" = min(x$xcoord, na.rm = TRUE),
+                         "xmax" = max(x$xcoord, na.rm = TRUE),
+                         "ymin" = min(x$ycoord, na.rm = TRUE),
+                         "ymax" = max(x$ycoord, na.rm = TRUE))
+    }
   } else {
-    coord_range = list("xmin" = min(x$xcoord),
-                       "xmax" = max(x$xcoord),
-                       "ymin" = min(x$ycoord),
-                       "ymax" = max(x$ycoord))
+    coord_range <- list("xmin" = NA, "xmax" = NA, "ymin" = NA, "ymax" = NA)
   }
   if (all(c("datasetKey", "basisOfRecord") %in% names(x))) {
     structure(list(first_year = min(x$year),
