@@ -5,6 +5,7 @@
 \alias{calc_map.hill0}
 \alias{calc_map.hill1}
 \alias{calc_map.hill2}
+\alias{calc_map.relative_occupancy}
 \alias{calc_map.obs_richness}
 \alias{calc_map.total_occ}
 \alias{calc_map.newness}
@@ -27,6 +28,8 @@
 \method{calc_map}{hill1}(x, ...)
 
 \method{calc_map}{hill2}(x, ...)
+
+\method{calc_map}{relative_occupancy}(x, occ_type = 0, ...)
 
 \method{calc_map}{obs_richness}(x, ...)
 
@@ -59,6 +62,31 @@ calc_map(x, ...)
 
 \item{...}{Additional arguments passed to specific indicator calculation
 functions.}
+
+\item{occ_type}{Integer controlling the occupancy denominator (default \code{0}):
+\itemize{
+\item \code{0} — \strong{Total-area occupancy}: number of grid cells occupied by the
+species (across all years) / total number of grid cells in the study
+region (including unsampled cells). \emph{Presence-only caveat}: empty cells
+cannot be assumed truly unoccupied; they may simply be unsampled.
+\item \code{1} — \strong{Relative-to-ever-occupied occupancy}: species' cells / cells
+with \emph{at least one occurrence (any species, any year)}. Conditions on
+cells where sampling effort is documented.
+\item \code{2} — \strong{Temporal mean annual occupancy}: for each year, compute the
+proportion of that year's occupied cells (any species) in which the
+species was recorded; then average those annual proportions across all
+years in the data. This captures how consistently a species occupies the
+active sampling footprint over time.
+}
+
+\strong{Note on presence-only data}: All three types rely on presence-only
+records. A cell with no records cannot be assumed to be truly unoccupied.
+Types 1 and 2 condition on cells with documented occurrences, but those
+still reflect sampling effort rather than true species absence.
+
+\strong{Note on cell aggregation}: When a coarser \code{cell_size} is chosen, data
+are aggregated to coarser grid cells before this calculation. All
+denominators count post-aggregation cells (\code{cellid}).}
 
 \item{newness_min_year}{(Optional) If set, only shows values above this
 (e.g. 1970). Values below the minimum will be replaced with NA. This can be
