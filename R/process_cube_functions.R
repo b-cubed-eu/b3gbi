@@ -123,7 +123,7 @@ process_cube <- function(cube_name,
                          separator = NULL) {
 
   yearMonth <- species <- occurrences <- speciesKey <- cellCode <- NULL
-  year <- . <- max_year <- NULL
+  year <- yearMonthDay <- . <- max_year <- NULL
 
   if (is.character(cube_name) && length(cube_name == 1)) {
     if (is.null(separator)) {
