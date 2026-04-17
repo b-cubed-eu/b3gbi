@@ -133,6 +133,9 @@
 - [`process_cube()`](https://b-cubed-eu.github.io/b3gbi/reference/process_cube.md)
   : Process GBIF Data Cubes
 
+- [`replace_na()`](https://b-cubed-eu.github.io/b3gbi/reference/replace_na.md)
+  : Replace NA Values in Indicator Objects
+
 - [`spec_occ_map()`](https://b-cubed-eu.github.io/b3gbi/reference/spec_occ_map.md)
   [`spec_occ_ts()`](https://b-cubed-eu.github.io/b3gbi/reference/spec_occ_map.md)
   : Calculate Species Occurrences Over Space or Time

@@ -244,10 +244,10 @@ diversity_map
 #> 
 #> Coordinate range:
 #>      xmin      ymin      xmax      ymax 
-#>  8.016236 54.628857 15.272695 57.736914 
+#>  8.040572 54.750000 15.188939 57.736925 
 #> 
 #> Grid cell size: 0.25 degrees 
-#> Number of cells: 299 
+#> Number of cells: 200 
 #> 
 #> Observation years: 1862 - 2024 
 #> Total years with observations: 126 
@@ -262,17 +262,17 @@ diversity_map
 #> First 10 rows of data (use n = to show more):
 #> 
 #> # A tibble: 200 × 4
-#>    cellid   area cellCode  diversity_val
-#>     <int> [km^2] <chr>             <int>
-#>  1    129   446. E010N54AB            13
-#>  2    137   446. E012N54AB            28
-#>  3    138   446. E012N54BA            32
-#>  4    172   443. E008N55DC            32
-#>  5    173   443. E008N55DD            33
-#>  6    174   443. E009N55CC            21
-#>  7    178   443. E010N55CC            25
-#>  8    179   443. E010N55CD            31
-#>  9    180   443. E010N55DC            39
-#> 10    182   443. E011N55CC            21
+#>    cellid cellCode    area diversity_val
+#>     <int> <chr>     [km^2]         <int>
+#>  1      1 E009N57DD   419.            37
+#>  2      2 E009N57DB   417.            30
+#>  3      3 E008N56AB   422.            36
+#>  4      4 E015N55CC   251.            32
+#>  5      5 E014N55DD   442.            34
+#>  6      6 E012N54AA   445.            52
+#>  7      7 E011N54BB   445.            40
+#>  8      8 E008N56BA   422.            26
+#>  9      9 E010N55CD   442.            31
+#> 10     10 E012N54BA   445.            32
 #> # ℹ 190 more rows
 ```

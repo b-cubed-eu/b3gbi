@@ -1,5 +1,28 @@
 # Changelog
 
+## b3gbi 0.8.18 - Minor update:
+
+- Addressed `S2` geometry degenerate vertex errors related to incorrect
+  geographic subset orientations for exact-matching map boundary points.
+- Added native sf boundaries for MGRS, EEA, and EQDGC, vastly improving
+  boundary and grid visualization.
+- Added function to replace NA values with zeroes in a calculated
+  indicator map or time series. Example: x_filled \<- replace_na(x).
+- Removed redundant plotting parameters `complete_grid_outline` and
+  `visible_grid_outline` from `plot_map` and `plot_species_map`.
+- Fixed a bug introduced in version 0.8.0 where
+  `compute_indicator_workflow` produced erroneous empty cell lines for
+  certain bounding boxes across MGRS, EEA, and EQDGC datasets by
+  correcting spatial matching workflows to rely on native `cellCode`
+  joins.
+- Fixed a bug where Hill diversity calculated confidence intervals even
+  when `ci_type` was set to `none`.
+- Fixed a bug where topology exceptions were causing indicator
+  calculations to fail for some cubes.
+- Fixed a bug where aggregating to a larger grid size than the native
+  cube grid gave incorrect output by leaving the original cell codes
+  intact.
+
 ## b3gbi 0.8.17 - Minor update:
 
 - Fixed error that prevented rnaturalearth layers from downloading.

@@ -391,10 +391,6 @@ plot(Denmark_observed_richness_map,
   legend_title = "Mammal Species Count",
   title = "Observed Mammal Richness (1980-Present)"
 )
-#> Warning in rep(pch, length.out = length(x)): 'x' is NULL so the result will be
-#> NULL
-#> Warning in rep(pch, length.out = length(x)): 'x' is NULL so the result will be
-#> NULL
 ```
 
 ![](b3gbi_files/figure-html/plot-map-1.png)

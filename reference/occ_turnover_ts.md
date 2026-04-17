@@ -200,8 +200,5 @@ compute_indicator_workflow
 ot_ts <- occ_turnover_ts(example_cube_1, first_year = 1985)
 #> Warning: Bootstrapped confidence intervals cannot be calculated for the chosen indicator.
 plot(ot_ts)
-#> Warning: Removed 1 row containing non-finite outside the scale range (`stat_smooth()`).
-#> Warning: Removed 1 row containing missing values or values outside the scale range
-#> (`geom_point()`).
 
 ```

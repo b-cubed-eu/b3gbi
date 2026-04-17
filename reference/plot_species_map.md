@@ -34,9 +34,7 @@ plot_species_map(
   land_fill_colour = NULL,
   grid_fill_colour = NULL,
   grid_line_colour = NULL,
-  grid_outline_colour = NULL,
   grid_line_width = NULL,
-  grid_outline_width = NULL,
   grid_fill_transparency = NULL,
   grid_line_transparency = NULL,
   legend_title = NULL,
@@ -45,9 +43,7 @@ plot_species_map(
   title_wrap_length = 60,
   spec_name_wrap_length = 40,
   visible_gridlines = TRUE,
-  visible_grid_outline = FALSE,
   visible_panel_gridlines = FALSE,
-  complete_grid_outline = FALSE,
   map_expansion_factor = 0.5,
   layers = NULL,
   layer_colours = NULL,
@@ -169,19 +165,9 @@ plot_species_map(
   (Optional) Colour for the grid lines. Default is "black". If
   visible_gridlines is set to FALSE, this setting will have no effect.
 
-- grid_outline_colour:
-
-  (Optional) Colour for the grid outline. Default is "black". If
-  visible_grid_outline is set to FALSE, this setting will have no
-  effect.
-
 - grid_line_width:
 
   (Optional) Width of the grid lines. Default is 0.1.
-
-- grid_outline_width:
-
-  (Optional) Width of the grid outline. Default is 0.5.
 
 - grid_fill_transparency:
 
@@ -222,18 +208,9 @@ plot_species_map(
 
   (Optional) Show gridlines between cells. Default is TRUE.
 
-- visible_grid_outline:
-
-  (Optional) Show outline around grid. Default is FALSE.
-
 - visible_panel_gridlines:
 
   (Optional) Show ggplot panel gridlines. Default is FALSE.
-
-- complete_grid_outline:
-
-  (Optional) If TRUE, the grid outline will be extended as a complete
-  rectangle, even if the grid is not. Default is FALSE.
 
 - map_expansion_factor:
 

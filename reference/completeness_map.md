@@ -15,7 +15,7 @@ completeness_map(
   ...
 )
 
-completeness_ts(data, cutoff_length = 5, ...)
+completeness_ts(data, cutoff_length = 5, gridded_average = FALSE, ...)
 ```
 
 ## Arguments
@@ -176,6 +176,12 @@ completeness_ts(data, cutoff_length = 5, ...)
       setting is required for the calculation of rarity or Hill
       diversity, and is forced on by indicators that require it.
       (Default: FALSE)
+
+- gridded_average:
+
+  (Optional) For time series, calculate completeness for each grid cell
+  and average the results, rather than calculating for the entire area
+  at once. Default is FALSE.
 
 ## Value
 

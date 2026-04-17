@@ -90,6 +90,7 @@ The function will return an error if it cannot find all required columns.</p>
 <span>  force_gridcode <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  cols_year <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  cols_yearMonth <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  cols_yearMonthDay <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  cols_cellCode <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  cols_occurrences <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  cols_scientificName <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -154,6 +155,14 @@ you have a yearMonth column.</p></dd>
 and month of occurrence (if present and if other than 'yearMonth'). Use this
 only if you do not have a year column. The b3gbi package does not use month
 data, so the function will convert your yearMonth column to a year column.</p></dd>
+
+
+<dt id="arg-cols-yearmonthday">cols_yearMonthDay<a class="anchor" aria-label="anchor" href="#arg-cols-yearmonthday"></a></dt>
+<dd><p>(Optional) The name of the column containing the
+year, month and day of occurrence (if present and if other than
+'yearMonthDay'). Use this only if you do not have year or yearMonth columns.
+The b3gbi package does not use day or month data, so the function will
+convert your yearMonthDay column to a year column.</p></dd>
 
 
 <dt id="arg-cols-cellcode">cols_cellCode<a class="anchor" aria-label="anchor" href="#arg-cols-cellcode"></a></dt>
