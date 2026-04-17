@@ -1,3 +1,9 @@
+# b3gbi 0.8.19 - Minor update:
+
+* Added relative occupancy indicator access using relative_occupancy_ts() and relative_occupancy_map(). There are three different types which can be set using e.g. `occ_type = 0` (one of 0,1,2).
+* Removed redundant process_cube_old() function as no longer supported.
+* process_cube() now retains yearMonth or yearMonthDay columns so they can be used downstream instead of removing them after conversion to year.
+
 # b3gbi 0.8.18 - Minor update:
 
 * Addressed `S2` geometry degenerate vertex errors related to incorrect geographic subset orientations for exact-matching map boundary points.
