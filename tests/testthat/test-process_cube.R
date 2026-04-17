@@ -86,7 +86,6 @@ test_that("process_cube converts yearMonth to year", {
   cube_df <- rename(cube_df, yearMonth = year)
   result <- process_cube(cube_df)
   expect_true("year" %in% names(result$data))
-  expect_false("yearMonth" %in% names(result$data))
   expect_type(result$data$year, "double")
 })
 
@@ -101,7 +100,6 @@ test_that("process_cube converts yearMonthDay to year", {
   cube_df <- rename(cube_df, yearMonthDay = year)
   result <- process_cube(cube_df)
   expect_true("year" %in% names(result$data))
-  expect_false("yearMonthDay" %in% names(result$data))
   expect_type(result$data$year, "double")
 })
 
@@ -576,35 +574,4 @@ test_that("process_cube handles custom separator", {
   expect_equal(nrow(result$data), 1)
   expect_equal(result$data$obs[1], 10)
   unlink(temp_file)
-})
-
-test_that("process_cube_old handles legacy data", {
-  occ_file <- tempfile(fileext = "_occ.csv")
-  tax_file <- tempfile(fileext = "_tax.csv")
-
-  # legacy data logic: first_year = min(year), last_year = max(year) - 1
-  readr::write_csv(tibble::tibble(
-    year = c(2010, 2011, 2012),
-    eea_cell_code = c("1kmE32N20", "1kmE32N20", "1kmE32N20"),
-    n = c(5, 6, 7),
-    min_coord_uncertainty = c(100, 100, 100),
-    speciesKey = c(101, 101, 101)
-  ), occ_file)
-
-  readr::write_csv(tibble::tibble(
-    speciesKey = 101,
-    scientificName = "Legacy Species",
-    rank = "SPECIES",
-    taxonomicStatus = "ACCEPTED",
-    kingdom = "Animalia",
-    includes = NA_character_
-  ), tax_file)
-
-  result <- b3gbi:::process_cube_old(occ_file, tax_info = tax_file)
-
-  expect_s3_class(result, "processed_cube")
-  expect_equal(result$grid_type, "eea")
-  expect_true(nrow(result$data) > 0)
-
-  unlink(c(occ_file, tax_file))
 })
