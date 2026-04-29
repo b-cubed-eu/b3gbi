@@ -23,9 +23,9 @@ check_cell_size <- function(cell_size,
                             max_warn_cells = 1000000) {
 
   # --- 1. Determine the base resolution size & DYNAMIC warning threshold ---
-  if (stringr::str_detect(resolution, "km")) {
-    res_unit <- "km"
-    res_size <- as.numeric(stringr::str_extract(resolution, "[0-9.]+(?=km)"))
+  if (stringr::str_detect(resolution, "(km|m)")) {
+    res_unit <- stringr::str_extract(resolution, "(km|m)")
+    res_size <- as.numeric(stringr::str_extract(resolution, "[0-9.]+"))
 
     # Calculate the AUTO threshold (used ONLY if cell_size="auto")
     if (!is.null(area)) {
@@ -116,6 +116,18 @@ check_cell_size <- function(cell_size,
       }
     } else if (cell_size == "auto") {
       cell_size <- NULL
+    } else if (grepl("^[0-9.]+(km|m)$", cell_size)) {
+      # Handle numeric values with km or m suffixes (e.g., "1km", "100m", "0.25km")
+      res_val <- as.numeric(stringr::str_extract(cell_size, "[0-9.]+"))
+      unit <- stringr::str_extract(cell_size, "(km|m)")
+      # Convert to whatever res_unit we have
+      if (unit == res_unit) {
+        cell_size <- res_val
+      } else if (unit == "km" && res_unit == "m") {
+        cell_size <- res_val * 1000
+      } else if (unit == "m" && res_unit == "km") {
+        cell_size <- res_val / 1000
+      }
     } else {
       stop("Invalid character value for cell_size. Use 'grid', 'auto', or a numeric value.")
     }
