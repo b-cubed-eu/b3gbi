@@ -23,8 +23,8 @@ check_cell_size <- function(cell_size,
                             max_warn_cells = 1000000) {
 
   # --- 1. Determine the base resolution size & DYNAMIC warning threshold ---
-  if (stringr::str_detect(resolution, "(km|m)")) {
-    res_unit <- stringr::str_extract(resolution, "(km|m)")
+  if (stringr::str_detect(resolution, "(km|m)$")) {
+    res_unit <- stringr::str_extract(resolution, "(km|m)$")
     res_size <- as.numeric(stringr::str_extract(resolution, "[0-9.]+"))
 
     # Calculate the AUTO threshold (used ONLY if cell_size="auto")
