@@ -1,3 +1,15 @@
+# b3gbi 0.8.19 - Minor update:
+
+* Added relative occupancy indicator access using `relative_occupancy_ts()` and `relative_occupancy_map()`. There are three different types which can be set using e.g. `occ_type = 0` (one of 0,1,2).
+* Removed redundant `process_cube_old()` function as no longer supported.
+* `process_cube()` now retains yearMonth or yearMonthDay columns so they can be used downstream instead of removing them after conversion to year.
+* Fixed a bug in `add_ne_layer` where country borders disappeared below approximately 40–50°N on European maps. The `group_by/reframe/st_crop` pattern was collapsing individual country geometries into grouped features, destroying borders in the overlay layer.
+* Fixed a bug in `eea_code_to_coords` where coordinate parsing applied an incorrect scaling factor for meter-based EEA grid resolutions, causing a ~10° spatial misalignment of grid cells.
+* Fixed a bug in `create_native_grid` where resolution parsing failed for meter-based resolutions (e.g. "250m") because it only handled the "km" suffix.
+* Fixed a bug in `compute_indicator_workflow` where `st_intersection` of grid cells with land boundaries could produce fragmented polygons for the same cell, resulting in duplicate rows and visual rendering artifacts. Fragments are now reunited per cell code.
+* Improved robustness of `get_ne_data` by adding geometry precision management (`st_set_precision`), defensive `tryCatch` blocks, and spatial filtering to prevent GEOS `TopologyException` errors during map data retrieval.
+* Improved robustness of `compute_indicator_workflow` with additional NULL checks, fallback logic for bounding box calculations, and defensive error handling for spatial intersection operations.
+
 # b3gbi 0.8.18 - Minor update:
 
 * Addressed `S2` geometry degenerate vertex errors related to incorrect geographic subset orientations for exact-matching map boundary points.

@@ -47,6 +47,7 @@ scores.
 \item 'occ_turnover': Occupancy turnover.
 \item 'spec_range': Species range size.
 \item 'spec_occ': Species occurrences.
+\item 'relative_occupancy': Species relative occupancy.
 \item 'tax_distinct': Taxonomic distinctness.
 \item 'hill0': Species richness (estimated by coverage-based rarefaction).
 \item 'hill1': Hill-Shannon diversity (estimated by coverage-based

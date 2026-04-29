@@ -123,7 +123,7 @@ process_cube <- function(cube_name,
                          separator = NULL) {
 
   yearMonth <- species <- occurrences <- speciesKey <- cellCode <- NULL
-  year <- . <- max_year <- NULL
+  year <- yearMonthDay <- . <- max_year <- NULL
 
   if (is.character(cube_name) && length(cube_name == 1)) {
     if (is.null(separator)) {
@@ -455,8 +455,7 @@ process_cube <- function(cube_name,
         occurrence_data %>%
         dplyr::mutate(year = as.numeric(stringr::str_extract(
           yearMonth, "(\\d{4})"))
-        ) %>%
-        dplyr::select(-yearMonth)
+        )
       # If year and yearMonth columns are both missing but yearMonthDay present,
       # convert yearMonthDay to year
     } else if ("yearMonthDay" %in% colnames(occurrence_data)) {
@@ -464,8 +463,7 @@ process_cube <- function(cube_name,
         occurrence_data %>%
         dplyr::mutate(year = as.numeric(stringr::str_extract(
           yearMonthDay, "(\\d{4})"))
-        ) %>%
-        dplyr::select(-yearMonthDay)
+        )
     } else {
       stop("No year, yearMonth, or yearMonthDay column found in cube. Please ",
            "specify column name manually.")
@@ -717,163 +715,4 @@ process_cube <- function(cube_name,
     cube <- new_processed_cube(occurrence_data, grid_type)
   }
   return(cube)
-}
-
-#' @noRd
-process_cube_old <- function(cube_name,
-                             tax_info = NULL,
-                             datasets_info = NULL,
-                             first_year = 1600,
-                             last_year = NULL) {
-
-  eea_cell_code <- taxonomicStatus <- includes <- notes <- n <- NULL
-  min_coord_uncertainty <- year <- . <- max_year <- NULL
-
-  if (is.null(tax_info)) {
-
-    stop(paste0(
-      "Please provide a taxonomic information file using the argument ",
-      "tax_info. This function is only intended for processing older ",
-      "generation cubes made using the TriAS code. Current generation cubes ",
-      "built using the GBIF API should be processed using process_cube()."
-    ))
-
-  }
-
-  # Read in data cube
-  occurrence_data <- readr::read_csv(
-    file = cube_name,
-    col_types = readr::cols(
-      year = readr::col_double(),
-      eea_cell_code = readr::col_character(),
-      n = readr::col_double(),
-      min_coord_uncertainty = readr::col_double()
-    ),
-    na = ""
-  )
-
-  # Read in associated taxonomic info
-  taxonomic_info <- readr::read_csv(
-    file = tax_info,
-    col_types = readr::cols(
-      scientificName = readr::col_character(),
-      rank = readr::col_factor(),
-      taxonomicStatus = readr::col_factor(),
-      kingdom = readr::col_factor(),
-      includes = readr::col_character()
-    ),
-    na = ""
-  )
-
-  if (!is.null(datasets_info)) {
-
-    # Read in associated dataset info
-    datasets_info <- readr::read_csv(
-      file = datasets_info,
-      col_types = readr::cols(
-        datasetName = readr::col_factor(),
-        dataType = readr::col_factor()
-      ),
-      na = ""
-    )
-
-  }
-
-  if ("speciesKey" %in% colnames(occurrence_data)) {
-
-    occurrence_data <-
-      occurrence_data %>%
-      dplyr::rename(taxonKey = "speciesKey")
-
-    occurrence_data <-
-      occurrence_data %>%
-      dplyr::mutate(eea_cell_code = gsub("-", "", eea_cell_code))
-
-    taxonomic_info <-
-      taxonomic_info %>%
-      dplyr::rename(taxonKey = "speciesKey")
-
-
-  }
-
-  # Merged the three data frames together
-  merged_data <- dplyr::left_join(occurrence_data,
-                                  taxonomic_info,
-                                  by = "taxonKey")
-
-  if (!is.null(datasets_info)) {
-
-    merged_data <- dplyr::left_join(merged_data,
-                                    datasets_info,
-                                    by = "datasetKey")
-
-  }
-
-  # Separate 'eea_cell_code' into resolution, coordinates
-  merged_data <- merged_data %>%
-    dplyr::mutate(
-      xcoord = as.numeric(stringr::str_extract(
-        eea_cell_code, "(?<=E)\\d+"
-      )) * 1000,
-      ycoord = as.numeric(stringr::str_extract(
-        eea_cell_code, "(?<=N)\\d+"
-      )) * 1000,
-      resolution = stringr::str_replace_all(
-        eea_cell_code, "(E\\d+)|(N\\d+)", ""
-      )
-    )
-
-  if (!is.null(datasets_info)) {
-
-    # Remove columns that are not needed
-    merged_data <-
-      merged_data %>%
-      dplyr::select(-taxonomicStatus, -includes, -notes)
-
-  } else {
-
-    # Remove columns that are not needed
-    merged_data <-
-      merged_data %>%
-      dplyr::select(-taxonomicStatus, -includes)
-
-  }
-
-  # Rename column n to obs
-  merged_data <-
-    merged_data %>%
-    dplyr::rename(obs = n,
-                  cellCode = eea_cell_code,
-                  minCoordUncertaintyInMeters = min_coord_uncertainty)
-
-  # Check whether start and end years are within dataset
-  first_year <- merged_data %>%
-    dplyr::select(year) %>%
-    min(na.rm = TRUE) %>%
-    ifelse(is.null(first_year),
-           .,
-           ifelse(first_year > ., first_year, .))
-  last_year <- merged_data %>%
-    dplyr::summarize(max_year = max(year, na.rm = TRUE) - 1) %>%
-    dplyr::pull(max_year) %>%
-    ifelse(is.null(last_year),
-           .,
-           ifelse(last_year < ., last_year, .))
-
-  # Limit data set
-  merged_data <-
-    merged_data %>%
-    dplyr::filter(year >= first_year) %>%
-    dplyr::filter(year <= last_year)
-
-  # Remove any duplicate rows
-  merged_data <-
-    merged_data %>%
-    dplyr::distinct() %>%
-    dplyr::arrange(year)
-
-  cube <- new_processed_cube(merged_data, grid_type = "eea")
-
-  return(cube)
-
 }

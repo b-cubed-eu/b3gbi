@@ -81,31 +81,21 @@ add_ne_layer <- function(layer_name, scale, extent_projected) {
   # extent_projected <- sf::st_transform(sf::st_as_sfc(extent_projected),
   #                                      crs = "ESRI:54012")
 
-  # Attempt to perform cropping for efficiency FIRST
-  # If it fails, validate first
+  # Crop layer to the extent for efficiency
+  # Use st_crop directly on the sf object to preserve individual features
+  # (previous group_by/reframe approach destroyed per-country geometries)
+  sf::st_agr(layer_raw) <- "constant"
   processed_layer <- tryCatch({
-    layer_raw %>%
-  #    sf::st_transform(crs = "ESRI:54012") %>%
-      dplyr::group_by(scalerank, featurecla) %>%
-      dplyr::reframe(geometry = suppressMessages(
-        sf::st_crop(geometry, extent_projected))
-      )%>%
-      sf::st_as_sf()
+    suppressMessages(sf::st_crop(layer_raw, extent_projected))
   }, error = function(e) {
     layer_raw %>%
       sf::st_make_valid() %>%
-   #   sf::st_transform(crs = "ESRI:54012") %>%
-      dplyr::group_by(scalerank, featurecla) %>%
-      dplyr::reframe(geometry = suppressMessages(
-        sf::st_crop(geometry, extent_projected))
-      )%>%
-      sf::st_as_sf()
+      suppressMessages(sf::st_crop(extent_projected))
   })
 
-  # Then validate and filter (on the now smaller dataset)
+  # Filter out empty geometries
   processed_layer <- processed_layer %>%
-   # sf::st_make_valid() %>%
-    dplyr::filter(!sf::st_is_empty(geometry)) # Filter out empty geometries
+    dplyr::filter(!sf::st_is_empty(geometry))
 
   return(processed_layer)
 }

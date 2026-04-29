@@ -54,8 +54,133 @@ calc_map.hill2 <- function(x, ...) {
                   meant to be called directly.", inherits(x, "hill2"))
 
   indicator <- calc_map_hill_core(x = x, type = "hill2", ...)
+  return(indicator)
+
+}
+
+#' @param occ_type Integer controlling the occupancy denominator (default `0`):
+#'   * `0` — **Total-area occupancy**: number of grid cells occupied by the
+#'     species (across all years) / total number of grid cells in the study
+#'     region (including unsampled cells). *Presence-only caveat*: empty cells
+#'     cannot be assumed truly unoccupied; they may simply be unsampled.
+#'   * `1` — **Relative-to-ever-occupied occupancy**: species' cells / cells
+#'     with *at least one occurrence (any species, any year)*. Conditions on
+#'     cells where sampling effort is documented.
+#'   * `2` — **Temporal mean annual occupancy**: for each year, compute the
+#'     proportion of that year's occupied cells (any species) in which the
+#'     species was recorded; then average those annual proportions across all
+#'     years in the data. This captures how consistently a species occupies the
+#'     active sampling footprint over time.
+#'
+#'   **Note on presence-only data**: All three types rely on presence-only
+#'   records. A cell with no records cannot be assumed to be truly unoccupied.
+#'   Types 1 and 2 condition on cells with documented occurrences, but those
+#'   still reflect sampling effort rather than true species absence.
+#'
+#'   **Note on cell aggregation**: When a coarser `cell_size` is chosen, data
+#'   are aggregated to coarser grid cells before this calculation. All
+#'   denominators count post-aggregation cells (`cellid`).
+#' @export
+#' @rdname calc_map
+calc_map.relative_occupancy <- function(x, occ_type = 0, ...) {
+
+  stopifnot_error("Wrong data class. This is an internal function and is not
+                  meant to be called directly.", inherits(x, "relative_occupancy"))
+
+  if (!occ_type %in% c(0L, 1L, 2L)) {
+    stop("`occ_type` must be 0, 1, or 2.")
+  }
+
+  cellid <- taxonKey <- scientificName <- diversity_val <- cellCode <- NULL
+  year <- species_cells_yr <- n_occ_cells_yr <- annual_prop <- NULL
+
+  if (occ_type == 0L) {
+    # -------------------------------------------------------------------------
+    # Type 0: denominator = total grid cells in study region (original behaviour)
+    # -------------------------------------------------------------------------
+    total_num_cells <- attr(x, "total_num_cells")
+    if (is.null(total_num_cells)) {
+      stop(paste0(
+        "total_num_cells attribute not found. ",
+        "Cannot calculate relative occupancy with occ_type = 0."
+      ))
+    }
+
+    # Count distinct cells occupied by each species (across all years)
+    occupied_cells <- x %>%
+      dplyr::distinct(cellid, scientificName) %>%
+      dplyr::count(scientificName, name = "occupied_cells")
+
+    indicator <- occupied_cells %>%
+      dplyr::mutate(diversity_val = occupied_cells / total_num_cells) %>%
+      dplyr::left_join(
+        x %>% dplyr::distinct(cellid, cellCode, scientificName, taxonKey),
+        by = "scientificName"
+      ) %>%
+      dplyr::select(cellid, cellCode, taxonKey, scientificName, diversity_val) %>%
+      dplyr::arrange(cellid)
+
+  } else if (occ_type == 1L) {
+    # -------------------------------------------------------------------------
+    # Type 1: denominator = cells with >= 1 occurrence (any species, any year)
+    # -------------------------------------------------------------------------
+    ever_occupied <- dplyr::n_distinct(x$cellid)
+
+    occupied_cells <- x %>%
+      dplyr::distinct(cellid, scientificName) %>%
+      dplyr::count(scientificName, name = "occupied_cells")
+
+    indicator <- occupied_cells %>%
+      dplyr::mutate(diversity_val = occupied_cells / ever_occupied) %>%
+      dplyr::left_join(
+        x %>% dplyr::distinct(cellid, cellCode, scientificName, taxonKey),
+        by = "scientificName"
+      ) %>%
+      dplyr::select(cellid, cellCode, taxonKey, scientificName, diversity_val) %>%
+      dplyr::arrange(cellid)
+
+  } else {
+    # -------------------------------------------------------------------------
+    # Type 2: temporal mean annual occupancy.
+    # For each year, count cells with >= 1 record (any species) as the
+    # denominator; count cells with >= 1 record for the focal species as the
+    # numerator. Compute the annual proportion, then average across years.
+    # The map value for each species is the temporal mean of those proportions.
+    #
+    # Presence-only caveat: the denominator reflects annual recording footprint,
+    # not true sampling effort; years with slim data may dominate the average.
+    # -------------------------------------------------------------------------
+    # Number of cells with any occurrence in each year
+    active_cells_per_year <- x %>%
+      dplyr::distinct(year, cellid) %>%
+      dplyr::count(year, name = "n_occ_cells_yr")
+
+    # Number of cells per species per year
+    species_cells_per_year <- x %>%
+      dplyr::distinct(year, cellid, scientificName, taxonKey) %>%
+      dplyr::count(year, scientificName, taxonKey, name = "species_cells_yr")
+
+    # Annual proportion then temporal mean per species
+    species_mean_prop <- species_cells_per_year %>%
+      dplyr::left_join(active_cells_per_year, by = "year") %>%
+      dplyr::mutate(annual_prop = species_cells_yr / n_occ_cells_yr) %>%
+      dplyr::summarise(
+        diversity_val = mean(annual_prop, na.rm = TRUE),
+        .by = c(scientificName, taxonKey)
+      )
+
+    # Join back to the cell-level data to produce one row per species x cell
+    indicator <- species_mean_prop %>%
+      dplyr::left_join(
+        x %>% dplyr::distinct(cellid, cellCode, scientificName, taxonKey),
+        by = c("scientificName", "taxonKey")
+      ) %>%
+      dplyr::select(cellid, cellCode, taxonKey, scientificName, diversity_val) %>%
+      dplyr::arrange(cellid)
+  }
 
   return(indicator)
+
 }
 
 #' @export

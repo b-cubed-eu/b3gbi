@@ -741,6 +741,11 @@ mock_occ_turnover <- structure(list(data = mock_data,
                                     first_year = 2001,
                                     last_year = 2005),
                                class = c("indicator_ts", "occ_turnover"))
+mock_relative_occupancy <- structure(list(data = mock_data,
+                                          first_year = 2001,
+                                          last_year = 2005),
+                                     class = c("indicator_ts",
+                                               "relative_occupancy"))
 
 # Same invalid mock object for all error tests
 mock_invalid_object <- list(a = 1, b = 2)
@@ -839,5 +844,12 @@ test_that("plot.obs_richness handles valid input and class", {
 test_that("plot.occ_turnover handles valid input and class", {
   expect_silent(plot.occ_turnover(mock_occ_turnover))
   expect_error(plot.occ_turnover(mock_invalid_object),
+               "Incorrect object class.")
+})
+
+test_that("plot.relative_occupancy handles valid input and class", {
+  expect_silent(plot.relative_occupancy(mock_relative_occupancy,
+                                        species = 101))
+  expect_error(plot.relative_occupancy(mock_invalid_object, species = 101),
                "Incorrect object class.")
 })
