@@ -23,7 +23,7 @@ appropriate wrappers."><meta property="og:image" content="https://b-cubed-eu.git
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.17</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.19</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -46,7 +46,7 @@ appropriate wrappers."><meta property="og:image" content="https://b-cubed-eu.git
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Calculate Biodiversity Indicators Over Space</h1>
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.8.18/R/calc_map_methods.R" class="external-link"><code>R/calc_map_methods.R</code></a>, <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.8.18/R/generic_functions.R" class="external-link"><code>R/generic_functions.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/R/calc_map_methods.R" class="external-link"><code>R/calc_map_methods.R</code></a>, <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/R/generic_functions.R" class="external-link"><code>R/generic_functions.R</code></a></small>
       <div class="d-none name"><code>calc_map.Rd</code></div>
     </div>
 
@@ -72,6 +72,9 @@ appropriate wrappers.</p>
 <span></span>
 <span><span class="co"># S3 method for class 'hill2'</span></span>
 <span><span class="fu">calc_map</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S3 method for class 'relative_occupancy'</span></span>
+<span><span class="fu">calc_map</span><span class="op">(</span><span class="va">x</span>, occ_type <span class="op">=</span> <span class="fl">0</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S3 method for class 'obs_richness'</span></span>
 <span><span class="fu">calc_map</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
@@ -125,6 +128,28 @@ appropriate wrappers.</p>
 functions.</p></dd>
 
 
+<dt id="arg-occ-type">occ_type<a class="anchor" aria-label="anchor" href="#arg-occ-type"></a></dt>
+<dd><p>Integer controlling the occupancy denominator (default <code>0</code>):</p><ul><li><p><code>0</code> — <strong>Total-area occupancy</strong>: number of grid cells occupied by the
+species (across all years) / total number of grid cells in the study
+region (including unsampled cells). <em>Presence-only caveat</em>: empty cells
+cannot be assumed truly unoccupied; they may simply be unsampled.</p></li>
+<li><p><code>1</code> — <strong>Relative-to-ever-occupied occupancy</strong>: species' cells / cells
+with <em>at least one occurrence (any species, any year)</em>. Conditions on
+cells where sampling effort is documented.</p></li>
+<li><p><code>2</code> — <strong>Temporal mean annual occupancy</strong>: for each year, compute the
+proportion of that year's occupied cells (any species) in which the
+species was recorded; then average those annual proportions across all
+years in the data. This captures how consistently a species occupies the
+active sampling footprint over time.</p></li>
+</ul><p><strong>Note on presence-only data</strong>: All three types rely on presence-only
+records. A cell with no records cannot be assumed to be truly unoccupied.
+Types 1 and 2 condition on cells with documented occurrences, but those
+still reflect sampling effort rather than true species absence.</p>
+<p><strong>Note on cell aggregation</strong>: When a coarser <code>cell_size</code> is chosen, data
+are aggregated to coarser grid cells before this calculation. All
+denominators count post-aggregation cells (<code>cellid</code>).</p></dd>
+
+
 <dt id="arg-newness-min-year">newness_min_year<a class="anchor" aria-label="anchor" href="#arg-newness-min-year"></a></dt>
 <dd><p>(Optional) If set, only shows values above this
 (e.g. 1970). Values below the minimum will be replaced with NA. This can be
@@ -144,8 +169,6 @@ indicator values and metadata.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">observed_richness_map</span> <span class="op">&lt;-</span> <span class="fu"><a href="obs_richness_map.html">obs_richness_map</a></span><span class="op">(</span><span class="va">example_cube_1</span>, level <span class="op">=</span> <span class="st">"country"</span>,</span></span>
 <span class="r-in"><span>                                          region <span class="op">=</span> <span class="st">"Denmark"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">observed_richness_map</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'x' is NULL so the result will be NULL</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'x' is NULL so the result will be NULL</span>
 <span class="r-plt img"><img src="calc_map-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

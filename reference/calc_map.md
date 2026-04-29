@@ -22,6 +22,9 @@ calc_map(x, ...)
 # S3 method for class 'hill2'
 calc_map(x, ...)
 
+# S3 method for class 'relative_occupancy'
+calc_map(x, occ_type = 0, ...)
+
 # S3 method for class 'obs_richness'
 calc_map(x, ...)
 
@@ -72,6 +75,36 @@ calc_map(x, ...)
   Additional arguments passed to specific indicator calculation
   functions.
 
+- occ_type:
+
+  Integer controlling the occupancy denominator (default `0`):
+
+  - `0` — **Total-area occupancy**: number of grid cells occupied by the
+    species (across all years) / total number of grid cells in the study
+    region (including unsampled cells). *Presence-only caveat*: empty
+    cells cannot be assumed truly unoccupied; they may simply be
+    unsampled.
+
+  - `1` — **Relative-to-ever-occupied occupancy**: species' cells /
+    cells with *at least one occurrence (any species, any year)*.
+    Conditions on cells where sampling effort is documented.
+
+  - `2` — **Temporal mean annual occupancy**: for each year, compute the
+    proportion of that year's occupied cells (any species) in which the
+    species was recorded; then average those annual proportions across
+    all years in the data. This captures how consistently a species
+    occupies the active sampling footprint over time.
+
+  **Note on presence-only data**: All three types rely on presence-only
+  records. A cell with no records cannot be assumed to be truly
+  unoccupied. Types 1 and 2 condition on cells with documented
+  occurrences, but those still reflect sampling effort rather than true
+  species absence.
+
+  **Note on cell aggregation**: When a coarser `cell_size` is chosen,
+  data are aggregated to coarser grid cells before this calculation. All
+  denominators count post-aggregation cells (`cellid`).
+
 - newness_min_year:
 
   (Optional) If set, only shows values above this (e.g. 1970). Values
@@ -91,7 +124,5 @@ indicator values and metadata.
 observed_richness_map <- obs_richness_map(example_cube_1, level = "country",
                                           region = "Denmark")
 plot(observed_richness_map)
-#> Warning: 'x' is NULL so the result will be NULL
-#> Warning: 'x' is NULL so the result will be NULL
 
 ```

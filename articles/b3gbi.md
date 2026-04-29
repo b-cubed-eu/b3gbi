@@ -237,64 +237,71 @@ available_indicators
 #>     Class: tax_distinct
 #>     Calculate map: yes, e.g. tax_distinct_map(my_data_cube)
 #>     Calculate time series: yes, e.g. tax_distinct_ts(my_data_cube)
-#>     Additional map function arguments: NA
-#>     Additional time series function arguments: NA
+#>     Additional map function arguments: rows
+#>     Additional time series function arguments: rows
 #> 
 #> 11. Species Richness (Estimated by Coverage-Based Rarefaction)
 #>     Class: hill0
 #>     Calculate map: yes, e.g. hill0_map(my_data_cube)
 #>     Calculate time series: yes, e.g. hill0_ts(my_data_cube)
-#>     Additional map function arguments: cutoff_length, coverage
-#>     Additional time series function arguments: cutoff_length, coverage
+#>     Additional map function arguments: cutoff_length, coverage, conf_level, data_type, assume_freq
+#>     Additional time series function arguments: cutoff_length, coverage, conf_level, data_type, assume_freq
 #> 
 #> 12. Hill-Shannon Diversity (Estimated by Coverage-Based Rarefaction)
 #>     Class: hill1
 #>     Calculate map: yes, e.g. hill1_map(my_data_cube)
 #>     Calculate time series: yes, e.g. hill1_ts(my_data_cube)
-#>     Additional map function arguments: cutoff_length, coverage
-#>     Additional time series function arguments: cutoff_length, coverage
+#>     Additional map function arguments: cutoff_length, coverage, conf_level, data_type, assume_freq
+#>     Additional time series function arguments: cutoff_length, coverage, conf_level, data_type, assume_freq
 #> 
 #> 13. Hill-Simpson Diversity (Estimated by Coverage-Based Rarefaction)
 #>     Class: hill2
 #>     Calculate map: yes, e.g. hill2_map(my_data_cube)
 #>     Calculate time series: yes, e.g. hill2_ts(my_data_cube)
-#>     Additional map function arguments: cutoff_length, coverage
-#>     Additional time series function arguments: cutoff_length, coverage
+#>     Additional map function arguments: cutoff_length, coverage, conf_level, data_type, assume_freq
+#>     Additional time series function arguments: cutoff_length, coverage, conf_level, data_type, assume_freq
 #> 
 #> 14. Species Occurrences
 #>     Class: spec_occ
 #>     Calculate map: yes, e.g. spec_occ_map(my_data_cube)
 #>     Calculate time series: yes, e.g. spec_occ_ts(my_data_cube)
-#>     Additional map function arguments: none
-#>     Additional time series function arguments: none
+#>     Additional map function arguments: NA
+#>     Additional time series function arguments: NA
 #> 
 #> 15. Species Range
 #>     Class: spec_range
 #>     Calculate map: yes, e.g. spec_range_map(my_data_cube)
 #>     Calculate time series: yes, e.g. spec_range_ts(my_data_cube)
-#>     Additional map function arguments: none
-#>     Additional time series function arguments: none
+#>     Additional map function arguments: NA
+#>     Additional time series function arguments: NA
 #> 
 #> 16. Occupancy Turnover
 #>     Class: occ_turnover
 #>     Calculate map: no
 #>     Calculate time series: yes, e.g. occ_turnover_ts(my_data_cube)
-#>     Additional map function arguments: none
-#>     Additional time series function arguments: none
+#>     Additional map function arguments: NA
+#>     Additional time series function arguments: NA
 #> 
 #> 17. Species Richness Density
 #>     Class: spec_richness_density
 #>     Calculate map: yes, e.g. spec_richness_density_map(my_data_cube)
 #>     Calculate time series: yes, e.g. spec_richness_density_ts(my_data_cube)
-#>     Additional map function arguments: none
-#>     Additional time series function arguments: none
+#>     Additional map function arguments: NA
+#>     Additional time series function arguments: NA
 #> 
 #> 18. Completeness (Sample Coverage)
 #>     Class: completeness
 #>     Calculate map: yes, e.g. completeness_map(my_data_cube)
 #>     Calculate time series: yes, e.g. completeness_ts(my_data_cube)
-#>     Additional map function arguments: none
-#>     Additional time series function arguments: none
+#>     Additional map function arguments: cutoff_length, data_type, assume_freq
+#>     Additional time series function arguments: cutoff_length, data_type, assume_freq, gridded_average
+#> 
+#> 19. Species Relative Occupancy
+#>     Class: relative_occupancy
+#>     Calculate map: yes, e.g. relative_occupancy_map(my_data_cube)
+#>     Calculate time series: yes, e.g. relative_occupancy_ts(my_data_cube)
+#>     Additional map function arguments: NA
+#>     Additional time series function arguments: NA
 ```
 
 ### Core Arguments for Wrapper Functions
@@ -342,7 +349,8 @@ The result is an `indicator_map` object (the data within it is also an
 class(Denmark_observed_richness_map)
 #> [1] "indicator_map" "obs_richness"
 class(Denmark_observed_richness_map$data)
-#> [1] "indicator_data" "sf"             "data.frame"
+#> [1] "indicator_data" "sf"             "tbl_df"         "tbl"           
+#> [5] "data.frame"
 ```
 
 ### Example: Total Occurrences Time Series
@@ -391,10 +399,6 @@ plot(Denmark_observed_richness_map,
   legend_title = "Mammal Species Count",
   title = "Observed Mammal Richness (1980-Present)"
 )
-#> Warning in rep(pch, length.out = length(x)): 'x' is NULL so the result will be
-#> NULL
-#> Warning in rep(pch, length.out = length(x)): 'x' is NULL so the result will be
-#> NULL
 ```
 
 ![](b3gbi_files/figure-html/plot-map-1.png)

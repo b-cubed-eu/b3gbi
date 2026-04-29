@@ -21,7 +21,7 @@ types are provided using the appropriate wrappers."><meta property="og:image" co
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.17</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.19</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,7 +44,7 @@ types are provided using the appropriate wrappers."><meta property="og:image" co
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Calculate Biodiversity Indicators Over Time</h1>
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.8.18/R/calc_ts_methods.R" class="external-link"><code>R/calc_ts_methods.R</code></a>, <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.8.18/R/generic_functions.R" class="external-link"><code>R/generic_functions.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/R/calc_ts_methods.R" class="external-link"><code>R/calc_ts_methods.R</code></a>, <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/R/generic_functions.R" class="external-link"><code>R/generic_functions.R</code></a></small>
       <div class="d-none name"><code>calc_ts.Rd</code></div>
     </div>
 
@@ -109,6 +109,9 @@ types are provided using the appropriate wrappers.</p>
 <span><span class="co"># S3 method for class 'spec_range'</span></span>
 <span><span class="fu">calc_ts</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># S3 method for class 'relative_occupancy'</span></span>
+<span><span class="fu">calc_ts</span><span class="op">(</span><span class="va">x</span>, occ_type <span class="op">=</span> <span class="fl">0</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># S3 method for class 'tax_distinct'</span></span>
 <span><span class="fu">calc_ts</span><span class="op">(</span><span class="va">x</span>, set_rows <span class="op">=</span> <span class="fl">1</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
@@ -129,6 +132,33 @@ types are provided using the appropriate wrappers.</p>
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Additional arguments passed to specific indicator calculation
 functions.</p></dd>
+
+
+<dt id="arg-occ-type">occ_type<a class="anchor" aria-label="anchor" href="#arg-occ-type"></a></dt>
+<dd><p>Integer controlling the occupancy denominator (default <code>0</code>):</p><ul><li><p><code>0</code> — <strong>Total-area occupancy</strong>: number of cells occupied by species /
+total number of grid cells in the study region (including unsampled
+cells). This is the most conservative measure. <em>Presence-only caveat</em>:
+empty cells cannot be assumed to be truly unoccupied; they may simply
+lack sampling effort.</p></li>
+<li><p><code>1</code> — <strong>Relative-to-ever-occupied occupancy</strong>: number of cells occupied
+by species / number of cells with <em>at least one occurrence (any species)
+anywhere in the time window</em>. This conditions on cells where some
+sampling effort is documented but the denominator is still constant
+across years.</p></li>
+<li><p><code>2</code> — <strong>Annual occupancy</strong>: for each year, number of cells occupied by
+species / number of cells with at least one occurrence (any species) <em>in
+that year</em>. The denominator therefore varies by year, reflecting changes
+in sampling footprint over time.</p></li>
+</ul><p><strong>Note on presence-only data</strong>: All three types are computed from
+presence-only occurrence data. A cell with no records cannot be assumed
+to be truly unoccupied; it may be unsampled or under-surveyed. Types 1
+and 2 partially address this by restricting the denominator to cells
+with documented occurrences, but they still reflect <em>recording effort</em>
+rather than true absence. Interpret all types with care.</p>
+<p><strong>Note on cell aggregation</strong>: When a coarser <code>cell_size</code> is chosen, data
+are aggregated to coarser grid cells before this calculation. The
+denominator counts post-aggregation cells (<code>cellid</code>), not original cube
+cells (<code>cellCode</code>).</p></dd>
 
 
 <dt id="arg-set-rows">set_rows<a class="anchor" aria-label="anchor" href="#arg-set-rows"></a></dt>

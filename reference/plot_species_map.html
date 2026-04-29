@@ -21,7 +21,7 @@ plot_map() function instead."><meta property="og:image" content="https://b-cubed
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.17</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.19</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,7 +44,7 @@ plot_map() function instead."><meta property="og:image" content="https://b-cubed
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Plot Occurrence Map or Range Map of Individual Species</h1>
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.8.18/R/plot_species_map.R" class="external-link"><code>R/plot_species_map.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/R/plot_species_map.R" class="external-link"><code>R/plot_species_map.R</code></a></small>
       <div class="d-none name"><code>plot_species_map.Rd</code></div>
     </div>
 
@@ -79,9 +79,7 @@ multi-species indicators (e.g., species richness or evenness), use the
 <span>  land_fill_colour <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  grid_fill_colour <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  grid_line_colour <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  grid_outline_colour <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  grid_line_width <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  grid_outline_width <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  grid_fill_transparency <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  grid_line_transparency <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  legend_title <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -90,9 +88,7 @@ multi-species indicators (e.g., species richness or evenness), use the
 <span>  title_wrap_length <span class="op">=</span> <span class="fl">60</span>,</span>
 <span>  spec_name_wrap_length <span class="op">=</span> <span class="fl">40</span>,</span>
 <span>  visible_gridlines <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  visible_grid_outline <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  visible_panel_gridlines <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  complete_grid_outline <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  map_expansion_factor <span class="op">=</span> <span class="fl">0.5</span>,</span>
 <span>  layers <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  layer_colours <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -214,19 +210,8 @@ grid cells will be coloured according to their indicator value). Default is
 effect.</p></dd>
 
 
-<dt id="arg-grid-outline-colour">grid_outline_colour<a class="anchor" aria-label="anchor" href="#arg-grid-outline-colour"></a></dt>
-<dd><p>(Optional) Colour for the grid outline. Default is
-"black". If visible_grid_outline is set to FALSE, this setting will have no
-effect.</p></dd>
-
-
 <dt id="arg-grid-line-width">grid_line_width<a class="anchor" aria-label="anchor" href="#arg-grid-line-width"></a></dt>
 <dd><p>(Optional) Width of the grid lines. Default is 0.1.</p></dd>
-
-
-<dt id="arg-grid-outline-width">grid_outline_width<a class="anchor" aria-label="anchor" href="#arg-grid-outline-width"></a></dt>
-<dd><p>(Optional) Width of the grid outline. Default is
-0.5.</p></dd>
 
 
 <dt id="arg-grid-fill-transparency">grid_fill_transparency<a class="anchor" aria-label="anchor" href="#arg-grid-fill-transparency"></a></dt>
@@ -271,19 +256,9 @@ wrapping to a new line. Default: 40 characters.</p></dd>
 TRUE.</p></dd>
 
 
-<dt id="arg-visible-grid-outline">visible_grid_outline<a class="anchor" aria-label="anchor" href="#arg-visible-grid-outline"></a></dt>
-<dd><p>(Optional) Show outline around grid. Default is
-FALSE.</p></dd>
-
-
 <dt id="arg-visible-panel-gridlines">visible_panel_gridlines<a class="anchor" aria-label="anchor" href="#arg-visible-panel-gridlines"></a></dt>
 <dd><p>(Optional) Show ggplot panel gridlines.
 Default is FALSE.</p></dd>
-
-
-<dt id="arg-complete-grid-outline">complete_grid_outline<a class="anchor" aria-label="anchor" href="#arg-complete-grid-outline"></a></dt>
-<dd><p>(Optional) If TRUE, the grid outline will be
-extended as a complete rectangle, even if the grid is not. Default is FALSE.</p></dd>
 
 
 <dt id="arg-map-expansion-factor">map_expansion_factor<a class="anchor" aria-label="anchor" href="#arg-map-expansion-factor"></a></dt>

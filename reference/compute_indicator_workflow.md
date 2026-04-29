@@ -69,6 +69,8 @@ compute_indicator_workflow(
 
   - 'spec_occ': Species occurrences.
 
+  - 'relative_occupancy': Species relative occupancy.
+
   - 'tax_distinct': Taxonomic distinctness.
 
   - 'hill0': Species richness (estimated by coverage-based rarefaction).
@@ -244,10 +246,10 @@ diversity_map
 #> 
 #> Coordinate range:
 #>      xmin      ymin      xmax      ymax 
-#>  8.016236 54.628857 15.272695 57.736914 
+#>  8.040572 54.750000 15.188939 57.736925 
 #> 
 #> Grid cell size: 0.25 degrees 
-#> Number of cells: 299 
+#> Number of cells: 200 
 #> 
 #> Observation years: 1862 - 2024 
 #> Total years with observations: 126 
@@ -262,17 +264,17 @@ diversity_map
 #> First 10 rows of data (use n = to show more):
 #> 
 #> # A tibble: 200 × 4
-#>    cellid   area cellCode  diversity_val
-#>     <int> [km^2] <chr>             <int>
-#>  1    129   446. E010N54AB            13
-#>  2    137   446. E012N54AB            28
-#>  3    138   446. E012N54BA            32
-#>  4    172   443. E008N55DC            32
-#>  5    173   443. E008N55DD            33
-#>  6    174   443. E009N55CC            21
-#>  7    178   443. E010N55CC            25
-#>  8    179   443. E010N55CD            31
-#>  9    180   443. E010N55DC            39
-#> 10    182   443. E011N55CC            21
+#>    cellCode  cellid   area diversity_val
+#>    <chr>      <int> [km^2]         <int>
+#>  1 E008N54BA    178   344.            20
+#>  2 E008N55AA    126   261.            21
+#>  3 E008N55AB    110   434.            35
+#>  4 E008N55AC     58   293.            39
+#>  5 E008N55AD     59   436.            37
+#>  6 E008N55BA    185   434.            31
+#>  7 E008N55BB     60   434.            25
+#>  8 E008N55BC    141   436.            30
+#>  9 E008N55BD     61   436.            27
+#> 10 E008N55CA    127   324.             2
 #> # ℹ 190 more rows
 ```

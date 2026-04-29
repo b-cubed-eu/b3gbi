@@ -1,21 +1,16 @@
-# Calculate Completeness (Sample Coverage) Over Space or Time
+# Calculate Species Relative Occupancy Over Space or Time
 
-This function calculates the completeness of biodiversity data over a
-gridded map or as a time series using the Sample Coverage metric from
-the iNEXT package.
+Calculate the relative occupancy of each species — the proportion of
+grid cells in which it has been recorded — either as a gridded map or as
+a time series. Three denominator definitions are available via the
+`occ_type` parameter (see 'Details').
 
 ## Usage
 
 ``` r
-completeness_map(
-  data,
-  cutoff_length = 5,
-  data_type = c("incidence", "abundance"),
-  assume_freq = FALSE,
-  ...
-)
+relative_occupancy_map(data, occ_type = 0, ...)
 
-completeness_ts(data, cutoff_length = 5, gridded_average = FALSE, ...)
+relative_occupancy_ts(data, occ_type = 0, ...)
 ```
 
 ## Arguments
@@ -24,19 +19,21 @@ completeness_ts(data, cutoff_length = 5, gridded_average = FALSE, ...)
 
   A data cube object (class 'processed_cube').
 
-- cutoff_length:
+- occ_type:
 
-  (Optional) The minimum number of species or observations required for
-  a grid cell or time point to be included. Default is 5.
+  Integer controlling the occupancy denominator. One of:
 
-- data_type:
+  - `0` (default) — Total-area occupancy: denominator is all grid cells
+    in the study region (including those with no records).
 
-  The type of data: "incidence" or "abundance". Default is "incidence".
+  - `1` — Ever-occupied occupancy: denominator is the number of cells
+    with at least one occurrence (any species) anywhere in the time
+    window.
 
-- assume_freq:
-
-  (Optional) Whether to assume frequency data if using incidence.
-  Default is FALSE.
+  - `2` — Annual occupancy: for time series, the denominator is the
+    number of cells with at least one occurrence (any species) *in that
+    year*; for maps, the per-year proportion is computed and then
+    averaged across years.
 
 - ...:
 
@@ -177,56 +174,124 @@ completeness_ts(data, cutoff_length = 5, gridded_average = FALSE, ...)
       diversity, and is forced on by indicators that require it.
       (Default: FALSE)
 
-- gridded_average:
-
-  (Optional) For time series, calculate completeness for each grid cell
-  and average the results, rather than calculating for the entire area
-  at once. Default is FALSE.
-
 ## Value
 
 An S3 object with the classes 'indicator_map' or 'indicator_ts' and
-'completeness' containing the calculated indicator values and metadata.
+'relative_occupancy' containing:
+
+- **cellid** (map) or **year** (ts): spatial or temporal identifier.
+
+- **cellCode**: grid cell codes (map only; if available).
+
+- **taxonKey**: GBIF taxon keys.
+
+- **scientificName**: Species scientific names.
+
+- **diversity_val**: Relative occupancy value in \\\[0, 1\]\\.
 
 ## Details
 
-### Completeness (Sample Coverage)
+### Relative occupancy
 
-Completeness is measured as **Sample Coverage**, a concept developed by
-Turing and Good (1953) and further popularized in ecology by Chao and
-Jost (2012). Sample coverage estimates the proportion of the total
-individuals in an ecological community that belong to the species
-detected in a sample.
+Relative occupancy quantifies how widely distributed a species is within
+a study region, expressed as a proportion (0–1). The numerator is always
+the number of post-aggregation grid cells (`cellid`) in which the
+species has at least one recorded occurrence. The denominator depends on
+`occ_type`:
 
-A coverage value of 1.0 indicates that no new species are expected to be
-uncovered through further sampling, meaning the sample is perfectly
-complete. A value of 0.8, for example, suggests that 20% of the
-individuals in the community belong to species that have not yet been
-detected in the sample.
+|            |                                   |                                                     |
+|------------|-----------------------------------|-----------------------------------------------------|
+| `occ_type` | Name                              | Denominator                                         |
+| `0`        | Total-area                        | All grid cells in region (constant)                 |
+| `1`        | Ever-occupied                     | Cells with ≥ 1 occurrence, any species, full window |
+| `2`        | Annual (TS) / Temporal mean (map) | Cells with ≥ 1 occ in *that year*                   |
 
-Calculating sample coverage is a prerequisite for reliable comparisons
-of biodiversity across different areas or time periods, as it provides a
-standardized measure of sample completeness that is independent of
-sample size alone (Chao et al., 2014).
+**Type 0** is the most conservative and comparable across different data
+cubes because the denominator is fixed by the grid definition. A low
+value means the species occupies few cells relative to the entire
+region; however, empty cells cannot be assumed truly unoccupied — they
+may be under-sampled or simply not yet visited.
 
-In this package, completeness is calculated using the `iNEXT` package
-based on the observed data in each grid cell or time point.
+**Type 1** restricts the denominator to cells where *any* occurrence was
+recorded across the full time window, conditioning on cells with
+documented sampling effort. Values will always be \\\geq\\ the
+corresponding Type 0 value (since the denominator is smaller). Useful
+when you wish to compare species occupancy within the subset of cells
+that have been at least partially surveyed.
+
+**Type 2** further restricts the denominator *within each year* (for
+time series) to cells active in that year. For maps, the annual
+proportion is computed first and then averaged across years (temporal
+mean). This is the most dynamic measure, as both numerator and
+denominator can vary per year, reflecting inter-annual changes in
+sampling footprint.
+
+### Presence-only data caveat
+
+These cubes contain presence-only data. An empty cell does **not** imply
+that a species was absent — it may simply reflect lack of sampling in
+that cell. Types 1 and 2 partially address this by conditioning on cells
+where at least one occurrence was recorded, but those cells still only
+document where observers were active, not where species were
+definitively absent. All three types should be interpreted as *recorded*
+occupancy, not true occupancy.
+
+### Cell aggregation
+
+When `cell_size` is coarser than the native cube resolution, the data
+are first aggregated to the coarser grid (internally via
+`aggregate_data_to_coarser_grid()`). All denominators are computed on
+the post-aggregation `cellid` (not the original `cellCode`). This
+ensures the indicator is consistent with the resolution at which it is
+displayed.
 
 ## Functions
 
-- `completeness_map()`:
+- `relative_occupancy_map()`: Calculate relative occupancy as a gridded
+  map.
 
-- `completeness_ts()`:
+- `relative_occupancy_ts()`: Calculate relative occupancy as a time
+  series.
+
+## References
+
+Sax, D. F., & Gaines, S. D. (2003). Species diversity: from global
+decreases to local increases. *Trends in Ecology & Evolution*, 18(11),
+561–566.
+
+## See also
+
+compute_indicator_workflow
 
 ## Examples
 
 ``` r
 if (FALSE) { # \dontrun{
-comp_map <- completeness_map(example_cube_1)
-plot(comp_map)
+# Type 0: proportion of all grid cells
+ro_map <- relative_occupancy_map(example_cube_1,
+  level = "country", region = "Denmark", occ_type = 0
+)
+plot(ro_map, c(2440728, 4265185))
+
+# Type 1: proportion of ever-occupied cells
+ro_map_1 <- relative_occupancy_map(example_cube_1,
+  level = "country", region = "Denmark", occ_type = 1
+)
+
+# Type 2: temporal mean annual occupancy
+ro_map_2 <- relative_occupancy_map(example_cube_1,
+  level = "country", region = "Denmark", occ_type = 2
+)
 } # }
 if (FALSE) { # \dontrun{
-comp_ts <- completeness_ts(example_cube_1, first_year = 1985)
-plot(comp_ts)
+# Type 0: proportion of all grid cells (default)
+ro_ts <- relative_occupancy_ts(example_cube_1, occ_type = 0)
+plot(ro_ts, c(2440728, 4265185))
+
+# Type 1: proportion of ever-occupied cells (constant denominator)
+ro_ts_1 <- relative_occupancy_ts(example_cube_1, occ_type = 1)
+
+# Type 2: proportion of cells active that year (varying denominator)
+ro_ts_2 <- relative_occupancy_ts(example_cube_1, occ_type = 2)
 } # }
 ```
