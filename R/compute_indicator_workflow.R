@@ -196,7 +196,7 @@ compute_indicator_workflow <- function(data,
   }
 
   # Null assignments
-  xcoord <- ycoord <- ll <- ul <- NULL
+  xcoord <- ycoord <- ll <- ul <- cellCode <- cellid <- geometry <- NULL
 
   # Check for empty cube
   if (nrow(data$data) == 0) {
@@ -862,15 +862,23 @@ compute_indicator_workflow <- function(data,
       # and visual artifacts (like opaque layers or internal lines).
       if (!is.null(clipped_grid) && nrow(clipped_grid) > 0) {
         clipped_grid <- clipped_grid[!sf::st_is_empty(clipped_grid), ]
-        
+
+        # Build summarize expressions, preserving 'area' if present
+        has_area <- "area" %in% names(clipped_grid)
         clipped_grid <- clipped_grid %>%
           dplyr::group_by(cellCode) %>%
           dplyr::summarize(
             cellid = dplyr::first(cellid),
+            area = if (has_area) dplyr::first(area) else NULL,
             geometry = sf::st_union(geometry),
             .groups = "drop"
           ) %>%
           sf::st_make_valid()
+
+        # Remove the NULL area column if it wasn't present
+        if (!has_area && "area" %in% names(clipped_grid)) {
+          clipped_grid$area <- NULL
+        }
       }
     }
 
