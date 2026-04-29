@@ -277,10 +277,11 @@ get_ne_data <- function(projected_crs,
       map_data_combined <- tryCatch({
         sf::st_buffer(map_data_projected, dist = 100) %>% 
           sf::st_make_valid() %>% 
-          sf::st_union()
+          sf::st_union() %>%
+          sf::st_as_sf()
       }, error = function(e) {
         warning("Map data union failed: ", e$message)
-        map_data_projected
+        sf::st_as_sf(map_data_projected)
       })
     } else {
       map_data_combined <- map_data_projected
