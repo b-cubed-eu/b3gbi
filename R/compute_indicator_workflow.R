@@ -476,8 +476,10 @@ compute_indicator_workflow <- function(data,
     if (data$grid_type == "mgrs") {
       df_sf_input <- create_sf_from_utm(df, "EPSG:4326")
     } else if (data$grid_type == "eea") {
-      res_size <- as.numeric(stringr::str_extract(df$resolution, "[0-9.]+(?=km)"))
-      half_res_size <- res_size / 2
+      res_size <- as.numeric(stringr::str_extract(df$resolution, "[0-9.]+(?=(km|m))"))
+      res_unit <- stringr::str_extract(df$resolution, "(km|m)")
+      res_meters <- ifelse(res_unit == "km", res_size * 1000, res_size)
+      half_res_size <- res_meters / 2
       df_offset <- df %>%
         dplyr::mutate(
           xcoord_offset = xcoord + half_res_size,
@@ -540,7 +542,7 @@ compute_indicator_workflow <- function(data,
         is_empty <- sf::st_is_empty(shapefile_merge)
       }
 
-      if (is_empty) {
+      if (all(is_empty)) {
         stop("Shapefile does not seem to be within the area of the cube.")
       }
       # Get bounding box of new object
@@ -693,20 +695,23 @@ compute_indicator_workflow <- function(data,
     # Define the final study polygon
     if (!is.null(shapefile)) {
       # Final polygon is determined by shapefile intersection
-      final_study_polygon <- sf::st_as_sf(shapefile_merge)
+      intersection_target <- sf::st_as_sf(shapefile_merge)
     } else {
       # Final polygon is determined by Natural Earth map data
-      final_study_polygon <- map_data
+      intersection_target <- map_data
     }
 
     # Calculate the final, correct area of the study region
-    final_area_sqkm <-
-      final_study_polygon %>%
-      sf::st_make_valid() %>%
-      sf::st_union() %>% # Union handles multi-polygons (e.g., countries)
-      sf::st_transform(crs = "ESRI:54012") %>% # Mollweide equal-area projection
-      sf::st_area() %>%
-      units::set_units("km^2")
+    final_area_sqkm <- if (!is.null(intersection_target)) {
+      intersection_target %>%
+        sf::st_make_valid() %>%
+        sf::st_union() %>% # Union handles multi-polygons (e.g., countries)
+        sf::st_transform(crs = "ESRI:54012") %>% # Mollweide equal-area projection
+        sf::st_area() %>%
+        units::set_units("km^2")
+    } else {
+      NA
+    }
 
     if (dim_type == "map" || force_grid == TRUE) {
       # Set output cell size (or if user provided one, check if it makes sense)
@@ -735,15 +740,20 @@ compute_indicator_workflow <- function(data,
       }
 
       # Calculate the area of the cube's extent
-      cube_bbox <- sf::st_bbox(
-        c(
-          xmin = coord_range[[1]],
-          xmax = coord_range[[2]],
-          ymin = coord_range[[3]],
-          ymax = coord_range[[4]]
-        ),
-        crs = cube_crs
-      )
+      cube_bbox <- tryCatch({
+        sf::st_bbox(
+          c(
+            xmin = coord_range[[1]],
+            xmax = coord_range[[2]],
+            ymin = coord_range[[3]],
+            ymax = coord_range[[4]]
+          ),
+          crs = cube_crs
+        )
+      }, error = function(e) {
+        warning("Cube bounding box calculation failed, using fallback.")
+        sf::st_bbox(df_sf_input)
+      })
 
       final_area_sqkm <-
         sf::st_as_sfc(cube_bbox) %>%
@@ -825,17 +835,43 @@ compute_indicator_workflow <- function(data,
       # Use st_intersection to clip grid cells to the map boundary.
       # Unlike st_filter (which removes cells), st_intersection clips cells
       # at the boundary, preserving coastal cells that partially overlap land.
-      suppressMessages(sf::sf_use_s2(FALSE))
-
-      clipped_grid <- sf::st_intersection(
-        grid,
-        sf::st_union(intersection_target)
-      )
+      # Defensively prepare the intersection target to avoid TopologyExceptions
+      # Intersect grid with intersection target
+      if (is.null(intersection_target)) {
+        clipped_grid <- grid
+      } else {
+        # Defensively intersect
+        suppressMessages(sf::sf_use_s2(FALSE))
+        clipped_grid <- tryCatch({
+          # Use st_union to create a single "knife" for clipping
+          sf::st_intersection(grid, sf::st_union(sf::st_make_valid(intersection_target)))
+        }, error = function(e) {
+          # Fallback to bounding box intersection if the map geometry is corrupted
+          warning("Map geometry union failed, falling back to bounding box intersection: ", e$message)
+          sf::st_intersection(grid, sf::st_as_sfc(sf::st_bbox(intersection_target)))
+        })
+        suppressMessages(sf::sf_use_s2(original_s2))
+      }
 
       suppressMessages(sf::sf_use_s2(original_s2))
 
       # Remove empty results from cells entirely outside the boundary
       clipped_grid <- clipped_grid[!sf::st_is_empty(clipped_grid), ]
+
+      # IMPORTANT: Union grid cell fragments by cellCode to prevent data duplication
+      # and visual artifacts (like opaque layers or internal lines).
+      if (!is.null(clipped_grid) && nrow(clipped_grid) > 0) {
+        clipped_grid <- clipped_grid[!sf::st_is_empty(clipped_grid), ]
+        
+        clipped_grid <- clipped_grid %>%
+          dplyr::group_by(cellCode) %>%
+          dplyr::summarize(
+            cellid = dplyr::first(cellid),
+            geometry = sf::st_union(geometry),
+            .groups = "drop"
+          ) %>%
+          sf::st_make_valid()
+      }
     }
 
     # Filter data to only those within the intersection target
