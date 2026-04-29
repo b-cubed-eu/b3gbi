@@ -188,7 +188,9 @@ create_eea_grid <- function(df, projection, resolution = NULL) {
   }
 
   # Determine native resolution
-  native_res_m <- as.numeric(gsub("km", "", coords$resolution[1])) * 1000
+  res_val <- as.numeric(stringr::str_extract(coords$resolution[1], "[0-9.]+"))
+  res_unit <- stringr::str_extract(coords$resolution[1], "(km|m)")
+  native_res_m <- ifelse(res_unit == "km", res_val * 1000, res_val)
   if (is.na(native_res_m)) native_res_m <- res_m
 
   # Filter out NAs for robustness
