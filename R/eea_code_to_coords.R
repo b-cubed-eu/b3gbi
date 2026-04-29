@@ -5,6 +5,7 @@ eea_code_to_coords <- function(cellCodes) {
 
   cellCode <- resolution_text <- xcoord_base <- ycoord_base <- NULL
   km_multiplier <- xcoord <- ycoord <- resolution_final <- NULL
+  resolution_value <- resolution_unit <- NULL
 
   data.frame(cellCode = cellCodes) %>%
     dplyr::mutate(
