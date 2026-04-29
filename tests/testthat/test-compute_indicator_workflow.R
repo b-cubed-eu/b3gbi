@@ -172,7 +172,7 @@ mock_get_ne_data <- function(projected_crs,
         sf::st_polygon(
           list(
             matrix(
-              c(0, 0, 0, 10, 10, 10, 10, 0, 0, 0),
+              c(0, 0, 0, 10000, 10000, 10000, 10000, 0, 0, 0),
               ncol = 2,
               byrow = TRUE
             )
@@ -186,7 +186,7 @@ mock_get_ne_data <- function(projected_crs,
         sf::st_polygon(
           list(
             matrix(
-              c(0, 0, 0, 10, 10, 10, 10, 0, 0, 0),
+              c(0, 0, 0, 10000, 10000, 10000, 10000, 0, 0, 0),
               ncol = 2,
               byrow = TRUE
             )
@@ -202,8 +202,8 @@ test_that(
   "compute_indicator_workflow creates grids and performs spatial operations", {
   mock_cube <- list(
     data = data.frame(
-      xcoord = c(3, 2, 5),
-      ycoord = c(3, 6, 5),
+      xcoord = c(3000, 2000, 5000),
+      ycoord = c(3000, 6000, 5000),
       resolution = c("1km", "1km", "1km"),
       cellCode = c(1, 2, 3),
       year = c(2000, 2000, 2000),
@@ -212,10 +212,10 @@ test_that(
     ),
     first_year = 2000,
     last_year = 2000,
-    coord_range = list("xmin" = 1,
-                       "xmax" = 9,
-                       "ymin" = 1,
-                       "ymax" = 9),
+    coord_range = list("xmin" = 1000,
+                       "xmax" = 9000,
+                       "ymin" = 1000,
+                       "ymax" = 9000),
     num_species = 1,
     resolutions = "1km",
     grid_type = "eea"
@@ -249,7 +249,7 @@ test_that(
         sf::st_polygon(
           list(
             matrix(
-              c(2, 2, 2, 5.4, 5.4, 8, 5.4, 2, 2, 2),
+              c(0, 0, 0, 8000, 8000, 8000, 8000, 0, 0, 0),
               ncol = 2,
               byrow = TRUE
             )
@@ -291,7 +291,7 @@ test_that(
         sf::st_polygon(
           list(
             matrix(
-              c(2, 2, 2, 5.4, 5.4, 8, 5.4, 2, 2, 2),
+              c(2000, 2000, 2000, 4000, 4000, 4000, 4000, 2000, 2000, 2000),
               ncol = 2,
               byrow = TRUE
             )
