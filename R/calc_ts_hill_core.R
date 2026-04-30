@@ -8,7 +8,7 @@ calc_ts_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
 
   stopifnot_error("Please check the class and structure of your data. This is an
                   internal function, not meant to be called directly.",
-                  inherits(x, c("data.frame", "sf")) &
+                  rlang::inherits_any(x, c("data.frame", "sf")) &
                     rlang::inherits_any(x, c("hill0", "hill1", "hill2")))
 
   scientificName <- year <- obs <- cellCode <- Assemblage <- qD <- SC <-
@@ -52,10 +52,10 @@ calc_ts_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
   names(species_records_raw) <- richness_by_year$year
 
   temp_opts <- list(...)
-  cutoff_length <- temp_opts$cutoff_length
-  coverage <- temp_opts$coverage
-  conf <- temp_opts$conf
-  nboot <- temp_opts$nboot
+  cutoff_length <- if (!is.null(temp_opts$cutoff_length)) temp_opts$cutoff_length else 2
+  coverage <- if (!is.null(temp_opts$coverage)) temp_opts$coverage else 0.95
+  conf <- if (!is.null(temp_opts$conf)) temp_opts$conf else 0.95
+  nboot <- if (!is.null(temp_opts$nboot)) temp_opts$nboot else 0
 
   # remove all years with too little data to avoid errors from iNEXT
   species_records_raw <- purrr::keep(
