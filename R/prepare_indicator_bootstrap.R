@@ -48,6 +48,7 @@ prepare_indicator_bootstrap <- function(
     trans = function(t) t,
     inv_trans = function(t) t,
     confidence_level = 0.95,
+    expected_years = NULL,
     boot_args = list(),
     ci_args = list()) {
 
@@ -231,7 +232,8 @@ prepare_indicator_bootstrap <- function(
     samples = num_bootstrap,
     processed_cube = FALSE,
     method = boot_method,
-    seed = seed
+    seed = seed,
+    expected_years = expected_years
   )
 
   ## Allow user-supplied arguments to override defaults

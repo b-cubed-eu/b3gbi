@@ -15,7 +15,10 @@ calc_ts_evenness_core <- function(x, type, ...) {
   }
 
   # Calculate number of records for each species by grid cell
-  all_years <- sort(unique(x$year))
+  dots <- list(...)
+  expected_years <- dots$expected_years
+  all_years <- if (!is.null(expected_years)) expected_years else sort(unique(x$year))
+
   x <- x %>%
     dplyr::summarize(num_occ = sum(obs), .by = c(year, taxonKey)) %>%
     tidyr::complete(year = all_years, taxonKey, fill = list(num_occ = 0)) %>%

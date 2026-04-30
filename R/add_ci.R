@@ -210,11 +210,15 @@ add_ci <- function(indicator,
     return(indicator)
 
   } else if (bootstrap_level == "cube") {
+    # Get expected years for consistency in indicator results
+    expected_years <- unique(indicator$data$year)
+
     # Get dubicube function parameters
     params_total  <- prepare_indicator_bootstrap(
       indicator = indicator,
       num_bootstrap = num_bootstrap,
       ci_type = ci_type,
+      expected_years = expected_years,
       trans = trans,
       inv_trans = inv_trans,
       confidence_level = confidence_level,
