@@ -9,7 +9,7 @@ calc_ts_completeness_core <- function(x, ...) {
   stopifnot_error(
     "Please check the class and structure of your data. This is an
                   internal function, not meant to be called directly.",
-    inherits(x, c("data.frame", "sf")) &
+    rlang::inherits_any(x, c("data.frame", "sf")) &
       inherits(x, "completeness")
   )
 
