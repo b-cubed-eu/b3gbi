@@ -524,6 +524,8 @@ calc_ci.hill0 <- function(x,
                           num_bootstrap = 1000,
                           ...) {
 
+  year <- ll <- ul <- NULL
+
   stopifnot_error("Wrong data class.", inherits(x, "hill0"))
 
   # Call the ts calculation core with bootstrapping
@@ -544,6 +546,8 @@ calc_ci.hill1 <- function(x,
                           num_bootstrap = 1000,
                           ...) {
 
+  year <- ll <- ul <- NULL
+
   stopifnot_error("Wrong data class.", inherits(x, "hill1"))
 
   # Call the ts calculation core with bootstrapping
@@ -563,6 +567,8 @@ calc_ci.hill2 <- function(x,
                           indicator,
                           num_bootstrap = 1000,
                           ...) {
+
+  year <- ll <- ul <- NULL
 
   stopifnot_error("Wrong data class.", inherits(x, "hill2"))
 
