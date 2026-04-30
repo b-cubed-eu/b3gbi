@@ -1,6 +1,7 @@
 #' Core function to calculate completeness (Sample Coverage) for time series output
 #'
 #' @param x A processed data cube.
+#' @param expected_years (Optional) Vector of years expected in the output.
 #' @param ... Additional arguments.
 #'
 #' @return A data frame with year and completeness (sample coverage) values.
@@ -9,7 +10,7 @@ calc_ts_completeness_core <- function(x, ...) {
   stopifnot_error(
     "Please check the class and structure of your data. This is an
                   internal function, not meant to be called directly.",
-    inherits(x, c("data.frame", "sf")) &
+    rlang::inherits_any(x, c("data.frame", "sf")) &
       inherits(x, "completeness")
   )
 
@@ -75,7 +76,9 @@ calc_ts_completeness_core <- function(x, ...) {
     indicator_data <- purrr::compact(indicator_data)
 
     # Ensure all years from the original input are represented
-    all_years <- tibble::tibble(year = sort(unique(x$year)))
+    dots <- list(...)
+    expected_years <- dots$expected_years
+    all_years <- tibble::tibble(year = if (!is.null(expected_years)) expected_years else sort(unique(x$year)))
 
     if (length(indicator_data) == 0) {
       indicator <- all_years %>% dplyr::mutate(diversity_val = NA_real_)
@@ -142,7 +145,10 @@ calc_ts_completeness_core <- function(x, ...) {
       species_records_raw, function(x) length(x) > cutoff_length
     )
 
-    all_years <- tibble::tibble(year = sort(unique(x$year)))
+    # Ensure all years from the original input are represented
+    dots <- list(...)
+    expected_years <- dots$expected_years
+    all_years <- tibble::tibble(year = if (!is.null(expected_years)) expected_years else sort(unique(x$year)))
 
     if (length(species_records_filtered) == 0) {
       indicator <- all_years %>% dplyr::mutate(diversity_val = NA_real_)

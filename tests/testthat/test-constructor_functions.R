@@ -128,7 +128,8 @@ test_that("new_indicator_ts creates indicator_ts object correctly", {
     num_species = 3,
     num_years = 11,
     species_names = NULL,
-    coord_range = list(xmin = 1, xmax = 2, ymin = 3, ymax = 4)
+    coord_range = list(xmin = 1, xmax = 2, ymin = 3, ymax = 4),
+    raw_cube_occurrences = mock_tibble
   )
   expect_s3_class(its, c("indicator_ts", "obs_richness"))
   expect_equal(its$div_type, "obs_richness")

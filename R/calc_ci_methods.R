@@ -44,7 +44,7 @@ calc_ci.default <- function(x,
 calc_ci.total_occ <- function(x,
                               indicator,
                               num_bootstrap = 1000,
-                              ci_type = ci_type,
+                              ci_type = "norm",
                               ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
@@ -85,7 +85,7 @@ calc_ci.total_occ <- function(x,
 calc_ci.occ_density <- function(x,
                                 indicator,
                                 num_bootstrap = 1000,
-                                ci_type = ci_type,
+                                ci_type = "norm",
                                 ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
@@ -203,7 +203,7 @@ calc_ci.spec_richness_density <- function(x,
 calc_ci.newness <- function(x,
                             indicator,
                             num_bootstrap = 1000,
-                            ci_type = ci_type,
+                            ci_type = "norm",
                             ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
@@ -289,7 +289,7 @@ calc_ci.pielou_evenness <- function(x,
 calc_ci.ab_rarity <- function(x,
                               indicator,
                               num_bootstrap = 1000,
-                              ci_type = ci_type,
+                              ci_type = "norm",
                               ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
@@ -330,7 +330,7 @@ calc_ci.ab_rarity <- function(x,
 calc_ci.area_rarity <- function(x,
                                 indicator,
                                 num_bootstrap = 1000,
-                                ci_type = ci_type,
+                                ci_type = "norm",
                                 ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
@@ -376,7 +376,7 @@ calc_ci.area_rarity <- function(x,
 calc_ci.spec_occ <- function(x,
                              indicator,
                              num_bootstrap = 1000,
-                             ci_type = ci_type,
+                             ci_type = "norm",
                              ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
@@ -451,7 +451,7 @@ calc_ci.spec_occ <- function(x,
 calc_ci.spec_range <- function(x,
                                indicator,
                                num_bootstrap = 1000,
-                               ci_type = ci_type,
+                               ci_type = "norm",
                                ...) {
 
   stopifnot_error("Wrong data class. This is an internal function and is not
@@ -512,6 +512,72 @@ calc_ci.spec_range <- function(x,
     dplyr::full_join(ci_df,
                      by = dplyr::join_by(year, taxonKey, scientificName),
                      relationship = "many-to-many")
+
+  return(indicator)
+
+}
+
+#' @describeIn calc_ci Calculate confidence intervals for Hill0 (Richness)
+#' @export
+calc_ci.hill0 <- function(x,
+                          indicator,
+                          num_bootstrap = 1000,
+                          ...) {
+
+  year <- ll <- ul <- NULL
+
+  stopifnot_error("Wrong data class.", inherits(x, "hill0"))
+
+  # Call the ts calculation core with bootstrapping
+  ci_results <- calc_ts_hill_core(x, type = "hill0", nboot = num_bootstrap, ...)
+
+  # Join the confidence intervals to the original indicator
+  indicator <- indicator %>%
+    dplyr::left_join(ci_results %>% dplyr::select(year, ll, ul), by = "year")
+
+  return(indicator)
+
+}
+
+#' @describeIn calc_ci Calculate confidence intervals for Hill1 (Shannon)
+#' @export
+calc_ci.hill1 <- function(x,
+                          indicator,
+                          num_bootstrap = 1000,
+                          ...) {
+
+  year <- ll <- ul <- NULL
+
+  stopifnot_error("Wrong data class.", inherits(x, "hill1"))
+
+  # Call the ts calculation core with bootstrapping
+  ci_results <- calc_ts_hill_core(x, type = "hill1", nboot = num_bootstrap, ...)
+
+  # Join the confidence intervals to the original indicator
+  indicator <- indicator %>%
+    dplyr::left_join(ci_results %>% dplyr::select(year, ll, ul), by = "year")
+
+  return(indicator)
+
+}
+
+#' @describeIn calc_ci Calculate confidence intervals for Hill2 (Simpson)
+#' @export
+calc_ci.hill2 <- function(x,
+                          indicator,
+                          num_bootstrap = 1000,
+                          ...) {
+
+  year <- ll <- ul <- NULL
+
+  stopifnot_error("Wrong data class.", inherits(x, "hill2"))
+
+  # Call the ts calculation core with bootstrapping
+  ci_results <- calc_ts_hill_core(x, type = "hill2", nboot = num_bootstrap, ...)
+
+  # Join the confidence intervals to the original indicator
+  indicator <- indicator %>%
+    dplyr::left_join(ci_results %>% dplyr::select(year, ll, ul), by = "year")
 
   return(indicator)
 
