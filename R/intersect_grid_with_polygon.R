@@ -6,11 +6,9 @@ intersect_grid_with_polygon <- function(grid,
   # target and only clipping those that cross boundaries.
 
   original_s2 <- sf::sf_use_s2()
-  on.exit(sf::sf_use_s2(original_s2))
+  on.exit(suppressMessages(sf::sf_use_s2(original_s2)))
 
   # Ensure geometries are valid before intersection
-  grid_v <- grid
-  target_v <- intersection_target
 
   # Helper function for optimized intersection
   do_intersection <- function(g, t) {
@@ -72,7 +70,7 @@ intersect_grid_with_polygon <- function(grid,
   # Retry with S2 OFF if failed or returning empty
   if (is.null(result) || nrow(result) == 0) {
     message("Retrying intersection with S2 disabled...")
-    sf::sf_use_s2(FALSE)
+    suppressMessages(sf::sf_use_s2(FALSE))
     tryCatch(
       {
         result <- do_intersection(sf::st_make_valid(grid), sf::st_make_valid(intersection_target))
@@ -94,6 +92,11 @@ intersect_grid_with_polygon <- function(grid,
   # Final check
   if (is.null(result) || nrow(result) == 0) {
     stop("No spatial intersection between map data and grid.")
+  }
+
+  # Deduplicate by cellCode to ensure a clean one-to-one mapping for joins
+  if ("cellCode" %in% names(result)) {
+    result <- dplyr::distinct(result, .data[["cellCode"]], .keep_all = TRUE)
   }
 
   return(result)

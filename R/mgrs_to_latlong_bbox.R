@@ -39,10 +39,12 @@ mgrs_to_latlong_bbox <- function(df) {
     hemisphere <- group_df$hemisphere[1]
 
     # Construct the correct EPSG code
+    # UTM zones must be 2 digits (e.g. 05)
+    utm_zone_num <- as.numeric(utm_zone)
     epsg_code <- if (hemisphere == "North") {
-      paste0("EPSG:326", utm_zone)
+      paste0("EPSG:326", sprintf("%02d", utm_zone_num))
     } else {
-      paste0("EPSG:327", utm_zone)
+      paste0("EPSG:327", sprintf("%02d", utm_zone_num))
     }
 
     # Create sf object and transform to EPSG:4326

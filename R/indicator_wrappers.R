@@ -552,6 +552,9 @@ completeness_details <- paste0(
 #' @param data_type The type of data: "incidence" or "abundance". Default is "incidence".
 #' @param assume_freq (Optional) Whether to assume frequency data if using
 #'  incidence. Default is FALSE.
+#' @param gridded_average (Optional) For time series, calculate completeness
+#'  for each grid cell and average the results, rather than calculating for
+#'  the entire area at once. Default is FALSE.
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
@@ -595,14 +598,15 @@ completeness_map <- function(data,
 #' @export
 completeness_ts <- function(data,
                             cutoff_length = 5,
+                            gridded_average = FALSE,
                             ...) {
 
   compute_indicator_workflow(data,
                              type = "completeness",
                              dim_type = "ts",
                              cutoff_length = cutoff_length,
+                             gridded_average = gridded_average,
                              ...)
-
 }
 
 
@@ -1203,6 +1207,159 @@ spec_range_ts <- function(data, ...) {
     ...
   )
 }
+
+
+
+#' @title Calculate Species Relative Occupancy Over Space or Time
+#'
+#' @description Calculate the relative occupancy of each species — the
+#'  proportion of grid cells in which it has been recorded — either as a
+#'  gridded map or as a time series. Three denominator definitions are
+#'  available via the `occ_type` parameter (see 'Details').
+#'
+#' @details
+#' ## Relative occupancy
+#' Relative occupancy quantifies how widely distributed a species is within
+#' a study region, expressed as a proportion (0–1). The numerator is always
+#' the number of post-aggregation grid cells (`cellid`) in which the species
+#' has at least one recorded occurrence. The denominator depends on
+#' `occ_type`:
+#'
+#' | `occ_type` | Name | Denominator |
+#' |:---:|---|---|
+#' | `0` | Total-area | All grid cells in region (constant) |
+#' | `1` | Ever-occupied | Cells with ≥ 1 occurrence, any species, full window |
+#' | `2` | Annual (TS) / Temporal mean (map) | Cells with ≥ 1 occ in *that year* |
+#'
+#' **Type 0** is the most conservative and comparable across different data
+#' cubes because the denominator is fixed by the grid definition. A low value
+#' means the species occupies few cells relative to the entire region;
+#' however, empty cells cannot be assumed truly unoccupied — they may be
+#' under-sampled or simply not yet visited.
+#'
+#' **Type 1** restricts the denominator to cells where *any* occurrence was
+#' recorded across the full time window, conditioning on cells with
+#' documented sampling effort. Values will always be \eqn{\geq} the
+#' corresponding Type 0 value (since the denominator is smaller). Useful
+#' when you wish to compare species occupancy within the subset of cells
+#' that have been at least partially surveyed.
+#'
+#' **Type 2** further restricts the denominator *within each year* (for time
+#' series) to cells active in that year. For maps, the annual proportion is
+#' computed first and then averaged across years (temporal mean). This is the
+#' most dynamic measure, as both numerator and denominator can vary per year,
+#' reflecting inter-annual changes in sampling footprint.
+#'
+#' ## Presence-only data caveat
+#' These cubes contain presence-only data. An empty cell does **not** imply
+#' that a species was absent — it may simply reflect lack of sampling in that
+#' cell. Types 1 and 2 partially address this by conditioning on cells where
+#' at least one occurrence was recorded, but those cells still only document
+#' where observers were active, not where species were definitively absent.
+#' All three types should be interpreted as *recorded* occupancy, not true
+#' occupancy.
+#'
+#' ## Cell aggregation
+#' When `cell_size` is coarser than the native cube resolution, the data are
+#' first aggregated to the coarser grid (internally via
+#' `aggregate_data_to_coarser_grid()`).
+#' All denominators are computed on the post-aggregation `cellid` (not the
+#' original `cellCode`). This ensures the indicator is consistent with the
+#' resolution at which it is displayed.
+#'
+#' @param data A data cube object (class 'processed_cube').
+#' @param occ_type Integer controlling the occupancy denominator. One of:
+#'   * `0` (default) — Total-area occupancy: denominator is all grid cells
+#'     in the study region (including those with no records).
+#'   * `1` — Ever-occupied occupancy: denominator is the number of cells with
+#'     at least one occurrence (any species) anywhere in the time window.
+#'   * `2` — Annual occupancy: for time series, the denominator is the number
+#'     of cells with at least one occurrence (any species) *in that year*; for
+#'     maps, the per-year proportion is computed and then averaged across years.
+#'
+#' @inheritDotParams compute_indicator_workflow -type -dim_type -data
+#'
+#' @seealso compute_indicator_workflow
+#'
+#' @return An S3 object with the classes 'indicator_map' or 'indicator_ts' and
+#'  'relative_occupancy' containing:
+#'   * **cellid** (map) or **year** (ts): spatial or temporal identifier.
+#'   * **cellCode**: grid cell codes (map only; if available).
+#'   * **taxonKey**: GBIF taxon keys.
+#'   * **scientificName**: Species scientific names.
+#'   * **diversity_val**: Relative occupancy value in \eqn{[0, 1]}.
+#'
+#' @references
+#' Sax, D. F., & Gaines, S. D. (2003). Species diversity: from global
+#' decreases to local increases. *Trends in Ecology & Evolution*, 18(11),
+#' 561–566.
+#'
+#' @family species-based indicators
+#' @describeIn relative_occupancy_map Calculate relative occupancy as a
+#'  gridded map.
+#'
+#' @examples
+#' \dontrun{
+#' # Type 0: proportion of all grid cells
+#' ro_map <- relative_occupancy_map(example_cube_1,
+#'   level = "country", region = "Denmark", occ_type = 0
+#' )
+#' plot(ro_map, c(2440728, 4265185))
+#'
+#' # Type 1: proportion of ever-occupied cells
+#' ro_map_1 <- relative_occupancy_map(example_cube_1,
+#'   level = "country", region = "Denmark", occ_type = 1
+#' )
+#'
+#' # Type 2: temporal mean annual occupancy
+#' ro_map_2 <- relative_occupancy_map(example_cube_1,
+#'   level = "country", region = "Denmark", occ_type = 2
+#' )
+#' }
+#' @export
+relative_occupancy_map <- function(data, occ_type = 0, ...) {
+  occ_type <- as.integer(occ_type)
+  if (!occ_type %in% c(0L, 1L, 2L)) {
+    stop("`occ_type` must be 0, 1, or 2.")
+  }
+  compute_indicator_workflow(data,
+    type = "relative_occupancy",
+    dim_type = "map",
+    occ_type = occ_type,
+    ...
+  )
+}
+
+#' @describeIn relative_occupancy_map Calculate relative occupancy as a time
+#'  series.
+#'
+#' @examples
+#' \dontrun{
+#' # Type 0: proportion of all grid cells (default)
+#' ro_ts <- relative_occupancy_ts(example_cube_1, occ_type = 0)
+#' plot(ro_ts, c(2440728, 4265185))
+#'
+#' # Type 1: proportion of ever-occupied cells (constant denominator)
+#' ro_ts_1 <- relative_occupancy_ts(example_cube_1, occ_type = 1)
+#'
+#' # Type 2: proportion of cells active that year (varying denominator)
+#' ro_ts_2 <- relative_occupancy_ts(example_cube_1, occ_type = 2)
+#' }
+#' @export
+relative_occupancy_ts <- function(data, occ_type = 0, ...) {
+  occ_type <- as.integer(occ_type)
+  if (!occ_type %in% c(0L, 1L, 2L)) {
+    stop("`occ_type` must be 0, 1, or 2.")
+  }
+  compute_indicator_workflow(data,
+    type = "relative_occupancy",
+    dim_type = "ts",
+    occ_type = occ_type,
+    ...
+  )
+}
+
+
 
 #' @title Calculate Taxonomic Distinctness Over Space or Time
 #'

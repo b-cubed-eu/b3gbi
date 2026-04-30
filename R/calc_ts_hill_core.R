@@ -58,29 +58,49 @@ calc_ts_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
   nboot <- if (!is.null(temp_opts$nboot)) temp_opts$nboot else 0
 
   # remove all years with too little data to avoid errors from iNEXT
-  species_records_raw <- purrr::keep(
+  species_records_filtered <- purrr::keep(
     species_records_raw, function(x) length(x) > cutoff_length
   )
 
-  coverage_rare <- species_records_raw %>%
-    my_estimateD(base = "coverage",
-                 level = coverage,
-                 datatype = "incidence_raw",
-                 q = qval,
-                 conf = conf,
-                 nboot = nboot)
+  all_years <- tibble::tibble(year = sort(unique(x$year)))
 
-  # Extract estimated relative species richness
-  indicator <- coverage_rare %>%
-    dplyr::select(Assemblage, qD, t, SC, Order.q, qD.LCL, qD.UCL) %>%
-    dplyr::rename(year = Assemblage,
-                  diversity_val = qD,
-                  samp_size_est = t,
-                  coverage = SC,
-                  diversity_type = Order.q,
-                  ll = qD.LCL,
-                  ul = qD.UCL) %>%
-    dplyr::mutate(year = as.numeric(year))
+  if (length(species_records_filtered) == 0) {
+    indicator <- all_years %>%
+      dplyr::mutate(
+        diversity_val = NA_real_,
+        samp_size_est = NA_real_,
+        coverage = NA_real_,
+        diversity_type = qval,
+        ll = NA_real_,
+        ul = NA_real_
+      )
+  } else {
+    coverage_rare <- species_records_filtered %>%
+      my_estimateD(
+        base = "coverage",
+        level = coverage,
+        datatype = "incidence_raw",
+        q = qval,
+        conf = conf,
+        nboot = nboot
+      )
+
+    # Extract estimated relative species richness
+    indicator <- coverage_rare %>%
+      dplyr::select(Assemblage, qD, t, SC, Order.q, qD.LCL, qD.UCL) %>%
+      dplyr::rename(
+        year = Assemblage,
+        diversity_val = qD,
+        samp_size_est = t,
+        coverage = SC,
+        diversity_type = Order.q,
+        ll = qD.LCL,
+        ul = qD.UCL
+      ) %>%
+      dplyr::mutate(year = as.numeric(year)) %>%
+      dplyr::right_join(all_years, by = "year") %>%
+      dplyr::arrange(year)
+  }
 
   return(indicator)
 

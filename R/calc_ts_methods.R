@@ -370,6 +370,107 @@ calc_ts.spec_range <- function(x, ...) {
 
 }
 
+#' @param occ_type Integer controlling the occupancy denominator (default `0`):
+#'   * `0` — **Total-area occupancy**: number of cells occupied by species /
+#'     total number of grid cells in the study region (including unsampled
+#'     cells). This is the most conservative measure. *Presence-only caveat*:
+#'     empty cells cannot be assumed to be truly unoccupied; they may simply
+#'     lack sampling effort.
+#'   * `1` — **Relative-to-ever-occupied occupancy**: number of cells occupied
+#'     by species / number of cells with *at least one occurrence (any species)
+#'     anywhere in the time window*. This conditions on cells where some
+#'     sampling effort is documented but the denominator is still constant
+#'     across years.
+#'   * `2` — **Annual occupancy**: for each year, number of cells occupied by
+#'     species / number of cells with at least one occurrence (any species) *in
+#'     that year*. The denominator therefore varies by year, reflecting changes
+#'     in sampling footprint over time.
+#'
+#'   **Note on presence-only data**: All three types are computed from
+#'   presence-only occurrence data. A cell with no records cannot be assumed
+#'   to be truly unoccupied; it may be unsampled or under-surveyed. Types 1
+#'   and 2 partially address this by restricting the denominator to cells
+#'   with documented occurrences, but they still reflect *recording effort*
+#'   rather than true absence. Interpret all types with care.
+#'
+#'   **Note on cell aggregation**: When a coarser `cell_size` is chosen, data
+#'   are aggregated to coarser grid cells before this calculation. The
+#'   denominator counts post-aggregation cells (`cellid`), not original cube
+#'   cells (`cellCode`).
+#' @export
+#' @rdname calc_ts
+calc_ts.relative_occupancy <- function(x, occ_type = 0, ...) {
+
+  stopifnot_error("Wrong data class. This is an internal function and is not
+                  meant to be called directly.",
+                  inherits(x, "relative_occupancy"))
+
+  if (!occ_type %in% c(0L, 1L, 2L)) {
+    stop("`occ_type` must be 0, 1, or 2.")
+  }
+
+  year <- taxonKey <- scientificName <- diversity_val <- cellid <- NULL
+  occupied_cells_yr <- n_occ_cells <- NULL
+
+  # Count cells occupied by each species in each year
+  species_cells <- x %>%
+    dplyr::distinct(year, cellid, scientificName, taxonKey) %>%
+    dplyr::count(year, scientificName, taxonKey, name = "species_cells")
+
+  if (occ_type == 0L) {
+    # -------------------------------------------------------------------------
+    # Type 0: denominator = total grid cells in study region (constant)
+    # -------------------------------------------------------------------------
+    total_num_cells <- attr(x, "total_num_cells")
+    if (is.null(total_num_cells)) {
+      stop(paste0(
+        "total_num_cells attribute not found. ",
+        "Cannot calculate relative occupancy with occ_type = 0."
+      ))
+    }
+
+    indicator <- species_cells %>%
+      dplyr::mutate(diversity_val = species_cells / total_num_cells)
+
+  } else if (occ_type == 1L) {
+    # -------------------------------------------------------------------------
+    # Type 1: denominator = cells with >= 1 occurrence across entire time window
+    # (constant). Conditions on cells where sampling effort is documented.
+    # Presence-only caveat: recorded cells are not a complete picture of effort.
+    # -------------------------------------------------------------------------
+    ever_occupied <- dplyr::n_distinct(x$cellid)
+
+    indicator <- species_cells %>%
+      dplyr::mutate(diversity_val = species_cells / ever_occupied)
+
+  } else {
+    # -------------------------------------------------------------------------
+    # Type 2: denominator = cells with >= 1 occurrence in *that year* (varies
+    # per year). Reflects inter-annual variation in recording footprint.
+    # Presence-only caveat: cells active in year t only show where recorders
+    # were active, not where species were definitively absent.
+    # -------------------------------------------------------------------------
+    active_cells_per_year <- x %>%
+      dplyr::distinct(year, cellid) %>%
+      dplyr::count(year, name = "n_occ_cells")
+
+    indicator <- species_cells %>%
+      dplyr::left_join(active_cells_per_year, by = "year") %>%
+      dplyr::mutate(diversity_val = species_cells / n_occ_cells) %>%
+      dplyr::select(-n_occ_cells)
+  }
+
+  indicator <- indicator %>%
+    dplyr::select(year, taxonKey, scientificName, diversity_val) %>%
+    dplyr::arrange(year, taxonKey)
+
+  # Add the 'relative_occupancy' class back to the object
+  class(indicator) <- c("relative_occupancy", class(indicator))
+
+  return(indicator)
+
+}
+
 #' @param set_rows Automatically select which taxonomic information to keep when
 #'  there are multiple options. Default value of 1 keeps the first option,
 #'  which is usually the best.

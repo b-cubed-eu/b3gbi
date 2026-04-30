@@ -3,8 +3,6 @@ add_ne_layer <- function(layer_name, scale, extent_projected) {
 
   geometry <- featurecla <- scalerank <- type <- geom <- NULL
 
-  temp_ne_dir <- tools::R_user_dir("rnaturalearth", "cache")
-
   if (layer_name == "admin_0_countries") {
     # Use the robust ne_countries function for the base layer
     # The ne_countries function handles downloading the data if it doesn't exist
@@ -54,8 +52,7 @@ add_ne_layer <- function(layer_name, scale, extent_projected) {
       rnaturalearth::ne_load(scale = scale,
                              returnclass = "sf",
                              type = layer_name,
-                             category = category,
-                             temp_ne_dir)
+                             category = category)
     }, error = function(e) {
       if (grepl("the file .* seems not to exist", e, ignore.case = TRUE) ||
           grepl("Failed to download", e, ignore.case = TRUE) ||
@@ -65,13 +62,11 @@ add_ne_layer <- function(layer_name, scale, extent_projected) {
                                    returnclass = "sf",
                                    type = layer_name,
                                    category = category,
-                                   load = FALSE,
-                                   destdir = temp_ne_dir)
+                                   load = FALSE)
         rnaturalearth::ne_load(scale = scale,
                                returnclass = "sf",
                                type = layer_name,
-                               category = category,
-                               temp_ne_dir)
+                               category = category)
       } else {
         stop(e) # Re-throw other unhandled errors
       }
@@ -86,27 +81,21 @@ add_ne_layer <- function(layer_name, scale, extent_projected) {
   # extent_projected <- sf::st_transform(sf::st_as_sfc(extent_projected),
   #                                      crs = "ESRI:54012")
 
-  # Attempt to perform cropping for efficiency FIRST
-  # If it fails, validate first
+  # Crop layer to the extent for efficiency
+  # Use st_crop directly on the sf object to preserve individual features
+  # (previous group_by/reframe approach destroyed per-country geometries)
+  sf::st_agr(layer_raw) <- "constant"
   processed_layer <- tryCatch({
-    layer_raw %>%
-  #    sf::st_transform(crs = "ESRI:54012") %>%
-      dplyr::group_by(scalerank, featurecla) %>%
-      dplyr::reframe(geometry = sf::st_crop(geometry, extent_projected)) %>%
-      sf::st_as_sf()
+    suppressMessages(sf::st_crop(layer_raw, extent_projected))
   }, error = function(e) {
     layer_raw %>%
       sf::st_make_valid() %>%
-   #   sf::st_transform(crs = "ESRI:54012") %>%
-      dplyr::group_by(scalerank, featurecla) %>%
-      dplyr::reframe(geometry = sf::st_crop(geometry, extent_projected)) %>%
-      sf::st_as_sf()
+      suppressMessages(sf::st_crop(extent_projected))
   })
 
-  # Then validate and filter (on the now smaller dataset)
+  # Filter out empty geometries
   processed_layer <- processed_layer %>%
-   # sf::st_make_valid() %>%
-    dplyr::filter(!sf::st_is_empty(geometry)) # Filter out empty geometries
+    dplyr::filter(!sf::st_is_empty(geometry))
 
   return(processed_layer)
 }
