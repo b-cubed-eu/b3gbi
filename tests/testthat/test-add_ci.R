@@ -42,7 +42,7 @@ test_that("add_ci returns original object with warning for excluded indicators",
     },
     .package = "b3gbi",
     {
-      result_hill <- add_ci(mock_hill)
+      result_hill <- add_ci(mock_hill, bootstrap_level = "indicator")
       expect_true("ll" %in% names(result_hill$data))
     }
   )
