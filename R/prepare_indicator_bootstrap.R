@@ -102,6 +102,24 @@ prepare_indicator_bootstrap <- function(
       inv_trans = inv_trans,
       no_bias = FALSE
     ),
+    hill0 = list(
+      group_specific = FALSE,
+      trans = trans,
+      inv_trans = inv_trans,
+      no_bias = FALSE
+    ),
+    hill1 = list(
+      group_specific = FALSE,
+      trans = trans,
+      inv_trans = inv_trans,
+      no_bias = FALSE
+    ),
+    hill2 = list(
+      group_specific = FALSE,
+      trans = trans,
+      inv_trans = inv_trans,
+      no_bias = FALSE
+    ),
     newness = list(
       group_specific = FALSE,
       trans = trans,
