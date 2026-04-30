@@ -12,6 +12,7 @@ prepare_indicator_bootstrap(
   trans = function(t) t,
   inv_trans = function(t) t,
   confidence_level = 0.95,
+  expected_years = NULL,
   boot_args = list(),
   ci_args = list()
 )
