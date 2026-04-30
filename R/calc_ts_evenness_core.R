@@ -1,3 +1,4 @@
+#' @param expected_years (Optional) Vector of years expected in the output.
 #' @noRd
 calc_ts_evenness_core <- function(x, type, ...) {
 

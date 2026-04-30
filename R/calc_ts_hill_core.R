@@ -1,7 +1,7 @@
 #' @param type (Optional) Choose which Hill number, or q, to calculate. Choose
 #'  'hill0' (q = 0) for estimated species richness, 'hill1' for Hill-Shannon
 #'  diversity, or 'hill2' for Hill-Simpson diversity.
-#' @param ... Additional arguments passed to iNEXT::estimateD(e.g.,nboot, conf).
+#' @param expected_years (Optional) Vector of years expected in the output.
 #' @importFrom iNEXT estimateD DataInfo
 #' @noRd
 calc_ts_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
@@ -62,7 +62,9 @@ calc_ts_hill_core <- function(x, type = c("hill0", "hill1", "hill2"), ...) {
     species_records_raw, function(x) length(x) > cutoff_length
   )
 
-  all_years <- tibble::tibble(year = sort(unique(x$year)))
+  dots <- list(...)
+  expected_years <- dots$expected_years
+  all_years <- tibble::tibble(year = if (!is.null(expected_years)) expected_years else sort(unique(x$year)))
 
   if (length(species_records_filtered) == 0) {
     indicator <- all_years %>%
