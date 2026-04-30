@@ -2,11 +2,11 @@ test_that("compute_indicator_workflow handles input validation", {
   # Create a mock processed_cube object
   mock_cube <- list(
     data = data.frame(
-      xcoord = 1:10,
-      ycoord = 1:10,
-      year = 2000:2009,
+      xcoord = rep(1:10, 2),
+      ycoord = rep(1:10, 2),
+      year = rep(2000:2009, 2),
       scientificName = "A",
-      obs = 1:10
+      obs = c(1:10, 10:1)
     ),
     first_year = 2000,
     last_year = 2009,
@@ -388,7 +388,8 @@ test_that(
       data = mock_cube,
       type = "total_occ",
       dim_type = "ts",
-      ci_type = "norm"
+      ci_type = "norm",
+      num_bootstrap = 10
     )
     expect_true(
       all(
