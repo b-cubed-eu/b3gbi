@@ -516,3 +516,63 @@ calc_ci.spec_range <- function(x,
   return(indicator)
 
 }
+
+#' @describeIn calc_ci Calculate confidence intervals for Hill0 (Richness)
+#' @export
+calc_ci.hill0 <- function(x,
+                          indicator,
+                          num_bootstrap = 1000,
+                          ...) {
+
+  stopifnot_error("Wrong data class.", inherits(x, "hill0"))
+
+  # Call the ts calculation core with bootstrapping
+  ci_results <- calc_ts_hill_core(x, type = "hill0", nboot = num_bootstrap, ...)
+
+  # Join the confidence intervals to the original indicator
+  indicator <- indicator %>%
+    dplyr::left_join(ci_results %>% dplyr::select(year, ll, ul), by = "year")
+
+  return(indicator)
+
+}
+
+#' @describeIn calc_ci Calculate confidence intervals for Hill1 (Shannon)
+#' @export
+calc_ci.hill1 <- function(x,
+                          indicator,
+                          num_bootstrap = 1000,
+                          ...) {
+
+  stopifnot_error("Wrong data class.", inherits(x, "hill1"))
+
+  # Call the ts calculation core with bootstrapping
+  ci_results <- calc_ts_hill_core(x, type = "hill1", nboot = num_bootstrap, ...)
+
+  # Join the confidence intervals to the original indicator
+  indicator <- indicator %>%
+    dplyr::left_join(ci_results %>% dplyr::select(year, ll, ul), by = "year")
+
+  return(indicator)
+
+}
+
+#' @describeIn calc_ci Calculate confidence intervals for Hill2 (Simpson)
+#' @export
+calc_ci.hill2 <- function(x,
+                          indicator,
+                          num_bootstrap = 1000,
+                          ...) {
+
+  stopifnot_error("Wrong data class.", inherits(x, "hill2"))
+
+  # Call the ts calculation core with bootstrapping
+  ci_results <- calc_ts_hill_core(x, type = "hill2", nboot = num_bootstrap, ...)
+
+  # Join the confidence intervals to the original indicator
+  indicator <- indicator %>%
+    dplyr::left_join(ci_results %>% dplyr::select(year, ll, ul), by = "year")
+
+  return(indicator)
+
+}
