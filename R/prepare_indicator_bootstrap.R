@@ -17,6 +17,8 @@
 #' @param inv_trans Optional inverse transformation function.
 #'   Will be overridden if specified by the indicator rule book.
 #' @param confidence_level Numeric between 0 and 1. Confidence level.
+#' @param expected_years (Optional) Vector of years expected in the output.
+#'   Used to ensure consistent data frame structure during bootstrapping.
 #' @param boot_args Named list of additional arguments passed to
 #'   \code{bootstrap_cube()}, overriding defaults.
 #' @param ci_args Named list of additional arguments passed to
