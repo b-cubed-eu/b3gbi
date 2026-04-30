@@ -144,9 +144,6 @@ add_ci <- function(indicator,
                  "occ_turnover",
                  "tax_distinct",
                  "spec_richness_density",
-                 "hill0",
-                 "hill1",
-                 "hill2",
                  "coverage")
 
   # Match ci_type argument
