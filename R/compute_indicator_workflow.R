@@ -174,6 +174,9 @@ compute_indicator_workflow <- function(data,
     "none"
   }
 
+  # Filter dots to remove arguments already explicitly handled
+  dots_filtered <- dots[!(names(dots) %in% c("num_bootstrap", "ci_type", "gridded_average"))]
+
   wrong_class(data,
     class = c("processed_cube", "processed_cube_dsinfo", "sim_cube"),
     reason = "unrecognized"
@@ -998,7 +1001,7 @@ compute_indicator_workflow <- function(data,
 
   if (dim_type == "map") {
     # Calculate indicator
-    indicator <- calc_map(data_final_nogeom, ...)
+    indicator <- do.call(calc_map, c(list(x = data_final_nogeom), dots_filtered))
 
     # Add indicator values to grid
     join_cols <- unique(c("cellid", intersect(names(clipped_grid), names(indicator))))
@@ -1017,17 +1020,17 @@ compute_indicator_workflow <- function(data,
     }
   } else {
     # Calculate indicator
-    indicator <- calc_ts(data_final_nogeom, ...)
+    indicator <- do.call(calc_ts, c(list(x = data_final_nogeom), dots_filtered))
 
     # Calculate confidence intervals
     if (ci_type != "none") {
       if (!type %in% noci_list) {
-        indicator <- calc_ci(data_final_nogeom,
-          indicator = indicator,
-          num_bootstrap = num_bootstrap,
-          ci_type = ci_type,
-          ...
-        )
+        indicator <- do.call(calc_ci,
+                             c(list(x = data_final_nogeom,
+                                    indicator = indicator,
+                                    num_bootstrap = num_bootstrap,
+                                    ci_type = ci_type),
+                               dots_filtered))
       } else {
         if (!type %in% c("hill0", "hill1", "hill2", "completeness")) {
           warning(
