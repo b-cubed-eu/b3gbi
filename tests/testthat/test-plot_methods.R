@@ -577,10 +577,12 @@ test_that("plot_species_ts applies custom aesthetics correctly", {
   expect_equal(point_geom$aes_params$size, 4)
 })
 
-spec_occ_mammals_denmark_ts_ci <- suppressWarnings(spec_occ_ts(example_cube_1,
+spec_occ_mammals_denmark_ts_ci <- spec_occ_ts(example_cube_1,
                                             level = "country",
-                                            region = "Denmark") %>%
-   add_ci(num_bootstrap = 10))
+                                            region = "Denmark")
+# Add mock CI columns to avoid dubicube instability in tests
+spec_occ_mammals_denmark_ts_ci$data <- spec_occ_mammals_denmark_ts_ci$data %>%
+  dplyr::mutate(ll = diversity_val * 0.9, ul = diversity_val * 1.1)
 
 test_that("plot_species_ts manages trends and confidence intervals", {
   # Verify presence of smoothed trend
