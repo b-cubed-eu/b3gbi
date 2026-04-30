@@ -13,6 +13,9 @@
 \alias{calc_ci.area_rarity}
 \alias{calc_ci.spec_occ}
 \alias{calc_ci.spec_range}
+\alias{calc_ci.hill0}
+\alias{calc_ci.hill1}
+\alias{calc_ci.hill2}
 \title{Calculate Confidence Intervals for a Biodiversity Indicator}
 \usage{
 calc_ci(x, indicator, ...)
@@ -38,6 +41,12 @@ calc_ci(x, indicator, ...)
 \method{calc_ci}{spec_occ}(x, indicator, num_bootstrap = 1000, ci_type = "norm", ...)
 
 \method{calc_ci}{spec_range}(x, indicator, num_bootstrap = 1000, ci_type = "norm", ...)
+
+\method{calc_ci}{hill0}(x, indicator, num_bootstrap = 1000, ...)
+
+\method{calc_ci}{hill1}(x, indicator, num_bootstrap = 1000, ...)
+
+\method{calc_ci}{hill2}(x, indicator, num_bootstrap = 1000, ...)
 }
 \arguments{
 \item{x}{A data cube object}
@@ -81,5 +90,11 @@ biodiversity indicator over time unless you choose 'none' for ci_type.
 \item \code{calc_ci(spec_occ)}: Calculate confidence intervals for species occurrences
 
 \item \code{calc_ci(spec_range)}: Calculate confidence intervals for species range
+
+\item \code{calc_ci(hill0)}: Calculate confidence intervals for Hill0 (Richness)
+
+\item \code{calc_ci(hill1)}: Calculate confidence intervals for Hill1 (Shannon)
+
+\item \code{calc_ci(hill2)}: Calculate confidence intervals for Hill2 (Simpson)
 
 }}
