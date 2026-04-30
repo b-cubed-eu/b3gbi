@@ -162,6 +162,18 @@ compute_indicator_workflow <- function(data,
     FALSE
   }
 
+  num_bootstrap <- if ("num_bootstrap" %in% names(dots)) {
+    dots$num_bootstrap
+  } else {
+    0
+  }
+
+  ci_type <- if ("ci_type" %in% names(dots)) {
+    dots$ci_type
+  } else {
+    "none"
+  }
+
   wrong_class(data,
     class = c("processed_cube", "processed_cube_dsinfo", "sim_cube"),
     reason = "unrecognized"
