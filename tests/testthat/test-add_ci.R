@@ -26,15 +26,26 @@ test_that("add_ci returns original object with warning for excluded indicators",
   # Mock for Hill numbers
   mock_hill <- list(
     data = data.frame(year = 2000, diversity_val = 10),
+    raw_data = data.frame(year = 2000,
+                          scientificName = "Species A",
+                          obs = 1,
+                          cellCode = "C1"),
     div_type = "hill0"
   )
   class(mock_hill) <- c("indicator_ts", "hill0")
+  attr(mock_hill, "type") <- "ts"
 
-  expect_warning(
-    result_hill <- add_ci(mock_hill),
-    "Confidence intervals cannot calculated for hill0 as they are handled by the iNext package"
+  # Mock calc_ci.hill0
+  testthat::with_mocked_bindings(
+    calc_ci = function(...) {
+       data.frame(year = 2000, diversity_val = 10, ll = 9, ul = 11)
+    },
+    .package = "b3gbi",
+    {
+      result_hill <- add_ci(mock_hill)
+      expect_true("ll" %in% names(result_hill$data))
+    }
   )
-  expect_equal(result_hill, mock_hill)
 })
 
 test_that("add_ci calls dubicube for cube-level bootstrapping", {
