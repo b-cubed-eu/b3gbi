@@ -195,7 +195,7 @@ compute_indicator_workflow <- function(data,
   }
 
   # Null assignments
-  xcoord <- ycoord <- ll <- ul <- cellCode <- cellid <- geometry <- NULL
+  xcoord <- ycoord <- ll <- ul <- cellCode <- cellid <- geometry <- area <- NULL
 
   # Check for empty cube
   if (nrow(data$data) == 0) {
@@ -977,7 +977,7 @@ compute_indicator_workflow <- function(data,
 
   # Save raw data before adding classes (for bootstrapping later)
   raw_data_for_bootstrap <- data_final_nogeom
-  
+
   # Assign classes to send data to correct calculator function
   subtype <- paste0(type, "_", dim_type)
   class(data_final_nogeom) <- append(type, class(data_final_nogeom))
