@@ -154,25 +154,11 @@ compute_indicator_workflow <- function(data,
   # Save original cell_size to determine whether to use native grid later
   original_cell_size <- cell_size
 
-  # Extract gridded_average from dots if present
+  # Extract parameters from dots
   dots <- list(...)
-  gridded_average <- if ("gridded_average" %in% names(dots)) {
-    dots$gridded_average
-  } else {
-    FALSE
-  }
-
-  num_bootstrap <- if ("num_bootstrap" %in% names(dots)) {
-    dots$num_bootstrap
-  } else {
-    0
-  }
-
-  ci_type <- if ("ci_type" %in% names(dots)) {
-    dots$ci_type
-  } else {
-    "none"
-  }
+  gridded_average <- if ("gridded_average" %in% names(dots)) dots$gridded_average else FALSE
+  num_bootstrap   <- if ("num_bootstrap" %in% names(dots)) dots$num_bootstrap else 0
+  ci_type         <- if ("ci_type" %in% names(dots)) dots$ci_type else "none"
 
   # Filter dots to remove arguments already explicitly handled
   dots_filtered <- dots[!(names(dots) %in% c("num_bootstrap", "ci_type", "gridded_average"))]
