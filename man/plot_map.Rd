@@ -22,9 +22,7 @@ plot_map(
   land_fill_colour = NULL,
   grid_fill_colour = NULL,
   grid_line_colour = NULL,
-  grid_outline_colour = NULL,
   grid_line_width = NULL,
-  grid_outline_width = NULL,
   grid_fill_transparency = NULL,
   grid_line_transparency = NULL,
   legend_title = NULL,
@@ -32,9 +30,7 @@ plot_map(
   legend_title_wrap_length = 10,
   title_wrap_length = 60,
   visible_gridlines = TRUE,
-  visible_grid_outline = FALSE,
   visible_panel_gridlines = FALSE,
-  complete_grid_outline = FALSE,
   map_expansion_factor = 0.1,
   layers = NULL,
   layer_colours = NULL,
@@ -98,14 +94,7 @@ grid cells will be coloured according to their indicator value). Default is
 "black". If visible_gridlines is set to FALSE, this setting will have no
 effect.}
 
-\item{grid_outline_colour}{(Optional) Colour for the grid outline. Default is
-"black". If visible_grid_outline is set to FALSE, this setting will have no
-effect.}
-
 \item{grid_line_width}{(Optional) Width of the grid lines. Default is 0.1.}
-
-\item{grid_outline_width}{(Optional) Width of the grid outline. Default is
-0.5.}
 
 \item{grid_fill_transparency}{(Optional) Transparency of the grid fill colour
 for empty grid cells (0 = fully transparent, 1 = fully opaque). If
@@ -130,14 +119,8 @@ new line.}
 \item{visible_gridlines}{(Optional) Show gridlines between cells. Default is
 TRUE.}
 
-\item{visible_grid_outline}{(Optional) Show outline around grid. Default is
-FALSE.}
-
 \item{visible_panel_gridlines}{(Optional) Show ggplot panel gridlines.
 Default is FALSE.}
-
-\item{complete_grid_outline}{(Optional) If TRUE, the grid outline will be
-extended as a complete rectangle, even if the grid is not. Default is FALSE.}
 
 \item{map_expansion_factor}{(Optional) Factor to expand the map limits
 beyond the grid limits. This does NOT expand the boundaries of the plot, it

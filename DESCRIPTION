@@ -38,6 +38,7 @@ Imports:
     stringr,
     tibble,
     tidyr,
+    tidyselect,
     units
 Suggests: 
     bold (>= 1.3.0),

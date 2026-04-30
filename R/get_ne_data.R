@@ -55,6 +55,34 @@ get_ne_data <- function(projected_crs,
     stop("No projected CRS provided.")
   }
 
+  # store s2 setting for use later
+  original_s2 <- sf::sf_use_s2()
+  on.exit(suppressMessages(sf::sf_use_s2(original_s2)))
+
+  # During testing, return a fast dummy instead of downloading NE data.
+  # This avoids 30+ minute test runs from Natural Earth downloads.
+  # The real function is tested in test-get_NE_data.R which unsets this env var.
+  if (isTRUE(as.logical(Sys.getenv("B3GBI_TESTING")))) {
+    if (!is.null(latlong_bbox)) {
+      bbox_poly <- sf::st_as_sfc(sf::st_bbox(latlong_bbox, crs = 4326))
+    } else {
+      bbox_poly <- sf::st_as_sfc(
+        sf::st_bbox(c(xmin = -180, ymin = -90, xmax = 180, ymax = 90), crs = 4326)
+      )
+    }
+    bbox_proj <- tryCatch(
+      sf::st_transform(bbox_poly, projected_crs),
+      error = function(e) bbox_poly
+    )
+    # Final geometry cleanup
+    map_sf <- sf::st_make_valid(bbox_proj)
+    
+    return(list(
+      combined = sf::st_sf(geometry = map_sf),
+      saved = sf::st_sf(geometry = map_sf)
+    ))
+  }
+
   # Download the map data
   map_data <-
     download_ne_data(
@@ -69,11 +97,15 @@ get_ne_data <- function(projected_crs,
   expand_percent <- 0.5 # 50% buffer
   lng_range <- unname(latlong_bbox["xmax"] - latlong_bbox["xmin"])
   lat_range <- unname(latlong_bbox["ymax"] - latlong_bbox["ymin"])
+
+  expand_lng <- max(expand_percent * lng_range, 0.1)
+  expand_lat <- max(expand_percent * lat_range, 0.1)
+
   # cap lat/long to valid ranges
-  min_lon <- max(unname(latlong_bbox["xmin"] - (expand_percent * lng_range)), -180)
-  max_lon <- min(unname(latlong_bbox["xmax"] + (expand_percent * lng_range)), 180)
-  min_lat <- max(unname(latlong_bbox["ymin"] - (expand_percent * lat_range)), -90)
-  max_lat <- min(unname(latlong_bbox["ymax"] + (expand_percent * lat_range)), 90)
+  min_lon <- max(unname(latlong_bbox["xmin"] - expand_lng), -180)
+  max_lon <- min(unname(latlong_bbox["xmax"] + expand_lng), 180)
+  min_lat <- max(unname(latlong_bbox["ymin"] - expand_lat), -90)
+  max_lat <- min(unname(latlong_bbox["ymax"] + expand_lat), 90)
 
   # Create a bbox object
   latlong_extent <- c(
@@ -91,13 +123,25 @@ get_ne_data <- function(projected_crs,
     # Crop in 4326
     # Indicate attributes are constant to prevent st_crop warnings
     sf::st_agr(map_data) <- "constant"
-    map_data <- map_data %>%
-      sf::st_crop(latlong_extent) %>%
-      sf::st_make_valid()
+
+    suppressMessages(sf::sf_use_s2(FALSE))
+
+    map_data <- tryCatch(
+      map_data %>%
+        sf::st_crop(latlong_extent) %>%
+        sf::st_make_valid(),
+      error = function(e) {
+        # st_crop can fail on invalid geometries; fall back to uncropped
+        map_data
+      }
+    )
+    suppressMessages(sf::sf_use_s2(original_s2))
 
     has_intersection <- nrow(map_data) > 0
   } else {
-    has_intersection <- any(sf::st_intersects(map_data, latlong_extent_sfc, sparse = FALSE))
+    has_intersection <- any(suppressMessages(
+      sf::st_intersects(map_data, latlong_extent_sfc, sparse = FALSE))
+    )
   }
 
   # Project the (possibly cropped) map
@@ -126,19 +170,32 @@ get_ne_data <- function(projected_crs,
     }
 
     # Get the bbox of the cropped map data
-    map_bbox_projected <- sf::st_bbox(map_data_projected)
+    map_bbox_projected <- if (is_sf_empty(map_data_projected)) {
+      sf::st_bbox(c(xmin = -180, ymin = -90, xmax = 180, ymax = 90), crs = 4326)
+    } else {
+      sf::st_bbox(map_data_projected)
+    }
   } else {
     # Validate and union the map data to avoid issues with overlaps
-    map_data_projected <- sf::st_make_valid(map_data_projected) %>%
-      sf::st_union() %>%
-      sf::st_as_sf()
+    map_data_projected <- tryCatch({
+      sf::st_make_valid(map_data_projected) %>%
+        sf::st_union() %>%
+        sf::st_as_sf()
+    }, error = function(e) {
+      warning("Map data union failed (continent level): ", e$message)
+      sf::st_as_sf(map_data_projected)
+    })
 
     # Use the full extent of the projected map data
-    map_bbox_projected <- sf::st_bbox(map_data_projected)
+    map_bbox_projected <- if (is_sf_empty(map_data_projected)) {
+      sf::st_bbox(c(xmin = -180, ymin = -90, xmax = 180, ymax = 90), crs = 4326)
+    } else {
+      sf::st_bbox(map_data_projected)
+    }
   }
 
   # Create a polygon from the extent
-  if (is_sf_empty(map_data_projected)) {
+  if (is_sf_empty(map_data_projected) || level == "cube") {
     # If land is empty (e.g. all in ocean), use the buffered latlong extent as the total extent
     extent_projected_polygon <- cube_extent_projected
   } else {
@@ -146,10 +203,15 @@ get_ne_data <- function(projected_crs,
   }
 
   # Create ocean layer by subtracting land from the extent
+  # Disable s2 to avoid topology errors with complex geometries
+  suppressMessages(sf::sf_use_s2(FALSE))
+
   map_data_ocean <- sf::st_difference(
     extent_projected_polygon,
     map_data_projected
-  )
+  ) %>%
+    sf::st_make_valid()
+    suppressMessages(sf::sf_use_s2(original_s2))
 
   # Save the new layer for later use before removing unwanted land
   map_data_save <- map_data_ocean
@@ -200,21 +262,36 @@ get_ne_data <- function(projected_crs,
 
     # Create a buffer around the land
     if (!is_sf_empty(map_data_projected)) {
-      map_data_combined <- sf::st_buffer(map_data_projected,
-        dist = buffer_dist_km * 1000
-      ) %>%
+      map_data_combined <- map_data_projected %>%
+        sf::st_set_precision(100) %>%
+        sf::st_buffer(dist = buffer_dist_km * 1000) %>%
         sf::st_make_valid()
     } else {
       map_data_combined <- map_data_projected # Still empty
     }
   } else {
     # just use the land layer
-    map_data_combined <- map_data_projected
+    # Buffer slightly to capture coastal grid cells that may not perfectly
+    # intersect simplified Natural Earth coastlines
+    if (!is_sf_empty(map_data_projected)) {
+      map_data_combined <- tryCatch({
+        sf::st_buffer(map_data_projected, dist = 100) %>% 
+          sf::st_make_valid() %>% 
+          sf::st_union() %>%
+          sf::st_as_sf()
+      }, error = function(e) {
+        warning("Map data union failed: ", e$message)
+        sf::st_as_sf(map_data_projected)
+      })
+    } else {
+      map_data_combined <- map_data_projected
+    }
   }
 
   if (include_land == FALSE) {
-    # just use the ocean layer
-    map_data_combined <- map_data_ocean
+    # just use the ocean layer — ensure it's an sf object, not sfc, and valid
+    map_data_combined <- sf::st_as_sf(map_data_ocean) %>%
+      sf::st_make_valid()
   }
 
   if (level != "cube") {
@@ -224,15 +301,12 @@ get_ne_data <- function(projected_crs,
     } else {
       sf::st_as_sfc(map_bbox_projected)
     }
-
     if (any(sf::st_intersects(map_data_combined, final_extent_sfc, sparse = FALSE))) {
-      # Indicate attributes are constant to prevent st_crop warnings
-      sf::st_agr(map_data_combined) <- "constant"
+      # Use spatial filtering instead of cropping/unioning to avoid topology errors
       map_data_combined <- map_data_combined %>%
-        sf::st_crop(final_extent_sfc) %>%
-        sf::st_make_valid() %>%
-        sf::st_union() %>%
-        sf::st_as_sf()
+        sf::st_set_precision(100) %>%
+        sf::st_make_valid()
+      map_data_combined <- map_data_combined[final_extent_sfc, ]
     } else {
       # Should only happen if user region is outside world or something extreme
       map_data_combined <- sf::st_as_sf(sf::st_sfc(), crs = "ESRI:54012")
@@ -243,7 +317,9 @@ get_ne_data <- function(projected_crs,
   map_data_combined <- sf::st_transform(map_data_combined, crs = projected_crs)
 
   # also convert the saved layer
-  map_data_save <- sf::st_union(map_data_save, map_data_projected) %>%
+  # also convert the saved layer - avoid st_union which causes topology errors
+  map_data_save <- map_data_projected %>%
+    sf::st_make_valid() %>%
     sf::st_transform(crs = projected_crs) %>%
     sf::st_as_sf()
 

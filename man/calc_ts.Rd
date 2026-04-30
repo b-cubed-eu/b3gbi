@@ -18,6 +18,7 @@
 \alias{calc_ts.area_rarity}
 \alias{calc_ts.spec_occ}
 \alias{calc_ts.spec_range}
+\alias{calc_ts.relative_occupancy}
 \alias{calc_ts.tax_distinct}
 \alias{calc_ts.occ_turnover}
 \alias{calc_ts}
@@ -57,6 +58,8 @@
 
 \method{calc_ts}{spec_range}(x, ...)
 
+\method{calc_ts}{relative_occupancy}(x, occ_type = 0, ...)
+
 \method{calc_ts}{tax_distinct}(x, set_rows = 1, ...)
 
 \method{calc_ts}{occ_turnover}(x, ...)
@@ -68,6 +71,36 @@ calc_ts(x, ...)
 
 \item{...}{Additional arguments passed to specific indicator calculation
 functions.}
+
+\item{occ_type}{Integer controlling the occupancy denominator (default \code{0}):
+\itemize{
+\item \code{0} — \strong{Total-area occupancy}: number of cells occupied by species /
+total number of grid cells in the study region (including unsampled
+cells). This is the most conservative measure. \emph{Presence-only caveat}:
+empty cells cannot be assumed to be truly unoccupied; they may simply
+lack sampling effort.
+\item \code{1} — \strong{Relative-to-ever-occupied occupancy}: number of cells occupied
+by species / number of cells with \emph{at least one occurrence (any species)
+anywhere in the time window}. This conditions on cells where some
+sampling effort is documented but the denominator is still constant
+across years.
+\item \code{2} — \strong{Annual occupancy}: for each year, number of cells occupied by
+species / number of cells with at least one occurrence (any species) \emph{in
+that year}. The denominator therefore varies by year, reflecting changes
+in sampling footprint over time.
+}
+
+\strong{Note on presence-only data}: All three types are computed from
+presence-only occurrence data. A cell with no records cannot be assumed
+to be truly unoccupied; it may be unsampled or under-surveyed. Types 1
+and 2 partially address this by restricting the denominator to cells
+with documented occurrences, but they still reflect \emph{recording effort}
+rather than true absence. Interpret all types with care.
+
+\strong{Note on cell aggregation}: When a coarser \code{cell_size} is chosen, data
+are aggregated to coarser grid cells before this calculation. The
+denominator counts post-aggregation cells (\code{cellid}), not original cube
+cells (\code{cellCode}).}
 
 \item{set_rows}{Automatically select which taxonomic information to keep when
 there are multiple options. Default value of 1 keeps the first option,

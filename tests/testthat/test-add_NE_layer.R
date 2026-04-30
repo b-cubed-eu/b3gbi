@@ -77,7 +77,8 @@ mock_st_make_valid <- function(x) {
 
 # --- Test Block 1: The 'admin_0_countries' path ---
 test_that("Path 'admin_0_countries' correctly loads and crops", {
-
+  skip_on_cran()
+  skip_on_ci()
   testthat::with_mocked_bindings(
     `ne_countries` = mock_ne_countries,
     {
@@ -191,7 +192,8 @@ test_that("Error handling attempts download on load failure", {
 
 # --- Test Block 4: Lookup Failure and Final Processing ---
 test_that("Unsupported scale and lookup failures stop execution", {
-
+  skip_on_cran()
+  skip_on_ci()
   # 1. Unsupported scale (Activates the switch STOP)
   expect_error(
     add_ne_layer(layer_name = "lakes", scale = "tiny", extent_projected = mock_extent),

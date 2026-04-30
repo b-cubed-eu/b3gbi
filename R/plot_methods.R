@@ -33,10 +33,10 @@ plot.spec_occ <- function(x, species, ...) {
   call_plot(
     x,
     species = species,
-    "Occurrences",
-    "Species Occurrences",
-    "Occurrences",
-    "Species Occurrences",
+    y_label_default = "Occurrences",
+    auto_title_ts = "Species Occurrences",
+    leg_label_default = "Occurrences",
+    auto_title_map = "Species Occurrences",
     ...
   )
 
@@ -51,8 +51,8 @@ plot.cum_richness <- function(x, envelopecolour = NULL, ...) {
 
   call_plot(
     x,
-    "Cumulative Species Richness",
-    "Cumulative Species Richness",
+    y_label_default = "Cumulative Species Richness",
+    auto_title_ts = "Cumulative Species Richness",
     smoothed_trend = FALSE,
     ...
   )
@@ -68,10 +68,10 @@ plot.pielou_evenness <- function(x, ...) {
 
   call_plot(
     x,
-    "Evenness",
-    "Pielou's Evenness Trend",
-    "Evenness",
-    "Pielou's Evenness",
+    y_label_default = "Evenness",
+    auto_title_ts = "Pielou's Evenness Trend",
+    leg_label_default = "Evenness",
+    auto_title_map = "Pielou's Evenness",
     ...
   )
 
@@ -86,10 +86,10 @@ plot.williams_evenness <- function(x, ...) {
 
   call_plot(
     x,
-    "Evenness",
-    "Williams' Evenness Trend",
-    "Evenness",
-    "Williams' Evenness",
+    y_label_default = "Evenness",
+    auto_title_ts = "Williams' Evenness Trend",
+    leg_label_default = "Evenness",
+    auto_title_map = "Williams' Evenness",
     ...
   )
 
@@ -104,10 +104,10 @@ plot.tax_distinct <- function(x, ...) {
 
   call_plot(
     x,
-    "Taxonomic Distinctness",
-    "Taxonomic Distinctness Trend",
-    "Taxonomic Distinctness",
-    "Taxonomic Distinctness",
+    y_label_default = "Taxonomic Distinctness",
+    auto_title_ts = "Taxonomic Distinctness Trend",
+    leg_label_default = "Taxonomic Distinctness",
+    auto_title_map = "Taxonomic Distinctness",
     ...
   )
 
@@ -122,10 +122,10 @@ plot.spec_richness_density <- function(x, ...) {
 
   call_plot(
     x,
-    "Mean Unique Species \nper km^2",
-    "Trend of Mean Species Richness Density",
-    "Unique Species \nper km^2",
-    "Density of Species Richness",
+    y_label_default = "Mean Unique Species \nper km^2",
+    auto_title_ts = "Trend of Mean Species Richness Density",
+    leg_label_default = "Unique Species \nper km^2",
+    auto_title_map = "Density of Species Richness",
     ...
   )
 
@@ -139,10 +139,10 @@ plot.occ_density <- function(x, ...) {
 
   call_plot(
     x,
-    "Mean Occurrences \nper km^2",
-    "Trend of Mean Occurrence Density",
-    "Occurrences \nper km^2",
-    "Density of Occurrences",
+    y_label_default = "Mean Occurrences \nper km^2",
+    auto_title_ts = "Trend of Mean Occurrence Density",
+    leg_label_default = "Occurrences \nper km^2",
+    auto_title_map = "Density of Occurrences",
     ...
   )
 
@@ -156,10 +156,10 @@ plot.newness <- function(x, ...) {
 
   call_plot(
     x,
-    "Mean Year of Occurrence",
-    "Trend of Mean Year of Occurrence",
-    "Mean Year of \nOccurrence",
-    "Mean Year of Occurrence",
+    y_label_default = "Mean Year of Occurrence",
+    auto_title_ts = "Trend of Mean Year of Occurrence",
+    leg_label_default = "Mean Year of \nOccurrence",
+    auto_title_map = "Mean Year of Occurrence",
     ...
   )
 
@@ -174,10 +174,10 @@ plot.total_occ <- function(x, ...) {
 
   call_plot(
     x,
-    "Occurrences",
-    "Trend of Total Occurrences",
-    "Occurrences",
-    "Total Occurrences",
+    y_label_default = "Occurrences",
+    auto_title_ts = "Trend of Total Occurrences",
+    leg_label_default = "Occurrences",
+    auto_title_map = "Total Occurrences",
     ...
   )
 
@@ -191,10 +191,10 @@ plot.area_rarity <- function(x, ...) {
 
   call_plot(
     x,
-    "Mean of Rarity (Summed by Cell)",
-    "Area-Based Rarity Trend",
-    "Summed Rarity",
-    "Area-Based Rarity",
+    y_label_default = "Mean of Rarity (Summed by Cell)",
+    auto_title_ts = "Area-Based Rarity Trend",
+    leg_label_default = "Summed Rarity",
+    auto_title_map = "Area-Based Rarity",
     ...
   )
 
@@ -208,10 +208,10 @@ plot.ab_rarity <- function(x, ...) {
 
   call_plot(
     x,
-    "Mean of Rarity (Summed by Cell)",
-    "Abundance-Based Rarity Trend",
-    "Summed Rarity",
-    "Abundance-Based Rarity",
+    y_label_default = "Mean of Rarity (Summed by Cell)",
+    auto_title_ts = "Abundance-Based Rarity Trend",
+    leg_label_default = "Summed Rarity",
+    auto_title_map = "Abundance-Based Rarity",
     ...
   )
 
@@ -225,10 +225,10 @@ plot.completeness <- function(x, ...) {
 
   call_plot(
     x,
-    "Sample Coverage",
-    "Trend of Sample Coverage",
-    "Sample Coverage",
-    "Sample Coverage",
+    y_label_default = "Sample Coverage",
+    auto_title_ts = "Trend of Sample Coverage",
+    leg_label_default = "Sample Coverage",
+    auto_title_map = "Sample Coverage",
     ...
   )
 
@@ -242,10 +242,10 @@ plot.hill2 <- function(x, ...) {
 
   call_plot(
     x,
-    "Hill-Simpson Diversity",
-    "Hill-Simpson Diversity Trend (Estimated by Coverage-Based Rarefaction)",
-    "Hill-Simpson Diversity",
-    "Hill-Simpson Diversity (Estimated by Coverage-Based Rarefaction)",
+    y_label_default = "Hill-Simpson Diversity",
+    auto_title_ts = "Hill-Simpson Diversity Trend (Estimated by Coverage-Based Rarefaction)",
+    leg_label_default = "Hill-Simpson Diversity",
+    auto_title_map = "Hill-Simpson Diversity (Estimated by Coverage-Based Rarefaction)",
     ...
   )
 
@@ -259,10 +259,10 @@ plot.hill1 <- function(x, ...) {
 
   call_plot(
     x,
-    "Hill-Shannon Diversity",
-    "Hill-Shannon Diversity Trend (Estimated by Coverage-Based Rarefaction)",
-    "Hill-Shannon Diversity",
-    "Hill-Shannon Diversity (Estimated by Coverage-Based Rarefaction)",
+    y_label_default = "Hill-Shannon Diversity",
+    auto_title_ts = "Hill-Shannon Diversity Trend (Estimated by Coverage-Based Rarefaction)",
+    leg_label_default = "Hill-Shannon Diversity",
+    auto_title_map = "Hill-Shannon Diversity (Estimated by Coverage-Based Rarefaction)",
     ...
   )
 
@@ -276,10 +276,10 @@ plot.hill0 <- function(x, ...) {
 
   call_plot(
     x,
-    "Species Richness",
-    "Species Richness Trend (Estimated by Coverage-Based Rarefaction)",
-    "Richness",
-    "Species Richness (Estimated by Coverage-Based Rarefaction)",
+    y_label_default = "Species Richness",
+    auto_title_ts = "Species Richness Trend (Estimated by Coverage-Based Rarefaction)",
+    leg_label_default = "Richness",
+    auto_title_map = "Species Richness (Estimated by Coverage-Based Rarefaction)",
     ...
   )
 
@@ -314,5 +314,30 @@ plot.occ_turnover <- function(x, auccolour = NULL,  ...) {
             y_label_default = "Occupancy Turnover",
             auto_title_ts = "Occupancy Turnover",
             ...)
+
+}
+
+#' @export
+plot.relative_occupancy <- function(x, species, ...) {
+
+  wrong_class(x, "relative_occupancy", reason = "incorrect")
+  wrong_class(x, c("indicator_ts", "indicator_map"), reason = "incorrect")
+
+  # Prepare a list of default arguments for call_plot
+  plot_args <- list(
+    x = x,
+    species = species,
+    y_label_default = "Relative Occupancy",
+    auto_title_ts = "Species Relative Occupancy Trend",
+    leg_label_default = "Relative Occupancy",
+    auto_title_map = "Species Relative Occupancy"
+  )
+
+  # Add any additional arguments passed via ...
+  dots <- list(...)
+  plot_args <- c(plot_args, dots)
+
+  # Call the central plotting function
+  do.call(call_plot, plot_args)
 
 }

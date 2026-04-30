@@ -5,6 +5,7 @@ eea_code_to_coords <- function(cellCodes) {
 
   cellCode <- resolution_text <- xcoord_base <- ycoord_base <- NULL
   km_multiplier <- xcoord <- ycoord <- resolution_final <- NULL
+  resolution_value <- resolution_unit <- NULL
 
   data.frame(cellCode = cellCodes) %>%
     dplyr::mutate(
@@ -15,14 +16,17 @@ eea_code_to_coords <- function(cellCodes) {
         ""
       ),
 
-      # 2. Extract the numerical resolution value (e.g., 1, 250)
-      resolution_value = as.numeric(stringr::str_extract(resolution_text, "^\\d+")),
+      # 2. Determine resolution in km (numeric)
+      resolution_value = as.numeric(stringr::str_extract(cellCode, "[0-9.]+")),
+      # Extract resolution unit (km or m)
+      resolution_unit = stringr::str_extract(cellCode, "(km|m)"),
 
-      # 3. Determine the multiplication factor in KILOMETERS (e.g., 1.0 or 0.25)
+      # Calculate multiplier to get meters per grid unit
+      # (e.g., for 100km, the value is 100,000 meters)
       km_multiplier = dplyr::case_when(
-        stringr::str_detect(resolution_text, "km") ~ resolution_value,
-        stringr::str_detect(resolution_text, "m")  ~ resolution_value / 1000,
-        TRUE ~ NA_real_
+        resolution_unit == "km" ~ resolution_value * 1000,
+        resolution_unit == "m" ~ resolution_value,
+        TRUE ~ 1000 # Default to 1km if no unit found
       ),
 
       # 4. Extract x-coordinate base value (e.g., 420 from E420)
@@ -37,15 +41,22 @@ eea_code_to_coords <- function(cellCodes) {
         "(?<=[NS])-?\\d+"
       )),
 
-      # 6. Calculate the final coordinates in METERS
-      xcoord = xcoord_base * km_multiplier * 1000,
-      ycoord = ycoord_base * km_multiplier * 1000,
+      # 6. Final coordinates in meters
+      # Heuristic: If base coordinates are > 10,000, they are likely already in meters.
+      # Standard EEA IDs use km-scale integers (e.g. E4321 for 4,321,000m).
+      xcoord = dplyr::if_else(abs(xcoord_base) > 10000,
+                               xcoord_base,
+                               xcoord_base * km_multiplier),
+      ycoord = dplyr::if_else(abs(ycoord_base) > 10000,
+                               ycoord_base,
+                               ycoord_base * km_multiplier),
 
-      # 7. Create the final resolution string: e.g., 0.25 + "km" -> "0.25km"
-      resolution_final = paste0(km_multiplier, "km")
+      # 7. Create the final resolution string
+      resolution_final = paste0(resolution_value, resolution_unit)
     ) %>%
     # Select only the final columns needed
     dplyr::select(
+      cellCode,
       xcoord,
       ycoord,
       resolution = resolution_final

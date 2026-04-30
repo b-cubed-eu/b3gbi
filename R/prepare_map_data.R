@@ -83,7 +83,7 @@ prepare_map_data <- function(data,
   # Crop to the above-determined bounding box
   map_surround <- map_data_sf %>%
     sf::st_make_valid() %>%
-    sf::st_crop(latlong_extent) %>%
+    suppressMessages(sf::st_crop(latlong_extent)) %>%
     sf::st_transform(crs = projection)
 
   # Crop layers if provided
