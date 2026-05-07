@@ -20,7 +20,7 @@ knitr::opts_chunk$set(
 
 ## Introduction 🛡️
 
-Quantifying uncertainty is crucial for robust biodiversity assessments. The **b3gbi** package provides a flexible and powerful way to calculate confidence intervals (CIs) for biodiversity indicators using bootstrapping methods, leveraging the **dubicube** package for robust cube-level resampling.
+Quantifying uncertainty is crucial for robust biodiversity assessments. The **b3gbi** package provides a flexible and powerful way to calculate confidence intervals (CIs) for biodiversity indicators using bootstrapping methods, leveraging the [**dubicube**](https://github.com/b-cubed-eu/dubicube) package for robust cube-level resampling.
 
 To maintain a clean and efficient workflow, uncertainty calculation is decoupled from the initial indicator calculation. This "two-step" process allows users to first explore their data and indicators quickly, and then perform computationally intensive bootstrapping only when needed.
 
@@ -94,10 +94,19 @@ The `add_ci()` function provides several arguments for fine-tuning the CI calcul
 | Argument | Description | Default |
 |----------|-------------|---------|
 | `num_bootstrap` | Number of bootstrap replicates. | `1000` |
-| `ci_type` | Type of bootstrap interval (`"norm"`, `"basic"`, `"perc"`, `"bca"`). | `"norm"` |
+| `ci_type` | Type of bootstrap interval. See [Types of Confidence Intervals](#types-of-confidence-intervals) below. | `"perc"` |
 | `confidence_level` | The confidence level (e.g., 0.95). | `0.95` |
 | `boot_args` | A list of additional arguments for `dubicube::bootstrap_cube()`. | `list()` |
 | `ci_args` | A list of additional arguments for `dubicube::calculate_bootstrap_ci()`. | `list()` |
+
+## Types of Confidence Intervals
+
+The `ci_type` argument allows you to choose between different methods for calculating bootstrap confidence intervals. These are passed directly to the `dubicube` package:
+
+*   **Percentile (`"perc"`)**: (Default) The simplest and most commonly used method. It uses the ordered bootstrap replicates to find the intervals (e.g., the 2.5th and 97.5th percentiles for a 95% CI). It is transformation-invariant and generally robust for biodiversity indicators.
+*   **Bias-Corrected and Accelerated (`"bca"`)**: An improvement over the percentile method that adjusts for both bias and skewness in the bootstrap distribution. It is highly recommended for accuracy but requires more computation.
+*   **Normal Approximation (`"norm"`)**: Assumes the bootstrap distribution is approximately normal. It uses the standard error of the bootstrap replicates to calculate the interval. While fast, it may be less accurate for skewed distributions typical of biodiversity metrics.
+*   **Basic (`"basic"`)**: Also known as the "reverse percentile" method. It uses the percentiles of the distribution of the difference between the bootstrap replicates and the original estimate.
 
 ### Customizing the Bootstrap Process
 
