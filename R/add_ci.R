@@ -18,7 +18,7 @@
 #'   * `indicator`: Bootstrapping is done by resampling indicator
 #'     values. This is faster for large cubes but less robust.
 #' @param ci_type (Optional) Type of bootstrap confidence intervals to
-#'   calculate. (Default: `"norm"`). Supported options are:
+#'   calculate. (Default: `"perc"`). Supported options are:
 #'   * `perc`: Percentile intervals.
 #'   * `bca`: Bias-corrected and accelerated intervals.
 #'   * `norm`: Normal approximation intervals.

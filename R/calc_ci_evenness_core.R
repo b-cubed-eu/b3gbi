@@ -8,7 +8,7 @@
 #' @param num_bootstrap (Optional) Set the number of bootstraps to calculate for
 #'  generating confidence intervals. (Default: 1000)
 #' @param ci_type (Optional) Type of bootstrap confidence intervals to
-#'  calculate. (Default: "norm". Select "none" to avoid calculating bootstrap
+#'  calculate. (Default: "perc". Select "none" to avoid calculating bootstrap
 #'  CIs.)
 #' @param ... Additional arguments
 #' @noRd
@@ -16,7 +16,7 @@ calc_ci_evenness_core <- function(x,
                                   type,
                                   indicator,
                                   num_bootstrap = 1000,
-                                  ci_type = ci_type,
+                                  ci_type = "perc",
                                   ...) {
 
   obs <- year <- taxonKey <- num_occ <- NULL
