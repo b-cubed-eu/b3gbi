@@ -22,25 +22,25 @@ calc_ci(x, indicator, ...)
 
 \method{calc_ci}{default}(x, indicator, ...)
 
-\method{calc_ci}{total_occ}(x, indicator, num_bootstrap = 1000, ci_type = "norm", ...)
+\method{calc_ci}{total_occ}(x, indicator, num_bootstrap = 1000, ci_type = "perc", ...)
 
-\method{calc_ci}{occ_density}(x, indicator, num_bootstrap = 1000, ci_type = "norm", ...)
+\method{calc_ci}{occ_density}(x, indicator, num_bootstrap = 1000, ci_type = "perc", ...)
 
-\method{calc_ci}{spec_richness_density}(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
+\method{calc_ci}{spec_richness_density}(x, indicator, num_bootstrap = 1000, ci_type = "perc", ...)
 
-\method{calc_ci}{newness}(x, indicator, num_bootstrap = 1000, ci_type = "norm", ...)
+\method{calc_ci}{newness}(x, indicator, num_bootstrap = 1000, ci_type = "perc", ...)
 
 \method{calc_ci}{williams_evenness}(x, ...)
 
 \method{calc_ci}{pielou_evenness}(x, ...)
 
-\method{calc_ci}{ab_rarity}(x, indicator, num_bootstrap = 1000, ci_type = "norm", ...)
+\method{calc_ci}{ab_rarity}(x, indicator, num_bootstrap = 1000, ci_type = "perc", ...)
 
-\method{calc_ci}{area_rarity}(x, indicator, num_bootstrap = 1000, ci_type = "norm", ...)
+\method{calc_ci}{area_rarity}(x, indicator, num_bootstrap = 1000, ci_type = "perc", ...)
 
-\method{calc_ci}{spec_occ}(x, indicator, num_bootstrap = 1000, ci_type = "norm", ...)
+\method{calc_ci}{spec_occ}(x, indicator, num_bootstrap = 1000, ci_type = "perc", ...)
 
-\method{calc_ci}{spec_range}(x, indicator, num_bootstrap = 1000, ci_type = "norm", ...)
+\method{calc_ci}{spec_range}(x, indicator, num_bootstrap = 1000, ci_type = "perc", ...)
 
 \method{calc_ci}{hill0}(x, indicator, num_bootstrap = 1000, ...)
 
@@ -61,7 +61,7 @@ be called by the 'compute_indicator_workflow' function.}
 generating confidence intervals. (Default: 1000)}
 
 \item{ci_type}{(Optional) Type of bootstrap confidence intervals to
-calculate. (Default: "norm". Select "none" to avoid calculating bootstrap
+calculate. (Default: "perc". Select "none" to avoid calculating bootstrap
 CIs.)}
 }
 \description{

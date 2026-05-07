@@ -36,7 +36,7 @@ values. This is faster for large cubes but less robust.
 }}
 
 \item{ci_type}{(Optional) Type of bootstrap confidence intervals to
-calculate. (Default: \code{"norm"}). Supported options are:
+calculate. (Default: \code{"perc"}). Supported options are:
 \itemize{
 \item \code{perc}: Percentile intervals.
 \item \code{bca}: Bias-corrected and accelerated intervals.
