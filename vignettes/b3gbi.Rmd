@@ -144,13 +144,15 @@ The result is an `indicator_ts` object.
 class(Denmark_total_occ_ts)
 ```
 
-Now let's add confidence intervals using the `add_ci()` function. To speed things up we will reduce the number of bootstrap samples from the default of 1000 to 100.
+Now let's add confidence intervals using the `add_ci()` function. To speed things up we will reduce the number of bootstrap samples from the default of 1000 to 100. By default, the package uses **percentile** intervals (`"perc"`), which are robust for biodiversity indicators.
 
 ```{r add-ci}
 # Add confidence intervals to the time series
 Denmark_total_occ_ts_with_ci <- add_ci(Denmark_total_occ_ts, 
                                        num_bootstrap = 100)
 ```
+
+For more in-depth information on how uncertainty is handled, the different types of confidence intervals available, and advanced configuration options, please see the [Uncertainty in Biodiversity Indicators](uncertainty.html) vignette.
 
 
 ## Step 3: Visualization with `plot()`
