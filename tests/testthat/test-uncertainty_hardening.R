@@ -104,3 +104,88 @@ test_that("add_ci returns original object with warning for excluded indicators",
   )
   expect_identical(res, indicator)
 })
+
+test_that("calc_ci S3 methods work correctly", {
+  # Common mock objects
+  ind_base <- data.frame(year = 2000, diversity_val = 1)
+  
+  # Hill indicators - provide more data points to allow successful bootstrapping
+  df_hill <- data.frame(
+    year = rep(2000, 20),
+    obs = c(rep(1, 10), rep(0, 10)),
+    scientificName = rep(LETTERS[1:5], 4),
+    cellCode = paste0("C", 1:20),
+    taxonKey = rep(1:5, 4)
+  )
+  for (h in c("hill0", "hill1", "hill2")) {
+    x <- df_hill
+    class(x) <- c(h, "data.frame")
+    res <- suppressWarnings(b3gbi:::calc_ci(x, ind_base, num_bootstrap = 20))
+    expect_true("ll" %in% names(res), info = paste("Testing", h))
+  }
+  
+  # Evenness indicators - need multiple species with DIFFERENT abundances
+  df_even <- data.frame(
+    year = rep(2000, 10),
+    obs = 1:10,
+    taxonKey = rep(1:5, 2)
+  )
+  for (e in c("pielou_evenness", "williams_evenness")) {
+    x <- df_even
+    class(x) <- c(e, "data.frame")
+    res <- suppressWarnings(b3gbi:::calc_ci(x, ind_base, num_bootstrap = 20))
+    expect_true("ll" %in% names(res), info = paste("Testing", e))
+  }
+  
+  # Total Occ and Density
+  df_to <- data.frame(year = rep(2000, 20), obs = sample(c(0, 1, 5, 10), 20, replace = TRUE))
+  class(df_to) <- c("total_occ", "data.frame")
+  res_to <- suppressWarnings(b3gbi:::calc_ci(df_to, ind_base, num_bootstrap = 20))
+  expect_true("ll" %in% names(res_to))
+  
+  df_od <- data.frame(year = rep(2000, 20), obs = sample(c(0, 1, 5, 10), 20, replace = TRUE), area = 1:20)
+  class(df_od) <- c("occ_density", "data.frame")
+  attr(df_od, "total_area_sqkm") <- 100
+  res_od <- suppressWarnings(b3gbi:::calc_ci(df_od, ind_base, num_bootstrap = 20))
+  expect_true("ll" %in% names(res_od))
+  
+  # Richness Density
+  df_srd <- data.frame(year = rep(2000, 10), taxonKey = 1:10)
+  class(df_srd) <- c("spec_richness_density", "data.frame")
+  attr(df_srd, "total_area_sqkm") <- 100
+  res_srd <- suppressWarnings(b3gbi:::calc_ci(df_srd, ind_base, num_bootstrap = 20))
+  expect_true("ll" %in% names(res_srd))
+  
+  # Rarity and Newness
+  # Use multiple years and cells with varied species counts to ensure variance
+  df_rare <- data.frame(
+    year = rep(2000:2001, each = 20),
+    obs = 1:40,
+    area = 1:40,
+    cellid = rep(c(rep(1, 5), rep(2, 4), rep(3, 3), rep(4, 2), 5:10), 2),
+    taxonKey = rep(1:20, 2)
+  )
+  ind_rare <- data.frame(year = 2000:2001, diversity_val = 1)
+  for (r in c("ab_rarity", "area_rarity", "newness")) {
+    x <- df_rare
+    class(x) <- c(r, "data.frame")
+    res <- suppressWarnings(b3gbi:::calc_ci(x, ind_rare, num_bootstrap = 20))
+    expect_true("ll" %in% names(res), info = paste("Testing", r))
+  }
+  
+  # Spec Occ and Range
+  df_spec <- data.frame(
+    year = rep(2000, 20),
+    obs = sample(c(0, 1), 20, replace = TRUE),
+    taxonKey = 1,
+    scientificName = "A",
+    cellCode = paste0("C", 1:20)
+  )
+  ind_spec <- data.frame(year = 2000, diversity_val = 1, taxonKey = 1, scientificName = "A")
+  for (s in c("spec_occ", "spec_range")) {
+    x <- df_spec
+    class(x) <- c(s, "data.frame")
+    res <- suppressWarnings(b3gbi:::calc_ci(x, ind_spec, num_bootstrap = 20))
+    expect_true("ll" %in% names(res), info = paste("Testing", s))
+  }
+})
