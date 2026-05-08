@@ -79,9 +79,9 @@ This method resamples the calculated indicator values themselves.
 
 The `add_ci()` function automatically applies appropriate bootstrapping strategies based on the indicator type. This ensures statistically correct confidence intervals without requiring manual configuration:
 
-*   **Group-Specific Bootstrapping**: Species-level indicators (`total_occ`, `spec_occ`, `spec_range`) automatically resample within each species-year combination. This is essential when indicators are calculated per species.
+*   **Group-Specific Bootstrapping**: This method isolates resampling strictly within each grouping variable. For indicators like Total Occurrences (`total_occ`), which calculate a raw count per year, resampling only within that year provides mathematically correct variance without cross-contamination between years.
 
-*   **Whole-Cube Bootstrapping**: Aggregate indicators (evenness, rarity, density metrics) resample across the entire cube, treating the data as a single population.
+*   **Whole-Cube Bootstrapping**: This method resamples the entire dataset at once. This is automatically applied to aggregate indicators (evenness, rarity, density metrics) as well as species-level indicators (`spec_occ`, `spec_range`). For species-level indicators, whole-cube resampling is computationally optimized to process thousands of species simultaneously in a single pass while correctly capturing changes in species composition during resampling.
 
 *   **Bounded Indicators**: Evenness metrics (`pielou_evenness`, `williams_evenness`) automatically use logit transformation to ensure confidence intervals remain within valid [0, 1] bounds.
 
@@ -155,11 +155,15 @@ Confidence intervals can be added post-hoc for the following indicators:
 *   Species Occurrences (`spec_occ`)
 *   Species Range (`spec_range`)
 
+### Special Case: Hill Diversity Indicators
+While most indicators rely on `dubicube` for calculating confidence intervals, the Hill diversity indicators (`hill0`, `hill1`, `hill2`) compute their metrics using the `iNEXT` package, which runs an intensive coverage-based rarefaction algorithm. `iNEXT` possesses its own highly optimized, native bootstrapping engine.
+
+When you pass a Hill indicator to `add_ci()`, the function will automatically detect it, bypass `dubicube`'s cube-level resampling to prevent computationally disastrous double-bootstrapping, and seamlessly delegate to `iNEXT`'s internal engine (forcing `bootstrap_level = "indicator"`).
+
 ### Exclusions
 
 Certain indicators cannot have confidence intervals added via `add_ci()`:
 
-*   **Hill Numbers** (`hill0`, `hill1`, `hill2`): These calculate their own uncertainty internally using the `iNext` package during the initial calculation.
 *   **Observed Richness** (`obs_richness`): Bootstrapping observed richness is often not statistically sensible; consider using Hill numbers for estimated richness instead.
 *   **Cumulative Richness** (`cum_richness`): The cumulative nature of this metric makes standard bootstrapping inappropriate.
 *   **Occurrence Turnover** (`occ_turnover`): Similar to cumulative richness, the temporal dependency requires specialized methods.
