@@ -2,8 +2,8 @@
 
 * Confidence intervals are no longer calculated in the core indicator workflow, except for Hill diversity (Hill diversity is handled by the iNEXT package, which calculates confidence intervals internally). They are now calculated using a separated function, add_ci(), which can be applied to any indicator_ts object for which reasonable confidence intervals can be calculated. This gives the user more freedom. After adding CIs, you can recalculate with different parameters by setting 'replace = TRUE' when you call add_ci().
 * **Indicator-specific bootstrap defaults**: add_ci() now applies different default behaviors based on indicator type to ensure statistically appropriate confidence intervals:
-  - Species-level indicators (`spec_occ`, `spec_range`, `total_occ`) use group-specific bootstrapping (resampling within each species/year combination)
-  - Aggregate indicators (evenness, rarity, density) use whole-cube bootstrapping
+  - Species-level incidence indicators (`spec_occ`, `spec_range`) and aggregate indicators (evenness, rarity, density) use whole-cube bootstrapping to correctly capture changes in species composition.
+  - Raw counting indicators (`total_occ`) use group-specific bootstrapping (resampling strictly within each specific year).
   - Evenness indicators (`pielou_evenness`, `williams_evenness`) automatically apply logit transformation to keep confidence intervals within valid [0,1] bounds
   - Total occurrences (`total_occ`) has bias correction disabled by default
 * Bootstrapping for confidence intervals is now done across the entire cube by default. This uses the dubicube package, which is now added as a dependency. The option to calculate at indicator level is still available by setting 'level = "indicator"' when calling add_ci(). Indicator level bootstrapping is a faster but less robust method.
@@ -14,6 +14,10 @@
 * Included detailed bootstrap summary statistics (`est_boot`, `se_boot`, `bias_boot`) in the output of `add_ci()`.
 * Added a new conceptual vignette: "Uncertainty in Biodiversity Indicators".
 * Added comprehensive unit and integration tests for the decoupled uncertainty workflow.
+* **Bug Fix**: Fixed a critical performance issue where `add_ci()` triggered an infinite "double-bootstrapping" loop for Hill diversity indicators (`hill0`, `hill1`, `hill2`). `add_ci()` now correctly delegates these to `iNEXT`'s internal bootstrap engine natively.
+* **Bug Fix**: Fixed a statistical validity and scaling issue where species-level indicators (`spec_occ`, `spec_range`) were using group-specific bootstrapping. This produced zero variance (all CIs returned as `NA`) and caused hours-long hangs. They now use native `dubicube` whole-cube resampling, cutting computation time from hours to seconds and correctly calculating variance.
+* **Bug Fix**: Fixed an issue where custom S3 indicator classes were stripped during resampling in the `add_ci` pipeline, resolving method dispatch failures by utilizing a `calc_ts_safe()` closure.
+
 # b3gbi 0.8.19 - Minor update:
 
 * Added relative occupancy indicator access using `relative_occupancy_ts()` and `relative_occupancy_map()`. There are three different types which can be set using e.g. `occ_type = 0` (one of 0,1,2).
