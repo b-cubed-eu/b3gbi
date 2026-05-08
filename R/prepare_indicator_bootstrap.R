@@ -130,13 +130,19 @@ prepare_indicator_bootstrap <- function(
       no_bias = FALSE
     ),
     spec_occ = list(
-      group_specific = TRUE,
+      group_specific = FALSE,
       trans = trans,
       inv_trans = inv_trans,
       no_bias = FALSE
     ),
     spec_range = list(
-      group_specific = TRUE,
+      group_specific = FALSE,
+      trans = trans,
+      inv_trans = inv_trans,
+      no_bias = FALSE
+    ),
+    relative_occupancy = list(
+      group_specific = FALSE,
       trans = trans,
       inv_trans = inv_trans,
       no_bias = FALSE
@@ -191,8 +197,14 @@ prepare_indicator_bootstrap <- function(
     "whole_cube"
   }
 
-  ## Whole-cube bootstrapping requires the "boot_" prefix
-  if (length(group_cols) == 1) {
+  ## The "boot_" prefix selects boot::boot-based methods which run one
+  ## boot::boot() call PER group. For single-grouping-variable indicators
+  ## (year only), this is efficient. But for species-level indicators that
+  ## use a composite group_key (year_taxonKey), this would create hundreds
+  ## of boot::boot() calls. Use the native dubicube methods instead, which
+  ## resample once and compute all groups in a single calc_ts call.
+  uses_composite_key <- "group_key" %in% group_cols
+  if (length(group_cols) == 1 && !uses_composite_key) {
     boot_method <- paste0("boot_", boot_method)
   }
 
@@ -227,9 +239,42 @@ prepare_indicator_bootstrap <- function(
             exists(paste0("calc_ts.", indicator$div_type), mode = "function"))
   }
   
+  ## ------------------------------------------------------------------
+  ## Create a bootstrap-safe wrapper for calc_ts
+  ## ------------------------------------------------------------------
+  ## During resampling (modelr::bootstrap or boot::boot subsetting),
+  ## tibble's [ method strips custom S3 classes like "spec_range".
+  ## This closure captures the div_type and re-applies it before dispatch.
+  ##
+  ## Additionally, for species-level indicators using the native dubicube
+  ## methods (whole_cube / group_specific), dubicube validates that the
+  ## output has EXACTLY the grouping_var columns + diversity_val. Since
+  ## calc_ts.spec_range returns year/taxonKey/scientificName/diversity_val,
+  ## we must create the composite group_key and strip extra columns.
+  div_type_captured <- indicator$div_type
+  
+  calc_ts_safe <- function(data, ...) {
+    if (!inherits(data, div_type_captured)) {
+      class(data) <- c(div_type_captured, class(data))
+    }
+    result <- calc_ts(data, ...)
+    
+    # Post-process: create group_key for dubicube compatibility
+    if (uses_composite_key && !"group_key" %in% names(result)) {
+      if (all(c("year", "taxonKey") %in% names(result))) {
+        result <- result %>%
+          tidyr::unite("group_key", "year", "taxonKey",
+                       sep = "_", remove = TRUE) %>%
+          dplyr::select("group_key", "diversity_val")
+      }
+    }
+    
+    result
+  }
+  
   bootstrap_params <- list(
     data_cube = data_for_bootstrap,
-    fun = calc_ts,
+    fun = calc_ts_safe,
     grouping_var = group_cols,
     samples = num_bootstrap,
     processed_cube = FALSE,
