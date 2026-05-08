@@ -22,7 +22,9 @@ test_that("add_ci returns original object with warning for excluded indicators",
     "Cannot calculate sensible confidence intervals for obs_richness"
   )
   expect_equal(result, mock_ts)
+})
 
+test_that("add_ci delegates to inext via calc_ci for hill indicators", {
   # Mock for Hill numbers
   mock_hill <- list(
     data = data.frame(year = 2000, diversity_val = 10),
@@ -42,7 +44,10 @@ test_that("add_ci returns original object with warning for excluded indicators",
     },
     .package = "b3gbi",
     {
-      result_hill <- add_ci(mock_hill, bootstrap_level = "indicator")
+      expect_warning(
+        result_hill <- add_ci(mock_hill, bootstrap_level = "cube"),
+        "Cube-level bootstrapping is not supported for hill0"
+      )
       expect_true("ll" %in% names(result_hill$data))
     }
   )

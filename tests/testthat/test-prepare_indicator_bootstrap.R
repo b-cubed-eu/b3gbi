@@ -99,7 +99,7 @@ indicator_expectations <- list(
   ),
   spec_occ = list(
     indicator = indicator_spec_occ,
-    method = "boot_group_specific",
+    method = "whole_cube",
     grouping = "group_key",
     trans = function(t) t,
     inv_trans = function(t) t,
@@ -107,7 +107,7 @@ indicator_expectations <- list(
   ),
   spec_range = list(
     indicator = indicator_spec_range,
-    method = "boot_group_specific",
+    method = "whole_cube",
     grouping = "group_key",
     trans = function(t) t,
     inv_trans = function(t) t,
