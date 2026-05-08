@@ -14,9 +14,6 @@
 * Included detailed bootstrap summary statistics (`est_boot`, `se_boot`, `bias_boot`) in the output of `add_ci()`.
 * Added a new conceptual vignette: "Uncertainty in Biodiversity Indicators".
 * Added comprehensive unit and integration tests for the decoupled uncertainty workflow.
-* **Bug Fix**: Fixed a critical performance issue where `add_ci()` triggered an infinite "double-bootstrapping" loop for Hill diversity indicators (`hill0`, `hill1`, `hill2`). `add_ci()` now correctly delegates these to `iNEXT`'s internal bootstrap engine natively.
-* **Bug Fix**: Fixed a statistical validity and scaling issue where species-level indicators (`spec_occ`, `spec_range`) were using group-specific bootstrapping. This produced zero variance (all CIs returned as `NA`) and caused hours-long hangs. They now use native `dubicube` whole-cube resampling, cutting computation time from hours to seconds and correctly calculating variance.
-* **Bug Fix**: Fixed an issue where custom S3 indicator classes were stripped during resampling in the `add_ci` pipeline, resolving method dispatch failures by utilizing a `calc_ts_safe()` closure.
 
 # b3gbi 0.8.19 - Minor update:
 
