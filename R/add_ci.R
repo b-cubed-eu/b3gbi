@@ -152,23 +152,25 @@ add_ci <- function(indicator,
 
   # If indicator is in noci_list, return indicator without calculating CIs
   if (indicator$div_type %in% noci_list) {
-    if (indicator$div_type %in% c("hill0", "hill1", "hill2")) {
-      warning(
-        paste0(
-          "Confidence intervals cannot calculated for ",
-          indicator$div_type,
-          " as they are handled by the iNext package when calculating
-          your indicator. Returning indicator without adding CIs."
-        )
+    warning(
+      paste0(
+        "Cannot calculate sensible confidence intervals for ",
+        indicator$div_type, ". Returning indicator without CIs."
       )
-    } else
-      warning(
-        paste0(
-          "Cannot calculate sensible confidence intervals for ",
-          indicator$div_type, ". Returning indicator without CIs."
-        )
-      )
+    )
     return(indicator)
+  }
+
+  # iNEXT calculates CIs internally. Switch to indicator-level bootstrapping.
+  if (indicator$div_type %in% c("hill0", "hill1", "hill2") && bootstrap_level == "cube") {
+    warning(
+      paste0(
+        "Cube-level bootstrapping is not supported for ", indicator$div_type, 
+        " as confidence intervals are natively handled by the iNEXT package. ",
+        "Switching to 'indicator' level bootstrapping."
+      )
+    )
+    bootstrap_level <- "indicator"
   }
 
   # Extract data from indicator object
