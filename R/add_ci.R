@@ -241,7 +241,7 @@ add_ci <- function(indicator,
       dubicube::calculate_bootstrap_ci,
       params_total$ci_params
     ) %>%
-      dplyr::select(-est_original)
+      dplyr::select(-dplyr::any_of("est_original"))
 
     # Join confidence intervals to indicator object
     if (nrow(ci_df) > 0) {
