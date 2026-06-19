@@ -12,6 +12,7 @@
 [![R-CMD-check](https://github.com/b-cubed-eu/b3gbi/actions/workflows/R-CMD-check.yaml/badge.svg?branch=main)](https://github.com/b-cubed-eu/b3gbi/actions/workflows/R-CMD-check.yaml)
 [![codecov](https://codecov.io/gh/b-cubed-eu/b3gbi/branch/main/graph/badge.svg)](https://app.codecov.io/gh/b-cubed-eu/b3gbi/)
 [![name status badge](https://b-cubed-eu.r-universe.dev/badges/:name?color=6CDDB4)](https://b-cubed-eu.r-universe.dev/)
+[![DOI](https://zenodo.org/badge/693214449.svg)](https://doi.org/10.5281/zenodo.20763709)
 
 <!-- badges: end -->
 
