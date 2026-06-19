@@ -227,3 +227,26 @@ test_that("Unsupported scale and lookup failures stop execution", {
     }
   )
 })
+
+test_that("add_ne_layer and get_ne_data handle missing rnaturalearthhires package", {
+  testthat::skip_if_not_installed("mockr")
+  
+  mockr::with_mock(
+    is_package_installed = function(package) {
+      if (package == "rnaturalearthhires") return(FALSE)
+      return(TRUE)
+    },
+    {
+      expect_error(
+        add_ne_layer(layer_name = "roads", scale = "large", extent_projected = mock_extent),
+        "rnaturalearthhires"
+      )
+      
+      expect_error(
+        get_ne_data(latlong_bbox = c(0, 0, 10, 10), ne_scale = "large"),
+        "rnaturalearthhires"
+      )
+    }
+  )
+})
+

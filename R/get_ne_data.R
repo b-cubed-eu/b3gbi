@@ -37,7 +37,7 @@ get_ne_data <- function(projected_crs,
                         buffer_dist_km = NULL) {
   x <- . <- NULL
 
-  if (ne_scale == "large" && !requireNamespace("rnaturalearthhires", quietly = TRUE)) {
+  if (ne_scale == "large" && !is_package_installed("rnaturalearthhires")) {
     stop("Package 'rnaturalearthhires' is required for large scale (10m) map data. ",
          "Please install it or use ne_scale = 'medium' or 'small'.")
   }

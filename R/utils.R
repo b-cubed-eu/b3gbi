@@ -838,3 +838,9 @@ my_DataInfo <- function(...) {
   iNEXT::DataInfo(...)
 }
 
+# Wrapper of requireNamespace. This is for mocking in testthat tests.
+#' @noRd
+is_package_installed <- function(package) {
+  requireNamespace(package, quietly = TRUE)
+}
+

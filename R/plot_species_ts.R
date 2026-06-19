@@ -86,7 +86,7 @@ plot_species_ts <- function(x,
                             spec_name_wrap_length = 40
 ) {
   # Check if patchwork package is installed
-  if (!requireNamespace("patchwork", quietly = TRUE)) {
+  if (!is_package_installed("patchwork")) {
     stop("The 'patchwork' package is required for this function.
          Please install it using: install.packages('patchwork')",
          call. = FALSE)

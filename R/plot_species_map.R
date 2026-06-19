@@ -73,7 +73,7 @@ plot_species_map <- function(x,
                              scale = c("medium", "small", "large"),
                              filter_outliers = FALSE) {
   # Check if patchwork package is installed
-  if (!requireNamespace("patchwork", quietly = TRUE)) {
+  if (!is_package_installed("patchwork")) {
     stop("The 'patchwork' package is required for this function.
          Please install it using: install.packages('patchwork')",
          call. = FALSE)

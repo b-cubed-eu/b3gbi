@@ -3,7 +3,7 @@ add_ne_layer <- function(layer_name, scale, extent_projected) {
 
   geometry <- featurecla <- scalerank <- type <- geom <- NULL
 
-  if (scale == "large" && !requireNamespace("rnaturalearthhires", quietly = TRUE)) {
+  if (scale == "large" && !is_package_installed("rnaturalearthhires")) {
     stop("Package 'rnaturalearthhires' is required for large scale (10m) map data. ",
          "Please install it or use scale = 'medium' or 'small'.")
   }

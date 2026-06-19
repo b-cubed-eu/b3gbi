@@ -144,3 +144,31 @@ test_that("EEA grid scales successfully with cell_size='grid' and no resolution 
   expect_equal(nrow(result$data), 2)
   expect_false(any(is.na(result$data$diversity_val)))
 })
+
+test_that("create_native_grid handles invalid/missing resolutions fallback", {
+  # Mock MGRS cube data with NA or invalid resolution in df
+  mgrs_df <- data.frame(
+    cellCode = c("32VNH05", "32VNH06"),
+    xcoord = c(500000, 600000),
+    ycoord = c(6000000, 6100000),
+    utmzone = c(32, 32),
+    hemisphere = c("N", "N"),
+    resolution = c(NA, "invalid_res")
+  )
+  
+  grid <- b3gbi:::create_native_grid(mgrs_df, projection = "EPSG:4326", grid_type = "mgrs")
+  expect_s3_class(grid, "sf")
+  expect_equal(nrow(grid), 2)
+  
+  # EQDGC cube data with NA or invalid resolution
+  eqdgc_df <- data.frame(
+    cellCode = c("E10N20", "E10N21"),
+    xcoord = c(10, 10),
+    ycoord = c(20, 21),
+    resolution = c("invalid_res", NA)
+  )
+  grid_eqdgc <- b3gbi:::create_native_grid(eqdgc_df, projection = "EPSG:4326", grid_type = "eqdgc")
+  expect_s3_class(grid_eqdgc, "sf")
+  expect_equal(nrow(grid_eqdgc), 2)
+})
+
