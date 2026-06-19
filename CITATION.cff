@@ -41,20 +41,6 @@ references:
   year: '2026'
   version: '>= 3.5.0'
 - type: software
-  title: bit64
-  abstract: 'bit64: A S3 Class for Vectors of 64bit Integers'
-  notes: Imports
-  url: https://github.com/r-lib/bit64
-  repository: https://CRAN.R-project.org/package=bit64
-  authors:
-  - family-names: Chirico
-    given-names: Michael
-    email: michaelchirico4@gmail.com
-  - family-names: Oehlschlägel
-    given-names: Jens
-  year: '2026'
-  doi: 10.32614/CRAN.package.bit64
-- type: software
   title: boot
   abstract: 'boot: Bootstrap Functions (Originally by Angelo Canty for S)'
   notes: Imports
@@ -203,19 +189,6 @@ references:
     orcid: https://orcid.org/0000-0001-5670-2640
   year: '2026'
   version: '>= 0.2.4'
-- type: software
-  title: patchwork
-  abstract: 'patchwork: The Composer of Plots'
-  notes: Imports
-  url: https://patchwork.data-imaginist.com
-  repository: https://CRAN.R-project.org/package=patchwork
-  authors:
-  - family-names: Pedersen
-    given-names: Thomas Lin
-    email: thomasp85@gmail.com
-    orcid: https://orcid.org/0000-0002-5147-4711
-  year: '2026'
-  doi: 10.32614/CRAN.package.patchwork
 - type: software
   title: permute
   abstract: 'permute: Functions for Generating Restricted Permutations of Data'
@@ -408,6 +381,20 @@ references:
   year: '2026'
   doi: 10.32614/CRAN.package.units
 - type: software
+  title: bit64
+  abstract: 'bit64: A S3 Class for Vectors of 64bit Integers'
+  notes: Suggests
+  url: https://github.com/r-lib/bit64
+  repository: https://CRAN.R-project.org/package=bit64
+  authors:
+  - family-names: Chirico
+    given-names: Michael
+    email: michaelchirico4@gmail.com
+  - family-names: Oehlschlägel
+    given-names: Jens
+  year: '2026'
+  doi: 10.32614/CRAN.package.bit64
+- type: software
   title: bold
   abstract: 'bold: Interface to Bold Systems API'
   notes: Suggests
@@ -501,6 +488,19 @@ references:
     email: kirill@cynkra.com
   year: '2026'
   doi: 10.32614/CRAN.package.mockr
+- type: software
+  title: patchwork
+  abstract: 'patchwork: The Composer of Plots'
+  notes: Suggests
+  url: https://patchwork.data-imaginist.com
+  repository: https://CRAN.R-project.org/package=patchwork
+  authors:
+  - family-names: Pedersen
+    given-names: Thomas Lin
+    email: thomasp85@gmail.com
+    orcid: https://orcid.org/0000-0002-5147-4711
+  year: '2026'
+  doi: 10.32614/CRAN.package.patchwork
 - type: software
   title: RColorBrewer
   abstract: 'RColorBrewer: ColorBrewer Palettes'

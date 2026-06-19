@@ -854,3 +854,29 @@ test_that("plot.relative_occupancy handles valid input and class", {
   expect_error(plot.relative_occupancy(mock_invalid_object, species = 101),
                "Incorrect object class.")
 })
+
+test_that("plot_species_map and plot_species_ts handle missing patchwork package", {
+  testthat::skip_if_not_installed("mockr")
+  
+  mockr::with_mock(
+    is_package_installed = function(package) {
+      if (package == "patchwork") return(FALSE)
+      return(TRUE)
+    },
+    {
+      expect_error(
+        plot_species_map(spec_occ_mammals_denmark, species = 2440728),
+        "patchwork"
+      )
+      
+      spec_occ_ts_mammals_denmark <- spec_occ_ts(example_cube_1,
+                                                 level = "country",
+                                                 region = "Denmark")
+      expect_error(
+        plot_species_ts(spec_occ_ts_mammals_denmark, species = 2440728),
+        "patchwork"
+      )
+    }
+  )
+})
+

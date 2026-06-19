@@ -15,6 +15,7 @@ mock_map_hill1 <- structure(mock_map_data, class = c("hill1", "data.frame"))
 mock_map_hill2 <- structure(mock_map_data, class = c("hill2", "data.frame"))
 
 test_that("calc_map.hill0 calculates correctly", {
+  testthat::skip_if_not_installed("mockr")
   mockr::with_mock(
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
       if (datatype == "incidence_freq" && all(q == 0)) {
@@ -66,6 +67,7 @@ test_that("calc_map.hill0 calculates correctly", {
 })
 
 test_that("calc_map.hill1 calculates correctly", {
+  testthat::skip_if_not_installed("mockr")
   mockr::with_mock(
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
       if (datatype == "incidence_freq" && all(q == 1)) {
@@ -116,6 +118,7 @@ test_that("calc_map.hill1 calculates correctly", {
 })
 
 test_that("calc_map.hill2 calculates correctly", {
+  testthat::skip_if_not_installed("mockr")
   mockr::with_mock(
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
       if (datatype == "incidence_freq" && all(q == 2)) {
@@ -165,6 +168,7 @@ test_that("calc_map.hill2 calculates correctly", {
 })
 
 test_that("calc_map.hill0 handles empty data correctly", {
+  testthat::skip_if_not_installed("mockr")
   mockr::with_mock(
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
       return(tibble::tibble(Assemblage = character(),
@@ -199,6 +203,7 @@ test_that("calc_map.hill0 handles empty data correctly", {
 })
 
 test_that("calc_map.hill1 handles empty data correctly", {
+  testthat::skip_if_not_installed("mockr")
   mockr::with_mock(
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
       return(tibble::tibble(Assemblage = character(),
@@ -233,6 +238,7 @@ test_that("calc_map.hill1 handles empty data correctly", {
 })
 
 test_that("calc_map.hill2 handles empty data correctly", {
+  testthat::skip_if_not_installed("mockr")
   mockr::with_mock(
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
       return(tibble::tibble(Assemblage = character(),
@@ -267,6 +273,7 @@ test_that("calc_map.hill2 handles empty data correctly", {
 })
 
 test_that("calc_map.hill0 handles NA values correctly", {
+  testthat::skip_if_not_installed("mockr")
   mockr::with_mock(
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
       return(tibble::tibble(Assemblage = character(),
@@ -301,6 +308,7 @@ test_that("calc_map.hill0 handles NA values correctly", {
 })
 
 test_that("calc_map.hill1 handles NA values correctly", {
+  testthat::skip_if_not_installed("mockr")
   mockr::with_mock(
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
       return(tibble::tibble(Assemblage = character(),
@@ -335,6 +343,7 @@ test_that("calc_map.hill1 handles NA values correctly", {
 })
 
 test_that("calc_map.hill2 handles NA values correctly", {
+  testthat::skip_if_not_installed("mockr")
   mockr::with_mock(
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
       return(tibble::tibble(Assemblage = character(),
@@ -369,6 +378,7 @@ test_that("calc_map.hill2 handles NA values correctly", {
 })
 
 test_that("calc_map.hill0 handles non-numeric data correctly", {
+  testthat::skip_if_not_installed("mockr")
   mockr::with_mock(
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
       return(tibble::tibble(Assemblage = character(),
@@ -403,6 +413,7 @@ test_that("calc_map.hill0 handles non-numeric data correctly", {
 })
 
 test_that("calc_map.hill1 handles non-numeric data correctly", {
+  testthat::skip_if_not_installed("mockr")
   mockr::with_mock(
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
       return(tibble::tibble(Assemblage = character(),
@@ -437,6 +448,7 @@ test_that("calc_map.hill1 handles non-numeric data correctly", {
 })
 
 test_that("calc_map.hill2 handles non-numeric data correctly", {
+  testthat::skip_if_not_installed("mockr")
   mockr::with_mock(
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
       return(tibble::tibble(Assemblage = character(),
@@ -471,6 +483,7 @@ test_that("calc_map.hill2 handles non-numeric data correctly", {
 })
 
 test_that("calc_map.hill0 handles non-standard data types correctly", {
+  testthat::skip_if_not_installed("mockr")
   mockr::with_mock(
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
       return(tibble::tibble(Assemblage = character(),
@@ -505,6 +518,7 @@ test_that("calc_map.hill0 handles non-standard data types correctly", {
 })
 
 test_that("calc_map.hill1 handles non-standard data types correctly", {
+  testthat::skip_if_not_installed("mockr")
   mockr::with_mock(
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
       return(tibble::tibble(Assemblage = character(),
@@ -539,6 +553,7 @@ test_that("calc_map.hill1 handles non-standard data types correctly", {
 })
 
 test_that("calc_map.hill2 handles non-standard data types correctly", {
+  testthat::skip_if_not_installed("mockr")
   mockr::with_mock(
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
       return(tibble::tibble(Assemblage = character(),
@@ -795,6 +810,7 @@ mock_compute_evenness_formula <- function(x, type) {
 }
 
 test_that("calc_map.williams_evenness calculates correctly", {
+  testthat::skip_if_not_installed("mockr")
   mockr::with_mock(
     `compute_evenness_formula` = mock_compute_evenness_formula,
     {
@@ -810,6 +826,7 @@ test_that("calc_map.williams_evenness calculates correctly", {
 })
 
 test_that("calc_map.pielou_evenness calculates correctly", {
+  testthat::skip_if_not_installed("mockr")
   mockr::with_mock(
     `compute_evenness_formula` = mock_compute_evenness_formula,
     {
@@ -825,6 +842,7 @@ test_that("calc_map.pielou_evenness calculates correctly", {
 })
 
 test_that("calc_map_evenness_core handles cases with no occurrences", {
+  testthat::skip_if_not_installed("mockr")
   mock_evenness_empty <- data.frame(
     cellid = integer(0),
     cellCode = character(0),
@@ -855,6 +873,7 @@ test_that("calc_map_evenness_core handles cases with no occurrences", {
 })
 
 test_that("calc_map_evenness_core handles NA values in obs correctly", {
+  testthat::skip_if_not_installed("mockr")
   mock_evenness_core_na <- data.frame(
     cellid = c(1, 1, 2, 2),
     cellCode = c("A1", "A1", "A2", "A2"),

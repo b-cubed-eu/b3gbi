@@ -115,6 +115,7 @@ mock_rnaturalearth_env <- function() {
 
 # --- Ternaturalearth# --- Test Block 2: Dynamic Lookup and Loading (The ELSE path) ---
 test_that("Dynamic lookup and ne_load correctly process standard layer", {
+  testthat::skip_if_not_installed("rnaturalearthhires")
 
   # Only mock the functions that perform actions/file I/O.
   # The data objects are now defined globally in this file (Step 1).
@@ -144,6 +145,7 @@ test_that("Dynamic lookup and ne_load correctly process standard layer", {
 
 # --- Test Block 3: Error Handling and Recovery (FIXED) ---
 test_that("Error handling attempts download on load failure", {
+  testthat::skip_if_not_installed("rnaturalearthhires")
 
   # --- Advanced Mock: Simulate ne_load failing once, then succeeding ---
 
@@ -192,6 +194,7 @@ test_that("Error handling attempts download on load failure", {
 
 # --- Test Block 4: Lookup Failure and Final Processing ---
 test_that("Unsupported scale and lookup failures stop execution", {
+  testthat::skip_if_not_installed("rnaturalearthhires")
   skip_on_cran()
   skip_on_ci()
   # 1. Unsupported scale (Activates the switch STOP)
@@ -224,3 +227,26 @@ test_that("Unsupported scale and lookup failures stop execution", {
     }
   )
 })
+
+test_that("add_ne_layer and get_ne_data handle missing rnaturalearthhires package", {
+  testthat::skip_if_not_installed("mockr")
+  
+  mockr::with_mock(
+    is_package_installed = function(package) {
+      if (package == "rnaturalearthhires") return(FALSE)
+      return(TRUE)
+    },
+    {
+      expect_error(
+        add_ne_layer(layer_name = "roads", scale = "large", extent_projected = mock_extent),
+        "rnaturalearthhires"
+      )
+      
+      expect_error(
+        get_ne_data(latlong_bbox = c(0, 0, 10, 10), ne_scale = "large"),
+        "rnaturalearthhires"
+      )
+    }
+  )
+})
+
