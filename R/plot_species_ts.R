@@ -85,6 +85,12 @@ plot_species_ts <- function(x,
                             title_wrap_length = 60,
                             spec_name_wrap_length = 40
 ) {
+  # Check if patchwork package is installed
+  if (!is_package_installed("patchwork")) {
+    stop("The 'patchwork' package is required for this function.
+         Please install it using: install.packages('patchwork')",
+         call. = FALSE)
+  }
 
   # Set variable definitions to NULL where required
   year <- ll <- ul <- diversity_val <- NULL

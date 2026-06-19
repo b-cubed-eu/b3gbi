@@ -25,3 +25,10 @@ run_ramsar_metrics.R
 test-indicator_formulas.R
 ^doc$
 ^Meta$
+^.gemini$
+^conductor$
+^Rplots\.pdf$
+^lib$
+^local$
+^scratch$
+^shiny$

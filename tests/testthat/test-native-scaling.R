@@ -108,3 +108,78 @@ test_that("Native grid scaling aligns correctly for MGRS", {
   # Has valid data
   expect_gt(sum(result_10km$data$diversity_val, na.rm = TRUE), 0)
 })
+
+test_that("EEA grid scales successfully with cell_size='grid' and no resolution prefix in cellCode", {
+  mock_data <- data.frame(
+    cellCode = c("E4321N3210", "E4322N3211"),
+    xcoord = c(4321000, 4322000),
+    ycoord = c(3210000, 3211000),
+    obs = c(10, 20),
+    taxonKey = c(1, 2),
+    scientificName = c("Species A", "Species B"),
+    year = 2020
+  )
+
+  mock_cube <- list(
+    data = mock_data,
+    grid_type = "eea",
+    first_year = 2020,
+    last_year = 2020,
+    num_species = 2,
+    kingdoms = "Animalia",
+    num_families = 2,
+    coord_range = c(4321000, 4322000, 3210000, 3211000),
+    resolutions = NULL
+  )
+  class(mock_cube) <- "processed_cube"
+
+  result <- compute_indicator_workflow(
+    data = mock_cube,
+    type = "obs_richness",
+    dim_type = "map",
+    cell_size = "grid",
+    ci_type = "none"
+  )
+
+  expect_equal(nrow(result$data), 2)
+  expect_false(any(is.na(result$data$diversity_val)))
+})
+
+test_that("create_native_grid handles invalid/missing resolutions fallback", {
+  # Mock MGRS cube data with NA or invalid resolution in df
+  mgrs_df <- data.frame(
+    cellCode = c("32VNH05", "32VNH06"),
+    xcoord = c(500000, 600000),
+    ycoord = c(6000000, 6100000),
+    utmzone = c(32, 32),
+    hemisphere = c("N", "N"),
+    resolution = c(NA, "invalid_res")
+  )
+  
+  grid <- b3gbi:::create_native_grid(mgrs_df, projection = "EPSG:4326", grid_type = "mgrs")
+  expect_s3_class(grid, "sf")
+  expect_equal(nrow(grid), 2)
+  
+  # EQDGC cube data with NA or invalid resolution
+  eqdgc_df <- data.frame(
+    cellCode = c("E10N20", "E10N21"),
+    xcoord = c(10, 10),
+    ycoord = c(20, 21),
+    resolution = c("invalid_res", NA)
+  )
+  grid_eqdgc <- b3gbi:::create_native_grid(eqdgc_df, projection = "EPSG:4326", grid_type = "eqdgc")
+  expect_s3_class(grid_eqdgc, "sf")
+  expect_equal(nrow(grid_eqdgc), 2)
+
+  # EEA cube data with NA or invalid resolution
+  eea_df <- data.frame(
+    cellCode = c("E4321N3210", "E4322N3211"),
+    xcoord = c(4321000, 4322000),
+    ycoord = c(3210000, 3211000),
+    resolution = c("invalid_res", NA)
+  )
+  grid_eea <- b3gbi:::create_native_grid(eea_df, projection = "EPSG:4326", grid_type = "eea")
+  expect_s3_class(grid_eea, "sf")
+  expect_equal(nrow(grid_eea), 2)
+})
+

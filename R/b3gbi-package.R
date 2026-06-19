@@ -20,7 +20,6 @@
 #'  st_crs
 #' @importFrom units set_units
 #' @importFrom rnaturalearth ne_countries
-#' @importFrom patchwork wrap_plots
 #' @importFrom stats approx cor loess median predict quantile sd
 #' @importFrom utils data find modifyList
 #' @importFrom rlang := %||% caller_env

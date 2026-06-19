@@ -829,3 +829,70 @@ test_that("wrong_class triggers is.na(is_correct) check with forced NA via my_in
     regexp = "Incorrect object class"
   )
 })
+
+# ---------------------
+# Tests for my_estimateD patch (handles T=1 or no singletons/doubletons for q=1)
+test_that("my_estimateD handles q=1 bug in iNEXT for incidence data", {
+  # Mixed list containing a bad site (site1) and a good site (site2)
+  # site1: T = 2, freqs = (2, 2) -> has no singletons/doubletons, would crash iNEXT for q=1
+  # site2: T = 3, freqs = (2, 2) -> works fine
+  x_mixed <- list(
+    site1 = c(2, 2, 2),
+    site2 = c(3, 2, 2)
+  )
+  
+  res <- my_estimateD(x_mixed, datatype = "incidence_freq", base = "coverage", level = 0.95, q = c(0, 1, 2), conf = 0.95, nboot = 0)
+  
+  # Ensure all q values are processed
+  expect_equal(nrow(res), 6)
+  
+  # Check site1 at Order.q = 1 (the patched one)
+  site1_q1 <- res[res$Assemblage == "site1" & res$Order.q == 1, ]
+  expect_equal(site1_q1$Method, "Observed")
+  expect_equal(site1_q1$qD, 2) # Sobs = 2
+  expect_equal(site1_q1$SC, 0.95) # Target level
+  
+  # Check site2 at Order.q = 1 (computed via iNEXT)
+  site2_q1 <- res[res$Assemblage == "site2" & res$Order.q == 1, ]
+  expect_equal(site2_q1$Method, "Rarefaction")
+  
+  # Test with single bad input (not in a list)
+  x_single_bad <- c(2, 2, 2)
+  res_single <- my_estimateD(x_single_bad, datatype = "incidence_freq", base = "coverage", level = 0.95, q = 1, conf = 0.95, nboot = 0)
+  # For non-list input, Assemblage column is stripped
+  expect_null(res_single$Assemblage)
+  expect_equal(res_single$qD, 2)
+})
+
+test_that("my_estimateD coverage for other paths", {
+  # 1. Bypass check if datatype is abundance
+  x_abundance <- c(10, 20, 30)
+  res_ab <- my_estimateD(x_abundance, datatype = "abundance", q = c(0, 1, 2), nboot = 0)
+  expect_equal(nrow(res_ab), 3)
+  
+  # 2. Test incidence_raw data
+  # incidence_raw is a list of matrices where columns are sampling units and rows are species
+  # site1 (bad): 2 sampling units, both species present in both units (row sums = 2, 2)
+  # site2 (good): 3 sampling units, one species present in 1 unit, another in 2 units
+  site1_mat <- matrix(c(1, 1, 1, 1), nrow = 2, ncol = 2) # nT = 2, rowSums = c(2, 2) -> no freq between 1 and nT-1
+  site2_mat <- matrix(c(1, 0, 0, 1, 1, 0), nrow = 2, ncol = 3) # nT = 3, rowSums = c(2, 1) -> has singleton/doubleton
+  
+  x_raw <- list(
+    site1 = site1_mat,
+    site2 = site2_mat
+  )
+  
+  res_raw <- my_estimateD(x_raw, datatype = "incidence_raw", base = "size", level = 2, q = c(0, 1, 2), conf = 0.95, nboot = 0)
+  expect_equal(nrow(res_raw), 6)
+  
+  site1_raw_q1 <- res_raw[res_raw$Assemblage == "site1" & res_raw$Order.q == 1, ]
+  expect_equal(site1_raw_q1$Method, "Observed")
+  expect_equal(site1_raw_q1$qD, 2)
+  
+  # 3. Test list input with no names (names will be generated)
+  x_unnamed <- list(
+    c(2, 2, 2)
+  )
+  res_unnamed <- my_estimateD(x_unnamed, datatype = "incidence_freq", q = 1, nboot = 0)
+  expect_equal(res_unnamed$Assemblage, "site1")
+})

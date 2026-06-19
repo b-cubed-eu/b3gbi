@@ -8,7 +8,7 @@
   "codeRepository": "https://github.com/b-cubed-eu/b3gbi",
   "issueTracker": "https://github.com/b-cubed-eu/b3gbi/issues",
   "license": "https://spdx.org/licenses/MIT",
-  "version": "0.8.19",
+  "version": "0.8.20",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -46,6 +46,18 @@
     }
   ],
   "softwareSuggestions": [
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "bit64",
+      "name": "bit64",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=bit64"
+    },
     {
       "@type": "SoftwareApplication",
       "identifier": "bold",
@@ -112,6 +124,18 @@
         "url": "https://cran.r-project.org"
       },
       "sameAs": "https://CRAN.R-project.org/package=mockr"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "identifier": "patchwork",
+      "name": "patchwork",
+      "provider": {
+        "@id": "https://cran.r-project.org",
+        "@type": "Organization",
+        "name": "Comprehensive R Archive Network (CRAN)",
+        "url": "https://cran.r-project.org"
+      },
+      "sameAs": "https://CRAN.R-project.org/package=patchwork"
     },
     {
       "@type": "SoftwareApplication",
@@ -203,18 +227,6 @@
     },
     "2": {
       "@type": "SoftwareApplication",
-      "identifier": "bit64",
-      "name": "bit64",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=bit64"
-    },
-    "3": {
-      "@type": "SoftwareApplication",
       "identifier": "boot",
       "name": "boot",
       "provider": {
@@ -225,7 +237,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=boot"
     },
-    "4": {
+    "3": {
       "@type": "SoftwareApplication",
       "identifier": "dplyr",
       "name": "dplyr",
@@ -237,7 +249,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=dplyr"
     },
-    "5": {
+    "4": {
       "@type": "SoftwareApplication",
       "identifier": "ggplot2",
       "name": "ggplot2",
@@ -249,7 +261,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=ggplot2"
     },
-    "6": {
+    "5": {
       "@type": "SoftwareApplication",
       "identifier": "iNEXT",
       "name": "iNEXT",
@@ -261,7 +273,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=iNEXT"
     },
-    "7": {
+    "6": {
       "@type": "SoftwareApplication",
       "identifier": "labeling",
       "name": "labeling",
@@ -273,7 +285,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=labeling"
     },
-    "8": {
+    "7": {
       "@type": "SoftwareApplication",
       "identifier": "magrittr",
       "name": "magrittr",
@@ -285,26 +297,14 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=magrittr"
     },
-    "9": {
+    "8": {
       "@type": "SoftwareApplication",
       "identifier": "mgrs",
       "name": "mgrs",
       "version": ">= 0.2.4",
       "sameAs": "https://github.com/hrbrmstr/mgrs"
     },
-    "10": {
-      "@type": "SoftwareApplication",
-      "identifier": "patchwork",
-      "name": "patchwork",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=patchwork"
-    },
-    "11": {
+    "9": {
       "@type": "SoftwareApplication",
       "identifier": "permute",
       "name": "permute",
@@ -316,7 +316,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=permute"
     },
-    "12": {
+    "10": {
       "@type": "SoftwareApplication",
       "identifier": "purrr",
       "name": "purrr",
@@ -328,7 +328,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=purrr"
     },
-    "13": {
+    "11": {
       "@type": "SoftwareApplication",
       "identifier": "readr",
       "name": "readr",
@@ -340,7 +340,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=readr"
     },
-    "14": {
+    "12": {
       "@type": "SoftwareApplication",
       "identifier": "rlang",
       "name": "rlang",
@@ -352,7 +352,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=rlang"
     },
-    "15": {
+    "13": {
       "@type": "SoftwareApplication",
       "identifier": "rnaturalearth",
       "name": "rnaturalearth",
@@ -364,7 +364,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=rnaturalearth"
     },
-    "16": {
+    "14": {
       "@type": "SoftwareApplication",
       "identifier": "scales",
       "name": "scales",
@@ -376,7 +376,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=scales"
     },
-    "17": {
+    "15": {
       "@type": "SoftwareApplication",
       "identifier": "sf",
       "name": "sf",
@@ -388,7 +388,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=sf"
     },
-    "18": {
+    "16": {
       "@type": "SoftwareApplication",
       "identifier": "stringr",
       "name": "stringr",
@@ -400,7 +400,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=stringr"
     },
-    "19": {
+    "17": {
       "@type": "SoftwareApplication",
       "identifier": "tibble",
       "name": "tibble",
@@ -412,7 +412,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=tibble"
     },
-    "20": {
+    "18": {
       "@type": "SoftwareApplication",
       "identifier": "tidyr",
       "name": "tidyr",
@@ -424,7 +424,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=tidyr"
     },
-    "21": {
+    "19": {
       "@type": "SoftwareApplication",
       "identifier": "tidyselect",
       "name": "tidyselect",
@@ -436,7 +436,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=tidyselect"
     },
-    "22": {
+    "20": {
       "@type": "SoftwareApplication",
       "identifier": "units",
       "name": "units",
@@ -450,7 +450,7 @@
     },
     "SystemRequirements": null
   },
-  "fileSize": "407044.116KB",
+  "fileSize": "2139.818KB",
   "releaseNotes": "https://github.com/b-cubed-eu/b3gbi/blob/main/NEWS.md",
   "contIntegration": ["https://github.com/b-cubed-eu/b3gbi/actions/workflows/R-CMD-check.yaml", "https://app.codecov.io/gh/b-cubed-eu/b3gbi/"],
   "developmentStatus": "https://www.repostatus.org/#wip"

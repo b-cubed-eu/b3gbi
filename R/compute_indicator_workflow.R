@@ -196,7 +196,7 @@ compute_indicator_workflow <- function(data,
   }
 
   # Null assignments
-  xcoord <- ycoord <- ll <- ul <- cellCode <- cellid <- geometry <- NULL
+  xcoord <- ycoord <- ll <- ul <- cellCode <- cellid <- geometry <- area <- NULL
 
   # Check for empty cube
   if (nrow(data$data) == 0) {
@@ -476,9 +476,14 @@ compute_indicator_workflow <- function(data,
     if (data$grid_type == "mgrs") {
       df_sf_input <- create_sf_from_utm(df, "EPSG:4326")
     } else if (data$grid_type == "eea") {
-      res_size <- as.numeric(stringr::str_extract(df$resolution, "[0-9.]+(?=(km|m))"))
-      res_unit <- stringr::str_extract(df$resolution, "(km|m)")
+      res_str <- if ("resolution" %in% names(df)) df$resolution else NULL
+      if (is.null(res_str) || length(res_str) == 0) {
+        res_str <- eea_code_to_coords(df$cellCode[1])$resolution
+      }
+      res_size <- as.numeric(stringr::str_extract(res_str, "[0-9.]+(?=(km|m))"))
+      res_unit <- stringr::str_extract(res_str, "(km|m)")
       res_meters <- ifelse(res_unit == "km", res_size * 1000, res_size)
+      res_meters[is.na(res_meters)] <- 1000 # Fallback to 1km if NA
       half_res_size <- res_meters / 2
       df_offset <- df %>%
         dplyr::mutate(
@@ -715,8 +720,10 @@ compute_indicator_workflow <- function(data,
 
     if (dim_type == "map" || force_grid == TRUE) {
       # Set output cell size (or if user provided one, check if it makes sense)
-      # Compatibility fix: check both plural and singular resolution slots
       res_val <- data$resolutions[1] %||% data$resolution
+      if (is.null(res_val) || length(res_val) == 0 || is.na(res_val)) {
+        res_val <- if (data$grid_type %in% c("eea", "mgrs")) "1km" else if (data$grid_type == "eqdgc") "0.25 degrees" else "1km"
+      }
       resolution_arg <- if (data$grid_type == "isea3h") "isea3h" else res_val
 
       cell_size <- check_cell_size(
