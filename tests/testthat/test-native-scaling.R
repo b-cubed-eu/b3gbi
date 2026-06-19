@@ -170,5 +170,16 @@ test_that("create_native_grid handles invalid/missing resolutions fallback", {
   grid_eqdgc <- b3gbi:::create_native_grid(eqdgc_df, projection = "EPSG:4326", grid_type = "eqdgc")
   expect_s3_class(grid_eqdgc, "sf")
   expect_equal(nrow(grid_eqdgc), 2)
+
+  # EEA cube data with NA or invalid resolution
+  eea_df <- data.frame(
+    cellCode = c("E4321N3210", "E4322N3211"),
+    xcoord = c(4321000, 4322000),
+    ycoord = c(3210000, 3211000),
+    resolution = c("invalid_res", NA)
+  )
+  grid_eea <- b3gbi:::create_native_grid(eea_df, projection = "EPSG:4326", grid_type = "eea")
+  expect_s3_class(grid_eea, "sf")
+  expect_equal(nrow(grid_eea), 2)
 })
 
