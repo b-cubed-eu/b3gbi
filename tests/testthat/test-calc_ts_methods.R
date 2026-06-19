@@ -495,6 +495,7 @@ mock_tax_hier <- list(
 )
 
 test_that("calc_ts.tax_distinct calculates correctly", {
+  testthat::skip_if_not_installed("mockr")
   # Mock the call to taxize::classification
   mockr::with_mock(
     `my_classification` = function(...) {
@@ -630,6 +631,7 @@ mock_pielou_evenness <-
   structure(mock_evenness_data, class = c("pielou_evenness", "data.frame"))
 
 test_that("calc_ts.williams_evenness calculates correctly", {
+  testthat::skip_if_not_installed("mockr")
   # Mock the function to return a fixed value
   mockr::with_mock(
     `compute_evenness_formula` = function(...) {
@@ -676,6 +678,7 @@ test_that("calc_ts.williams_evenness handles empty input gracefully", {
 })
 
 test_that("calc_ts.pielou_evenness calculates correctly", {
+  testthat::skip_if_not_installed("mockr")
   # Mock the function to return a fixed value
   mockr::with_mock(
     `compute_evenness_formula` = function(...) {
@@ -762,6 +765,7 @@ mock_estimateD <- tibble::tibble(
 )
 
 test_that("calc_ts.hill0 calculates correctly", {
+  testthat::skip_if_not_installed("mockr")
   mockr::with_mock(
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
       if (datatype == "incidence_raw" && all(q == 0)) {
@@ -823,6 +827,7 @@ test_that("calc_ts.hill0 calculates correctly", {
 })
 
 test_that("calc_ts.hill1 calculates correctly", {
+  testthat::skip_if_not_installed("mockr")
   mockr::with_mock(
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
       if (datatype == "incidence_raw" && all(q == 1)) {
@@ -887,6 +892,7 @@ test_that("calc_ts.hill1 calculates correctly", {
 })
 
 test_that("calc_ts.hill2 calculates correctly", {
+  testthat::skip_if_not_installed("mockr")
   mockr::with_mock(
     `my_estimateD` = function(data, q, datatype, base, level, ...) {
       if (datatype == "incidence_raw" && all(q == 2)) {

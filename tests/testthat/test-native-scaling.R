@@ -108,3 +108,39 @@ test_that("Native grid scaling aligns correctly for MGRS", {
   # Has valid data
   expect_gt(sum(result_10km$data$diversity_val, na.rm = TRUE), 0)
 })
+
+test_that("EEA grid scales successfully with cell_size='grid' and no resolution prefix in cellCode", {
+  mock_data <- data.frame(
+    cellCode = c("E4321N3210", "E4322N3211"),
+    xcoord = c(4321000, 4322000),
+    ycoord = c(3210000, 3211000),
+    obs = c(10, 20),
+    taxonKey = c(1, 2),
+    scientificName = c("Species A", "Species B"),
+    year = 2020
+  )
+
+  mock_cube <- list(
+    data = mock_data,
+    grid_type = "eea",
+    first_year = 2020,
+    last_year = 2020,
+    num_species = 2,
+    kingdoms = "Animalia",
+    num_families = 2,
+    coord_range = c(4321000, 4322000, 3210000, 3211000),
+    resolutions = NULL
+  )
+  class(mock_cube) <- "processed_cube"
+
+  result <- compute_indicator_workflow(
+    data = mock_cube,
+    type = "obs_richness",
+    dim_type = "map",
+    cell_size = "grid",
+    ci_type = "none"
+  )
+
+  expect_equal(nrow(result$data), 2)
+  expect_false(any(is.na(result$data$diversity_val)))
+})

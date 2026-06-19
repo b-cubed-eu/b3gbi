@@ -62,10 +62,11 @@ create_mgrs_grid <- function(df, projection, resolution = NULL) {
   if (is.null(res_str) || is.na(res_str)) {
     res_m <- 1000 # Default to 1km
   } else {
-    res_val <- as.numeric(gsub("[a-zA-Z]", "", res_str))
+    res_val <- suppressWarnings(as.numeric(gsub("[a-zA-Z]", "", res_str)))
     res_unit <- gsub("[0-9.]", "", res_str)
     res_m <- if (res_unit == "km") res_val * 1000 else res_val
   }
+  if (is.na(res_m)) res_m <- 1000 # Fallback
   half_res <- res_m / 2
 
   # 2. Parse MGRS codes to UTM coordinates
@@ -168,12 +169,13 @@ create_eea_grid <- function(df, projection, resolution = NULL) {
 
   if (is.null(res_str) || is.na(res_str)) {
     coords_temp <- eea_code_to_coords(df$cellCode[1])
-    res_m <- as.numeric(gsub("km", "", coords_temp$resolution[1])) * 1000
+    res_m <- suppressWarnings(as.numeric(gsub("km", "", coords_temp$resolution[1]))) * 1000
   } else {
-    res_val <- as.numeric(gsub("[a-zA-Z]", "", res_str))
+    res_val <- suppressWarnings(as.numeric(gsub("[a-zA-Z]", "", res_str)))
     res_unit <- gsub("[0-9.]", "", res_str)
     res_m <- if (res_unit == "km") res_val * 1000 else res_val
   }
+  if (is.na(res_m)) res_m <- 1000 # Fallback
 
   # 2. Parse EEA cell codes to coordinates (lower-left corners in EPSG:3035)
   unique_codes <- unique(df$cellCode)
@@ -192,6 +194,7 @@ create_eea_grid <- function(df, projection, resolution = NULL) {
   res_unit <- stringr::str_extract(coords$resolution[1], "(km|m)")
   native_res_m <- ifelse(res_unit == "km", res_val * 1000, res_val)
   if (is.na(native_res_m)) native_res_m <- res_m
+  if (is.na(native_res_m)) native_res_m <- 1000 # Fallback
 
   # Filter out NAs for robustness
   n_before <- nrow(coords)
@@ -240,8 +243,9 @@ create_eqdgc_grid <- function(df, projection, resolution = NULL) {
   if (is.null(res_str) || is.na(res_str)) {
     res_deg <- 0.25 # Default
   } else {
-    res_deg <- as.numeric(gsub("degrees", "", res_str))
+    res_deg <- suppressWarnings(as.numeric(gsub("degrees", "", res_str)))
   }
+  if (is.na(res_deg)) res_deg <- 0.25 # Fallback
   half_res <- res_deg / 2
 
   # 2. Convert cell codes to center coordinates in lat/long (EPSG:4326)

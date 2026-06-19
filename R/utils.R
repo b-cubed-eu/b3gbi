@@ -698,8 +698,133 @@ my_classification <- function(x, ...) {
 
 # Wrapper of function iNext::estimateD. This is for mocking in testthat tests.
 #' @noRd
-my_estimateD <- function(...) {
-  iNEXT::estimateD(...)
+my_estimateD <- function(x, datatype = "abundance", base = "size", level = NULL, q = 0, conf = 0.95, nboot = 50, ...) {
+  # If q does not contain 1, or datatype is abundance, bypass the patch
+  if (!(1 %in% q) || !(datatype %in% c("incidence_freq", "incidence_raw"))) {
+    return(iNEXT::estimateD(x, datatype = datatype, base = base, level = level, q = q, conf = conf, nboot = nboot, ...))
+  }
+
+  # Ensure x is a list and has names (since iNEXT behaves differently otherwise)
+  is_list_input <- is.list(x)
+  if (!is_list_input) {
+    x_list <- list(site1 = x)
+  } else {
+    x_list <- x
+    if (is.null(names(x_list))) {
+      names(x_list) <- paste0("site", seq_along(x_list))
+    }
+  }
+
+  bad_indices <- logical(length(x_list))
+
+  for (i in seq_along(x_list)) {
+    x_i <- x_list[[i]]
+    if (datatype == "incidence_freq") {
+      nT <- x_i[1]
+      Yi <- x_i[-1]
+      Yi <- Yi[Yi != 0]
+      yi <- Yi[Yi >= 1 & Yi <= (nT - 1)]
+      if (length(yi) == 0) {
+        bad_indices[i] <- TRUE
+      }
+    } else if (datatype == "incidence_raw") {
+      nT <- ncol(x_i)
+      Yi <- rowSums(x_i)
+      Yi <- Yi[Yi != 0]
+      yi <- Yi[Yi >= 1 & Yi <= (nT - 1)]
+      if (length(yi) == 0) {
+        bad_indices[i] <- TRUE
+      }
+    }
+  }
+
+  results_list <- list()
+
+  # Process the good ones
+  if (any(!bad_indices)) {
+    good_x <- x_list[!bad_indices]
+    good_results <- iNEXT::estimateD(good_x, datatype = datatype, base = base, level = level, q = q, conf = conf, nboot = nboot, ...)
+    results_list[[length(results_list) + 1]] <- good_results
+  }
+
+  # Process the bad ones
+  if (any(bad_indices)) {
+    bad_x <- x_list[bad_indices]
+    
+    # 1. Estimate for q values other than 1
+    q_other <- q[q != 1]
+    bad_other_results <- NULL
+    if (length(q_other) > 0) {
+      bad_other_results <- iNEXT::estimateD(bad_x, datatype = datatype, base = base, level = level, q = q_other, conf = conf, nboot = nboot, ...)
+    }
+    
+    # 2. Estimate for q = 1
+    bad_q1_results <- data.frame(
+      Assemblage = names(bad_x),
+      t = numeric(length(bad_x)),
+      Method = character(length(bad_x)),
+      Order.q = numeric(length(bad_x)),
+      SC = numeric(length(bad_x)),
+      qD = numeric(length(bad_x)),
+      qD.LCL = numeric(length(bad_x)),
+      qD.UCL = numeric(length(bad_x)),
+      stringsAsFactors = FALSE
+    )
+    
+    for (k in seq_along(bad_x)) {
+      x_i <- bad_x[[k]]
+      if (datatype == "incidence_freq") {
+        nT <- x_i[1]
+        Yi <- x_i[-1]
+        Yi <- Yi[Yi != 0]
+        Sobs <- length(Yi)
+      } else {
+        nT <- ncol(x_i)
+        Yi <- rowSums(x_i)
+        Yi <- Yi[Yi != 0]
+        Sobs <- length(Yi)
+      }
+      
+      sc_val <- if (!is.null(level)) level else 1.0
+      
+      bad_q1_results$t[k] <- nT
+      bad_q1_results$Method[k] <- "Observed"
+      bad_q1_results$Order.q[k] <- 1
+      bad_q1_results$SC[k] <- sc_val
+      bad_q1_results$qD[k] <- Sobs
+      bad_q1_results$qD.LCL[k] <- Sobs
+      bad_q1_results$qD.UCL[k] <- Sobs
+    }
+    
+    if (!is.null(bad_other_results)) {
+      bad_combined <- rbind(bad_other_results, bad_q1_results)
+    } else {
+      bad_combined <- bad_q1_results
+    }
+    
+    results_list[[length(results_list) + 1]] <- bad_combined
+  }
+
+  # Combine all results
+  combined <- do.call(rbind, results_list)
+
+  # Reorder to match original input list order and q order
+  assemblage_names <- names(x_list)
+  
+  combined$assemblage_order <- match(combined$Assemblage, assemblage_names)
+  combined$q_order <- match(combined$Order.q, q)
+  combined <- combined[order(combined$assemblage_order, combined$q_order), , drop = FALSE]
+  
+  combined$assemblage_order <- NULL
+  combined$q_order <- NULL
+  rownames(combined) <- NULL
+
+  # If the original input was not a list, strip the Assemblage column to match iNEXT behavior
+  if (!is_list_input) {
+    combined$Assemblage <- NULL
+  }
+
+  return(combined)
 }
 
 # Wrapper of function inherits. This is for mocking in testthat tests.

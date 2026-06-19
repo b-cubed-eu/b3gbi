@@ -3,6 +3,11 @@ add_ne_layer <- function(layer_name, scale, extent_projected) {
 
   geometry <- featurecla <- scalerank <- type <- geom <- NULL
 
+  if (scale == "large" && !requireNamespace("rnaturalearthhires", quietly = TRUE)) {
+    stop("Package 'rnaturalearthhires' is required for large scale (10m) map data. ",
+         "Please install it or use scale = 'medium' or 'small'.")
+  }
+
   if (layer_name == "admin_0_countries") {
     # Use the robust ne_countries function for the base layer
     # The ne_countries function handles downloading the data if it doesn't exist
