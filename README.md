@@ -5,7 +5,7 @@
 
 <!-- badges: start -->
 
-[![repo status](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip)
+[![repo status](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#wip)
 [![Release](https://img.shields.io/github/release/b-cubed-eu/b3gbi.svg?include_prereleases)](https://github.com/b-cubed-eu/b3gbi/releases)
 [![b3gbi status badge](https://b-cubed-eu.r-universe.dev/b3gbi/badges/version)](https://b-cubed-eu.r-universe.dev/b3gbi)
 [![CRAN status](https://www.r-pkg.org/badges/version/b3gbi)](https://CRAN.R-project.org/package=b3gbi)
