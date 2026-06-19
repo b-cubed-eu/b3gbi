@@ -196,7 +196,7 @@ compute_indicator_workflow <- function(data,
   }
 
   # Null assignments
-  xcoord <- ycoord <- ll <- ul <- cellCode <- cellid <- geometry <- NULL
+  xcoord <- ycoord <- ll <- ul <- cellCode <- cellid <- geometry <- area <- NULL
 
   # Check for empty cube
   if (nrow(data$data) == 0) {
