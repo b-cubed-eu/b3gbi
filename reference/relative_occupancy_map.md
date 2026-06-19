@@ -199,12 +199,12 @@ the number of post-aggregation grid cells (`cellid`) in which the
 species has at least one recorded occurrence. The denominator depends on
 `occ_type`:
 
-|            |                                   |                                                     |
-|------------|-----------------------------------|-----------------------------------------------------|
-| `occ_type` | Name                              | Denominator                                         |
-| `0`        | Total-area                        | All grid cells in region (constant)                 |
-| `1`        | Ever-occupied                     | Cells with ≥ 1 occurrence, any species, full window |
-| `2`        | Annual (TS) / Temporal mean (map) | Cells with ≥ 1 occ in *that year*                   |
+|  |  |  |
+|----|----|----|
+| `occ_type` | Name | Denominator |
+| `0` | Total-area | All grid cells in region (constant) |
+| `1` | Ever-occupied | Cells with ≥ 1 occurrence, any species, full window |
+| `2` | Annual (TS) / Temporal mean (map) | Cells with ≥ 1 occ in *that year* |
 
 **Type 0** is the most conservative and comparable across different data
 cubes because the denominator is fixed by the grid definition. A low

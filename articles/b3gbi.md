@@ -31,6 +31,7 @@ The package is publicly available at
 The package is available on the dedicated B-Cubed R-universe repository.
 
 ``` r
+
 # Install the package from the dedicated R-universe
 install.packages("b3gbi", repos = "https://b-cubed-eu.r-universe.dev")
 
@@ -47,12 +48,12 @@ names and grid types.
 
 ### Key `process_cube()` Arguments
 
-| Argument     | Description                                                              | Default/Details           |
-|--------------|--------------------------------------------------------------------------|---------------------------|
-| `data`       | Path to the .csv file containing the GBIF cube. Required.                |                           |
-| `grid_type`  | The grid system used (e.g., ‘eea’, ‘mgrs’, ‘eqdgc’, ‘isea3h’, ‘custom’). | Autodetected if possible. |
-| `first_year` | Filters the cube to start at this year.                                  | First year in the data.   |
-| `last_year`  | Filters the cube to end at this year.                                    | Last year in the data.    |
+| Argument | Description | Default/Details |
+|----|----|----|
+| `data` | Path to the .csv file containing the GBIF cube. Required. |  |
+| `grid_type` | The grid system used (e.g., ‘eea’, ‘mgrs’, ‘eqdgc’, ‘isea3h’, ‘custom’). | Autodetected if possible. |
+| `first_year` | Filters the cube to start at this year. | First year in the data. |
+| `last_year` | Filters the cube to end at this year. | Last year in the data. |
 
 **Note on Column Names**: The function automatically attempts to detect
 required columns (like cell code, year, species key). You only need to
@@ -65,6 +66,7 @@ Here we import an example cube of mammals in Denmark, filtering the data
 to start from 1980.
 
 ``` r
+
 # Function 1: process_cube()
 denmark_cube <- process_cube(
   system.file("extdata",
@@ -81,34 +83,34 @@ denmark_cube
 #> 
 #> Date Range: 1980 - 2024 
 #> Single-resolution cube with cell size 0.25degrees 
-#> Number of cells: 323 
+#> Number of cells: 186 
 #> Grid reference system: eqdgc 
 #> Coordinate range:
 #>  xmin  xmax  ymin  ymax 
-#>  3.25 15.75 54.25 58.25 
+#>  3.75 15.25 54.50 58.25 
 #> 
-#> Total number of observations: 204664 
-#> Number of species represented: 100 
-#> Number of families represented: 31 
+#> Total number of observations: 6064 
+#> Number of species represented: 53 
+#> Number of families represented: 19 
 #> 
 #> Kingdoms represented: Animalia 
 #> 
 #> First 10 rows of data (use n = to show more):
 #> 
-#> # A tibble: 30,985 × 15
+#> # A tibble: 969 × 15
 #>     year cellCode  kingdomKey kingdom  familyKey family  taxonKey scientificName
 #>    <dbl> <chr>          <dbl> <chr>        <dbl> <chr>      <dbl> <chr>         
-#>  1  1980 E008N55CB          1 Animalia      5310 Phocid…  2434793 Phoca vitulina
-#>  2  1980 E008N56BB          1 Animalia      5307 Mustel…  5218987 Mustela nival…
-#>  3  1980 E008N57DC          1 Animalia      9361 Phocoe…  2440669 Phocoena phoc…
-#>  4  1980 E009N55BB          1 Animalia      5722 Erinac…  5219616 Erinaceus eur…
-#>  5  1980 E009N56BB          1 Animalia      9368 Vesper…  5218507 Plecotus auri…
-#>  6  1980 E009N57DD          1 Animalia      9361 Phocoe…  2440669 Phocoena phoc…
-#>  7  1980 E010N55AA          1 Animalia      5310 Phocid…  2434793 Phoca vitulina
-#>  8  1980 E010N55AA          1 Animalia      5307 Mustel…  5219019 Mustela ermin…
-#>  9  1980 E010N55BB          1 Animalia      5310 Phocid…  2434793 Phoca vitulina
-#> 10  1980 E010N56CB          1 Animalia      5307 Mustel…  5218887 Martes foina  
-#> # ℹ 30,975 more rows
+#>  1  1980 E010N55AA          1 Animalia      5307 Mustel…  5219019 Mustela ermin…
+#>  2  1980 E012N55AD          1 Animalia      5534 Sorici…  8316400 Sorex araneus 
+#>  3  1981 E008N55CB          1 Animalia      5310 Phocid…  2434806 Halichoerus g…
+#>  4  1981 E010N57BA          1 Animalia   3240723 Cricet…  4265185 Arvicola amph…
+#>  5  1981 E011N57CC          1 Animalia      5310 Phocid…  2434806 Halichoerus g…
+#>  6  1982 E010N56AD          1 Animalia      5310 Phocid…  2434806 Halichoerus g…
+#>  7  1982 E011N56DC          1 Animalia      5310 Phocid…  2434793 Phoca vitulina
+#>  8  1983 E009N55CD          1 Animalia      9379 Lepori…  7952072 Lepus europae…
+#>  9  1983 E011N55AB          1 Animalia      5310 Phocid…  2434793 Phoca vitulina
+#> 10  1983 E015N55CA          1 Animalia      5310 Phocid…  2434806 Halichoerus g…
+#> # ℹ 959 more rows
 #> # ℹ 7 more variables: obs <dbl>, minCoordinateUncertaintyInMeters <dbl>,
 #> #   minTemporalUncertainty <dbl>, familyCount <dbl>, xcoord <dbl>,
 #> #   ycoord <dbl>, resolution <chr>
@@ -118,38 +120,39 @@ The data itself is stored in a tibble within the object’s `data` slot,
 and the rest is metadata.
 
 ``` r
+
 str(denmark_cube)
 #> List of 11
 #>  $ first_year  : num 1980
 #>  $ last_year   : num 2024
 #>  $ coord_range :List of 4
-#>   ..$ xmin: num 3.25
-#>   ..$ xmax: num 15.8
-#>   ..$ ymin: num 54.2
+#>   ..$ xmin: num 3.75
+#>   ..$ xmax: num 15.2
+#>   ..$ ymin: num 54.5
 #>   ..$ ymax: num 58.2
-#>  $ num_cells   : int 323
-#>  $ num_species : int 100
-#>  $ num_obs     : num 204664
+#>  $ num_cells   : int 186
+#>  $ num_species : int 53
+#>  $ num_obs     : num 6064
 #>  $ kingdoms    : chr "Animalia"
-#>  $ num_families: int 31
+#>  $ num_families: int 19
 #>  $ grid_type   : chr "eqdgc"
 #>  $ resolutions : chr "0.25degrees"
-#>  $ data        : tibble [30,985 × 15] (S3: tbl_df/tbl/data.frame)
-#>   ..$ year                            : num [1:30985] 1980 1980 1980 1980 1980 1980 1980 1980 1980 1980 ...
-#>   ..$ cellCode                        : chr [1:30985] "E008N55CB" "E008N56BB" "E008N57DC" "E009N55BB" ...
-#>   ..$ kingdomKey                      : num [1:30985] 1 1 1 1 1 1 1 1 1 1 ...
-#>   ..$ kingdom                         : chr [1:30985] "Animalia" "Animalia" "Animalia" "Animalia" ...
-#>   ..$ familyKey                       : num [1:30985] 5310 5307 9361 5722 9368 ...
-#>   ..$ family                          : chr [1:30985] "Phocidae" "Mustelidae" "Phocoenidae" "Erinaceidae" ...
-#>   ..$ taxonKey                        : num [1:30985] 2434793 5218987 2440669 5219616 5218507 ...
-#>   ..$ scientificName                  : chr [1:30985] "Phoca vitulina" "Mustela nivalis" "Phocoena phocoena" "Erinaceus europaeus" ...
-#>   ..$ obs                             : num [1:30985] 1 1 27 1 1 1 1 1 1 1 ...
-#>   ..$ minCoordinateUncertaintyInMeters: num [1:30985] 3 1000 1000 50 1000 1000 3 930 3 92 ...
-#>   ..$ minTemporalUncertainty          : num [1:30985] 86400 86400 86400 86400 2678400 ...
-#>   ..$ familyCount                     : num [1:30985] 39284 23427 19402 3807 16848 ...
-#>   ..$ xcoord                          : num [1:30985] 8.38 8.88 8.62 9.88 9.88 ...
-#>   ..$ ycoord                          : num [1:30985] 55.4 56.9 57.1 55.9 56.9 ...
-#>   ..$ resolution                      : chr [1:30985] "0.25degrees" "0.25degrees" "0.25degrees" "0.25degrees" ...
+#>  $ data        : tibble [969 × 15] (S3: tbl_df/tbl/data.frame)
+#>   ..$ year                            : num [1:969] 1980 1980 1981 1981 1981 ...
+#>   ..$ cellCode                        : chr [1:969] "E010N55AA" "E012N55AD" "E008N55CB" "E010N57BA" ...
+#>   ..$ kingdomKey                      : num [1:969] 1 1 1 1 1 1 1 1 1 1 ...
+#>   ..$ kingdom                         : chr [1:969] "Animalia" "Animalia" "Animalia" "Animalia" ...
+#>   ..$ familyKey                       : num [1:969] 5307 5534 5310 3240723 5310 ...
+#>   ..$ family                          : chr [1:969] "Mustelidae" "Soricidae" "Phocidae" "Cricetidae" ...
+#>   ..$ taxonKey                        : num [1:969] 5219019 8316400 2434806 4265185 2434806 ...
+#>   ..$ scientificName                  : chr [1:969] "Mustela erminea" "Sorex araneus" "Halichoerus grypus" "Arvicola amphibius" ...
+#>   ..$ obs                             : num [1:969] 1 1 3 1 1 1 1 1 2 2 ...
+#>   ..$ minCoordinateUncertaintyInMeters: num [1:969] 930 390 3 870 3 3 3 780 3 3 ...
+#>   ..$ minTemporalUncertainty          : num [1:969] 86400 86400 86400 86400 86400 86400 86400 86400 86400 86400 ...
+#>   ..$ familyCount                     : num [1:969] 23427 1360 39284 1954 39284 ...
+#>   ..$ xcoord                          : num [1:969] 10.12 12.38 8.38 10.62 11.12 ...
+#>   ..$ ycoord                          : num [1:969] 55.9 55.6 55.4 57.9 57.1 ...
+#>   ..$ resolution                      : chr [1:969] "0.25degrees" "0.25degrees" "0.25degrees" "0.25degrees" ...
 #>  - attr(*, "class")= chr "processed_cube"
 ```
 
@@ -164,6 +167,7 @@ Use `available_indicators` to see the full list of indicators and their
 associated wrapper functions (e.g., `obs_richness_map`, `total_occ_ts`).
 
 ``` r
+
 available_indicators
 #> 
 #> 
@@ -309,13 +313,13 @@ available_indicators
 All indicator wrapper functions (e.g., `obs_richness_map`,
 `occ_turnover_ts`) share the following key arguments:
 
-| Argument        | Description                                                                        | Details                                                                        |
-|-----------------|------------------------------------------------------------------------------------|--------------------------------------------------------------------------------|
-| `data`          | The `processed_cube` object. Required.                                             |                                                                                |
-| `level`         | The geographical scale (‘country’, ‘continent’, ‘world’).                          | Automatically retrieves boundaries.                                            |
-| `region`        | The specific region name (e.g., ‘Germany’, ‘Europe’).                              | Required if level is set.                                                      |
-| `ci_type`       | Type of bootstrap confidence interval to calculate. Only relevant for time series. | ‘norm’, ‘basic’, ‘perc’, ‘bca’, or ‘none’. Defaults to ‘norm’ for time series. |
-| `num_bootstrap` | Number of bootstrap runs for CI calculation. Only relevant for time series.        | Defaults to 100.                                                               |
+| Argument | Description | Details |
+|----|----|----|
+| `data` | The `processed_cube` object. Required. |  |
+| `level` | The geographical scale (‘country’, ‘continent’, ‘world’). | Automatically retrieves boundaries. |
+| `region` | The specific region name (e.g., ‘Germany’, ‘Europe’). | Required if level is set. |
+| `ci_type` | Type of bootstrap confidence interval to calculate. Only relevant for time series. | ‘norm’, ‘basic’, ‘perc’, ‘bca’, or ‘none’. Defaults to ‘norm’ for time series. |
+| `num_bootstrap` | Number of bootstrap runs for CI calculation. Only relevant for time series. | Defaults to 100. |
 
 **Important Note on Confidence Intervals (CIs)**:
 
@@ -334,6 +338,7 @@ Let’s calculate the observed richness spatially, covering the period
 from 1980 to the end of the cube’s data.
 
 ``` r
+
 # Calculate a gridded map of observed species richness for Denmark
 # Note that ci_type is ignored for map indicators
 Denmark_observed_richness_map <- obs_richness_map(denmark_cube,
@@ -346,6 +351,7 @@ The result is an `indicator_map` object (the data within it is also an
 `sf` object, containing geographical information).
 
 ``` r
+
 class(Denmark_observed_richness_map)
 #> [1] "indicator_map" "obs_richness"
 class(Denmark_observed_richness_map$data)
@@ -359,6 +365,7 @@ Now, let’s calculate the same indicator temporally for a trend analysis.
 We will use the default `ci_type = "norm"` and `num_bootstrap = 100`.
 
 ``` r
+
 # Calculate a time series of total occurrences for Denmark
 Denmark_total_occ_ts <- total_occ_ts(denmark_cube,
   level = "country",
@@ -366,11 +373,14 @@ Denmark_total_occ_ts <- total_occ_ts(denmark_cube,
   ci_type = "norm", # Include confidence intervals
   num_bootstrap = 100
 ) # Using the default number of runs
+#> [1] "All values of t are equal to  2 \n Cannot calculate confidence intervals"
+#> [1] "All values of t are equal to  2 \n Cannot calculate confidence intervals"
 ```
 
 The result is an `indicator_ts` object.
 
 ``` r
+
 class(Denmark_total_occ_ts)
 #> [1] "indicator_ts" "total_occ"
 ```
@@ -386,14 +396,15 @@ and applies smart defaults for titles, colors, and layout.
 
 ### Plotting the Map
 
-| Argument         | Description                                                                                                      | Common Use                           |
-|------------------|------------------------------------------------------------------------------------------------------------------|--------------------------------------|
-| `title`          | Sets the plot title.                                                                                             | e.g., “Observed Richness in Denmark” |
-| `legend_title`   | Sets the legend title.                                                                                           | e.g., “Number of Species”            |
-| `crop_to_grid`   | If TRUE, the map edges are determined by the grid extent.                                                        |                                      |
-| `crop_by_region` | If TRUE, map edges are determined by the map region selected during indicator calculation, rather than the data. |                                      |
+| Argument | Description | Common Use |
+|----|----|----|
+| `title` | Sets the plot title. | e.g., “Observed Richness in Denmark” |
+| `legend_title` | Sets the legend title. | e.g., “Number of Species” |
+| `crop_to_grid` | If TRUE, the map edges are determined by the grid extent. |  |
+| `crop_by_region` | If TRUE, map edges are determined by the map region selected during indicator calculation, rather than the data. |  |
 
 ``` r
+
 # Plotting the map object
 plot(Denmark_observed_richness_map,
   legend_title = "Mammal Species Count",
@@ -405,16 +416,17 @@ plot(Denmark_observed_richness_map,
 
 ### Plotting the Time Series
 
-| Argument              | Description                                            | Common Use         |
-|-----------------------|--------------------------------------------------------|--------------------|
-| `smoothed_trend`      | If TRUE, displays a smoothed trend line (LOESS).       | Defaults to TRUE.  |
-| `linecolour`          | Sets the color of the indicator line/points.           | e.g., “blue”       |
-| `ribboncolour`        | Sets the color of the indicator confidence interval.   | e.g., “skyblue”    |
-| `trendlinecolour`     | Sets the color of the trend line.                      | e.g., “darkorange” |
-| `envelopecolour`      | Sets the color of the trend line confidence intervals. | e.g., “orange”     |
-| `x_label` / `y_label` | Custom labels for the axes.                            |                    |
+| Argument | Description | Common Use |
+|----|----|----|
+| `smoothed_trend` | If TRUE, displays a smoothed trend line (LOESS). | Defaults to TRUE. |
+| `linecolour` | Sets the color of the indicator line/points. | e.g., “blue” |
+| `ribboncolour` | Sets the color of the indicator confidence interval. | e.g., “skyblue” |
+| `trendlinecolour` | Sets the color of the trend line. | e.g., “darkorange” |
+| `envelopecolour` | Sets the color of the trend line confidence intervals. | e.g., “orange” |
+| `x_label` / `y_label` | Custom labels for the axes. |  |
 
 ``` r
+
 # Plotting the time series object
 plot(Denmark_total_occ_ts,
   title = "Temporal Trend of Total Mammal Occurrences in Denmark",

@@ -1,5 +1,25 @@
 # Changelog
 
+## b3gbi 0.8.20 - Minor update:
+
+- Fixed a bug in `my_estimateD` where calculating Shannon diversity
+  (q=1) crashed with NA/NaN argument for cells with single sampling
+  units or where all species were observed in all units.
+- Fixed a bug in `create_native_grid` and `compute_indicator_workflow`
+  where coordinate building crashed with `!anyNA(x) is not TRUE` if
+  native grid resolution was missing or grid codes did not carry
+  resolution prefixes (e.g. EEA grids). Added 1km and 1000m resolution
+  fallbacks.
+- Moved `bit64` and `patchwork` dependencies to `Suggests` to minimize
+  imports and avoid CRAN warnings. Added dynamic namespace checking for
+  `patchwork` in
+  [`plot_species_map()`](https://b-cubed-eu.github.io/b3gbi/reference/plot_species_map.md)
+  and
+  [`plot_species_ts()`](https://b-cubed-eu.github.io/b3gbi/reference/plot_species_ts.md).
+- Systematically downsampled large Denmark mammals datasets in
+  `inst/extdata` to reduce installed package size to CRAN limits (\<
+  5MB) while preserving full year distribution for unit tests.
+
 ## b3gbi 0.8.19 - Minor update:
 
 - Added relative occupancy indicator access using

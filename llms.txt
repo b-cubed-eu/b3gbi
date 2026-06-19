@@ -35,6 +35,7 @@ b3gbi empowers biodiversity analysis with:
 Install **b3gbi** in R:
 
 ``` r
+
 install.packages("b3gbi", repos = c("https://b-cubed-eu.r-universe.dev", "https://cloud.r-project.org"))
 ```
 
@@ -45,6 +46,7 @@ cube, calculating an indicator, and plotting the result as a spatial map
 of species richness for mammals in Denmark.
 
 ``` r
+
 # Load package
 library(b3gbi)
 
