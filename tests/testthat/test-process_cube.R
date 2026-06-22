@@ -575,3 +575,23 @@ test_that("process_cube handles custom separator", {
   expect_equal(result$data$obs[1], 10)
   unlink(temp_file)
 })
+
+test_that("process_cube preserves string-based GBIF keys (new format)", {
+  # GBIF changed from integer keys (e.g. 1 for Animalia) to string keys (e.g. "N")
+  cube_df <- tibble::tibble(
+    year = 2020,
+    cellCode = "1kmE32N20",
+    occurrences = 5,
+    scientificName = "Panthera leo",
+    speciesKey = "3VQZ9",
+    kingdomKey = "N",
+    familyKey = "XYZAB"
+  )
+
+  result <- suppressWarnings(process_cube(cube_df, grid_type = "eea"))
+  expect_s3_class(result, "processed_cube")
+  # Keys must be preserved as non-NA strings, not coerced to NA via as.numeric
+  expect_equal(result$data$taxonKey[1], "3VQZ9")
+  expect_equal(result$data$kingdomKey[1], "N")
+  expect_equal(result$data$familyKey[1], "XYZAB")
+})
