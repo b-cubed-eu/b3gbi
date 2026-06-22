@@ -882,7 +882,7 @@ test_that("my_estimateD coverage for other paths", {
     site2 = site2_mat
   )
   
-  res_raw <- my_estimateD(x_raw, datatype = "incidence_raw", base = "size", level = 2, q = c(0, 1, 2), conf = 0.95, nboot = 0)
+  res_raw <- suppressWarnings(my_estimateD(x_raw, datatype = "incidence_raw", base = "size", level = 2, q = c(0, 1, 2), conf = 0.95, nboot = 0))
   expect_equal(nrow(res_raw), 6)
   
   site1_raw_q1 <- res_raw[res_raw$Assemblage == "site1" & res_raw$Order.q == 1, ]

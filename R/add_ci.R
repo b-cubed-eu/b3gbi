@@ -268,8 +268,8 @@ add_ci <- function(indicator,
       if ("year" %in% names(ci_df) && is.numeric(x$year)) {
         ci_df$year <- as.numeric(ci_df$year)
       }
-      if ("taxonKey" %in% names(ci_df) && is.numeric(x$taxonKey)) {
-        ci_df$taxonKey <- as.numeric(ci_df$taxonKey)
+      if ("taxonKey" %in% names(ci_df)) {
+        ci_df$taxonKey <- if (is.numeric(x$taxonKey)) as.numeric(ci_df$taxonKey) else as.character(ci_df$taxonKey)
       }
       # Convert negative values to zero as rarity cannot be less than zero
       ci_df$ll <- ifelse(ci_df$ll > 0, ci_df$ll, 0)

@@ -126,7 +126,7 @@ plot_species_ts <- function(x,
   }
 
   # Split data by species
-  split_so <- if (is.numeric(species)) {
+  split_so <- if (is.numeric(species) || all(as.character(species) %in% x$data$taxonKey)) {
     get_occurrences_and_split(x$data, "taxonKey", species)
   } else {
     get_occurrences_and_split(x$data, "scientificName", species)
