@@ -1,5 +1,28 @@
 # Changelog
 
+## b3gbi 0.9.1 - Minor update:
+
+- **Support for Alphanumeric/String-Based Taxonomic Keys**: Excluded key
+  columns (`kingdomKey`, `familyKey`, `speciesKey`) from numeric
+  coercion in
+  [`process_cube()`](https://b-cubed-eu.github.io/b3gbi/reference/process_cube.md).
+  This ensures compatibility with GBIF’s new taxonomic backbone
+  migrating to the Catalogue of Life (COL), which uses alphanumeric
+  string keys (e.g., `kingdomKey = "N"`) instead of integer keys.
+- **Type Safety for downstream calculations**: Modified
+  [`add_ci()`](https://b-cubed-eu.github.io/b3gbi/reference/add_ci.md)
+  and empty fallback data structures in `calc_ts_methods.R` to support
+  and preserve character-type `taxonKey` values, preventing mismatches
+  or coercion warnings during diversity and uncertainty estimation.
+- **Enhanced Species Search in Plotting**: Updated
+  [`plot_species_map()`](https://b-cubed-eu.github.io/b3gbi/reference/plot_species_map.md)
+  and
+  [`plot_species_ts()`](https://b-cubed-eu.github.io/b3gbi/reference/plot_species_ts.md)
+  to correctly match and look up alphanumeric/string keys against
+  `taxonKey` instead of fallback matching to `scientificName`.
+- **Cleaned up tests**: Suppressed expected `iNEXT` presence-absence
+  input format warnings in unit tests to ensure R CMD check compliance.
+
 ## b3gbi 0.9.0 - Major update:
 
 - Confidence intervals are no longer calculated in the core indicator

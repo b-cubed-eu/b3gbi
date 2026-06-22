@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,9 +40,20 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.9/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.9.1" id="b3gbi-091---minor-update">b3gbi 0.9.1 - Minor update:<a class="anchor" aria-label="anchor" href="#b3gbi-091---minor-update"></a></h2>
+<ul><li>
+<strong>Support for Alphanumeric/String-Based Taxonomic Keys</strong>: Excluded key columns (<code>kingdomKey</code>, <code>familyKey</code>, <code>speciesKey</code>) from numeric coercion in <code><a href="../reference/process_cube.html">process_cube()</a></code>. This ensures compatibility with GBIF’s new taxonomic backbone migrating to the Catalogue of Life (COL), which uses alphanumeric string keys (e.g., <code>kingdomKey = "N"</code>) instead of integer keys.</li>
+<li>
+<strong>Type Safety for downstream calculations</strong>: Modified <code><a href="../reference/add_ci.html">add_ci()</a></code> and empty fallback data structures in <code>calc_ts_methods.R</code> to support and preserve character-type <code>taxonKey</code> values, preventing mismatches or coercion warnings during diversity and uncertainty estimation.</li>
+<li>
+<strong>Enhanced Species Search in Plotting</strong>: Updated <code><a href="../reference/plot_species_map.html">plot_species_map()</a></code> and <code><a href="../reference/plot_species_ts.html">plot_species_ts()</a></code> to correctly match and look up alphanumeric/string keys against <code>taxonKey</code> instead of fallback matching to <code>scientificName</code>.</li>
+<li>
+<strong>Cleaned up tests</strong>: Suppressed expected <code>iNEXT</code> presence-absence input format warnings in unit tests to ensure R CMD check compliance.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.9.0" id="b3gbi-090---major-update">b3gbi 0.9.0 - Major update:<a class="anchor" aria-label="anchor" href="#b3gbi-090---major-update"></a></h2>
 <ul><li>Confidence intervals are no longer calculated in the core indicator workflow, except for Hill diversity (Hill diversity is handled by the iNEXT package, which calculates confidence intervals internally). They are now calculated using a separated function, add_ci(), which can be applied to any indicator_ts object for which reasonable confidence intervals can be calculated. This gives the user more freedom. After adding CIs, you can recalculate with different parameters by setting ‘replace = TRUE’ when you call add_ci().</li>
