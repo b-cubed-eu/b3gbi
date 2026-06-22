@@ -113,11 +113,23 @@ calc_ts.total_occ <- function(x, ...) {
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.", inherits(x, "total_occ"))
 
-  obs <- NULL
+  obs <- year <- NULL
 
-  # Calculate total number of occurrences over the grid
-  indicator <- x %>%
-    dplyr::summarize(diversity_val = sum(obs), .by = "year")
+  # Fast path for single-year bootstrap calls to avoid dplyr overhead
+  if (length(unique(x$year)) == 1) {
+    if (nrow(x) == 0) {
+      indicator <- data.frame(year = numeric(), diversity_val = numeric())
+    } else {
+      indicator <- data.frame(
+        year = x$year[1],
+        diversity_val = sum(x$obs, na.rm = TRUE)
+      )
+    }
+  } else {
+    # Calculate total number of occurrences over the grid
+    indicator <- x %>%
+      dplyr::summarize(diversity_val = sum(obs), .by = "year")
+  }
 
   return(indicator)
 
@@ -331,12 +343,28 @@ calc_ts.spec_occ <- function(x, ...) {
 
   year <- scientificName <- taxonKey <- obs <- diversity_val <- NULL
 
-  indicator <- x %>%
-    dplyr::summarize(diversity_val = sum(obs),
-                     scientificName = scientificName[1],
-                     .by = c(taxonKey, year)) %>%
-    dplyr::arrange(year) %>%
-    dplyr::select(year, taxonKey, scientificName, diversity_val)
+  # Fast path for single-group bootstrap calls to avoid dplyr overhead
+  if (dplyr::n_distinct(x$year) == 1 && dplyr::n_distinct(x$taxonKey) == 1) {
+    if (nrow(x) == 0) {
+      indicator <- data.frame(year = numeric(), taxonKey = numeric(),
+                              scientificName = character(), diversity_val = numeric())
+    } else {
+      indicator <- data.frame(
+        year = x$year[1],
+        taxonKey = x$taxonKey[1],
+        scientificName = x$scientificName[1],
+        diversity_val = sum(x$obs, na.rm = TRUE)
+      )
+    }
+  } else {
+    # Standard path for multiple groups
+    indicator <- x %>%
+      dplyr::summarize(diversity_val = sum(obs),
+                       scientificName = scientificName[1],
+                       .by = c(taxonKey, year)) %>%
+      dplyr::arrange(year) %>%
+      dplyr::select(year, taxonKey, scientificName, diversity_val)
+  }
 
   # Add the 'spec_occ' class back to the object
   class(indicator) <- c("spec_occ", class(indicator))
@@ -355,13 +383,28 @@ calc_ts.spec_range <- function(x, ...) {
 
   year <- taxonKey <- obs <- diversity_val <- scientificName <- NULL
 
-  # Flatten occurrences for each species by year
-  indicator <- x %>%
-    dplyr::summarize(diversity_val = sum(obs >= 1),
-                     scientificName = scientificName[1],
-                     .by = c(taxonKey, year)) %>%
-    dplyr::arrange(taxonKey) %>%
-    dplyr::select(year, taxonKey, scientificName, diversity_val)
+  # Fast path for single-group bootstrap calls to avoid dplyr overhead
+  if (dplyr::n_distinct(x$year) == 1 && dplyr::n_distinct(x$taxonKey) == 1) {
+    if (nrow(x) == 0) {
+      indicator <- data.frame(year = numeric(), taxonKey = numeric(),
+                              scientificName = character(), diversity_val = numeric())
+    } else {
+      indicator <- data.frame(
+        year = x$year[1],
+        taxonKey = x$taxonKey[1],
+        scientificName = x$scientificName[1],
+        diversity_val = sum(x$obs >= 1, na.rm = TRUE)
+      )
+    }
+  } else {
+    # Standard path for multiple groups
+    indicator <- x %>%
+      dplyr::summarize(diversity_val = sum(obs >= 1),
+                       scientificName = scientificName[1],
+                       .by = c(taxonKey, year)) %>%
+      dplyr::arrange(taxonKey) %>%
+      dplyr::select(year, taxonKey, scientificName, diversity_val)
+  }
 
   # Add the 'spec_range' class back to the object
   class(indicator) <- c("spec_range", class(indicator))
@@ -412,52 +455,55 @@ calc_ts.relative_occupancy <- function(x, occ_type = 0, ...) {
   year <- taxonKey <- scientificName <- diversity_val <- cellid <- NULL
   occupied_cells_yr <- n_occ_cells <- NULL
 
-  # Count cells occupied by each species in each year
-  species_cells <- x %>%
-    dplyr::distinct(year, cellid, scientificName, taxonKey) %>%
-    dplyr::count(year, scientificName, taxonKey, name = "species_cells")
+  # Fast path for single-year bootstrap calls
+  if (length(unique(x$year)) == 1) {
+    # Count cells occupied by each species
+    species_cells <- x %>%
+      dplyr::distinct(cellid, scientificName, taxonKey) %>%
+      dplyr::count(scientificName, taxonKey, name = "species_cells") %>%
+      dplyr::mutate(year = x$year[1])
 
-  if (occ_type == 0L) {
-    # -------------------------------------------------------------------------
-    # Type 0: denominator = total grid cells in study region (constant)
-    # -------------------------------------------------------------------------
-    total_num_cells <- attr(x, "total_num_cells")
-    if (is.null(total_num_cells)) {
-      stop(paste0(
-        "total_num_cells attribute not found. ",
-        "Cannot calculate relative occupancy with occ_type = 0."
-      ))
+    if (occ_type == 0L) {
+      total_num_cells <- attr(x, "total_num_cells")
+      indicator <- species_cells %>%
+        dplyr::mutate(diversity_val = species_cells / total_num_cells)
+    } else if (occ_type == 1L) {
+      ever_occupied <- dplyr::n_distinct(x$cellid)
+      indicator <- species_cells %>%
+        dplyr::mutate(diversity_val = species_cells / ever_occupied)
+    } else {
+      active_cells <- dplyr::n_distinct(x$cellid)
+      indicator <- species_cells %>%
+        dplyr::mutate(diversity_val = species_cells / active_cells)
     }
-
-    indicator <- species_cells %>%
-      dplyr::mutate(diversity_val = species_cells / total_num_cells)
-
-  } else if (occ_type == 1L) {
-    # -------------------------------------------------------------------------
-    # Type 1: denominator = cells with >= 1 occurrence across entire time window
-    # (constant). Conditions on cells where sampling effort is documented.
-    # Presence-only caveat: recorded cells are not a complete picture of effort.
-    # -------------------------------------------------------------------------
-    ever_occupied <- dplyr::n_distinct(x$cellid)
-
-    indicator <- species_cells %>%
-      dplyr::mutate(diversity_val = species_cells / ever_occupied)
-
   } else {
-    # -------------------------------------------------------------------------
-    # Type 2: denominator = cells with >= 1 occurrence in *that year* (varies
-    # per year). Reflects inter-annual variation in recording footprint.
-    # Presence-only caveat: cells active in year t only show where recorders
-    # were active, not where species were definitively absent.
-    # -------------------------------------------------------------------------
-    active_cells_per_year <- x %>%
-      dplyr::distinct(year, cellid) %>%
-      dplyr::count(year, name = "n_occ_cells")
+    # Standard path for multiple years
+    # Count cells occupied by each species in each year
+    species_cells <- x %>%
+      dplyr::distinct(year, cellid, scientificName, taxonKey) %>%
+      dplyr::count(year, scientificName, taxonKey, name = "species_cells")
 
-    indicator <- species_cells %>%
-      dplyr::left_join(active_cells_per_year, by = "year") %>%
-      dplyr::mutate(diversity_val = species_cells / n_occ_cells) %>%
-      dplyr::select(-n_occ_cells)
+    if (occ_type == 0L) {
+      total_num_cells <- attr(x, "total_num_cells")
+      if (is.null(total_num_cells)) {
+        stop("total_num_cells attribute not found.")
+      }
+      indicator <- species_cells %>%
+        dplyr::mutate(diversity_val = species_cells / total_num_cells)
+    } else if (occ_type == 1L) {
+      ever_occupied <- dplyr::n_distinct(x$cellid)
+      indicator <- species_cells %>%
+        dplyr::mutate(diversity_val = species_cells / ever_occupied)
+    } else {
+      active_cells_per_year <- x %>%
+        dplyr::distinct(year, cellid) %>%
+        dplyr::count(year, name = "n_occ_cells")
+
+      indicator <- species_cells %>%
+        dplyr::left_join(active_cells_per_year, by = "year") %>%
+        dplyr::mutate(diversity_val = species_cells / n_occ_cells) %>%
+        dplyr::select(-n_occ_cells)
+    }
   }
 
   indicator <- indicator %>%

@@ -8,7 +8,7 @@
   "codeRepository": "https://github.com/b-cubed-eu/b3gbi",
   "issueTracker": "https://github.com/b-cubed-eu/b3gbi/issues",
   "license": "https://spdx.org/licenses/MIT",
-  "version": "0.8.21",
+  "version": "0.9.0",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -251,6 +251,12 @@
     },
     "4": {
       "@type": "SoftwareApplication",
+      "identifier": "dubicube",
+      "name": "dubicube",
+      "sameAs": "https://github.com/b-cubed-eu/dubicube"
+    },
+    "5": {
+      "@type": "SoftwareApplication",
       "identifier": "ggplot2",
       "name": "ggplot2",
       "provider": {
@@ -261,7 +267,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=ggplot2"
     },
-    "5": {
+    "6": {
       "@type": "SoftwareApplication",
       "identifier": "iNEXT",
       "name": "iNEXT",
@@ -273,7 +279,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=iNEXT"
     },
-    "6": {
+    "7": {
       "@type": "SoftwareApplication",
       "identifier": "labeling",
       "name": "labeling",
@@ -285,7 +291,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=labeling"
     },
-    "7": {
+    "8": {
       "@type": "SoftwareApplication",
       "identifier": "magrittr",
       "name": "magrittr",
@@ -297,14 +303,14 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=magrittr"
     },
-    "8": {
+    "9": {
       "@type": "SoftwareApplication",
       "identifier": "mgrs",
       "name": "mgrs",
       "version": ">= 0.2.4",
       "sameAs": "https://github.com/hrbrmstr/mgrs"
     },
-    "9": {
+    "10": {
       "@type": "SoftwareApplication",
       "identifier": "permute",
       "name": "permute",
@@ -316,7 +322,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=permute"
     },
-    "10": {
+    "11": {
       "@type": "SoftwareApplication",
       "identifier": "purrr",
       "name": "purrr",
@@ -328,7 +334,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=purrr"
     },
-    "11": {
+    "12": {
       "@type": "SoftwareApplication",
       "identifier": "readr",
       "name": "readr",
@@ -340,7 +346,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=readr"
     },
-    "12": {
+    "13": {
       "@type": "SoftwareApplication",
       "identifier": "rlang",
       "name": "rlang",
@@ -352,7 +358,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=rlang"
     },
-    "13": {
+    "14": {
       "@type": "SoftwareApplication",
       "identifier": "rnaturalearth",
       "name": "rnaturalearth",
@@ -364,7 +370,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=rnaturalearth"
     },
-    "14": {
+    "15": {
       "@type": "SoftwareApplication",
       "identifier": "scales",
       "name": "scales",
@@ -376,7 +382,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=scales"
     },
-    "15": {
+    "16": {
       "@type": "SoftwareApplication",
       "identifier": "sf",
       "name": "sf",
@@ -388,7 +394,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=sf"
     },
-    "16": {
+    "17": {
       "@type": "SoftwareApplication",
       "identifier": "stringr",
       "name": "stringr",
@@ -400,7 +406,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=stringr"
     },
-    "17": {
+    "18": {
       "@type": "SoftwareApplication",
       "identifier": "tibble",
       "name": "tibble",
@@ -412,7 +418,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=tibble"
     },
-    "18": {
+    "19": {
       "@type": "SoftwareApplication",
       "identifier": "tidyr",
       "name": "tidyr",
@@ -424,7 +430,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=tidyr"
     },
-    "19": {
+    "20": {
       "@type": "SoftwareApplication",
       "identifier": "tidyselect",
       "name": "tidyselect",
@@ -436,7 +442,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=tidyselect"
     },
-    "20": {
+    "21": {
       "@type": "SoftwareApplication",
       "identifier": "units",
       "name": "units",
@@ -450,7 +456,7 @@
     },
     "SystemRequirements": null
   },
-  "fileSize": "2148.828KB",
+  "fileSize": "2227.469KB",
   "releaseNotes": "https://github.com/b-cubed-eu/b3gbi/blob/main/NEWS.md",
   "contIntegration": ["https://github.com/b-cubed-eu/b3gbi/actions/workflows/R-CMD-check.yaml", "https://app.codecov.io/gh/b-cubed-eu/b3gbi/"],
   "developmentStatus": "https://www.repostatus.org/#wip"

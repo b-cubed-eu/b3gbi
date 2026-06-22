@@ -1,9 +1,10 @@
+#' @param expected_years (Optional) Vector of years expected in the output.
 #' @noRd
 calc_ts_evenness_core <- function(x, type, ...) {
 
   stopifnot_error("Please check the class and structure of your data. This is an
                   internal function, not meant to be called directly.",
-                  inherits(x, c("data.frame", "sf")))
+                  rlang::inherits_any(x, c("data.frame", "sf")))
 
   num_occ <- obs <- year <- taxonKey <- cellCode <- NULL
 
@@ -15,8 +16,13 @@ calc_ts_evenness_core <- function(x, type, ...) {
   }
 
   # Calculate number of records for each species by grid cell
+  dots <- list(...)
+  expected_years <- dots$expected_years
+  all_years <- if (!is.null(expected_years)) expected_years else sort(unique(x$year))
+
   x <- x %>%
     dplyr::summarize(num_occ = sum(obs), .by = c(year, taxonKey)) %>%
+    tidyr::complete(year = all_years, taxonKey, fill = list(num_occ = 0)) %>%
     dplyr::arrange(year) %>%
     tidyr::pivot_wider(names_from = year,
                        values_from = num_occ,

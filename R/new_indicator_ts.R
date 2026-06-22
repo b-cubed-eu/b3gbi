@@ -42,7 +42,8 @@ new_indicator_ts <- function(x,
                              num_species,
                              num_years,
                              species_names,
-                             coord_range) {
+                             coord_range,
+                             raw_cube_occurrences) {
   # check that x is a tibble and all necessary columns are present
   stopifnot(tibble::is_tibble(x),
             all(c("year",
@@ -63,7 +64,8 @@ new_indicator_ts <- function(x,
     num_families = num_families,
     coord_range = coord_range,
     species_names = species_names,
-    data = x
+    data = x,
+    raw_data = raw_cube_occurrences
   ),
   class = c("indicator_ts", div_type),
   indicator_id = id,

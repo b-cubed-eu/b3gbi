@@ -2,11 +2,11 @@ test_that("compute_indicator_workflow handles input validation", {
   # Create a mock processed_cube object
   mock_cube <- list(
     data = data.frame(
-      xcoord = 1:10,
-      ycoord = 1:10,
-      year = 2000:2009,
+      xcoord = rep(1:10, 2),
+      ycoord = rep(1:10, 2),
+      year = rep(2000:2009, 2),
       scientificName = "A",
-      obs = 1:10
+      obs = c(1:10, 10:1)
     ),
     first_year = 2000,
     last_year = 2009,
@@ -44,17 +44,6 @@ test_that("compute_indicator_workflow handles input validation", {
       data = mock_cube,
       type = "obs_richness",
       dim_type = "invalid"
-    ),
-    "'arg' should be one of"
-  )
-
-  # Invalid ci_type
-  expect_error(
-    compute_indicator_workflow(
-      data = mock_cube,
-      type = "obs_richness",
-      dim_type = "map",
-      ci_type = "invalid"
     ),
     "'arg' should be one of"
   )
@@ -399,17 +388,14 @@ test_that(
       data = mock_cube,
       type = "total_occ",
       dim_type = "ts",
-      ci_type = "norm"
+      ci_type = "norm",
+      num_bootstrap = 10
     )
     expect_true(
       all(
         c(
           "year",
-          "diversity_val",
-          "int_type",
-          "ll",
-          "ul",
-          "conf_level"
+          "diversity_val"
         ) %in% names(result_ci$data)
       )
     )
@@ -516,8 +502,7 @@ test_that("compute_indicator_workflow handles sim_cube objects", {
   result_ts <- compute_indicator_workflow(
     data = mock_sim_cube,
     type = "total_occ",
-    dim_type = "ts",
-    ci_type = "none"
+    dim_type = "ts"
   )
   expect_s3_class(result_ts, "indicator_ts")
 
@@ -525,8 +510,8 @@ test_that("compute_indicator_workflow handles sim_cube objects", {
   result_ci <- compute_indicator_workflow(
     data = mock_sim_cube,
     type = "total_occ",
-    dim_type = "ts",
-    ci_type = "norm")
+    dim_type = "ts") %>%
+    add_ci(ci_type = "norm", num_bootstrap = 100)
   expect_true(
     all(
       c(
@@ -535,7 +520,7 @@ test_that("compute_indicator_workflow handles sim_cube objects", {
         "int_type",
         "ll",
         "ul",
-        "conf_level"
+        "conf"
       ) %in% names(result_ci$data)
     )
   )

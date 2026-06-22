@@ -827,6 +827,16 @@ my_estimateD <- function(x, datatype = "abundance", base = "size", level = NULL,
   return(combined)
 }
 
+# Transformation functions
+# Logit transformation
+logit <- function(p) {
+  log(p / (1 - p))
+}
+
+# Inverse logit transformation
+inv_logit <- function(l) {
+  exp(l) / (1 + exp(l))
+}
 # Wrapper of function inherits. This is for mocking in testthat tests.
 #' @noRd
 my_inherits <- function(x, what) {

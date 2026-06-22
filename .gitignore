@@ -77,3 +77,7 @@ app.R
 /conductor
 /shiny
 /lib
+/R/bootstrap_cube.R
+/R/calculate_boot_ci_from_boot.R
+/R/calculate_bootstrap_ci.R
+/R/process_boot_input.R
