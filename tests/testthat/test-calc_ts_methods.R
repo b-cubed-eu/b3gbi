@@ -398,7 +398,7 @@ test_that("calc_ts.spec_occ throws error on wrong class", {
 
 test_that("calc_ts.spec_occ handles empty input gracefully", {
   empty_input <- structure(data.frame(year = integer(),
-                                      taxonKey = integer(),
+                                      taxonKey = character(),
                                       scientificName = character(),
                                       obs = integer()),
                            class = c("spec_occ", "data.frame"))
@@ -406,7 +406,7 @@ test_that("calc_ts.spec_occ handles empty input gracefully", {
   expected_empty_result <- structure(
     data.frame(
       year = integer(),
-      taxonKey = integer(),
+      taxonKey = character(),
       scientificName = character(),
       diversity_val = integer()
     ), class = c("spec_occ", "data.frame"))
@@ -458,7 +458,7 @@ test_that("calc_ts.spec_range throws error on wrong class", {
 
 test_that("calc_ts.spec_range handles empty input gracefully", {
   empty_input <- structure(data.frame(year = integer(),
-                                      taxonKey = integer(),
+                                      taxonKey = character(),
                                       scientificName = character(),
                                       obs = integer(),
                                       cellCode = integer()),
@@ -466,7 +466,7 @@ test_that("calc_ts.spec_range handles empty input gracefully", {
 
   expected_empty_result <- structure(data.frame(
     year = integer(),
-    taxonKey = integer(),
+    taxonKey = character(),
     scientificName = character(),
     diversity_val = integer()
   ), class = c("spec_range", "data.frame"))
