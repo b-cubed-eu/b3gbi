@@ -15,6 +15,11 @@
 * Added a new conceptual vignette: "Uncertainty in Biodiversity Indicators".
 * Added comprehensive unit and integration tests for the decoupled uncertainty workflow.
 
+# b3gbi 0.8.21 - Minor update:
+
+* Added FAIR_MAPPING.md to describe how output columns map to standardized naming conventions for FAIR compliance.
+* Added Zenodo archive badge with DOI to Readme.md.
+
 # b3gbi 0.8.20 - Minor update:
 
 * Fixed a bug in `my_estimateD` where calculating Shannon diversity (q=1) crashed with NA/NaN argument for cells with single sampling units or where all species were observed in all units.
