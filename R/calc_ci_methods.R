@@ -428,6 +428,20 @@ calc_ci.spec_occ <- function(x,
   # Convert list to data frame
   ci_df <- do.call(rbind, ci_df_list)
 
+  if (is.null(ci_df) || nrow(ci_df) == 0 || !all(c("year", "taxonKey", "scientificName") %in% names(ci_df))) {
+    ci_df <- data.frame(
+      year = numeric(),
+      taxonKey = character(),
+      scientificName = character(),
+      ll = numeric(),
+      ul = numeric(),
+      est_boot = numeric(),
+      se_boot = numeric(),
+      bias_boot = numeric(),
+      conf_level = numeric()
+    )
+  }
+
   # Convert negative values to zero as rarity cannot be less than zero
   ci_df$ll <- ifelse(ci_df$ll > 0, ci_df$ll, 0)
 
@@ -503,6 +517,20 @@ calc_ci.spec_range <- function(x,
 
   # Convert list to data frame
   ci_df <- do.call(rbind, ci_df_list)
+
+  if (is.null(ci_df) || nrow(ci_df) == 0 || !all(c("year", "taxonKey", "scientificName") %in% names(ci_df))) {
+    ci_df <- data.frame(
+      year = numeric(),
+      taxonKey = character(),
+      scientificName = character(),
+      ll = numeric(),
+      ul = numeric(),
+      est_boot = numeric(),
+      se_boot = numeric(),
+      bias_boot = numeric(),
+      conf_level = numeric()
+    )
+  }
 
   # Convert negative values to zero as rarity cannot be less than zero
   ci_df$ll <- ifelse(ci_df$ll > 0, ci_df$ll, 0)

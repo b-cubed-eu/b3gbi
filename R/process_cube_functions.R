@@ -518,19 +518,18 @@ process_cube <- function(cube_name,
     ))
   }
 
-  essential_cols <- c("year",
-                      "occurrences",
-                      "minCoordinateUncertaintyInMeters",
-                      "minTemporalUncertainty",
-                      "kingdomKey",
-                      "familyKey",
-                      "speciesKey",
-                      "familyCount")
+  numeric_cols <- c("year",
+                    "occurrences",
+                    "minCoordinateUncertaintyInMeters",
+                    "minTemporalUncertainty",
+                    "familyCount")
 
-  # make sure that essential columns are the correct type
+  # make sure that numeric columns are the correct type
+  # Note: key columns (kingdomKey, familyKey, speciesKey) are intentionally
+  # excluded because GBIF now uses string-based keys (e.g. "N" for Animalia)
   occurrence_data <-
     occurrence_data %>%
-    dplyr::mutate(across(any_of(essential_cols), as.numeric))
+    dplyr::mutate(across(any_of(numeric_cols), as.numeric))
 
   # rename occurrences and speciesKey columns to be consistent with the other
   # package functions (should maybe change this throughout package?)

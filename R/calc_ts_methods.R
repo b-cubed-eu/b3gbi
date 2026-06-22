@@ -344,9 +344,9 @@ calc_ts.spec_occ <- function(x, ...) {
   year <- scientificName <- taxonKey <- obs <- diversity_val <- NULL
 
   # Fast path for single-group bootstrap calls to avoid dplyr overhead
-  if (dplyr::n_distinct(x$year) == 1 && dplyr::n_distinct(x$taxonKey) == 1) {
+  if (dplyr::n_distinct(x$year) <= 1 && dplyr::n_distinct(x$taxonKey) <= 1) {
     if (nrow(x) == 0) {
-      indicator <- data.frame(year = numeric(), taxonKey = numeric(),
+      indicator <- data.frame(year = numeric(), taxonKey = character(),
                               scientificName = character(), diversity_val = numeric())
     } else {
       indicator <- data.frame(
@@ -384,9 +384,9 @@ calc_ts.spec_range <- function(x, ...) {
   year <- taxonKey <- obs <- diversity_val <- scientificName <- NULL
 
   # Fast path for single-group bootstrap calls to avoid dplyr overhead
-  if (dplyr::n_distinct(x$year) == 1 && dplyr::n_distinct(x$taxonKey) == 1) {
+  if (dplyr::n_distinct(x$year) <= 1 && dplyr::n_distinct(x$taxonKey) <= 1) {
     if (nrow(x) == 0) {
-      indicator <- data.frame(year = numeric(), taxonKey = numeric(),
+      indicator <- data.frame(year = numeric(), taxonKey = character(),
                               scientificName = character(), diversity_val = numeric())
     } else {
       indicator <- data.frame(
