@@ -23,12 +23,6 @@ spec_occ_ts(data, ...)
   Arguments passed on to
   [`compute_indicator_workflow`](https://b-cubed-eu.github.io/b3gbi/reference/compute_indicator_workflow.md)
 
-  `ci_type`
-
-  :   (Optional) Type of bootstrap confidence intervals to calculate.
-      (Default: "norm"). Select "none" to avoid calculating bootstrap
-      CIs.
-
   `cell_size`
 
   :   (Optional) Length of grid cell sides, in km or degrees. If set to
@@ -96,11 +90,6 @@ spec_occ_ts(data, ...)
   :   (Optional) Calls st_make_valid() from the sf package after
       creating the grid. Increases processing time but may help if you
       are getting polygon errors. (Default is FALSE).
-
-  `num_bootstrap`
-
-  :   (Optional) Set the number of bootstraps to calculate for
-      generating confidence intervals. (Default: 100)
 
   `shapefile_path`
 
@@ -180,7 +169,8 @@ biodiversity although not an indicator when calculated in isolation.
 
 ## See also
 
-compute_indicator_workflow
+[compute_indicator_workflow](https://b-cubed-eu.github.io/b3gbi/reference/compute_indicator_workflow.md),
+[add_ci](https://b-cubed-eu.github.io/b3gbi/reference/add_ci.md)
 
 ## Examples
 
@@ -193,30 +183,6 @@ so_map <- spec_occ_map(example_cube_1,
 plot(so_map, c(2440728, 4265185))
 } # }
 so_ts <- spec_occ_ts(example_cube_1, first_year = 1985)
-#> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  2 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  2 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  22 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  48 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  3 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"
 plot(so_ts, c(2435767, 2434793))
 
 ```

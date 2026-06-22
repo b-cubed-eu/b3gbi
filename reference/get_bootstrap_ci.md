@@ -31,5 +31,7 @@ get_bootstrap_ci(bootstrap_list, temporal_list_name = "year", ...)
 
 The returned value is a dataframe containing the time point, the type of
 interval (`int_type`), the lower limit of the confidence interval
-(`ll`), the upper limit of the confidence interval (`ul`), and the
-confidence level of the intervals (`conf_level`).
+(`ll`), the upper limit of the confidence interval (`ul`), the bootstrap
+estimate (`est_boot`), the bootstrap standard error (`se_boot`), the
+bootstrap bias (`bias_boot`), and the confidence level of the intervals
+(`conf_level`).

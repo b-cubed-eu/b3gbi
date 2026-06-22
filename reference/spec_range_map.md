@@ -22,12 +22,6 @@ spec_range_ts(data, ...)
   Arguments passed on to
   [`compute_indicator_workflow`](https://b-cubed-eu.github.io/b3gbi/reference/compute_indicator_workflow.md)
 
-  `ci_type`
-
-  :   (Optional) Type of bootstrap confidence intervals to calculate.
-      (Default: "norm"). Select "none" to avoid calculating bootstrap
-      CIs.
-
   `cell_size`
 
   :   (Optional) Length of grid cell sides, in km or degrees. If set to
@@ -95,11 +89,6 @@ spec_range_ts(data, ...)
   :   (Optional) Calls st_make_valid() from the sf package after
       creating the grid. Increases processing time but may help if you
       are getting polygon errors. (Default is FALSE).
-
-  `num_bootstrap`
-
-  :   (Optional) Set the number of bootstraps to calculate for
-      generating confidence intervals. (Default: 100)
 
   `shapefile_path`
 
@@ -169,7 +158,8 @@ An S3 object with the classes 'indicator_map' or 'indicator_ts' and
 
 ## See also
 
-compute_indicator_workflow
+[compute_indicator_workflow](https://b-cubed-eu.github.io/b3gbi/reference/compute_indicator_workflow.md),
+[add_ci](https://b-cubed-eu.github.io/b3gbi/reference/add_ci.md)
 
 ## Examples
 

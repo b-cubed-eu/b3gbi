@@ -13,16 +13,16 @@ calc_ci(x, indicator, ...)
 calc_ci(x, indicator, ...)
 
 # S3 method for class 'total_occ'
-calc_ci(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
+calc_ci(x, indicator, num_bootstrap = 1000, ci_type = "perc", ...)
 
 # S3 method for class 'occ_density'
-calc_ci(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
+calc_ci(x, indicator, num_bootstrap = 1000, ci_type = "perc", ...)
 
 # S3 method for class 'spec_richness_density'
-calc_ci(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
+calc_ci(x, indicator, num_bootstrap = 1000, ci_type = "perc", ...)
 
 # S3 method for class 'newness'
-calc_ci(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
+calc_ci(x, indicator, num_bootstrap = 1000, ci_type = "perc", ...)
 
 # S3 method for class 'williams_evenness'
 calc_ci(x, ...)
@@ -31,16 +31,25 @@ calc_ci(x, ...)
 calc_ci(x, ...)
 
 # S3 method for class 'ab_rarity'
-calc_ci(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
+calc_ci(x, indicator, num_bootstrap = 1000, ci_type = "perc", ...)
 
 # S3 method for class 'area_rarity'
-calc_ci(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
+calc_ci(x, indicator, num_bootstrap = 1000, ci_type = "perc", ...)
 
 # S3 method for class 'spec_occ'
-calc_ci(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
+calc_ci(x, indicator, num_bootstrap = 1000, ci_type = "perc", ...)
 
 # S3 method for class 'spec_range'
-calc_ci(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
+calc_ci(x, indicator, num_bootstrap = 1000, ci_type = "perc", ...)
+
+# S3 method for class 'hill0'
+calc_ci(x, indicator, num_bootstrap = 1000, ...)
+
+# S3 method for class 'hill1'
+calc_ci(x, indicator, num_bootstrap = 1000, ...)
+
+# S3 method for class 'hill2'
+calc_ci(x, indicator, num_bootstrap = 1000, ...)
 ```
 
 ## Arguments
@@ -67,7 +76,7 @@ calc_ci(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
 - ci_type:
 
   (Optional) Type of bootstrap confidence intervals to calculate.
-  (Default: "norm". Select "none" to avoid calculating bootstrap CIs.)
+  (Default: "perc". Select "none" to avoid calculating bootstrap CIs.)
 
 ## Methods (by class)
 
@@ -99,3 +108,9 @@ calc_ci(x, indicator, num_bootstrap = 1000, ci_type = ci_type, ...)
 
 - `calc_ci(spec_range)`: Calculate confidence intervals for species
   range
+
+- `calc_ci(hill0)`: Calculate confidence intervals for Hill0 (Richness)
+
+- `calc_ci(hill1)`: Calculate confidence intervals for Hill1 (Shannon)
+
+- `calc_ci(hill2)`: Calculate confidence intervals for Hill2 (Simpson)

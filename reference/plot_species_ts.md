@@ -260,28 +260,6 @@ plot(s). Can be customized using ggplot2 functions.
 spec_occ_ts_mammals_denmark <- spec_occ_ts(example_cube_1,
                                         level = "country",
                                         region = "Denmark")
-#> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  2 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  2 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  22 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  2 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  3 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"
 # default colours:
 plot_species_ts(spec_occ_ts_mammals_denmark, c(2440728, 4265185))
 

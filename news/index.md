@@ -1,5 +1,58 @@
 # Changelog
 
+## b3gbi 0.9.0 - Major update:
+
+- Confidence intervals are no longer calculated in the core indicator
+  workflow, except for Hill diversity (Hill diversity is handled by the
+  iNEXT package, which calculates confidence intervals internally). They
+  are now calculated using a separated function, add_ci(), which can be
+  applied to any indicator_ts object for which reasonable confidence
+  intervals can be calculated. This gives the user more freedom. After
+  adding CIs, you can recalculate with different parameters by setting
+  ‘replace = TRUE’ when you call add_ci().
+- **Indicator-specific bootstrap defaults**: add_ci() now applies
+  different default behaviors based on indicator type to ensure
+  statistically appropriate confidence intervals:
+  - Species-level incidence indicators (`spec_occ`, `spec_range`) and
+    aggregate indicators (evenness, rarity, density) use whole-cube
+    bootstrapping to correctly capture changes in species composition.
+  - Raw counting indicators (`total_occ`) use group-specific
+    bootstrapping (resampling strictly within each specific year).
+  - Evenness indicators (`pielou_evenness`, `williams_evenness`)
+    automatically apply logit transformation to keep confidence
+    intervals within valid \[0,1\] bounds
+  - Total occurrences (`total_occ`) has bias correction disabled by
+    default
+- Bootstrapping for confidence intervals is now done across the entire
+  cube by default. This uses the dubicube package, which is now added as
+  a dependency. The option to calculate at indicator level is still
+  available by setting ‘level = “indicator”’ when calling add_ci().
+  Indicator level bootstrapping is a faster but less robust method.
+- The default number of bootstrap replicates when calculating confidence
+  intervals is now 1000. This improves robustness at the sake of speed.
+  This can still be changed using the ‘num_bootstrap’ parameter when
+  calling add_ci().
+- Added `boot_args` and `ci_args` parameters to
+  [`add_ci()`](https://b-cubed-eu.github.io/b3gbi/reference/add_ci.md)
+  to allow fine-tuning of the underlying `dubicube` calls. These can be
+  used to override the indicator-specific defaults if needed.
+- Implemented `group_specific` vs `whole_cube` resampling logic in
+  [`add_ci()`](https://b-cubed-eu.github.io/b3gbi/reference/add_ci.md)
+  to handle different indicator calculation requirements. Species-level
+  indicators are automatically detected and handled appropriately.
+- Added new internal helper function
+  [`prepare_indicator_bootstrap()`](https://b-cubed-eu.github.io/b3gbi/reference/prepare_indicator_bootstrap.md)
+  to centralize bootstrap parameter configuration. This function
+  implements a “rule book” pattern that defines appropriate defaults for
+  each indicator type.
+- Included detailed bootstrap summary statistics (`est_boot`, `se_boot`,
+  `bias_boot`) in the output of
+  [`add_ci()`](https://b-cubed-eu.github.io/b3gbi/reference/add_ci.md).
+- Added a new conceptual vignette: “Uncertainty in Biodiversity
+  Indicators”.
+- Added comprehensive unit and integration tests for the decoupled
+  uncertainty workflow.
+
 ## b3gbi 0.8.21 - Minor update:
 
 - Added FAIR_MAPPING.md to describe how output columns map to
@@ -20,8 +73,7 @@
   imports and avoid CRAN warnings. Added dynamic namespace checking for
   `patchwork` in
   [`plot_species_map()`](https://b-cubed-eu.github.io/b3gbi/reference/plot_species_map.md)
-  and
-  [`plot_species_ts()`](https://b-cubed-eu.github.io/b3gbi/reference/plot_species_ts.md).
+  and `plot_species_ts().`
 - Systematically downsampled large Denmark mammals datasets in
   `inst/extdata` to reduce installed package size to CRAN limits (\<
   5MB) while preserving full year distribution for unit tests.

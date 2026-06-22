@@ -23,7 +23,7 @@ plot_ts() function instead."><meta property="og:image" content="https://b-cubed-
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.21</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -34,6 +34,10 @@ plot_ts() function instead."><meta property="og:image" content="https://b-cubed-
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/b3gbi.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/uncertainty.html">Uncertainty in Biodiversity Indicators</a></li>
+  </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://b-cubed.eu/" aria-label="B-Cubed website"><span class="fa fa-cube"></span></a></li>
@@ -314,28 +318,6 @@ plot(s). Can be customized using ggplot2 functions.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">spec_occ_ts_mammals_denmark</span> <span class="op">&lt;-</span> <span class="fu"><a href="spec_occ_map.html">spec_occ_ts</a></span><span class="op">(</span><span class="va">example_cube_1</span>,</span></span>
 <span class="r-in"><span>                                        level <span class="op">=</span> <span class="st">"country"</span>,</span></span>
 <span class="r-in"><span>                                        region <span class="op">=</span> <span class="st">"Denmark"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  2 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  2 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  22 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  2 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  3 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
 <span class="r-in"><span><span class="co"># default colours:</span></span></span>
 <span class="r-in"><span><span class="fu">plot_species_ts</span><span class="op">(</span><span class="va">spec_occ_ts_mammals_denmark</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2440728</span>, <span class="fl">4265185</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot_species_ts-1.png" alt="" width="700" height="433"></span>

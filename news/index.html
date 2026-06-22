@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.21</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -24,6 +24,10 @@
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/b3gbi.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="active nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/uncertainty.html">Uncertainty in Biodiversity Indicators</a></li>
+  </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://b-cubed.eu/" aria-label="B-Cubed website"><span class="fa fa-cube"></span></a></li>
@@ -40,6 +44,25 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.9.0" id="b3gbi-090---major-update">b3gbi 0.9.0 - Major update:<a class="anchor" aria-label="anchor" href="#b3gbi-090---major-update"></a></h2>
+<ul><li>Confidence intervals are no longer calculated in the core indicator workflow, except for Hill diversity (Hill diversity is handled by the iNEXT package, which calculates confidence intervals internally). They are now calculated using a separated function, add_ci(), which can be applied to any indicator_ts object for which reasonable confidence intervals can be calculated. This gives the user more freedom. After adding CIs, you can recalculate with different parameters by setting ‘replace = TRUE’ when you call add_ci().</li>
+<li>
+<strong>Indicator-specific bootstrap defaults</strong>: add_ci() now applies different default behaviors based on indicator type to ensure statistically appropriate confidence intervals:
+<ul><li>Species-level incidence indicators (<code>spec_occ</code>, <code>spec_range</code>) and aggregate indicators (evenness, rarity, density) use whole-cube bootstrapping to correctly capture changes in species composition.</li>
+<li>Raw counting indicators (<code>total_occ</code>) use group-specific bootstrapping (resampling strictly within each specific year).</li>
+<li>Evenness indicators (<code>pielou_evenness</code>, <code>williams_evenness</code>) automatically apply logit transformation to keep confidence intervals within valid [0,1] bounds</li>
+<li>Total occurrences (<code>total_occ</code>) has bias correction disabled by default</li>
+</ul></li>
+<li>Bootstrapping for confidence intervals is now done across the entire cube by default. This uses the dubicube package, which is now added as a dependency. The option to calculate at indicator level is still available by setting ‘level = “indicator”’ when calling add_ci(). Indicator level bootstrapping is a faster but less robust method.</li>
+<li>The default number of bootstrap replicates when calculating confidence intervals is now 1000. This improves robustness at the sake of speed. This can still be changed using the ‘num_bootstrap’ parameter when calling add_ci().</li>
+<li>Added <code>boot_args</code> and <code>ci_args</code> parameters to <code><a href="../reference/add_ci.html">add_ci()</a></code> to allow fine-tuning of the underlying <code>dubicube</code> calls. These can be used to override the indicator-specific defaults if needed.</li>
+<li>Implemented <code>group_specific</code> vs <code>whole_cube</code> resampling logic in <code><a href="../reference/add_ci.html">add_ci()</a></code> to handle different indicator calculation requirements. Species-level indicators are automatically detected and handled appropriately.</li>
+<li>Added new internal helper function <code><a href="../reference/prepare_indicator_bootstrap.html">prepare_indicator_bootstrap()</a></code> to centralize bootstrap parameter configuration. This function implements a “rule book” pattern that defines appropriate defaults for each indicator type.</li>
+<li>Included detailed bootstrap summary statistics (<code>est_boot</code>, <code>se_boot</code>, <code>bias_boot</code>) in the output of <code><a href="../reference/add_ci.html">add_ci()</a></code>.</li>
+<li>Added a new conceptual vignette: “Uncertainty in Biodiversity Indicators”.</li>
+<li>Added comprehensive unit and integration tests for the decoupled uncertainty workflow.</li>
+</ul></div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.8.21" id="b3gbi-0821---minor-update">b3gbi 0.8.21 - Minor update:<a class="anchor" aria-label="anchor" href="#b3gbi-0821---minor-update"></a></h2>
 <ul><li>Added FAIR_MAPPING.md to describe how output columns map to standardized naming conventions for FAIR compliance.</li>
 <li>Added Zenodo archive badge with DOI to Readme.md.</li>
@@ -48,7 +71,8 @@
 <h2 class="pkg-version" data-toc-text="0.8.20" id="b3gbi-0820---minor-update">b3gbi 0.8.20 - Minor update:<a class="anchor" aria-label="anchor" href="#b3gbi-0820---minor-update"></a></h2>
 <ul><li>Fixed a bug in <code>my_estimateD</code> where calculating Shannon diversity (q=1) crashed with NA/NaN argument for cells with single sampling units or where all species were observed in all units.</li>
 <li>Fixed a bug in <code>create_native_grid</code> and <code>compute_indicator_workflow</code> where coordinate building crashed with <code>!anyNA(x) is not TRUE</code> if native grid resolution was missing or grid codes did not carry resolution prefixes (e.g. EEA grids). Added 1km and 1000m resolution fallbacks.</li>
-<li>Moved <code>bit64</code> and <code>patchwork</code> dependencies to <code>Suggests</code> to minimize imports and avoid CRAN warnings. Added dynamic namespace checking for <code>patchwork</code> in <code><a href="../reference/plot_species_map.html">plot_species_map()</a></code> and <code><a href="../reference/plot_species_ts.html">plot_species_ts()</a></code>.</li>
+<li>Moved <code>bit64</code> and <code>patchwork</code> dependencies to <code>Suggests</code> to minimize imports and avoid CRAN warnings. Added dynamic namespace checking for <code>patchwork</code> in <code><a href="../reference/plot_species_map.html">plot_species_map()</a></code> and <code>plot_species_ts().</code>
+</li>
 <li>Systematically downsampled large Denmark mammals datasets in <code>inst/extdata</code> to reduce installed package size to CRAN limits (&lt; 5MB) while preserving full year distribution for unit tests.</li>
 </ul></div>
     <div class="section level2">

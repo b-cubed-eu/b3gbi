@@ -33,7 +33,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.21</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -45,6 +45,12 @@
 <li class="active nav-item"><a class="nav-link" href="../articles/b3gbi.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/uncertainty.html">Uncertainty in Biodiversity Indicators</a></li>
+  </ul>
+</li>
       </ul>
 <ul class="navbar-nav">
 <li class="nav-item"><form class="form-inline" role="search">
@@ -440,32 +446,8 @@ indicators and their associated wrapper functions (e.g.,
 <td>The specific region name (e.g., ‘Germany’, ‘Europe’).</td>
 <td>Required if level is set.</td>
 </tr>
-<tr class="even">
-<td><code>ci_type</code></td>
-<td>Type of bootstrap confidence interval to calculate. Only relevant
-for time series.</td>
-<td>‘norm’, ‘basic’, ‘perc’, ‘bca’, or ‘none’. Defaults to ‘norm’ for
-time series.</td>
-</tr>
-<tr class="odd">
-<td><code>num_bootstrap</code></td>
-<td>Number of bootstrap runs for CI calculation. Only relevant for time
-series.</td>
-<td>Defaults to 100.</td>
-</tr>
 </tbody>
 </table>
-<p><strong>Important Note on Confidence Intervals (CIs)</strong>:</p>
-<ul>
-<li>The <code>ci_type</code> argument is only used for calculating
-uncertainty in general time series indicators (e.g.,
-<code>obs_richness_ts</code>) and is ignored for map indicators.</li>
-<li>For indicators based on Hill diversity (e.g.,
-<code>hill_ts()</code>), the <code>ci_type</code> is ignored because CIs
-are calculated internally using the iNEXT package. However, the
-<code>num_bootstrap</code> argument is still required to define the
-number of runs for iNEXT’s internal uncertainty estimation.</li>
-</ul>
 </div>
 <div class="section level3">
 <h3 id="example-observed-species-richness-map">Example: Observed Species Richness Map<a class="anchor" aria-label="anchor" href="#example-observed-species-richness-map"></a>
@@ -474,11 +456,10 @@ number of runs for iNEXT’s internal uncertainty estimation.</li>
 from 1980 to the end of the cube’s data.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate a gridded map of observed species richness for Denmark</span></span>
-<span><span class="co"># Note that ci_type is ignored for map indicators</span></span>
-<span><span class="va">Denmark_observed_richness_map</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/obs_richness_map.html">obs_richness_map</a></span><span class="op">(</span><span class="va">denmark_cube</span>,</span>
-<span>  level <span class="op">=</span> <span class="st">"country"</span>,</span>
-<span>  region <span class="op">=</span> <span class="st">"Denmark"</span></span>
-<span><span class="op">)</span></span></code></pre></div>
+<span><span class="co"># Note that confidence intervals are not calculated for map indicators</span></span>
+<span><span class="va">Denmark_observed_richness_map</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/obs_richness_map.html">obs_richness_map</a></span><span class="op">(</span><span class="va">denmark_cube</span>, </span>
+<span>                                                   level <span class="op">=</span> <span class="st">"country"</span>, </span>
+<span>                                                   region <span class="op">=</span> <span class="st">"Denmark"</span><span class="op">)</span> </span></code></pre></div>
 <p>The result is an <code>indicator_map</code> object (the data within
 it is also an <code>sf</code> object, containing geographical
 information).</p>
@@ -493,22 +474,31 @@ information).</p>
 <h3 id="example-total-occurrences-time-series">Example: Total Occurrences Time Series<a class="anchor" aria-label="anchor" href="#example-total-occurrences-time-series"></a>
 </h3>
 <p>Now, let’s calculate the same indicator temporally for a trend
-analysis. We will use the default <code>ci_type = "norm"</code> and
-<code>num_bootstrap = 100</code>.</p>
+analysis.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate a time series of total occurrences for Denmark</span></span>
-<span><span class="va">Denmark_total_occ_ts</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/total_occ_map.html">total_occ_ts</a></span><span class="op">(</span><span class="va">denmark_cube</span>,</span>
-<span>  level <span class="op">=</span> <span class="st">"country"</span>,</span>
-<span>  region <span class="op">=</span> <span class="st">"Denmark"</span>,</span>
-<span>  ci_type <span class="op">=</span> <span class="st">"norm"</span>, <span class="co"># Include confidence intervals</span></span>
-<span>  num_bootstrap <span class="op">=</span> <span class="fl">100</span></span>
-<span><span class="op">)</span> <span class="co"># Using the default number of runs</span></span>
-<span><span class="co">#&gt; [1] "All values of t are equal to  2 \n Cannot calculate confidence intervals"</span></span>
-<span><span class="co">#&gt; [1] "All values of t are equal to  2 \n Cannot calculate confidence intervals"</span></span></code></pre></div>
+<span><span class="co"># By default, confidence intervals are NOT calculated during this step</span></span>
+<span><span class="va">Denmark_total_occ_ts</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/total_occ_map.html">total_occ_ts</a></span><span class="op">(</span><span class="va">denmark_cube</span>, </span>
+<span>                                     level <span class="op">=</span> <span class="st">"country"</span>, </span>
+<span>                                     region <span class="op">=</span> <span class="st">"Denmark"</span><span class="op">)</span></span></code></pre></div>
 <p>The result is an <code>indicator_ts</code> object.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">Denmark_total_occ_ts</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "indicator_ts" "total_occ"</span></span></code></pre></div>
+<p>Now let’s add confidence intervals using the <code><a href="../reference/add_ci.html">add_ci()</a></code>
+function. To speed things up we will reduce the number of bootstrap
+samples from the default of 1000 to 100. By default, the package uses
+<strong>percentile</strong> intervals (<code>"perc"</code>), which are
+robust for biodiversity indicators.</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Add confidence intervals to the time series</span></span>
+<span><span class="va">Denmark_total_occ_ts_with_ci</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_ci.html">add_ci</a></span><span class="op">(</span><span class="va">Denmark_total_occ_ts</span>, </span>
+<span>                                       num_bootstrap <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "Performing group-specific bootstrap with `boot::boot()`."</span></span></code></pre></div>
+<p>For more in-depth information on how uncertainty is handled, the
+different types of confidence intervals available, and advanced
+configuration options, please see the <a href="uncertainty.html">Uncertainty in Biodiversity Indicators</a>
+vignette.</p>
 </div>
 </div>
 <div class="section level2">
@@ -556,7 +546,7 @@ indicator calculation, rather than the data.</td>
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plotting the map object</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">Denmark_observed_richness_map</span>,</span>
 <span>  legend_title <span class="op">=</span> <span class="st">"Mammal Species Count"</span>,</span>
@@ -567,53 +557,10 @@ indicator calculation, rather than the data.</td>
 <div class="section level3">
 <h3 id="plotting-the-time-series">Plotting the Time Series<a class="anchor" aria-label="anchor" href="#plotting-the-time-series"></a>
 </h3>
-<table class="table">
-<colgroup>
-<col width="28%">
-<col width="37%">
-<col width="34%">
-</colgroup>
-<thead><tr class="header">
-<th>Argument</th>
-<th>Description</th>
-<th>Common Use</th>
-</tr></thead>
-<tbody>
-<tr class="odd">
-<td><code>smoothed_trend</code></td>
-<td>If TRUE, displays a smoothed trend line (LOESS).</td>
-<td>Defaults to TRUE.</td>
-</tr>
-<tr class="even">
-<td><code>linecolour</code></td>
-<td>Sets the color of the indicator line/points.</td>
-<td>e.g., “blue”</td>
-</tr>
-<tr class="odd">
-<td><code>ribboncolour</code></td>
-<td>Sets the color of the indicator confidence interval.</td>
-<td>e.g., “skyblue”</td>
-</tr>
-<tr class="even">
-<td><code>trendlinecolour</code></td>
-<td>Sets the color of the trend line.</td>
-<td>e.g., “darkorange”</td>
-</tr>
-<tr class="odd">
-<td><code>envelopecolour</code></td>
-<td>Sets the color of the trend line confidence intervals.</td>
-<td>e.g., “orange”</td>
-</tr>
-<tr class="even">
-<td>
-<code>x_label</code> / <code>y_label</code>
-</td>
-<td>Custom labels for the axes.</td>
-<td></td>
-</tr>
-</tbody>
-</table>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<p>If your <code>indicator_ts</code> object contains confidence
+intervals, the <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> function will automatically display
+them as ribbons or error bars.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Plotting the time series object</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">Denmark_total_occ_ts</span>,</span>
 <span>  title <span class="op">=</span> <span class="st">"Temporal Trend of Total Mammal Occurrences in Denmark"</span>,</span>

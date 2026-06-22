@@ -21,7 +21,7 @@ types are provided using the appropriate wrappers."><meta property="og:image" co
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.21</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -32,6 +32,10 @@ types are provided using the appropriate wrappers."><meta property="og:image" co
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/b3gbi.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/uncertainty.html">Uncertainty in Biodiversity Indicators</a></li>
+  </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://b-cubed.eu/" aria-label="B-Cubed website"><span class="fa fa-cube"></span></a></li>
@@ -176,41 +180,6 @@ indicator values and metadata.</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">total_occurrences_trend</span> <span class="op">&lt;-</span> <span class="fu"><a href="total_occ_map.html">total_occ_ts</a></span><span class="op">(</span><span class="va">example_cube_1</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  2 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  2 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  3 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  2 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  2 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  2 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  4 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  3 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  2 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  2 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  5 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  4 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  3 \n Cannot calculate confidence intervals"</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">total_occurrences_trend</span>, min_year<span class="op">=</span><span class="fl">1980</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="calc_ts-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>

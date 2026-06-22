@@ -17,7 +17,7 @@ for more information)."><meta property="og:image" content="https://b-cubed-eu.gi
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.21</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -28,6 +28,10 @@ for more information)."><meta property="og:image" content="https://b-cubed-eu.gi
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/b3gbi.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/uncertainty.html">Uncertainty in Biodiversity Indicators</a></li>
+  </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://b-cubed.eu/" aria-label="B-Cubed website"><span class="fa fa-cube"></span></a></li>
@@ -66,12 +70,7 @@ for more information).</p>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Arguments passed on to <code><a href="compute_indicator_workflow.html">compute_indicator_workflow</a></code></p><dl><dt><code>ci_type</code></dt>
-<dd><p>(Optional) Type of bootstrap confidence intervals to
-calculate. (Default: "norm"). Select "none" to avoid calculating bootstrap
-CIs.</p></dd>
-
-    <dt><code>cell_size</code></dt>
+<dd><p>Arguments passed on to <code><a href="compute_indicator_workflow.html">compute_indicator_workflow</a></code></p><dl><dt><code>cell_size</code></dt>
 <dd><p>(Optional) Length of grid cell sides, in km or degrees.
 If set to "grid" (default), this will use the existing grid size of your
 cube. If set to "auto", this will be automatically determined according to
@@ -125,10 +124,6 @@ solve specific issues. (Default is TRUE).</p></dd>
 <dd><p>(Optional) Calls st_make_valid() from the sf package
 after creating the grid. Increases processing time but may help if you are
 getting polygon errors. (Default is FALSE).</p></dd>
-
-    <dt><code>num_bootstrap</code></dt>
-<dd><p>(Optional) Set the number of bootstraps to calculate for
-generating confidence intervals. (Default: 100)</p></dd>
 
     <dt><code>shapefile_path</code></dt>
 <dd><p>(optional) Path of an external shapefile to merge into
@@ -203,7 +198,7 @@ although not an indicator when calculated in isolation.</p>
 </ul></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p>compute_indicator_workflow</p></div>
+    <div class="dont-index"><p><a href="compute_indicator_workflow.html">compute_indicator_workflow</a>, <a href="add_ci.html">add_ci</a></p></div>
     </div>
 
     <div class="section level2">
@@ -216,30 +211,6 @@ although not an indicator when calculated in isolation.</p>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">so_map</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2440728</span>, <span class="fl">4265185</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span><span class="va">so_ts</span> <span class="op">&lt;-</span> <span class="fu">spec_occ_ts</span><span class="op">(</span><span class="va">example_cube_1</span>, first_year <span class="op">=</span> <span class="fl">1985</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  2 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  2 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  22 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  48 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  3 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "All values of t are equal to  1 \n Cannot calculate confidence intervals"</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">so_ts</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2435767</span>, <span class="fl">2434793</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="spec_occ_map-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>

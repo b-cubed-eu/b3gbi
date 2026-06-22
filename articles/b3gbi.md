@@ -318,19 +318,6 @@ All indicator wrapper functions (e.g., `obs_richness_map`,
 | `data` | The `processed_cube` object. Required. |  |
 | `level` | The geographical scale (‘country’, ‘continent’, ‘world’). | Automatically retrieves boundaries. |
 | `region` | The specific region name (e.g., ‘Germany’, ‘Europe’). | Required if level is set. |
-| `ci_type` | Type of bootstrap confidence interval to calculate. Only relevant for time series. | ‘norm’, ‘basic’, ‘perc’, ‘bca’, or ‘none’. Defaults to ‘norm’ for time series. |
-| `num_bootstrap` | Number of bootstrap runs for CI calculation. Only relevant for time series. | Defaults to 100. |
-
-**Important Note on Confidence Intervals (CIs)**:
-
-- The `ci_type` argument is only used for calculating uncertainty in
-  general time series indicators (e.g., `obs_richness_ts`) and is
-  ignored for map indicators.
-- For indicators based on Hill diversity (e.g., `hill_ts()`), the
-  `ci_type` is ignored because CIs are calculated internally using the
-  iNEXT package. However, the `num_bootstrap` argument is still required
-  to define the number of runs for iNEXT’s internal uncertainty
-  estimation.
 
 ### Example: Observed Species Richness Map
 
@@ -340,11 +327,10 @@ from 1980 to the end of the cube’s data.
 ``` r
 
 # Calculate a gridded map of observed species richness for Denmark
-# Note that ci_type is ignored for map indicators
-Denmark_observed_richness_map <- obs_richness_map(denmark_cube,
-  level = "country",
-  region = "Denmark"
-)
+# Note that confidence intervals are not calculated for map indicators
+Denmark_observed_richness_map <- obs_richness_map(denmark_cube, 
+                                                   level = "country", 
+                                                   region = "Denmark") 
 ```
 
 The result is an `indicator_map` object (the data within it is also an
@@ -362,19 +348,14 @@ class(Denmark_observed_richness_map$data)
 ### Example: Total Occurrences Time Series
 
 Now, let’s calculate the same indicator temporally for a trend analysis.
-We will use the default `ci_type = "norm"` and `num_bootstrap = 100`.
 
 ``` r
 
 # Calculate a time series of total occurrences for Denmark
-Denmark_total_occ_ts <- total_occ_ts(denmark_cube,
-  level = "country",
-  region = "Denmark",
-  ci_type = "norm", # Include confidence intervals
-  num_bootstrap = 100
-) # Using the default number of runs
-#> [1] "All values of t are equal to  2 \n Cannot calculate confidence intervals"
-#> [1] "All values of t are equal to  2 \n Cannot calculate confidence intervals"
+# By default, confidence intervals are NOT calculated during this step
+Denmark_total_occ_ts <- total_occ_ts(denmark_cube, 
+                                     level = "country", 
+                                     region = "Denmark")
 ```
 
 The result is an `indicator_ts` object.
@@ -384,6 +365,27 @@ The result is an `indicator_ts` object.
 class(Denmark_total_occ_ts)
 #> [1] "indicator_ts" "total_occ"
 ```
+
+Now let’s add confidence intervals using the
+[`add_ci()`](https://b-cubed-eu.github.io/b3gbi/reference/add_ci.md)
+function. To speed things up we will reduce the number of bootstrap
+samples from the default of 1000 to 100. By default, the package uses
+**percentile** intervals (`"perc"`), which are robust for biodiversity
+indicators.
+
+``` r
+
+# Add confidence intervals to the time series
+Denmark_total_occ_ts_with_ci <- add_ci(Denmark_total_occ_ts, 
+                                       num_bootstrap = 100)
+#> [1] "Performing group-specific bootstrap with `boot::boot()`."
+```
+
+For more in-depth information on how uncertainty is handled, the
+different types of confidence intervals available, and advanced
+configuration options, please see the [Uncertainty in Biodiversity
+Indicators](https://b-cubed-eu.github.io/b3gbi/articles/uncertainty.md)
+vignette.
 
 ## Step 3: Visualization with `plot()`
 
@@ -416,14 +418,9 @@ plot(Denmark_observed_richness_map,
 
 ### Plotting the Time Series
 
-| Argument | Description | Common Use |
-|----|----|----|
-| `smoothed_trend` | If TRUE, displays a smoothed trend line (LOESS). | Defaults to TRUE. |
-| `linecolour` | Sets the color of the indicator line/points. | e.g., “blue” |
-| `ribboncolour` | Sets the color of the indicator confidence interval. | e.g., “skyblue” |
-| `trendlinecolour` | Sets the color of the trend line. | e.g., “darkorange” |
-| `envelopecolour` | Sets the color of the trend line confidence intervals. | e.g., “orange” |
-| `x_label` / `y_label` | Custom labels for the axes. |  |
+If your `indicator_ts` object contains confidence intervals, the
+[`plot()`](https://rdrr.io/r/graphics/plot.default.html) function will
+automatically display them as ribbons or error bars.
 
 ``` r
 

@@ -2,6 +2,9 @@
 
 ## All functions
 
+- [`add_ci()`](https://b-cubed-eu.github.io/b3gbi/reference/add_ci.md) :
+  Add Confidence Intervals to an Indicator Object
+
 - [`area_rarity_map()`](https://b-cubed-eu.github.io/b3gbi/reference/area_rarity_map.md)
   [`area_rarity_ts()`](https://b-cubed-eu.github.io/b3gbi/reference/area_rarity_map.md)
   [`ab_rarity_map()`](https://b-cubed-eu.github.io/b3gbi/reference/area_rarity_map.md)
@@ -111,6 +114,10 @@
 
 - [`plot_ts()`](https://b-cubed-eu.github.io/b3gbi/reference/plot_ts.md)
   : Plot Biodiversity Indicator Trend
+
+- [`prepare_indicator_bootstrap()`](https://b-cubed-eu.github.io/b3gbi/reference/prepare_indicator_bootstrap.md)
+  : Prepare bootstrap and confidence interval parameters for an
+  indicator
 
 - [`print(`*`<available_indicators>`*`)`](https://b-cubed-eu.github.io/b3gbi/reference/print.available_indicators.md)
   : Print Available Indicators

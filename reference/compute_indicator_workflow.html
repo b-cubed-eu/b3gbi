@@ -19,7 +19,7 @@ output into an appropriate S3 object ('indicator_map' or 'indicator_ts')."><meta
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.21</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -30,6 +30,10 @@ output into an appropriate S3 object ('indicator_map' or 'indicator_ts')."><meta
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/b3gbi.html">Get started</a></li>
 <li class="active nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/uncertainty.html">Uncertainty in Biodiversity Indicators</a></li>
+  </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://b-cubed.eu/" aria-label="B-Cubed website"><span class="fa fa-cube"></span></a></li>
@@ -59,7 +63,6 @@ output into an appropriate S3 object ('indicator_map' or 'indicator_ts').</p>
 <span>  <span class="va">data</span>,</span>
 <span>  <span class="va">type</span>,</span>
 <span>  dim_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"map"</span>, <span class="st">"ts"</span><span class="op">)</span>,</span>
-<span>  ci_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"norm"</span>, <span class="st">"basic"</span>, <span class="st">"perc"</span>, <span class="st">"bca"</span>, <span class="st">"none"</span><span class="op">)</span>,</span>
 <span>  cell_size <span class="op">=</span> <span class="st">"grid"</span>,</span>
 <span>  level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cube"</span>, <span class="st">"continent"</span>, <span class="st">"country"</span>, <span class="st">"world"</span>, <span class="st">"sovereignty"</span>, <span class="st">"geounit"</span><span class="op">)</span>,</span>
 <span>  region <span class="op">=</span> <span class="st">"Europe"</span>,</span>
@@ -70,7 +73,6 @@ output into an appropriate S3 object ('indicator_map' or 'indicator_ts').</p>
 <span>  last_year <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  spherical_geometry <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  make_valid <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>  num_bootstrap <span class="op">=</span> <span class="fl">100</span>,</span>
 <span>  shapefile_path <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  shapefile_crs <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  invert <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -117,12 +119,6 @@ rarefaction).</p></li>
 <dt id="arg-dim-type">dim_type<a class="anchor" aria-label="anchor" href="#arg-dim-type"></a></dt>
 <dd><p>(Optional) Dimension to calculate indicator over time: 'ts',
 or space: 'map'. (Default: 'map')</p></dd>
-
-
-<dt id="arg-ci-type">ci_type<a class="anchor" aria-label="anchor" href="#arg-ci-type"></a></dt>
-<dd><p>(Optional) Type of bootstrap confidence intervals to
-calculate. (Default: "norm"). Select "none" to avoid calculating bootstrap
-CIs.</p></dd>
 
 
 <dt id="arg-cell-size">cell_size<a class="anchor" aria-label="anchor" href="#arg-cell-size"></a></dt>
@@ -188,11 +184,6 @@ solve specific issues. (Default is TRUE).</p></dd>
 <dd><p>(Optional) Calls st_make_valid() from the sf package
 after creating the grid. Increases processing time but may help if you are
 getting polygon errors. (Default is FALSE).</p></dd>
-
-
-<dt id="arg-num-bootstrap">num_bootstrap<a class="anchor" aria-label="anchor" href="#arg-num-bootstrap"></a></dt>
-<dd><p>(Optional) Set the number of bootstraps to calculate for
-generating confidence intervals. (Default: 100)</p></dd>
 
 
 <dt id="arg-shapefile-path">shapefile_path<a class="anchor" aria-label="anchor" href="#arg-shapefile-path"></a></dt>
