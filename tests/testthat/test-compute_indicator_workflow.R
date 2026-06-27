@@ -680,8 +680,8 @@ test_that("compute_indicator_workflow handles sfc grid and sfc intersection_targ
     }
     res
   }
-  registerS3method("st_as_sf", "sfc", st_as_sf_mock, env = globalenv())
-  on.exit(registerS3method("st_as_sf", "sfc", orig_method, env = globalenv()))
+  registerS3method("st_as_sf", "sfc", st_as_sf_mock, envir = asNamespace("sf"))
+  on.exit(registerS3method("st_as_sf", "sfc", orig_method, envir = asNamespace("sf")))
 
   mock_get_ne_data_sfc <- function(...) {
     list(
