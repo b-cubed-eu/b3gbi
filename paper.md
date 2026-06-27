@@ -60,6 +60,10 @@ Importantly, several indicators are excluded from post-hoc bootstrapping (`noci_
 - **Relative Occupancy**: Standard bootstrapping is not supported because resampling occurrences strips essential spatial metadata (like `total_num_cells` or `total_area_sqkm`). These spatial attributes cannot be regenerated from occurrences alone because occurrences contain no information about empty grid cells (zero occurrences) in the study area.
 - **Cumulative Richness, Species Turnover, and Taxonomic Distinctness**: Standard bootstrapping is inappropriate due to the inherently sequential nature of cumulative counts, the high instability introduced in consecutive species lists, and extreme sensitivity to exact taxonomic compositions.
 
+# AI Usage Disclosure
+
+While the overall software architecture, design, and the majority of the codebase and documentation of `b3gbi` were human-created, artificial intelligence was utilized to write, modify, and document portions of the package's recent iterations. Specifically, the Gemini 3.1 Flash and Gemini 3.5 Flash models, along with the Antigravity agentic coding assistant, were used for code generation, bug fixing, test coverage enhancement, and drafting JOSS manuscript sections. All design decisions and final code integrations were directed by human authors, and all AI-generated code and documentation were reviewed and approved by humans.
+
 # Acknowledgements
 
 This package was developed as part of the "Biodiversity Building Blocks for Policy" (B-Cubed) project, which has received funding from the European Union's Horizon Europe Research and Innovation Programme under Grant Agreement No. 101059592.
