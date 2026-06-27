@@ -32,3 +32,5 @@ test-indicator_formulas.R
 ^local$
 ^scratch$
 ^shiny$
+^paper\.md$
+^paper\.bib$
