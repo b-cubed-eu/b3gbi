@@ -769,6 +769,8 @@ compute_indicator_workflow <- function(data,
       )
     }
 
+    # Ensure grid is an sf object (not sfc) before setting st_agr
+    if (!inherits(grid, "sf")) grid <- sf::st_as_sf(grid)
     sf::st_agr(grid) <- "constant"
 
     # Define the object to be used for intersection
@@ -799,6 +801,12 @@ compute_indicator_workflow <- function(data,
     if (!sf::st_is_longlat(intersection_target)) {
       intersection_target <- sf::st_buffer(intersection_target, dist = 1) %>%
         sf::st_make_valid()
+    }
+
+    # Ensure intersection_target is an sf object (not sfc) before setting st_agr.
+    # st_difference, st_buffer, and st_make_valid can return sfc in edge cases.
+    if (!inherits(intersection_target, "sf")) {
+      intersection_target <- sf::st_as_sf(intersection_target)
     }
 
     suppressMessages(sf::sf_use_s2(original_s2))
