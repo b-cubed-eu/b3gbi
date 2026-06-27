@@ -21,7 +21,7 @@ CI calculation process."><meta property="og:image" content="https://b-cubed-eu.g
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,7 +48,7 @@ CI calculation process."><meta property="og:image" content="https://b-cubed-eu.g
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Add Confidence Intervals to an Indicator Object</h1>
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/HEAD/R/add_ci.R" class="external-link"><code>R/add_ci.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/R/add_ci.R" class="external-link"><code>R/add_ci.R</code></a></small>
       <div class="d-none name"><code>add_ci.Rd</code></div>
     </div>
 
@@ -205,16 +205,51 @@ inverted afterwards to return intervals on the original scale.</p>
 <h3 id="indicators-outside-scope-of-this-function">Indicators outside scope of this function<a class="anchor" aria-label="anchor" href="#indicators-outside-scope-of-this-function"></a></h3>
 
 
-<p>For certain indicators, confidence intervals cannot be
-added post-hoc as they are calculated internally via the <code>iNext</code> package, or
-if they are not relevant. In such cases, a warning is issued and the
-original object is returned. The following indicators cannot have confidence
-intervals added via <code>add_ci()</code>:</p><ul><li><p><code>hill0</code>, <code>hill1</code>, <code>hill2</code> (calculated internally)</p></li>
-<li><p><code>obs_richness</code></p></li>
-<li><p><code>cum_richness</code></p></li>
-<li><p><code>occ_turnover</code></p></li>
-<li><p><code>tax_distinct</code></p></li>
-</ul></div>
+<p>For certain indicators, confidence intervals cannot be calculated or
+added post-hoc because they are not statistically relevant, or because
+proper uncertainty estimation is not supported. In such cases, a warning
+is issued and the original object is returned. The following indicators
+cannot have confidence intervals added via <code>add_ci()</code>:</p><ul><li><p><code>obs_richness</code>, <code>spec_richness_density</code>: Observed species richness and
+richness density are highly sensitive to sampling effort and sample size.
+Furthermore, bootstrapping observed occurrences can never discover
+new/unobserved species, meaning resampled richness estimates are always
+less than or equal to the observed richness. This results in confidence
+intervals that lie entirely at or below the observed value (i.e., the
+upper bound cannot exceed the observed richness). Therefore, post-hoc
+bootstrapping is not a statistically sound way to estimate their
+uncertainty (Hill numbers <code>hill0</code>, <code>hill1</code>, <code>hill2</code> should be used
+instead for proper rarefaction/extrapolation).</p></li>
+<li><p><code>completeness</code>: Sample completeness (coverage) is calculated as a
+deterministic sample statistic using <code>iNEXT</code> methods, and confidence
+interval calculation is not supported.</p></li>
+<li><p><code>relative_occupancy</code>: Standard bootstrapping is not supported because
+resampling strips spatial attributes (like <code>total_num_cells</code> or
+<code>total_area_sqkm</code>) necessary for occupancy calculation. These spatial
+attributes cannot be regenerated from the resampled occurrences alone,
+as occurrences only capture cells/regions where species were detected
+and contain no information about empty grid cells (zero occurrences)
+in the study area.</p></li>
+<li><p><code>cum_richness</code> (Cumulative Species Richness): This is an inherently
+temporal and sequential indicator for which CIs are not generated, as its
+nature as an accumulating count over time is not well-suited to standard
+bootstrapping methods for uncertainty.</p></li>
+<li><p><code>occ_turnover</code> (Species Turnover): Confidence intervals are not
+calculated for this indicator. The metric's reliance on comparing the
+unique species lists between consecutive time steps means that
+bootstrapping individual observations within each time step would
+introduce artificial variability in these lists. This makes the resulting
+gains and losses highly unstable and would lead to unreliable or biased
+confidence intervals for the turnover metric.</p></li>
+<li><p><code>tax_distinct</code> (Taxonomic Distinctness): Confidence intervals are not
+calculated for this indicator. Due to its high sensitivity to the exact
+species composition and taxonomic relationships within a sample,
+bootstrapping individual occurrences can introduce significant artificial
+variability, leading to unreliable or biased confidence intervals.</p></li>
+</ul><p><em>Note:</em> For Hill numbers (<code>hill0</code>, <code>hill1</code>, <code>hill2</code>), cube-level
+bootstrapping is not supported natively, but <code>add_ci()</code> will automatically
+switch to indicator-level bootstrapping and calculate confidence intervals
+internally using the <code>iNEXT</code> package.</p>
+</div>
 
     </div>
     <div class="section level2">
