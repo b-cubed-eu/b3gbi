@@ -630,3 +630,84 @@ test_that("Confidence intervals are not stripped from Hill diversity when ci_typ
     )
   )
 })
+
+test_that("compute_indicator_workflow handles sfc grid and sfc intersection_target objects", {
+  mock_cube <- list(
+    data = data.frame(
+      xcoord = c(3000, 2000, 5000),
+      ycoord = c(3000, 6000, 5000),
+      resolution = c("1km", "1km", "1km"),
+      cellCode = c(1, 2, 3),
+      year = c(2000, 2000, 2000),
+      scientificName = c("A", "A", "A"),
+      obs = c(1, 1, 1)
+    ),
+    first_year = 2000,
+    last_year = 2000,
+    coord_range = list("xmin" = 1000,
+                       "xmax" = 9000,
+                       "ymin" = 1000,
+                       "ymax" = 9000),
+    num_species = 1,
+    resolutions = "1km",
+    grid_type = "eea"
+  )
+  class(mock_cube) <- c("processed_cube", "list")
+
+  # Mock get_ne_data to return a list with combined as sfc
+  mock_sfc <- sf::st_sfc(
+    sf::st_polygon(
+      list(
+        matrix(
+          c(0, 0, 0, 10000, 10000, 10000, 10000, 0, 0, 0),
+          ncol = 2,
+          byrow = TRUE
+        )
+      )
+    ),
+    crs = "EPSG:3035"
+  )
+
+  # Save original st_as_sf.sfc method and register mock method
+  orig_method <- getS3method("st_as_sf", "sfc")
+  st_as_sf_mock <- function(x, ...) {
+    res <- sf::st_sf(geometry = x)
+    if (!"cellid" %in% names(res)) {
+      res$cellid <- 1:nrow(res)
+    }
+    if (!"cellCode" %in% names(res)) {
+      res$cellCode <- 1:nrow(res)
+    }
+    res
+  }
+  registerS3method("st_as_sf", "sfc", st_as_sf_mock, env = globalenv())
+  on.exit(registerS3method("st_as_sf", "sfc", orig_method, env = globalenv()))
+
+  mock_get_ne_data_sfc <- function(...) {
+    list(
+      combined = mock_sfc,
+      saved = sf::st_sf(geometry = mock_sfc, crs = "EPSG:3035")
+    )
+  }
+
+  with_mocked_bindings(
+    get_ne_data = mock_get_ne_data_sfc,
+    create_native_grid = function(...) {
+      # Return sfc instead of sf
+      mock_sfc
+    },
+    {
+      suppressWarnings(
+        result <- compute_indicator_workflow(
+          data = mock_cube,
+          type = "obs_richness",
+          dim_type = "map",
+          level = "country",
+          region = "Test",
+          cell_size = 1
+        )
+      )
+      expect_s3_class(result$data, "sf")
+    }
+  )
+})
