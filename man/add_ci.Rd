@@ -142,18 +142,54 @@ inverted afterwards to return intervals on the original scale.
 
 \subsection{Indicators outside scope of this function}{
 
-For certain indicators, confidence intervals cannot be
-added post-hoc as they are calculated internally via the \code{iNext} package, or
-if they are not relevant. In such cases, a warning is issued and the
-original object is returned. The following indicators cannot have confidence
-intervals added via \code{add_ci()}:
+For certain indicators, confidence intervals cannot be calculated or
+added post-hoc because they are not statistically relevant, or because
+proper uncertainty estimation is not supported. In such cases, a warning
+is issued and the original object is returned. The following indicators
+cannot have confidence intervals added via \code{add_ci()}:
 \itemize{
-\item \code{hill0}, \code{hill1}, \code{hill2} (calculated internally)
-\item \code{obs_richness}
-\item \code{cum_richness}
-\item \code{occ_turnover}
-\item \code{tax_distinct}
+\item \code{obs_richness}, \code{spec_richness_density}: Observed species richness and
+richness density are highly sensitive to sampling effort and sample size.
+Furthermore, bootstrapping observed occurrences can never discover
+new/unobserved species, meaning resampled richness estimates are always
+less than or equal to the observed richness. This results in confidence
+intervals that lie entirely at or below the observed value (i.e., the
+upper bound cannot exceed the observed richness). Therefore, post-hoc
+bootstrapping is not a statistically sound way to estimate their
+uncertainty (Hill numbers \code{hill0}, \code{hill1}, \code{hill2} should be used
+instead for proper rarefaction/extrapolation).
+\item \code{completeness}: Sample completeness (coverage) is calculated as a
+deterministic sample statistic using \code{iNEXT} methods, and confidence
+interval calculation is not supported.
+\item \code{relative_occupancy}: Standard bootstrapping is not supported because
+resampling strips spatial attributes (like \code{total_num_cells} or
+\code{total_area_sqkm}) necessary for occupancy calculation. These spatial
+attributes cannot be regenerated from the resampled occurrences alone,
+as occurrences only capture cells/regions where species were detected
+and contain no information about empty grid cells (zero occurrences)
+in the study area.
+\item \code{cum_richness} (Cumulative Species Richness): This is an inherently
+temporal and sequential indicator for which CIs are not generated, as its
+nature as an accumulating count over time is not well-suited to standard
+bootstrapping methods for uncertainty.
+\item \code{occ_turnover} (Species Turnover): Confidence intervals are not
+calculated for this indicator. The metric's reliance on comparing the
+unique species lists between consecutive time steps means that
+bootstrapping individual observations within each time step would
+introduce artificial variability in these lists. This makes the resulting
+gains and losses highly unstable and would lead to unreliable or biased
+confidence intervals for the turnover metric.
+\item \code{tax_distinct} (Taxonomic Distinctness): Confidence intervals are not
+calculated for this indicator. Due to its high sensitivity to the exact
+species composition and taxonomic relationships within a sample,
+bootstrapping individual occurrences can introduce significant artificial
+variability, leading to unreliable or biased confidence intervals.
 }
+
+\emph{Note:} For Hill numbers (\code{hill0}, \code{hill1}, \code{hill2}), cube-level
+bootstrapping is not supported natively, but \code{add_ci()} will automatically
+switch to indicator-level bootstrapping and calculate confidence intervals
+internally using the \code{iNEXT} package.
 }
 }
 \seealso{

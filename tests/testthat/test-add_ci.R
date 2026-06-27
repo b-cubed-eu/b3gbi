@@ -22,6 +22,30 @@ test_that("add_ci returns original object with warning for excluded indicators",
     "Cannot calculate sensible confidence intervals for obs_richness"
   )
   expect_equal(result, mock_ts)
+
+  # Test completeness
+  mock_comp <- list(
+    data = data.frame(year = 2000, diversity_val = 0.8),
+    div_type = "completeness"
+  )
+  class(mock_comp) <- c("indicator_ts", "completeness")
+  expect_warning(
+    result_comp <- add_ci(mock_comp),
+    "Cannot calculate sensible confidence intervals for completeness"
+  )
+  expect_equal(result_comp, mock_comp)
+
+  # Test relative_occupancy
+  mock_relo <- list(
+    data = data.frame(year = 2000, diversity_val = 0.5),
+    div_type = "relative_occupancy"
+  )
+  class(mock_relo) <- c("indicator_ts", "relative_occupancy")
+  expect_warning(
+    result_relo <- add_ci(mock_relo),
+    "Cannot calculate sensible confidence intervals for relative_occupancy"
+  )
+  expect_equal(result_relo, mock_relo)
 })
 
 test_that("add_ci delegates to inext via calc_ci for hill indicators", {
