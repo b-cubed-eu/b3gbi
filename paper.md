@@ -62,10 +62,10 @@ Importantly, several indicators are excluded from post-hoc bootstrapping (`noci_
 
 # AI Usage Disclosure
 
-While the overall software architecture, design, and the majority of the codebase and documentation of `b3gbi` were human-created, artificial intelligence was utilized to write, modify, and document portions of the package's recent iterations. Specifically, the Gemini 3.1 Flash and Gemini 3.5 Flash models, along with the Antigravity agentic coding assistant, were used for code generation, bug fixing, test coverage enhancement, and drafting JOSS manuscript sections. All design decisions and final code integrations were directed by human authors, and all AI-generated code and documentation were reviewed and approved by humans.
+While the overall software architecture, design, and the majority of the codebase and documentation of `b3gbi` were human-created, artificial intelligence was utilized to write, modify, and document portions of the package's recent iterations. Specifically, the Gemini 3.1 Flash and Gemini 3.5 Flash models, along with the Antigravity agentic coding assistant, were used for code generation, bug fixing, test coverage enhancement, documentation updates, and drafting JOSS manuscript sections. All design decisions and final code integrations were directed by a human author, and all AI-generated code and documentation were reviewed, edited, and approved by a human.
 
 # Acknowledgements
 
-This package was developed as part of the "Biodiversity Building Blocks for Policy" (B-Cubed) project, which has received funding from the European Union's Horizon Europe Research and Innovation Programme under Grant Agreement No. 101059592.
+This package was developed as part of the "Biodiversity Building Blocks for Policy" (B-Cubed) project, which has received funding from the European Union's Horizon Europe Research and Innovation Programme under Grant Agreement No. 101059592. I thank Ward Langeraert, Peter Desmet, Sandra MacFadyen, Damiano Oldoni, and Jasmijn Hillaert for providing code review and valuable feedback and suggestions during development. I also thank Hanno Seebens and Yanina Sica for providing valuable scientific input and support.
 
 # References
