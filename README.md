@@ -5,14 +5,16 @@
 
 <!-- badges: start -->
 
-[![repo status](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#wip)
+[![repo
+status](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#wip)
 [![Release](https://img.shields.io/github/release/b-cubed-eu/b3gbi.svg?include_prereleases)](https://github.com/b-cubed-eu/b3gbi/releases)
-[![b3gbi status badge](https://b-cubed-eu.r-universe.dev/b3gbi/badges/version)](https://b-cubed-eu.r-universe.dev/b3gbi)
-[![CRAN status](https://www.r-pkg.org/badges/version/b3gbi)](https://CRAN.R-project.org/package=b3gbi)
+[![b3gbi status
+badge](https://b-cubed-eu.r-universe.dev/b3gbi/badges/version)](https://b-cubed-eu.r-universe.dev/b3gbi)
 [![R-CMD-check](https://github.com/b-cubed-eu/b3gbi/actions/workflows/R-CMD-check.yaml/badge.svg?branch=main)](https://github.com/b-cubed-eu/b3gbi/actions/workflows/R-CMD-check.yaml)
 [![codecov](https://codecov.io/gh/b-cubed-eu/b3gbi/branch/main/graph/badge.svg)](https://app.codecov.io/gh/b-cubed-eu/b3gbi/)
-[![name status badge](https://b-cubed-eu.r-universe.dev/badges/:name?color=6CDDB4)](https://b-cubed-eu.r-universe.dev/)
-[![DOI](https://zenodo.org/badge/693214449.svg)](https://doi.org/10.5281/zenodo.20763709)
+[![name status
+badge](https://b-cubed-eu.r-universe.dev/badges/:name?color=6CDDB4)](https://b-cubed-eu.r-universe.dev/)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20763709.svg)](https://doi.org/10.5281/zenodo.20763709)
 
 <!-- badges: end -->
 
@@ -75,7 +77,7 @@ map_obs_rich_mammals <- obs_richness_map(mammal_data, level = "country", region 
 plot(map_obs_rich_mammals, title = "Observed Species Richness: Mammals in Denmark")
 ```
 
-<img src="man/figures/README-example-1.png" width="100%" />
+<img src="man/figures/README-example-1.png" alt="" width="100%" />
 
 For a more in-depth introduction, see the tutorial:
 <https://b-cubed-eu.github.io/b3gbi/articles/b3gbi.html>.
