@@ -14,7 +14,7 @@ badge](https://b-cubed-eu.r-universe.dev/b3gbi/badges/version)](https://b-cubed-
 [![codecov](https://codecov.io/gh/b-cubed-eu/b3gbi/branch/main/graph/badge.svg)](https://app.codecov.io/gh/b-cubed-eu/b3gbi/)
 [![name status
 badge](https://b-cubed-eu.r-universe.dev/badges/:name?color=6CDDB4)](https://b-cubed-eu.r-universe.dev/)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20763709.svg)](https://doi.org/10.5281/zenodo.20763709)
+[![DOI](https://zenodo.org/badge/693214449.svg)](https://zenodo.org/badge/latestdoi/693214449)
 
 <!-- badges: end -->
 
