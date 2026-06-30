@@ -40,7 +40,7 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="logo.png" class="logo" alt=""><h1>Summary</h1>
-      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v0.9.2/paper.md" class="external-link"><code>paper.md</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/paper.md" class="external-link"><code>paper.md</code></a></small>
     </div>
 
 
@@ -54,13 +54,37 @@
 <p>While packages like <code>rgbif</code> [@wallace2020] interface with GBIF data, and packages like <code>iNEXT</code> [@inext] calculate specific diversity metrics (such as Hill numbers), there is a distinct gap for a comprehensive, user-friendly framework that takes raw data cubes and automates the entire process of spatial boundary clipping, multi-scale grid aggregation, indicator calculation, and visualization. Furthermore, assessing the reliability of these indicators is critical. <code>b3gbi</code> addresses this need by integrating seamlessly with the <code>dubicube</code> package [@dubicube] to perform cube-level bootstrapping, allowing users to calculate robust confidence intervals that capture the underlying sampling uncertainty of the original occurrence data. While researchers frequently build ad-hoc scripts to process occurrence cubes, <code>b3gbi</code> provides a unified, optimized framework that eliminates inconsistent, manual data-handling pipelines, ensuring cross-project reproducibility for international policy reporting.</p>
 </div>
 <div class="section level1">
+<h1 id="state-of-the-field">State of the Field<a class="anchor" aria-label="anchor" href="#state-of-the-field"></a></h1>
+<p>Calculating biodiversity metrics from raw species observations is a common workflow in ecology, supported by established packages such as <code>vegan</code> [@vegan] and <code>iNEXT</code> [@inext]. However, these packages operate on community ecology matrices (e.g., site-by-species matrices) and do not support spatial coordinate grids, boundaries, or spatiotemporal occurrence cubes natively.</p>
+<ul><li>
+<strong><code>vegan</code> [@vegan]</strong> is the standard R package for community ecology diversity metrics (e.g., Shannon and Simpson diversity indices, Pielou evenness). However, it does not handle spatial grid mapping (EEA, MGRS, ISEA3H), spatial clipping, multi-scale grid aggregation, or spatiotemporal trend mapping.</li>
+<li>
+<strong><code>iNEXT</code> [@inext]</strong> specializes in Hill numbers (rarefaction/extrapolation). While <code>b3gbi</code> integrates <code>iNEXT</code>’s core routines to compute Hill numbers and their associated confidence intervals, <code>iNEXT</code> on its own does not provide wrapper functions to ingest spatiotemporal data cubes, clip boundaries, aggregate grid resolutions, or compute other non-Hill metrics (e.g., area-based rarity, species range, turnover).</li>
+<li>
+<strong><code>ebvcube</code> [@ebvcube]</strong> is designed to access, query, and visualize Essential Biodiversity Variables (EBVs) stored in netCDF structures, but it does not process Darwin Core-aligned spatiotemporal occurrence data cubes (as retrieved from GBIF) or calculate taxonomic, evenness, and turnover indicators from raw occurrence lists.</li>
+<li>
+<strong><code>b3verse</code> siblings</strong>: Sibling packages within the <code>b3verse</code> ecosystem cover complementary indicator types: <code>pdindicatoR</code> focuses on phylogenetic diversity indicators, and <code>impIndicator</code> focuses on alien species impacts. <code>b3gbi</code> serves as the core, general-purpose library for taxonomic diversity, evenness, rarity, and occupancy indicators.</li>
+</ul><div class="section level2">
+<h2 id="build-vs-contribute-justification">Build vs. Contribute Justification<a class="anchor" aria-label="anchor" href="#build-vs-contribute-justification"></a></h2>
+<p>Contributing these features directly to <code>vegan</code> or <code>iNEXT</code> would be inappropriate, as those packages are mathematically focused libraries for community ordination and Hill number estimation, respectively. Extending them to parse raw spatiotemporal occurrence cubes, manage geographical coordinate transformations (e.g., converting EEA codes to coordinates), and handle spatial geometries would expand their scopes excessively.</p>
+<p>Designing <code>b3gbi</code> as a standalone, modular package allows first-class support for the “species occurrence cube” data standard [@desmet2023] developed by the B-Cubed project. It also enables seamless, decoupled integration with sibling packages like <code>dubicube</code> [@dubicube] for cube-level bootstrapping (estimating indicator uncertainty) and <code>gcube</code> for synthetic cube simulations.</p>
+</div>
+</div>
+<div class="section level1">
 <h1 id="software-design-and-workflow">Software Design and Workflow<a class="anchor" aria-label="anchor" href="#software-design-and-workflow"></a></h1>
-<p>The <code>b3gbi</code> package is designed around a clean, three-step pipeline:</p>
-<pre><code>  +--------------+       +-------------------+       +-----------------------+
-  | Ingestion &amp;  |       |     Indicator     |       |      Uncertainty      |
-  | Validation   | ----&gt; |    Calculation    | ----&gt; |      Estimation       |
-  | process_cube |       |  (wrapper funcs)  |       |        add_ci         |
-  +--------------+       +-------------------+       +-----------------------+</code></pre>
+<p>The <code>b3gbi</code> package is designed around a clean, four-step pipeline:</p>
+<pre><code>  +------------------+      +-------------------+
+  | 1. Ingestion &amp;   |      |   2. Indicator    |
+  |    Validation    | ---&gt; |    Calculation    |
+  |   process_cube   |      |  (wrapper funcs)  |
+  +------------------+      +-------------------+
+                                      |
+                                      v
+  +------------------+      +-------------------+
+  | 4. Visualization |      |  3. Uncertainty   |
+  |   plot method    | &lt;--- |    Estimation     |
+  |                  |      |      add_ci       |
+  +------------------+      +-------------------+</code></pre>
 <ol style="list-style-type: decimal"><li>
 <strong>Ingestion &amp; Validation</strong>: The <code><a href="reference/process_cube.html">process_cube()</a></code> function imports spatiotemporal species occurrence cubes (as CSV files), validates the required fields, auto-detects grid types (including gridded coordinate columns), and filters the data by year. The resulting output is structured into a <code>processed_cube</code> class.</li>
 <li>
@@ -72,11 +96,29 @@
 <li>
 <strong>Completeness &amp; Rarity</strong>: Sample completeness/coverage (<code>completeness</code>), abundance-based rarity (<code>ab_rarity</code>), and area-based rarity (<code>area_rarity</code>).</li>
 <li>
-<strong>Occupancy &amp; Dynamics</strong>: Species occurrences (<code>spec_occ</code>), species range (<code>spec_range</code>), relative occupancy (<code>relative_occupancy</code>), and species turnover (<code>occ_turnover</code>).</li>
+<strong>Occurrence &amp; Density</strong>: Total occurrences (<code>total_occ</code>) and occurrence density (<code>occ_density</code>).</li>
+<li>
+<strong>Occupancy &amp; Dynamics</strong>: Species occurrences (<code>spec_occ</code>), species range (<code>spec_range</code>), relative occupancy (<code>relative_occupancy</code>), species turnover (<code>occ_turnover</code>), and mean year of occurrence (<code>newness</code>).</li>
 </ul></li>
 <li>
-<strong>Uncertainty &amp; Visualization</strong>: Calling the generic <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> function on an indicator object automatically generates clean, publishable map or time-series plots. To calculate uncertainty, the user passes a temporal indicator object to <code><a href="reference/add_ci.html">add_ci()</a></code>. Decoupling the intensive bootstrapping process from initial indicator calculations allows for quick data exploration before executing heavy simulations. The package includes a minimalist, internal spatiotemporal occurrence cube dataset, allowing users to execute and verify the entire pipeline out of the box.</li>
+<strong>Uncertainty Estimation</strong>: Uncertainty can be calculated by passing an indicator object to <code><a href="reference/add_ci.html">add_ci()</a></code>. The package supports both cube-level bootstrapping (default, utilizing <code>dubicube</code>) and indicator-level bootstrapping. Decoupling the intensive bootstrapping process from initial indicator calculations allows for quick data exploration before executing heavy simulations.</li>
+<li>
+<strong>Visualization</strong>: Calling the generic <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> function on an indicator object automatically generates clean, publishable map or time-series plots. The package includes a minimalist, internal spatiotemporal occurrence cube dataset, allowing users to execute, visualize, and verify the entire pipeline out of the box.</li>
 </ol></div>
+<div class="section level1">
+<h1 id="research-impact-statement">Research Impact Statement<a class="anchor" aria-label="anchor" href="#research-impact-statement"></a></h1>
+<p>The <code>b3gbi</code> package provides evidence of both realized impact and credible near-term significance for researchers and policy reporting:</p>
+<ul><li>
+<strong>Core of the B-Cubed Ecosystem</strong>: <code>b3gbi</code> is the central indicator package of the European Union’s Horizon Europe B-Cubed project (Grant Agreement No. 101059592), which aims to standardize biodiversity workflows for policy reporting.</li>
+<li>
+<strong>Policy Reporting Workflows</strong>: The package computes taxonomic, evenness, rarity, and occupancy indicators that map directly to international policy frameworks, including the Kunming-Montreal Global Biodiversity Framework (GBF) and the EU Biodiversity Strategy for 2030.</li>
+<li>
+<strong>FAIR Compliance</strong>: <code>b3gbi</code> outputs are mapped to standard vocabularies (Darwin Core MeasurementOrFact extension, ISO 8601, and GBIF Data Cube specifications) as documented in <code>FAIR_MAPPING.md</code>. This ensures that generated indicators comply with the Research Data Alliance (RDA) FAIR Data Maturity Model standards (specifically RDA-I2-01D and RDA-I3-03M), allowing for seamless sharing and aggregation in global repositories.</li>
+<li>
+<strong>Robust &amp; Flexible Uncertainty Estimation</strong>: A major limitation in existing biodiversity reporting is the lack of uncertainty quantification. By integrating with <code>dubicube</code>, <code>b3gbi</code> enables researchers to calculate robust confidence intervals via cube-level bootstrapping, while also offering faster, internal bootstrapping at the indicator level for rapid, resource-efficient data exploration.</li>
+<li>
+<strong>Community Adoption and Case Studies</strong>: The package has been integrated directly into the analytical workflows of multiple case studies within the B-Cubed project. Additionally, community adoption has been supported by developer-led training webinars to help researchers transition from raw occurrence data cubes to reproducible policy metrics. To lower the barrier to entry for non-programmer stakeholders, a Shiny-based graphical user interface (GUI) was initiated during a project hackathon and is maintained in the <a href="https://github.com/b-cubed-eu/b3gbi-gui" class="external-link">b-cubed-eu/b3gbi-gui</a> repository.</li>
+</ul></div>
 <div class="section level1">
 <h1 id="uncertainty-estimation--statistical-limitations">Uncertainty Estimation &amp; Statistical Limitations<a class="anchor" aria-label="anchor" href="#uncertainty-estimation--statistical-limitations"></a></h1>
 <p>When calculating uncertainty via <code><a href="reference/add_ci.html">add_ci()</a></code>, users can choose between cube-level bootstrapping (resampling original occurrences) and indicator-level bootstrapping (resampling calculated values) [@dubicube]. Cube-level bootstrapping is the default and most robust level, and <code><a href="reference/add_ci.html">add_ci()</a></code> automatically customizes the bootstrap settings based on the indicator type: - <strong>Hill Numbers</strong>: Because Hill numbers are calculated via <code>iNEXT</code>’s internal rarefaction/extrapolation engine, <code><a href="reference/add_ci.html">add_ci()</a></code> delegates directly to <code>iNEXT</code> to avoid double-bootstrapping. - <strong>Bounded Indicators</strong>: Evenness indicators automatically use logit transformation to keep confidence intervals within the valid <code>[0, 1]</code> bounds.</p>
