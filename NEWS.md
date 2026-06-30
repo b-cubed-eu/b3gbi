@@ -1,3 +1,8 @@
+# b3gbi 0.9.2 - Minor update:
+
+* **Fixed add_ci() crash for completeness and relative_occupancy**: Corrected the exclusion list (`noci_list`) in `add_ci()` to replace `"coverage"` with `"completeness"` and add `"relative_occupancy"`. This ensures these unsupported indicators warn and return cleanly instead of throwing a fatal error.
+* **Improved uncertainty calculation documentation**: Fully documented the uncertainty calculations (or reasons for exclusion) for all indicators outside the scope of `add_ci()`, including observed species richness, richness density, sample completeness, relative occupancy, cumulative richness, turnover, and taxonomic distinctness.
+
 # b3gbi 0.9.1 - Minor update:
 
 * **Support for Alphanumeric/String-Based Taxonomic Keys**: Excluded key columns (`kingdomKey`, `familyKey`, `speciesKey`) from numeric coercion in `process_cube()`. This ensures compatibility with GBIF's new taxonomic backbone migrating to the Catalogue of Life (COL), which uses alphanumeric string keys (e.g., `kingdomKey = "N"`) instead of integer keys.
