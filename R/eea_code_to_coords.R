@@ -42,14 +42,15 @@ eea_code_to_coords <- function(cellCodes) {
       )),
 
       # 6. Final coordinates in meters
-      # Heuristic: If base coordinates are > 10,000, they are likely already in meters.
-      # Standard EEA IDs use km-scale integers (e.g. E4321 for 4,321,000m).
-      xcoord = dplyr::if_else(abs(xcoord_base) > 10000,
-                               xcoord_base,
-                               xcoord_base * km_multiplier),
-      ycoord = dplyr::if_else(abs(ycoord_base) > 10000,
-                               ycoord_base,
-                               ycoord_base * km_multiplier),
+      # EEA grid coordinates are specified in kilometers for km-scale grids and in meters for meter-scale grids.
+      # E.g., 5kmE4320N3210 has base 4320 km, which is 4320 * 1000 = 4,320,000 meters.
+      # E.g., 100mE4321000N3210000 has base 4321000 m, which is 4,321,000 meters.
+      xcoord = dplyr::if_else(is.na(resolution_unit) | resolution_unit == "km",
+                              xcoord_base * 1000,
+                              xcoord_base),
+      ycoord = dplyr::if_else(is.na(resolution_unit) | resolution_unit == "km",
+                              ycoord_base * 1000,
+                              ycoord_base),
 
       # 7. Create the final resolution string
       resolution_final = paste0(resolution_value, resolution_unit)

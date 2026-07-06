@@ -121,5 +121,5 @@ plot(to_ts)
 }
 }
 \seealso{
-\link{compute_indicator_workflow}, \link{add_ci}
+\code{\link[=compute_indicator_workflow]{compute_indicator_workflow()}}, \code{\link[=add_ci]{add_ci()}}
 }

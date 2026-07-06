@@ -32,6 +32,11 @@ new_processed_cube <- function(x, grid_type) {
   has_coords <- all(c("xcoord", "ycoord") %in% names(x))
   res_num <- as.numeric(stringr::str_extract(x$resolution[1],
                                              "^[+-]?\\d*\\.?\\d+"))
+  res_unit <- stringr::str_extract(x$resolution[1], "(km|m|degrees)")
+  res_meters <- res_num
+  if (!is.na(res_unit) && res_unit == "km") {
+    res_meters <- res_num * 1000
+  }
   
   if (has_coords) {
     if (grid_type == "eqdgc") {
@@ -41,14 +46,14 @@ new_processed_cube <- function(x, grid_type) {
                          "ymax" = max(x$ycoord, na.rm = TRUE) + (res_num / 2))
     } else if (grid_type == "eea") {
       coord_range = list("xmin" = min(x$xcoord, na.rm = TRUE),
-                         "xmax" = max(x$xcoord, na.rm = TRUE) + res_num,
+                         "xmax" = max(x$xcoord, na.rm = TRUE) + res_meters,
                          "ymin" = min(x$ycoord, na.rm = TRUE),
-                         "ymax" = max(x$ycoord, na.rm = TRUE) + res_num)
+                         "ymax" = max(x$ycoord, na.rm = TRUE) + res_meters)
     } else if (grid_type == "mgrs") {
-      coord_range = list("xmin" = min(x$xcoord, na.rm = TRUE) - (res_num / 2),
-                         "xmax" = max(x$xcoord, na.rm = TRUE) + (res_num / 2),
-                         "ymin" = min(x$ycoord, na.rm = TRUE) - (res_num / 2),
-                         "ymax" = max(x$ycoord, na.rm = TRUE) + (res_num / 2))
+      coord_range = list("xmin" = min(x$xcoord, na.rm = TRUE) - (res_meters / 2),
+                         "xmax" = max(x$xcoord, na.rm = TRUE) + (res_meters / 2),
+                         "ymin" = min(x$ycoord, na.rm = TRUE) - (res_meters / 2),
+                         "ymax" = max(x$ycoord, na.rm = TRUE) + (res_meters / 2))
     } else {
       coord_range = list("xmin" = min(x$xcoord, na.rm = TRUE),
                          "xmax" = max(x$xcoord, na.rm = TRUE),
