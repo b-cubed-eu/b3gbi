@@ -151,5 +151,5 @@ Consequences for conservation and monitoring. \emph{Journal of Applied Ecology},
 \emph{55}(1), 169-184.
 }
 \seealso{
-\link{compute_indicator_workflow}, \link{add_ci}
+\code{\link[=compute_indicator_workflow]{compute_indicator_workflow()}}, \code{\link[=add_ci]{add_ci()}}
 }

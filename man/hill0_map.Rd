@@ -246,5 +246,5 @@ rarefaction and extrapolation of species diversity (Hill numbers).
 \emph{Methods in Ecology and Evolution}, \emph{7}(12), 1451-1456.
 }
 \seealso{
-\link{compute_indicator_workflow}, \link{add_ci}
+\code{\link[=compute_indicator_workflow]{compute_indicator_workflow()}}, \code{\link[=add_ci]{add_ci()}}
 }

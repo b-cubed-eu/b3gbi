@@ -189,5 +189,5 @@ Rabinowitz, D. (1981). Seven forms of rarity. *Biological aspects of rare *
 \emph{plant conservation}.
 }
 \seealso{
-\link{compute_indicator_workflow}, \link{add_ci}
+\code{\link[=compute_indicator_workflow]{compute_indicator_workflow()}}, \code{\link[=add_ci]{add_ci()}}
 }
