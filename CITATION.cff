@@ -8,7 +8,7 @@ message: 'To cite package "b3gbi" in publications use:'
 type: software
 license: MIT
 title: 'b3gbi: General Biodiversity Indicators for Biodiversity Data Cubes'
-version: 0.9.2
+version: 0.9.3
 abstract: Calculate general biodiversity indicators from GBIF data cubes. Includes
   many common indicators such as species richness, evenness, and completeness, which
   can be calculated over time (trends) or space (maps). Now also supports retaining
@@ -65,12 +65,12 @@ references:
     given-names: Hadley
     email: hadley@posit.co
     orcid: https://orcid.org/0000-0003-4757-117X
-  - family-names: François
+  - family-names: Francois
     given-names: Romain
     orcid: https://orcid.org/0000-0002-2444-4226
   - family-names: Henry
     given-names: Lionel
-  - family-names: Müller
+  - family-names: Muller
     given-names: Kirill
     orcid: https://orcid.org/0000-0002-1416-3412
   - family-names: Vaughan
@@ -375,7 +375,7 @@ references:
   - family-names: Kalinowski
     given-names: Tomasz
   - family-names: Ucar
-    given-names: Iñaki
+    given-names: Inaki
     email: iucar@fedoraproject.org
     orcid: https://orcid.org/0000-0001-6403-5550
   year: '2026'
@@ -390,7 +390,7 @@ references:
   - family-names: Chirico
     given-names: Michael
     email: michaelchirico4@gmail.com
-  - family-names: Oehlschlägel
+  - family-names: Oehlschlagel
     given-names: Jens
   year: '2026'
   doi: 10.32614/CRAN.package.bit64
@@ -633,7 +633,7 @@ references:
   - family-names: Henry
     given-names: Lionel
     email: lionel@posit.co
-  - family-names: Müller
+  - family-names: Muller
     given-names: Kirill
     email: krlmlr+r@mailbox.org
   - family-names: Ushey

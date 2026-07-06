@@ -1,5 +1,9 @@
-# b3gbi 0.9.2 - Minor update:
+# b3gbi 0.9.3 - Minor update:
 
+* **Fixed EEA grid coordinate parsing**: Corrected a bug where coordinate values in EEA grid codes for some resolutions (e.g., 5km) were erroneously multiplied by their resolution values instead of a fixed 1,000. Grid coordinates are now properly extracted based on km vs. m specification in the EEA standard.
+* **Fixed coord_range bounds for grids**: Addressed a cosmetic issue where bounding boxes generated from grid data incorrectly added the raw resolution unit to coordinates, instead of correctly converting to meters first.
+
+# b3gbi 0.9.2 - Minor update:
 * **Fixed add_ci() crash for completeness and relative_occupancy**: Corrected the exclusion list (`noci_list`) in `add_ci()` to replace `"coverage"` with `"completeness"` and add `"relative_occupancy"`. This ensures these unsupported indicators warn and return cleanly instead of throwing a fatal error.
 * **Improved uncertainty calculation documentation**: Fully documented the uncertainty calculations (or reasons for exclusion) for all indicators outside the scope of `add_ci()`, including observed species richness, richness density, sample completeness, relative occupancy, cumulative richness, turnover, and taxonomic distinctness.
 
