@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -43,6 +43,13 @@
       <small>Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.9.3" id="b3gbi-093---minor-update">b3gbi 0.9.3 - Minor update:<a class="anchor" aria-label="anchor" href="#b3gbi-093---minor-update"></a></h2>
+<ul><li>
+<strong>Fixed EEA grid coordinate parsing</strong>: Corrected a bug where coordinate values in EEA grid codes for some resolutions (e.g., 5km) were erroneously multiplied by their resolution values instead of a fixed 1,000. Grid coordinates are now properly extracted based on km vs. m specification in the EEA standard.</li>
+<li>
+<strong>Fixed coord_range bounds for grids</strong>: Addressed a cosmetic issue where bounding boxes generated from grid data incorrectly added the raw resolution unit to coordinates, instead of correctly converting to meters first.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.9.2" id="b3gbi-092---minor-update">b3gbi 0.9.2 - Minor update:<a class="anchor" aria-label="anchor" href="#b3gbi-092---minor-update"></a></h2>
 <ul><li>

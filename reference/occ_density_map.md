@@ -164,8 +164,8 @@ information to total occurrences, but is adjusted for cell area.
 
 ## See also
 
-[compute_indicator_workflow](https://b-cubed-eu.github.io/b3gbi/reference/compute_indicator_workflow.md),
-[add_ci](https://b-cubed-eu.github.io/b3gbi/reference/add_ci.md)
+[`compute_indicator_workflow()`](https://b-cubed-eu.github.io/b3gbi/reference/compute_indicator_workflow.md),
+[`add_ci()`](https://b-cubed-eu.github.io/b3gbi/reference/add_ci.md)
 
 ## Examples
 
