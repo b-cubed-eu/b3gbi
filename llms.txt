@@ -43,7 +43,7 @@ install.packages("b3gbi", repos = c("https://b-cubed-eu.r-universe.dev", "https:
 
 This basic example demonstrates the core workflow: preparing the data
 cube, calculating an indicator, and plotting the result as a spatial map
-of species richness for mammals in Denmark.
+of species richness for bryophytes in Montenegro.
 
 ``` r
 
@@ -51,14 +51,14 @@ of species richness for mammals in Denmark.
 library(b3gbi)
 
 # 1. Load and prepare the GBIF data cube
-cube_name <- system.file("extdata", "denmark_mammals_cube_eqdgc.csv", package = "b3gbi")
-mammal_data <- process_cube(cube_name)
+cube_name <- system.file("extdata", "montenegro_bryophytes_cube_eea.csv", package = "b3gbi")
+bryophyte_data <- process_cube(cube_name)
 
 # 2. Calculate a map of observed richness
-map_obs_rich_mammals <- obs_richness_map(mammal_data, level = "country", region = "Denmark", ne_scale = "medium")
+map_rich_bryo <- obs_richness_map(bryophyte_data, level = "country", region = "Montenegro", ne_scale = "medium", cell_size = 10)
 
 # 3. Plot the indicator map
-plot(map_obs_rich_mammals, title = "Observed Species Richness: Mammals in Denmark")
+plot(map_rich_bryo, title = "Observed Species Richness: Bryophytes in Montenegro")
 ```
 
 ![](reference/figures/README-example-1.png)
