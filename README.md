@@ -15,6 +15,7 @@ badge](https://b-cubed-eu.r-universe.dev/b3gbi/badges/version)](https://b-cubed-
 [![name status
 badge](https://b-cubed-eu.r-universe.dev/badges/:name?color=6CDDB4)](https://b-cubed-eu.r-universe.dev/)
 [![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.20763709-blue.svg)](https://doi.org/10.5281/zenodo.20763709)
+[![status](https://joss.theoj.org/papers/892c9da161bfc0658e2edca125a3ba10/status.svg)](https://joss.theoj.org/papers/892c9da161bfc0658e2edca125a3ba10)
 
 <!-- badges: end -->
 
