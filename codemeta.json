@@ -35,7 +35,7 @@
       "@type": "Person",
       "givenName": "Peter",
       "familyName": "Desmet",
-      "@id": "https://orcid.org/0000-0002-4442-8796"
+      "@id": "https://orcid.org/0000-0002-8442-8025"
     }
   ],
   "copyrightHolder": [
@@ -470,7 +470,7 @@
     },
     "SystemRequirements": null
   },
-  "fileSize": "2228.638KB",
+  "fileSize": "2226.588KB",
   "releaseNotes": "https://github.com/b-cubed-eu/b3gbi/blob/main/NEWS.md",
   "contIntegration": ["https://github.com/b-cubed-eu/b3gbi/actions/workflows/R-CMD-check.yaml", "https://app.codecov.io/gh/b-cubed-eu/b3gbi/"],
   "developmentStatus": "https://www.repostatus.org/#wip"
