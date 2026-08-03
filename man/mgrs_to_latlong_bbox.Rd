@@ -18,3 +18,14 @@ Albers).
 Converts MGRS coordinates to a single sf bounding box in a
 suitable projected CRS, handling data that spans multiple UTM zones.
 }
+\examples{
+\dontrun{
+df <- data.frame(
+  cellCode = c("32UUC", "32UUD"),
+  xcoord = c(500000, 501000),
+  ycoord = c(5600000, 5601000)
+)
+bbox <- mgrs_to_latlong_bbox(df)
+}
+
+}

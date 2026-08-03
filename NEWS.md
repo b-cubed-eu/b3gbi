@@ -1,6 +1,11 @@
-# b3gbi 0.9.4 - Minor update:
+# b3gbi 0.9.4 - Minor update (JOSS Review Fixes):
 
-* **Added package contributors**: Updated `Authors@R` in `DESCRIPTION` to list Ward Langeraert and Peter Desmet as contributors (`role = "ctb"`).
+* **Added package contributors**: Updated `Authors@R` in `DESCRIPTION` to list Ward Langeraert and Peter Desmet as contributors (`role = "ctb"`) (#142).
+* **Tracked Montenegro bryophytes example dataset**: Added `inst/extdata/montenegro_bryophytes_cube_eea.csv` to git tracking so package examples run out of the box (#145).
+* **Fixed paper rendering**: Added blank lines before bulleted lists in `paper.md` for clean PDF rendering (#144).
+* **Added tutorial link to vignette**: Added link to the B-Cubed GBIF cube download tutorial in the "Getting Started" vignette (#146).
+* **Added examples for exported functions**: Added `@examples` roxygen documentation blocks for `add_ci()`, `calc_ci()`, `create_sf_from_utm()`, `mgrs_to_latlong_bbox()`, and `plot_mv()` (#147).
+* **Code health and goodpractice updates**: Added `add = TRUE` to all `on.exit()` calls and removed unused internal function `get_legend_title()` (#143).
 
 # b3gbi 0.9.3 - Minor update:
 

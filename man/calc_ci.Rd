@@ -98,3 +98,11 @@ biodiversity indicator over time unless you choose 'none' for ci_type.
 \item \code{calc_ci(hill2)}: Calculate confidence intervals for Hill2 (Simpson)
 
 }}
+\examples{
+\dontrun{
+# Note: calc_ci is an internal function called automatically during indicator calculation
+cube_path <- system.file("extdata", "denmark_mammals_cube_eea.csv", package = "b3gbi")
+cube <- process_cube(cube_path)
+ts_occ <- total_occ_ts(cube, ci_type = "perc")
+}
+}
