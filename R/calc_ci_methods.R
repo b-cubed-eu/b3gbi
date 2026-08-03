@@ -11,10 +11,10 @@
 #' @param ... Additional arguments passed to specific calc_ci functions.
 #' @examples
 #' \dontrun{
+#' # Note: calc_ci is an internal function called automatically during indicator calculation
 #' cube_path <- system.file("extdata", "denmark_mammals_cube_eea.csv", package = "b3gbi")
 #' cube <- process_cube(cube_path)
-#' ts_occ <- total_occ_ts(cube)
-#' ci_res <- calc_ci(cube, ts_occ)
+#' ts_occ <- total_occ_ts(cube, ci_type = "perc")
 #' }
 #' @export
 calc_ci <- function(x,

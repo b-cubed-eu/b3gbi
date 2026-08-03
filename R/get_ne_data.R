@@ -62,7 +62,7 @@ get_ne_data <- function(projected_crs,
 
   # store s2 setting for use later
   original_s2 <- sf::sf_use_s2()
-  on.exit(suppressMessages(sf::sf_use_s2(original_s2)))
+  on.exit(suppressMessages(sf::sf_use_s2(original_s2)), add = TRUE)
 
   # During testing, return a fast dummy instead of downloading NE data.
   # This avoids 30+ minute test runs from Natural Earth downloads.
