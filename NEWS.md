@@ -5,7 +5,8 @@
 * **Fixed paper rendering**: Added blank lines before bulleted lists in `paper.md` for clean PDF rendering (#144).
 * **Added tutorial link to vignette**: Added link to the B-Cubed GBIF cube download tutorial in the "Getting Started" vignette (#146).
 * **Added examples for exported functions**: Added `@examples` roxygen documentation blocks for `add_ci()`, `calc_ci()`, `create_sf_from_utm()`, `mgrs_to_latlong_bbox()`, and `plot_mv()` (#147).
-* **Code health and goodpractice updates**: Added `add = TRUE` to all `on.exit()` calls and removed unused internal function `get_legend_title()` (#143).
+* **Code health and goodpractice updates**: Added `add = TRUE` to all `on.exit()` calls, updated `print` methods to invisibly return input objects (`invisible(x)`), and removed unused internal function `get_legend_title()` (#143).
+* **Configured Codecov coverage threshold**: Updated `codecov.yml` with a 1% threshold allowance.
 
 # b3gbi 0.9.3 - Minor update:
 
