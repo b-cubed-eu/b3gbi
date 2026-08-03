@@ -64,6 +64,9 @@ generating confidence intervals. (Default: 1000)}
 calculate. (Default: "perc". Select "none" to avoid calculating bootstrap
 CIs.)}
 }
+\value{
+A data frame containing indicator values with calculated lower (\code{ll}) and upper (\code{ul}) confidence bounds.
+}
 \description{
 This function calculates bootstrap confidence intervals for a
 biodiversity indicator. It is called automatically when calculating a
@@ -103,6 +106,5 @@ biodiversity indicator over time unless you choose 'none' for ci_type.
 # Note: calc_ci is an internal function called automatically during indicator calculation
 cube_path <- system.file("extdata", "denmark_mammals_cube_eea.csv", package = "b3gbi")
 cube <- process_cube(cube_path)
-ts_occ <- total_occ_ts(cube, ci_type = "perc")
 }
 }

@@ -14,8 +14,8 @@
 #' # Note: calc_ci is an internal function called automatically during indicator calculation
 #' cube_path <- system.file("extdata", "denmark_mammals_cube_eea.csv", package = "b3gbi")
 #' cube <- process_cube(cube_path)
-#' ts_occ <- total_occ_ts(cube, ci_type = "perc")
 #' }
+#' @return A data frame containing indicator values with calculated lower (`ll`) and upper (`ul`) confidence bounds.
 #' @export
 calc_ci <- function(x,
                     indicator,
