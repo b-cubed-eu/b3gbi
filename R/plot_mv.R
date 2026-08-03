@@ -22,6 +22,14 @@
 #'
 #' @return An interactive mapview plot.
 #'
+#' @examples
+#' \dontrun{
+#' cube_path <- system.file("extdata", "denmark_mammals_cube_eea.csv", package = "b3gbi")
+#' cube <- process_cube(cube_path)
+#' map_rich <- obs_richness_map(cube, level = "country", region = "Denmark")
+#' plot_mv(map_rich)
+#' }
+#'
 #' @export
 #'
 #' @importFrom grDevices colorRampPalette

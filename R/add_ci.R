@@ -147,6 +147,20 @@
 #'
 #' @seealso [dubicube::bootstrap_cube()], [dubicube::calculate_bootstrap_ci()]
 #'
+#' @examples
+#' \dontrun{
+#' # Load sample cube data
+#' cube_path <- system.file("extdata", "denmark_mammals_cube_eea.csv", package = "b3gbi")
+#' cube <- process_cube(cube_path)
+#' 
+#' # Calculate a time series indicator
+#' ts_occ <- total_occ_ts(cube)
+#' 
+#' # Add bootstrap confidence intervals
+#' ts_occ_ci <- add_ci(ts_occ, num_bootstrap = 100)
+#' plot(ts_occ_ci)
+#' }
+#'
 #' @export
 add_ci <- function(indicator,
                    num_bootstrap = 1000,

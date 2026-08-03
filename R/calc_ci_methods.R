@@ -9,6 +9,13 @@
 #'  frame. *Note: this should NOT be an 'indicator_ts' object as it is meant to
 #'  be called by the 'compute_indicator_workflow' function.
 #' @param ... Additional arguments passed to specific calc_ci functions.
+#' @examples
+#' \dontrun{
+#' cube_path <- system.file("extdata", "denmark_mammals_cube_eea.csv", package = "b3gbi")
+#' cube <- process_cube(cube_path)
+#' ts_occ <- total_occ_ts(cube)
+#' ci_res <- calc_ci(cube, ts_occ)
+#' }
 #' @export
 calc_ci <- function(x,
                     indicator,

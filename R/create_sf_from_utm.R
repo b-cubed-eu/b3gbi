@@ -9,6 +9,17 @@
 #'
 #' @return An sf object with the geometry correctly defined for each UTM zone.
 #'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   xcoord = c(500000, 501000),
+#'   ycoord = c(5600000, 5601000),
+#'   utmzone = c(32, 32),
+#'   hemisphere = c("North", "North")
+#' )
+#' sf_obj <- create_sf_from_utm(df, output_crs = "EPSG:4326")
+#' }
+#'
 #' @export
 create_sf_from_utm <- function(df, output_crs = NULL) {
 
