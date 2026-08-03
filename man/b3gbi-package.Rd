@@ -24,6 +24,8 @@ Useful links:
 
 Other contributors:
 \itemize{
+  \item Ward Langeraert (\href{https://orcid.org/0000-0002-5900-8109}{ORCID}) [contributor]
+  \item Peter Desmet (\href{https://orcid.org/0000-0002-4442-8796}{ORCID}) [contributor]
   \item University of Giessen [copyright holder]
   \item European Union [funder]
 }

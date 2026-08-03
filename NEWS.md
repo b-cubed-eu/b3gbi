@@ -1,3 +1,7 @@
+# b3gbi 0.9.4 - Minor update:
+
+* **Added package contributors**: Updated `Authors@R` in `DESCRIPTION` to list Ward Langeraert and Peter Desmet as contributors (`role = "ctb"`).
+
 # b3gbi 0.9.3 - Minor update:
 
 * **Fixed EEA grid coordinate parsing**: Corrected a bug where coordinate values in EEA grid codes for some resolutions (e.g., 5km) were erroneously multiplied by their resolution values instead of a fixed 1,000. Grid coordinates are now properly extracted based on km vs. m specification in the EEA standard.
