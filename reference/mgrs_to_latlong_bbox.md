@@ -21,3 +21,16 @@ mgrs_to_latlong_bbox(df)
 An sf bounding box
 ([`sf::st_bbox`](https://r-spatial.github.io/sf/reference/st_bbox.html))
 in a single projected CRS (e.g., Albers).
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+df <- data.frame(
+  cellCode = c("32UUC", "32UUD"),
+  xcoord = c(500000, 501000),
+  ycoord = c(5600000, 5601000)
+)
+bbox <- mgrs_to_latlong_bbox(df)
+} # }
+```

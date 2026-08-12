@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -121,9 +121,21 @@
 </ul></div>
 <div class="section level1">
 <h1 id="uncertainty-estimation--statistical-limitations">Uncertainty Estimation &amp; Statistical Limitations<a class="anchor" aria-label="anchor" href="#uncertainty-estimation--statistical-limitations"></a></h1>
-<p>When calculating uncertainty via <code><a href="reference/add_ci.html">add_ci()</a></code>, users can choose between cube-level bootstrapping (resampling original occurrences) and indicator-level bootstrapping (resampling calculated values) [@dubicube]. Cube-level bootstrapping is the default and most robust level, and <code><a href="reference/add_ci.html">add_ci()</a></code> automatically customizes the bootstrap settings based on the indicator type: - <strong>Hill Numbers</strong>: Because Hill numbers are calculated via <code>iNEXT</code>’s internal rarefaction/extrapolation engine, <code><a href="reference/add_ci.html">add_ci()</a></code> delegates directly to <code>iNEXT</code> to avoid double-bootstrapping. - <strong>Bounded Indicators</strong>: Evenness indicators automatically use logit transformation to keep confidence intervals within the valid <code>[0, 1]</code> bounds.</p>
-<p>Importantly, several indicators are excluded from post-hoc bootstrapping (<code>noci_list</code>): - <strong>Observed Richness and Richness Density</strong>: Resampling from observed occurrences can never discover new/unobserved species, meaning bootstrapped richness estimates are strictly less than or equal to the observed richness (<code>S_boot &lt;= S_obs</code>). This forces the confidence intervals to lie entirely at or below the observed richness, which is statistically incorrect. - <strong>Sample Completeness</strong>: Sample coverage (completeness) is calculated as a deterministic sample statistic using <code>iNEXT</code> methods, and confidence interval estimation is not supported. - <strong>Relative Occupancy</strong>: Standard bootstrapping is not supported because resampling occurrences strips essential spatial metadata (like <code>total_num_cells</code> or <code>total_area_sqkm</code>). These spatial attributes cannot be regenerated from occurrences alone because occurrences contain no information about empty grid cells (zero occurrences) in the study area. - <strong>Cumulative Richness, Species Turnover, and Taxonomic Distinctness</strong>: Standard bootstrapping is inappropriate due to the inherently sequential nature of cumulative counts, the high instability introduced in consecutive species lists, and extreme sensitivity to exact taxonomic compositions.</p>
-</div>
+<p>When calculating uncertainty via <code><a href="reference/add_ci.html">add_ci()</a></code>, users can choose between cube-level bootstrapping (resampling original occurrences) and indicator-level bootstrapping (resampling calculated values) [@dubicube]. Cube-level bootstrapping is the default and most robust level, and <code><a href="reference/add_ci.html">add_ci()</a></code> automatically customizes the bootstrap settings based on the indicator type:</p>
+<ul><li>
+<strong>Hill Numbers</strong>: Because Hill numbers are calculated via <code>iNEXT</code>’s internal rarefaction/extrapolation engine, <code><a href="reference/add_ci.html">add_ci()</a></code> delegates directly to <code>iNEXT</code> to avoid double-bootstrapping.</li>
+<li>
+<strong>Bounded Indicators</strong>: Evenness indicators automatically use logit transformation to keep confidence intervals within the valid <code>[0, 1]</code> bounds.</li>
+</ul><p>Importantly, several indicators are excluded from post-hoc bootstrapping (<code>noci_list</code>):</p>
+<ul><li>
+<strong>Observed Richness and Richness Density</strong>: Resampling from observed occurrences can never discover new/unobserved species, meaning bootstrapped richness estimates are strictly less than or equal to the observed richness (<code>S_boot &lt;= S_obs</code>). This forces the confidence intervals to lie entirely at or below the observed richness, which is statistically incorrect.</li>
+<li>
+<strong>Sample Completeness</strong>: Sample coverage (completeness) is calculated as a deterministic sample statistic using <code>iNEXT</code> methods, and confidence interval estimation is not supported.</li>
+<li>
+<strong>Relative Occupancy</strong>: Standard bootstrapping is not supported because resampling occurrences strips essential spatial metadata (like <code>total_num_cells</code> or <code>total_area_sqkm</code>). These spatial attributes cannot be regenerated from occurrences alone because occurrences contain no information about empty grid cells (zero occurrences) in the study area.</li>
+<li>
+<strong>Cumulative Richness, Species Turnover, and Taxonomic Distinctness</strong>: Standard bootstrapping is inappropriate due to the inherently sequential nature of cumulative counts, the high instability introduced in consecutive species lists, and extreme sensitivity to exact taxonomic compositions.</li>
+</ul></div>
 <div class="section level1">
 <h1 id="ai-usage-disclosure">AI Usage Disclosure<a class="anchor" aria-label="anchor" href="#ai-usage-disclosure"></a></h1>
 <p>While the overall software architecture, design, and the majority of the codebase and documentation of <code>b3gbi</code> were human-created, artificial intelligence was utilized to write, modify, and document portions of the package’s recent iterations. Specifically, the Gemini 3.1 Flash and Gemini 3.5 Flash models, along with the Antigravity agentic coding assistant, were used for code generation, bug fixing, test coverage enhancement, documentation updates, and drafting JOSS manuscript sections. All design decisions and final code integrations were directed by a human author, and all AI-generated code and documentation were reviewed, edited, and approved by a human.</p>

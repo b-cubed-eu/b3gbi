@@ -22,6 +22,12 @@ Useful links:
 
 Other contributors:
 
+- Ward Langeraert ([ORCID](https://orcid.org/0000-0002-5900-8109))
+  \[contributor\]
+
+- Peter Desmet ([ORCID](https://orcid.org/0000-0002-8442-8025))
+  \[contributor\]
+
 - University of Giessen \[copyright holder\]
 
 - European Union \[funder\]

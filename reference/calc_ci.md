@@ -78,6 +78,11 @@ calc_ci(x, indicator, num_bootstrap = 1000, ...)
   (Optional) Type of bootstrap confidence intervals to calculate.
   (Default: "perc". Select "none" to avoid calculating bootstrap CIs.)
 
+## Value
+
+A data frame containing indicator values with calculated lower (`ll`)
+and upper (`ul`) confidence bounds.
+
 ## Methods (by class)
 
 - `calc_ci(total_occ)`: Calculate confidence intervals for total
@@ -114,3 +119,13 @@ calc_ci(x, indicator, num_bootstrap = 1000, ...)
 - `calc_ci(hill1)`: Calculate confidence intervals for Hill1 (Shannon)
 
 - `calc_ci(hill2)`: Calculate confidence intervals for Hill2 (Simpson)
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+# Note: calc_ci is an internal function called automatically during indicator calculation
+cube_path <- system.file("extdata", "denmark_mammals_cube_eea.csv", package = "b3gbi")
+cube <- process_cube(cube_path)
+} # }
+```

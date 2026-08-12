@@ -195,32 +195,39 @@ values) \[@dubicube\]. Cube-level bootstrapping is the default and most
 robust level, and
 [`add_ci()`](https://b-cubed-eu.github.io/b3gbi/reference/add_ci.md)
 automatically customizes the bootstrap settings based on the indicator
-type: - **Hill Numbers**: Because Hill numbers are calculated via
-`iNEXT`’s internal rarefaction/extrapolation engine,
-[`add_ci()`](https://b-cubed-eu.github.io/b3gbi/reference/add_ci.md)
-delegates directly to `iNEXT` to avoid double-bootstrapping. - **Bounded
-Indicators**: Evenness indicators automatically use logit transformation
-to keep confidence intervals within the valid `[0, 1]` bounds.
+type:
+
+- **Hill Numbers**: Because Hill numbers are calculated via `iNEXT`’s
+  internal rarefaction/extrapolation engine,
+  [`add_ci()`](https://b-cubed-eu.github.io/b3gbi/reference/add_ci.md)
+  delegates directly to `iNEXT` to avoid double-bootstrapping.
+- **Bounded Indicators**: Evenness indicators automatically use logit
+  transformation to keep confidence intervals within the valid `[0, 1]`
+  bounds.
 
 Importantly, several indicators are excluded from post-hoc bootstrapping
-(`noci_list`): - **Observed Richness and Richness Density**: Resampling
-from observed occurrences can never discover new/unobserved species,
-meaning bootstrapped richness estimates are strictly less than or equal
-to the observed richness (`S_boot <= S_obs`). This forces the confidence
-intervals to lie entirely at or below the observed richness, which is
-statistically incorrect. - **Sample Completeness**: Sample coverage
-(completeness) is calculated as a deterministic sample statistic using
-`iNEXT` methods, and confidence interval estimation is not supported. -
-**Relative Occupancy**: Standard bootstrapping is not supported because
-resampling occurrences strips essential spatial metadata (like
-`total_num_cells` or `total_area_sqkm`). These spatial attributes cannot
-be regenerated from occurrences alone because occurrences contain no
-information about empty grid cells (zero occurrences) in the study
-area. - **Cumulative Richness, Species Turnover, and Taxonomic
-Distinctness**: Standard bootstrapping is inappropriate due to the
-inherently sequential nature of cumulative counts, the high instability
-introduced in consecutive species lists, and extreme sensitivity to
-exact taxonomic compositions.
+(`noci_list`):
+
+- **Observed Richness and Richness Density**: Resampling from observed
+  occurrences can never discover new/unobserved species, meaning
+  bootstrapped richness estimates are strictly less than or equal to the
+  observed richness (`S_boot <= S_obs`). This forces the confidence
+  intervals to lie entirely at or below the observed richness, which is
+  statistically incorrect.
+- **Sample Completeness**: Sample coverage (completeness) is calculated
+  as a deterministic sample statistic using `iNEXT` methods, and
+  confidence interval estimation is not supported.
+- **Relative Occupancy**: Standard bootstrapping is not supported
+  because resampling occurrences strips essential spatial metadata (like
+  `total_num_cells` or `total_area_sqkm`). These spatial attributes
+  cannot be regenerated from occurrences alone because occurrences
+  contain no information about empty grid cells (zero occurrences) in
+  the study area.
+- **Cumulative Richness, Species Turnover, and Taxonomic Distinctness**:
+  Standard bootstrapping is inappropriate due to the inherently
+  sequential nature of cumulative counts, the high instability
+  introduced in consecutive species lists, and extreme sensitivity to
+  exact taxonomic compositions.
 
 # AI Usage Disclosure
 

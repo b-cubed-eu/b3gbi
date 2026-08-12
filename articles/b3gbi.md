@@ -46,6 +46,10 @@ converting it into a structured `processed_cube` object. This function
 automatically validates the input and attempts to autodetect column
 names and grid types.
 
+To learn how to generate and download a compatible GBIF data cube, see
+the [B-Cubed tutorial on downloading a cube from
+GBIF](https://docs.b-cubed.eu/tutorials/download-a-cube-from-gbif/).
+
 ### Key `process_cube()` Arguments
 
 | Argument | Description | Default/Details |

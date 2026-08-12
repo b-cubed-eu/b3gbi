@@ -1,5 +1,38 @@
 # Changelog
 
+## b3gbi 0.9.4 - Minor update (JOSS Review Fixes):
+
+- **Added package contributors**: Updated `Authors@R` in `DESCRIPTION`
+  to list Ward Langeraert and Peter Desmet as contributors
+  (`role = "ctb"`)
+  ([\#142](https://github.com/b-cubed-eu/b3gbi/issues/142)).
+- **Tracked Montenegro bryophytes example dataset**: Added
+  `inst/extdata/montenegro_bryophytes_cube_eea.csv` to git tracking so
+  package examples run out of the box
+  ([\#145](https://github.com/b-cubed-eu/b3gbi/issues/145)).
+- **Fixed paper rendering**: Added blank lines before bulleted lists in
+  `paper.md` for clean PDF rendering
+  ([\#144](https://github.com/b-cubed-eu/b3gbi/issues/144)).
+- **Added tutorial link to vignette**: Added link to the B-Cubed GBIF
+  cube download tutorial in the “Getting Started” vignette
+  ([\#146](https://github.com/b-cubed-eu/b3gbi/issues/146)).
+- **Added examples for exported functions**: Added `@examples` roxygen
+  documentation blocks for
+  [`add_ci()`](https://b-cubed-eu.github.io/b3gbi/reference/add_ci.md),
+  [`calc_ci()`](https://b-cubed-eu.github.io/b3gbi/reference/calc_ci.md),
+  [`create_sf_from_utm()`](https://b-cubed-eu.github.io/b3gbi/reference/create_sf_from_utm.md),
+  [`mgrs_to_latlong_bbox()`](https://b-cubed-eu.github.io/b3gbi/reference/mgrs_to_latlong_bbox.md),
+  and
+  [`plot_mv()`](https://b-cubed-eu.github.io/b3gbi/reference/plot_mv.md)
+  ([\#147](https://github.com/b-cubed-eu/b3gbi/issues/147)).
+- **Code health and goodpractice updates**: Added `add = TRUE` to all
+  [`on.exit()`](https://rdrr.io/r/base/on.exit.html) calls, updated
+  `print` methods to invisibly return input objects (`invisible(x)`),
+  and removed unused internal function `get_legend_title()`
+  ([\#143](https://github.com/b-cubed-eu/b3gbi/issues/143)).
+- **Configured Codecov coverage threshold**: Updated `codecov.yml` with
+  a 1% threshold allowance.
+
 ## b3gbi 0.9.3 - Minor update:
 
 - **Fixed EEA grid coordinate parsing**: Corrected a bug where

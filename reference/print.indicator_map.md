@@ -28,3 +28,7 @@ print(x, n = 10, include_na = FALSE, ...)
 - ...:
 
   Additional arguments.
+
+## Value
+
+Invisibly returns the input object `x`.

@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.4</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -43,6 +43,23 @@
       <small>Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.9.4" id="b3gbi-094---minor-update-joss-review-fixes">b3gbi 0.9.4 - Minor update (JOSS Review Fixes):<a class="anchor" aria-label="anchor" href="#b3gbi-094---minor-update-joss-review-fixes"></a></h2>
+<ul><li>
+<strong>Added package contributors</strong>: Updated <code>Authors@R</code> in <code>DESCRIPTION</code> to list Ward Langeraert and Peter Desmet as contributors (<code>role = "ctb"</code>) (<a href="https://github.com/b-cubed-eu/b3gbi/issues/142" class="external-link">#142</a>).</li>
+<li>
+<strong>Tracked Montenegro bryophytes example dataset</strong>: Added <code>inst/extdata/montenegro_bryophytes_cube_eea.csv</code> to git tracking so package examples run out of the box (<a href="https://github.com/b-cubed-eu/b3gbi/issues/145" class="external-link">#145</a>).</li>
+<li>
+<strong>Fixed paper rendering</strong>: Added blank lines before bulleted lists in <code>paper.md</code> for clean PDF rendering (<a href="https://github.com/b-cubed-eu/b3gbi/issues/144" class="external-link">#144</a>).</li>
+<li>
+<strong>Added tutorial link to vignette</strong>: Added link to the B-Cubed GBIF cube download tutorial in the “Getting Started” vignette (<a href="https://github.com/b-cubed-eu/b3gbi/issues/146" class="external-link">#146</a>).</li>
+<li>
+<strong>Added examples for exported functions</strong>: Added <code>@examples</code> roxygen documentation blocks for <code><a href="../reference/add_ci.html">add_ci()</a></code>, <code><a href="../reference/calc_ci.html">calc_ci()</a></code>, <code><a href="../reference/create_sf_from_utm.html">create_sf_from_utm()</a></code>, <code><a href="../reference/mgrs_to_latlong_bbox.html">mgrs_to_latlong_bbox()</a></code>, and <code><a href="../reference/plot_mv.html">plot_mv()</a></code> (<a href="https://github.com/b-cubed-eu/b3gbi/issues/147" class="external-link">#147</a>).</li>
+<li>
+<strong>Code health and goodpractice updates</strong>: Added <code>add = TRUE</code> to all <code><a href="https://rdrr.io/r/base/on.exit.html" class="external-link">on.exit()</a></code> calls, updated <code>print</code> methods to invisibly return input objects (<code>invisible(x)</code>), and removed unused internal function <code>get_legend_title()</code> (<a href="https://github.com/b-cubed-eu/b3gbi/issues/143" class="external-link">#143</a>).</li>
+<li>
+<strong>Configured Codecov coverage threshold</strong>: Updated <code>codecov.yml</code> with a 1% threshold allowance.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.9.3" id="b3gbi-093---minor-update">b3gbi 0.9.3 - Minor update:<a class="anchor" aria-label="anchor" href="#b3gbi-093---minor-update"></a></h2>
 <ul><li>
