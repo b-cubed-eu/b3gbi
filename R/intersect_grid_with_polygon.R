@@ -6,7 +6,7 @@ intersect_grid_with_polygon <- function(grid,
   # target and only clipping those that cross boundaries.
 
   original_s2 <- sf::sf_use_s2()
-  on.exit(suppressMessages(sf::sf_use_s2(original_s2)))
+  on.exit(suppressMessages(sf::sf_use_s2(original_s2)), add = TRUE)
 
   # Ensure geometries are valid before intersection
 

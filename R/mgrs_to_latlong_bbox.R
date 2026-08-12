@@ -8,6 +8,16 @@
 #' @return An sf bounding box (`sf::st_bbox`) in a single projected CRS (e.g.,
 #'  Albers).
 #'
+#' @examples
+#' \dontrun{
+#' df <- data.frame(
+#'   cellCode = c("32UUC", "32UUD"),
+#'   xcoord = c(500000, 501000),
+#'   ycoord = c(5600000, 5601000)
+#' )
+#' bbox <- mgrs_to_latlong_bbox(df)
+#' }
+#'
 #' @export
 mgrs_to_latlong_bbox <- function(df) {
 

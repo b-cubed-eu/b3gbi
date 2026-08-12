@@ -16,6 +16,9 @@ in the printed output. Default is FALSE.}
 
 \item{...}{Additional arguments.}
 }
+\value{
+Invisibly returns the input object \code{x}.
+}
 \description{
 Provides a summary representation of an indicator_map object,
 designed for user-friendly display in the console.

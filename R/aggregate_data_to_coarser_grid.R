@@ -31,7 +31,7 @@ aggregate_data_to_coarser_grid <- function(data_assigned, clipped_grid,
 
   # Assign each native grid cell to a coarse cell via spatial intersection
   original_s2 <- sf::sf_use_s2()
-  on.exit(suppressMessages(sf::sf_use_s2(original_s2)))
+  on.exit(suppressMessages(sf::sf_use_s2(original_s2)), add = TRUE)
   suppressMessages(sf::sf_use_s2(FALSE))
 
   sf::st_agr(grid_proj) <- "constant"

@@ -28,6 +28,7 @@ print.indicator_ts <- function(x, n = 10, ...) {
   if (!is.null(x$kingdoms)) cat("Kingdoms represented:", x$kingdoms, "\n")
   cat("\nFirst", n, "rows of data (use n = to show more):\n\n")
   print(x$data, n = n, ...)
+  invisible(x)
 }
 
 
@@ -44,6 +45,7 @@ print.indicator_ts <- function(x, n = 10, ...) {
 #'  in the printed output. Default is FALSE.
 #' @param ... Additional arguments.
 #'
+#' @return Invisibly returns the input object `x`.
 #' @export
 print.indicator_map <- function(x, n = 10, include_na = FALSE, ...) {
 
@@ -81,6 +83,7 @@ print.indicator_map <- function(x, n = 10, include_na = FALSE, ...) {
   out_data %>%
     dplyr::select(-geometry) %>%
     print(n = n, ...)
+  invisible(x)
 }
 
 #' @title Print a Processed Data Cube Object
@@ -122,6 +125,7 @@ print.processed_cube <- function(x, n = 10, ...) {
   cat("Kingdoms represented:", paste(x$kingdoms, collapse = ", "), "\n\n")
   cat("First", n, "rows of data (use n = to show more):\n\n")
   print(x$data, n = n, ...)
+  invisible(x)
 }
 
 #' @title Print a Processed Data Cube Object
@@ -135,6 +139,7 @@ print.processed_cube <- function(x, n = 10, ...) {
 #' @param n (Optional) Integer specifying the number of rows of data to display.
 #' @param ... Additional arguments.
 #'
+#' @return Invisibly returns the input object `x`.
 #' @export
 print.processed_cube_dsinfo <- function(x, n = 10, ...) {
   cat("\nProcessed data cube for calculating biodiversity indicators.\n\n")
@@ -155,6 +160,7 @@ print.processed_cube_dsinfo <- function(x, n = 10, ...) {
       paste(x$record_types, collapse = ", "), "\n\n")
   cat("First", n, "rows of data (use n = to show more):\n\n")
   print(x$data, n = n, ...)
+  invisible(x)
 }
 
 #' @title Print a Simulated Data Cube Object
@@ -169,6 +175,7 @@ print.processed_cube_dsinfo <- function(x, n = 10, ...) {
 #'  display.
 #' @param ... Additional arguments.
 #'
+#' @return Invisibly returns the input object `x`.
 #' @export
 print.sim_cube <- function(x, n = 10, ...) {
   cat("\nSimulated data cube for calculating biodiversity indicators\n\n")
@@ -187,6 +194,7 @@ print.sim_cube <- function(x, n = 10, ...) {
   cat("Kingdoms represented:", paste(x$kingdoms, collapse = ", "), "\n\n")
   cat("First", n, "rows of data (use n = to show more):\n\n")
   print(x$data, n = n, ...)
+  invisible(x)
 }
 
 #' @title Print Available Indicators
@@ -198,6 +206,7 @@ print.sim_cube <- function(x, n = 10, ...) {
 #' @param n (Optional) Integer specifying the number of rows of data to display.
 #' @param ... Additional arguments.
 #'
+#' @return Invisibly returns the input object `x`.
 #' @export
 print.available_indicators <- function(x, n = 30, ...) {
   num_indicators <- length(x) # Use length(x) directly
@@ -241,4 +250,5 @@ print.available_indicators <- function(x, n = 30, ...) {
   } else {
     cat("\n")
   }
+  invisible(x)
 }

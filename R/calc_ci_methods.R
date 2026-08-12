@@ -9,6 +9,13 @@
 #'  frame. *Note: this should NOT be an 'indicator_ts' object as it is meant to
 #'  be called by the 'compute_indicator_workflow' function.
 #' @param ... Additional arguments passed to specific calc_ci functions.
+#' @examples
+#' \dontrun{
+#' # Note: calc_ci is an internal function called automatically during indicator calculation
+#' cube_path <- system.file("extdata", "denmark_mammals_cube_eea.csv", package = "b3gbi")
+#' cube <- process_cube(cube_path)
+#' }
+#' @return A data frame containing indicator values with calculated lower (`ll`) and upper (`ul`) confidence bounds.
 #' @export
 calc_ci <- function(x,
                     indicator,

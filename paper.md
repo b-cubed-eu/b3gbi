@@ -85,10 +85,12 @@ The `b3gbi` package provides evidence of both realized impact and credible near-
 # Uncertainty Estimation & Statistical Limitations
 
 When calculating uncertainty via `add_ci()`, users can choose between cube-level bootstrapping (resampling original occurrences) and indicator-level bootstrapping (resampling calculated values) [@dubicube]. Cube-level bootstrapping is the default and most robust level, and `add_ci()` automatically customizes the bootstrap settings based on the indicator type:
+
 - **Hill Numbers**: Because Hill numbers are calculated via `iNEXT`'s internal rarefaction/extrapolation engine, `add_ci()` delegates directly to `iNEXT` to avoid double-bootstrapping.
 - **Bounded Indicators**: Evenness indicators automatically use logit transformation to keep confidence intervals within the valid `[0, 1]` bounds.
 
 Importantly, several indicators are excluded from post-hoc bootstrapping (`noci_list`):
+
 - **Observed Richness and Richness Density**: Resampling from observed occurrences can never discover new/unobserved species, meaning bootstrapped richness estimates are strictly less than or equal to the observed richness (`S_boot <= S_obs`). This forces the confidence intervals to lie entirely at or below the observed richness, which is statistically incorrect.
 - **Sample Completeness**: Sample coverage (completeness) is calculated as a deterministic sample statistic using `iNEXT` methods, and confidence interval estimation is not supported.
 - **Relative Occupancy**: Standard bootstrapping is not supported because resampling occurrences strips essential spatial metadata (like `total_num_cells` or `total_area_sqkm`). These spatial attributes cannot be regenerated from occurrences alone because occurrences contain no information about empty grid cells (zero occurrences) in the study area.
