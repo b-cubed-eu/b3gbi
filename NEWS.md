@@ -1,3 +1,7 @@
+# b3gbi 1.0.0 - First official release version
+
+*The package has completed the review process for the Journal of Open Source Software and is now moving from pre-release to the first official release version.
+
 # b3gbi 0.9.4 - Minor update (JOSS Review Fixes):
 
 * **Added package contributors**: Updated `Authors@R` in `DESCRIPTION` to list Ward Langeraert and Peter Desmet as contributors (`role = "ctb"`) (#142).
