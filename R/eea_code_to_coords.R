@@ -1,65 +1,103 @@
+#' Convert EEA reference grid cell codes to coordinates
+#'
+#' Converts EEA reference grid cell codes (e.g. `"10kmE432N321"`) to the
+#' coordinates of the lower-left corner of each cell in metres (EPSG:3035).
+#'
+#' Following the EEA reference grid / INSPIRE naming rule, the easting and
+#' northing in a cell code are the coordinates in metres divided by 10^n, where
+#' n is the number of trailing zeros of the cell size in metres. The
+#' coordinates are therefore recovered by multiplying by 10^n, e.g.:
+#' `100kmE51N29` (x 10^5), `10kmE510N293` (x 10^4), `5kmE5100N2930` and
+#' `1kmE5105N2933` (x 10^3), `100mE51052N29336` (x 10^2), `250mE1025N22000`
+#' (x 10^1) and `25mE5105200N2933600` (x 1: 25 has no trailing zeros).
+#'
+#' Non-standard codes whose numbers are already in metres (e.g.
+#' `"10kmE4321000N3210000"`) would give coordinates far outside the EPSG:3035
+#' extent; for these the numbers are used as metres, with a warning.
+#'
+#' @param cellCodes Character vector of EEA cell codes.
+#'
+#' @return A data frame with columns `cellCode`, `xcoord`, `ycoord` (metres)
+#'   and `resolution` (e.g. `"10km"`).
+#' @noRd
 eea_code_to_coords <- function(cellCodes) {
-  # Requires dplyr for data manipulation and stringr for string extraction
-  if (!requireNamespace("dplyr", quietly = TRUE)) stop("The 'dplyr' package is required.")
-  if (!requireNamespace("stringr", quietly = TRUE)) stop("The 'stringr' package is required.")
 
-  cellCode <- resolution_text <- xcoord_base <- ycoord_base <- NULL
-  km_multiplier <- xcoord <- ycoord <- resolution_final <- NULL
-  resolution_value <- resolution_unit <- NULL
+  cellCode <- xcoord_base <- ycoord_base <- NULL
+  xcoord <- ycoord <- resolution_final <- NULL
+  resolution_value <- resolution_unit <- cell_size_m <- coord_multiplier <- NULL
 
-  data.frame(cellCode = cellCodes) %>%
+  out <- data.frame(cellCode = cellCodes) %>%
     dplyr::mutate(
-      # 1. Extract the resolution part (e.g., "1km", "250m")
-      resolution_text = stringr::str_replace_all(
-        cellCode,
-        "(E-?\\d+)|(N-?\\d+)|(W-?\\d+)|(S-?\\d+)",
-        ""
-      ),
-
-      # 2. Determine resolution in km (numeric)
+      # 1. Resolution value and unit (e.g., 10 and "km" from "10kmE432N321")
       resolution_value = as.numeric(stringr::str_extract(cellCode, "[0-9.]+")),
-      # Extract resolution unit (km or m)
       resolution_unit = stringr::str_extract(cellCode, "(km|m)"),
 
-      # Calculate multiplier to get meters per grid unit
-      # (e.g., for 100km, the value is 100,000 meters)
-      km_multiplier = dplyr::case_when(
+      # 2. Cell size in metres
+      cell_size_m = dplyr::case_when(
         resolution_unit == "km" ~ resolution_value * 1000,
         resolution_unit == "m" ~ resolution_value,
         TRUE ~ 1000 # Default to 1km if no unit found
       ),
 
-      # 4. Extract x-coordinate base value (e.g., 420 from E420)
+      # 3. Multiplier: 10^(number of trailing zeros of the cell size in metres)
+      coord_multiplier = 10^eea_trailing_zeros(cell_size_m),
+
+      # 4. Easting and northing as given in the code (e.g., 432 from E432)
       xcoord_base = as.numeric(stringr::str_extract(
         cellCode,
         "(?<=[EW])-?\\d+"
       )),
-
-      # 5. Extract y-coordinate base value (e.g., 420 from N420)
       ycoord_base = as.numeric(stringr::str_extract(
         cellCode,
         "(?<=[NS])-?\\d+"
       )),
 
-      # 6. Final coordinates in meters
-      # EEA grid coordinates are specified in kilometers for km-scale grids and in meters for meter-scale grids.
-      # E.g., 5kmE4320N3210 has base 4320 km, which is 4320 * 1000 = 4,320,000 meters.
-      # E.g., 100mE4321000N3210000 has base 4321000 m, which is 4,321,000 meters.
-      xcoord = dplyr::if_else(is.na(resolution_unit) | resolution_unit == "km",
-                              xcoord_base * 1000,
-                              xcoord_base),
-      ycoord = dplyr::if_else(is.na(resolution_unit) | resolution_unit == "km",
-                              ycoord_base * 1000,
-                              ycoord_base),
+      # 5. Coordinates in metres
+      xcoord = xcoord_base * coord_multiplier,
+      ycoord = ycoord_base * coord_multiplier,
 
-      # 7. Create the final resolution string
+      # 6. Resolution string
       resolution_final = paste0(resolution_value, resolution_unit)
-    ) %>%
-    # Select only the final columns needed
+    )
+
+  # Safety net for non-standard codes whose numbers are already in metres:
+  # the EPSG:3035 grid does not extend beyond 10,000 km
+  too_far <- !is.na(out$xcoord) & !is.na(out$ycoord) &
+    (abs(out$xcoord) > 1e7 | abs(out$ycoord) > 1e7) &
+    abs(out$xcoord_base) <= 1e7 & abs(out$ycoord_base) <= 1e7
+  if (any(too_far)) {
+    warning(sprintf(
+      paste0("%d EEA cell code(s) (e.g. '%s') do not follow the EEA naming ",
+             "rule; their numbers were taken to be in metres."),
+      sum(too_far), out$cellCode[which(too_far)[1]]
+    ), call. = FALSE)
+    out$xcoord[too_far] <- out$xcoord_base[too_far]
+    out$ycoord[too_far] <- out$ycoord_base[too_far]
+  }
+
+  out %>%
     dplyr::select(
       cellCode,
       xcoord,
       ycoord,
       resolution = resolution_final
     )
+}
+
+#' Number of trailing zeros of (whole) numbers
+#'
+#' @param x Numeric vector (e.g. cell sizes in metres).
+#' @return Integer vector; 0 for NA or non-positive values.
+#' @noRd
+eea_trailing_zeros <- function(x) {
+  vapply(x, function(v) {
+    if (is.na(v) || v <= 0) return(0L)
+    v <- round(v)
+    n <- 0L
+    while (v %% 10 == 0) {
+      v <- v / 10
+      n <- n + 1L
+    }
+    n
+  }, integer(1))
 }
