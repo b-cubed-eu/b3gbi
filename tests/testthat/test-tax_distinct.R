@@ -129,7 +129,8 @@ test_that("get_taxonomic_hierarchy makes one request and caches results", {
 
   local_mocked_bindings(
     my_name_backbone_checklist = mock_checklist,
-    check_rgbif_installed = function() invisible(TRUE)
+    check_rgbif_installed = function() invisible(TRUE),
+    rgbif_supports_checklists = function() TRUE
   )
   expect_message(hier <- get_taxonomic_hierarchy(x), "4 taxa")
   expect_equal(length(calls), 1)
@@ -159,7 +160,8 @@ test_that("get_taxonomic_hierarchy uses COL XR for alphanumeric keys", {
       used <<- c(used, checklistKey)
       fake_name_backbone_checklist(name_data, checklistKey)
     },
-    check_rgbif_installed = function() invisible(TRUE)
+    check_rgbif_installed = function() invisible(TRUE),
+    rgbif_supports_checklists = function() TRUE
   )
   suppressWarnings(suppressMessages(
     get_taxonomic_hierarchy(data.frame(taxonKey = c("Q2M4", "101")))
@@ -172,7 +174,8 @@ test_that("taxa not found by key are retried by name, others warned about", {
   clear_taxonomy_cache()
   local_mocked_bindings(
     my_name_backbone_checklist = fake_name_backbone_checklist,
-    check_rgbif_installed = function() invisible(TRUE)
+    check_rgbif_installed = function() invisible(TRUE),
+    rgbif_supports_checklists = function() TRUE
   )
   x <- data.frame(taxonKey = c(101, 555, 556),
                   scientificName = c("Vulpes vulpes", "Meles meles", "Nonexistent"))
@@ -188,12 +191,40 @@ test_that("GBIF errors give an informative message", {
   clear_taxonomy_cache()
   local_mocked_bindings(
     my_name_backbone_checklist = function(...) stop("Status: 0"),
-    check_rgbif_installed = function() invisible(TRUE)
+    check_rgbif_installed = function() invisible(TRUE),
+    rgbif_supports_checklists = function() TRUE
   )
   expect_error(
     suppressMessages(get_taxonomic_hierarchy(data.frame(taxonKey = 101))),
     "Could not retrieve taxonomic classifications from GBIF"
   )
+})
+
+test_that("older rgbif versions match by name against the GBIF Backbone", {
+  clear_taxonomy_cache()
+  args_seen <- list()
+  local_mocked_bindings(
+    my_name_backbone_checklist = function(name_data, checklistKey, ...) {
+      args_seen[[length(args_seen) + 1]] <<- names(name_data)
+      fake_name_backbone_checklist(name_data, checklistKey)
+    },
+    check_rgbif_installed = function() invisible(TRUE),
+    rgbif_supports_checklists = function() FALSE
+  )
+  x <- data.frame(taxonKey = c(101, 103, 104),
+                  scientificName = c("Vulpes vulpes", "Meles meles",
+                                     "Turdus merula"))
+  hier <- suppressMessages(get_taxonomic_hierarchy(x))
+  expect_equal(length(args_seen), 1)
+  expect_equal(args_seen[[1]], "scientificName")
+  expect_equal(hier$family, c("9701", "5307", "6171"))
+
+  # COL XR keys cannot be handled by older rgbif versions
+  expect_error(
+    suppressMessages(get_taxonomic_hierarchy(data.frame(taxonKey = "Q2M4"))),
+    "requires rgbif 3.8.4"
+  )
+  clear_taxonomy_cache()
 })
 
 # --- Indicator calculation -----------------------------------------------------
@@ -210,7 +241,8 @@ test_that("calc_map.tax_distinct and calc_ts.tax_distinct use the index", {
   clear_taxonomy_cache()
   local_mocked_bindings(
     my_name_backbone_checklist = fake_name_backbone_checklist,
-    check_rgbif_installed = function() invisible(TRUE)
+    check_rgbif_installed = function() invisible(TRUE),
+    rgbif_supports_checklists = function() TRUE
   )
   d <- tax_distance_matrix(fake_taxonomy[, tax_ranks])
   tdi_b <- expected_tdi(d[c(1, 3, 4, 5), c(1, 3, 4, 5)])
@@ -241,7 +273,8 @@ test_that("calc_map.tax_distinct handles empty input", {
 test_that("the 'rows' argument of the wrappers is deprecated", {
   local_mocked_bindings(
     compute_indicator_workflow = function(...) "ok",
-    check_rgbif_installed = function() invisible(TRUE)
+    check_rgbif_installed = function() invisible(TRUE),
+    rgbif_supports_checklists = function() TRUE
   )
   expect_warning(tax_distinct_map(NULL, rows = 2), "deprecated")
   expect_warning(tax_distinct_ts(NULL, rows = 2), "deprecated")
@@ -252,7 +285,7 @@ test_that("the 'rows' argument of the wrappers is deprecated", {
 
 test_that("classifications can be retrieved from GBIF", {
   skip_on_cran()
-  skip_if_not_installed("rgbif", minimum_version = "3.8.4")
+  skip_if_not_installed("rgbif", minimum_version = "3.7.0")
   skip_if_offline("api.gbif.org")
   clear_taxonomy_cache()
   # Micromys minutus and Myotis daubentonii (GBIF Backbone keys, both in

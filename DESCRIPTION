@@ -48,7 +48,7 @@ Suggests:
     mockr,
     patchwork,
     RColorBrewer,
-    rgbif (>= 3.8.4),
+    rgbif (>= 3.7.0),
     rmarkdown,
     rnaturalearthdata,
     rnaturalearthhires,

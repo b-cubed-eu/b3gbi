@@ -28,16 +28,29 @@ b3gbi_tax_cache <- new.env(parent = emptyenv())
 check_rgbif_installed <- function() {
   rlang::check_installed(
     "rgbif",
-    version = "3.8.4",
+    version = "3.7.0",
     reason = "to retrieve taxonomic classifications from GBIF for taxonomic distinctness."
   )
   invisible(TRUE)
 }
 
+#' Does the installed rgbif support lookups in a chosen checklist?
+#'
+#' rgbif >= 3.8.4 (GBIF API v2) accepts `checklistKey` and `usageKey`. Older
+#' versions only match names against the GBIF Backbone.
+#' @noRd
+rgbif_supports_checklists <- function() {
+  "checklistKey" %in% names(formals(rgbif::name_backbone_checklist))
+}
+
 #' Wrapper of rgbif::name_backbone_checklist() (for mocking in tests)
 #' @noRd
 my_name_backbone_checklist <- function(name_data, checklistKey, ...) {
-  rgbif::name_backbone_checklist(name_data, checklistKey = checklistKey, ...)
+  if (rgbif_supports_checklists()) {
+    rgbif::name_backbone_checklist(name_data, checklistKey = checklistKey, ...)
+  } else {
+    rgbif::name_backbone_checklist(name_data, ...)
+  }
 }
 
 #' Clear the session cache of taxonomic classifications
@@ -154,17 +167,29 @@ get_taxonomic_hierarchy <- function(x) {
 #' @noRd
 fetch_gbif_classification <- function(taxa, checklist) {
 
-  res <- tryCatch(
-    my_name_backbone_checklist(
-      data.frame(usageKey = taxa$taxonKey, stringsAsFactors = FALSE),
-      checklistKey = checklist
-    ),
-    error = function(e) {
-      stop("Could not retrieve taxonomic classifications from GBIF: ",
-           conditionMessage(e), call. = FALSE)
-    }
-  )
-  hier <- parse_gbif_classification(res, n = nrow(taxa))
+  by_key <- rgbif_supports_checklists()
+
+  if (!by_key && checklist != gbif_checklists[["backbone"]]) {
+    stop("This cube uses Catalogue of Life (COL XR) taxon keys, which ",
+         "requires rgbif 3.8.4 or later. Please update rgbif.", call. = FALSE)
+  }
+
+  if (by_key) {
+    res <- tryCatch(
+      my_name_backbone_checklist(
+        data.frame(usageKey = taxa$taxonKey, stringsAsFactors = FALSE),
+        checklistKey = checklist
+      ),
+      error = function(e) {
+        stop("Could not retrieve taxonomic classifications from GBIF: ",
+             conditionMessage(e), call. = FALSE)
+      }
+    )
+    hier <- parse_gbif_classification(res, n = nrow(taxa))
+  } else {
+    # Older rgbif: match all taxa by name against the GBIF Backbone
+    hier <- parse_gbif_classification(NULL, n = nrow(taxa))
+  }
 
   # Retry taxa without a result by scientific name
   retry <- which(is.na(hier$kingdom) & !is.na(taxa$scientificName))
@@ -176,7 +201,13 @@ fetch_gbif_classification <- function(taxa, checklist) {
     }
     res2 <- tryCatch(
       my_name_backbone_checklist(name_data, checklistKey = checklist),
-      error = function(e) NULL
+      error = function(e) {
+        if (!by_key) {
+          stop("Could not retrieve taxonomic classifications from GBIF: ",
+               conditionMessage(e), call. = FALSE)
+        }
+        NULL
+      }
     )
     if (!is.null(res2)) {
       hier[retry, ] <- parse_gbif_classification(res2, n = length(retry))
