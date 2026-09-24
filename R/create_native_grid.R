@@ -71,7 +71,7 @@ create_mgrs_grid <- function(df, projection, resolution = NULL) {
 
   # 2. Parse MGRS codes to UTM coordinates
   unique_codes <- unique(df$cellCode)
-  utm_info <- mgrs::mgrs_to_utm(unique_codes)
+  utm_info <- suppressWarnings(mgrs_to_utm(unique_codes))
 
   # Fallback to xcoord/ycoord if mgrs parsing failed (all or partial)
   na_utm <- is.na(utm_info$easting) | is.na(utm_info$northing)

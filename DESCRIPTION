@@ -1,7 +1,7 @@
 Type: Package
 Package: b3gbi
 Title: General Biodiversity Indicators for Biodiversity Data Cubes
-Version: 1.0.0.9001
+Version: 1.0.0.9002
 Authors@R: c(
     person("Shawn", "Dove", email = "Shawn.Dove@allzool.bio.uni-giessen.de",
            role = c("aut", "cre"), comment = c(ORCID = "0000-0001-9465-5638")),
@@ -27,7 +27,6 @@ Imports:
     iNEXT,
     labeling,
     magrittr,
-    mgrs (>= 0.2.4),
     permute,
     purrr,
     readr,
@@ -66,7 +65,6 @@ Additional_repositories: https://b-cubed-eu.r-universe.dev,
     https://ropensci.r-universe.dev
 Config/Needs/check: Ironholds/WikidataR, ropensci/wikitaxa
 Remotes: 
-    hrbrmstr/mgrs,
     ropensci/bold,
     ropensci/wikitaxa,
     ropensci/taxize,

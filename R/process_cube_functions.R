@@ -602,16 +602,19 @@ process_cube <- function(cube_name,
       }
     }
 
-    utm <- mgrs::mgrs_to_utm(occurrence_data$cellCode)
+    utm <- mgrs_to_utm(occurrence_data$cellCode)
     occurrence_data$xcoord <- utm$easting
     occurrence_data$ycoord <- utm$northing
     occurrence_data$utmzone <- utm$zone
     occurrence_data$hemisphere <- utm$hemisphere
 
-    # this will not work properly if there is a - symbol in the code
-    occurrence_data$resolution <- paste0(
-      10^((9 - nchar(occurrence_data$cellCode[1])) / 2), "km"
-    )
+    # Resolution follows from the number of digits after the 100 km square
+    # letters (0 digits = 100 km, 2 = 10 km, 4 = 1 km, ...). Use the most
+    # common value in case a few codes are malformed.
+    n_digits <- nchar(gsub("^\\s*[0-9]{1,2}[A-Za-z]{3}|\\s", "",
+                           occurrence_data$cellCode))
+    n_digits <- as.numeric(names(which.max(table(n_digits))))
+    occurrence_data$resolution <- paste0(10^(2 - n_digits / 2), "km")
 
   } else if (grid_type == "eqdgc") {
     if (force_gridcode == FALSE) {

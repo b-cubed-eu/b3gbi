@@ -1,3 +1,8 @@
+# b3gbi 1.0.0.9002 (development version)
+
+* **Removed the dependency on the non-CRAN package `mgrs`.** MGRS grid codes are now converted to UTM coordinates by an internal pure-R function (`mgrs_to_utm()`), written from the MGRS specification. It gives identical results to `mgrs::mgrs_to_utm()` for over 100,000 test codes worldwide at all precisions (100 km to 1 m), including the Norway and Svalbard special zones. Invalid codes and polar (UPS) codes return `NA` with a single summary warning.
+* The resolution of MGRS cubes is now worked out from the number of digits in the codes, so it is also correct for single-digit UTM zones.
+
 # b3gbi 1.0.0.9001 (development version)
 
 **Indicator corrections. Values of the affected indicators will change.**
