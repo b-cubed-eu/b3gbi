@@ -1378,40 +1378,42 @@ relative_occupancy_ts <- function(data, occ_type = 0, ...) {
 #'
 #' @details Taxonomic distinctness is an essential biodiversity variable (EBV)
 #' that measures the taxonomic relatedness between species, providing a measure
-#' of biodiversity that accounts for evolutionary relationships. A distance
-#' matrix based on pairwise taxonomic relationships is calculated for each cell
-#' using the taxize package (Chamberlain & Sz&ouml;cs, 2013; Chamberlain et al.,
-#' 2020), then taxonomic distinctness is calculated as the Taxonomic
-#' Distinctness Index (TDI; Clarke & Warwick, 1999):
+#' of biodiversity that accounts for evolutionary relationships. It is
+#' calculated as the Taxonomic Distinctness Index (TDI; Clarke & Warwick, 1999;
+#' presence-absence form):
 #' \deqn{
-#'  \frac{\sum\sum_{i<j} \frac{|R_i - R_j|}{L}}{\frac{S(S-1)}{2}}
+#'  \frac{\sum\sum_{i<j} \frac{\omega_{ij}}{L}}{\frac{S(S-1)}{2}}
 #' }{
-#'  (&sum;&sum; from i<j of (|R_i-R_j| / L) / (S * (S - 1) / 2)
+#'  (&sum;&sum; from i<j of (w_ij / L) / (S * (S - 1) / 2)
 #' }
-#' where S is the number of species, Ri and Rj are the taxonomic ranks
-#' of species i and j (from the GBIF Taxonomic Backbone), and L is the
-#' maximum number of taxonomic ranks.
-#' The TDI ranges from 0 to 1, with higher values indicating greater
-#' taxonomic distinctness.
+#' where S is the number of species, \eqn{\omega_{ij}}{w_ij} is the taxonomic
+#' distance between species i and j (the number of taxonomic levels below the
+#' lowest rank they share: 1 for species in the same genus, 2 for the same
+#' family, and so on up to 7 for species in different kingdoms), and L = 7 is
+#' the number of taxonomic levels used (kingdom, phylum, class, order, family,
+#' genus, species). The TDI ranges from 0 to 1, with higher values indicating
+#' greater taxonomic distinctness. It is calculated for grid cells or years
+#' with at least three classified species.
+#'
+#' The classification of each taxon is retrieved from GBIF with the rgbif
+#' package (Chamberlain et al.) using the taxon keys in the cube: the GBIF
+#' Backbone Taxonomy for numeric keys, and the Catalogue of Life eXtended
+#' Release (COL XR) for alphanumeric keys. All taxa are looked up in a single
+#' batched request, and the results are cached for the rest of the R session.
+#' This requires the rgbif package and an internet connection.
 #'
 #' @references
-#' Chamberlain, S. A., & Sz&ouml;cs, E. (2013). taxize: taxonomic search and
-#' retrieval in R. *F1000Research*, 2.
-#'
-#' Chamberlain, S., Szoecs, E., Foster, Z., Boettiger, C., Ram, K., Bartomeus,
-#' I., Baumgartner, J., O'Donnell, J., Oksanen, J., Tzovaras, B. G., Marchand,
-#' P., Tran, V., Salmon, M., Li, G., & Greni&eacute;, M. (2020). taxize:
-#' Taxonomic Information from Around the Web. R package version 0.9.98.
-#' https://github.com/ropensci/taxize.
+#' Chamberlain, S., Barve, V., Mcglinn, D., Oldoni, D., Desmet, P., Geffert, L.,
+#' & Ram, K. rgbif: Interface to the Global Biodiversity Information Facility
+#' API. R package. https://CRAN.R-project.org/package=rgbif
 #'
 #' Clarke, K. R., & Warwick, R. M. (1999). The taxonomic distinctness measure
 #' of biodiversity: weighting of step lengths between hierarchical levels.
 #' Marine Ecology Progress Series, 184, 21-29.
 #'
 #' @param data A data cube object (class 'processed_cube').
-#' @param rows (Optional) Choose which row to select if there are multiple
-#'  matches when retrieving taxonomic information from GBIF. (Default is 1.
-#'  Use NA for interactive mode.)
+#' @param rows Deprecated and ignored. Taxa are now looked up by their GBIF
+#'  taxon key, so there is no ambiguity to resolve.
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
@@ -1433,14 +1435,16 @@ relative_occupancy_ts <- function(data, occ_type = 0, ...) {
 #'
 #' @export
 tax_distinct_map <- function(data, rows = 1, ...) {
-  if (!requireNamespace("taxize", quietly = TRUE)) {
-    stop("The package {taxize} is required for this action")
+  check_rgbif_installed()
+
+  if (!missing(rows)) {
+    warning("The 'rows' argument is deprecated and ignored: taxa are now ",
+            "looked up by their GBIF taxon key.", call. = FALSE)
   }
 
   compute_indicator_workflow(data,
     type = "tax_distinct",
     dim_type = "map",
-    rows = rows,
     ...
   )
 }
@@ -1457,14 +1461,16 @@ tax_distinct_map <- function(data, rows = 1, ...) {
 #' }
 #' @export
 tax_distinct_ts <- function(data, rows = 1, ...) {
-  if (!requireNamespace("taxize", quietly = TRUE)) {
-    stop("The package {taxize} is required for this action")
+  check_rgbif_installed()
+
+  if (!missing(rows)) {
+    warning("The 'rows' argument is deprecated and ignored: taxa are now ",
+            "looked up by their GBIF taxon key.", call. = FALSE)
   }
 
   compute_indicator_workflow(data,
     type = "tax_distinct",
     dim_type = "ts",
-    rows = rows,
     ...
   )
 }

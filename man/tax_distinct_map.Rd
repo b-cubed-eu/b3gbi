@@ -12,9 +12,8 @@ tax_distinct_ts(data, rows = 1, ...)
 \arguments{
 \item{data}{A data cube object (class 'processed_cube').}
 
-\item{rows}{(Optional) Choose which row to select if there are multiple
-matches when retrieving taxonomic information from GBIF. (Default is 1.
-Use NA for interactive mode.)}
+\item{rows}{Deprecated and ignored. Taxa are now looked up by their GBIF
+taxon key, so there is no ambiguity to resolve.}
 
 \item{...}{
   Arguments passed on to \code{\link[=compute_indicator_workflow]{compute_indicator_workflow}}
@@ -99,21 +98,29 @@ over a gridded map or as a time series (see 'Details' for more information).
 \details{
 Taxonomic distinctness is an essential biodiversity variable (EBV)
 that measures the taxonomic relatedness between species, providing a measure
-of biodiversity that accounts for evolutionary relationships. A distance
-matrix based on pairwise taxonomic relationships is calculated for each cell
-using the taxize package (Chamberlain & Szöcs, 2013; Chamberlain et al.,
-2020), then taxonomic distinctness is calculated as the Taxonomic
-Distinctness Index (TDI; Clarke & Warwick, 1999):
+of biodiversity that accounts for evolutionary relationships. It is
+calculated as the Taxonomic Distinctness Index (TDI; Clarke & Warwick, 1999;
+presence-absence form):
 \deqn{
- \frac{\sum\sum_{i<j} \frac{|R_i - R_j|}{L}}{\frac{S(S-1)}{2}}
+ \frac{\sum\sum_{i<j} \frac{\omega_{ij}}{L}}{\frac{S(S-1)}{2}}
 }{
- (&sum;&sum; from i<j of (|R_i-R_j| / L) / (S * (S - 1) / 2)
+ (&sum;&sum; from i<j of (w_ij / L) / (S * (S - 1) / 2)
 }
-where S is the number of species, Ri and Rj are the taxonomic ranks
-of species i and j (from the GBIF Taxonomic Backbone), and L is the
-maximum number of taxonomic ranks.
-The TDI ranges from 0 to 1, with higher values indicating greater
-taxonomic distinctness.
+where S is the number of species, \eqn{\omega_{ij}}{w_ij} is the taxonomic
+distance between species i and j (the number of taxonomic levels below the
+lowest rank they share: 1 for species in the same genus, 2 for the same
+family, and so on up to 7 for species in different kingdoms), and L = 7 is
+the number of taxonomic levels used (kingdom, phylum, class, order, family,
+genus, species). The TDI ranges from 0 to 1, with higher values indicating
+greater taxonomic distinctness. It is calculated for grid cells or years
+with at least three classified species.
+
+The classification of each taxon is retrieved from GBIF with the rgbif
+package (Chamberlain et al.) using the taxon keys in the cube: the GBIF
+Backbone Taxonomy for numeric keys, and the Catalogue of Life eXtended
+Release (COL XR) for alphanumeric keys. All taxa are looked up in a single
+batched request, and the results are cached for the rest of the R session.
+This requires the rgbif package and an internet connection.
 }
 \section{Functions}{
 \itemize{
@@ -140,14 +147,9 @@ plot(td_ts)
 }
 }
 \references{
-Chamberlain, S. A., & Szöcs, E. (2013). taxize: taxonomic search and
-retrieval in R. \emph{F1000Research}, 2.
-
-Chamberlain, S., Szoecs, E., Foster, Z., Boettiger, C., Ram, K., Bartomeus,
-I., Baumgartner, J., O'Donnell, J., Oksanen, J., Tzovaras, B. G., Marchand,
-P., Tran, V., Salmon, M., Li, G., & Grenié, M. (2020). taxize:
-Taxonomic Information from Around the Web. R package version 0.9.98.
-https://github.com/ropensci/taxize.
+Chamberlain, S., Barve, V., Mcglinn, D., Oldoni, D., Desmet, P., Geffert, L.,
+& Ram, K. rgbif: Interface to the Global Biodiversity Information Facility
+API. R package. https://CRAN.R-project.org/package=rgbif
 
 Clarke, K. R., & Warwick, R. M. (1999). The taxonomic distinctness measure
 of biodiversity: weighting of step lengths between hierarchical levels.

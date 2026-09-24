@@ -985,17 +985,10 @@ test_that(
       return(result)
     }
 
-    result <- withCallingHandlers(
-      {
-        with_mocked_bindings(
-          compute_indicator_workflow = mock_compute_indicator_return,
-          tax_distinct_map(mock_cube, level = "country", region = "Denmark")
-        )
-      },
-      requireNamespace = function(e) {
-        invokeRestart("muffleMessage")
-        TRUE # Simulate taxize being installed
-      }
+    result <- with_mocked_bindings(
+      compute_indicator_workflow = mock_compute_indicator_return,
+      check_rgbif_installed = function() invisible(TRUE),
+      tax_distinct_map(mock_cube, level = "country", region = "Denmark")
     )
 
     expect_equal(result$type, "tax_distinct")
@@ -1027,17 +1020,10 @@ test_that(
       return(result)
     }
 
-    result <- withCallingHandlers(
-      {
-        with_mocked_bindings(
-          compute_indicator_workflow = mock_compute_indicator_return,
-          tax_distinct_ts(mock_cube, first_year = 1985)
-        )
-      },
-      requireNamespace = function(e) {
-        invokeRestart("muffleMessage")
-        TRUE # Simulate taxize being installed
-      }
+    result <- with_mocked_bindings(
+      compute_indicator_workflow = mock_compute_indicator_return,
+      check_rgbif_installed = function() invisible(TRUE),
+      tax_distinct_ts(mock_cube, first_year = 1985)
     )
 
     expect_equal(result$type, "tax_distinct")

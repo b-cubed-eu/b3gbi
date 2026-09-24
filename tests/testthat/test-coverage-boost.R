@@ -10,12 +10,12 @@ test_that("coverage boost for indicator formulas", {
     expect_type(compute_evenness_formula(vec, "williams_evenness"), "double")
 
     # compute_tax_distinct_formula
-    hier1 <- data.frame(rank = c("kingdom", "phylum", "class"), name = c("K1", "P1", "C1"), stringsAsFactors = FALSE)
-    hier2 <- data.frame(rank = c("kingdom", "phylum", "class"), name = c("K1", "P1", "C2"), stringsAsFactors = FALSE)
-    hier3 <- data.frame(rank = c("kingdom", "phylum", "class"), name = c("K1", "P2", "C3"), stringsAsFactors = FALSE)
-
-    tax_hier <- list(S1 = hier1, S2 = hier2, S3 = hier3)
-    x_df <- data.frame(scientificName = c("S1", "S2", "S3"))
+    tax_hier <- data.frame(
+      taxonKey = c("1", "2", "3"),
+      kingdom = "K1", phylum = c("P1", "P1", "P2"), class = c("C1", "C2", "C3"),
+      order = NA, family = NA, genus = NA, species = c("S1", "S2", "S3")
+    )
+    x_df <- data.frame(taxonKey = c(1, 2, 3))
 
     res_tdi <- compute_tax_distinct_formula(x_df, tax_hier)
     expect_type(res_tdi, "double")

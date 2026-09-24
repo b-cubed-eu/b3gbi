@@ -1,3 +1,14 @@
+# b3gbi 1.0.0.9003 (development version)
+
+* **Taxonomic distinctness no longer uses `taxize`** (and therefore no longer needs the non-CRAN packages `taxize`, `bold`, `wikitaxa` and `WikidataR`). Classifications are now retrieved from GBIF with `rgbif` (in Suggests):
+  * All taxa in a cube are looked up in **one batched request** by their GBIF taxon key, instead of one request per species name. Results are **cached for the rest of the R session**, so calculating another indicator from the same cube (e.g. a map after a time series) does not query GBIF again.
+  * Numeric taxon keys are looked up in the GBIF Backbone Taxonomy and alphanumeric keys in the Catalogue of Life eXtended Release (COL XR), so cubes using either taxonomy are supported. Taxa that cannot be found by key are retried by scientific name; any still unresolved are excluded, with a warning.
+  * Because taxa are looked up by key, the `rows` argument of `tax_distinct_map()`/`tax_distinct_ts()` and the `set_rows` argument of `calc_ts.tax_distinct()` are deprecated and ignored.
+* **Taxonomic distinctness calculation:**
+  * The number of taxonomic levels is now fixed at L = 7 (kingdom to species) instead of being recalculated for each cell or year, so values are comparable across cells and years.
+  * Taxa are compared from the top of the hierarchy down using GBIF keys, so homonyms in different higher taxa (e.g. the same genus name in animals and plants) are no longer treated as related.
+  * Pairwise distances are calculated with vectorised matrix operations instead of a loop over species pairs.
+
 # b3gbi 1.0.0.9002 (development version)
 
 * **Removed the dependency on the non-CRAN package `mgrs`.** MGRS grid codes are now converted to UTM coordinates by an internal pure-R function (`mgrs_to_utm()`), written from the MGRS specification. It gives identical results to `mgrs::mgrs_to_utm()` for over 100,000 test codes worldwide at all precisions (100 km to 1 m), including the Norway and Svalbard special zones. Invalid codes and polar (UPS) codes return `NA` with a single summary warning.

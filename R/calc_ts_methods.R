@@ -521,9 +521,8 @@ calc_ts.relative_occupancy <- function(x, occ_type = 0, ...) {
 
 }
 
-#' @param set_rows Automatically select which taxonomic information to keep when
-#'  there are multiple options. Default value of 1 keeps the first option,
-#'  which is usually the best.
+#' @param set_rows Deprecated and ignored. Taxa are now looked up by their
+#'  GBIF taxon key, so there is no ambiguity to resolve.
 #' @export
 #' @rdname calc_ts
 calc_ts.tax_distinct <- function(x, set_rows = 1, ...) {
@@ -539,12 +538,9 @@ calc_ts.tax_distinct <- function(x, set_rows = 1, ...) {
     return(tibble::tibble(year = integer(), diversity_val = numeric()))
   }
 
-  if (requireNamespace("taxize", quietly = TRUE)) {
-    # Retrieve taxonomic data from GBIF
-    tax_hier <- my_classification(unique(x$scientificName), db = "gbif", ...)
-  } else {
-    stop("Please install the taxize package to use this function.")
-  }
+  # Retrieve the taxonomic hierarchy of all taxa once (one batched GBIF
+  # request, cached for the session) and reuse it for every year
+  tax_hier <- get_taxonomic_hierarchy(x)
 
   # Calculate taxonomic distinctness
   indicator <- x %>%

@@ -478,58 +478,7 @@ test_that("calc_ts.spec_range handles empty input gracefully", {
 })
 
 
-# Define a mock data frame for testing
-mock_tax_distinct_data <- data.frame(
-  year = c(2001, 2001, 2002, 2003),
-  scientificName = c("Species A", "Species B", "Species C", "Species D")
-)
-
-# Add class for the input
-mock_tax_distinct <- structure(mock_tax_distinct_data, class = c("tax_distinct",
-                                                                 "data.frame"))
-
-# Mock return value for the taxize classification
-mock_tax_hier <- list(
-  `Species A` = list(rank = "species", name = "A"),
-  `Species B` = list(rank = "species", name = "B"),
-  `Species C` = list(rank = "species", name = "C"),
-  `Species D` = list(rank = "species", name = "D")
-)
-
-test_that("calc_ts.tax_distinct calculates correctly", {
-  testthat::skip_if_not_installed("mockr")
-  # Mock the call to taxize::classification
-  mockr::with_mock(
-    `my_classification` = function(...) {
-      message("taxize::classification called") # DEBUG
-      mock_tax_hier
-    },
-    # Mock a return value for compute_tax_distinct_formula
-    `compute_tax_distinct_formula` = function(.x, tax_hier) {
-      message("compute_tax_distinct_formula called")  # DEBUG
-      # Simply return a fixed value for simplicity
-      return(1)
-    },
-    {
-      result <- calc_ts.tax_distinct(mock_tax_distinct)
-    }
-  )
-
-  expected_result <- tibble::tibble(
-    year = c(2001, 2002, 2003),
-    diversity_val = c(1, 1, 1)
-  )
-  expect_equal(result, expected_result)
-})
-
-test_that("calc_ts.tax_distinct handles missing taxize package", {
-  with_mocked_bindings(
-    my_classification = function(...) {
-      stop("Please install the taxize package to use this function.")
-    },
-    expect_error(calc_ts.tax_distinct(mock_tax_distinct),
-                 "Please install the taxize package"))
-})
+# Tests of the calculation in calc_ts.tax_distinct are in test-tax_distinct.R
 
 test_that("calc_ts.tax_distinct throws error on wrong class", {
   mock_invalid_input <- data.frame(
