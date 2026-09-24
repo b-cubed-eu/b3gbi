@@ -19,7 +19,8 @@ Description: Calculate general biodiversity indicators from species
     turnover and sample completeness, and can be calculated over time (time
     series) or space (maps), with bootstrap confidence intervals. Cubes using
     the EEA reference grid, MGRS, the extended quarter-degree grid (EQDGC) or
-    ISEA3H grids are supported.
+    ISEA3H grids are supported. For details see Dove (2026)
+    <doi:10.21105/joss.10963>.
 License: MIT + file LICENSE
 URL: https://github.com/b-cubed-eu/b3gbi,
     https://b-cubed-eu.github.io/b3gbi/
