@@ -1,15 +1,13 @@
-# b3gbi 1.0.0.9005 (development version)
+# b3gbi 1.0.1.9000 (development version)
 
-* **Fixed EEA grid code conversion for most cell sizes.** The fix in 0.9.3 (multiply the numbers in a code by 1,000 for any km grid and use them unchanged for m grids) was only correct for 1 km, 2 km and 5 km grids; 10 km and 100 km cubes (and 100 m, 250 m cubes) were placed in the wrong location. Before 0.9.3, multiplying by the cell size was correct for 1, 10 and 100 km but wrong for 5 km. Codes are now converted with the EEA/INSPIRE naming rule: the numbers are the coordinates in metres divided by 10^n, where n is the number of trailing zeros of the cell size in metres (e.g. `10kmE510N293` -> 5,100,000 / 2,930,000 m; `5kmE5100N2930` -> 5,100,000 / 2,930,000 m; `100mE51052N29336` -> 5,105,200 / 2,933,600 m). Non-standard codes that already contain full metres are still recognised, with a warning.
-
-# b3gbi 1.0.0.9004 (development version)
+## Optional dubicube (cube-level bootstrapping)
 
 * **`dubicube` moved from Imports to Suggests.** b3gbi can now be installed without packages from outside CRAN. Cube-level bootstrapping still uses `dubicube`, which remains the recommended way to calculate confidence intervals.
 * **New default `bootstrap_level = "auto"` in `add_ci()`.** It uses cube-level bootstrapping (`dubicube`) when that package is installed and falls back to indicator-level bootstrapping otherwise, with a message (shown once per session) explaining how to install `dubicube` from R-universe. Asking explicitly for `bootstrap_level = "cube"` without `dubicube` stops with installation instructions. Hill numbers use the indicator level under `"auto"` without a warning, as their confidence intervals come from `iNEXT`.
 * The bootstrap level that was used is stored in the new `ci_method` element of the indicator object and shown by `print()`.
 * Vignettes updated to explain how to install `dubicube` and what `"auto"` does.
 
-# b3gbi 1.0.0.9003 (development version)
+## Taxonomic distinctness via rgbif (taxize removed)
 
 * **Taxonomic distinctness no longer uses `taxize`** (and therefore no longer needs the non-CRAN packages `taxize`, `bold`, `wikitaxa` and `WikidataR`). Classifications are now retrieved from GBIF with `rgbif` (in Suggests):
   * All taxa in a cube are looked up in **one batched request** by their GBIF taxon key, instead of one request per species name. Results are **cached for the rest of the R session**, so calculating another indicator from the same cube (e.g. a map after a time series) does not query GBIF again.
@@ -20,12 +18,12 @@
   * Taxa are compared from the top of the hierarchy down using GBIF keys, so homonyms in different higher taxa (e.g. the same genus name in animals and plants) are no longer treated as related.
   * Pairwise distances are calculated with vectorised matrix operations instead of a loop over species pairs.
 
-# b3gbi 1.0.0.9002 (development version)
+## MGRS conversion without the mgrs package
 
 * **Removed the dependency on the non-CRAN package `mgrs`.** MGRS grid codes are now converted to UTM coordinates by an internal pure-R function (`mgrs_to_utm()`), written from the MGRS specification. It gives identical results to `mgrs::mgrs_to_utm()` for over 100,000 test codes worldwide at all precisions (100 km to 1 m), including the Norway and Svalbard special zones. Invalid codes and polar (UPS) codes return `NA` with a single summary warning.
 * The resolution of MGRS cubes is now worked out from the number of digits in the codes, so it is also correct for single-digit UTM zones.
 
-# b3gbi 1.0.0.9001 (development version)
+## Indicator corrections
 
 **Indicator corrections. Values of the affected indicators will change.**
 
@@ -37,6 +35,10 @@
 * Updated the documentation of evenness and rarity to describe exactly how S, proportions and occupancy are calculated for maps and time series.
 * Removed a stray `print()` from the taxonomic distinctness calculation; `replace_na()` now reports with `message()` instead of `print()`.
 * Added hand-computed tests for the evenness and rarity definitions.
+
+# b3gbi 1.0.1 - Bug fix
+
+* **Fixed EEA grid code conversion for most cell sizes.** The fix in 0.9.3 (multiply the numbers in a code by 1,000 for any km grid and use them unchanged for m grids) was only correct for 1 km, 2 km and 5 km grids; 10 km and 100 km cubes (and 100 m, 250 m cubes) were placed in the wrong location. Before 0.9.3, multiplying by the cell size was correct for 1, 10 and 100 km but wrong for 5 km. Codes are now converted with the EEA/INSPIRE naming rule: the numbers are the coordinates in metres divided by 10^n, where n is the number of trailing zeros of the cell size in metres (e.g. `10kmE510N293` -> 5,100,000 / 2,930,000 m; `5kmE5100N2930` -> 5,100,000 / 2,930,000 m; `100mE51052N29336` -> 5,105,200 / 2,933,600 m). Non-standard codes that already contain full metres are still recognised, with a warning.
 
 # b3gbi 1.0.0 - First official release version
 
