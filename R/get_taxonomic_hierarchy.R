@@ -196,6 +196,9 @@ fetch_gbif_classification <- function(taxa, checklist) {
   if (length(retry) > 0) {
     name_data <- data.frame(scientificName = taxa$scientificName[retry],
                             stringsAsFactors = FALSE)
+    # Older rgbif versions expect the name column to be called 'name'
+    # (newer ones 'scientificName'); using the expected name avoids a message
+    if (!by_key) names(name_data)[1] <- "name"
     if (!all(is.na(taxa$kingdom[retry]))) {
       name_data$kingdom <- taxa$kingdom[retry]
     }

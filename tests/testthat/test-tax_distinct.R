@@ -28,7 +28,8 @@ fake_name_backbone_checklist <- function(name_data, checklistKey, ...) {
   if ("usageKey" %in% names(name_data)) {
     idx <- match(name_data$usageKey, fake_taxonomy$usageKey)
   } else {
-    idx <- match(name_data$scientificName, fake_taxonomy$scientificName)
+    nm <- if ("name" %in% names(name_data)) name_data$name else name_data$scientificName
+    idx <- match(nm, fake_taxonomy$scientificName)
   }
   out <- fake_taxonomy[idx, , drop = FALSE]
   out$matchType <- ifelse(is.na(idx), "NONE", "EXACT")
@@ -216,7 +217,7 @@ test_that("older rgbif versions match by name against the GBIF Backbone", {
                                      "Turdus merula"))
   hier <- suppressMessages(get_taxonomic_hierarchy(x))
   expect_equal(length(args_seen), 1)
-  expect_equal(args_seen[[1]], "scientificName")
+  expect_equal(args_seen[[1]], "name")
   expect_equal(hier$family, c("9701", "5307", "6171"))
 
   # COL XR keys cannot be handled by older rgbif versions
