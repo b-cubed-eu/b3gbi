@@ -339,7 +339,7 @@ test_that(
   # Create a mock processed_cube object
     mock_cube <- list(
       data = data.frame(
-        cellCode = sprintf("10kmE%04dN%04d", rep(4000:4009, 10), rep(3000:3009, each = 10)),
+        cellCode = sprintf("10kmE%03dN%03d", rep(400:409, 10), rep(300:309, each = 10)),
         xcoord = rep(seq(4000000, 4090000, by = 10000), 10),
         ycoord = rep(seq(3000000, 3090000, by = 10000), each = 10),
         year = rep(2000:2009, 10),
@@ -411,7 +411,7 @@ test_that("compute_indicator_workflow creates output objects correctly", {
   # Create a mock processed_cube object
   mock_cube <- list(
     data = data.frame(
-      cellCode = sprintf("10kmE%dN%d", seq(4000, 4090, by=10), seq(3000, 3090, by=10)),
+      cellCode = sprintf("10kmE%dN%d", 400:409, 300:309),
       xcoord = seq(xmin, xmax, length.out = 10),
       ycoord = seq(ymin, ymax, length.out = 10),
       obs = 1:10,
@@ -553,7 +553,7 @@ test_that(
         xcoord = c(1, 5),
         ycoord = c(5, 1),
         resolution = c("10km", "10km"),
-        cellCode = c("10kmE4000N3000", "10kmE4001N3001"),
+        cellCode = c("10kmE400N300", "10kmE401N301"),
         year = c(2000, 2000),
         scientificName = c("A", "A"),
         obs = c(1, 1)
