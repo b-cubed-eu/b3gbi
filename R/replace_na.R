@@ -44,11 +44,11 @@ replace_na <- function(x) {
   number_na_replaced <- number_na_before - number_na_after
 
   # Tell the user how many NA values were replaced
-  print(paste0("Replaced ", number_na_replaced, " NA values with zeroes."))
+  message(paste0("Replaced ", number_na_replaced, " NA values with zeroes."))
 
   # If any NA values remain, tell the user
   if (number_na_after > 0) {
-    print(paste0(number_na_after, " NA values could not be replaced."))
+    message(paste0(number_na_after, " NA values could not be replaced."))
   }
 
   # Put the vector with the replaced values back into the indicator object

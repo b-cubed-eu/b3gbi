@@ -1,3 +1,16 @@
+# b3gbi 1.0.0.9001 (development version)
+
+**Indicator corrections. Values of the affected indicators will change.**
+
+* **Evenness (`pielou_evenness_*`, `williams_evenness_*`)**: S is now the number of species actually observed in each grid cell or year. Previously, species absent from a cell or year were counted towards S, so S was the species pool of the whole cube. This biased evenness downwards, most strongly in species-poor cells and years. Evenness is now `NA` when fewer than two species are present, since it is undefined there.
+* **Abundance-based rarity time series (`ab_rarity_ts`)**: relative abundance is now calculated separately for each year, and each species contributes once per year. Previously, proportions were pooled over all years and each species' rarity was added once for every grid cell it occupied, which inflated the values of widespread species.
+* **Area-based rarity time series (`area_rarity_ts`)**: occupancy (the proportion of occupied grid cells) is now calculated separately for each year. Previously it was pooled over all years. The yearly value is still the mean over grid cells of the summed species rarity.
+* Indicator-level confidence intervals for both rarity indicators (`calc_ci.ab_rarity`, `calc_ci.area_rarity`) use the same corrected definitions.
+* **Confidence intervals**: `add_ci()` (cube level) now gives `NA` confidence limits for years where the bootstrap distribution is undefined or constant (e.g. evenness with a single species), instead of failing. In the indicator-level evenness CI code, confidence intervals are now always matched to the correct year.
+* Updated the documentation of evenness and rarity to describe exactly how S, proportions and occupancy are calculated for maps and time series.
+* Removed a stray `print()` from the taxonomic distinctness calculation; `replace_na()` now reports with `message()` instead of `print()`.
+* Added hand-computed tests for the evenness and rarity definitions.
+
 # b3gbi 1.0.0 - First official release version
 
 *The package has completed the review process for the Journal of Open Source Software and is now moving from pre-release to the first official release version.

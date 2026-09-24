@@ -52,7 +52,8 @@ calc_ci_evenness_core <- function(x,
   # Replace NA values to avoid errors when calculating confidence intervals
   bootstraps <- lapply(bootstraps, ci_error_prevent)
 
-  names(bootstraps) <- unique(indicator$year)
+  # Note: 'bootstraps' keeps the year names of 'x' (from pivot_wider), so
+  # confidence intervals are always matched to the correct year.
 
   # Calculate confidence intervals and add to indicator values
   ci <- calc_ci_core(bootstraps, indicator, ci_type, ...)

@@ -284,6 +284,25 @@ add_ci <- function(indicator,
     bootstrap_results <- do.call(dubicube::bootstrap_cube,
                                  params_total$bootstrap_params)
 
+    # Drop groups (e.g. years) whose bootstrap distribution is undefined or
+    # degenerate, such as evenness in a year with fewer than two species, or
+    # rarity in a year with a single species. These would otherwise make the
+    # CI calculation fail; they simply get NA confidence limits.
+    bootstrap_results <- drop_degenerate_bootstraps(
+      bootstrap_results,
+      params_total$ci_params$grouping_var
+    )
+    if (length(bootstrap_results) == 0 ||
+        (is.data.frame(bootstrap_results) && nrow(bootstrap_results) == 0)) {
+      warning(
+        paste0(
+          "Unable to calculate confidence intervals. There may be ",
+          "insufficient data."
+        )
+      )
+      return(indicator)
+    }
+
     # Calculate confidence intervals from bootstrap results
     params_total$ci_params$bootstrap_results <- bootstrap_results
     params_total$ci_params$bootstrap_samples_df <- bootstrap_results
@@ -341,4 +360,42 @@ add_ci <- function(indicator,
   } else {
     stop("Invalid bootstrap_level. Choose 'cube' or 'indicator'.")
   }
+}
+
+#' Remove bootstrap groups for which confidence intervals are undefined
+#'
+#' Groups (e.g. years) whose original estimate is not finite, or whose finite
+#' bootstrap replicates take fewer than two distinct values, are removed so
+#' that the confidence interval calculation does not fail. Works with both a list of
+#' 'boot' objects and a data frame of bootstrap replicates.
+#'
+#' @param bootstrap_results Output of `dubicube::bootstrap_cube()`.
+#' @param grouping_var Name(s) of the grouping column(s).
+#' @noRd
+drop_degenerate_bootstraps <- function(bootstrap_results, grouping_var) {
+
+  est_original <- rep_boot <- NULL
+
+  if (inherits(bootstrap_results, "boot")) {
+    bootstrap_results <- list(bootstrap_results)
+  }
+
+  if (is.list(bootstrap_results) && !is.data.frame(bootstrap_results)) {
+    keep <- vapply(bootstrap_results, function(b) {
+      t <- b$t[, 1]
+      is.finite(b$t0[1]) && length(unique(t[is.finite(t)])) >= 2
+    }, logical(1))
+    return(bootstrap_results[keep])
+  }
+
+  if (is.data.frame(bootstrap_results) &&
+      all(c("est_original", "rep_boot") %in% names(bootstrap_results))) {
+    group_cols <- intersect(grouping_var, names(bootstrap_results))
+    bootstrap_results <- bootstrap_results %>%
+      dplyr::filter(is.finite(est_original) &
+                      dplyr::n_distinct(rep_boot[is.finite(rep_boot)]) >= 2,
+                    .by = dplyr::all_of(group_cols))
+  }
+
+  bootstrap_results
 }

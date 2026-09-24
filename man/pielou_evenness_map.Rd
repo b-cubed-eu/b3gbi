@@ -125,8 +125,10 @@ used evenness measure. It is calculated as:
 }{
  E = -Sum from i=1 to S of pi * ln(pi) / ln(S)
 }
-where S is the number of species and pi is the proportion of occurrences
-represented by species i.
+where S is the number of species observed in the grid cell (maps) or year
+(time series) and pi is the proportion of occurrences represented by
+species i. Species that are absent from a cell or year do not count towards
+S. Evenness is undefined (NA) when fewer than two species are present.
 }
 
 \subsection{Williams' evenness}{
@@ -154,8 +156,8 @@ Williams' evenness is calculated as:
   1 - sqrt((S * Sum from i=1 to S of pi^2 - 1) / (S - 1))
 }
 
-where S is the number of species and pi is the proportion of occurrences
-represented by species i.
+where S is the number of species observed in the grid cell or year and pi
+is the proportion of occurrences represented by species i.
 }
 }
 \section{Functions}{

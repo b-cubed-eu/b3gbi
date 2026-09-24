@@ -269,10 +269,11 @@ mock_ab_rarity <- structure(mock_ab_rarity_data, class = c("ab_rarity",
 test_that("calc_ts.ab_rarity calculates rarity correctly", {
   result <- calc_ts.ab_rarity(mock_ab_rarity)
 
-  # Expected output should reflect aggregated results
+  # Relative abundance is calculated per year:
+  # 2001: 30/10 + 30/20 = 4.5; 2002: 20/5 + 20/15 = 5.333333
   expected_result <- data.frame(
     year = c(2001, 2002),
-    diversity_val = c(5.833333, 6.666667)
+    diversity_val = c(4.5, 5.333333)
   )
 
   # Use tolerance to allow for minor floating point differences
@@ -321,10 +322,11 @@ mock_area_rarity <- structure(mock_area_rarity_data, class = c("area_rarity",
 test_that("calc_ts.area_rarity calculates area-based rarity correctly", {
   result <- calc_ts.area_rarity(mock_area_rarity)
 
-  # Expected output should reflect aggregated results
+  # Occupancy is calculated per year: one occupied cell per year, each species
+  # occupies it, so each species' rarity is 1 and the cell sum is 2
   expected_result <- data.frame(
     year = c(2001, 2002),
-    diversity_val = c(3, 3)
+    diversity_val = c(2, 2)
   )
 
   expect_equal(result, expected_result)

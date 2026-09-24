@@ -172,8 +172,10 @@ total_occ_ts <- function(data, ...) {
 #' }{
 #'  E = -Sum from i=1 to S of pi * ln(pi) / ln(S)
 #' }
-#' where S is the number of species and pi is the proportion of occurrences
-#' represented by species i.
+#' where S is the number of species observed in the grid cell (maps) or year
+#' (time series) and pi is the proportion of occurrences represented by
+#' species i. Species that are absent from a cell or year do not count towards
+#' S. Evenness is undefined (NA) when fewer than two species are present.
 #'
 #' ## Williams' evenness
 #'
@@ -200,8 +202,8 @@ total_occ_ts <- function(data, ...) {
 #'   1 - sqrt((S * Sum from i=1 to S of pi^2 - 1) / (S - 1))
 #' }
 #'
-#' where S is the number of species and pi is the proportion of occurrences
-#' represented by species i.
+#' where S is the number of species observed in the grid cell or year and pi
+#' is the proportion of occurrences represented by species i.
 #'
 #' @references
 #' Pielou, E. C. (1966). The measurement of diversity in
@@ -323,7 +325,10 @@ williams_evenness_ts <- function(data, ...) {
 #' }
 #'
 #' where S is the number of species and pi is the proportion of occurrences
-#' represented by species i.
+#' represented by species i. For maps, pi is calculated within each grid cell
+#' (over the whole time period). For time series, pi is calculated separately
+#' for each year (species i's occurrences that year divided by all occurrences
+#' that year), and each species present in a year contributes once.
 #'
 #' ## Area-Based Rarity
 #' Area-based rarity is the inverse of occupancy frequency (proportion of grid
@@ -339,6 +344,11 @@ williams_evenness_ts <- function(data, ...) {
 #'
 #' where S is the number of species, N is the total number of occupied grid
 #' cells, and ni is the number of grid cells occupied by species i.
+#'
+#' For maps, N and ni are calculated over the whole time period, and the summed
+#' rarity is reported for each grid cell. For time series, N and ni are
+#' calculated separately for each year; rarity is summed within each occupied
+#' grid cell and the yearly value is the mean of these cell sums.
 #'
 #' @references
 #' Maciel, E. A. (2021). An index for assessing the rare species of a community.

@@ -3,9 +3,12 @@ compute_evenness_formula <- function(x, type) {
 
   type <- match.arg(type, names(available_indicators))
 
-  S <- length(x)
-  n <- x[x > 0]
-  if (length(n) == 0) return(NA)
+  # Only species actually observed in this cell/year count towards S.
+  # (Absent species are passed in as zeros and must not inflate S.)
+  n <- x[!is.na(x) & x > 0]
+  S <- length(n)
+  # Evenness is undefined with fewer than two species
+  if (S < 2) return(NA)
   N <- sum(n)
   p <- n / N
 
