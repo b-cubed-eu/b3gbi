@@ -1,3 +1,7 @@
+# b3gbi 1.0.1 - Bug fix
+
+* **Fixed EEA grid code conversion for most cell sizes.** The fix in 0.9.3 (multiply the numbers in a code by 1,000 for any km grid and use them unchanged for m grids) was only correct for 1 km, 2 km and 5 km grids; 10 km and 100 km cubes (and 100 m, 250 m cubes) were placed in the wrong location. Before 0.9.3, multiplying by the cell size was correct for 1, 10 and 100 km but wrong for 5 km. Codes are now converted with the EEA/INSPIRE naming rule: the numbers are the coordinates in metres divided by 10^n, where n is the number of trailing zeros of the cell size in metres (e.g. `10kmE510N293` -> 5,100,000 / 2,930,000 m; `5kmE5100N2930` -> 5,100,000 / 2,930,000 m; `100mE51052N29336` -> 5,105,200 / 2,933,600 m). Non-standard codes that already contain full metres are still recognised, with a warning.
+
 # b3gbi 1.0.0 - First official release version
 
 *The package has completed the review process for the Journal of Open Source Software and is now moving from pre-release to the first official release version.
