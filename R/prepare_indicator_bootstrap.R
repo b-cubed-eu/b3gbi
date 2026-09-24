@@ -1,7 +1,7 @@
 #' Prepare bootstrap and confidence interval parameters for an indicator
 #'
-#' This function prepares the argument lists for [dubicube::bootstrap_cube()]
-#' and [dubicube::calculate_bootstrap_ci()] based on the indicator definition.
+#' This function prepares the argument lists for `dubicube::bootstrap_cube()`
+#' and `dubicube::calculate_bootstrap_ci()` based on the indicator definition.
 #' Behaviour (grouping, bootstrap method, transformations, bias correction)
 #' is fully controlled by a rule book keyed on `indicator$div_type`.
 #'

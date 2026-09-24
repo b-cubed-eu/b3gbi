@@ -1,3 +1,10 @@
+# b3gbi 1.0.0.9004 (development version)
+
+* **`dubicube` moved from Imports to Suggests.** b3gbi can now be installed without packages from outside CRAN. Cube-level bootstrapping still uses `dubicube`, which remains the recommended way to calculate confidence intervals.
+* **New default `bootstrap_level = "auto"` in `add_ci()`.** It uses cube-level bootstrapping (`dubicube`) when that package is installed and falls back to indicator-level bootstrapping otherwise, with a message (shown once per session) explaining how to install `dubicube` from R-universe. Asking explicitly for `bootstrap_level = "cube"` without `dubicube` stops with installation instructions. Hill numbers use the indicator level under `"auto"` without a warning, as their confidence intervals come from `iNEXT`.
+* The bootstrap level that was used is stored in the new `ci_method` element of the indicator object and shown by `print()`.
+* Vignettes updated to explain how to install `dubicube` and what `"auto"` does.
+
 # b3gbi 1.0.0.9003 (development version)
 
 * **Taxonomic distinctness no longer uses `taxize`** (and therefore no longer needs the non-CRAN packages `taxize`, `bold`, `wikitaxa` and `WikidataR`). Classifications are now retrieved from GBIF with `rgbif` (in Suggests):

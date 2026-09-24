@@ -52,8 +52,8 @@ A named list with two elements:
 }
 }
 \description{
-This function prepares the argument lists for \code{\link[dubicube:bootstrap_cube]{dubicube::bootstrap_cube()}}
-and \code{\link[dubicube:calculate_bootstrap_ci]{dubicube::calculate_bootstrap_ci()}} based on the indicator definition.
+This function prepares the argument lists for \code{dubicube::bootstrap_cube()}
+and \code{dubicube::calculate_bootstrap_ci()} based on the indicator definition.
 Behaviour (grouping, bootstrap method, transformations, bias correction)
 is fully controlled by a rule book keyed on \code{indicator$div_type}.
 }

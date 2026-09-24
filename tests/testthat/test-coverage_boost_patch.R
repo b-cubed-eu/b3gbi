@@ -106,7 +106,7 @@ test_that("add_ci edge cases and warnings", {
   )
   class(mock_indicator) <- "indicator_ts"
 
-  testthat::with_mocked_bindings(
+  if (requireNamespace("dubicube", quietly = TRUE)) testthat::with_mocked_bindings(
     bootstrap_cube = function(...) data.frame(),
     calculate_bootstrap_ci = function(...) data.frame(),
     .package = "dubicube",

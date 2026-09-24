@@ -26,6 +26,14 @@ print.indicator_ts <- function(x, n = 10, ...) {
                                     paste(x$num_families, collapse = ", "),
                                     "\n\n")
   if (!is.null(x$kingdoms)) cat("Kingdoms represented:", x$kingdoms, "\n")
+  if (!is.null(x$ci_method)) {
+    cat("\nConfidence intervals:",
+        switch(x$ci_method,
+               cube = "cube-level bootstrapping (dubicube)",
+               indicator = "indicator-level bootstrapping",
+               x$ci_method),
+        "\n")
+  }
   cat("\nFirst", n, "rows of data (use n = to show more):\n\n")
   print(x$data, n = n, ...)
   invisible(x)

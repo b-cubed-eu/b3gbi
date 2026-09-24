@@ -12,11 +12,18 @@
 #' @param num_bootstrap (Optional) Number of bootstrap replicates to perform.
 #'   (Default: 1000)
 #' @param bootstrap_level (Optional) Level at which to perform bootstrapping:
-#'   * `cube` (default): Bootstrapping is done by resampling the
-#'     occurrence records in the cube. This is mathematically more robust as it
-#'     captures the underlying sampling uncertainty.
+#'   * `auto` (default): Uses `cube` if the \pkg{dubicube} package is
+#'     installed, and otherwise falls back to `indicator` (with a message).
+#'   * `cube`: Bootstrapping is done by resampling the occurrence records in
+#'     the cube, using the \pkg{dubicube} package. This is statistically more
+#'     robust as it captures the underlying sampling uncertainty. Requires
+#'     \pkg{dubicube}.
 #'   * `indicator`: Bootstrapping is done by resampling indicator
-#'     values. This is faster for large cubes but less robust.
+#'     values. This is faster for large cubes but less robust, and does not
+#'     require \pkg{dubicube}.
+#'
+#'   The level that was used is stored in the `ci_method` element of the
+#'   returned object and shown when it is printed.
 #' @param ci_type (Optional) Type of bootstrap confidence intervals to
 #'   calculate. (Default: `"perc"`). Supported options are:
 #'   * `perc`: Percentile intervals.
@@ -37,14 +44,18 @@
 #'   be replaced? (Default: TRUE)
 #' @param seed (Optional) Integer. Random seed for bootstrapping. (Default: 123)
 #' @param boot_args (Optional) Named list of additional arguments passed to
-#'   `dubicube::bootstrap_cube()`. (Default: `list()`)
+#'   `dubicube::bootstrap_cube()` (cube level only). (Default: `list()`)
 #' @param ci_args (Optional) Named list of additional arguments passed to
-#'   `dubicube::calculate_bootstrap_ci()`. (Default: `list()`)
+#'   `dubicube::calculate_bootstrap_ci()` (cube level only).
+#'   (Default: `list()`)
 #' @param ... (Optional) Additional arguments passed to calc_ci().
 #'
 #' @details
-#' The function acts as a bridge to the \pkg{dubicube} package to calculate
-#' bootstrap confidence intervals.
+#' For cube-level bootstrapping, the function acts as a bridge to the
+#' \pkg{dubicube} package (Langeraert et al.), which is developed alongside
+#' \pkg{b3gbi} within the B-Cubed project. \pkg{dubicube} is not on CRAN; it
+#' can be installed from R-universe with
+#' `install.packages("dubicube", repos = c("https://b-cubed-eu.r-universe.dev", "https://cloud.r-project.org"))`.
 #'
 #' ## Indicator-specific defaults
 #'
@@ -145,7 +156,7 @@
 #'   * `int_type`: The type of interval calculated (e.g., 'perc').
 #'   * `conf`: The confidence level used.
 #'
-#' @seealso [dubicube::bootstrap_cube()], [dubicube::calculate_bootstrap_ci()]
+#' @seealso `dubicube::bootstrap_cube()`, `dubicube::calculate_bootstrap_ci()`
 #'
 #' @examples
 #' \dontrun{
@@ -164,7 +175,8 @@
 #' @export
 add_ci <- function(indicator,
                    num_bootstrap = 1000,
-                   bootstrap_level = c("cube",
+                   bootstrap_level = c("auto",
+                                       "cube",
                                        "indicator"),
                    ci_type = c("perc",
                                "bca",
@@ -212,7 +224,12 @@ add_ci <- function(indicator,
     return(indicator)
   }
 
-  # iNEXT calculates CIs internally. Switch to indicator-level bootstrapping.
+  # iNEXT calculates CIs internally, so Hill numbers always use the
+  # indicator level (silently when the level was chosen automatically)
+  if (indicator$div_type %in% c("hill0", "hill1", "hill2") &&
+      bootstrap_level == "auto") {
+    bootstrap_level <- "indicator"
+  }
   if (indicator$div_type %in% c("hill0", "hill1", "hill2") && bootstrap_level == "cube") {
     warning(
       paste0(
@@ -222,6 +239,27 @@ add_ci <- function(indicator,
       )
     )
     bootstrap_level <- "indicator"
+  }
+
+  # Resolve the bootstrap level: cube level needs the dubicube package
+  if (bootstrap_level == "auto") {
+    if (is_package_installed("dubicube")) {
+      bootstrap_level <- "cube"
+    } else {
+      rlang::inform(
+        c(paste0("Package 'dubicube' is not installed, so confidence ",
+                 "intervals are calculated by indicator-level bootstrapping."),
+          i = paste0("For cube-level bootstrapping, install 'dubicube' with ",
+                     "install.packages(\"dubicube\", repos = ",
+                     "c(\"https://b-cubed-eu.r-universe.dev\", ",
+                     "\"https://cloud.r-project.org\"))")),
+        .frequency = "once",
+        .frequency_id = "b3gbi_add_ci_no_dubicube"
+      )
+      bootstrap_level <- "indicator"
+    }
+  } else if (bootstrap_level == "cube") {
+    check_dubicube_installed()
   }
 
   # Extract data from indicator object
@@ -260,6 +298,7 @@ add_ci <- function(indicator,
                               num_bootstrap = num_bootstrap,
                               ci_type = ci_type,
                               ...)
+    indicator$ci_method <- "indicator"
     return(indicator)
 
   } else if (bootstrap_level == "cube") {
@@ -348,6 +387,7 @@ add_ci <- function(indicator,
         dplyr::full_join(ci_df,
                          by = group_cols)
       indicator$data <- x
+      indicator$ci_method <- "cube"
       return(indicator)
     } else {
       warning(
@@ -360,6 +400,23 @@ add_ci <- function(indicator,
   } else {
     stop("Invalid bootstrap_level. Choose 'cube' or 'indicator'.")
   }
+}
+
+#' Stop with installation instructions if dubicube is not installed
+#' @noRd
+check_dubicube_installed <- function() {
+  if (!is_package_installed("dubicube")) {
+    stop(
+      "Cube-level bootstrapping requires the 'dubicube' package, which is ",
+      "not installed. Install it with:\n",
+      "  install.packages(\"dubicube\", repos = ",
+      "c(\"https://b-cubed-eu.r-universe.dev\", ",
+      "\"https://cloud.r-project.org\"))\n",
+      "or use bootstrap_level = \"indicator\".",
+      call. = FALSE
+    )
+  }
+  invisible(TRUE)
 }
 
 #' Remove bootstrap groups for which confidence intervals are undefined

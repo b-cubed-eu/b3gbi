@@ -7,7 +7,7 @@
 add_ci(
   indicator,
   num_bootstrap = 1000,
-  bootstrap_level = c("cube", "indicator"),
+  bootstrap_level = c("auto", "cube", "indicator"),
   ci_type = c("perc", "bca", "norm", "basic", "none"),
   trans = function(t) t,
   inv_trans = function(t) t,
@@ -28,12 +28,19 @@ intervals should be added.}
 
 \item{bootstrap_level}{(Optional) Level at which to perform bootstrapping:
 \itemize{
-\item \code{cube} (default): Bootstrapping is done by resampling the
-occurrence records in the cube. This is mathematically more robust as it
-captures the underlying sampling uncertainty.
+\item \code{auto} (default): Uses \code{cube} if the \pkg{dubicube} package is
+installed, and otherwise falls back to \code{indicator} (with a message).
+\item \code{cube}: Bootstrapping is done by resampling the occurrence records in
+the cube, using the \pkg{dubicube} package. This is statistically more
+robust as it captures the underlying sampling uncertainty. Requires
+\pkg{dubicube}.
 \item \code{indicator}: Bootstrapping is done by resampling indicator
-values. This is faster for large cubes but less robust.
-}}
+values. This is faster for large cubes but less robust, and does not
+require \pkg{dubicube}.
+}
+
+The level that was used is stored in the \code{ci_method} element of the
+returned object and shown when it is printed.}
 
 \item{ci_type}{(Optional) Type of bootstrap confidence intervals to
 calculate. (Default: \code{"perc"}). Supported options are:
@@ -61,10 +68,11 @@ confidence intervals (\code{ll} and \code{ul} columns), should they
 be replaced? (Default: TRUE)}
 
 \item{boot_args}{(Optional) Named list of additional arguments passed to
-\code{dubicube::bootstrap_cube()}. (Default: \code{list()})}
+\code{dubicube::bootstrap_cube()} (cube level only). (Default: \code{list()})}
 
 \item{ci_args}{(Optional) Named list of additional arguments passed to
-\code{dubicube::calculate_bootstrap_ci()}. (Default: \code{list()})}
+\code{dubicube::calculate_bootstrap_ci()} (cube level only).
+(Default: \code{list()})}
 
 \item{seed}{(Optional) Integer. Random seed for bootstrapping. (Default: 123)}
 
@@ -91,8 +99,11 @@ calculated values), allowing for advanced transformations during the
 CI calculation process.
 }
 \details{
-The function acts as a bridge to the \pkg{dubicube} package to calculate
-bootstrap confidence intervals.
+For cube-level bootstrapping, the function acts as a bridge to the
+\pkg{dubicube} package (Langeraert et al.), which is developed alongside
+\pkg{b3gbi} within the B-Cubed project. \pkg{dubicube} is not on CRAN; it
+can be installed from R-universe with
+\code{install.packages("dubicube", repos = c("https://b-cubed-eu.r-universe.dev", "https://cloud.r-project.org"))}.
 \subsection{Indicator-specific defaults}{
 
 Depending on the indicator, default settings are internally applied when
@@ -208,5 +219,5 @@ plot(ts_occ_ci)
 
 }
 \seealso{
-\code{\link[dubicube:bootstrap_cube]{dubicube::bootstrap_cube()}}, \code{\link[dubicube:calculate_bootstrap_ci]{dubicube::calculate_bootstrap_ci()}}
+\code{dubicube::bootstrap_cube()}, \code{dubicube::calculate_bootstrap_ci()}
 }
