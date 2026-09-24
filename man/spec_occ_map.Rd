@@ -110,7 +110,7 @@ although not an indicator when calculated in isolation.
 
 }}
 \examples{
-\dontrun{
+\donttest{
 so_map <- spec_occ_map(example_cube_1,
   level = "country",
   region = "Denmark", include_ocean = FALSE

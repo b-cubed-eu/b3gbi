@@ -35,3 +35,5 @@ test-indicator_formulas.R
 ^paper\.md$
 ^paper\.bib$
 ^FAIR_MAPPING\.md$
+^cran-comments\.md$
+^CRAN-SUBMISSION$

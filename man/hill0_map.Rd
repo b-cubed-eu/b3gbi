@@ -203,27 +203,27 @@ Another way to estimate species richness is to standardise by coverage. The iNEX
 
 }}
 \examples{
-\dontrun{
+\donttest{
 h0_map <- hill0_map(example_cube_1, level = "country", region = "Denmark")
 plot(h0_map)
 }
-\dontrun{
+\donttest{
 h0_ts <- hill0_ts(example_cube_1, first_year = 1985)
 plot(h0_ts)
 }
-\dontrun{
+\donttest{
 h1_map <- hill1_map(example_cube_1, level = "country", region = "Denmark")
 plot(h1_map)
 }
-\dontrun{
+\donttest{
 h1_ts <- hill1_ts(example_cube_1, first_year = 1985)
 plot(h1_ts)
 }
-\dontrun{
+\donttest{
 h2_map <- hill2_map(example_cube_1, level = "country", region = "Denmark")
 plot(h2_map)
 }
-\dontrun{
+\donttest{
 h2_ts <- hill2_ts(example_cube_1, first_year = 1985)
 plot(h2_ts)
 }

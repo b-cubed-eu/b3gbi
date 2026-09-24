@@ -108,14 +108,14 @@ interpreting the results of calculated indicators.
 
 }}
 \examples{
-\dontrun{
+\donttest{
 to_map <- total_occ_map(example_cube_1,
   level = "country",
   region = "Denmark"
 )
 plot(to_map)
 }
-\dontrun{
+\donttest{
 to_ts <- total_occ_ts(example_cube_1, first_year = 1985)
 plot(to_ts)
 }

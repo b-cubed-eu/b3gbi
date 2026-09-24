@@ -155,6 +155,7 @@ prepares the data, creates a grid, calculates indicators, and formats the
 output into an appropriate S3 object ('indicator_map' or 'indicator_ts').
 }
 \examples{
+\donttest{
 diversity_map <- compute_indicator_workflow(example_cube_1,
   type = "obs_richness",
   dim_type = "map",
@@ -162,5 +163,6 @@ diversity_map <- compute_indicator_workflow(example_cube_1,
   region = "Denmark"
 )
 diversity_map
+}
 
 }

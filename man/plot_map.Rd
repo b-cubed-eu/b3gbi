@@ -160,6 +160,7 @@ single-species indicators, use the \code{plot_species_map()} function
 instead.
 }
 \examples{
+\donttest{
 evenness_map <- pielou_evenness_map(example_cube_1,
   level = "country",
   region = "Denmark"
@@ -169,5 +170,6 @@ plot_map(
   title = "Map of Species Evenness in Denmark",
   legend_title = "Evenness"
 )
+}
 
 }

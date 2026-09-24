@@ -10,10 +10,12 @@
 #'  be called by the 'compute_indicator_workflow' function.
 #' @param ... Additional arguments passed to specific calc_ci functions.
 #' @examples
-#' \dontrun{
-#' # Note: calc_ci is an internal function called automatically during indicator calculation
-#' cube_path <- system.file("extdata", "denmark_mammals_cube_eea.csv", package = "b3gbi")
-#' cube <- process_cube(cube_path)
+#' \donttest{
+#' # calc_ci() is called automatically when confidence intervals are requested
+#' # during indicator calculation (or by add_ci(bootstrap_level = "indicator"))
+#' occ_ts <- total_occ_ts(example_cube_1, first_year = 2000,
+#'                        ci_type = "perc", num_bootstrap = 100)
+#' head(occ_ts$data)
 #' }
 #' @return A data frame containing indicator values with calculated lower (`ll`) and upper (`ul`) confidence bounds.
 #' @export

@@ -1,4 +1,5 @@
 test_that("get_ne_data retrieves map data correctly", {
+  skip_on_cran()
   # Use real get_ne_data for this test only
   Sys.unsetenv("B3GBI_TESTING")
   on.exit(Sys.setenv(B3GBI_TESTING = "TRUE"))

@@ -87,6 +87,7 @@
 #' Can be customized using ggplot2 functions.
 #'
 #' @examples
+#' \donttest{
 #' evenness_map <- pielou_evenness_map(example_cube_1,
 #'   level = "country",
 #'   region = "Denmark"
@@ -96,6 +97,7 @@
 #'   title = "Map of Species Evenness in Denmark",
 #'   legend_title = "Evenness"
 #' )
+#' }
 #'
 #' @export
 plot_map <- function(x,

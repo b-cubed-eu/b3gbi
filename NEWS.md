@@ -1,5 +1,12 @@
 # b3gbi 1.0.1.9000 (development version)
 
+## Preparing for CRAN
+
+* **Fixed hexagonal (ISEA3H) grids on systems whose PROJ cannot invert `+proj=isea`** (PROJ < 9.5 and many Windows builds) when `dggridR` is not installed. The native fallback only checked the forward transformation, so the hexagons could not be transformed back and maps came out empty ("No spatial intersection between map data and grid"). It now checks the round trip and uses a local Lambert azimuthal equal-area projection when needed.
+* DESCRIPTION: rewritten package description; removed the `Remotes` field (all non-CRAN packages are optional and listed in `Additional_repositories`).
+* Examples: all examples now run (slower map examples in `\donttest{}`), except the taxonomic distinctness examples, which need the GBIF API. Several examples were fixed (`prepare_indicator_bootstrap()`, `calc_ci()`, `replace_na()`, `sum_by_taxon()`).
+* Tests: slow tests are skipped on CRAN (total test time about 1.5 minutes), and `plot_mv()` tests are skipped when `mapview` is not installed.
+
 ## Optional dubicube (cube-level bootstrapping)
 
 * **`dubicube` moved from Imports to Suggests.** b3gbi can now be installed without packages from outside CRAN. Cube-level bootstrapping still uses `dubicube`, which remains the recommended way to calculate confidence intervals.

@@ -11,10 +11,8 @@
 #' @return A tibble with columns \code{total_observations} and the specified \code{rank}.
 #'
 #' @examples
-#' \dontrun{
-#' # Assuming 'cube' is a processed_cube object
-#' family_sums <- sum_by_taxon(cube, "family")
-#' }
+#' family_sums <- sum_by_taxon(example_cube_1, "family")
+#' head(family_sums)
 #'
 #' @export
 sum_by_taxon <- function(object, rank) {

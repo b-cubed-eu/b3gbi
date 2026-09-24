@@ -133,11 +133,11 @@ In this package, completeness is calculated using the \if{html}{\out{<code>}}iNE
 
 }}
 \examples{
-\dontrun{
+\donttest{
 comp_map <- completeness_map(example_cube_1)
 plot(comp_map)
 }
-\dontrun{
+\donttest{
 comp_ts <- completeness_ts(example_cube_1, first_year = 1985)
 plot(comp_ts)
 }

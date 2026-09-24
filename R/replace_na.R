@@ -12,9 +12,10 @@
 #'  replaced by zero.
 #'
 #' @examples
-#' \dontrun{
-#' # Assuming 'result' is an indicator_map or indicator_ts object
-#' result_filled <- replace_na(result)
+#' \donttest{
+#' # Evenness is NA in cells with fewer than two species
+#' pe_map <- pielou_evenness_map(example_cube_1)
+#' pe_map_filled <- replace_na(pe_map)
 #' }
 #'
 #' @export

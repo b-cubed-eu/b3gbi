@@ -49,7 +49,7 @@
 #' @describeIn obs_richness_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' or_map <- obs_richness_map(example_cube_1,
 #'   level = "country",
 #'   region = "Denmark"
@@ -69,7 +69,7 @@ obs_richness_map <- function(data, ...) {
 #' @describeIn obs_richness_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' or_ts <- obs_richness_ts(example_cube_1, first_year = 1985)
 #' plot(or_ts)
 #' }
@@ -108,7 +108,7 @@ obs_richness_ts <- function(data, ...) {
 #' @describeIn total_occ_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' to_map <- total_occ_map(example_cube_1,
 #'   level = "country",
 #'   region = "Denmark"
@@ -128,7 +128,7 @@ total_occ_map <- function(data, ...) {
 #' @describeIn total_occ_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' to_ts <- total_occ_ts(example_cube_1, first_year = 1985)
 #' plot(to_ts)
 #' }
@@ -226,7 +226,7 @@ total_occ_ts <- function(data, ...) {
 #' @describeIn pielou_evenness_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' pe_map <- pielou_evenness_map(example_cube_1,
 #'   level = "country",
 #'   region = "Denmark"
@@ -246,7 +246,7 @@ pielou_evenness_map <- function(data, ...) {
 #' @describeIn pielou_evenness_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' pe_ts <- pielou_evenness_ts(example_cube_1, first_year = 1985)
 #' plot(pe_ts)
 #' }
@@ -263,7 +263,7 @@ pielou_evenness_ts <- function(data, ...) {
 #' @describeIn pielou_evenness_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' we_map <- williams_evenness_map(example_cube_1,
 #'   level = "country",
 #'   region = "Denmark"
@@ -282,7 +282,7 @@ williams_evenness_map <- function(data, ...) {
 #' @describeIn pielou_evenness_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' we_ts <- williams_evenness_ts(example_cube_1, first_year = 1985)
 #' plot(we_ts)
 #' }
@@ -370,7 +370,7 @@ williams_evenness_ts <- function(data, ...) {
 #' @describeIn area_rarity_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' arr_map <- area_rarity_map(example_cube_1,
 #'   level = "country",
 #'   region = "Denmark"
@@ -390,7 +390,7 @@ area_rarity_map <- function(data, ...) {
 #' @describeIn area_rarity_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' arr_ts <- area_rarity_ts(example_cube_1, first_year = 1985)
 #' plot(arr_ts)
 #' }
@@ -408,7 +408,7 @@ area_rarity_ts <- function(data, ...) {
 #' @describeIn area_rarity_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' abr_map <- ab_rarity_map(example_cube_1,
 #'   level = "country",
 #'   region = "Denmark"
@@ -428,7 +428,7 @@ ab_rarity_map <- function(data, ...) {
 #' @describeIn area_rarity_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' abr_ts <- ab_rarity_ts(example_cube_1, first_year = 1985)
 #' plot(abr_ts)
 #' }
@@ -574,7 +574,7 @@ completeness_details <- paste0(
 #' @describeIn completeness_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' comp_map <- completeness_map(example_cube_1)
 #' plot(comp_map)
 #' }
@@ -601,7 +601,7 @@ completeness_map <- function(data,
 #' @describeIn completeness_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' comp_ts <- completeness_ts(example_cube_1, first_year = 1985)
 #' plot(comp_ts)
 #' }
@@ -689,7 +689,7 @@ completeness_ts <- function(data,
 #' @describeIn hill0_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' h0_map <- hill0_map(example_cube_1, level = "country", region = "Denmark")
 #' plot(h0_map)
 #' }
@@ -720,7 +720,7 @@ hill0_map <- function(data,
 #'
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' h0_ts <- hill0_ts(example_cube_1, first_year = 1985)
 #' plot(h0_ts)
 #' }
@@ -756,7 +756,7 @@ hill0_ts <- function(data,
 #' @describeIn hill0_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' h1_map <- hill1_map(example_cube_1, level = "country", region = "Denmark")
 #' plot(h1_map)
 #' }
@@ -786,7 +786,7 @@ hill1_map <- function(data,
 #' @describeIn hill0_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' h1_ts <- hill1_ts(example_cube_1, first_year = 1985)
 #' plot(h1_ts)
 #' }
@@ -822,7 +822,7 @@ hill1_ts <- function(data,
 #' @describeIn hill0_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' h2_map <- hill2_map(example_cube_1, level = "country", region = "Denmark")
 #' plot(h2_map)
 #' }
@@ -851,7 +851,7 @@ hill2_map <- function(data,
 #' @describeIn hill0_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' h2_ts <- hill2_ts(example_cube_1, first_year = 1985)
 #' plot(h2_ts)
 #' }
@@ -924,7 +924,7 @@ hill2_ts <- function(data,
 #'  containing the calculated indicator values and metadata.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' cr_ts <- cum_richness_ts(example_cube_1, first_year = 1985)
 #' plot(cr_ts)
 #' }
@@ -965,7 +965,7 @@ cum_richness_ts <- function(data, ...) {
 #' @describeIn newness_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' n_map <- newness_map(example_cube_1, level = "country", region = "Denmark")
 #' plot(n_map)
 #' }
@@ -982,7 +982,7 @@ newness_map <- function(data, ...) {
 #' @describeIn newness_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' n_ts <- newness_ts(example_cube_1, first_year = 1985)
 #' plot(n_ts)
 #' }
@@ -1018,7 +1018,7 @@ newness_ts <- function(data, ...) {
 #' @describeIn occ_density_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' od_map <- occ_density_map(example_cube_1,
 #'   level = "country",
 #'   region = "Denmark"
@@ -1038,7 +1038,7 @@ occ_density_map <- function(data, ...) {
 #' @describeIn occ_density_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' od_ts <- occ_density_ts(example_cube_1, first_year = 1985)
 #' plot(od_ts)
 #' }
@@ -1078,7 +1078,7 @@ occ_density_ts <- function(data, ...) {
 #' @describeIn spec_richness_density_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' srd_map <- spec_richness_density_map(example_cube_1,
 #'   level = "country",
 #'   region = "Denmark"
@@ -1098,7 +1098,7 @@ spec_richness_density_map <- function(data, ...) {
 #' @describeIn spec_richness_density_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' srd_ts <- spec_richness_density_ts(example_cube_1, first_year = 1985)
 #' plot(srd_ts)
 #' }
@@ -1138,7 +1138,7 @@ spec_richness_density_ts <- function(data, ...) {
 #' @describeIn spec_occ_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' so_map <- spec_occ_map(example_cube_1,
 #'   level = "country",
 #'   region = "Denmark", include_ocean = FALSE
@@ -1187,11 +1187,13 @@ spec_occ_ts <- function(data, ...) {
 #' @describeIn spec_range_map
 #'
 #' @examples
+#' \donttest{
 #' sr_map <- spec_range_map(example_cube_1,
 #'   level = "country",
 #'   region = "Denmark", include_ocean = FALSE
 #' )
 #' plot(sr_map, c(2440728, 4265185))
+#' }
 #'
 #' @export
 spec_range_map <- function(data, ...) {
@@ -1205,7 +1207,7 @@ spec_range_map <- function(data, ...) {
 #' @describeIn spec_range_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' sr_ts <- spec_range_ts(example_cube_1, first_year = 1985)
 #' plot(sr_ts, c(2440728, 4265185))
 #' }
@@ -1309,7 +1311,7 @@ spec_range_ts <- function(data, ...) {
 #'  gridded map.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Type 0: proportion of all grid cells
 #' ro_map <- relative_occupancy_map(example_cube_1,
 #'   level = "country", region = "Denmark", occ_type = 0
@@ -1344,7 +1346,7 @@ relative_occupancy_map <- function(data, occ_type = 0, ...) {
 #'  series.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Type 0: proportion of all grid cells (default)
 #' ro_ts <- relative_occupancy_ts(example_cube_1, occ_type = 0)
 #' plot(ro_ts, c(2440728, 4265185))

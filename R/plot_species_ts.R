@@ -27,6 +27,7 @@
 #'  plot(s). Can be customized using ggplot2 functions.
 #'
 #' @examples
+#' \donttest{
 #' spec_occ_ts_mammals_denmark <- spec_occ_ts(example_cube_1,
 #'                                         level = "country",
 #'                                         region = "Denmark")
@@ -38,6 +39,7 @@
 #'         linecolour = "thistle",
 #'         trendlinecolour = "forestgreen",
 #'         envelopecolour = "lightgreen")
+#' }
 #' @export
 plot_species_ts <- function(x,
                             species,

@@ -19,7 +19,7 @@ Converts MGRS coordinates to a single sf bounding box in a
 suitable projected CRS, handling data that spans multiple UTM zones.
 }
 \examples{
-\dontrun{
+\donttest{
 df <- data.frame(
   cellCode = c("32UUC", "32UUD"),
   xcoord = c(500000, 501000),

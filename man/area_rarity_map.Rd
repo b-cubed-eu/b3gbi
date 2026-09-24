@@ -166,25 +166,25 @@ grid cell and the yearly value is the mean of these cell sums.
 
 }}
 \examples{
-\dontrun{
+\donttest{
 arr_map <- area_rarity_map(example_cube_1,
   level = "country",
   region = "Denmark"
 )
 plot(arr_map)
 }
-\dontrun{
+\donttest{
 arr_ts <- area_rarity_ts(example_cube_1, first_year = 1985)
 plot(arr_ts)
 }
-\dontrun{
+\donttest{
 abr_map <- ab_rarity_map(example_cube_1,
   level = "country",
   region = "Denmark"
 )
 plot(abr_map)
 }
-\dontrun{
+\donttest{
 abr_ts <- ab_rarity_ts(example_cube_1, first_year = 1985)
 plot(abr_ts)
 }

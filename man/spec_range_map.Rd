@@ -101,13 +101,15 @@ series.
 
 }}
 \examples{
+\donttest{
 sr_map <- spec_range_map(example_cube_1,
   level = "country",
   region = "Denmark", include_ocean = FALSE
 )
 plot(sr_map, c(2440728, 4265185))
+}
 
-\dontrun{
+\donttest{
 sr_ts <- spec_range_ts(example_cube_1, first_year = 1985)
 plot(sr_ts, c(2440728, 4265185))
 }

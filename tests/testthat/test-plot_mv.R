@@ -2,6 +2,8 @@
 # 1. SETUP & MOCKS (Run this block first to enable testing)
 # ==============================================================================
 
+skip_if_not_installed("mapview")
+skip_if_not_installed("mockery")
 library(mockery)
 
 create_dummy_map <- function() {

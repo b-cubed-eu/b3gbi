@@ -33,12 +33,14 @@
 #' @importFrom utils modifyList
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
+#' ind <- total_occ_ts(example_cube_1, first_year = 2000)
 #' params <- prepare_indicator_bootstrap(
-#'   indicator = indicator,
-#'   num_bootstrap = 1000,
-#'   ci_type = "bca"
+#'   indicator = ind,
+#'   num_bootstrap = 100,
+#'   ci_type = "perc"
 #' )
+#' names(params$bootstrap_params)
 #' }
 #'
 #' @export

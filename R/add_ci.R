@@ -159,7 +159,7 @@
 #' @seealso `dubicube::bootstrap_cube()`, `dubicube::calculate_bootstrap_ci()`
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Load sample cube data
 #' cube_path <- system.file("extdata", "denmark_mammals_cube_eea.csv", package = "b3gbi")
 #' cube <- process_cube(cube_path)

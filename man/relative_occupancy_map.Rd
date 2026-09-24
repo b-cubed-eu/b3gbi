@@ -178,7 +178,7 @@ series.
 
 }}
 \examples{
-\dontrun{
+\donttest{
 # Type 0: proportion of all grid cells
 ro_map <- relative_occupancy_map(example_cube_1,
   level = "country", region = "Denmark", occ_type = 0
@@ -195,7 +195,7 @@ ro_map_2 <- relative_occupancy_map(example_cube_1,
   level = "country", region = "Denmark", occ_type = 2
 )
 }
-\dontrun{
+\donttest{
 # Type 0: proportion of all grid cells (default)
 ro_ts <- relative_occupancy_ts(example_cube_1, occ_type = 0)
 plot(ro_ts, c(2440728, 4265185))

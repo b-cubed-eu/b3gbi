@@ -102,6 +102,7 @@
 #' @return An S3 object containing the calculated indicator values and metadata.
 #'
 #' @examples
+#' \donttest{
 #' diversity_map <- compute_indicator_workflow(example_cube_1,
 #'   type = "obs_richness",
 #'   dim_type = "map",
@@ -109,6 +110,7 @@
 #'   region = "Denmark"
 #' )
 #' diversity_map
+#' }
 #'
 #' @export
 compute_indicator_workflow <- function(data,

@@ -23,15 +23,13 @@
 #'   \item{ycoord}{North-South coordinate on the eqdgc grid}
 #'   \item{resolution}{grid cell size}
 #' }
-#' @examples{
-#'   \dontrun{
-#'     # Basic example of how to use the dataset
-#'     denmark_mammals_or_map <- obs_richness_map(example_cube_1,
-#'                                                level = "country",
-#'                                                region = "Denmark")
-#'     plot(denmark_mammals_or_map,
-#'          title = "Mammals in Denmark (1862-2024): Observed Species Richness")
-#'   }
+#' @examples
+#' \donttest{
+#' denmark_mammals_or_map <- obs_richness_map(example_cube_1,
+#'                                            level = "country",
+#'                                            region = "Denmark")
+#' plot(denmark_mammals_or_map,
+#'      title = "Mammals in Denmark (1862-2024): Observed Species Richness")
 #' }
 #' @source \url{https://doi.org/10.15468/dl.5mb887}
 "example_cube_1"
@@ -47,7 +45,7 @@
 #' \describe{
 #'   \item{year}{a year the indicator was calculated for}
 #'   \item{diversity_val}{calculated richness value for the year}
-#' }ed
+#' }
 #' @source \url{https://doi.org/10.15468/dl.5mb887}
 "example_indicator_ts1"
 

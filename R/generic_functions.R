@@ -40,9 +40,11 @@ calc_ts <- function(x, ...) {
 #'  indicator values and metadata.
 #'
 #' @examples
+#' \donttest{
 #' observed_richness_map <- obs_richness_map(example_cube_1, level = "country",
 #'                                           region = "Denmark")
 #' plot(observed_richness_map)
+#' }
 #'
 #' @export
 calc_map <- function(x, ...) {

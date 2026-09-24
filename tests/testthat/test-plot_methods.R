@@ -400,6 +400,7 @@ test_that("plot_ts handles title and axis label management", {
 })
 
 test_that("plot_ts correctly applies smoothing and confidence intervals", {
+  skip_on_cran()
   data(example_indicator_ts2)
 
   # With smoothing
@@ -856,6 +857,7 @@ test_that("plot.relative_occupancy handles valid input and class", {
 })
 
 test_that("plot_species_map and plot_species_ts handle missing patchwork package", {
+  skip_on_cran()
   testthat::skip_if_not_installed("mockr")
   
   mockr::with_mock(

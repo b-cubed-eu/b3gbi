@@ -138,6 +138,7 @@ test_that("ts occ_type 1 values >= occ_type 0 for same year/species", {
 })
 
 test_that("ts occ_type 0 matches previous default behaviour", {
+  skip_on_cran()
   # Type 0 should give identical results to the old un-typed default since
   # it uses the same total_num_cells denominator.
   skip_on_cran()

@@ -204,7 +204,7 @@ internally using the \code{iNEXT} package.
 }
 }
 \examples{
-\dontrun{
+\donttest{
 # Load sample cube data
 cube_path <- system.file("extdata", "denmark_mammals_cube_eea.csv", package = "b3gbi")
 cube <- process_cube(cube_path)

@@ -85,7 +85,7 @@
 #' @return A tibble containing the processed GBIF occurrence data.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' cube_name <- system.file("extdata", "denmark_mammals_cube_eqdgc.csv",
 #'                          package = "b3gbi")
 #' denmark_example_cube <- process_cube(cube_name)

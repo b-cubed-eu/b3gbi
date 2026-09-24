@@ -130,14 +130,14 @@ detectability of each species.
 
 }}
 \examples{
-\dontrun{
+\donttest{
 or_map <- obs_richness_map(example_cube_1,
   level = "country",
   region = "Denmark"
 )
 plot(or_map)
 }
-\dontrun{
+\donttest{
 or_ts <- obs_richness_ts(example_cube_1, first_year = 1985)
 plot(or_ts)
 }

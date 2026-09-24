@@ -10,7 +10,7 @@
 #' @return An sf object with the geometry correctly defined for each UTM zone.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' df <- data.frame(
 #'   xcoord = c(500000, 501000),
 #'   ycoord = c(5600000, 5601000),

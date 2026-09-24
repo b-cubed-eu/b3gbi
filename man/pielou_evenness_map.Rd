@@ -172,25 +172,25 @@ is the proportion of occurrences represented by species i.
 
 }}
 \examples{
-\dontrun{
+\donttest{
 pe_map <- pielou_evenness_map(example_cube_1,
   level = "country",
   region = "Denmark"
 )
 plot(pe_map)
 }
-\dontrun{
+\donttest{
 pe_ts <- pielou_evenness_ts(example_cube_1, first_year = 1985)
 plot(pe_ts)
 }
-\dontrun{
+\donttest{
 we_map <- williams_evenness_map(example_cube_1,
   level = "country",
   region = "Denmark"
 )
 plot(we_map)
 }
-\dontrun{
+\donttest{
 we_ts <- williams_evenness_ts(example_cube_1, first_year = 1985)
 plot(we_ts)
 }

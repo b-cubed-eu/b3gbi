@@ -182,10 +182,15 @@ create_isea3h_grid <- function(df, projection) {
     isea_crs <- "+proj=isea"
     has_isea <- tryCatch(
       {
-        # Test if transform works
-        test_pt <- sf::st_sfc(sf::st_point(c(0, 0)), crs = 4326)
-        sf::st_transform(test_pt, crs = isea_crs)
-        TRUE
+        # Test that the transform works in both directions: the hexagons are
+        # built in ISEA and transformed back, and older PROJ versions (< 9.5)
+        # have no inverse for +proj=isea
+        test_pt <- sf::st_sfc(sf::st_point(c(10, 50)), crs = 4326)
+        fwd <- sf::st_transform(test_pt, crs = isea_crs)
+        back <- suppressWarnings(sf::st_transform(fwd, crs = 4326))
+        xy <- sf::st_coordinates(back)
+        all(is.finite(xy)) && abs(xy[1, 1] - 10) < 1e-6 &&
+          abs(xy[1, 2] - 50) < 1e-6
       },
       error = function(e) FALSE
     )
@@ -199,7 +204,7 @@ create_isea3h_grid <- function(df, projection) {
         " +lon_0=", round(clon, 2),
         " +datum=WGS84 +units=m"
       )
-      message("System PROJ lacks '+proj=isea'. Using local LAEA fallback.")
+      message("System PROJ cannot convert to and from '+proj=isea'. Using local LAEA fallback.")
     }
 
     centroids_sf <- sf::st_as_sf(df_unique,
