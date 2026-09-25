@@ -31,7 +31,7 @@
 #' plot(denmark_mammals_or_map,
 #'      title = "Mammals in Denmark (1862-2024): Observed Species Richness")
 #' }
-#' @source \url{https://doi.org/10.15468/dl.5mb887}
+#' @source \doi{10.15468/dl.5mb887}
 "example_cube_1"
 
 
@@ -46,7 +46,7 @@
 #'   \item{year}{a year the indicator was calculated for}
 #'   \item{diversity_val}{calculated richness value for the year}
 #' }
-#' @source \url{https://doi.org/10.15468/dl.5mb887}
+#' @source \doi{10.15468/dl.5mb887}
 "example_indicator_ts1"
 
 #' Time Series of Cumulative Species Richness for Bryophytes in South Africa
@@ -61,7 +61,7 @@
 #'   \item{year}{a year the indicator was calculated for}
 #'   \item{diversity_val}{calculated richness value for the year}
 #' }
-#' @source \url{https://doi.org/10.15468/dl.yfzgja}
+#' @source \doi{10.15468/dl.yfzgja}
 "example_indicator_ts2"
 
 #' Map of Observed Species Richness for Mammals in Denmark
@@ -79,7 +79,7 @@
 #'  \item{diversity_val}{calculated richness value for the cell}
 #'  \item{geometry}{geometry of the map cell}
 #' }
-#' @source \url{https://doi.org/10.15468/dl.5mb887}
+#' @source \doi{10.15468/dl.5mb887}
 "example_indicator_map1"
 
 #' Indicators Available for Use in the Package

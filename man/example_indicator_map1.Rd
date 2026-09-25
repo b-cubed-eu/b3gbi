@@ -17,7 +17,7 @@ Degree (eqdgc) grid format}
 }
 }
 \source{
-\url{https://doi.org/10.15468/dl.5mb887}
+\doi{10.15468/dl.5mb887}
 }
 \usage{
 example_indicator_map1

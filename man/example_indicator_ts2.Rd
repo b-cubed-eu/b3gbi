@@ -13,7 +13,7 @@ variables, as well as metadata
 }
 }
 \source{
-\url{https://doi.org/10.15468/dl.yfzgja}
+\doi{10.15468/dl.yfzgja}
 }
 \usage{
 example_indicator_ts2
