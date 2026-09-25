@@ -46,12 +46,16 @@ aggregate_data_to_coarser_grid <- function(data_assigned, clipped_grid,
     return(list(data = data_assigned, grid = clipped_grid))
   }
 
-  # Keep only the largest overlap for each native cell. The areas are only
-  # compared with each other, so they are computed with s2 still switched off:
-  # with s2, tiny degenerate overlap slivers (e.g. on EQDGC grids) are invalid
-  # and make st_area() fail.
-  overlaps$ov_area <- as.numeric(sf::st_area(overlaps))
   suppressMessages(sf::sf_use_s2(original_s2))
+
+  # Keep only the largest overlap for each native cell. The areas are only
+  # compared among the pieces of the same native cell, so planar areas in the
+  # grid's own units are sufficient. Dropping the CRS avoids s2 (which fails on
+  # tiny degenerate slivers, e.g. on EQDGC grids) and lwgeom (which sf needs
+  # for ellipsoidal areas when s2 is off).
+  overlaps$ov_area <- as.numeric(
+    sf::st_area(sf::st_set_crs(sf::st_geometry(overlaps), NA))
+  )
   overlaps <- overlaps[order(overlaps$orig_cellid, -overlaps$ov_area), ]
   overlaps <- overlaps[!duplicated(overlaps$orig_cellid), ]
 

@@ -152,11 +152,10 @@ test_that("plot_mv passes ... to mapview::mapview()", {
   skip_if_not_installed("RColorBrewer")
   captured <- NULL
   local_mocked_bindings(
-    mapview = function(...) {
+    call_mapview = function(...) {
       captured <<- list(...)
       invisible(NULL)
-    },
-    .package = "mapview"
+    }
   )
   plot_mv(example_indicator_map1, legend = FALSE)
   expect_false(captured$legend)
