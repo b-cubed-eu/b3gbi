@@ -2,6 +2,7 @@
 # Verifies that intersect_grid_with_polygon is used for all grid types
 
 test_that("total_occ_map clips to region boundary for EQDGC", {
+  skip_on_cran()
   result <- total_occ_map(
     example_cube_1,
     level = "country",
@@ -35,6 +36,7 @@ test_that("total_occ_map works at cube level without clipping", {
 })
 
 test_that("obs_richness_map clips to region boundary", {
+  skip_on_cran()
 
   result <- obs_richness_map(
     example_cube_1,
@@ -53,6 +55,7 @@ test_that("obs_richness_map clips to region boundary", {
 })
 
 test_that("total_occ_map with cell_size aggregates correctly", {
+  skip_on_cran()
 
   result_native <- total_occ_map(
     example_cube_1,
@@ -77,6 +80,7 @@ test_that("total_occ_map with cell_size aggregates correctly", {
 })
 
 test_that("intersect_grid_with_polygon produces clipped cells", {
+  skip_on_cran()
   result <- total_occ_map(
     example_cube_1,
     level = "country",

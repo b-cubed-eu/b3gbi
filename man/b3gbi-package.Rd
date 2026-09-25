@@ -8,7 +8,7 @@
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Calculate general biodiversity indicators from GBIF data cubes. Includes many common indicators such as species richness, evenness, and completeness, which can be calculated over time (trends) or space (maps). Now also supports retaining original cell IDs.
+Calculate general biodiversity indicators from species occurrence cubes, such as those produced by the 'GBIF' (Global Biodiversity Information Facility) occurrence cube service \url{https://techdocs.gbif.org/en/data-use/data-cubes}. Indicators include observed and coverage-based rarefied species richness and Hill numbers (via 'iNEXT'), evenness, rarity, taxonomic distinctness, occupancy, turnover and sample completeness, and can be calculated over time (time series) or space (maps), with bootstrap confidence intervals. Cubes using the EEA reference grid, MGRS, the extended quarter-degree grid (EQDGC) or ISEA3H grids are supported. For details see Dove (2026) \doi{10.21105/joss.10963}.
 }
 \seealso{
 Useful links:
@@ -27,7 +27,7 @@ Other contributors:
   \item Ward Langeraert (\href{https://orcid.org/0000-0002-5900-8109}{ORCID}) [contributor]
   \item Peter Desmet (\href{https://orcid.org/0000-0002-8442-8025}{ORCID}) [contributor]
   \item University of Giessen [copyright holder]
-  \item European Union [funder]
+  \item European Union (Horizon Europe Research and Innovation Programme, grant 101059592) [funder]
 }
 
 }

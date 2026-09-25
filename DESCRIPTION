@@ -1,19 +1,27 @@
 Type: Package
 Package: b3gbi
 Title: General Biodiversity Indicators for Biodiversity Data Cubes
-Version: 1.0.1
+Version: 1.1.0
 Authors@R: c(
     person("Shawn", "Dove", email = "Shawn.Dove@allzool.bio.uni-giessen.de",
            role = c("aut", "cre"), comment = c(ORCID = "0000-0001-9465-5638")),
     person("Ward", "Langeraert", role = "ctb", comment = c(ORCID = "0000-0002-5900-8109")),
     person("Peter", "Desmet", role = "ctb", comment = c(ORCID = "0000-0002-8442-8025")),
     person("University of Giessen", role = "cph"),
-    person("European Union", role = "fnd")
+    person("European Union", role = "fnd",
+           comment = "Horizon Europe Research and Innovation Programme, grant 101059592")
   )
-Description: Calculate general biodiversity indicators from GBIF data
-    cubes. Includes many common indicators such as species richness,
-    evenness, and completeness, which can be calculated over time (trends)
-    or space (maps). Now also supports retaining original cell IDs.
+Description: Calculate general biodiversity indicators from species
+    occurrence cubes, such as those produced by the 'GBIF' (Global
+    Biodiversity Information Facility) occurrence cube service
+    <https://techdocs.gbif.org/en/data-use/data-cubes>. Indicators include
+    observed and coverage-based rarefied species richness and Hill numbers
+    (via 'iNEXT'), evenness, rarity, taxonomic distinctness, occupancy,
+    turnover and sample completeness, and can be calculated over time (time
+    series) or space (maps), with bootstrap confidence intervals. Cubes using
+    the EEA reference grid, MGRS, the extended quarter-degree grid (EQDGC) or
+    ISEA3H grids are supported. For details see Dove (2026)
+    <doi:10.21105/joss.10963>.
 License: MIT + file LICENSE
 URL: https://github.com/b-cubed-eu/b3gbi,
     https://b-cubed-eu.github.io/b3gbi/
@@ -22,12 +30,10 @@ Depends:
 Imports:
     boot,
     dplyr,
-    dubicube,
     ggplot2,
     iNEXT,
     labeling,
     magrittr,
-    mgrs (>= 0.2.4),
     permute,
     purrr,
     readr,
@@ -42,21 +48,24 @@ Imports:
     units
 Suggests: 
     bit64,
-    bold (>= 1.3.0),
     dggridR,
+    dubicube,
     knitr,
     mapview,
     mockery,
     mockr,
     patchwork,
     RColorBrewer,
+    rgbif (>= 3.7.0),
     rmarkdown,
     rnaturalearthdata,
     rnaturalearthhires,
-    taxize (>= 0.9.99),
     testthat (>= 3.0.0),
     withr
 Config/testthat/edition: 3
+Config/Needs/check: b-cubed-eu/dubicube, ropensci/rnaturalearthhires
+Config/Needs/coverage: b-cubed-eu/dubicube, ropensci/rnaturalearthhires
+Config/Needs/website: b-cubed-eu/dubicube, ropensci/rnaturalearthhires
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
@@ -64,14 +73,4 @@ RoxygenNote: 7.3.3
 VignetteBuilder: knitr, rmarkdown
 Additional_repositories: https://b-cubed-eu.r-universe.dev,
     https://ropensci.r-universe.dev
-Config/Needs/check: Ironholds/WikidataR, ropensci/wikitaxa
-Remotes: 
-    hrbrmstr/mgrs,
-    ropensci/bold,
-    ropensci/wikitaxa,
-    ropensci/taxize,
-    ropensci/rnaturalearthhires,
-    b-cubed-eu/dubicube
 BugReports: https://github.com/b-cubed-eu/b3gbi/issues
-Funding: This project has received funding from the European Union’s Horizon Europe 
-    Research and Innovation Programme (ID No 101059592).

@@ -49,7 +49,7 @@
 #' @describeIn obs_richness_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' or_map <- obs_richness_map(example_cube_1,
 #'   level = "country",
 #'   region = "Denmark"
@@ -69,7 +69,7 @@ obs_richness_map <- function(data, ...) {
 #' @describeIn obs_richness_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' or_ts <- obs_richness_ts(example_cube_1, first_year = 1985)
 #' plot(or_ts)
 #' }
@@ -108,7 +108,7 @@ obs_richness_ts <- function(data, ...) {
 #' @describeIn total_occ_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' to_map <- total_occ_map(example_cube_1,
 #'   level = "country",
 #'   region = "Denmark"
@@ -128,7 +128,7 @@ total_occ_map <- function(data, ...) {
 #' @describeIn total_occ_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' to_ts <- total_occ_ts(example_cube_1, first_year = 1985)
 #' plot(to_ts)
 #' }
@@ -172,8 +172,10 @@ total_occ_ts <- function(data, ...) {
 #' }{
 #'  E = -Sum from i=1 to S of pi * ln(pi) / ln(S)
 #' }
-#' where S is the number of species and pi is the proportion of occurrences
-#' represented by species i.
+#' where S is the number of species observed in the grid cell (maps) or year
+#' (time series) and pi is the proportion of occurrences represented by
+#' species i. Species that are absent from a cell or year do not count towards
+#' S. Evenness is undefined (NA) when fewer than two species are present.
 #'
 #' ## Williams' evenness
 #'
@@ -200,8 +202,8 @@ total_occ_ts <- function(data, ...) {
 #'   1 - sqrt((S * Sum from i=1 to S of pi^2 - 1) / (S - 1))
 #' }
 #'
-#' where S is the number of species and pi is the proportion of occurrences
-#' represented by species i.
+#' where S is the number of species observed in the grid cell or year and pi
+#' is the proportion of occurrences represented by species i.
 #'
 #' @references
 #' Pielou, E. C. (1966). The measurement of diversity in
@@ -224,7 +226,7 @@ total_occ_ts <- function(data, ...) {
 #' @describeIn pielou_evenness_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' pe_map <- pielou_evenness_map(example_cube_1,
 #'   level = "country",
 #'   region = "Denmark"
@@ -244,7 +246,7 @@ pielou_evenness_map <- function(data, ...) {
 #' @describeIn pielou_evenness_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' pe_ts <- pielou_evenness_ts(example_cube_1, first_year = 1985)
 #' plot(pe_ts)
 #' }
@@ -261,7 +263,7 @@ pielou_evenness_ts <- function(data, ...) {
 #' @describeIn pielou_evenness_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' we_map <- williams_evenness_map(example_cube_1,
 #'   level = "country",
 #'   region = "Denmark"
@@ -280,7 +282,7 @@ williams_evenness_map <- function(data, ...) {
 #' @describeIn pielou_evenness_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' we_ts <- williams_evenness_ts(example_cube_1, first_year = 1985)
 #' plot(we_ts)
 #' }
@@ -323,7 +325,10 @@ williams_evenness_ts <- function(data, ...) {
 #' }
 #'
 #' where S is the number of species and pi is the proportion of occurrences
-#' represented by species i.
+#' represented by species i. For maps, pi is calculated within each grid cell
+#' (over the whole time period). For time series, pi is calculated separately
+#' for each year (species i's occurrences that year divided by all occurrences
+#' that year), and each species present in a year contributes once.
 #'
 #' ## Area-Based Rarity
 #' Area-based rarity is the inverse of occupancy frequency (proportion of grid
@@ -339,6 +344,11 @@ williams_evenness_ts <- function(data, ...) {
 #'
 #' where S is the number of species, N is the total number of occupied grid
 #' cells, and ni is the number of grid cells occupied by species i.
+#'
+#' For maps, N and ni are calculated over the whole time period, and the summed
+#' rarity is reported for each grid cell. For time series, N and ni are
+#' calculated separately for each year; rarity is summed within each occupied
+#' grid cell and the yearly value is the mean of these cell sums.
 #'
 #' @references
 #' Maciel, E. A. (2021). An index for assessing the rare species of a community.
@@ -360,7 +370,7 @@ williams_evenness_ts <- function(data, ...) {
 #' @describeIn area_rarity_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' arr_map <- area_rarity_map(example_cube_1,
 #'   level = "country",
 #'   region = "Denmark"
@@ -380,7 +390,7 @@ area_rarity_map <- function(data, ...) {
 #' @describeIn area_rarity_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' arr_ts <- area_rarity_ts(example_cube_1, first_year = 1985)
 #' plot(arr_ts)
 #' }
@@ -398,7 +408,7 @@ area_rarity_ts <- function(data, ...) {
 #' @describeIn area_rarity_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' abr_map <- ab_rarity_map(example_cube_1,
 #'   level = "country",
 #'   region = "Denmark"
@@ -418,7 +428,7 @@ ab_rarity_map <- function(data, ...) {
 #' @describeIn area_rarity_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' abr_ts <- ab_rarity_ts(example_cube_1, first_year = 1985)
 #' plot(abr_ts)
 #' }
@@ -433,13 +443,12 @@ ab_rarity_ts <- function(data, ...) {
 
 #' @noRd
 hill_diversity_details <- paste0(
-  "<h3>Hill diversity</h3>",
-  "\n\n",
+  "\n\n## Hill diversity\n\n",
   "Hill (1973) introduced the concept of Hill diversity, which assumes ",
   "that the number and relative abundance of species are inseparable ",
   "components of diversity. Hill diversity uses a single equation to ",
   "calculate multiple measures of diversity by varying a single ",
-  "parameter \u2113, which changes the emphasis on rare vs common species ",
+  "parameter \\eqn{\\ell}{l}, which changes the emphasis on rare vs common species ",
   "(Roswell et al., 2019). It represents the mean rarity of sampled ",
   "species, and is calculated as: ",
   "\\deqn{",
@@ -449,25 +458,25 @@ hill_diversity_details <- paste0(
   "  }",
   "where D is diversity, S is the number of species, pi is the proportion ",
   "of individuals belonging to species i, ri is the rarity of species i, ",
-  "and \u2113 determines the rarity scale for the mean. While \u2113 can ",
+  "and \\eqn{\\ell}{l} determines the rarity scale for the mean. While \\eqn{\\ell}{l} can ",
   "theoretically take almost any value, three common measures of diversity ",
   "are special cases: species richness, and modified versions of the ",
   "Shannon and Simpson diversity indices (Roswell et al., 2019). These ",
-  "three measures occur when \u2113 takes the value of 1, 0 (or near-zero, ",
-  "as \u2113 cannot actually take the value of 0), or -1, respectively. \n",
-  "\n* **Species Richness (\u2113 = 1):**",
+  "three measures occur when \\eqn{\\ell}{l} takes the value of 1, 0 (or near-zero, ",
+  "as \\eqn{\\ell}{l} cannot actually take the value of 0), or -1, respectively. \n",
+  "\n* **Species Richness (\\eqn{\\ell}{l} = 1):**",
   "  \\deqn{",
   "    D = S",
   "  }{",
   "    D = S",
   "  }",
-  "\n* **Hill-Shannon Diversity (\u2113 \u2248 0):**",
+  "\n* **Hill-Shannon Diversity (\\eqn{\\ell}{l} \\eqn{\\approx}{~} 0):**",
   "  \\deqn{",
   "    D = e^{-\\sum_{i=1}^{S} p_i \\ln(p_i)}",
   "  }{",
   "    D = e ^ (-Sum from i=1 to S of pi * ln(pi))",
   "  }",
-  "\n* **Hill-Simpson Diversity (\u2113 = -1):**",
+  "\n* **Hill-Simpson Diversity (\\eqn{\\ell}{l} = -1):**",
   "  \\deqn{",
   "    D = \\frac{1}{\\sum_{i=1}^{S} p_i^2}",
   "  }{",
@@ -479,8 +488,7 @@ hill_diversity_details <- paste0(
   "rare species equally, and Hill-Simpson diversity uses a reciprocal ",
   "scale (the harmonic mean), giving common species higher leverage.",
   "\n\n",
-  "<h3>Coverage-based estimation</h3>",
-  "\n\n",
+  "\n\n## Coverage-based estimation\n\n",
   "Hill diversity values can be estimated through different ",
   "standardisation procedures as a way to mitigate the effects of sample size ",
   "and sampling biases. One way to do this is by equalising sample size by ",
@@ -520,9 +528,8 @@ hill_diversity_details <- paste0(
 )
 
 completeness_details <- paste0(
-  "<h3>Completeness (Sample Coverage)</h3>",
-  "\n\n",
-  "Completeness is measured as <b>Sample Coverage</b>, a concept developed by ",
+  "\n\n## Completeness (Sample Coverage)\n\n",
+  "Completeness is measured as **Sample Coverage**, a concept developed by ",
   "Turing and Good (1953) and further popularized in ecology by Chao and Jost ",
   "(2012). Sample coverage estimates the proportion of the total individuals ",
   "in an ecological community that belong to the species detected in a sample. ",
@@ -534,7 +541,7 @@ completeness_details <- paste0(
   "biodiversity across different areas or time periods, as it provides a ",
   "standardized measure of sample completeness that is independent of sample size ",
   "alone (Chao et al., 2014).",
-  "\n\nIn this package, completeness is calculated using the <code>iNEXT</code> ",
+  "\n\nIn this package, completeness is calculated using the 'iNEXT' ",
   "package based on the observed data in each grid cell or time point."
 )
 
@@ -564,7 +571,7 @@ completeness_details <- paste0(
 #' @describeIn completeness_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' comp_map <- completeness_map(example_cube_1)
 #' plot(comp_map)
 #' }
@@ -591,7 +598,7 @@ completeness_map <- function(data,
 #' @describeIn completeness_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' comp_ts <- completeness_ts(example_cube_1, first_year = 1985)
 #' plot(comp_ts)
 #' }
@@ -616,14 +623,14 @@ completeness_ts <- function(data,
 #'  over a gridded map or as a time series.
 #'  Three Hill diversity measures are covered:
 #'
-#' *Species richness* - <code>hill0_map()</code> and
-#'  <code>hill0_ts()</code>
+#' *Species richness* - `hill0_map()` and
+#'  `hill0_ts()`
 #'
-#' *Hill-Shannon diversity* - <code>hill1_map()</code> and
-#'  <code>hill1_ts()</code>
+#' *Hill-Shannon diversity* - `hill1_map()` and
+#'  `hill1_ts()`
 #'
-#' *Hill-Simpson diversity* - <code>hill2_map()</code> and
-#'  <code>hill2_ts()</code>
+#' *Hill-Simpson diversity* - `hill2_map()` and
+#'  `hill2_ts()`
 #'
 #' (see 'Details' for more information).
 #'
@@ -679,7 +686,7 @@ completeness_ts <- function(data,
 #' @describeIn hill0_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' h0_map <- hill0_map(example_cube_1, level = "country", region = "Denmark")
 #' plot(h0_map)
 #' }
@@ -710,7 +717,7 @@ hill0_map <- function(data,
 #'
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' h0_ts <- hill0_ts(example_cube_1, first_year = 1985)
 #' plot(h0_ts)
 #' }
@@ -746,7 +753,7 @@ hill0_ts <- function(data,
 #' @describeIn hill0_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' h1_map <- hill1_map(example_cube_1, level = "country", region = "Denmark")
 #' plot(h1_map)
 #' }
@@ -776,7 +783,7 @@ hill1_map <- function(data,
 #' @describeIn hill0_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' h1_ts <- hill1_ts(example_cube_1, first_year = 1985)
 #' plot(h1_ts)
 #' }
@@ -812,7 +819,7 @@ hill1_ts <- function(data,
 #' @describeIn hill0_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' h2_map <- hill2_map(example_cube_1, level = "country", region = "Denmark")
 #' plot(h2_map)
 #' }
@@ -841,7 +848,7 @@ hill2_map <- function(data,
 #' @describeIn hill0_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' h2_ts <- hill2_ts(example_cube_1, first_year = 1985)
 #' plot(h2_ts)
 #' }
@@ -914,7 +921,7 @@ hill2_ts <- function(data,
 #'  containing the calculated indicator values and metadata.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' cr_ts <- cum_richness_ts(example_cube_1, first_year = 1985)
 #' plot(cr_ts)
 #' }
@@ -955,7 +962,7 @@ cum_richness_ts <- function(data, ...) {
 #' @describeIn newness_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' n_map <- newness_map(example_cube_1, level = "country", region = "Denmark")
 #' plot(n_map)
 #' }
@@ -972,7 +979,7 @@ newness_map <- function(data, ...) {
 #' @describeIn newness_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' n_ts <- newness_ts(example_cube_1, first_year = 1985)
 #' plot(n_ts)
 #' }
@@ -1008,7 +1015,7 @@ newness_ts <- function(data, ...) {
 #' @describeIn occ_density_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' od_map <- occ_density_map(example_cube_1,
 #'   level = "country",
 #'   region = "Denmark"
@@ -1028,7 +1035,7 @@ occ_density_map <- function(data, ...) {
 #' @describeIn occ_density_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' od_ts <- occ_density_ts(example_cube_1, first_year = 1985)
 #' plot(od_ts)
 #' }
@@ -1068,7 +1075,7 @@ occ_density_ts <- function(data, ...) {
 #' @describeIn spec_richness_density_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' srd_map <- spec_richness_density_map(example_cube_1,
 #'   level = "country",
 #'   region = "Denmark"
@@ -1088,7 +1095,7 @@ spec_richness_density_map <- function(data, ...) {
 #' @describeIn spec_richness_density_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' srd_ts <- spec_richness_density_ts(example_cube_1, first_year = 1985)
 #' plot(srd_ts)
 #' }
@@ -1128,7 +1135,7 @@ spec_richness_density_ts <- function(data, ...) {
 #' @describeIn spec_occ_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' so_map <- spec_occ_map(example_cube_1,
 #'   level = "country",
 #'   region = "Denmark", include_ocean = FALSE
@@ -1177,11 +1184,13 @@ spec_occ_ts <- function(data, ...) {
 #' @describeIn spec_range_map
 #'
 #' @examples
+#' \donttest{
 #' sr_map <- spec_range_map(example_cube_1,
 #'   level = "country",
 #'   region = "Denmark", include_ocean = FALSE
 #' )
 #' plot(sr_map, c(2440728, 4265185))
+#' }
 #'
 #' @export
 spec_range_map <- function(data, ...) {
@@ -1195,7 +1204,7 @@ spec_range_map <- function(data, ...) {
 #' @describeIn spec_range_map
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' sr_ts <- spec_range_ts(example_cube_1, first_year = 1985)
 #' plot(sr_ts, c(2440728, 4265185))
 #' }
@@ -1228,8 +1237,8 @@ spec_range_ts <- function(data, ...) {
 #' | `occ_type` | Name | Denominator |
 #' |:---:|---|---|
 #' | `0` | Total-area | All grid cells in region (constant) |
-#' | `1` | Ever-occupied | Cells with ≥ 1 occurrence, any species, full window |
-#' | `2` | Annual (TS) / Temporal mean (map) | Cells with ≥ 1 occ in *that year* |
+#' | `1` | Ever-occupied | Cells with at least 1 occurrence, any species, full window |
+#' | `2` | Annual (TS) / Temporal mean (map) | Cells with at least 1 occurrence in *that year* |
 #'
 #' **Type 0** is the most conservative and comparable across different data
 #' cubes because the denominator is fixed by the grid definition. A low value
@@ -1299,7 +1308,7 @@ spec_range_ts <- function(data, ...) {
 #'  gridded map.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Type 0: proportion of all grid cells
 #' ro_map <- relative_occupancy_map(example_cube_1,
 #'   level = "country", region = "Denmark", occ_type = 0
@@ -1334,7 +1343,7 @@ relative_occupancy_map <- function(data, occ_type = 0, ...) {
 #'  series.
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # Type 0: proportion of all grid cells (default)
 #' ro_ts <- relative_occupancy_ts(example_cube_1, occ_type = 0)
 #' plot(ro_ts, c(2440728, 4265185))
@@ -1368,40 +1377,42 @@ relative_occupancy_ts <- function(data, occ_type = 0, ...) {
 #'
 #' @details Taxonomic distinctness is an essential biodiversity variable (EBV)
 #' that measures the taxonomic relatedness between species, providing a measure
-#' of biodiversity that accounts for evolutionary relationships. A distance
-#' matrix based on pairwise taxonomic relationships is calculated for each cell
-#' using the taxize package (Chamberlain & Sz&ouml;cs, 2013; Chamberlain et al.,
-#' 2020), then taxonomic distinctness is calculated as the Taxonomic
-#' Distinctness Index (TDI; Clarke & Warwick, 1999):
+#' of biodiversity that accounts for evolutionary relationships. It is
+#' calculated as the Taxonomic Distinctness Index (TDI; Clarke & Warwick, 1999;
+#' presence-absence form):
 #' \deqn{
-#'  \frac{\sum\sum_{i<j} \frac{|R_i - R_j|}{L}}{\frac{S(S-1)}{2}}
+#'  \frac{\sum\sum_{i<j} \frac{\omega_{ij}}{L}}{\frac{S(S-1)}{2}}
 #' }{
-#'  (&sum;&sum; from i<j of (|R_i-R_j| / L) / (S * (S - 1) / 2)
+#'  (&sum;&sum; from i<j of (w_ij / L) / (S * (S - 1) / 2)
 #' }
-#' where S is the number of species, Ri and Rj are the taxonomic ranks
-#' of species i and j (from the GBIF Taxonomic Backbone), and L is the
-#' maximum number of taxonomic ranks.
-#' The TDI ranges from 0 to 1, with higher values indicating greater
-#' taxonomic distinctness.
+#' where S is the number of species, \eqn{\omega_{ij}}{w_ij} is the taxonomic
+#' distance between species i and j (the number of taxonomic levels below the
+#' lowest rank they share: 1 for species in the same genus, 2 for the same
+#' family, and so on up to 7 for species in different kingdoms), and L = 7 is
+#' the number of taxonomic levels used (kingdom, phylum, class, order, family,
+#' genus, species). The TDI ranges from 0 to 1, with higher values indicating
+#' greater taxonomic distinctness. It is calculated for grid cells or years
+#' with at least three classified species.
+#'
+#' The classification of each taxon is retrieved from GBIF with the rgbif
+#' package (Chamberlain et al.) using the taxon keys in the cube: the GBIF
+#' Backbone Taxonomy for numeric keys, and the Catalogue of Life eXtended
+#' Release (COL XR) for alphanumeric keys. All taxa are looked up in a single
+#' batched request, and the results are cached for the rest of the R session.
+#' This requires the rgbif package and an internet connection.
 #'
 #' @references
-#' Chamberlain, S. A., & Sz&ouml;cs, E. (2013). taxize: taxonomic search and
-#' retrieval in R. *F1000Research*, 2.
-#'
-#' Chamberlain, S., Szoecs, E., Foster, Z., Boettiger, C., Ram, K., Bartomeus,
-#' I., Baumgartner, J., O'Donnell, J., Oksanen, J., Tzovaras, B. G., Marchand,
-#' P., Tran, V., Salmon, M., Li, G., & Greni&eacute;, M. (2020). taxize:
-#' Taxonomic Information from Around the Web. R package version 0.9.98.
-#' https://github.com/ropensci/taxize.
+#' Chamberlain, S., Barve, V., Mcglinn, D., Oldoni, D., Desmet, P., Geffert, L.,
+#' & Ram, K. rgbif: Interface to the Global Biodiversity Information Facility
+#' API. R package. https://CRAN.R-project.org/package=rgbif
 #'
 #' Clarke, K. R., & Warwick, R. M. (1999). The taxonomic distinctness measure
 #' of biodiversity: weighting of step lengths between hierarchical levels.
 #' Marine Ecology Progress Series, 184, 21-29.
 #'
 #' @param data A data cube object (class 'processed_cube').
-#' @param rows (Optional) Choose which row to select if there are multiple
-#'  matches when retrieving taxonomic information from GBIF. (Default is 1.
-#'  Use NA for interactive mode.)
+#' @param rows Deprecated and ignored. Taxa are now looked up by their GBIF
+#'  taxon key, so there is no ambiguity to resolve.
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
@@ -1423,14 +1434,16 @@ relative_occupancy_ts <- function(data, occ_type = 0, ...) {
 #'
 #' @export
 tax_distinct_map <- function(data, rows = 1, ...) {
-  if (!requireNamespace("taxize", quietly = TRUE)) {
-    stop("The package {taxize} is required for this action")
+  check_rgbif_installed()
+
+  if (!missing(rows)) {
+    warning("The 'rows' argument is deprecated and ignored: taxa are now ",
+            "looked up by their GBIF taxon key.", call. = FALSE)
   }
 
   compute_indicator_workflow(data,
     type = "tax_distinct",
     dim_type = "map",
-    rows = rows,
     ...
   )
 }
@@ -1447,14 +1460,16 @@ tax_distinct_map <- function(data, rows = 1, ...) {
 #' }
 #' @export
 tax_distinct_ts <- function(data, rows = 1, ...) {
-  if (!requireNamespace("taxize", quietly = TRUE)) {
-    stop("The package {taxize} is required for this action")
+  check_rgbif_installed()
+
+  if (!missing(rows)) {
+    warning("The 'rows' argument is deprecated and ignored: taxa are now ",
+            "looked up by their GBIF taxon key.", call. = FALSE)
   }
 
   compute_indicator_workflow(data,
     type = "tax_distinct",
     dim_type = "ts",
-    rows = rows,
     ...
   )
 }

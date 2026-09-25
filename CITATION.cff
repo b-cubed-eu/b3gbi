@@ -8,16 +8,37 @@ message: 'To cite package "b3gbi" in publications use:'
 type: software
 license: MIT
 title: 'b3gbi: General Biodiversity Indicators for Biodiversity Data Cubes'
-version: 1.0.1
-abstract: Calculate general biodiversity indicators from GBIF data cubes. Includes
-  many common indicators such as species richness, evenness, and completeness, which
-  can be calculated over time (trends) or space (maps). Now also supports retaining
-  original cell IDs.
+version: 1.0.1.9000
+doi: 10.21105/joss.10963
+abstract: Calculate general biodiversity indicators from species occurrence cubes,
+  such as those produced by the 'GBIF' (Global Biodiversity Information Facility)
+  occurrence cube service <https://techdocs.gbif.org/en/data-use/data-cubes>. Indicators
+  include observed and coverage-based rarefied species richness and Hill numbers (via
+  'iNEXT'), evenness, rarity, taxonomic distinctness, occupancy, turnover and sample
+  completeness, and can be calculated over time (time series) or space (maps), with
+  bootstrap confidence intervals. Cubes using the EEA reference grid, MGRS, the extended
+  quarter-degree grid (EQDGC) or ISEA3H grids are supported. For details see Dove
+  (2026) <https://doi.org/10.21105/joss.10963>.
 authors:
 - family-names: Dove
   given-names: Shawn
   email: Shawn.Dove@allzool.bio.uni-giessen.de
   orcid: https://orcid.org/0000-0001-9465-5638
+preferred-citation:
+  type: article
+  title: 'b3gbi: Standardized Biodiversity Indicators from Spatiotemporal Occurrence
+    Cubes'
+  authors:
+  - family-names: Dove
+    given-names: Shawn
+    email: Shawn.Dove@allzool.bio.uni-giessen.de
+    orcid: https://orcid.org/0000-0001-9465-5638
+  journal: Journal of Open Source Software
+  year: '2026'
+  volume: '11'
+  issue: '125'
+  doi: 10.21105/joss.10963
+  start: '10963'
 repository-code: https://github.com/b-cubed-eu/b3gbi
 url: https://b-cubed-eu.github.io/b3gbi/
 contact:
@@ -79,23 +100,6 @@ references:
     orcid: https://orcid.org/0000-0003-4777-038X
   year: '2026'
   doi: 10.32614/CRAN.package.dplyr
-- type: software
-  title: dubicube
-  abstract: 'dubicube: Calculation and Interpretation of Data Cube Indicator Uncertainty'
-  notes: Imports
-  url: https://b-cubed-eu.github.io/dubicube/
-  authors:
-  - family-names: Langeraert
-    given-names: Ward
-    email: ward.langeraert@inbo.be
-    orcid: https://orcid.org/0000-0002-5900-8109
-    affiliation: Research Institute for Nature and Forest (INBO)
-  - family-names: Van Daele
-    given-names: Toon
-    email: toon.vandaele@inbo.be
-    orcid: https://orcid.org/0000-0002-1362-853X
-    affiliation: Research Institute for Nature and Forest (INBO)
-  year: '2026'
 - type: software
   title: ggplot2
   abstract: 'ggplot2: Create Elegant Data Visualisations Using the Grammar of Graphics'
@@ -178,19 +182,6 @@ references:
     email: hadley@posit.co
   year: '2026'
   doi: 10.32614/CRAN.package.magrittr
-- type: software
-  title: mgrs
-  abstract: 'mgrs: Convert ''MGRS'' (''Military Grid Reference System'') Coordinates
-    From/To Other Coordinate Systems'
-  notes: Imports
-  url: https://gitlab.com/hrbrmstr/mgrs
-  authors:
-  - family-names: Rudis
-    given-names: Bob
-    email: bob@rud.is
-    orcid: https://orcid.org/0000-0001-5670-2640
-  year: '2026'
-  version: '>= 0.2.4'
 - type: software
   title: permute
   abstract: 'permute: Functions for Generating Restricted Permutations of Data'
@@ -397,6 +388,23 @@ references:
   year: '2026'
   doi: 10.32614/CRAN.package.bit64
 - type: software
+  title: dubicube
+  abstract: 'dubicube: Calculation and Interpretation of Data Cube Indicator Uncertainty'
+  notes: Suggests
+  url: https://b-cubed-eu.github.io/dubicube/
+  authors:
+  - family-names: Langeraert
+    given-names: Ward
+    email: ward.langeraert@inbo.be
+    orcid: https://orcid.org/0000-0002-5900-8109
+    affiliation: Research Institute for Nature and Forest (INBO)
+  - family-names: Van Daele
+    given-names: Toon
+    email: toon.vandaele@inbo.be
+    orcid: https://orcid.org/0000-0002-1362-853X
+    affiliation: Research Institute for Nature and Forest (INBO)
+  year: '2026'
+- type: software
   title: knitr
   abstract: 'knitr: A General-Purpose Package for Dynamic Report Generation in R'
   notes: Suggests
@@ -485,6 +493,23 @@ references:
   year: '2026'
   doi: 10.32614/CRAN.package.RColorBrewer
 - type: software
+  title: rgbif
+  abstract: 'rgbif: Interface to the Global Biodiversity Information Facility API'
+  notes: Suggests
+  url: https://docs.ropensci.org/rgbif/
+  repository: https://CRAN.R-project.org/package=rgbif
+  authors:
+  - family-names: Chamberlain
+    given-names: Scott
+  - family-names: Oldoni
+    given-names: Damiano
+  - family-names: Waller
+    given-names: John
+    email: jwaller@gbif.org
+  year: '2026'
+  doi: 10.32614/CRAN.package.rgbif
+  version: '>= 3.7.0'
+- type: software
   title: rmarkdown
   abstract: 'rmarkdown: Dynamic Documents for R'
   notes: Suggests
@@ -567,26 +592,6 @@ references:
     email: pmassicotte@hotmail.com
     orcid: https://orcid.org/0000-0002-5919-4116
   year: '2026'
-- type: software
-  title: taxize
-  abstract: 'taxize: Taxonomic Information from Around the Web'
-  notes: Suggests
-  url: https://docs.ropensci.org/taxize/
-  repository: https://CRAN.R-project.org/package=taxize
-  authors:
-  - family-names: Chamberlain
-    given-names: Scott
-    email: myrmecocystus@gmail.com
-  - family-names: Szoecs
-    given-names: Eduard
-  - family-names: Foster
-    given-names: Zachary
-    email: zacharyfoster1989@gmail.com
-  - family-names: Arendsee
-    given-names: Zebulun
-  year: '2026'
-  doi: 10.32614/CRAN.package.taxize
-  version: '>= 0.9.99'
 - type: software
   title: testthat
   abstract: 'testthat: Unit Testing for R'

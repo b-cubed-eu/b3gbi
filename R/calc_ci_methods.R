@@ -10,10 +10,12 @@
 #'  be called by the 'compute_indicator_workflow' function.
 #' @param ... Additional arguments passed to specific calc_ci functions.
 #' @examples
-#' \dontrun{
-#' # Note: calc_ci is an internal function called automatically during indicator calculation
-#' cube_path <- system.file("extdata", "denmark_mammals_cube_eea.csv", package = "b3gbi")
-#' cube <- process_cube(cube_path)
+#' \donttest{
+#' # calc_ci() is called automatically when confidence intervals are requested
+#' # during indicator calculation (or by add_ci(bootstrap_level = "indicator"))
+#' occ_ts <- total_occ_ts(example_cube_1, first_year = 2000,
+#'                        ci_type = "perc", num_bootstrap = 100)
+#' head(occ_ts$data)
 #' }
 #' @return A data frame containing indicator values with calculated lower (`ll`) and upper (`ul`) confidence bounds.
 #' @export
@@ -303,12 +305,16 @@ calc_ci.ab_rarity <- function(x,
                   meant to be called directly.",
                   inherits(x, "ab_rarity"))
 
-  obs <- taxonKey <- records_taxon <- year <- NULL
+  obs <- taxonKey <- records_taxon <- year <- rarity <- total_obs <- NULL
 
-    # Calculate rarity for each cell each year
+    # Calculate rarity for each species each year (relative abundance is
+    # calculated per year; one value per species per year)
     x <- x %>%
-      dplyr::mutate(records_taxon = sum(obs), .by = taxonKey) %>%
-      dplyr::mutate(rarity = 1 / (records_taxon / sum(obs))) %>%
+      dplyr::summarise(records_taxon = sum(obs, na.rm = TRUE),
+                       .by = c(year, taxonKey)) %>%
+      dplyr::filter(records_taxon > 0) %>%
+      dplyr::mutate(total_obs = sum(records_taxon), .by = year) %>%
+      dplyr::mutate(rarity = total_obs / records_taxon) %>%
       dplyr::arrange(year)
 
     ind_list <- list_org_by_year(x, "rarity")
@@ -344,15 +350,15 @@ calc_ci.area_rarity <- function(x,
                   meant to be called directly.",
                   inherits(x, "area_rarity"))
 
-  year <- cellid <- taxonKey <- rec_tax_cell <- rarity <- NULL
+  year <- cellid <- taxonKey <- occupied_cells <- total_cells <- rarity <- NULL
 
-  # Calculate rarity for each cell each year
+  # Calculate summed rarity for each cell each year (occupancy is calculated
+  # per year, matching calc_ts.area_rarity)
   x <- x %>%
-    dplyr::arrange(year, cellid, taxonKey) %>%
-    dplyr::mutate(rec_tax_cell = sum(dplyr::n_distinct(cellid)),
-                  .by = c(taxonKey)) %>%
-    dplyr::mutate(rarity = 1 /
-                    (rec_tax_cell / sum(dplyr::n_distinct(cellid)))) %>%
+    dplyr::distinct(year, cellid, taxonKey) %>%
+    dplyr::mutate(total_cells = dplyr::n_distinct(cellid), .by = year) %>%
+    dplyr::mutate(occupied_cells = dplyr::n(), .by = c(year, taxonKey)) %>%
+    dplyr::mutate(rarity = total_cells / occupied_cells) %>%
     dplyr::summarise(diversity_val = sum(rarity), .by = c("year", "cellid")) %>%
     dplyr::arrange(year)
 

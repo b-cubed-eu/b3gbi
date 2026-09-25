@@ -506,24 +506,26 @@ test_that("compute_indicator_workflow handles sim_cube objects", {
   )
   expect_s3_class(result_ts, "indicator_ts")
 
-  # Test valid sim_cube operation (ts) with confidence intervals
-  result_ci <- compute_indicator_workflow(
-    data = mock_sim_cube,
-    type = "total_occ",
-    dim_type = "ts") %>%
-    add_ci(ci_type = "norm", num_bootstrap = 100)
-  expect_true(
-    all(
-      c(
-        "year",
-        "diversity_val",
-        "int_type",
-        "ll",
-        "ul",
-        "conf"
-      ) %in% names(result_ci$data)
+  # Test valid sim_cube operation (ts) with cube-level confidence intervals
+  if (requireNamespace("dubicube", quietly = TRUE)) {
+    result_ci <- compute_indicator_workflow(
+      data = mock_sim_cube,
+      type = "total_occ",
+      dim_type = "ts") %>%
+      add_ci(ci_type = "norm", num_bootstrap = 100, bootstrap_level = "cube")
+    expect_true(
+      all(
+        c(
+          "year",
+          "diversity_val",
+          "int_type",
+          "ll",
+          "ul",
+          "conf"
+        ) %in% names(result_ci$data)
+      )
     )
-  )
+  }
 
   # Test invalid sim_cube (missing 'obs' column)
   invalid_sim_cube <- list(

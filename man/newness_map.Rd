@@ -111,11 +111,11 @@ amounts of citizen science data.
 
 }}
 \examples{
-\dontrun{
+\donttest{
 n_map <- newness_map(example_cube_1, level = "country", region = "Denmark")
 plot(n_map)
 }
-\dontrun{
+\donttest{
 n_ts <- newness_ts(example_cube_1, first_year = 1985)
 plot(n_ts)
 }

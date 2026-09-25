@@ -24,6 +24,7 @@ test_that("Integration: total_occ_ts followed by add_ci works", {
 })
 
 test_that("Integration: pielou_evenness_ts followed by add_ci works (cube level)", {
+  skip_on_cran()
   skip_if_not_installed("dubicube")
 
   # Load example data

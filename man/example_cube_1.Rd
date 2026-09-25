@@ -27,7 +27,7 @@ meters}
 }
 }
 \source{
-\url{https://doi.org/10.15468/dl.5mb887}
+\doi{10.15468/dl.5mb887}
 }
 \usage{
 example_cube_1
@@ -37,15 +37,12 @@ Small example cube containing the mammal occurrences in Denmark available on
 GBIF as of 16.03.2024.
 }
 \examples{
-{
-  \dontrun{
-    # Basic example of how to use the dataset
-    denmark_mammals_or_map <- obs_richness_map(example_cube_1,
-                                               level = "country",
-                                               region = "Denmark")
-    plot(denmark_mammals_or_map,
-         title = "Mammals in Denmark (1862-2024): Observed Species Richness")
-  }
+\donttest{
+denmark_mammals_or_map <- obs_richness_map(example_cube_1,
+                                           level = "country",
+                                           region = "Denmark")
+plot(denmark_mammals_or_map,
+     title = "Mammals in Denmark (1862-2024): Observed Species Richness")
 }
 }
 \keyword{datasets}

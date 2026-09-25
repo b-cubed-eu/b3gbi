@@ -102,9 +102,8 @@ are aggregated to coarser grid cells before this calculation. The
 denominator counts post-aggregation cells (\code{cellid}), not original cube
 cells (\code{cellCode}).}
 
-\item{set_rows}{Automatically select which taxonomic information to keep when
-there are multiple options. Default value of 1 keeps the first option,
-which is usually the best.}
+\item{set_rows}{Deprecated and ignored. Taxa are now looked up by their
+GBIF taxon key, so there is no ambiguity to resolve.}
 }
 \value{
 An S3 object of the class 'indicator_ts' containing the calculated

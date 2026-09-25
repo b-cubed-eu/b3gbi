@@ -112,18 +112,16 @@ over a gridded map or as a time series using the Sample Coverage metric
 from the iNEXT package.
 }
 \details{
-\if{html}{\out{
-<h3>Completeness (Sample Coverage)</h3>
-}}
+\subsection{Completeness (Sample Coverage)}{
 
-
-Completeness is measured as \if{html}{\out{<b>}}Sample Coverage\if{html}{\out{</b>}}, a concept developed by Turing and Good (1953) and further popularized in ecology by Chao and Jost (2012). Sample coverage estimates the proportion of the total individuals in an ecological community that belong to the species detected in a sample.
+Completeness is measured as \strong{Sample Coverage}, a concept developed by Turing and Good (1953) and further popularized in ecology by Chao and Jost (2012). Sample coverage estimates the proportion of the total individuals in an ecological community that belong to the species detected in a sample.
 
 A coverage value of 1.0 indicates that no new species are expected to be uncovered through further sampling, meaning the sample is perfectly complete. A value of 0.8, for example, suggests that 20\% of the individuals in the community belong to species that have not yet been detected in the sample.
 
 Calculating sample coverage is a prerequisite for reliable comparisons of biodiversity across different areas or time periods, as it provides a standardized measure of sample completeness that is independent of sample size alone (Chao et al., 2014).
 
-In this package, completeness is calculated using the \if{html}{\out{<code>}}iNEXT\if{html}{\out{</code>}} package based on the observed data in each grid cell or time point.
+In this package, completeness is calculated using the 'iNEXT' package based on the observed data in each grid cell or time point.
+}
 }
 \section{Functions}{
 \itemize{
@@ -133,11 +131,11 @@ In this package, completeness is calculated using the \if{html}{\out{<code>}}iNE
 
 }}
 \examples{
-\dontrun{
+\donttest{
 comp_map <- completeness_map(example_cube_1)
 plot(comp_map)
 }
-\dontrun{
+\donttest{
 comp_ts <- completeness_ts(example_cube_1, first_year = 1985)
 plot(comp_ts)
 }

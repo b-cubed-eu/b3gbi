@@ -118,7 +118,7 @@ provide an underestimate of species richness.
 }
 }
 \examples{
-\dontrun{
+\donttest{
 cr_ts <- cum_richness_ts(example_cube_1, first_year = 1985)
 plot(cr_ts)
 }

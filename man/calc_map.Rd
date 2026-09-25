@@ -107,8 +107,10 @@ implementations for different indicator types are provided using the
 appropriate wrappers.
 }
 \examples{
+\donttest{
 observed_richness_map <- obs_richness_map(example_cube_1, level = "country",
                                           region = "Denmark")
 plot(observed_richness_map)
+}
 
 }

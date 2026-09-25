@@ -9,7 +9,7 @@
 #'  Albers).
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' df <- data.frame(
 #'   cellCode = c("32UUC", "32UUD"),
 #'   xcoord = c(500000, 501000),

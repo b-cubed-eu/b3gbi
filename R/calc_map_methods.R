@@ -460,18 +460,9 @@ calc_map.tax_distinct <- function(x, ...) {
                           diversity_val = numeric()))
   }
 
-  if (requireNamespace("taxize", quietly = TRUE)) {
-
-    # Retrieve taxonomic data from GBIF
-    tax_hier <- my_classification(unique(x$scientificName),
-                                       db = "gbif",
-                                       ...)
-
-  } else {
-    stop(
-      "The 'taxize' package is required to calculate taxonomic distinctness."
-    )
-  }
+  # Retrieve the taxonomic hierarchy of all taxa once (one batched GBIF
+  # request, cached for the session) and reuse it for every grid cell
+  tax_hier <- get_taxonomic_hierarchy(x)
 
   # A helper function to check for empty rows
   is_not_empty <- function(df) {

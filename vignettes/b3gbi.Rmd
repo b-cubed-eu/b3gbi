@@ -28,7 +28,7 @@ This tutorial will guide you through the three core steps of the b3gbi workflow:
 2. **Indicator Calculation**: Using indicator-specific wrapper functions.
 3. **Visualization**: Plotting the results as maps or time series using the generic `plot()` function.
 
-The package is publicly available at <https://www.github.com/b-cubed-eu/b3gbi>.
+The package is publicly available at <https://github.com/b-cubed-eu/b3gbi>.
 
 ## Package Installation
 
@@ -146,7 +146,7 @@ The result is an `indicator_ts` object.
 class(Denmark_total_occ_ts)
 ```
 
-Now let's add confidence intervals using the `add_ci()` function. To speed things up we will reduce the number of bootstrap samples from the default of 1000 to 100. By default, the package uses **percentile** intervals (`"perc"`), which are robust for biodiversity indicators.
+Now let's add confidence intervals using the `add_ci()` function. To speed things up we will reduce the number of bootstrap samples from the default of 1000 to 100. By default, the package uses **percentile** intervals (`"perc"`), which are robust for biodiversity indicators. If the **dubicube** package is installed, `add_ci()` resamples the occurrence records in the cube (cube-level bootstrapping); otherwise it falls back to faster indicator-level bootstrapping.
 
 ```{r add-ci}
 # Add confidence intervals to the time series

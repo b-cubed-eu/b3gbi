@@ -125,8 +125,10 @@ used evenness measure. It is calculated as:
 }{
  E = -Sum from i=1 to S of pi * ln(pi) / ln(S)
 }
-where S is the number of species and pi is the proportion of occurrences
-represented by species i.
+where S is the number of species observed in the grid cell (maps) or year
+(time series) and pi is the proportion of occurrences represented by
+species i. Species that are absent from a cell or year do not count towards
+S. Evenness is undefined (NA) when fewer than two species are present.
 }
 
 \subsection{Williams' evenness}{
@@ -154,8 +156,8 @@ Williams' evenness is calculated as:
   1 - sqrt((S * Sum from i=1 to S of pi^2 - 1) / (S - 1))
 }
 
-where S is the number of species and pi is the proportion of occurrences
-represented by species i.
+where S is the number of species observed in the grid cell or year and pi
+is the proportion of occurrences represented by species i.
 }
 }
 \section{Functions}{
@@ -170,25 +172,25 @@ represented by species i.
 
 }}
 \examples{
-\dontrun{
+\donttest{
 pe_map <- pielou_evenness_map(example_cube_1,
   level = "country",
   region = "Denmark"
 )
 plot(pe_map)
 }
-\dontrun{
+\donttest{
 pe_ts <- pielou_evenness_ts(example_cube_1, first_year = 1985)
 plot(pe_ts)
 }
-\dontrun{
+\donttest{
 we_map <- williams_evenness_map(example_cube_1,
   level = "country",
   region = "Denmark"
 )
 plot(we_map)
 }
-\dontrun{
+\donttest{
 we_ts <- williams_evenness_ts(example_cube_1, first_year = 1985)
 plot(we_ts)
 }

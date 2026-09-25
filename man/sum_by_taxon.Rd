@@ -21,9 +21,7 @@ This function takes a \code{processed_cube} object and aggregates the
 observation counts by a specified taxonomic rank.
 }
 \examples{
-\dontrun{
-# Assuming 'cube' is a processed_cube object
-family_sums <- sum_by_taxon(cube, "family")
-}
+family_sums <- sum_by_taxon(example_cube_1, "family")
+head(family_sums)
 
 }

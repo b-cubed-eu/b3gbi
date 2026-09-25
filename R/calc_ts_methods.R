@@ -291,15 +291,17 @@ calc_ts.ab_rarity <- function(x, ...) {
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.", inherits(x, "ab_rarity"))
 
-  obs <- taxonKey <- records_taxon <- year <- rarity <- NULL
-
-  total_obs <- sum(x$obs)
+  obs <- taxonKey <- records_taxon <- year <- rarity <- total_obs <- NULL
 
   # Calculate rarity as the sum of the inverse of relative abundance for each
-  # species
+  # species. Relative abundance is calculated separately for each year, and
+  # each species contributes once per year (not once per occupied cell).
   indicator <- x %>%
-    dplyr::mutate(records_taxon = sum(obs), .by = taxonKey) %>%
-    dplyr::mutate(rarity = 1 / (records_taxon / total_obs)) %>%
+    dplyr::summarise(records_taxon = sum(obs, na.rm = TRUE),
+                     .by = c(year, taxonKey)) %>%
+    dplyr::filter(records_taxon > 0) %>%
+    dplyr::mutate(total_obs = sum(records_taxon), .by = year) %>%
+    dplyr::mutate(rarity = total_obs / records_taxon) %>%
     dplyr::summarise(diversity_val = sum(rarity), .by = "year") %>%
     dplyr::arrange(year)
 
@@ -317,14 +319,16 @@ calc_ts.area_rarity <- function(x, ...) {
   year <- cellid <- taxonKey <- occupied_cells <- rarity <- NULL
   diversity_val <- NULL
 
-  total_cells <- dplyr::n_distinct(x$cellid)
+  total_cells <- NULL
 
   # Calculate rarity as the sum (per grid cell) of the inverse of occupancy
-  # frequency for each species
+  # frequency for each species, then average over cells. Occupancy is
+  # calculated separately for each year.
   indicator <- x %>%
-    dplyr::mutate(occupied_cells = dplyr::n_distinct(cellid),
-                  .by = c(taxonKey)) %>%
-    dplyr::mutate(rarity = 1 / (occupied_cells / total_cells)) %>%
+    dplyr::distinct(year, cellid, taxonKey) %>%
+    dplyr::mutate(total_cells = dplyr::n_distinct(cellid), .by = year) %>%
+    dplyr::mutate(occupied_cells = dplyr::n(), .by = c(year, taxonKey)) %>%
+    dplyr::mutate(rarity = total_cells / occupied_cells) %>%
     dplyr::summarise(diversity_val = sum(rarity), .by = c("year", "cellid")) %>%
     dplyr::summarise(diversity_val = mean(diversity_val), .by = "year") %>%
     dplyr::arrange(year)
@@ -517,9 +521,8 @@ calc_ts.relative_occupancy <- function(x, occ_type = 0, ...) {
 
 }
 
-#' @param set_rows Automatically select which taxonomic information to keep when
-#'  there are multiple options. Default value of 1 keeps the first option,
-#'  which is usually the best.
+#' @param set_rows Deprecated and ignored. Taxa are now looked up by their
+#'  GBIF taxon key, so there is no ambiguity to resolve.
 #' @export
 #' @rdname calc_ts
 calc_ts.tax_distinct <- function(x, set_rows = 1, ...) {
@@ -535,12 +538,9 @@ calc_ts.tax_distinct <- function(x, set_rows = 1, ...) {
     return(tibble::tibble(year = integer(), diversity_val = numeric()))
   }
 
-  if (requireNamespace("taxize", quietly = TRUE)) {
-    # Retrieve taxonomic data from GBIF
-    tax_hier <- my_classification(unique(x$scientificName), db = "gbif", ...)
-  } else {
-    stop("Please install the taxize package to use this function.")
-  }
+  # Retrieve the taxonomic hierarchy of all taxa once (one batched GBIF
+  # request, cached for the session) and reuse it for every year
+  tax_hier <- get_taxonomic_hierarchy(x)
 
   # Calculate taxonomic distinctness
   indicator <- x %>%

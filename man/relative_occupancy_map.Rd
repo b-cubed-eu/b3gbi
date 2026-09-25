@@ -122,8 +122,8 @@ has at least one recorded occurrence. The denominator depends on
 \code{occ_type}:\tabular{cll}{
    \code{occ_type} \tab Name \tab Denominator \cr
    \code{0} \tab Total-area \tab All grid cells in region (constant) \cr
-   \code{1} \tab Ever-occupied \tab Cells with ≥ 1 occurrence, any species, full window \cr
-   \code{2} \tab Annual (TS) / Temporal mean (map) \tab Cells with ≥ 1 occ in \emph{that year} \cr
+   \code{1} \tab Ever-occupied \tab Cells with at least 1 occurrence, any species, full window \cr
+   \code{2} \tab Annual (TS) / Temporal mean (map) \tab Cells with at least 1 occurrence in \emph{that year} \cr
 }
 
 
@@ -178,7 +178,7 @@ series.
 
 }}
 \examples{
-\dontrun{
+\donttest{
 # Type 0: proportion of all grid cells
 ro_map <- relative_occupancy_map(example_cube_1,
   level = "country", region = "Denmark", occ_type = 0
@@ -195,7 +195,7 @@ ro_map_2 <- relative_occupancy_map(example_cube_1,
   level = "country", region = "Denmark", occ_type = 2
 )
 }
-\dontrun{
+\donttest{
 # Type 0: proportion of all grid cells (default)
 ro_ts <- relative_occupancy_ts(example_cube_1, occ_type = 0)
 plot(ro_ts, c(2440728, 4265185))

@@ -689,13 +689,6 @@ my_readRDS <- function(file, ...) {
   readRDS(file, ...)
 }
 
-# Wrapper of function taxize::classification from base. This is for mocking in
-# testthat tests.
-#' @noRd
-my_classification <- function(x, ...) {
-  taxize::classification(x, ...)
-}
-
 # Wrapper of function iNext::estimateD. This is for mocking in testthat tests.
 #' @noRd
 my_estimateD <- function(x, datatype = "abundance", base = "size", level = NULL, q = 0, conf = 0.95, nboot = 50, ...) {

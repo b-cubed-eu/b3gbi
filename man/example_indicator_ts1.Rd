@@ -10,10 +10,10 @@ variables, as well as metadata
 \describe{
 \item{year}{a year the indicator was calculated for}
 \item{diversity_val}{calculated richness value for the year}
-}ed
+}
 }
 \source{
-\url{https://doi.org/10.15468/dl.5mb887}
+\doi{10.15468/dl.5mb887}
 }
 \usage{
 example_indicator_ts1

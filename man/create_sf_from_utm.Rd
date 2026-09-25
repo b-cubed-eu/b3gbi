@@ -20,7 +20,7 @@ This function takes a data frame with UTM coordinates (xcoord, ycoord) and a
 utmzone column, and creates an sf object with the correct CRS for each zone.
 }
 \examples{
-\dontrun{
+\donttest{
 df <- data.frame(
   xcoord = c(500000, 501000),
   ycoord = c(5600000, 5601000),

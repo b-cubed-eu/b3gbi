@@ -52,8 +52,8 @@ A named list with two elements:
 }
 }
 \description{
-This function prepares the argument lists for \code{\link[dubicube:bootstrap_cube]{dubicube::bootstrap_cube()}}
-and \code{\link[dubicube:calculate_bootstrap_ci]{dubicube::calculate_bootstrap_ci()}} based on the indicator definition.
+This function prepares the argument lists for \code{dubicube::bootstrap_cube()}
+and \code{dubicube::calculate_bootstrap_ci()} based on the indicator definition.
 Behaviour (grouping, bootstrap method, transformations, bias correction)
 is fully controlled by a rule book keyed on \code{indicator$div_type}.
 }
@@ -61,12 +61,14 @@ is fully controlled by a rule book keyed on \code{indicator$div_type}.
 No computation is performed; the function only returns parameter lists.
 }
 \examples{
-\dontrun{
+\donttest{
+ind <- total_occ_ts(example_cube_1, first_year = 2000)
 params <- prepare_indicator_bootstrap(
-  indicator = indicator,
-  num_bootstrap = 1000,
-  ci_type = "bca"
+  indicator = ind,
+  num_bootstrap = 100,
+  ci_type = "perc"
 )
+names(params$bootstrap_params)
 }
 
 }

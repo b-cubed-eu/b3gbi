@@ -45,11 +45,16 @@ Creates an interactive map of a calculated multi-species
 biodiversity indicator. Requires an indicator_map object as input.
 }
 \examples{
-\dontrun{
-cube_path <- system.file("extdata", "denmark_mammals_cube_eea.csv", package = "b3gbi")
-cube <- process_cube(cube_path)
-map_rich <- obs_richness_map(cube, level = "country", region = "Denmark")
-plot_mv(map_rich)
+\donttest{
+# Opens an interactive map, so only run in interactive sessions
+if (interactive() && requireNamespace("mapview", quietly = TRUE) &&
+    requireNamespace("RColorBrewer", quietly = TRUE)) {
+  cube_path <- system.file("extdata", "denmark_mammals_cube_eea.csv",
+                           package = "b3gbi")
+  cube <- process_cube(cube_path)
+  map_rich <- obs_richness_map(cube, level = "country", region = "Denmark")
+  plot_mv(map_rich)
+}
 }
 
 }

@@ -26,6 +26,7 @@ test_that("create_grid creates a valid grid", {
 })
 
 test_that("create_grid handles edge cases", {
+  skip_on_cran()
   # Create a simple sf object for testing
   denmark_map <- rnaturalearth::ne_countries(country = "Denmark",
                                              scale = "medium",
