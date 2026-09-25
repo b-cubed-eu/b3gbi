@@ -9,6 +9,8 @@
 #' @param n (Optional) Integer specifying the number of rows of data to display.
 #' @param ... Additional arguments.
 #'
+#' @return Invisibly returns the input object `x`.
+#'
 #' @examples
 #' print(example_indicator_ts1)
 #'
@@ -105,6 +107,8 @@ print.indicator_map <- function(x, n = 10, include_na = FALSE, ...) {
 #' @param n (Optional) Integer specifying the number of rows of cube data to
 #'  display.
 #' @param ... Additional arguments.
+#'
+#' @return Invisibly returns the input object `x`.
 #'
 #' @examples
 #' print(example_cube_1)
