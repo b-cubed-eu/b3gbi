@@ -63,6 +63,7 @@ Suggests:
     testthat (>= 3.0.0),
     withr
 Config/testthat/edition: 3
+Config/Needs/check: b-cubed-eu/dubicube, ropensci/rnaturalearthhires
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
