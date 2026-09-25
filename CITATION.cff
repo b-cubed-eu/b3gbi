@@ -8,7 +8,7 @@ message: 'To cite package "b3gbi" in publications use:'
 type: software
 license: MIT
 title: 'b3gbi: General Biodiversity Indicators for Biodiversity Data Cubes'
-version: 1.0.1.9000
+version: 1.1.0
 doi: 10.21105/joss.10963
 abstract: Calculate general biodiversity indicators from species occurrence cubes,
   such as those produced by the 'GBIF' (Global Biodiversity Information Facility)
