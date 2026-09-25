@@ -13,7 +13,7 @@
 ^[^/]*\.RDS$
 ^[^/]*\.jpg$
 ^[^/]*\.RData$
-^[^/]*\.old$
+^.*\.old$
 ^test_plots$
 ^test_data$
 ^wc10$
