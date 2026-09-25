@@ -82,12 +82,13 @@ plot_ts(
 
 - suppress_y:
 
-  (Optional) If TRUE, suppresses y-axis labels.
+  (Optional) If TRUE, suppresses y-axis tick labels. Default is FALSE.
 
 - smoothed_trend:
 
   (Optional) If TRUE, plot a smoothed trendline over time
-  ([`stats::loess()`](https://rdrr.io/r/stats/loess.html)).
+  ([`stats::loess()`](https://rdrr.io/r/stats/loess.html)). Default is
+  TRUE.
 
 - linecolour:
 
@@ -111,7 +112,7 @@ plot_ts(
 - error_alpha:
 
   (Optional) Transparency for indicator error bars (if ci_type =
-  "error_bar"). Default is 1.
+  "error_bars"). Default is 1.
 
 - trendlinecolour:
 
@@ -124,7 +125,7 @@ plot_ts(
 - envelopecolour:
 
   (Optional) Colour for the uncertainty envelope. Default is
-  lightsteelblue.
+  "lightsteelblue1".
 
 - envelopealpha:
 
@@ -170,8 +171,9 @@ plot_ts(
 
 - smooth_linetype:
 
-  (Optional) Type of line to plot for smoothed trendline. Default is
-  "solid".
+  (Optional) Type of line to plot for smoothed trendline. Options are
+  "solid", "dashed", "dotted", "dotdash", "longdash" or "twodash".
+  Default is "solid".
 
 - smooth_linewidth:
 
@@ -198,24 +200,24 @@ plot_ts(
 
   (Optional) Expansion factor to expand the x-axis beyond the data. Left
   and right values are required in the form of c(0.1, 0.2) or simply 0.1
-  to apply the same value to each side. Default is 0.05.
+  to apply the same value to each side. Default is 0.1.
 
 - y_expand:
 
   (Optional) Expansion factor to expand the y-axis beyond the data.
   Lower and upper values are required in the form of c(0.1, 0.2) or
   simply 0.1 to apply the same value to the top and bottom. Default is
-  0.05.
+  0.1.
 
 - x_breaks:
 
   (Optional) Integer giving desired number of breaks for x axis. (May
-  not return exactly the number requested.)
+  not return exactly the number requested.) Default is 10.
 
 - y_breaks:
 
   (Optional) Integer giving desired number of breaks for y axis. (May
-  not return exactly the number requested.)
+  not return exactly the number requested.) Default is 6.
 
 - title_wrap_length:
 

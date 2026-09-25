@@ -17,11 +17,11 @@ print(x, n = 30, ...)
 
 - n:
 
-  (Optional) Integer specifying the number of rows of data to display.
+  (Optional) Number of indicators to print (default 30).
 
 - ...:
 
-  Additional arguments.
+  Currently unused.
 
 ## Value
 

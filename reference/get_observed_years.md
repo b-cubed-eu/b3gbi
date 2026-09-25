@@ -1,4 +1,4 @@
-# Extract Years With Observations from an Indicator Map
+# Extract Years With Observations
 
 Takes an "indicator_map", "indicator_ts", or "processed_cube" object and
 determines the years for which observation data exists.
@@ -13,8 +13,7 @@ get_observed_years(x)
 
 - x:
 
-  An "indicator_map" object containing calculated indicator values
-  associated with grid cells.
+  An "indicator_map", "indicator_ts" or "processed_cube" object.
 
 ## Value
 

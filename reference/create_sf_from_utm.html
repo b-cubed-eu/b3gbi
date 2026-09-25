@@ -61,7 +61,9 @@ utmzone column, and creates an sf object with the correct CRS for each zone.</p>
 
 
 <dl><dt id="arg-df">df<a class="anchor" aria-label="anchor" href="#arg-df"></a></dt>
-<dd><p>A data frame with columns: xcoord, ycoord, and utmzone.</p></dd>
+<dd><p>A data frame with numeric columns <code>xcoord</code> (easting), <code>ycoord</code>
+(northing) and <code>utmzone</code>, and a character column <code>hemisphere</code> (<code>"S"</code> for
+the southern hemisphere; any other value is treated as northern).</p></dd>
 
 
 <dt id="arg-output-crs">output_crs<a class="anchor" aria-label="anchor" href="#arg-output-crs"></a></dt>
@@ -71,7 +73,8 @@ output CRS. If NULL, the CRS of the first UTM zone will be used.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>An sf object with the geometry correctly defined for each UTM zone.</p>
+    <p>A single sf object, with the points of each zone transformed to
+<code>output_crs</code>.</p>
     </div>
 
     <div class="section level2">

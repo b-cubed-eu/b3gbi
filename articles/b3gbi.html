@@ -90,7 +90,7 @@ biodiversity indicators. Developed as part of the EU-funded B3
 (Biodiversity Building Blocks for Policy) project, b3gbi takes
 pre-processed GBIF occurrence cubes as input and quickly transforms them
 into actionable metrics, including richness, evenness, rarity, taxonomic
-distinctness, Shannon-Hill diversity, Simpson-Hill diversity, and
+distinctness, Hill-Shannon diversity, Hill-Simpson diversity, and
 completeness, complete with integrated uncertainty estimation using
 robust bootstrapping methods.</p>
 <p>This tutorial will guide you through the three core steps of the
@@ -146,25 +146,28 @@ tutorial on downloading a cube from GBIF</a>.</p>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td><code>data</code></td>
-<td>Path to the .csv file containing the GBIF cube. Required.</td>
+<td><code>cube_name</code></td>
+<td>Path to the .csv file containing the GBIF cube, or a data frame.
+Required.</td>
 <td></td>
 </tr>
 <tr class="even">
 <td><code>grid_type</code></td>
-<td>The grid system used (e.g., ‘eea’, ‘mgrs’, ‘eqdgc’, ‘isea3h’,
-‘custom’).</td>
-<td>Autodetected if possible.</td>
+<td>The grid system used: ‘automatic’, ‘eea’, ‘mgrs’, ‘eqdgc’, ‘isea3h’,
+‘custom’ or ‘none’.</td>
+<td>‘automatic’ (default) autodetects the grid from the cell codes. Use
+‘custom’ for custom grid codes or ‘none’ for a cube without grid
+codes.</td>
 </tr>
 <tr class="odd">
 <td><code>first_year</code></td>
 <td>Filters the cube to start at this year.</td>
-<td>First year in the data.</td>
+<td>NULL (default) uses the earliest year in the data.</td>
 </tr>
 <tr class="even">
 <td><code>last_year</code></td>
 <td>Filters the cube to end at this year.</td>
-<td>Last year in the data.</td>
+<td>NULL (default) uses the latest year in the data.</td>
 </tr>
 </tbody>
 </table>
@@ -351,29 +354,29 @@ indicators and their associated wrapper functions (e.g.,
 <span><span class="co">#&gt;     Class: tax_distinct</span></span>
 <span><span class="co">#&gt;     Calculate map: yes, e.g. tax_distinct_map(my_data_cube)</span></span>
 <span><span class="co">#&gt;     Calculate time series: yes, e.g. tax_distinct_ts(my_data_cube)</span></span>
-<span><span class="co">#&gt;     Additional map function arguments: rows</span></span>
-<span><span class="co">#&gt;     Additional time series function arguments: rows</span></span>
+<span><span class="co">#&gt;     Additional map function arguments: NA</span></span>
+<span><span class="co">#&gt;     Additional time series function arguments: NA</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; 11. <span style="color: #BB0000;">Species Richness (Estimated by Coverage-Based Rarefaction)</span></span></span>
 <span><span class="co">#&gt;     Class: hill0</span></span>
 <span><span class="co">#&gt;     Calculate map: yes, e.g. hill0_map(my_data_cube)</span></span>
 <span><span class="co">#&gt;     Calculate time series: yes, e.g. hill0_ts(my_data_cube)</span></span>
-<span><span class="co">#&gt;     Additional map function arguments: cutoff_length, coverage, conf_level, data_type, assume_freq</span></span>
-<span><span class="co">#&gt;     Additional time series function arguments: cutoff_length, coverage, conf_level, data_type, assume_freq</span></span>
+<span><span class="co">#&gt;     Additional map function arguments: coverage, cutoff_length, data_type, assume_freq</span></span>
+<span><span class="co">#&gt;     Additional time series function arguments: coverage, cutoff_length, conf_level</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; 12. <span style="color: #BB0000;">Hill-Shannon Diversity (Estimated by Coverage-Based Rarefaction)</span></span></span>
 <span><span class="co">#&gt;     Class: hill1</span></span>
 <span><span class="co">#&gt;     Calculate map: yes, e.g. hill1_map(my_data_cube)</span></span>
 <span><span class="co">#&gt;     Calculate time series: yes, e.g. hill1_ts(my_data_cube)</span></span>
-<span><span class="co">#&gt;     Additional map function arguments: cutoff_length, coverage, conf_level, data_type, assume_freq</span></span>
-<span><span class="co">#&gt;     Additional time series function arguments: cutoff_length, coverage, conf_level, data_type, assume_freq</span></span>
+<span><span class="co">#&gt;     Additional map function arguments: cutoff_length, coverage, data_type, assume_freq</span></span>
+<span><span class="co">#&gt;     Additional time series function arguments: cutoff_length, coverage, conf_level</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; 13. <span style="color: #BB0000;">Hill-Simpson Diversity (Estimated by Coverage-Based Rarefaction)</span></span></span>
 <span><span class="co">#&gt;     Class: hill2</span></span>
 <span><span class="co">#&gt;     Calculate map: yes, e.g. hill2_map(my_data_cube)</span></span>
 <span><span class="co">#&gt;     Calculate time series: yes, e.g. hill2_ts(my_data_cube)</span></span>
-<span><span class="co">#&gt;     Additional map function arguments: cutoff_length, coverage, conf_level, data_type, assume_freq</span></span>
-<span><span class="co">#&gt;     Additional time series function arguments: cutoff_length, coverage, conf_level, data_type, assume_freq</span></span>
+<span><span class="co">#&gt;     Additional map function arguments: cutoff_length, coverage, data_type, assume_freq</span></span>
+<span><span class="co">#&gt;     Additional time series function arguments: cutoff_length, coverage, conf_level</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; 14. <span style="color: #BB0000;">Species Occurrences</span></span></span>
 <span><span class="co">#&gt;     Class: spec_occ</span></span>
@@ -408,14 +411,14 @@ indicators and their associated wrapper functions (e.g.,
 <span><span class="co">#&gt;     Calculate map: yes, e.g. completeness_map(my_data_cube)</span></span>
 <span><span class="co">#&gt;     Calculate time series: yes, e.g. completeness_ts(my_data_cube)</span></span>
 <span><span class="co">#&gt;     Additional map function arguments: cutoff_length, data_type, assume_freq</span></span>
-<span><span class="co">#&gt;     Additional time series function arguments: cutoff_length, data_type, assume_freq, gridded_average</span></span>
+<span><span class="co">#&gt;     Additional time series function arguments: cutoff_length, gridded_average</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; 19. <span style="color: #BB0000;">Species Relative Occupancy</span></span></span>
 <span><span class="co">#&gt;     Class: relative_occupancy</span></span>
 <span><span class="co">#&gt;     Calculate map: yes, e.g. relative_occupancy_map(my_data_cube)</span></span>
 <span><span class="co">#&gt;     Calculate time series: yes, e.g. relative_occupancy_ts(my_data_cube)</span></span>
-<span><span class="co">#&gt;     Additional map function arguments: NA</span></span>
-<span><span class="co">#&gt;     Additional time series function arguments: NA</span></span></code></pre></div>
+<span><span class="co">#&gt;     Additional map function arguments: occ_type</span></span>
+<span><span class="co">#&gt;     Additional time series function arguments: occ_type</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="core-arguments-for-wrapper-functions">Core Arguments for Wrapper Functions<a class="anchor" aria-label="anchor" href="#core-arguments-for-wrapper-functions"></a>
@@ -441,13 +444,16 @@ indicators and their associated wrapper functions (e.g.,
 </tr>
 <tr class="even">
 <td><code>level</code></td>
-<td>The geographical scale (‘country’, ‘continent’, ‘world’).</td>
-<td>Automatically retrieves boundaries.</td>
+<td>The spatial level: ‘cube’, ‘continent’, ‘country’, ‘world’,
+‘sovereignty’ or ‘geounit’.</td>
+<td>‘cube’ (default) uses the extent of the cube; other levels
+automatically retrieve boundaries from Natural Earth.</td>
 </tr>
 <tr class="odd">
 <td><code>region</code></td>
 <td>The specific region name (e.g., ‘Germany’, ‘Europe’).</td>
-<td>Required if level is set.</td>
+<td>Used when level is ‘continent’, ‘country’, ‘sovereignty’ or
+‘geounit’ (default “Europe”).</td>
 </tr>
 </tbody>
 </table>
@@ -476,8 +482,8 @@ information).</p>
 <div class="section level3">
 <h3 id="example-total-occurrences-time-series">Example: Total Occurrences Time Series<a class="anchor" aria-label="anchor" href="#example-total-occurrences-time-series"></a>
 </h3>
-<p>Now, let’s calculate the same indicator temporally for a trend
-analysis.</p>
+<p>Now, let’s calculate an indicator over time: the total number of
+occurrences per year.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Calculate a time series of total occurrences for Denmark</span></span>
 <span><span class="co"># By default, confidence intervals are NOT calculated during this step</span></span>
@@ -567,8 +573,8 @@ indicator calculation, rather than the data.</td>
 intervals, the <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> function will automatically display
 them as ribbons or error bars.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Plotting the time series object</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">Denmark_total_occ_ts</span>,</span>
+<code class="sourceCode R"><span><span class="co"># Plotting the time series object (with confidence intervals)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">Denmark_total_occ_ts_with_ci</span>,</span>
 <span>  title <span class="op">=</span> <span class="st">"Temporal Trend of Total Mammal Occurrences in Denmark"</span>,</span>
 <span>  linecolour <span class="op">=</span> <span class="st">"blue"</span>,</span>
 <span>  ribboncolour <span class="op">=</span> <span class="st">"skyblue"</span>,</span>

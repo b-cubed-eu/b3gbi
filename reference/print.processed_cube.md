@@ -23,7 +23,11 @@ print(x, n = 10, ...)
 
 - ...:
 
-  Additional arguments.
+  Additional arguments passed to print().
+
+## Value
+
+Invisibly returns the input object `x`.
 
 ## Examples
 

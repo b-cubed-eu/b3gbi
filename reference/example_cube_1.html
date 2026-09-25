@@ -58,8 +58,8 @@ GBIF as of 16.03.2024.</p>
 
     <div class="section level2">
     <h2 id="format">Format<a class="anchor" aria-label="anchor" href="#format"></a></h2>
-    <p>A 'processed_cube' object containing a tibble with 31,632 rows and
-15 variables, as well as metadata</p><dl><dt>year</dt>
+    <p>A 'processed_cube' object: a list of metadata plus, in its <code>data</code>
+element, a tibble with 31,632 rows and 15 variables</p><dl><dt>year</dt>
 <dd><p>year occurrence was recorded</p></dd>
 
 <dt>cellCode</dt>
@@ -85,7 +85,7 @@ on the Extended Quarter Degree (eqdgc) grid</p></dd>
 <dd><p>scientific species name</p></dd>
 
 <dt>obs</dt>
-<dd><p>number of individuals observed</p></dd>
+<dd><p>number of occurrences (records)</p></dd>
 
 <dt>minCoordinateUncertaintyInMeters</dt>
 <dd><p>minimum coordinate uncertainty in
@@ -94,14 +94,18 @@ meters</p></dd>
 <dt>minTemporalUncertainty</dt>
 <dd><p>minimum temporal uncertainty in seconds</p></dd>
 
+<dt>familyCount</dt>
+<dd><p>number of occurrences of the family the species
+belongs to</p></dd>
+
 <dt>xcoord</dt>
-<dd><p>East-West coordinate on the eqdgc grid</p></dd>
+<dd><p>longitude of the cell centre (degrees)</p></dd>
 
 <dt>ycoord</dt>
-<dd><p>North-South coordinate on the eqdgc grid</p></dd>
+<dd><p>latitude of the cell centre (degrees)</p></dd>
 
 <dt>resolution</dt>
-<dd><p>grid cell size</p></dd>
+<dd><p>grid cell size (e.g. "0.25degrees")</p></dd>
 
 
 </dl></div>

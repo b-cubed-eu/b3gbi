@@ -5,11 +5,11 @@
       fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
     }
   };
-</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/PT_Sans-0.4.10/font.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet"><meta property="og:title" content="Calculate Confidence Intervals for a Biodiversity Indicator — calc_ci"><meta name="description" content="This function calculates bootstrap confidence intervals for a
-biodiversity indicator. It is called automatically when calculating a
-biodiversity indicator over time unless you choose 'none' for ci_type."><meta property="og:description" content="This function calculates bootstrap confidence intervals for a
-biodiversity indicator. It is called automatically when calculating a
-biodiversity indicator over time unless you choose 'none' for ci_type."><meta property="og:image" content="https://b-cubed-eu.github.io/b3gbi/logo.png"></head><body>
+</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/PT_Sans-0.4.10/font.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet"><meta property="og:title" content="Calculate Confidence Intervals for a Biodiversity Indicator — calc_ci"><meta name="description" content="Calculates indicator-level bootstrap confidence intervals. It
+is called internally by add_ci() (indicator level) or when ci_type is
+supplied to a *_ts() function; it is not meant to be called directly."><meta property="og:description" content="Calculates indicator-level bootstrap confidence intervals. It
+is called internally by add_ci() (indicator level) or when ci_type is
+supplied to a *_ts() function; it is not meant to be called directly."><meta property="og:image" content="https://b-cubed-eu.github.io/b3gbi/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -49,9 +49,9 @@ biodiversity indicator over time unless you choose 'none' for ci_type."><meta pr
     </div>
 
     <div class="ref-description section level2">
-    <p>This function calculates bootstrap confidence intervals for a
-biodiversity indicator. It is called automatically when calculating a
-biodiversity indicator over time unless you choose 'none' for ci_type.</p>
+    <p>Calculates indicator-level bootstrap confidence intervals. It
+is called internally by <code><a href="add_ci.html">add_ci()</a></code> (indicator level) or when <code>ci_type</code> is
+supplied to a <code>*_ts()</code> function; it is not meant to be called directly.</p>
     </div>
 
     <div class="section level2">
@@ -116,7 +116,9 @@ be called by the 'compute_indicator_workflow' function.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Additional arguments passed to specific calc_ci functions.</p></dd>
+<dd><p>Additional arguments passed to specific calc_ci functions and
+on to <code><a href="https://rdrr.io/pkg/boot/man/boot.ci.html" class="external-link">boot::boot.ci()</a></code> (e.g., <code>conf</code>, <code>h</code>, <code>hinv</code>), or to the
+<span class="pkg">iNEXT</span>-based calculation for Hill numbers (e.g., <code>conf</code>).</p></dd>
 
 
 <dt id="arg-num-bootstrap">num_bootstrap<a class="anchor" aria-label="anchor" href="#arg-num-bootstrap"></a></dt>
@@ -125,9 +127,8 @@ generating confidence intervals. (Default: 1000)</p></dd>
 
 
 <dt id="arg-ci-type">ci_type<a class="anchor" aria-label="anchor" href="#arg-ci-type"></a></dt>
-<dd><p>(Optional) Type of bootstrap confidence intervals to
-calculate. (Default: "perc". Select "none" to avoid calculating bootstrap
-CIs.)</p></dd>
+<dd><p>(Optional) Type of bootstrap interval passed to
+<code><a href="https://rdrr.io/pkg/boot/man/boot.ci.html" class="external-link">boot::boot.ci()</a></code>. (Default: "perc")</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -161,14 +162,14 @@ CIs.)</p></dd>
 <span class="r-in"><span>                       ci_type <span class="op">=</span> <span class="st">"perc"</span>, num_bootstrap <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">occ_ts</span><span class="op">$</span><span class="va">data</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 6 × 9</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    year diversity_val int_type    ll    ul est_boot se_boot bias_boot conf_level</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>  <span style="text-decoration: underline;">2</span>000          <span style="text-decoration: underline;">2</span>166 percent  <span style="text-decoration: underline;">1</span>866. <span style="text-decoration: underline;">2</span>632.    <span style="text-decoration: underline;">2</span>189.    186.     23.3        0.95</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>  <span style="text-decoration: underline;">2</span>001          <span style="text-decoration: underline;">2</span>831 percent  <span style="text-decoration: underline;">2</span>579. <span style="text-decoration: underline;">3</span>098.    <span style="text-decoration: underline;">2</span>820.    137.    -<span style="color: #BB0000;">10.9</span>        0.95</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>  <span style="text-decoration: underline;">2</span>002          <span style="text-decoration: underline;">3</span>366 percent  <span style="text-decoration: underline;">2</span>988. <span style="text-decoration: underline;">3</span>880.    <span style="text-decoration: underline;">3</span>364.    225.     -<span style="color: #BB0000;">2.31</span>       0.95</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>  <span style="text-decoration: underline;">2</span>003          <span style="text-decoration: underline;">3</span>114 percent  <span style="text-decoration: underline;">2</span>629. <span style="text-decoration: underline;">3</span>722.    <span style="text-decoration: underline;">3</span>120.    258.      6.15       0.95</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>  <span style="text-decoration: underline;">2</span>004          <span style="text-decoration: underline;">2</span>934 percent  <span style="text-decoration: underline;">2</span>534. <span style="text-decoration: underline;">3</span>487.    <span style="text-decoration: underline;">2</span>997.    227.     63.0        0.95</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>  <span style="text-decoration: underline;">2</span>005          <span style="text-decoration: underline;">4</span>733 percent  <span style="text-decoration: underline;">3</span>994. <span style="text-decoration: underline;">5</span>378.    <span style="text-decoration: underline;">4</span>770.    329.     36.6        0.95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    year diversity_val int_type    ll    ul est_boot se_boot bias_boot  conf</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>  <span style="text-decoration: underline;">2</span>000          <span style="text-decoration: underline;">2</span>166 perc     <span style="text-decoration: underline;">1</span>866. <span style="text-decoration: underline;">2</span>632.    <span style="text-decoration: underline;">2</span>189.    186.     23.3   0.95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>  <span style="text-decoration: underline;">2</span>001          <span style="text-decoration: underline;">2</span>831 perc     <span style="text-decoration: underline;">2</span>579. <span style="text-decoration: underline;">3</span>098.    <span style="text-decoration: underline;">2</span>820.    137.    -<span style="color: #BB0000;">10.9</span>   0.95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>  <span style="text-decoration: underline;">2</span>002          <span style="text-decoration: underline;">3</span>366 perc     <span style="text-decoration: underline;">2</span>988. <span style="text-decoration: underline;">3</span>880.    <span style="text-decoration: underline;">3</span>364.    225.     -<span style="color: #BB0000;">2.31</span>  0.95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>  <span style="text-decoration: underline;">2</span>003          <span style="text-decoration: underline;">3</span>114 perc     <span style="text-decoration: underline;">2</span>629. <span style="text-decoration: underline;">3</span>722.    <span style="text-decoration: underline;">3</span>120.    258.      6.15  0.95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>  <span style="text-decoration: underline;">2</span>004          <span style="text-decoration: underline;">2</span>934 perc     <span style="text-decoration: underline;">2</span>534. <span style="text-decoration: underline;">3</span>487.    <span style="text-decoration: underline;">2</span>997.    227.     63.0   0.95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>  <span style="text-decoration: underline;">2</span>005          <span style="text-decoration: underline;">4</span>733 perc     <span style="text-decoration: underline;">3</span>994. <span style="text-decoration: underline;">5</span>378.    <span style="text-decoration: underline;">4</span>770.    329.     36.6   0.95</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>

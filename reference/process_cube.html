@@ -5,31 +5,17 @@
       fontURL: "https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/output/chtml/fonts/woff-v2"
     }
   };
-</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/PT_Sans-0.4.10/font.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet"><meta property="og:title" content="Process GBIF Data Cubes — process_cube"><meta name="description" content="Processes a GBIF data cube and (if applicable) an associated
-taxonomic information file. If your cube includes a taxonomic info file it
-is likely a previous generation cube and should be processed using
-'process_cube_old'. The taxonomic info file must reside in the same
-directory as your cube and share a base file name (e.g.,
-'cubes/my_mammals_cube.csv', 'cubes/my_mammals_info.csv'). If your cube does
-NOT include a taxonomic info file then it is likely a current generation
-cube and should be processed using the standard process_cube function. The
-API used to generate the current generation cubes is very flexible and
-allows user-specified column names. Therefore, please check that the column
-names of your cube match the Darwin Core standard expected by the
-process_cube function. If they do not, you may need to enter them manually.
-The function will return an error if it cannot find all required columns."><meta property="og:description" content="Processes a GBIF data cube and (if applicable) an associated
-taxonomic information file. If your cube includes a taxonomic info file it
-is likely a previous generation cube and should be processed using
-'process_cube_old'. The taxonomic info file must reside in the same
-directory as your cube and share a base file name (e.g.,
-'cubes/my_mammals_cube.csv', 'cubes/my_mammals_info.csv'). If your cube does
-NOT include a taxonomic info file then it is likely a current generation
-cube and should be processed using the standard process_cube function. The
-API used to generate the current generation cubes is very flexible and
-allows user-specified column names. Therefore, please check that the column
-names of your cube match the Darwin Core standard expected by the
-process_cube function. If they do not, you may need to enter them manually.
-The function will return an error if it cannot find all required columns."><meta property="og:image" content="https://b-cubed-eu.github.io/b3gbi/logo.png"></head><body>
+</script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/PT_Sans-0.4.10/font.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet"><meta property="og:title" content="Process GBIF Data Cubes — process_cube"><meta name="description" content="Processes a GBIF occurrence cube (a CSV file or a data frame)
+into a processed_cube object. Cubes produced by the GBIF cube API can
+have user-specified column names, so check that your column names match
+the Darwin Core names expected by this function; if not, supply them with
+the cols_* arguments. The function stops with an error if it cannot find
+all required columns."><meta property="og:description" content="Processes a GBIF occurrence cube (a CSV file or a data frame)
+into a processed_cube object. Cubes produced by the GBIF cube API can
+have user-specified column names, so check that your column names match
+the Darwin Core names expected by this function; if not, supply them with
+the cols_* arguments. The function stops with an error if it cannot find
+all required columns."><meta property="og:image" content="https://b-cubed-eu.github.io/b3gbi/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -69,19 +55,12 @@ The function will return an error if it cannot find all required columns."><meta
     </div>
 
     <div class="ref-description section level2">
-    <p>Processes a GBIF data cube and (if applicable) an associated
-taxonomic information file. If your cube includes a taxonomic info file it
-is likely a previous generation cube and should be processed using
-'process_cube_old'. The taxonomic info file must reside in the same
-directory as your cube and share a base file name (e.g.,
-'cubes/my_mammals_cube.csv', 'cubes/my_mammals_info.csv'). If your cube does
-NOT include a taxonomic info file then it is likely a current generation
-cube and should be processed using the standard process_cube function. The
-API used to generate the current generation cubes is very flexible and
-allows user-specified column names. Therefore, please check that the column
-names of your cube match the Darwin Core standard expected by the
-process_cube function. If they do not, you may need to enter them manually.
-The function will return an error if it cannot find all required columns.</p>
+    <p>Processes a GBIF occurrence cube (a CSV file or a data frame)
+into a <code>processed_cube</code> object. Cubes produced by the GBIF cube API can
+have user-specified column names, so check that your column names match
+the Darwin Core names expected by this function; if not, supply them with
+the <code>cols_*</code> arguments. The function stops with an error if it cannot find
+all required columns.</p>
     </div>
 
     <div class="section level2">
@@ -118,22 +97,23 @@ The function will return an error if it cannot find all required columns.</p>
 
 
 <dl><dt id="arg-cube-name">cube_name<a class="anchor" aria-label="anchor" href="#arg-cube-name"></a></dt>
-<dd><p>The location and name of a data cube file
-(e.g., 'inst/extdata/europe_species_cube.csv').</p></dd>
+<dd><p>Either the path to a data cube CSV file (e.g.
+<code>system.file("extdata", "denmark_mammals_cube_eqdgc.csv", package = "b3gbi")</code>) or a data frame containing the cube.</p></dd>
 
 
 <dt id="arg-grid-type">grid_type<a class="anchor" aria-label="anchor" href="#arg-grid-type"></a></dt>
-<dd><p>(Optional) Specify which grid reference system your cube
-uses. By default the function will attempt to determine this automatically
-and return an error if it fails. If you want to perform analysis on a cube
-with custom grid codes (e.g. output from the gcube package) or a cube
-without grid codes, select 'custom' or 'none', respectively.</p></dd>
+<dd><p>(Optional) The grid reference system your cube uses. One of
+<code>"automatic"</code> (default), <code>"eea"</code>, <code>"mgrs"</code>, <code>"eqdgc"</code>, <code>"isea3h"</code>,
+<code>"custom"</code> or <code>"none"</code>. With <code>"automatic"</code> the function attempts to detect
+the grid from the cell codes and returns an error if it fails. If you want
+to perform analysis on a cube with custom grid codes (e.g. output from the
+gcube package) or a cube without grid codes, select <code>"custom"</code> or <code>"none"</code>,
+respectively.</p></dd>
 
 
 <dt id="arg-first-year">first_year<a class="anchor" aria-label="anchor" href="#arg-first-year"></a></dt>
 <dd><p>(Optional) The first year of occurrences to include. If not
-specified, uses a default of 1600 to prevent false records (e.g. with
-year = 0).</p></dd>
+specified, uses the earliest year present in the cube.</p></dd>
 
 
 <dt id="arg-last-year">last_year<a class="anchor" aria-label="anchor" href="#arg-last-year"></a></dt>
@@ -142,10 +122,9 @@ specified, uses the latest year present in the cube.</p></dd>
 
 
 <dt id="arg-force-gridcode">force_gridcode<a class="anchor" aria-label="anchor" href="#arg-force-gridcode"></a></dt>
-<dd><p>(Optional) Force the function to assume a specific
-grid reference system. This may cause unexpected downstream issues, so it is
-not recommended. If you are getting errors related to grid cell codes,
-check to make sure they are valid.</p></dd>
+<dd><p>(Optional) Logical. If <code>TRUE</code>, skips the check that
+cell codes match the expected format of <code>grid_type</code>. Not recommended;
+invalid codes may cause downstream errors. Default <code>FALSE</code>.</p></dd>
 
 
 <dt id="arg-cols-year">cols_year<a class="anchor" aria-label="anchor" href="#arg-cols-year"></a></dt>
@@ -176,7 +155,7 @@ reference codes (if other than 'cellCode'). This column is required.</p></dd>
 
 <dt id="arg-cols-occurrences">cols_occurrences<a class="anchor" aria-label="anchor" href="#arg-cols-occurrences"></a></dt>
 <dd><p>(Optional) The name of the column containing the
-number of occurrence (if other than 'occurrences'). This column is required.</p></dd>
+number of occurrences (if other than 'occurrences'). This column is required.</p></dd>
 
 
 <dt id="arg-cols-scientificname">cols_scientificName<a class="anchor" aria-label="anchor" href="#arg-cols-scientificname"></a></dt>
@@ -189,7 +168,7 @@ column. One or the other is sufficient.</p></dd>
 <dt id="arg-cols-mincoordinateuncertaintyinmeters">cols_minCoordinateUncertaintyInMeters<a class="anchor" aria-label="anchor" href="#arg-cols-mincoordinateuncertaintyinmeters"></a></dt>
 <dd><p>(Optional) The name of the
 column containing the minimum coordinate uncertainty of the occurrences (if
-other than 'minCoordinateUncertaintyinMeters').</p></dd>
+other than 'minCoordinateUncertaintyInMeters').</p></dd>
 
 
 <dt id="arg-cols-mintemporaluncertainty">cols_minTemporalUncertainty<a class="anchor" aria-label="anchor" href="#arg-cols-mintemporaluncertainty"></a></dt>
@@ -222,7 +201,7 @@ kingdom key of the occurring species (if other than 'kingdomKey').</p></dd>
 
 <dt id="arg-cols-familykey">cols_familyKey<a class="anchor" aria-label="anchor" href="#arg-cols-familykey"></a></dt>
 <dd><p>(Optional) The name of the column containing the family
-key of the  occurring species (if other than 'familykey').</p></dd>
+key of the occurring species (if other than 'familyKey').</p></dd>
 
 
 <dt id="arg-cols-specieskey">cols_speciesKey<a class="anchor" aria-label="anchor" href="#arg-cols-specieskey"></a></dt>
@@ -255,7 +234,10 @@ having trouble.</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A tibble containing the processed GBIF occurrence data.</p>
+    <p>An object of class <code>processed_cube</code> (or <code>sim_cube</code> when
+<code>grid_type</code> is <code>"custom"</code> or <code>"none"</code>): a list of metadata (years, number
+of species, grid type, resolution, ...) plus the processed occurrences in
+the <code>data</code> element.</p>
     </div>
 
     <div class="section level2">

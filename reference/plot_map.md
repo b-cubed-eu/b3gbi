@@ -71,20 +71,33 @@ plot_map(
 
 - xlims:
 
-  (Optional) Custom x-axis limits.
+  (Optional) Custom longitude limits in decimal degrees (WGS84), as
+  c(min, max). Should be supplied together with ylims. If only xlims is
+  supplied, the values are instead interpreted in the units of the
+  indicator_map's coordinate reference system and combined with the
+  map's own y limits.
 
 - ylims:
 
-  (Optional) Custom y-axis limits.
+  (Optional) Custom latitude limits in decimal degrees (WGS84), as
+  c(min, max). Should be supplied together with xlims. If only ylims is
+  supplied, the values are instead interpreted in the units of the
+  indicator_map's coordinate reference system and combined with the
+  map's own x limits.
 
 - trans:
 
-  (Optional) Scale transformation for the fill gradient (e.g., 'log').
+  (Optional) Scale transformation for the fill gradient. Can be any
+  transformation accepted by
+  [`ggplot2::scale_fill_gradient()`](https://ggplot2.tidyverse.org/reference/scale_gradient.html)
+  (e.g., 'log', 'log10' or 'sqrt'), or one of the special values
+  'boxcox', 'modulus' or 'yj' (Yeo-Johnson), which use the power
+  parameter given in bcpower.
 
 - bcpower:
 
   (Optional) Power parameter for the Box-Cox, modulus, or Yeo-Johnson
-  transformations.
+  transformations (used only when trans is 'boxcox', 'modulus' or 'yj').
 
 - breaks:
 
@@ -108,15 +121,17 @@ plot_map(
 
 - crop_by_region:
 
-  (Optional) If TRUE, the map will be cropped to the specified region
-  when calculating the indicator_map. Default is FALSE. Note: this
-  requires that a region was specified when calculating the
-  indicator_map.
+  (Optional) If TRUE, the map extent is set to the bounding box of the
+  region that was specified when calculating the indicator_map (e.g. the
+  country or continent), instead of the extent of the grid. This
+  requires that a region was specified, i.e. that the indicator_map was
+  not calculated with level = "cube" or level = "world". Default is
+  FALSE.
 
 - ocean_fill_colour:
 
-  (Optional) Colour for the ocean area outside of the grid. Default is
-  "lightblue".
+  (Optional) Colour for the ocean (plot background) outside of the grid.
+  Default is "#92c5f0" (light blue).
 
 - land_fill_colour:
 
@@ -136,14 +151,16 @@ plot_map(
 
 - grid_line_width:
 
-  (Optional) Width of the grid lines. Default is 0.1.
+  (Optional) Width of the grid lines. If NULL (default), 0.5 for ISEA3H
+  grids and 0.1 otherwise.
 
 - grid_fill_transparency:
 
   (Optional) Transparency of the grid fill colour for empty grid cells
   (0 = fully transparent, 1 = fully opaque). If visible_gridlines is set
-  to TRUE, default is 0.2. Otherwise, default is 0. \*Note that this
-  setting does NOT apply to grid cells with indicator values!
+  to TRUE, default is 0.2. Otherwise, default is 0. Note that this
+  setting does NOT apply to grid cells with indicator values, and has no
+  visible effect while grid_fill_colour is "transparent".
 
 - grid_line_transparency:
 
@@ -183,7 +200,7 @@ plot_map(
   the crop is applied. If this value is too small, some land may be
   visibly cut off due to map distortion caused by projections. A larger
   value will extend the bounding box for cropping to prevent this. Must
-  be a positive number. (Default is 0.5). This should be enough for most
+  be a positive number. Default is 0.1. This should be enough for most
   projections, but you can increase this value if you are using an
   extreme projection and find that some land is visibly cut off.
 
@@ -194,13 +211,16 @@ plot_map(
 
 - layer_colours:
 
-  (Optional) Colours for the outlines of additional layers. Must be the
-  same length as 'layers'.
+  (Optional) Outline colours for the additional layers, given in the
+  same order as 'layers' (one colour per layer; must be the same length
+  as 'layers'). If NULL (default), all layer outlines are black.
 
 - layer_fill_colours:
 
-  (Optional) Fill colours for the additional layers. Must be the same
-  length as 'layers'.
+  (Optional) Fill colours for the additional layers, given in the same
+  order as 'layers' (must be the same length as 'layers'). If NULL
+  (default), layers are unfilled, except "ocean" and "lakes", which are
+  filled light blue.
 
 - scale:
 

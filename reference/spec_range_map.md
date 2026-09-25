@@ -1,7 +1,7 @@
-# Plot Species Ranges Over Space or Time
+# Calculate Species Ranges Over Space or Time
 
-Plot the cells occupied for individual species over a gridded map or
-calculate the change in the number of cells occupied as a time series.
+Calculate the cells occupied by individual species over a gridded map or
+the change in the number of cells occupied as a time series.
 
 ## Usage
 
@@ -24,21 +24,31 @@ spec_range_ts(data, ...)
 
   `cell_size`
 
-  :   (Optional) Length of grid cell sides, in km or degrees. If set to
-      "grid" (default), this will use the existing grid size of your
-      cube. If set to "auto", this will be automatically determined
-      according to the geographical level selected. This is 100 km or 1
-      degree for 'continent' or 'world', 10 km or (for a degree-based
-      CRS) the native resolution of the cube for 'country',
-      'sovereignty' or 'geounit'. If level is set to 'cube', cell size
-      will be the native resolution of the cube for a degree-based CRS,
-      or for a km-based CRS, the cell size will be determined by the
-      area of the cube: 100 km for cubes larger than 1 million sq km, 10
-      km for cubes between 10 thousand and 1 million sq km, 1 km for
-      cubes between 100 and 10 thousand sq km, and 0.1 km for cubes
-      smaller than 100 sq km. Alternatively, the user can manually
-      select the grid cell size (in km or degrees). Note that the cell
-      size must be a whole number multiple of the cube's resolution.
+  :   (Optional) Length of grid cell sides, in km or degrees. Only used
+      for maps and for time series that require a grid.
+
+      - `"grid"` (default): use the native resolution of the cube. If
+        this would produce more than about 1 million grid cells over the
+        study area (for degree-based cubes: if the resolution is finer
+        than 1 degree for 'world' or 'continent', or finer than 0.1
+        degrees otherwise), you are asked to confirm in an interactive
+        session, and the function stops with an error in a
+        non-interactive session.
+
+      - `"auto"`: determined automatically. For km-based grids it
+        depends on the area of the study region: 100 km for areas of at
+        least 1 million sq km, 10 km for at least 10,000 sq km, 1 km for
+        at least 100 sq km, and 0.1 km for smaller areas. For
+        degree-based grids it is 1 degree for 'world' or 'continent' and
+        0.1 degrees otherwise. The automatic size is never smaller than
+        the cube's resolution.
+
+      - A number (in the units of the cube's resolution, i.e. km or
+        degrees), or for km-based grids a string such as `"10km"` or
+        `"500m"`.
+
+      A manually selected cell size must be a whole number multiple of
+      the cube's resolution.
 
   `level`
 
@@ -47,8 +57,8 @@ spec_range_ts(data, ...)
 
   `region`
 
-  :   (Optional) The region of interest (e.g., "Europe"). This parameter
-      is ignored if level is set to 'cube' or 'world'. (Default: NULL)
+  :   (Optional) The region of interest (e.g., "Denmark"). Ignored if
+      level is 'cube' or 'world'. (Default: "Europe")
 
   `ne_type`
 
@@ -93,7 +103,7 @@ spec_range_ts(data, ...)
   `shapefile_path`
 
   :   (optional) Path of an external shapefile to merge into the
-      workflow. For example, if you want to calculate your indicator
+      workflow. For example, if you want to calculate your indicator for
       particular features such as protected areas or wetlands.
 
   `shapefile_crs`
@@ -113,7 +123,7 @@ spec_range_ts(data, ...)
   `include_land`
 
   :   (Optional) Include occurrences which fall within the land area.
-      Default is TRUE. \*Note that this purely a geographic filter, and
+      Default is TRUE. Note that this is purely a geographic filter, and
       does not filter based on whether the occurrence is actually
       terrestrial. Grid cells which fall partially on land and partially
       on ocean will be included even if include_land is FALSE. To
@@ -124,13 +134,12 @@ spec_range_ts(data, ...)
 
   :   (Optional) Include occurrences which fall outside the land area.
       Default is TRUE. Set as "buffered_coast" to include a set buffer
-      size around the land area rather than the entire ocean area.
-      \*Note that this is purely a geographic filter, and does not
-      filter based on whether the occurrence is actually marine. Grid
-      cells which fall partially on land and partially on ocean will be
-      included even if include_ocean is FALSE. To exclude marine taxa,
-      you must manually filter your data cube before calculating your
-      indicator.
+      size around the land area rather than the entire ocean area. Note
+      that this is purely a geographic filter, and does not filter based
+      on whether the occurrence is actually marine. Grid cells which
+      fall partially on land and partially on ocean will be included
+      even if include_ocean is FALSE. To exclude marine taxa, you must
+      manually filter your data cube before calculating your indicator.
 
   `buffer_dist_km`
 
@@ -140,15 +149,28 @@ spec_range_ts(data, ...)
   `force_grid`
 
   :   (Optional) Forces the calculation of a grid even if this would not
-      normally be part of the pipeline, e.g. for time series. This
-      setting is required for the calculation of rarity or Hill
-      diversity, and is forced on by indicators that require it.
+      normally be part of the pipeline, i.e. for time series. A grid is
+      needed for time series of area-based rarity, Hill diversity and
+      relative occupancy (and for completeness with
+      `gridded_average = TRUE`). This is switched on automatically for
+      these indicators: the wrappers
+      [`area_rarity_ts()`](https://b-cubed-eu.github.io/b3gbi/reference/area_rarity_map.md),
+      [`hill0_ts()`](https://b-cubed-eu.github.io/b3gbi/reference/hill0_map.md),
+      [`hill1_ts()`](https://b-cubed-eu.github.io/b3gbi/reference/hill0_map.md)
+      and
+      [`hill2_ts()`](https://b-cubed-eu.github.io/b3gbi/reference/hill0_map.md)
+      already set `force_grid = TRUE`, so do not pass it to them.
       (Default: FALSE)
 
 ## Value
 
 An S3 object with the classes 'indicator_map' or 'indicator_ts' and
 'spec_range' containing the calculated indicator values and metadata.
+
+## Details
+
+Maps show presence (1) in each occupied cell; time series give the
+number of occupied cells per species per year.
 
 ## Functions
 
@@ -160,6 +182,10 @@ An S3 object with the classes 'indicator_map' or 'indicator_ts' and
 
 [`compute_indicator_workflow()`](https://b-cubed-eu.github.io/b3gbi/reference/compute_indicator_workflow.md),
 [`add_ci()`](https://b-cubed-eu.github.io/b3gbi/reference/add_ci.md)
+
+Other species-based indicators:
+[`relative_occupancy_map()`](https://b-cubed-eu.github.io/b3gbi/reference/relative_occupancy_map.md),
+[`spec_occ_map()`](https://b-cubed-eu.github.io/b3gbi/reference/spec_occ_map.md)
 
 ## Examples
 

@@ -2,7 +2,7 @@
 
 A list of all biodiversity indicators available within the package,
 along with the dimensions they can be calculated across, the functions
-to access them, and any special arguments
+to access them, and any special arguments.
 
 ## Usage
 
@@ -12,8 +12,8 @@ available_indicators
 
 ## Format
 
-A special object of class 'available_indicators' containing a list of
-indicators and six fields with information about them
+A special object of class 'available_indicators': a named list of 19
+indicators, each a list of nine fields with information about it
 
 - indicator_class:
 

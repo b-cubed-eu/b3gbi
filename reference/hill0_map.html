@@ -125,13 +125,15 @@ Default is 0.95.</p></dd>
 
 
 <dt id="arg-cutoff-length">cutoff_length<a class="anchor" aria-label="anchor" href="#arg-cutoff-length"></a></dt>
-<dd><p>(Optional) The minimum number of data points for each
-grid cell. Grid cells with fewer data points will be removed before
-calculations to avoid errors. Default is 5.</p></dd>
+<dd><p>(Optional) Minimum amount of data required, to avoid
+errors in the estimation. For maps, grid cells with fewer than
+<code>cutoff_length</code> species are removed. For time series, years whose
+species-by-cell incidence matrix has <code>cutoff_length</code> entries or fewer are
+removed. Default is 5.</p></dd>
 
 
 <dt id="arg-data-type">data_type<a class="anchor" aria-label="anchor" href="#arg-data-type"></a></dt>
-<dd><p>(Optional) If set to "incidence", occurrences are converted
+<dd><p>(Optional, maps only) If set to "incidence", occurrences are converted
 to incidence data. Observations are treated as presence/absence and years
 are used as sampling units. The number of years in which a species was
 observed within a grid cell are then summarized. If set to "abundance",
@@ -140,8 +142,8 @@ abundance. Default is "incidence".</p></dd>
 
 
 <dt id="arg-assume-freq">assume_freq<a class="anchor" aria-label="anchor" href="#arg-assume-freq"></a></dt>
-<dd><p>(Optional) If TRUE, the sum of observations for a
-species within a grid cell is assumed to be a sum of sampling sites in
+<dd><p>(Optional, maps only) If TRUE, the sum of observations
+for a species within a grid cell is assumed to be a sum of sampling sites in
 which that species was observed. The maximum number of observations for
 any species within a grid cell is then taken as a proxy for the total number
 of sampling sites for that cell. This parameter is ignored if data_type is
@@ -152,26 +154,30 @@ certain of how your data is structured. Default is FALSE.</p></dd>
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Arguments passed on to <code><a href="compute_indicator_workflow.html">compute_indicator_workflow</a></code></p><dl><dt><code>cell_size</code></dt>
 <dd><p>(Optional) Length of grid cell sides, in km or degrees.
-If set to "grid" (default), this will use the existing grid size of your
-cube. If set to "auto", this will be automatically determined according to
-the geographical level selected. This is 100 km or 1 degree for 'continent'
-or 'world', 10 km or (for a degree-based CRS) the native resolution of the
-cube for 'country', 'sovereignty' or 'geounit'. If level is set to 'cube',
-cell size will be the native resolution of the cube for a degree-based CRS,
-or for a km-based CRS, the cell size will be determined by the area of the
-cube: 100 km for cubes larger than 1 million sq km, 10 km for cubes between
-10 thousand and 1 million sq km, 1 km for cubes between 100 and 10 thousand
-sq km, and 0.1 km for cubes smaller than 100 sq km. Alternatively, the user
-can manually select the grid cell size (in km or degrees). Note that the
-cell size must be a whole number multiple of the cube's resolution.</p></dd>
+Only used for maps and for time series that require a grid.</p><ul><li><p><code>"grid"</code> (default): use the native resolution of the cube. If this would
+produce more than about 1 million grid cells over the study area (for
+degree-based cubes: if the resolution is finer than 1 degree for 'world'
+or 'continent', or finer than 0.1 degrees otherwise), you are asked to
+confirm in an interactive session, and the function stops with an error
+in a non-interactive session.</p></li>
+<li><p><code>"auto"</code>: determined automatically. For km-based grids it depends on the
+area of the study region: 100 km for areas of at least 1 million sq km,
+10 km for at least 10,000 sq km, 1 km for at least 100 sq km, and
+0.1 km for smaller areas. For degree-based grids it is 1 degree for
+'world' or 'continent' and 0.1 degrees otherwise. The automatic size is
+never smaller than the cube's resolution.</p></li>
+<li><p>A number (in the units of the cube's resolution, i.e. km or degrees), or
+for km-based grids a string such as <code>"10km"</code> or <code>"500m"</code>.</p></li>
+</ul><p>A manually selected cell size must be a whole number multiple of the
+cube's resolution.</p></dd>
 
     <dt><code>level</code></dt>
 <dd><p>(Optional) Spatial level: 'cube', 'continent', 'country',
 'world', 'sovereignty', or 'geounit'. (Default: 'cube')</p></dd>
 
     <dt><code>region</code></dt>
-<dd><p>(Optional) The region of interest (e.g., "Europe"). This
-parameter is ignored if level is set to 'cube' or 'world'. (Default: NULL)</p></dd>
+<dd><p>(Optional) The region of interest (e.g., "Denmark"). Ignored
+if level is 'cube' or 'world'. (Default: "Europe")</p></dd>
 
     <dt><code>ne_type</code></dt>
 <dd><p>(Optional) The type of Natural Earth data to download:
@@ -207,7 +213,7 @@ getting polygon errors. (Default is FALSE).</p></dd>
 
     <dt><code>shapefile_path</code></dt>
 <dd><p>(optional) Path of an external shapefile to merge into
-the workflow. For example, if you want to calculate your indicator
+the workflow. For example, if you want to calculate your indicator for
 particular features such as protected areas or wetlands.</p></dd>
 
     <dt><code>shapefile_crs</code></dt>
@@ -224,7 +230,7 @@ FALSE.</p></dd>
 
     <dt><code>include_land</code></dt>
 <dd><p>(Optional) Include occurrences which fall within the
-land area. Default is TRUE. *Note that this purely a geographic filter, and
+land area. Default is TRUE. Note that this is purely a geographic filter, and
 does not filter based on whether the occurrence is actually terrestrial.
 Grid cells which fall partially on land and partially on ocean will be
 included even if include_land is FALSE. To exclude terrestrial and/or
@@ -234,7 +240,7 @@ your indicator.</p></dd>
     <dt><code>include_ocean</code></dt>
 <dd><p>(Optional) Include occurrences which fall outside the
 land area. Default is TRUE. Set as "buffered_coast" to include a set buffer
-size around the land area rather than the entire ocean area. *Note that this
+size around the land area rather than the entire ocean area. Note that this
 is purely a geographic filter, and does not filter based on whether the
 occurrence is actually marine. Grid cells which fall partially on land and
 partially on ocean will be included even if include_ocean is FALSE. To
@@ -247,17 +253,21 @@ include_ocean is set to "buffered_coast". Default is 50 km.</p></dd>
 
     <dt><code>force_grid</code></dt>
 <dd><p>(Optional) Forces the calculation of a grid even if this
-would not normally be part of the pipeline, e.g. for time series. This
-setting is required for the calculation of rarity or Hill diversity, and is
-forced on by indicators that require it. (Default: FALSE)</p></dd>
+would not normally be part of the pipeline, i.e. for time series. A grid is
+needed for time series of area-based rarity, Hill diversity and relative
+occupancy (and for completeness with <code>gridded_average = TRUE</code>). This is
+switched on automatically for these indicators: the wrappers
+<code><a href="area_rarity_map.html">area_rarity_ts()</a></code>, <code>hill0_ts()</code>, <code>hill1_ts()</code> and <code>hill2_ts()</code> already set
+<code>force_grid = TRUE</code>, so do not pass it to them. (Default: FALSE)</p></dd>
 
 
 </dl></dd>
 
 
 <dt id="arg-conf-level">conf_level<a class="anchor" aria-label="anchor" href="#arg-conf-level"></a></dt>
-<dd><p>(Optional) Confidence level for bootstrap confidence
-intervals. Only applies to temporal indicators. Default is 0.95.</p></dd>
+<dd><p>(Optional, time series only) Confidence level for
+bootstrap confidence intervals. Only used when <code>num_bootstrap</code> &gt; 0 and
+<code>ci_type</code> is not "none" (passed via <code>...</code>). Default is 0.95.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -273,9 +283,9 @@ metadata.</p>
 <h3 id="hill-diversity">Hill diversity<a class="anchor" aria-label="anchor" href="#hill-diversity"></a></h3>
 
 
-<p>Hill (1973) introduced the concept of Hill diversity, which assumes that the number and relative abundance of species are inseparable components of diversity. Hill diversity uses a single equation to calculate multiple measures of diversity by varying a single parameter \(\ell\), which changes the emphasis on rare vs common species (Roswell et al., 2019). It represents the mean rarity of sampled species, and is calculated as: $$  D = \left( \sum_{i=1}^{S} p_i^\ell \right)^{1/(1-\ell)}  $$where D is diversity, S is the number of species, pi is the proportion of individuals belonging to species i, ri is the rarity of species i, and \(\ell\) determines the rarity scale for the mean. While \(\ell\) can theoretically take almost any value, three common measures of diversity are special cases: species richness, and modified versions of the Shannon and Simpson diversity indices (Roswell et al., 2019). These three measures occur when \(\ell\) takes the value of 1, 0 (or near-zero, as \(\ell\) cannot actually take the value of 0), or -1, respectively.</p><ul><li><p><strong>Species Richness (\(\ell\) = 1):</strong>  $$    D = S  $$</p></li>
-<li><p><strong>Hill-Shannon Diversity (\(\ell\) \(\approx\) 0):</strong>  $$    D = e^{-\sum_{i=1}^{S} p_i \ln(p_i)}  $$</p></li>
-<li><p><strong>Hill-Simpson Diversity (\(\ell\) = -1):</strong>  $$    D = \frac{1}{\sum_{i=1}^{S} p_i^2}  $$</p></li>
+<p>Hill (1973) introduced the concept of Hill diversity, which assumes that the number and relative abundance of species are inseparable components of diversity. Hill diversity uses a single equation to calculate multiple measures of diversity by varying a single parameter, the order q, which changes the emphasis on rare vs common species (Roswell et al., 2021). It can be interpreted as the mean rarity of sampled species (the rarity of species i being 1/pi), and is calculated as: $$  D = \left( \sum_{i=1}^{S} p_i^q \right)^{1/(1-q)}  $$where D is diversity, S is the number of species, pi is the proportion of individuals belonging to species i, and q determines the rarity scale for the mean. While q can theoretically take almost any value, three common measures of diversity are special cases: species richness, and modified versions of the Shannon and Simpson diversity indices (Roswell et al., 2021). These three measures occur when q takes the value of 0, 1 (as the limit \(q \to 1\), since the formula is undefined at exactly q = 1), or 2, respectively. (Roswell et al. (2021) use \(\ell = 1 - q\).)</p><ul><li><p><strong>Species Richness (q = 0, <code>hill0</code>):</strong>  $$    D = S  $$</p></li>
+<li><p><strong>Hill-Shannon Diversity (q = 1, <code>hill1</code>):</strong>  $$    D = e^{-\sum_{i=1}^{S} p_i \ln(p_i)}  $$</p></li>
+<li><p><strong>Hill-Simpson Diversity (q = 2, <code>hill2</code>):</strong>  $$    D = \frac{1}{\sum_{i=1}^{S} p_i^2}  $$</p></li>
 </ul><p>Richness uses an arithmetic scale (the arithmetic mean), thus giving rare species a lot of leverage. By contrast, Hill-Shannon diversity uses a logarithmic scale (the geometric mean), treating common and rare species equally, and Hill-Simpson diversity uses a reciprocal scale (the harmonic mean), giving common species higher leverage.</p>
 </div>
 
@@ -303,9 +313,8 @@ metadata.</p>
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
     <p>Hill, M. O. (1973). Diversity and evenness: a unifying notation and its
 consequences. <em>Ecology</em>, <em>54</em>(2), 427-432.</p>
-<p>Roswell, M., Shipley, J., &amp; Ewers, R. M. (2019). A conceptual guide to
-measuring and interpreting functional diversity.
-<em>Journal of Applied Ecology</em>, <em>56</em>(12), 2533-2543.</p>
+<p>Roswell, M., Dushoff, J., &amp; Winfree, R. (2021). A conceptual guide to
+measuring species diversity. <em>Oikos</em>, <em>130</em>(3), 321-338.</p>
 <p>Chao, A., Gotelli, N. J., Hsieh, T. C., Sander, E. L., Ma, K. H.,
 Colwell, R. K., &amp; Ellison, A. M. (2014). Rarefaction and extrapolation with
 Hill numbers: a framework for sampling and estimation in species diversity

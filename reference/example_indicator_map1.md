@@ -11,8 +11,8 @@ example_indicator_map1
 
 ## Format
 
-An 'indicator_map' object containing a tibble with 800 rows and 5
-variables, as well as metadata
+An 'indicator_map' object: a list of metadata plus, in its `data`
+element, an sf data frame with 800 rows and 5 variables
 
 - cellid:
 

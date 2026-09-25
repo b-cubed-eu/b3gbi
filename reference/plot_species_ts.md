@@ -6,8 +6,12 @@ Requires an indicator_ts object created using the
 [`spec_occ_ts()`](https://b-cubed-eu.github.io/b3gbi/reference/spec_occ_map.md)
 or
 [`spec_range_ts()`](https://b-cubed-eu.github.io/b3gbi/reference/spec_range_map.md)
-functions as input. To plot multi-species indicators (e.g., species
-richness or evenness), use the
+functions as input. It is also the function called by
+[`plot()`](https://rdrr.io/r/graphics/plot.default.html) for
+species-level time series, including those created with
+[`relative_occupancy_ts()`](https://b-cubed-eu.github.io/b3gbi/reference/relative_occupancy_map.md).
+To plot multi-species indicators (e.g., species richness or evenness),
+use the
 [`plot_ts()`](https://b-cubed-eu.github.io/b3gbi/reference/plot_ts.md)
 function instead.
 
@@ -62,23 +66,23 @@ plot_species_ts(
 
   An 'indicator_ts' object containing time series of indicator values
   matched to species names and/or taxon keys, created using the
-  [`spec_occ_ts()`](https://b-cubed-eu.github.io/b3gbi/reference/spec_occ_map.md)
-  or
+  [`spec_occ_ts()`](https://b-cubed-eu.github.io/b3gbi/reference/spec_occ_map.md),
   [`spec_range_ts()`](https://b-cubed-eu.github.io/b3gbi/reference/spec_range_map.md)
+  or
+  [`relative_occupancy_ts()`](https://b-cubed-eu.github.io/b3gbi/reference/relative_occupancy_map.md)
   functions. This is a required parameter with no default.
 
 - species:
 
-  Species you want to map occurrences for. Can be either numerical
-  taxonKeys or species names. Partial species names can be used (the
-  function will try to match them). This is a required parameter with no
-  default.
+  Species you want to plot. Can be either numerical taxonKeys or species
+  names. Partial species names can be given as the beginning of a name
+  (prefix match). This is a required parameter with no default.
 
 - single_plot:
 
-  (Optional) By default all species occurrence time series will be
-  combined into a single multi-panel plot. Set this to FALSE to plot
-  each species separately.
+  (Optional) If TRUE (default), all species time series will be combined
+  into a single multi-panel plot. Set this to FALSE to plot each species
+  separately.
 
 - min_year:
 
@@ -106,12 +110,13 @@ plot_species_ts(
 
 - suppress_y:
 
-  (Optional) If TRUE, suppresses y-axis labels.
+  (Optional) If TRUE, suppresses y-axis tick labels. Default is FALSE.
 
 - smoothed_trend:
 
   (Optional) If TRUE, plot a smoothed trendline over time
-  ([`stats::loess()`](https://rdrr.io/r/stats/loess.html)).
+  ([`stats::loess()`](https://rdrr.io/r/stats/loess.html)). Default is
+  TRUE.
 
 - linecolour:
 
@@ -135,7 +140,7 @@ plot_species_ts(
 - error_alpha:
 
   (Optional) Transparency for indicator error bars (if ci_type =
-  "error_bar"). Default is 1.
+  "error_bars"). Default is 1.
 
 - trendlinecolour:
 
@@ -148,7 +153,7 @@ plot_species_ts(
 - envelopecolour:
 
   (Optional) Colour for the uncertainty envelope. Default is
-  lightsteelblue.
+  "lightsteelblue1".
 
 - envelopealpha:
 
@@ -194,8 +199,9 @@ plot_species_ts(
 
 - smooth_linetype:
 
-  (Optional) Type of line to plot for smoothed trendline. Default is
-  "solid".
+  (Optional) Type of line to plot for smoothed trendline. Options are
+  "solid", "dashed", "dotted", "dotdash", "longdash" or "twodash".
+  Default is "solid".
 
 - smooth_linewidth:
 
@@ -222,24 +228,24 @@ plot_species_ts(
 
   (Optional) Expansion factor to expand the x-axis beyond the data. Left
   and right values are required in the form of c(0.1, 0.2) or simply 0.1
-  to apply the same value to each side. Default is 0.05.
+  to apply the same value to each side. Default is 0.1.
 
 - y_expand:
 
   (Optional) Expansion factor to expand the y-axis beyond the data.
   Lower and upper values are required in the form of c(0.1, 0.2) or
   simply 0.1 to apply the same value to the top and bottom. Default is
-  0.05.
+  0.1.
 
 - x_breaks:
 
   (Optional) Integer giving desired number of breaks for x axis. (May
-  not return exactly the number requested.)
+  not return exactly the number requested.) Default is 10.
 
 - y_breaks:
 
   (Optional) Integer giving desired number of breaks for y axis. (May
-  not return exactly the number requested.)
+  not return exactly the number requested.) Default is 6.
 
 - title_wrap_length:
 
@@ -248,28 +254,33 @@ plot_species_ts(
 - spec_name_wrap_length:
 
   (Optional) Maximum species name length before wrapping to a new line.
+  Default is 40.
 
 ## Value
 
-A ggplot object representing species range or occurrence time series
-plot(s). Can be customized using ggplot2 functions.
+If single_plot = TRUE (default), a patchwork object combining one ggplot
+per species. If single_plot = FALSE, a named list of ggplot objects (one
+per species); if only one species is plotted, a patchwork object is
+returned regardless. These can be customized using ggplot2 and patchwork
+functions. Requires the 'patchwork' package.
 
 ## Examples
 
 ``` r
 # \donttest{
-spec_occ_ts_mammals_denmark <- spec_occ_ts(example_cube_1,
-                                        level = "country",
-                                        region = "Denmark")
-# default colours:
-plot_species_ts(spec_occ_ts_mammals_denmark, c(2440728, 4265185))
+if (requireNamespace("patchwork", quietly = TRUE)) {
+  spec_occ_ts_mammals_denmark <- spec_occ_ts(example_cube_1,
+                                             level = "country",
+                                             region = "Denmark")
+  # default colours:
+  plot_species_ts(spec_occ_ts_mammals_denmark, c(2440728, 4265185))
 
-
-# custom colours:
-plot_species_ts(spec_occ_ts_mammals_denmark, c(2440728, 4265185),
-        linecolour = "thistle",
-        trendlinecolour = "forestgreen",
-        envelopecolour = "lightgreen")
+  # custom colours:
+  plot_species_ts(spec_occ_ts_mammals_denmark, c(2440728, 4265185),
+          linecolour = "thistle",
+          trendlinecolour = "forestgreen",
+          envelopecolour = "lightgreen")
+}
 
 # }
 ```

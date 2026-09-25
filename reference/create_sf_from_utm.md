@@ -14,7 +14,9 @@ create_sf_from_utm(df, output_crs = NULL)
 
 - df:
 
-  A data frame with columns: xcoord, ycoord, and utmzone.
+  A data frame with numeric columns `xcoord` (easting), `ycoord`
+  (northing) and `utmzone`, and a character column `hemisphere` (`"S"`
+  for the southern hemisphere; any other value is treated as northern).
 
 - output_crs:
 
@@ -23,7 +25,8 @@ create_sf_from_utm(df, output_crs = NULL)
 
 ## Value
 
-An sf object with the geometry correctly defined for each UTM zone.
+A single sf object, with the points of each zone transformed to
+`output_crs`.
 
 ## Examples
 

@@ -3,8 +3,8 @@
 This function calculates bootstrap confidence intervals for an existing
 `indicator_ts` object. It supports both cube-level bootstrapping
 (resampling occurrence records) and indicator-level bootstrapping
-(resampling calculated values), allowing for advanced transformations
-during the CI calculation process.
+(resampling the per-year components of the indicator), allowing for
+advanced transformations during the CI calculation process.
 
 ## Usage
 
@@ -48,9 +48,11 @@ add_ci(
     robust as it captures the underlying sampling uncertainty. Requires
     dubicube.
 
-  - `indicator`: Bootstrapping is done by resampling indicator values.
-    This is faster for large cubes but less robust, and does not require
-    dubicube.
+  - `indicator`: Within each year, the component values of the indicator
+    (occurrence records, species, or grid-cell values) are resampled
+    with boot, without recalculating the indicator from a resampled
+    cube. This is faster for large cubes but less robust, and does not
+    require dubicube.
 
   The level that was used is stored in the `ci_method` element of the
   returned object and shown when it is printed.
@@ -68,24 +70,32 @@ add_ci(
 
   - `basic`: Basic bootstrap intervals.
 
-  - `none`: No confidence intervals calculated.
+  - `none`: No confidence intervals calculated; the indicator is
+    returned unchanged (with a message).
 
 - trans:
 
   (Optional) A function for transforming the indicator values before
-  calculating confidence intervals (e.g., `log`). (Default: identity
-  function)
+  calculating confidence intervals (e.g., `log`). At indicator level it
+  is passed to
+  [`boot::boot.ci()`](https://rdrr.io/pkg/boot/man/boot.ci.html) as `h`
+  (not used for Hill numbers). The `trans`/`inv_trans` arguments are
+  ignored for evenness indicators at cube level, which always use the
+  logit transformation unless overridden via `boot_args` or `ci_args`.
+  (Default: identity function)
 
 - inv_trans:
 
   (Optional) The inverse of the transformation function `trans` (e.g.,
-  `exp`). Used to back-transform the intervals to the original scale.
-  (Default: identity function)
+  `exp`). Used to back-transform the intervals to the original scale. At
+  indicator level it is passed to
+  [`boot::boot.ci()`](https://rdrr.io/pkg/boot/man/boot.ci.html) as
+  `hinv`. (Default: identity function)
 
 - confidence_level:
 
   (Optional) The confidence level for the calculated intervals (e.g.,
-  0.95 for 95% CIs). (Default: 0.95)
+  0.95 for 95% CIs). Used at both bootstrap levels. (Default: 0.95)
 
 - overwrite:
 
@@ -109,20 +119,33 @@ add_ci(
 
 - seed:
 
-  (Optional) Integer. Random seed for bootstrapping. (Default: 123)
+  (Optional) Integer. Random seed for bootstrapping, used at both
+  bootstrap levels. The random number generator state of the session is
+  restored afterwards. Use `NA` to not set a seed. (Default: 123)
 
 - ...:
 
-  (Optional) Additional arguments passed to calc_ci().
+  (Optional) Additional arguments passed to
+  [`calc_ci()`](https://b-cubed-eu.github.io/b3gbi/reference/calc_ci.md)
+  (indicator level only).
 
 ## Value
 
-An updated object of class `indicator_ts` containing the original data
-with the following additional columns:
+The input `indicator_ts` object, with the bootstrap level used stored in
+its `ci_method` element (`"cube"` or `"indicator"`) and the following
+columns added to its `data`:
 
-- `ll`: Lower limit of the confidence interval.
+- `ll`: Lower limit of the confidence interval (negative lower limits
+  are set to 0).
 
 - `ul`: Upper limit of the confidence interval.
+
+Except for Hill numbers (whose intervals come from iNEXT), the following
+columns are also added:
+
+- `int_type`: The type of interval calculated (e.g., `"perc"`).
+
+- `conf`: The confidence level used.
 
 - `est_boot`: The bootstrap estimate of the indicator value.
 
@@ -130,9 +153,12 @@ with the following additional columns:
 
 - `bias_boot`: The bootstrap estimate of bias.
 
-- `int_type`: The type of interval calculated (e.g., 'perc').
+At cube level, `est_boot`, `se_boot` and `bias_boot` are only returned
+for some indicators (e.g., `total_occ`, `spec_occ` and `spec_range`),
+depending on the bootstrap method and bias correction used.
 
-- `conf`: The confidence level used.
+If `ci_type = "none"`, or if confidence intervals cannot be calculated
+for the indicator, the input object is returned unchanged.
 
 ## Details
 
@@ -162,7 +188,8 @@ The following defaults are used unless explicitly overridden via
 
 - **`spec_occ`, `spec_range`**
 
-  - Group-specific bootstrapping: **yes**
+  - Group-specific bootstrapping: **no** (whole-cube resampling, with
+    intervals per year and species)
 
   - Transformation: **none (identity)**
 
@@ -187,13 +214,19 @@ The following defaults are used unless explicitly overridden via
   - Bias correction: enabled
 
 Group-specific bootstrapping means that resampling is performed within
-each group (e.g., species or year), which is required for indicators
-that are inherently group-based. This in contrast to whole-cube
-bootstrapping where resampling is performed across the whole dataset;
-applicable for indicators that combine information across groups
+each group (e.g., year), which is required for indicators that are
+inherently group-based. This is in contrast to whole-cube bootstrapping,
+where resampling is performed across the whole dataset; this is
+applicable to indicators that combine information across groups.
 
 Transformations are applied prior to confidence interval calculation and
 inverted afterwards to return intervals on the original scale.
+
+These defaults (grouping, the logit transformation for evenness and the
+disabled bias correction for `total_occ`) apply to cube-level
+bootstrapping. At indicator level, `trans` and `inv_trans` are passed to
+[`boot::boot.ci()`](https://rdrr.io/pkg/boot/man/boot.ci.html) for all
+indicators (including evenness) except Hill numbers.
 
 ### Indicators outside scope of this function
 

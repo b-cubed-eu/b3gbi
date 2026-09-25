@@ -119,7 +119,7 @@ function (e.g., <code><a href="../reference/total_occ_map.html">total_occ_ts()</
 indicator object to the <code><a href="../reference/add_ci.html">add_ci()</a></code> function.</li>
 </ol>
 <div class="section level3">
-<h3 id="example-calculating-richness-with-uncertainty">Example: Calculating Richness with Uncertainty<a class="anchor" aria-label="anchor" href="#example-calculating-richness-with-uncertainty"></a>
+<h3 id="example-total-occurrences-with-uncertainty">Example: Total Occurrences with Uncertainty<a class="anchor" aria-label="anchor" href="#example-total-occurrences-with-uncertainty"></a>
 </h3>
 <p>In this example, we calculate total occurrences for mammals in
 Denmark and then add 95% confidence intervals using cube-level
@@ -161,8 +161,9 @@ when it is printed.</p>
 <p>This is the <strong>recommended method</strong> (and the default when
 <strong>dubicube</strong> is installed). It resamples the raw occurrence
 records within the data cube. The function automatically determines
-whether to use group-specific resampling (for species-level indicators)
-or whole-cube resampling (for aggregate indicators) based on the
+whether to use group-specific resampling (for total occurrences, where
+each year is resampled separately) or whole-cube resampling (for all
+other indicators, including the species-level ones) based on the
 indicator type.</p>
 <ul>
 <li>
@@ -179,14 +180,17 @@ indicators are recalculated correctly for each bootstrap replicate.</p>
 <h3 id="indicator-level-bootstrapping-bootstrap_level-indicator">2. Indicator-Level Bootstrapping
 (<code>bootstrap_level = "indicator"</code>)<a class="anchor" aria-label="anchor" href="#indicator-level-bootstrapping-bootstrap_level-indicator"></a>
 </h3>
-<p>This method resamples the calculated indicator values themselves.</p>
+<p>This method resamples, within each year, the values the indicator is
+computed from (occurrence records, species, or grid cells) using the
+<strong>boot</strong> package, instead of recalculating the indicator on
+a resampled cube.</p>
 <ul>
 <li>
 <strong>Pros</strong>: Very fast, even for massive datasets.</li>
 <li>
-<strong>Cons</strong>: Less robust; assumes that the calculated
-indicator values are independent and identically distributed, which is
-often not strictly true for biodiversity metrics.</li>
+<strong>Cons</strong>: Less robust; treats these components as
+independent and identically distributed, which is often not strictly
+true for biodiversity data.</li>
 </ul>
 </div>
 </div>
@@ -217,8 +221,9 @@ resampling.</p></li>
 automatically use logit transformation to ensure confidence intervals
 remain within valid [0, 1] bounds.</p></li>
 </ul>
-<p>These defaults are applied internally, but can be overridden using
-<code>boot_args</code> if needed.</p>
+<p>These defaults are applied internally (at cube level), but can be
+overridden using <code>boot_args</code> or <code>ci_args</code> (see
+below) if needed.</p>
 </div>
 <div class="section level2">
 <h2 id="advanced-configuration">Advanced Configuration<a class="anchor" aria-label="anchor" href="#advanced-configuration"></a>
@@ -254,15 +259,29 @@ below.</td>
 <td><code>0.95</code></td>
 </tr>
 <tr class="even">
+<td><code>seed</code></td>
+<td>Random seed for bootstrapping (the session’s random number state is
+restored afterwards).</td>
+<td><code>123</code></td>
+</tr>
+<tr class="odd">
+<td>
+<code>trans</code> / <code>inv_trans</code>
+</td>
+<td>Transformation applied before calculating the intervals, and its
+inverse.</td>
+<td>identity</td>
+</tr>
+<tr class="even">
 <td><code>boot_args</code></td>
 <td>A list of additional arguments for
-<code><a href="https://b-cubed-eu.github.io/dubicube/reference/bootstrap_cube.html" class="external-link">dubicube::bootstrap_cube()</a></code>.</td>
+<code><a href="https://b-cubed-eu.github.io/dubicube/reference/bootstrap_cube.html" class="external-link">dubicube::bootstrap_cube()</a></code> (cube level only).</td>
 <td><code><a href="https://rdrr.io/r/base/list.html" class="external-link">list()</a></code></td>
 </tr>
 <tr class="odd">
 <td><code>ci_args</code></td>
 <td>A list of additional arguments for
-<code><a href="https://b-cubed-eu.github.io/dubicube/reference/calculate_bootstrap_ci.html" class="external-link">dubicube::calculate_bootstrap_ci()</a></code>.</td>
+<code><a href="https://b-cubed-eu.github.io/dubicube/reference/calculate_bootstrap_ci.html" class="external-link">dubicube::calculate_bootstrap_ci()</a></code> (cube level only).</td>
 <td><code><a href="https://rdrr.io/r/base/list.html" class="external-link">list()</a></code></td>
 </tr>
 </tbody>
@@ -272,8 +291,10 @@ below.</td>
 <h2 id="types-of-confidence-intervals">Types of Confidence Intervals<a class="anchor" aria-label="anchor" href="#types-of-confidence-intervals"></a>
 </h2>
 <p>The <code>ci_type</code> argument allows you to choose between
-different methods for calculating bootstrap confidence intervals. These
-are passed directly to the <code>dubicube</code> package:</p>
+different methods for calculating bootstrap confidence intervals. At
+cube level these are passed to
+<code><a href="https://b-cubed-eu.github.io/dubicube/reference/calculate_bootstrap_ci.html" class="external-link">dubicube::calculate_bootstrap_ci()</a></code>; at indicator level to
+<code><a href="https://rdrr.io/pkg/boot/man/boot.ci.html" class="external-link">boot::boot.ci()</a></code>:</p>
 <ul>
 <li>
 <strong>Percentile (<code>"perc"</code>)</strong>: (Default) The
@@ -302,14 +323,19 @@ estimate.</li>
 <div class="section level3">
 <h3 id="customizing-the-bootstrap-process">Customizing the Bootstrap Process<a class="anchor" aria-label="anchor" href="#customizing-the-bootstrap-process"></a>
 </h3>
-<p>If you need to pass specific parameters to the underlying
-<code>dubicube</code> functions (e.g., setting a specific seed), you can
-use the <code>boot_args</code> and <code>ci_args</code> parameters:</p>
+<p>The random seed, interval type and confidence level are set with the
+<code>seed</code>, <code>ci_type</code> and
+<code>confidence_level</code> arguments of <code><a href="../reference/add_ci.html">add_ci()</a></code>. If you
+need to pass other parameters to the underlying <code>dubicube</code>
+functions (cube level only), you can use the <code>boot_args</code> and
+<code>ci_args</code> parameters:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">occ_ts_custom</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_ci.html">add_ci</a></span><span class="op">(</span><span class="va">occ_ts</span>, </span>
+<code class="sourceCode R"><span><span class="va">occ_ts_custom</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_ci.html">add_ci</a></span><span class="op">(</span><span class="va">occ_ts</span>,</span>
 <span>                        num_bootstrap <span class="op">=</span> <span class="fl">500</span>,</span>
-<span>                        boot_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>seed <span class="op">=</span> <span class="fl">42</span><span class="op">)</span>,</span>
-<span>                        ci_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"perc"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span>                        seed <span class="op">=</span> <span class="fl">42</span>,</span>
+<span>                        ci_type <span class="op">=</span> <span class="st">"perc"</span>,</span>
+<span>                        confidence_level <span class="op">=</span> <span class="fl">0.9</span>,</span>
+<span>                        boot_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>progress <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="overriding-indicator-defaults">Overriding Indicator Defaults<a class="anchor" aria-label="anchor" href="#overriding-indicator-defaults"></a>
@@ -322,18 +348,26 @@ behavior:</p>
 <code class="sourceCode R"><span><span class="co"># Example: Calculate CIs for evenness on raw scale (no logit transformation)</span></span>
 <span><span class="va">evenness_raw</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_ci.html">add_ci</a></span><span class="op">(</span><span class="va">my_evenness_indicator</span>,</span>
 <span>                       num_bootstrap <span class="op">=</span> <span class="fl">1000</span>,</span>
-<span>                       boot_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>trans <span class="op">=</span> <span class="va">identity</span>, </span>
-<span>                                        inv_trans <span class="op">=</span> <span class="va">identity</span><span class="op">)</span><span class="op">)</span></span>
+<span>                       ci_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>h <span class="op">=</span> <span class="va">identity</span>,</span>
+<span>                                      hinv <span class="op">=</span> <span class="va">identity</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Example: Force bias correction for total_occ</span></span>
 <span><span class="va">occ_with_bias</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_ci.html">add_ci</a></span><span class="op">(</span><span class="va">my_occ_indicator</span>,</span>
 <span>                        num_bootstrap <span class="op">=</span> <span class="fl">1000</span>,</span>
 <span>                        ci_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>no_bias <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>Common override parameters include: - <code>trans</code> /
-<code>inv_trans</code>: Transformation functions - <code>no_bias</code>:
-Logical, disable bias correction (default varies by indicator) -
-<code>group_specific</code>: Logical, force group-specific vs whole-cube
-bootstrapping</p>
+<p>Common override parameters include:</p>
+<ul>
+<li>
+<code>h</code> / <code>hinv</code> (in <code>ci_args</code>):
+Transformation functions (for evenness indicators, these override the
+default logit transformation)</li>
+<li>
+<code>no_bias</code> (in <code>ci_args</code>): Logical, disable
+bias correction (default varies by indicator)</li>
+<li>
+<code>group_specific</code> (in <code>boot_args</code>): Logical,
+force group-specific vs whole-cube bootstrapping</li>
+</ul>
 </div>
 </div>
 <div class="section level2">
@@ -374,9 +408,20 @@ and seamlessly delegate to <code>iNEXT</code>’s internal engine (forcing
 <code><a href="../reference/add_ci.html">add_ci()</a></code>:</p>
 <ul>
 <li>
-<strong>Observed Richness</strong> (<code>obs_richness</code>):
-Bootstrapping observed richness is often not statistically sensible;
-consider using Hill numbers for estimated richness instead.</li>
+<strong>Observed Richness</strong> (<code>obs_richness</code>) and
+<strong>Species Richness Density</strong>
+(<code>spec_richness_density</code>): Bootstrapping observed occurrences
+can never discover unobserved species, so resampled richness is never
+above the observed value; consider using Hill numbers for estimated
+richness instead.</li>
+<li>
+<strong>Sample Completeness</strong> (<code>completeness</code>): A
+deterministic coverage estimate; confidence intervals are not
+supported.</li>
+<li>
+<strong>Relative Occupancy</strong>
+(<code>relative_occupancy</code>): Resampling occurrences cannot account
+for unoccupied grid cells, which are needed to calculate occupancy.</li>
 <li>
 <strong>Cumulative Richness</strong> (<code>cum_richness</code>):
 The cumulative nature of this metric makes standard bootstrapping

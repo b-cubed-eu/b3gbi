@@ -12,8 +12,8 @@ example_indicator_ts2
 
 ## Format
 
-An 'indicator_ts' object containing a tibble with 110 rows and 2
-variables, as well as metadata
+An 'indicator_ts' object: a list of metadata plus, in its `data`
+element, a tibble with 110 rows and 2 variables
 
 - year:
 
@@ -21,7 +21,7 @@ variables, as well as metadata
 
 - diversity_val:
 
-  calculated richness value for the year
+  cumulative species richness up to and including the year
 
 ## Source
 

@@ -1,8 +1,10 @@
 # Calculate Confidence Intervals for a Biodiversity Indicator
 
-This function calculates bootstrap confidence intervals for a
-biodiversity indicator. It is called automatically when calculating a
-biodiversity indicator over time unless you choose 'none' for ci_type.
+Calculates indicator-level bootstrap confidence intervals. It is called
+internally by
+[`add_ci()`](https://b-cubed-eu.github.io/b3gbi/reference/add_ci.md)
+(indicator level) or when `ci_type` is supplied to a `*_ts()` function;
+it is not meant to be called directly.
 
 ## Usage
 
@@ -66,7 +68,10 @@ calc_ci(x, indicator, num_bootstrap = 1000, ...)
 
 - ...:
 
-  Additional arguments passed to specific calc_ci functions.
+  Additional arguments passed to specific calc_ci functions and on to
+  [`boot::boot.ci()`](https://rdrr.io/pkg/boot/man/boot.ci.html) (e.g.,
+  `conf`, `h`, `hinv`), or to the iNEXT-based calculation for Hill
+  numbers (e.g., `conf`).
 
 - num_bootstrap:
 
@@ -75,8 +80,9 @@ calc_ci(x, indicator, num_bootstrap = 1000, ...)
 
 - ci_type:
 
-  (Optional) Type of bootstrap confidence intervals to calculate.
-  (Default: "perc". Select "none" to avoid calculating bootstrap CIs.)
+  (Optional) Type of bootstrap interval passed to
+  [`boot::boot.ci()`](https://rdrr.io/pkg/boot/man/boot.ci.html).
+  (Default: "perc")
 
 ## Value
 
@@ -130,13 +136,13 @@ occ_ts <- total_occ_ts(example_cube_1, first_year = 2000,
                        ci_type = "perc", num_bootstrap = 100)
 head(occ_ts$data)
 #> # A tibble: 6 × 9
-#>    year diversity_val int_type    ll    ul est_boot se_boot bias_boot conf_level
-#>   <dbl>         <dbl> <chr>    <dbl> <dbl>    <dbl>   <dbl>     <dbl>      <dbl>
-#> 1  2000          2166 percent  1866. 2632.    2189.    186.     23.3        0.95
-#> 2  2001          2831 percent  2579. 3098.    2820.    137.    -10.9        0.95
-#> 3  2002          3366 percent  2988. 3880.    3364.    225.     -2.31       0.95
-#> 4  2003          3114 percent  2629. 3722.    3120.    258.      6.15       0.95
-#> 5  2004          2934 percent  2534. 3487.    2997.    227.     63.0        0.95
-#> 6  2005          4733 percent  3994. 5378.    4770.    329.     36.6        0.95
+#>    year diversity_val int_type    ll    ul est_boot se_boot bias_boot  conf
+#>   <dbl>         <dbl> <chr>    <dbl> <dbl>    <dbl>   <dbl>     <dbl> <dbl>
+#> 1  2000          2166 perc     1866. 2632.    2189.    186.     23.3   0.95
+#> 2  2001          2831 perc     2579. 3098.    2820.    137.    -10.9   0.95
+#> 3  2002          3366 perc     2988. 3880.    3364.    225.     -2.31  0.95
+#> 4  2003          3114 perc     2629. 3722.    3120.    258.      6.15  0.95
+#> 5  2004          2934 perc     2534. 3487.    2997.    227.     63.0   0.95
+#> 6  2005          4733 perc     3994. 5378.    4770.    329.     36.6   0.95
 # }
 ```

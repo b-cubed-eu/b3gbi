@@ -8,8 +8,8 @@ calculating essential spatial and temporal biodiversity indicators.
 Developed as part of the EU-funded B3 (Biodiversity Building Blocks for
 Policy) project, b3gbi takes pre-processed GBIF occurrence cubes as
 input and quickly transforms them into actionable metrics, including
-richness, evenness, rarity, taxonomic distinctness, Shannon-Hill
-diversity, Simpson-Hill diversity, and completeness, complete with
+richness, evenness, rarity, taxonomic distinctness, Hill-Shannon
+diversity, Hill-Simpson diversity, and completeness, complete with
 integrated uncertainty estimation using robust bootstrapping methods.
 
 This tutorial will guide you through the three core steps of the b3gbi
@@ -54,10 +54,10 @@ GBIF](https://docs.b-cubed.eu/tutorials/download-a-cube-from-gbif/).
 
 | Argument | Description | Default/Details |
 |----|----|----|
-| `data` | Path to the .csv file containing the GBIF cube. Required. |  |
-| `grid_type` | The grid system used (e.g., ‘eea’, ‘mgrs’, ‘eqdgc’, ‘isea3h’, ‘custom’). | Autodetected if possible. |
-| `first_year` | Filters the cube to start at this year. | First year in the data. |
-| `last_year` | Filters the cube to end at this year. | Last year in the data. |
+| `cube_name` | Path to the .csv file containing the GBIF cube, or a data frame. Required. |  |
+| `grid_type` | The grid system used: ‘automatic’, ‘eea’, ‘mgrs’, ‘eqdgc’, ‘isea3h’, ‘custom’ or ‘none’. | ‘automatic’ (default) autodetects the grid from the cell codes. Use ‘custom’ for custom grid codes or ‘none’ for a cube without grid codes. |
+| `first_year` | Filters the cube to start at this year. | NULL (default) uses the earliest year in the data. |
+| `last_year` | Filters the cube to end at this year. | NULL (default) uses the latest year in the data. |
 
 **Note on Column Names**: The function automatically attempts to detect
 required columns (like cell code, year, species key). You only need to
@@ -245,29 +245,29 @@ available_indicators
 #>     Class: tax_distinct
 #>     Calculate map: yes, e.g. tax_distinct_map(my_data_cube)
 #>     Calculate time series: yes, e.g. tax_distinct_ts(my_data_cube)
-#>     Additional map function arguments: rows
-#>     Additional time series function arguments: rows
+#>     Additional map function arguments: NA
+#>     Additional time series function arguments: NA
 #> 
 #> 11. Species Richness (Estimated by Coverage-Based Rarefaction)
 #>     Class: hill0
 #>     Calculate map: yes, e.g. hill0_map(my_data_cube)
 #>     Calculate time series: yes, e.g. hill0_ts(my_data_cube)
-#>     Additional map function arguments: cutoff_length, coverage, conf_level, data_type, assume_freq
-#>     Additional time series function arguments: cutoff_length, coverage, conf_level, data_type, assume_freq
+#>     Additional map function arguments: coverage, cutoff_length, data_type, assume_freq
+#>     Additional time series function arguments: coverage, cutoff_length, conf_level
 #> 
 #> 12. Hill-Shannon Diversity (Estimated by Coverage-Based Rarefaction)
 #>     Class: hill1
 #>     Calculate map: yes, e.g. hill1_map(my_data_cube)
 #>     Calculate time series: yes, e.g. hill1_ts(my_data_cube)
-#>     Additional map function arguments: cutoff_length, coverage, conf_level, data_type, assume_freq
-#>     Additional time series function arguments: cutoff_length, coverage, conf_level, data_type, assume_freq
+#>     Additional map function arguments: cutoff_length, coverage, data_type, assume_freq
+#>     Additional time series function arguments: cutoff_length, coverage, conf_level
 #> 
 #> 13. Hill-Simpson Diversity (Estimated by Coverage-Based Rarefaction)
 #>     Class: hill2
 #>     Calculate map: yes, e.g. hill2_map(my_data_cube)
 #>     Calculate time series: yes, e.g. hill2_ts(my_data_cube)
-#>     Additional map function arguments: cutoff_length, coverage, conf_level, data_type, assume_freq
-#>     Additional time series function arguments: cutoff_length, coverage, conf_level, data_type, assume_freq
+#>     Additional map function arguments: cutoff_length, coverage, data_type, assume_freq
+#>     Additional time series function arguments: cutoff_length, coverage, conf_level
 #> 
 #> 14. Species Occurrences
 #>     Class: spec_occ
@@ -302,14 +302,14 @@ available_indicators
 #>     Calculate map: yes, e.g. completeness_map(my_data_cube)
 #>     Calculate time series: yes, e.g. completeness_ts(my_data_cube)
 #>     Additional map function arguments: cutoff_length, data_type, assume_freq
-#>     Additional time series function arguments: cutoff_length, data_type, assume_freq, gridded_average
+#>     Additional time series function arguments: cutoff_length, gridded_average
 #> 
 #> 19. Species Relative Occupancy
 #>     Class: relative_occupancy
 #>     Calculate map: yes, e.g. relative_occupancy_map(my_data_cube)
 #>     Calculate time series: yes, e.g. relative_occupancy_ts(my_data_cube)
-#>     Additional map function arguments: NA
-#>     Additional time series function arguments: NA
+#>     Additional map function arguments: occ_type
+#>     Additional time series function arguments: occ_type
 ```
 
 ### Core Arguments for Wrapper Functions
@@ -320,8 +320,8 @@ All indicator wrapper functions (e.g., `obs_richness_map`,
 | Argument | Description | Details |
 |----|----|----|
 | `data` | The `processed_cube` object. Required. |  |
-| `level` | The geographical scale (‘country’, ‘continent’, ‘world’). | Automatically retrieves boundaries. |
-| `region` | The specific region name (e.g., ‘Germany’, ‘Europe’). | Required if level is set. |
+| `level` | The spatial level: ‘cube’, ‘continent’, ‘country’, ‘world’, ‘sovereignty’ or ‘geounit’. | ‘cube’ (default) uses the extent of the cube; other levels automatically retrieve boundaries from Natural Earth. |
+| `region` | The specific region name (e.g., ‘Germany’, ‘Europe’). | Used when level is ‘continent’, ‘country’, ‘sovereignty’ or ‘geounit’ (default “Europe”). |
 
 ### Example: Observed Species Richness Map
 
@@ -351,7 +351,8 @@ class(Denmark_observed_richness_map$data)
 
 ### Example: Total Occurrences Time Series
 
-Now, let’s calculate the same indicator temporally for a trend analysis.
+Now, let’s calculate an indicator over time: the total number of
+occurrences per year.
 
 ``` r
 
@@ -431,8 +432,8 @@ automatically display them as ribbons or error bars.
 
 ``` r
 
-# Plotting the time series object
-plot(Denmark_total_occ_ts,
+# Plotting the time series object (with confidence intervals)
+plot(Denmark_total_occ_ts_with_ci,
   title = "Temporal Trend of Total Mammal Occurrences in Denmark",
   linecolour = "blue",
   ribboncolour = "skyblue",

@@ -51,7 +51,8 @@ plot_mv(
 
 - ...:
 
-  (Optional) Pass additional parameters to the mapview package.
+  (Optional) Additional arguments passed to
+  [`mapview::mapview()`](https://r-spatial.github.io/mapview/reference/mapView.html).
 
 ## Value
 

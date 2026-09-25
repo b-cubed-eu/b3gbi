@@ -11,8 +11,8 @@ example_cube_1
 
 ## Format
 
-A 'processed_cube' object containing a tibble with 31,632 rows and 15
-variables, as well as metadata
+A 'processed_cube' object: a list of metadata plus, in its `data`
+element, a tibble with 31,632 rows and 15 variables
 
 - year:
 
@@ -49,7 +49,7 @@ variables, as well as metadata
 
 - obs:
 
-  number of individuals observed
+  number of occurrences (records)
 
 - minCoordinateUncertaintyInMeters:
 
@@ -59,17 +59,21 @@ variables, as well as metadata
 
   minimum temporal uncertainty in seconds
 
+- familyCount:
+
+  number of occurrences of the family the species belongs to
+
 - xcoord:
 
-  East-West coordinate on the eqdgc grid
+  longitude of the cell centre (degrees)
 
 - ycoord:
 
-  North-South coordinate on the eqdgc grid
+  latitude of the cell centre (degrees)
 
 - resolution:
 
-  grid cell size
+  grid cell size (e.g. "0.25degrees")
 
 ## Source
 

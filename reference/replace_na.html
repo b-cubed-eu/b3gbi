@@ -8,10 +8,14 @@
 </script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"><link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet"><script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/PT_Sans-0.4.10/font.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet"><link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet"><script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><link href="../extra.css" rel="stylesheet"><meta property="og:title" content="Replace NA Values in Indicator Objects — replace_na"><meta name="description" content="This function takes an indicator_map or indicator_ts object and
 replaces all NA values in the diversity_val column with zeros. This is
 useful when NA values represent areas or years with no data that should be
-treated as zero for mapping or analysis purposes."><meta property="og:description" content="This function takes an indicator_map or indicator_ts object and
+treated as zero for mapping or analysis purposes. Only use it when zero is
+a meaningful value for the indicator: for indicators such as evenness, NA
+means the value is undefined (e.g. fewer than two species), not zero."><meta property="og:description" content="This function takes an indicator_map or indicator_ts object and
 replaces all NA values in the diversity_val column with zeros. This is
 useful when NA values represent areas or years with no data that should be
-treated as zero for mapping or analysis purposes."><meta property="og:image" content="https://b-cubed-eu.github.io/b3gbi/logo.png"></head><body>
+treated as zero for mapping or analysis purposes. Only use it when zero is
+a meaningful value for the indicator: for indicators such as evenness, NA
+means the value is undefined (e.g. fewer than two species), not zero."><meta property="og:image" content="https://b-cubed-eu.github.io/b3gbi/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -54,7 +58,9 @@ treated as zero for mapping or analysis purposes."><meta property="og:image" con
     <p>This function takes an <code>indicator_map</code> or <code>indicator_ts</code> object and
 replaces all NA values in the <code>diversity_val</code> column with zeros. This is
 useful when NA values represent areas or years with no data that should be
-treated as zero for mapping or analysis purposes.</p>
+treated as zero for mapping or analysis purposes. Only use it when zero is
+a meaningful value for the indicator: for indicators such as evenness, NA
+means the value is undefined (e.g. fewer than two species), not zero.</p>
     </div>
 
     <div class="section level2">
@@ -74,19 +80,15 @@ treated as zero for mapping or analysis purposes.</p>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>The input indicator object with NA values in <code>diversity_val</code>
-replaced by zero.</p>
+replaced by zero. Stops with an error if there are no NA values.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
-<span class="r-in"><span><span class="co"># Evenness is NA in cells with fewer than two species</span></span></span>
-<span class="r-in"><span><span class="va">pe_map</span> <span class="op">&lt;-</span> <span class="fu"><a href="pielou_evenness_map.html">pielou_evenness_map</a></span><span class="op">(</span><span class="va">example_cube_1</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> although coordinates are longitude/latitude, st_intersection assumes that they</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> are planar</span>
-<span class="r-in"><span><span class="va">pe_map_filled</span> <span class="op">&lt;-</span> <span class="fu">replace_na</span><span class="op">(</span><span class="va">pe_map</span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Replaced 90 NA values with zeroes.</span>
-<span class="r-in"><span><span class="co"># }</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Observed richness is NA in cells without occurrences, where zero species</span></span></span>
+<span class="r-in"><span><span class="co"># were observed</span></span></span>
+<span class="r-in"><span><span class="va">or_map_filled</span> <span class="op">&lt;-</span> <span class="fu">replace_na</span><span class="op">(</span><span class="va">example_indicator_map1</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Replaced 477 NA values with zeroes.</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

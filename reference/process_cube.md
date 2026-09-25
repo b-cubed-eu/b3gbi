@@ -1,19 +1,11 @@
 # Process GBIF Data Cubes
 
-Processes a GBIF data cube and (if applicable) an associated taxonomic
-information file. If your cube includes a taxonomic info file it is
-likely a previous generation cube and should be processed using
-'process_cube_old'. The taxonomic info file must reside in the same
-directory as your cube and share a base file name (e.g.,
-'cubes/my_mammals_cube.csv', 'cubes/my_mammals_info.csv'). If your cube
-does NOT include a taxonomic info file then it is likely a current
-generation cube and should be processed using the standard process_cube
-function. The API used to generate the current generation cubes is very
-flexible and allows user-specified column names. Therefore, please check
-that the column names of your cube match the Darwin Core standard
-expected by the process_cube function. If they do not, you may need to
-enter them manually. The function will return an error if it cannot find
-all required columns.
+Processes a GBIF occurrence cube (a CSV file or a data frame) into a
+`processed_cube` object. Cubes produced by the GBIF cube API can have
+user-specified column names, so check that your column names match the
+Darwin Core names expected by this function; if not, supply them with
+the `cols_*` arguments. The function stops with an error if it cannot
+find all required columns.
 
 ## Usage
 
@@ -49,21 +41,24 @@ process_cube(
 
 - cube_name:
 
-  The location and name of a data cube file (e.g.,
-  'inst/extdata/europe_species_cube.csv').
+  Either the path to a data cube CSV file (e.g.
+  `system.file("extdata", "denmark_mammals_cube_eqdgc.csv", package = "b3gbi")`)
+  or a data frame containing the cube.
 
 - grid_type:
 
-  (Optional) Specify which grid reference system your cube uses. By
-  default the function will attempt to determine this automatically and
-  return an error if it fails. If you want to perform analysis on a cube
-  with custom grid codes (e.g. output from the gcube package) or a cube
-  without grid codes, select 'custom' or 'none', respectively.
+  (Optional) The grid reference system your cube uses. One of
+  `"automatic"` (default), `"eea"`, `"mgrs"`, `"eqdgc"`, `"isea3h"`,
+  `"custom"` or `"none"`. With `"automatic"` the function attempts to
+  detect the grid from the cell codes and returns an error if it fails.
+  If you want to perform analysis on a cube with custom grid codes (e.g.
+  output from the gcube package) or a cube without grid codes, select
+  `"custom"` or `"none"`, respectively.
 
 - first_year:
 
   (Optional) The first year of occurrences to include. If not specified,
-  uses a default of 1600 to prevent false records (e.g. with year = 0).
+  uses the earliest year present in the cube.
 
 - last_year:
 
@@ -72,10 +67,9 @@ process_cube(
 
 - force_gridcode:
 
-  (Optional) Force the function to assume a specific grid reference
-  system. This may cause unexpected downstream issues, so it is not
-  recommended. If you are getting errors related to grid cell codes,
-  check to make sure they are valid.
+  (Optional) Logical. If `TRUE`, skips the check that cell codes match
+  the expected format of `grid_type`. Not recommended; invalid codes may
+  cause downstream errors. Default `FALSE`.
 
 - cols_year:
 
@@ -106,7 +100,7 @@ process_cube(
 
 - cols_occurrences:
 
-  (Optional) The name of the column containing the number of occurrence
+  (Optional) The name of the column containing the number of occurrences
   (if other than 'occurrences'). This column is required.
 
 - cols_scientificName:
@@ -120,7 +114,7 @@ process_cube(
 
   (Optional) The name of the column containing the minimum coordinate
   uncertainty of the occurrences (if other than
-  'minCoordinateUncertaintyinMeters').
+  'minCoordinateUncertaintyInMeters').
 
 - cols_minTemporalUncertainty:
 
@@ -153,7 +147,7 @@ process_cube(
 - cols_familyKey:
 
   (Optional) The name of the column containing the family key of the
-  occurring species (if other than 'familykey').
+  occurring species (if other than 'familyKey').
 
 - cols_speciesKey:
 
@@ -185,7 +179,10 @@ process_cube(
 
 ## Value
 
-A tibble containing the processed GBIF occurrence data.
+An object of class `processed_cube` (or `sim_cube` when `grid_type` is
+`"custom"` or `"none"`): a list of metadata (years, number of species,
+grid type, resolution, ...) plus the processed occurrences in the `data`
+element.
 
 ## Examples
 

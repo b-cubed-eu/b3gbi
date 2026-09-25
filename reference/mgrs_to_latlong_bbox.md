@@ -1,7 +1,7 @@
-# Create a Single Bounding Box from MGRS Data in a Projected CRS
+# Create a Longitude/Latitude Bounding Box from MGRS Data
 
-Converts MGRS coordinates to a single sf bounding box in a suitable
-projected CRS, handling data that spans multiple UTM zones.
+Converts UTM coordinates of MGRS cells, which may span several UTM
+zones, to WGS 84 and returns their combined bounding box.
 
 ## Usage
 
@@ -13,14 +13,15 @@ mgrs_to_latlong_bbox(df)
 
 - df:
 
-  A data frame with at least three columns: `cellCode` (containing MGRS
-  strings), and `xcoord` and `ycoord` for easting and northing.
+  A data frame with at least three columns: `cellCode` (MGRS codes; the
+  first three characters give the UTM zone and latitude band), and
+  `xcoord`/`ycoord` (UTM easting and northing).
 
 ## Value
 
-An sf bounding box
-([`sf::st_bbox`](https://r-spatial.github.io/sf/reference/st_bbox.html))
-in a single projected CRS (e.g., Albers).
+An
+[`sf::st_bbox()`](https://r-spatial.github.io/sf/reference/st_bbox.html)
+object in EPSG:4326 (longitude/latitude).
 
 ## Examples
 

@@ -44,7 +44,7 @@ follows:
     [`add_ci()`](https://b-cubed-eu.github.io/b3gbi/reference/add_ci.md)
     function.
 
-### Example: Calculating Richness with Uncertainty
+### Example: Total Occurrences with Uncertainty
 
 In this example, we calculate total occurrences for mammals in Denmark
 and then add 95% confidence intervals using cube-level bootstrapping.
@@ -85,8 +85,10 @@ printed.
 This is the **recommended method** (and the default when **dubicube** is
 installed). It resamples the raw occurrence records within the data
 cube. The function automatically determines whether to use
-group-specific resampling (for species-level indicators) or whole-cube
-resampling (for aggregate indicators) based on the indicator type.
+group-specific resampling (for total occurrences, where each year is
+resampled separately) or whole-cube resampling (for all other
+indicators, including the species-level ones) based on the indicator
+type.
 
 - **Pros**: Mathematically more robust; captures the underlying sampling
   uncertainty of the original data.
@@ -97,12 +99,15 @@ recalculated correctly for each bootstrap replicate.
 
 ### 2. Indicator-Level Bootstrapping (`bootstrap_level = "indicator"`)
 
-This method resamples the calculated indicator values themselves.
+This method resamples, within each year, the values the indicator is
+computed from (occurrence records, species, or grid cells) using the
+**boot** package, instead of recalculating the indicator on a resampled
+cube.
 
 - **Pros**: Very fast, even for massive datasets.
-- **Cons**: Less robust; assumes that the calculated indicator values
-  are independent and identically distributed, which is often not
-  strictly true for biodiversity metrics.
+- **Cons**: Less robust; treats these components as independent and
+  identically distributed, which is often not strictly true for
+  biodiversity data.
 
 ## Automatic Indicator Configuration
 
@@ -129,8 +134,8 @@ confidence intervals without requiring manual configuration:
   `williams_evenness`) automatically use logit transformation to ensure
   confidence intervals remain within valid \[0, 1\] bounds.
 
-These defaults are applied internally, but can be overridden using
-`boot_args` if needed.
+These defaults are applied internally (at cube level), but can be
+overridden using `boot_args` or `ci_args` (see below) if needed.
 
 ## Advanced Configuration
 
@@ -142,14 +147,19 @@ function provides several arguments for fine-tuning the CI calculation:
 | `num_bootstrap` | Number of bootstrap replicates. | `1000` |
 | `ci_type` | Type of bootstrap interval. See [Types of Confidence Intervals](#types-of-confidence-intervals) below. | `"perc"` |
 | `confidence_level` | The confidence level (e.g., 0.95). | `0.95` |
-| `boot_args` | A list of additional arguments for [`dubicube::bootstrap_cube()`](https://b-cubed-eu.github.io/dubicube/reference/bootstrap_cube.html). | [`list()`](https://rdrr.io/r/base/list.html) |
-| `ci_args` | A list of additional arguments for [`dubicube::calculate_bootstrap_ci()`](https://b-cubed-eu.github.io/dubicube/reference/calculate_bootstrap_ci.html). | [`list()`](https://rdrr.io/r/base/list.html) |
+| `seed` | Random seed for bootstrapping (the session’s random number state is restored afterwards). | `123` |
+| `trans` / `inv_trans` | Transformation applied before calculating the intervals, and its inverse. | identity |
+| `boot_args` | A list of additional arguments for [`dubicube::bootstrap_cube()`](https://b-cubed-eu.github.io/dubicube/reference/bootstrap_cube.html) (cube level only). | [`list()`](https://rdrr.io/r/base/list.html) |
+| `ci_args` | A list of additional arguments for [`dubicube::calculate_bootstrap_ci()`](https://b-cubed-eu.github.io/dubicube/reference/calculate_bootstrap_ci.html) (cube level only). | [`list()`](https://rdrr.io/r/base/list.html) |
 
 ## Types of Confidence Intervals
 
 The `ci_type` argument allows you to choose between different methods
-for calculating bootstrap confidence intervals. These are passed
-directly to the `dubicube` package:
+for calculating bootstrap confidence intervals. At cube level these are
+passed to
+[`dubicube::calculate_bootstrap_ci()`](https://b-cubed-eu.github.io/dubicube/reference/calculate_bootstrap_ci.html);
+at indicator level to
+[`boot::boot.ci()`](https://rdrr.io/pkg/boot/man/boot.ci.html):
 
 - **Percentile (`"perc"`)**: (Default) The simplest and most commonly
   used method. It uses the ordered bootstrap replicates to find the
@@ -171,16 +181,20 @@ directly to the `dubicube` package:
 
 ### Customizing the Bootstrap Process
 
-If you need to pass specific parameters to the underlying `dubicube`
-functions (e.g., setting a specific seed), you can use the `boot_args`
-and `ci_args` parameters:
+The random seed, interval type and confidence level are set with the
+`seed`, `ci_type` and `confidence_level` arguments of
+[`add_ci()`](https://b-cubed-eu.github.io/b3gbi/reference/add_ci.md). If
+you need to pass other parameters to the underlying `dubicube` functions
+(cube level only), you can use the `boot_args` and `ci_args` parameters:
 
 ``` r
 
-occ_ts_custom <- add_ci(occ_ts, 
+occ_ts_custom <- add_ci(occ_ts,
                         num_bootstrap = 500,
-                        boot_args = list(seed = 42),
-                        ci_args = list(type = "perc"))
+                        seed = 42,
+                        ci_type = "perc",
+                        confidence_level = 0.9,
+                        boot_args = list(progress = TRUE))
 ```
 
 ### Overriding Indicator Defaults
@@ -196,8 +210,8 @@ specialized behavior:
 # Example: Calculate CIs for evenness on raw scale (no logit transformation)
 evenness_raw <- add_ci(my_evenness_indicator,
                        num_bootstrap = 1000,
-                       boot_args = list(trans = identity, 
-                                        inv_trans = identity))
+                       ci_args = list(h = identity,
+                                      hinv = identity))
 
 # Example: Force bias correction for total_occ
 occ_with_bias <- add_ci(my_occ_indicator,
@@ -205,10 +219,14 @@ occ_with_bias <- add_ci(my_occ_indicator,
                         ci_args = list(no_bias = FALSE))
 ```
 
-Common override parameters include: - `trans` / `inv_trans`:
-Transformation functions - `no_bias`: Logical, disable bias correction
-(default varies by indicator) - `group_specific`: Logical, force
-group-specific vs whole-cube bootstrapping
+Common override parameters include:
+
+- `h` / `hinv` (in `ci_args`): Transformation functions (for evenness
+  indicators, these override the default logit transformation)
+- `no_bias` (in `ci_args`): Logical, disable bias correction (default
+  varies by indicator)
+- `group_specific` (in `boot_args`): Logical, force group-specific vs
+  whole-cube bootstrapping
 
 ## Supported Indicators
 
@@ -244,9 +262,16 @@ engine (forcing `bootstrap_level = "indicator"`).
 Certain indicators cannot have confidence intervals added via
 [`add_ci()`](https://b-cubed-eu.github.io/b3gbi/reference/add_ci.md):
 
-- **Observed Richness** (`obs_richness`): Bootstrapping observed
-  richness is often not statistically sensible; consider using Hill
+- **Observed Richness** (`obs_richness`) and **Species Richness
+  Density** (`spec_richness_density`): Bootstrapping observed
+  occurrences can never discover unobserved species, so resampled
+  richness is never above the observed value; consider using Hill
   numbers for estimated richness instead.
+- **Sample Completeness** (`completeness`): A deterministic coverage
+  estimate; confidence intervals are not supported.
+- **Relative Occupancy** (`relative_occupancy`): Resampling occurrences
+  cannot account for unoccupied grid cells, which are needed to
+  calculate occupancy.
 - **Cumulative Richness** (`cum_richness`): The cumulative nature of
   this metric makes standard bootstrapping inappropriate.
 - **Occurrence Turnover** (`occ_turnover`): Similar to cumulative

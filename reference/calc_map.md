@@ -92,8 +92,10 @@ calc_map(x, ...)
   - `2` — **Temporal mean annual occupancy**: for each year, compute the
     proportion of that year's occupied cells (any species) in which the
     species was recorded; then average those annual proportions across
-    all years in the data. This captures how consistently a species
-    occupies the active sampling footprint over time.
+    the years in which the species was recorded (years without records
+    of the species do not contribute a zero). This captures how
+    consistently a species occupies the active sampling footprint over
+    time.
 
   **Note on presence-only data**: All three types rely on presence-only
   records. A cell with no records cannot be assumed to be truly

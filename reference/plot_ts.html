@@ -134,12 +134,13 @@ an appropriate S3 method (if calling the function manually, leave as NULL).</p><
 
 
 <dt id="arg-suppress-y">suppress_y<a class="anchor" aria-label="anchor" href="#arg-suppress-y"></a></dt>
-<dd><p>(Optional) If TRUE, suppresses y-axis labels.</p></dd>
+<dd><p>(Optional) If TRUE, suppresses y-axis tick labels.
+Default is FALSE.</p></dd>
 
 
 <dt id="arg-smoothed-trend">smoothed_trend<a class="anchor" aria-label="anchor" href="#arg-smoothed-trend"></a></dt>
 <dd><p>(Optional) If TRUE, plot a smoothed trendline over time
-(<code><a href="https://rdrr.io/r/stats/loess.html" class="external-link">stats::loess()</a></code>).</p></dd>
+(<code><a href="https://rdrr.io/r/stats/loess.html" class="external-link">stats::loess()</a></code>). Default is TRUE.</p></dd>
 
 
 <dt id="arg-linecolour">linecolour<a class="anchor" aria-label="anchor" href="#arg-linecolour"></a></dt>
@@ -165,7 +166,7 @@ ribbon (if ci_type = "ribbon"). Default is 0.2.</p></dd>
 
 <dt id="arg-error-alpha">error_alpha<a class="anchor" aria-label="anchor" href="#arg-error-alpha"></a></dt>
 <dd><p>(Optional) Transparency for indicator error bars (if
-ci_type = "error_bar"). Default is 1.</p></dd>
+ci_type = "error_bars"). Default is 1.</p></dd>
 
 
 <dt id="arg-trendlinecolour">trendlinecolour<a class="anchor" aria-label="anchor" href="#arg-trendlinecolour"></a></dt>
@@ -180,7 +181,7 @@ Default is 0.5.</p></dd>
 
 <dt id="arg-envelopecolour">envelopecolour<a class="anchor" aria-label="anchor" href="#arg-envelopecolour"></a></dt>
 <dd><p>(Optional) Colour for the uncertainty envelope.
-Default is lightsteelblue.</p></dd>
+Default is "lightsteelblue1".</p></dd>
 
 
 <dt id="arg-envelopealpha">envelopealpha<a class="anchor" aria-label="anchor" href="#arg-envelopealpha"></a></dt>
@@ -229,7 +230,8 @@ ci_type = "error_bars". Default is 1.</p></dd>
 
 <dt id="arg-smooth-linetype">smooth_linetype<a class="anchor" aria-label="anchor" href="#arg-smooth-linetype"></a></dt>
 <dd><p>(Optional) Type of line to plot for smoothed
-trendline. Default is "solid".</p></dd>
+trendline. Options are "solid", "dashed", "dotted", "dotdash", "longdash"
+or "twodash". Default is "solid".</p></dd>
 
 
 <dt id="arg-smooth-linewidth">smooth_linewidth<a class="anchor" aria-label="anchor" href="#arg-smooth-linewidth"></a></dt>
@@ -257,23 +259,23 @@ confidence intervals. Default is 1.</p></dd>
 <dt id="arg-x-expand">x_expand<a class="anchor" aria-label="anchor" href="#arg-x-expand"></a></dt>
 <dd><p>(Optional)  Expansion factor to expand the x-axis beyond the
 data. Left and right values are required in the form of c(0.1, 0.2) or
-simply 0.1 to apply the same value to each side. Default is 0.05.</p></dd>
+simply 0.1 to apply the same value to each side. Default is 0.1.</p></dd>
 
 
 <dt id="arg-y-expand">y_expand<a class="anchor" aria-label="anchor" href="#arg-y-expand"></a></dt>
 <dd><p>(Optional)  Expansion factor to expand the y-axis beyond the
 data. Lower and upper values are required in the form of c(0.1, 0.2) or
-simply 0.1 to apply the same value to the top and bottom. Default is 0.05.</p></dd>
+simply 0.1 to apply the same value to the top and bottom. Default is 0.1.</p></dd>
 
 
 <dt id="arg-x-breaks">x_breaks<a class="anchor" aria-label="anchor" href="#arg-x-breaks"></a></dt>
 <dd><p>(Optional) Integer giving desired number of breaks for x
-axis. (May not return exactly the number requested.)</p></dd>
+axis. (May not return exactly the number requested.) Default is 10.</p></dd>
 
 
 <dt id="arg-y-breaks">y_breaks<a class="anchor" aria-label="anchor" href="#arg-y-breaks"></a></dt>
 <dd><p>(Optional) Integer giving desired number of breaks for y
-axis. (May not return exactly the number requested.)</p></dd>
+axis. (May not return exactly the number requested.) Default is 6.</p></dd>
 
 
 <dt id="arg-title-wrap-length">title_wrap_length<a class="anchor" aria-label="anchor" href="#arg-title-wrap-length"></a></dt>
