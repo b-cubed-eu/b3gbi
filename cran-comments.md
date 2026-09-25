@@ -42,4 +42,4 @@ the Journal of Open Source Software (JOSS).
 * local: Windows, R release (devtools::check(remote = TRUE, manual = TRUE))
 * win-builder: R-devel
 * mac-builder: R release
-* (to be completed: win-builder release, R-hub)
+* R-hub: Linux (R-devel) and Windows (R-devel), 0 errors | 0 warnings | 0 notes
