@@ -443,8 +443,7 @@ ab_rarity_ts <- function(data, ...) {
 
 #' @noRd
 hill_diversity_details <- paste0(
-  "<h3>Hill diversity</h3>",
-  "\n\n",
+  "\n\n## Hill diversity\n\n",
   "Hill (1973) introduced the concept of Hill diversity, which assumes ",
   "that the number and relative abundance of species are inseparable ",
   "components of diversity. Hill diversity uses a single equation to ",
@@ -489,8 +488,7 @@ hill_diversity_details <- paste0(
   "rare species equally, and Hill-Simpson diversity uses a reciprocal ",
   "scale (the harmonic mean), giving common species higher leverage.",
   "\n\n",
-  "<h3>Coverage-based estimation</h3>",
-  "\n\n",
+  "\n\n## Coverage-based estimation\n\n",
   "Hill diversity values can be estimated through different ",
   "standardisation procedures as a way to mitigate the effects of sample size ",
   "and sampling biases. One way to do this is by equalising sample size by ",
@@ -530,9 +528,8 @@ hill_diversity_details <- paste0(
 )
 
 completeness_details <- paste0(
-  "<h3>Completeness (Sample Coverage)</h3>",
-  "\n\n",
-  "Completeness is measured as <b>Sample Coverage</b>, a concept developed by ",
+  "\n\n## Completeness (Sample Coverage)\n\n",
+  "Completeness is measured as **Sample Coverage**, a concept developed by ",
   "Turing and Good (1953) and further popularized in ecology by Chao and Jost ",
   "(2012). Sample coverage estimates the proportion of the total individuals ",
   "in an ecological community that belong to the species detected in a sample. ",
@@ -544,7 +541,7 @@ completeness_details <- paste0(
   "biodiversity across different areas or time periods, as it provides a ",
   "standardized measure of sample completeness that is independent of sample size ",
   "alone (Chao et al., 2014).",
-  "\n\nIn this package, completeness is calculated using the <code>iNEXT</code> ",
+  "\n\nIn this package, completeness is calculated using the 'iNEXT' ",
   "package based on the observed data in each grid cell or time point."
 )
 
@@ -626,14 +623,14 @@ completeness_ts <- function(data,
 #'  over a gridded map or as a time series.
 #'  Three Hill diversity measures are covered:
 #'
-#' *Species richness* - <code>hill0_map()</code> and
-#'  <code>hill0_ts()</code>
+#' *Species richness* - `hill0_map()` and
+#'  `hill0_ts()`
 #'
-#' *Hill-Shannon diversity* - <code>hill1_map()</code> and
-#'  <code>hill1_ts()</code>
+#' *Hill-Shannon diversity* - `hill1_map()` and
+#'  `hill1_ts()`
 #'
-#' *Hill-Simpson diversity* - <code>hill2_map()</code> and
-#'  <code>hill2_ts()</code>
+#' *Hill-Simpson diversity* - `hill2_map()` and
+#'  `hill2_ts()`
 #'
 #' (see 'Details' for more information).
 #'

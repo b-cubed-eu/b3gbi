@@ -8,6 +8,11 @@ the Journal of Open Source Software (JOSS).
 0 errors | 0 warnings | 1 note
 
 * This is a new submission.
+* Possibly misspelled words in DESCRIPTION: EEA, EQDGC, ISEA, MGRS. These are
+  the standard abbreviations of the supported grid systems (European
+  Environment Agency reference grid, Extended Quarter Degree Grid Cells,
+  Icosahedral Snyder Equal Area aperture 3 hexagonal grid, Military Grid
+  Reference System).
 
 ## Notes for the CRAN team
 
@@ -34,4 +39,7 @@ the Journal of Open Source Software (JOSS).
 ## Test environments
 
 * local: Linux (Ubuntu 24.04), R 4.3.3
-* (to be completed: win-builder devel and release, mac-builder, R-hub)
+* local: Windows, R release (devtools::check(remote = TRUE, manual = TRUE))
+* win-builder: R-devel
+* mac-builder: R release
+* (to be completed: win-builder release, R-hub)

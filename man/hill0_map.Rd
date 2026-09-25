@@ -152,22 +152,19 @@ Use coverage-based methods to estimate Hill diversity measures
 over a gridded map or as a time series.
 Three Hill diversity measures are covered:
 
-\emph{Species richness} - \if{html}{\out{<code>}}hill0_map()\if{html}{\out{</code>}} and
-\if{html}{\out{<code>}}hill0_ts()\if{html}{\out{</code>}}
+\emph{Species richness} - \code{hill0_map()} and
+\code{hill0_ts()}
 
-\emph{Hill-Shannon diversity} - \if{html}{\out{<code>}}hill1_map()\if{html}{\out{</code>}} and
-\if{html}{\out{<code>}}hill1_ts()\if{html}{\out{</code>}}
+\emph{Hill-Shannon diversity} - \code{hill1_map()} and
+\code{hill1_ts()}
 
-\emph{Hill-Simpson diversity} - \if{html}{\out{<code>}}hill2_map()\if{html}{\out{</code>}} and
-\if{html}{\out{<code>}}hill2_ts()\if{html}{\out{</code>}}
+\emph{Hill-Simpson diversity} - \code{hill2_map()} and
+\code{hill2_ts()}
 
 (see 'Details' for more information).
 }
 \details{
-\if{html}{\out{
-<h3>Hill diversity</h3>
-}}
-
+\subsection{Hill diversity}{
 
 Hill (1973) introduced the concept of Hill diversity, which assumes that the number and relative abundance of species are inseparable components of diversity. Hill diversity uses a single equation to calculate multiple measures of diversity by varying a single parameter \eqn{\ell}{l}, which changes the emphasis on rare vs common species (Roswell et al., 2019). It represents the mean rarity of sampled species, and is calculated as: \deqn{  D = \left( \sum_{i=1}^{S} p_i^\ell \right)^{1/(1-\ell)}  }{  D = (Sum from i=1 to S of pi^l) ^ (1 / (1 - l))  }where D is diversity, S is the number of species, pi is the proportion of individuals belonging to species i, ri is the rarity of species i, and \eqn{\ell}{l} determines the rarity scale for the mean. While \eqn{\ell}{l} can theoretically take almost any value, three common measures of diversity are special cases: species richness, and modified versions of the Shannon and Simpson diversity indices (Roswell et al., 2019). These three measures occur when \eqn{\ell}{l} takes the value of 1, 0 (or near-zero, as \eqn{\ell}{l} cannot actually take the value of 0), or -1, respectively.
 \itemize{
@@ -176,16 +173,17 @@ Hill (1973) introduced the concept of Hill diversity, which assumes that the num
 \item \strong{Hill-Simpson Diversity (\eqn{\ell}{l} = -1):}  \deqn{    D = \frac{1}{\sum_{i=1}^{S} p_i^2}  }{    D = 1 / (Sum from i=1 to S of pi^2)  }
 }
 
-Richness uses an arithmetic scale (the arithmetic mean), thus giving rare species a lot of leverage. By contrast, Hill-Shannon diversity uses a logarithmic scale (the geometric mean), treating common and rare species equally, and Hill-Simpson diversity uses a reciprocal scale (the harmonic mean), giving common species higher leverage.\if{html}{\out{
-<h3>Coverage-based estimation</h3>
-}}
+Richness uses an arithmetic scale (the arithmetic mean), thus giving rare species a lot of leverage. By contrast, Hill-Shannon diversity uses a logarithmic scale (the geometric mean), treating common and rare species equally, and Hill-Simpson diversity uses a reciprocal scale (the harmonic mean), giving common species higher leverage.
+}
 
+\subsection{Coverage-based estimation}{
 
 Hill diversity values can be estimated through different standardisation procedures as a way to mitigate the effects of sample size and sampling biases. One way to do this is by equalising sample size by calculating a species accumulation curve (a plot of cumulative species richness as a function of sample size) for each year or grid cell. The smallest sample size from among all the grid cells or years in the dataset is used as a reference to select richness values from each curve. This is called rarefaction. It is also possible to use a larger sample size as a reference, but this requires extrapolation of smaller samples, which is more prone to error than rarefaction.
 
 However, results from sample-size based estimation can be problematic as they depend on both richness and evenness. A sample from a community with a more even distribution of individuals across species is likely to show higher richness than a sample of the same size from a community where many species are rare, as the rare species are less likely to appear in the sample. Similarly, a community containing a lot of species will appear less rich than it actually is if the sample size used for comparison is too small. Detectability also plays an important part; hard to detect species are less likely to appear in the sample, so communities in which rare species are more easily detectable are likely to yield richer samples.
 
 Another way to estimate species richness is to standardise by coverage. The iNEXT package (Chao et al., 2014; Hsieh et al., 2016) for R is used to estimate species richness at an equal level of coverage (e.g. 0.95) for each cell or year in a biodiversity data cube. Coverage is the proportion of individuals in the community belonging to species in the sample. So, at a coverage of 0.95, 95\% of individuals in the community belong to species detected in the sample while 5\% belong to species that are not detected in the sample. Coverage is estimated based on the frequencies of species already in the sample. It can be illustrated using a species accumulation curve, the slope of which represents the probability of detecting a new species with the next individual you sample from a community. At a sample size of zero, the slope would be one, meaning the next individual sampled has a 100\% probability of being a species not already in the sample. Therefore, a coverage value of one corresponds to the asymptote of a species accumulation curve (slope of zero), meaning no new species would be uncovered through further sampling.
+}
 }
 \section{Functions}{
 \itemize{
