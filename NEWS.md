@@ -17,7 +17,7 @@
 ## Taxonomic distinctness via rgbif (taxize removed)
 
 * **Taxonomic distinctness no longer uses `taxize`** (and therefore no longer needs the non-CRAN packages `taxize`, `bold`, `wikitaxa` and `WikidataR`). Classifications are now retrieved from GBIF with `rgbif` (in Suggests):
-  * All taxa in a cube are looked up in **one batched request** by their GBIF taxon key, instead of one request per species name. Results are **cached for the rest of the R session**, so calculating another indicator from the same cube (e.g. a map after a time series) does not query GBIF again.
+  * All taxa in a cube are looked up together in one call by their GBIF taxon key, instead of one request per species name. Results are **cached for the rest of the R session**, so calculating another indicator from the same cube (e.g. a map after a time series) does not query GBIF again.
   * Numeric taxon keys are looked up in the GBIF Backbone Taxonomy and alphanumeric keys in the Catalogue of Life eXtended Release (COL XR), so cubes using either taxonomy are supported. Taxa that cannot be found by key are retried by scientific name; any still unresolved are excluded, with a warning.
   * Because taxa are looked up by key, the `rows` argument of `tax_distinct_map()`/`tax_distinct_ts()` and the `set_rows` argument of `calc_ts.tax_distinct()` are deprecated and ignored.
 * **Taxonomic distinctness calculation:**
@@ -43,6 +43,17 @@
 * Updated the documentation of evenness and rarity to describe exactly how S, proportions and occupancy are calculated for maps and time series.
 * Removed a stray `print()` from the taxonomic distinctness calculation; `replace_na()` now reports with `message()` instead of `print()`.
 * Added hand-computed tests for the evenness and rarity definitions.
+
+## Bug fixes
+
+* `create_sf_from_utm()` now builds correct EPSG codes for UTM zones 1-9, so MGRS cubes in those zones are placed correctly.
+* `add_ci(ci_type = "none")` no longer errors.
+* Indicator-level bootstrapping now respects `confidence_level` and `seed`.
+* `completeness_ts(gridded_average = TRUE)` now works.
+* `plot_map()` now applies `layer_colours` and `grid_fill_colour`.
+* `plot_mv()` now passes `...` to `mapview`.
+* `process_cube()` now reports the correct (positive) number of rows removed for missing cell codes.
+* Documentation corrections throughout.
 
 # b3gbi 1.0.1 - Bug fix
 

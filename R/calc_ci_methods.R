@@ -1,14 +1,16 @@
 #' @title Calculate Confidence Intervals for a Biodiversity Indicator
 #'
-#' @description This function calculates bootstrap confidence intervals for a
-#' biodiversity indicator. It is called automatically when calculating a
-#' biodiversity indicator over time unless you choose 'none' for ci_type.
+#' @description Calculates indicator-level bootstrap confidence intervals. It
+#' is called internally by `add_ci()` (indicator level) or when `ci_type` is
+#' supplied to a `*_ts()` function; it is not meant to be called directly.
 #'
 #' @param x A data cube object
 #' @param indicator An indicator calculated over time, in the form of a data
 #'  frame. *Note: this should NOT be an 'indicator_ts' object as it is meant to
 #'  be called by the 'compute_indicator_workflow' function.
-#' @param ... Additional arguments passed to specific calc_ci functions.
+#' @param ... Additional arguments passed to specific calc_ci functions and
+#'  on to `boot::boot.ci()` (e.g., `conf`, `h`, `hinv`), or to the
+#'  \pkg{iNEXT}-based calculation for Hill numbers (e.g., `conf`).
 #' @examples
 #' \donttest{
 #' # calc_ci() is called automatically when confidence intervals are requested
@@ -46,9 +48,8 @@ calc_ci.default <- function(x,
 #' @describeIn calc_ci Calculate confidence intervals for total occurrences
 #' @param num_bootstrap (Optional) Set the number of bootstraps to calculate for
 #'  generating confidence intervals. (Default: 1000)
-#' @param ci_type (Optional) Type of bootstrap confidence intervals to
-#'  calculate. (Default: "perc". Select "none" to avoid calculating bootstrap
-#'  CIs.)
+#' @param ci_type (Optional) Type of bootstrap interval passed to
+#'  `boot::boot.ci()`. (Default: "perc")
 #' @export
 calc_ci.total_occ <- function(x,
                               indicator,
@@ -87,9 +88,8 @@ calc_ci.total_occ <- function(x,
 #' @describeIn calc_ci Calculate confidence intervals for occurrence density
 #' @param num_bootstrap (Optional) Set the number of bootstraps to calculate for
 #'  generating confidence intervals. (Default: 1000)
-#' @param ci_type (Optional) Type of bootstrap confidence intervals to
-#'  calculate. (Default: "perc". Select "none" to avoid calculating bootstrap
-#'  CIs.)
+#' @param ci_type (Optional) Type of bootstrap interval passed to
+#'  `boot::boot.ci()`. (Default: "perc")
 #' @export
 calc_ci.occ_density <- function(x,
                                 indicator,
@@ -145,9 +145,8 @@ calc_ci.occ_density <- function(x,
 #' @describeIn calc_ci Calculate confidence intervals for species richness density
 #' @param num_bootstrap (Optional) Set the number of bootstraps to calculate for
 #'  generating confidence intervals. (Default: 1000)
-#' @param ci_type (Optional) Type of bootstrap confidence intervals to
-#'  calculate. (Default: "perc". Select "none" to avoid calculating bootstrap
-#'  CIs.)
+#' @param ci_type (Optional) Type of bootstrap interval passed to
+#'  `boot::boot.ci()`. (Default: "perc")
 #' @export
 calc_ci.spec_richness_density <- function(x,
                                           indicator,
@@ -205,9 +204,8 @@ calc_ci.spec_richness_density <- function(x,
 #' @describeIn calc_ci Calculate confidence intervals for newness
 #' @param num_bootstrap (Optional) Set the number of bootstraps to calculate for
 #'  generating confidence intervals. (Default: 1000)
-#' @param ci_type (Optional) Type of bootstrap confidence intervals to
-#'  calculate. (Default: "perc". Select "none" to avoid calculating bootstrap
-#'  CIs.)
+#' @param ci_type (Optional) Type of bootstrap interval passed to
+#'  `boot::boot.ci()`. (Default: "perc")
 #' @export
 calc_ci.newness <- function(x,
                             indicator,
@@ -246,9 +244,8 @@ calc_ci.newness <- function(x,
 #' @describeIn calc_ci Calculate confidence intervals for Williams' evenness
 #' @param num_bootstrap (Optional) Set the number of bootstraps to calculate for
 #'  generating confidence intervals. (Default: 1000)
-#' @param ci_type (Optional) Type of bootstrap confidence intervals to
-#'  calculate. (Default: "perc". Select "none" to avoid calculating bootstrap
-#'  CIs.)
+#' @param ci_type (Optional) Type of bootstrap interval passed to
+#'  `boot::boot.ci()`. (Default: "perc")
 #' @export
 calc_ci.williams_evenness <- function(x,
                                       ...) {
@@ -269,9 +266,8 @@ calc_ci.williams_evenness <- function(x,
 #' @describeIn calc_ci Calculate confidence intervals for Pielou's evenness
 #' @param num_bootstrap (Optional) Set the number of bootstraps to calculate for
 #'  generating confidence intervals. (Default: 1000)
-#' @param ci_type (Optional) Type of bootstrap confidence intervals to
-#'  calculate. (Default: "perc". Select "none" to avoid calculating bootstrap
-#'  CIs.)
+#' @param ci_type (Optional) Type of bootstrap interval passed to
+#'  `boot::boot.ci()`. (Default: "perc")
 #' @export
 calc_ci.pielou_evenness <- function(x,
                                     ...) {
@@ -291,9 +287,8 @@ calc_ci.pielou_evenness <- function(x,
 #' @describeIn calc_ci Calculate confidence intervals for abundance-based rarity
 #' @param num_bootstrap (Optional) Set the number of bootstraps to calculate for
 #'  generating confidence intervals. (Default: 1000)
-#' @param ci_type (Optional) Type of bootstrap confidence intervals to
-#'  calculate. (Default: "perc". Select "none" to avoid calculating bootstrap
-#'  CIs.)
+#' @param ci_type (Optional) Type of bootstrap interval passed to
+#'  `boot::boot.ci()`. (Default: "perc")
 #' @export
 calc_ci.ab_rarity <- function(x,
                               indicator,
@@ -336,9 +331,8 @@ calc_ci.ab_rarity <- function(x,
 #' @describeIn calc_ci Calculate confidence intervals for area-based rarity
 #' @param num_bootstrap (Optional) Set the number of bootstraps to calculate for
 #'  generating confidence intervals. (Default: 1000)
-#' @param ci_type (Optional) Type of bootstrap confidence intervals to
-#'  calculate. (Default: "perc". Select "none" to avoid calculating bootstrap
-#'  CIs.)
+#' @param ci_type (Optional) Type of bootstrap interval passed to
+#'  `boot::boot.ci()`. (Default: "perc")
 #' @export
 calc_ci.area_rarity <- function(x,
                                 indicator,
@@ -382,9 +376,8 @@ calc_ci.area_rarity <- function(x,
 #' @describeIn calc_ci Calculate confidence intervals for species occurrences
 #' @param num_bootstrap (Optional) Set the number of bootstraps to calculate for
 #'  generating confidence intervals. (Default: 1000)
-#' @param ci_type (Optional) Type of bootstrap confidence intervals to
-#'  calculate. (Default: "perc". Select "none" to avoid calculating bootstrap
-#'  CIs.)
+#' @param ci_type (Optional) Type of bootstrap interval passed to
+#'  `boot::boot.ci()`. (Default: "perc")
 #' @export
 calc_ci.spec_occ <- function(x,
                              indicator,
@@ -446,12 +439,13 @@ calc_ci.spec_occ <- function(x,
       year = numeric(),
       taxonKey = character(),
       scientificName = character(),
+      int_type = character(),
       ll = numeric(),
       ul = numeric(),
       est_boot = numeric(),
       se_boot = numeric(),
       bias_boot = numeric(),
-      conf_level = numeric()
+      conf = numeric()
     )
   }
 
@@ -471,9 +465,8 @@ calc_ci.spec_occ <- function(x,
 #' @describeIn calc_ci Calculate confidence intervals for species range
 #' @param num_bootstrap (Optional) Set the number of bootstraps to calculate for
 #'  generating confidence intervals. (Default: 1000)
-#' @param ci_type (Optional) Type of bootstrap confidence intervals to
-#'  calculate. (Default: "perc". Select "none" to avoid calculating bootstrap
-#'  CIs.)
+#' @param ci_type (Optional) Type of bootstrap interval passed to
+#'  `boot::boot.ci()`. (Default: "perc")
 #' @export
 calc_ci.spec_range <- function(x,
                                indicator,
@@ -536,12 +529,13 @@ calc_ci.spec_range <- function(x,
       year = numeric(),
       taxonKey = character(),
       scientificName = character(),
+      int_type = character(),
       ll = numeric(),
       ul = numeric(),
       est_boot = numeric(),
       se_boot = numeric(),
       bias_boot = numeric(),
-      conf_level = numeric()
+      conf = numeric()
     )
   }
 

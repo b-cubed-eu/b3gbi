@@ -18,7 +18,8 @@
 #'  as options to select from. The first one in the list will be shown when the
 #'  map loads. Default is c("OpenStreetMap", "OpenTopoMap", "CartoDB.Positron",
 #'  "Esri.WorldImagery").
-#' @param ... (Optional) Pass additional parameters to the mapview package.
+#' @param ... (Optional) Additional arguments passed to
+#'  \code{mapview::mapview()}.
 #'
 #' @return An interactive mapview plot.
 #'
@@ -62,7 +63,7 @@ plot_mv <- function(x,
   if (!requireNamespace("RColorBrewer", quietly = TRUE)) {
     # If not installed, stop and tell the user what to do
     stop("The 'RColorBrewer' package is required for this function.
-         Please install it using: install.packages('mapview')",
+         Please install it using: install.packages('RColorBrewer')",
          call. = FALSE)
   }
 
@@ -107,7 +108,8 @@ plot_mv <- function(x,
     layer.name = legend_title,
     alpha.regions = transparency, # Ensure the polygons are visible
     color = "transparent",
-    col.regions = yellow_to_red_pal
+    col.regions = yellow_to_red_pal,
+    ...
   )
 
 }

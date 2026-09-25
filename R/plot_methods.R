@@ -44,7 +44,10 @@ plot.spec_occ <- function(x, species, ...) {
 
 
 #' @export
-plot.cum_richness <- function(x, envelopecolour = NULL, ...) {
+plot.cum_richness <- function(x,
+                              envelopecolour = NULL,
+                              smoothed_trend = FALSE,
+                              ...) {
 
   wrong_class(x, class = c("cum_richness", "indicator_ts"),
               reason = "incorrect", multiple = TRUE)
@@ -53,7 +56,8 @@ plot.cum_richness <- function(x, envelopecolour = NULL, ...) {
     x,
     y_label_default = "Cumulative Species Richness",
     auto_title_ts = "Cumulative Species Richness",
-    smoothed_trend = FALSE,
+    smoothed_trend = smoothed_trend,
+    envelopecolour = envelopecolour,
     ...
   )
 
@@ -306,9 +310,12 @@ plot.occ_turnover <- function(x, auccolour = NULL,  ...) {
   wrong_class(x, c("occ_turnover", "indicator_ts"),
               reason = "incorrect", multiple = TRUE)
 
-  # Set defaults
-  y_label_default <- "Occupancy Turnover"
-  auto_title <- "Occupancy Turnover"
+  # The area-under-the-curve fill was removed from plot_ts(), so auccolour
+  # can no longer be applied. Warn rather than silently ignoring it.
+  if (!is.null(auccolour)) {
+    warning("'auccolour' is no longer supported and will be ignored.",
+            call. = FALSE)
+  }
 
   call_plot(x,
             y_label_default = "Occupancy Turnover",

@@ -36,19 +36,22 @@ aggregate_data_to_coarser_grid <- function(data_assigned, clipped_grid,
 
   sf::st_agr(grid_proj) <- "constant"
   sf::st_agr(coarse_grid) <- "constant"
-  overlaps <- sf::st_intersection(
+  overlaps <- suppressMessages(suppressWarnings(sf::st_intersection(
     grid_proj[, c("orig_cellid", "geometry")],
     coarse_grid[, c("coarse_id", "geometry")]
-  )
-  suppressMessages(sf::sf_use_s2(original_s2))
+  )))
 
   if (nrow(overlaps) == 0) {
     warning("Aggregation failed: no overlap between native and coarse grid.")
     return(list(data = data_assigned, grid = clipped_grid))
   }
 
-  # Keep only the largest overlap for each native cell
+  # Keep only the largest overlap for each native cell. The areas are only
+  # compared with each other, so they are computed with s2 still switched off:
+  # with s2, tiny degenerate overlap slivers (e.g. on EQDGC grids) are invalid
+  # and make st_area() fail.
   overlaps$ov_area <- as.numeric(sf::st_area(overlaps))
+  suppressMessages(sf::sf_use_s2(original_s2))
   overlaps <- overlaps[order(overlaps$orig_cellid, -overlaps$ov_area), ]
   overlaps <- overlaps[!duplicated(overlaps$orig_cellid), ]
 

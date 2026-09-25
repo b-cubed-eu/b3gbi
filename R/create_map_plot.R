@@ -53,18 +53,35 @@ create_map_plot <- function(data,
     0
   }
 
-  # Format layer colours
-  if (!is.null(layer_colours)) {
-    layer_colours <- list("black", layer_colours)
+  # Drop any layers that could not be loaded (e.g. empty after cropping)
+  layer_list <- layer_list[!vapply(layer_list, is.null, logical(1))]
+
+  # Look up the outline and fill colours for each layer by name. The default
+  # land layer ("admin_0_countries") is always drawn with a black outline and
+  # no fill; user-supplied colours (named by layer in plot_map() and
+  # plot_species_map()) apply to the additional layers.
+  get_layer_colour <- function(layer_name, colours, default) {
+    if (!is.null(colours) && layer_name %in% names(colours)) {
+      colours[[layer_name]]
+    } else {
+      default
+    }
   }
-  if (!is.null(layer_fill_colours)) {
-    layer_fill_colours <- list("transparent", layer_fill_colours)
+
+  # Colour for empty grid cells (cells with no indicator value). Note that
+  # alpha() would turn "transparent" into semi-transparent white, so keep
+  # the default "transparent" as is.
+  na_fill_colour <- if (is.na(grid_fill_colour) ||
+                        identical(grid_fill_colour, "transparent")) {
+    "transparent"
+  } else {
+    alpha(grid_fill_colour, grid_fill_transparency)
   }
 
   # Define function to modify legend
   cust_leg <- function(scale.params = list()) {
     do.call("scale_fill_gradient", modifyList(
-      list(low = "gold", high = "firebrick4", na.value = "transparent"),
+      list(low = "gold", high = "firebrick4", na.value = na_fill_colour),
       scale.params
     ))
   }
@@ -103,15 +120,15 @@ create_map_plot <- function(data,
   # Step 3: Add additional layers, with ocean and lakes in blue
   for (i in seq_along(layer_list)) {
     layer_data <- layer_list[[i]]
-    layer_fill_colour <- if (names(layer_list)[[i]] %in% c("ocean", "lakes") &&
-      is.null(layer_fill_colours)) {
+    layer_name <- names(layer_list)[[i]]
+    default_fill <- if (layer_name %in% c("ocean", "lakes")) {
       "#92c5f0"
-    } else if (!is.null(layer_fill_colours)) {
-      layer_fill_colours[[i]]
     } else {
       "transparent"
     }
-    layer_colour <- if (!is.null(layer_colours)) layer_colours[[i]] else "black"
+    layer_fill_colour <- get_layer_colour(layer_name, layer_fill_colours,
+                                          default_fill)
+    layer_colour <- get_layer_colour(layer_name, layer_colours, "black")
 
     plot <- plot +
       ggplot2::geom_sf(
@@ -163,7 +180,7 @@ create_map_plot <- function(data,
         data = layer_data,
         aes(geometry = geometry),
         fill = "transparent",
-        colour = "black",
+        colour = get_layer_colour(i, layer_colours, "black"),
         inherit.aes = FALSE
       )
   }

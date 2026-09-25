@@ -2,39 +2,53 @@
 #'
 #' @description Creates map visualizations of species ranges or species
 #'  occurrences. Requires an indicator_map object created using the
-#'  \code{spec_occ_map()} or \code{spec_range_map()} functions as input. To plot
-#'  multi-species indicators (e.g., species richness or evenness), use the
-#'  \code{plot_map()} function instead.
+#'  \code{spec_occ_map()} or \code{spec_range_map()} functions as input. It is
+#'  also the function called by \code{plot()} for species-level maps, including
+#'  those created with \code{relative_occupancy_map()}. To plot multi-species
+#'  indicators (e.g., species richness or evenness), use the \code{plot_map()}
+#'  function instead.
 #'
 #' @inheritParams plot_map
 #'
 #' @param x An 'indicator_map' object containing indicator values for individual
 #'  species associated with map grid cells. This object is typically created
-#'  using the \code{spec_occ_map()} or \code{spec_range_map()} functions.
-#'  This is a required parameter with no default.
-#' @param species Species you want to map occurrences for. Can be either
-#'  numerical taxonKeys or species names. Partial species names can be used
-#'  (the function will try to match them). This is a required parameter with
-#'  no default.
-#' @param single_plot (Optional) If TRUE, all species occurrence time series
-#'  will be combined into a single multi-panel plot. Set this to FALSE to plot
-#'  each species separately. Default is TRUE.
+#'  using the \code{spec_occ_map()}, \code{spec_range_map()} or
+#'  \code{relative_occupancy_map()} functions. This is a required parameter
+#'  with no default.
+#' @param species Species you want to map. Can be either numerical taxonKeys
+#'  or species names. Partial species names can be given as the beginning of
+#'  a name (prefix match). This is a required parameter with no default.
+#' @param single_plot (Optional) If TRUE, all species maps will be combined
+#'  into a single multi-panel plot. Set this to FALSE to plot each species
+#'  separately. Default is TRUE.
 #' @param suppress_legend (Optional) Do not show legend. This defaults to FALSE
 #'  but will be forcibly set to TRUE when plotting species ranges, as all cell
 #'  values are 1.
 #' @param spec_name_wrap_length (Optional) Maximum species name length before
 #'  wrapping to a new line. Default: 40 characters.
+#' @param map_expansion_factor (Optional) Factor to expand the map limits
+#' beyond the grid limits. This does NOT expand the boundaries of the plot, it
+#' only affects where the crop is applied. If this value is too small, some
+#' land may be visibly cut off due to map distortion caused by projections. A
+#' larger value will extend the bounding box for cropping to prevent this.
+#' Must be a positive number. Default is 0.5. You can increase this value if
+#' you are using an extreme projection and find that some land is visibly cut
+#' off.
 #'
-#' @return A ggplot object representing the map of species range or occurrences.
-#' Can be customized using ggplot2 functions.
+#' @return If single_plot = TRUE (default), a patchwork object combining one
+#'  ggplot per species. If single_plot = FALSE, a named list of ggplot objects
+#'  (one per species). These can be customized using ggplot2 and patchwork
+#'  functions. Requires the 'patchwork' package.
 #'
 #' @examples
 #' \donttest{
-#' spec_occ_mammals_denmark <- spec_occ_map(example_cube_1,
-#'   level = "country",
-#'   region = "Denmark"
-#' )
-#' plot_species_map(x = spec_occ_mammals_denmark, c(2440728, 4265185))
+#' if (requireNamespace("patchwork", quietly = TRUE)) {
+#'   spec_occ_mammals_denmark <- spec_occ_map(example_cube_1,
+#'     level = "country",
+#'     region = "Denmark"
+#'   )
+#'   plot_species_map(x = spec_occ_mammals_denmark, c(2440728, 4265185))
+#' }
 #' }
 #'
 #' @export
@@ -101,7 +115,7 @@ plot_species_map <- function(x,
   wrong_class(x, "indicator_map", reason = "incorrect")
 
   # Set suppress_legend to TRUE if plotting a range map
-  if (inherits(x, "spec_range_map")) suppress_legend <- TRUE
+  if (inherits(x, "spec_range")) suppress_legend <- TRUE
 
   if (is.null(crop_to_grid)) {
     crop_to_grid <- if (x$map_level == "cube") TRUE else FALSE
@@ -124,6 +138,10 @@ plot_species_map <- function(x,
       "If layer_fill_colours is provided, it must be the same length as layers."
     )
   }
+
+  # Name layer colours by layer so each colour is matched to its layer
+  if (!is.null(layer_colours)) names(layer_colours) <- layers
+  if (!is.null(layer_fill_colours)) names(layer_fill_colours) <- layers
 
   # Get plot title (if set to "auto")
   title <- if (title == "auto") auto_title else title
@@ -186,6 +204,11 @@ plot_species_map <- function(x,
 
   # Unpack the list
   list2env(map_data_list, envir = environment())
+
+  # Set default grid line width based on grid type
+  if (is.null(grid_line_width)) {
+    grid_line_width <- if (!is.null(x$grid_type) && x$grid_type == "isea3h") 0.5 else 0.1
+  }
 
   # Create the plots for each species using the helper function
   plot <- purrr::map(seq_along(sci_names), function(i) {

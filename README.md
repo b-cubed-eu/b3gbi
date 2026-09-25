@@ -6,7 +6,7 @@
 <!-- badges: start -->
 
 [![repo
-status](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#wip)
+status](https://www.repostatus.org/badges/latest/active.svg)](https://www.repostatus.org/#active)
 [![Release](https://img.shields.io/github/release/b-cubed-eu/b3gbi.svg?include_prereleases)](https://github.com/b-cubed-eu/b3gbi/releases)
 [![b3gbi status
 badge](https://b-cubed-eu.r-universe.dev/b3gbi/badges/version)](https://b-cubed-eu.r-universe.dev/b3gbi)
@@ -43,7 +43,7 @@ b3gbi empowers biodiversity analysis with:
 - **Standardized Workflows:** Simplify the process of calculating common
   biodiversity indicators from GBIF data cubes.
 - **Flexibility:** Calculate richness, evenness, rarity, taxonomic
-  distinctness, Shannon-Hill diversity, Simpson-Hill diversity,
+  distinctness, Hill-Shannon diversity, Hill-Simpson diversity,
   completeness, and more.
 - **Analysis Options:** Explore temporal trends or create spatial maps.
 - **Visualization Tools:** Generate publication-ready plots of your

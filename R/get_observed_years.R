@@ -1,10 +1,9 @@
-#' Extract Years With Observations from an Indicator Map
+#' Extract Years With Observations
 #'
-#' Takes an "indicator_map",  "indicator_ts", or "processed_cube" object and
+#' Takes an "indicator_map", "indicator_ts", or "processed_cube" object and
 #' determines the years for which observation data exists.
 #'
-#' @param x An "indicator_map" object containing calculated indicator values
-#'  associated with grid cells.
+#' @param x An "indicator_map", "indicator_ts" or "processed_cube" object.
 #' @return A data frame with two columns:
 #'  * `years`: A sequence of years covering the range of observations.
 #'  * `occurrences`: A logical vector indicating if observations exist

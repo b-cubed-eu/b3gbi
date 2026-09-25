@@ -68,8 +68,9 @@ calc_map.hill2 <- function(x, ...) {
 #'     cells where sampling effort is documented.
 #'   * `2` — **Temporal mean annual occupancy**: for each year, compute the
 #'     proportion of that year's occupied cells (any species) in which the
-#'     species was recorded; then average those annual proportions across all
-#'     years in the data. This captures how consistently a species occupies the
+#'     species was recorded; then average those annual proportions across the
+#'     years in which the species was recorded (years without records of the
+#'     species do not contribute a zero). This captures how consistently a species occupies the
 #'     active sampling footprint over time.
 #'
 #'   **Note on presence-only data**: All three types rely on presence-only
@@ -144,7 +145,8 @@ calc_map.relative_occupancy <- function(x, occ_type = 0, ...) {
     # Type 2: temporal mean annual occupancy.
     # For each year, count cells with >= 1 record (any species) as the
     # denominator; count cells with >= 1 record for the focal species as the
-    # numerator. Compute the annual proportion, then average across years.
+    # numerator. Compute the annual proportion, then average across the years
+    # in which the species was recorded (years without it produce no row).
     # The map value for each species is the temporal mean of those proportions.
     #
     # Presence-only caveat: the denominator reflects annual recording footprint,
