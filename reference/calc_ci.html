@@ -17,7 +17,7 @@ biodiversity indicator over time unless you choose 'none' for ci_type."><meta pr
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -154,11 +154,22 @@ CIs.)</p></dd>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="co"># Note: calc_ci is an internal function called automatically during indicator calculation</span></span></span>
-<span class="r-in"><span><span class="va">cube_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"denmark_mammals_cube_eea.csv"</span>, package <span class="op">=</span> <span class="st">"b3gbi"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">cube</span> <span class="op">&lt;-</span> <span class="fu"><a href="process_cube.html">process_cube</a></span><span class="op">(</span><span class="va">cube_path</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="co"># calc_ci() is called automatically when confidence intervals are requested</span></span></span>
+<span class="r-in"><span><span class="co"># during indicator calculation (or by add_ci(bootstrap_level = "indicator"))</span></span></span>
+<span class="r-in"><span><span class="va">occ_ts</span> <span class="op">&lt;-</span> <span class="fu"><a href="total_occ_map.html">total_occ_ts</a></span><span class="op">(</span><span class="va">example_cube_1</span>, first_year <span class="op">=</span> <span class="fl">2000</span>,</span></span>
+<span class="r-in"><span>                       ci_type <span class="op">=</span> <span class="st">"perc"</span>, num_bootstrap <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">occ_ts</span><span class="op">$</span><span class="va">data</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 6 × 9</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    year diversity_val int_type    ll    ul est_boot se_boot bias_boot conf_level</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">1</span>  <span style="text-decoration: underline;">2</span>000          <span style="text-decoration: underline;">2</span>166 percent  <span style="text-decoration: underline;">1</span>866. <span style="text-decoration: underline;">2</span>632.    <span style="text-decoration: underline;">2</span>189.    186.     23.3        0.95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">2</span>  <span style="text-decoration: underline;">2</span>001          <span style="text-decoration: underline;">2</span>831 percent  <span style="text-decoration: underline;">2</span>579. <span style="text-decoration: underline;">3</span>098.    <span style="text-decoration: underline;">2</span>820.    137.    -<span style="color: #BB0000;">10.9</span>        0.95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">3</span>  <span style="text-decoration: underline;">2</span>002          <span style="text-decoration: underline;">3</span>366 percent  <span style="text-decoration: underline;">2</span>988. <span style="text-decoration: underline;">3</span>880.    <span style="text-decoration: underline;">3</span>364.    225.     -<span style="color: #BB0000;">2.31</span>       0.95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">4</span>  <span style="text-decoration: underline;">2</span>003          <span style="text-decoration: underline;">3</span>114 percent  <span style="text-decoration: underline;">2</span>629. <span style="text-decoration: underline;">3</span>722.    <span style="text-decoration: underline;">3</span>120.    258.      6.15       0.95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">5</span>  <span style="text-decoration: underline;">2</span>004          <span style="text-decoration: underline;">2</span>934 percent  <span style="text-decoration: underline;">2</span>534. <span style="text-decoration: underline;">3</span>487.    <span style="text-decoration: underline;">2</span>997.    227.     63.0        0.95</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">6</span>  <span style="text-decoration: underline;">2</span>005          <span style="text-decoration: underline;">4</span>733 percent  <span style="text-decoration: underline;">3</span>994. <span style="text-decoration: underline;">5</span>378.    <span style="text-decoration: underline;">4</span>770.    329.     36.6        0.95</span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

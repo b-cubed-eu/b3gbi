@@ -173,15 +173,17 @@ or even vital, for interpreting the results of calculated indicators.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 to_map <- total_occ_map(example_cube_1,
   level = "country",
   region = "Denmark"
 )
 plot(to_map)
-} # }
-if (FALSE) { # \dontrun{
+
+# }
+# \donttest{
 to_ts <- total_occ_ts(example_cube_1, first_year = 1985)
 plot(to_ts)
-} # }
+
+# }
 ```

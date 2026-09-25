@@ -21,7 +21,7 @@ CI calculation process."><meta property="og:image" content="https://b-cubed-eu.g
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -65,7 +65,7 @@ CI calculation process.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">add_ci</span><span class="op">(</span></span>
 <span>  <span class="va">indicator</span>,</span>
 <span>  num_bootstrap <span class="op">=</span> <span class="fl">1000</span>,</span>
-<span>  bootstrap_level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"cube"</span>, <span class="st">"indicator"</span><span class="op">)</span>,</span>
+<span>  bootstrap_level <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"auto"</span>, <span class="st">"cube"</span>, <span class="st">"indicator"</span><span class="op">)</span>,</span>
 <span>  ci_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"perc"</span>, <span class="st">"bca"</span>, <span class="st">"norm"</span>, <span class="st">"basic"</span>, <span class="st">"none"</span><span class="op">)</span>,</span>
 <span>  trans <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">t</span><span class="op">)</span> <span class="va">t</span>,</span>
 <span>  inv_trans <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">t</span><span class="op">)</span> <span class="va">t</span>,</span>
@@ -93,12 +93,17 @@ intervals should be added.</p></dd>
 
 
 <dt id="arg-bootstrap-level">bootstrap_level<a class="anchor" aria-label="anchor" href="#arg-bootstrap-level"></a></dt>
-<dd><p>(Optional) Level at which to perform bootstrapping:</p><ul><li><p><code>cube</code> (default): Bootstrapping is done by resampling the
-occurrence records in the cube. This is mathematically more robust as it
-captures the underlying sampling uncertainty.</p></li>
+<dd><p>(Optional) Level at which to perform bootstrapping:</p><ul><li><p><code>auto</code> (default): Uses <code>cube</code> if the <span class="pkg">dubicube</span> package is
+installed, and otherwise falls back to <code>indicator</code> (with a message).</p></li>
+<li><p><code>cube</code>: Bootstrapping is done by resampling the occurrence records in
+the cube, using the <span class="pkg">dubicube</span> package. This is statistically more
+robust as it captures the underlying sampling uncertainty. Requires
+<span class="pkg">dubicube</span>.</p></li>
 <li><p><code>indicator</code>: Bootstrapping is done by resampling indicator
-values. This is faster for large cubes but less robust.</p></li>
-</ul></dd>
+values. This is faster for large cubes but less robust, and does not
+require <span class="pkg">dubicube</span>.</p></li>
+</ul><p>The level that was used is stored in the <code>ci_method</code> element of the
+returned object and shown when it is printed.</p></dd>
 
 
 <dt id="arg-ci-type">ci_type<a class="anchor" aria-label="anchor" href="#arg-ci-type"></a></dt>
@@ -136,12 +141,13 @@ be replaced? (Default: TRUE)</p></dd>
 
 <dt id="arg-boot-args">boot_args<a class="anchor" aria-label="anchor" href="#arg-boot-args"></a></dt>
 <dd><p>(Optional) Named list of additional arguments passed to
-<code><a href="https://b-cubed-eu.github.io/dubicube/reference/bootstrap_cube.html" class="external-link">dubicube::bootstrap_cube()</a></code>. (Default: <code><a href="https://rdrr.io/r/base/list.html" class="external-link">list()</a></code>)</p></dd>
+<code><a href="https://b-cubed-eu.github.io/dubicube/reference/bootstrap_cube.html" class="external-link">dubicube::bootstrap_cube()</a></code> (cube level only). (Default: <code><a href="https://rdrr.io/r/base/list.html" class="external-link">list()</a></code>)</p></dd>
 
 
 <dt id="arg-ci-args">ci_args<a class="anchor" aria-label="anchor" href="#arg-ci-args"></a></dt>
 <dd><p>(Optional) Named list of additional arguments passed to
-<code><a href="https://b-cubed-eu.github.io/dubicube/reference/calculate_bootstrap_ci.html" class="external-link">dubicube::calculate_bootstrap_ci()</a></code>. (Default: <code><a href="https://rdrr.io/r/base/list.html" class="external-link">list()</a></code>)</p></dd>
+<code><a href="https://b-cubed-eu.github.io/dubicube/reference/calculate_bootstrap_ci.html" class="external-link">dubicube::calculate_bootstrap_ci()</a></code> (cube level only).
+(Default: <code><a href="https://rdrr.io/r/base/list.html" class="external-link">list()</a></code>)</p></dd>
 
 
 <dt id="arg-seed">seed<a class="anchor" aria-label="anchor" href="#arg-seed"></a></dt>
@@ -165,8 +171,11 @@ original data with the following additional columns:</p><ul><li><p><code>ll</cod
 </ul></div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The function acts as a bridge to the <span class="pkg">dubicube</span> package to calculate
-bootstrap confidence intervals.</p><div class="section">
+    <p>For cube-level bootstrapping, the function acts as a bridge to the
+<span class="pkg">dubicube</span> package (Langeraert et al.), which is developed alongside
+<span class="pkg">b3gbi</span> within the B-Cubed project. <span class="pkg">dubicube</span> is not on CRAN; it
+can be installed from R-universe with
+<code>install.packages("dubicube", repos = c("https://b-cubed-eu.r-universe.dev", "https://cloud.r-project.org"))</code>.</p><div class="section">
 <h3 id="indicator-specific-defaults">Indicator-specific defaults<a class="anchor" aria-label="anchor" href="#indicator-specific-defaults"></a></h3>
 
 
@@ -259,7 +268,7 @@ internally using the <code>iNEXT</code> package.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="co"># Load sample cube data</span></span></span>
 <span class="r-in"><span><span class="va">cube_path</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"denmark_mammals_cube_eea.csv"</span>, package <span class="op">=</span> <span class="st">"b3gbi"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">cube</span> <span class="op">&lt;-</span> <span class="fu"><a href="process_cube.html">process_cube</a></span><span class="op">(</span><span class="va">cube_path</span><span class="op">)</span></span></span>
@@ -269,8 +278,10 @@ internally using the <code>iNEXT</code> package.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Add bootstrap confidence intervals</span></span></span>
 <span class="r-in"><span><span class="va">ts_occ_ci</span> <span class="op">&lt;-</span> <span class="fu">add_ci</span><span class="op">(</span><span class="va">ts_occ</span>, num_bootstrap <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Performing group-specific bootstrap with `boot::boot()`."</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ts_occ_ci</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-plt img"><img src="add_ci-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

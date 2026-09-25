@@ -37,7 +37,7 @@ The function will return an error if it cannot find all required columns."><meta
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -260,12 +260,48 @@ having trouble.</p></dd>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="va">cube_name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, <span class="st">"denmark_mammals_cube_eqdgc.csv"</span>,</span></span>
 <span class="r-in"><span>                         package <span class="op">=</span> <span class="st">"b3gbi"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">denmark_example_cube</span> <span class="op">&lt;-</span> <span class="fu">process_cube</span><span class="op">(</span><span class="va">cube_name</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">denmark_example_cube</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Processed data cube for calculating biodiversity indicators</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Date Range: 1901 - 2024 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Single-resolution cube with cell size 0.25degrees </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Number of cells: 186 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Grid reference system: eqdgc </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Coordinate range:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  xmin  xmax  ymin  ymax </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  3.75 15.25 54.50 58.25 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Total number of observations: 6099 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Number of species represented: 54 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Number of families represented: 19 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Kingdoms represented: Animalia </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> First 10 rows of data (use n = to show more):</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># A tibble: 989 × 15</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     year cellCode  kingdomKey kingdom  familyKey family  taxonKey scientificName</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>      <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>  <span style="text-decoration: underline;">1</span>901 E010N55CD 1          Animalia 9456      Sciuri… 8211070  Sciurus vulga…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>  <span style="text-decoration: underline;">1</span>930 E014N55DD 1          Animalia 9456      Sciuri… 8211070  Sciurus vulga…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>  <span style="text-decoration: underline;">1</span>940 E012N55BA 1          Animalia 9614      Bovidae 2441022  Bos taurus    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>  <span style="text-decoration: underline;">1</span>943 E011N54BA 1          Animalia 5510      Muridae 2437756  Apodemus flav…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>  <span style="text-decoration: underline;">1</span>946 E008N56BB 1          Animalia 5510      Muridae 5219833  Micromys minu…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>  <span style="text-decoration: underline;">1</span>952 E010N57CB 1          Animalia 5510      Muridae 2439261  Rattus norveg…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>  <span style="text-decoration: underline;">1</span>960 E014N55DD 1          Animalia 5534      Sorici… 8316400  Sorex araneus </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>  <span style="text-decoration: underline;">1</span>963 E008N57DC 1          Animalia 5534      Sorici… 7571319  Sorex minutus </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>  <span style="text-decoration: underline;">1</span>968 E014N55DB 1          Animalia 5510      Muridae 2437756  Apodemus flav…</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>  <span style="text-decoration: underline;">1</span>969 E012N55BA 1          Animalia 9701      Canidae 5219243  Vulpes vulpes </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 979 more rows</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># ℹ 7 more variables: obs &lt;dbl&gt;, minCoordinateUncertaintyInMeters &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   minTemporalUncertainty &lt;dbl&gt;, familyCount &lt;dbl&gt;, xcoord &lt;dbl&gt;,</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;">#   ycoord &lt;dbl&gt;, resolution &lt;chr&gt;</span></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

@@ -1,5 +1,141 @@
 # Changelog
 
+## b3gbi 1.1.0
+
+### Housekeeping and bug fixes
+
+- **Fixed hexagonal (ISEA3H) grids on systems whose PROJ cannot invert
+  `+proj=isea`** (PROJ \< 9.5 and many Windows builds) when `dggridR` is
+  not installed. The native fallback only checked the forward
+  transformation, so the hexagons could not be transformed back and maps
+  came out empty (“No spatial intersection between map data and grid”).
+  It now checks the round trip and uses a local Lambert azimuthal
+  equal-area projection when needed.
+- DESCRIPTION: rewritten package description; removed the `Remotes`
+  field (all non-CRAN packages are optional and listed in
+  `Additional_repositories`).
+- Examples: all examples now run (slower map examples in `\donttest{}`),
+  except the taxonomic distinctness examples, which need the GBIF API.
+  Several examples were fixed
+  ([`prepare_indicator_bootstrap()`](https://b-cubed-eu.github.io/b3gbi/reference/prepare_indicator_bootstrap.md),
+  [`calc_ci()`](https://b-cubed-eu.github.io/b3gbi/reference/calc_ci.md),
+  [`replace_na()`](https://b-cubed-eu.github.io/b3gbi/reference/replace_na.md),
+  [`sum_by_taxon()`](https://b-cubed-eu.github.io/b3gbi/reference/sum_by_taxon.md)).
+- Tests: slow tests are skipped on CRAN (total test time about 1.5
+  minutes), and
+  [`plot_mv()`](https://b-cubed-eu.github.io/b3gbi/reference/plot_mv.md)
+  tests are skipped when `mapview` is not installed.
+
+### Optional dubicube (cube-level bootstrapping)
+
+- **`dubicube` moved from Imports to Suggests.** b3gbi can now be
+  installed without packages from outside CRAN. Cube-level bootstrapping
+  still uses `dubicube`, which remains the recommended way to calculate
+  confidence intervals.
+- **New default `bootstrap_level = "auto"` in
+  [`add_ci()`](https://b-cubed-eu.github.io/b3gbi/reference/add_ci.md).**
+  It uses cube-level bootstrapping (`dubicube`) when that package is
+  installed and falls back to indicator-level bootstrapping otherwise,
+  with a message (shown once per session) explaining how to install
+  `dubicube` from R-universe. Asking explicitly for
+  `bootstrap_level = "cube"` without `dubicube` stops with installation
+  instructions. Hill numbers use the indicator level under `"auto"`
+  without a warning, as their confidence intervals come from `iNEXT`.
+- The bootstrap level that was used is stored in the new `ci_method`
+  element of the indicator object and shown by
+  [`print()`](https://rdrr.io/r/base/print.html).
+- Vignettes updated to explain how to install `dubicube` and what
+  `"auto"` does.
+
+### Taxonomic distinctness via rgbif (taxize removed)
+
+- **Taxonomic distinctness no longer uses `taxize`** (and therefore no
+  longer needs the non-CRAN packages `taxize`, `bold`, `wikitaxa` and
+  `WikidataR`). Classifications are now retrieved from GBIF with `rgbif`
+  (in Suggests):
+  - All taxa in a cube are looked up in **one batched request** by their
+    GBIF taxon key, instead of one request per species name. Results are
+    **cached for the rest of the R session**, so calculating another
+    indicator from the same cube (e.g. a map after a time series) does
+    not query GBIF again.
+  - Numeric taxon keys are looked up in the GBIF Backbone Taxonomy and
+    alphanumeric keys in the Catalogue of Life eXtended Release (COL
+    XR), so cubes using either taxonomy are supported. Taxa that cannot
+    be found by key are retried by scientific name; any still unresolved
+    are excluded, with a warning.
+  - Because taxa are looked up by key, the `rows` argument of
+    [`tax_distinct_map()`](https://b-cubed-eu.github.io/b3gbi/reference/tax_distinct_map.md)/[`tax_distinct_ts()`](https://b-cubed-eu.github.io/b3gbi/reference/tax_distinct_map.md)
+    and the `set_rows` argument of
+    [`calc_ts.tax_distinct()`](https://b-cubed-eu.github.io/b3gbi/reference/calc_ts.md)
+    are deprecated and ignored.
+- **Taxonomic distinctness calculation:**
+  - The number of taxonomic levels is now fixed at L = 7 (kingdom to
+    species) instead of being recalculated for each cell or year, so
+    values are comparable across cells and years.
+  - Taxa are compared from the top of the hierarchy down using GBIF
+    keys, so homonyms in different higher taxa (e.g. the same genus name
+    in animals and plants) are no longer treated as related.
+  - Pairwise distances are calculated with vectorised matrix operations
+    instead of a loop over species pairs.
+
+### MGRS conversion without the mgrs package
+
+- **Removed the dependency on the non-CRAN package `mgrs`.** MGRS grid
+  codes are now converted to UTM coordinates by an internal pure-R
+  function (`mgrs_to_utm()`), written from the MGRS specification. It
+  gives identical results to
+  [`mgrs::mgrs_to_utm()`](https://rdrr.io/pkg/mgrs/man/mgrs_to_utm.html)
+  for over 100,000 test codes worldwide at all precisions (100 km to 1
+  m), including the Norway and Svalbard special zones. Invalid codes and
+  polar (UPS) codes return `NA` with a single summary warning.
+- The resolution of MGRS cubes is now worked out from the number of
+  digits in the codes, so it is also correct for single-digit UTM zones.
+
+### Indicator corrections
+
+**Indicator corrections. Values of the affected indicators will
+change.**
+
+- **Evenness (`pielou_evenness_*`, `williams_evenness_*`)**: The
+  evenness calculations now use the number of species actually observed
+  in each grid cell or year. Previously, species absent from a cell or
+  year were counted towards the total number of species. This biased
+  evenness downwards, most strongly in species-poor cells and years.
+  Evenness is now `NA` when fewer than two species are present, since it
+  is undefined there.
+- **Williams’ evenness for perfectly even communities**: floating-point
+  rounding could make Williams’ evenness `NA` (or very slightly below 1)
+  when all species were equally common, depending on the number of
+  species. It is now exactly 1 in that case.
+- **Abundance-based rarity time series (`ab_rarity_ts`)**: relative
+  abundance is now calculated separately for each year, and each species
+  contributes once per year. Previously, proportions were pooled over
+  all years and each species’ rarity was added once for every grid cell
+  it occupied, which inflated the values of widespread species.
+- **Area-based rarity time series (`area_rarity_ts`)**: occupancy (the
+  proportion of occupied grid cells) is now calculated separately for
+  each year. Previously it was pooled over all years. The yearly value
+  is still the mean over grid cells of the summed species rarity.
+- Indicator-level confidence intervals for both rarity indicators
+  (`calc_ci.ab_rarity`, `calc_ci.area_rarity`) use the same corrected
+  definitions.
+- **Confidence intervals**:
+  [`add_ci()`](https://b-cubed-eu.github.io/b3gbi/reference/add_ci.md)
+  (cube level) now gives `NA` confidence limits for years where the
+  bootstrap distribution is undefined or constant (e.g. evenness with a
+  single species), instead of failing. In the indicator-level evenness
+  CI code, confidence intervals are now always matched to the correct
+  year.
+- Updated the documentation of evenness and rarity to describe exactly
+  how S, proportions and occupancy are calculated for maps and time
+  series.
+- Removed a stray [`print()`](https://rdrr.io/r/base/print.html) from
+  the taxonomic distinctness calculation;
+  [`replace_na()`](https://b-cubed-eu.github.io/b3gbi/reference/replace_na.md)
+  now reports with [`message()`](https://rdrr.io/r/base/message.html)
+  instead of [`print()`](https://rdrr.io/r/base/print.html).
+- Added hand-computed tests for the evenness and rarity definitions.
+
 ## b3gbi 1.0.1 - Bug fix
 
 - **Fixed EEA grid code conversion for most cell sizes.** The fix in

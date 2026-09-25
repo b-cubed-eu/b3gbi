@@ -33,7 +33,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -106,7 +106,7 @@ wrapper functions.</li>
 <strong>Visualization</strong>: Plotting the results as maps or time
 series using the generic <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> function.</li>
 </ol>
-<p>The package is publicly available at <a href="https://www.github.com/b-cubed-eu/b3gbi" class="external-link uri">https://www.github.com/b-cubed-eu/b3gbi</a>.</p>
+<p>The package is publicly available at <a href="https://github.com/b-cubed-eu/b3gbi" class="external-link uri">https://github.com/b-cubed-eu/b3gbi</a>.</p>
 </div>
 <div class="section level2">
 <h2 id="package-installation">Package Installation<a class="anchor" aria-label="anchor" href="#package-installation"></a>
@@ -492,7 +492,10 @@ analysis.</p>
 function. To speed things up we will reduce the number of bootstrap
 samples from the default of 1000 to 100. By default, the package uses
 <strong>percentile</strong> intervals (<code>"perc"</code>), which are
-robust for biodiversity indicators.</p>
+robust for biodiversity indicators. If the <strong>dubicube</strong>
+package is installed, <code><a href="../reference/add_ci.html">add_ci()</a></code> resamples the occurrence
+records in the cube (cube-level bootstrapping); otherwise it falls back
+to faster indicator-level bootstrapping.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Add confidence intervals to the time series</span></span>
 <span><span class="va">Denmark_total_occ_ts_with_ci</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_ci.html">add_ci</a></span><span class="op">(</span><span class="va">Denmark_total_occ_ts</span>, </span>

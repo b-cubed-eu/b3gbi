@@ -198,7 +198,7 @@ of biodiversity across different areas or time periods, as it provides a
 standardized measure of sample completeness that is independent of
 sample size alone (Chao et al., 2014).
 
-In this package, completeness is calculated using the `iNEXT` package
+In this package, completeness is calculated using the 'iNEXT' package
 based on the observed data in each grid cell or time point.
 
 ## Functions
@@ -210,12 +210,16 @@ based on the observed data in each grid cell or time point.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 comp_map <- completeness_map(example_cube_1)
+#> although coordinates are longitude/latitude, st_intersection assumes that they
+#> are planar
 plot(comp_map)
-} # }
-if (FALSE) { # \dontrun{
+
+# }
+# \donttest{
 comp_ts <- completeness_ts(example_cube_1, first_year = 1985)
 plot(comp_ts)
-} # }
+
+# }
 ```

@@ -23,8 +23,6 @@ variables, as well as metadata
 
   calculated richness value for the year
 
-ed
-
 ## Source
 
-<https://doi.org/10.15468/dl.5mb887>
+[doi:10.15468/dl.5mb887](https://doi.org/10.15468/dl.5mb887)

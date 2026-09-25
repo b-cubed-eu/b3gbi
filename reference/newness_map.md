@@ -175,12 +175,14 @@ large amounts of citizen science data.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 n_map <- newness_map(example_cube_1, level = "country", region = "Denmark")
 plot(n_map)
-} # }
-if (FALSE) { # \dontrun{
+
+# }
+# \donttest{
 n_ts <- newness_ts(example_cube_1, first_year = 1985)
 plot(n_ts)
-} # }
+
+# }
 ```

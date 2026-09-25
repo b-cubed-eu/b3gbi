@@ -26,8 +26,12 @@ zero.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
-# Assuming 'result' is an indicator_map or indicator_ts object
-result_filled <- replace_na(result)
-} # }
+# \donttest{
+# Evenness is NA in cells with fewer than two species
+pe_map <- pielou_evenness_map(example_cube_1)
+#> although coordinates are longitude/latitude, st_intersection assumes that they
+#> are planar
+pe_map_filled <- replace_na(pe_map)
+#> Replaced 90 NA values with zeroes.
+# }
 ```

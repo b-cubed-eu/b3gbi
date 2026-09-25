@@ -260,10 +260,12 @@ Can be customized using ggplot2 functions.
 ## Examples
 
 ``` r
+# \donttest{
 spec_occ_mammals_denmark <- spec_occ_map(example_cube_1,
   level = "country",
   region = "Denmark"
 )
 plot_species_map(x = spec_occ_mammals_denmark, c(2440728, 4265185))
 
+# }
 ```

@@ -201,15 +201,17 @@ Applied Ecology*, *55*(1), 169-184.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 or_map <- obs_richness_map(example_cube_1,
   level = "country",
   region = "Denmark"
 )
 plot(or_map)
-} # }
-if (FALSE) { # \dontrun{
+
+# }
+# \donttest{
 or_ts <- obs_richness_ts(example_cube_1, first_year = 1985)
 plot(or_ts)
-} # }
+
+# }
 ```

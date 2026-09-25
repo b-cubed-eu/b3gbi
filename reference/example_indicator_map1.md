@@ -37,4 +37,4 @@ variables, as well as metadata
 
 ## Source
 
-<https://doi.org/10.15468/dl.5mb887>
+[doi:10.15468/dl.5mb887](https://doi.org/10.15468/dl.5mb887)

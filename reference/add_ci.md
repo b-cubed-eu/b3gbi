@@ -12,7 +12,7 @@ during the CI calculation process.
 add_ci(
   indicator,
   num_bootstrap = 1000,
-  bootstrap_level = c("cube", "indicator"),
+  bootstrap_level = c("auto", "cube", "indicator"),
   ci_type = c("perc", "bca", "norm", "basic", "none"),
   trans = function(t) t,
   inv_trans = function(t) t,
@@ -40,12 +40,20 @@ add_ci(
 
   (Optional) Level at which to perform bootstrapping:
 
-  - `cube` (default): Bootstrapping is done by resampling the occurrence
-    records in the cube. This is mathematically more robust as it
-    captures the underlying sampling uncertainty.
+  - `auto` (default): Uses `cube` if the dubicube package is installed,
+    and otherwise falls back to `indicator` (with a message).
+
+  - `cube`: Bootstrapping is done by resampling the occurrence records
+    in the cube, using the dubicube package. This is statistically more
+    robust as it captures the underlying sampling uncertainty. Requires
+    dubicube.
 
   - `indicator`: Bootstrapping is done by resampling indicator values.
-    This is faster for large cubes but less robust.
+    This is faster for large cubes but less robust, and does not require
+    dubicube.
+
+  The level that was used is stored in the `ci_method` element of the
+  returned object and shown when it is printed.
 
 - ci_type:
 
@@ -88,14 +96,16 @@ add_ci(
 - boot_args:
 
   (Optional) Named list of additional arguments passed to
-  [`dubicube::bootstrap_cube()`](https://b-cubed-eu.github.io/dubicube/reference/bootstrap_cube.html).
-  (Default: [`list()`](https://rdrr.io/r/base/list.html))
+  [`dubicube::bootstrap_cube()`](https://b-cubed-eu.github.io/dubicube/reference/bootstrap_cube.html)
+  (cube level only). (Default:
+  [`list()`](https://rdrr.io/r/base/list.html))
 
 - ci_args:
 
   (Optional) Named list of additional arguments passed to
-  [`dubicube::calculate_bootstrap_ci()`](https://b-cubed-eu.github.io/dubicube/reference/calculate_bootstrap_ci.html).
-  (Default: [`list()`](https://rdrr.io/r/base/list.html))
+  [`dubicube::calculate_bootstrap_ci()`](https://b-cubed-eu.github.io/dubicube/reference/calculate_bootstrap_ci.html)
+  (cube level only). (Default:
+  [`list()`](https://rdrr.io/r/base/list.html))
 
 - seed:
 
@@ -126,8 +136,11 @@ with the following additional columns:
 
 ## Details
 
-The function acts as a bridge to the dubicube package to calculate
-bootstrap confidence intervals.
+For cube-level bootstrapping, the function acts as a bridge to the
+dubicube package (Langeraert et al.), which is developed alongside b3gbi
+within the B-Cubed project. dubicube is not on CRAN; it can be installed
+from R-universe with
+`install.packages("dubicube", repos = c("https://b-cubed-eu.r-universe.dev", "https://cloud.r-project.org"))`.
 
 ### Indicator-specific defaults
 
@@ -246,7 +259,7 @@ confidence intervals internally using the `iNEXT` package.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 # Load sample cube data
 cube_path <- system.file("extdata", "denmark_mammals_cube_eea.csv", package = "b3gbi")
 cube <- process_cube(cube_path)
@@ -256,6 +269,8 @@ ts_occ <- total_occ_ts(cube)
 
 # Add bootstrap confidence intervals
 ts_occ_ci <- add_ci(ts_occ, num_bootstrap = 100)
+#> [1] "Performing group-specific bootstrap with `boot::boot()`."
 plot(ts_occ_ci)
-} # }
+
+# }
 ```

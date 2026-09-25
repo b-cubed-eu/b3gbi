@@ -13,21 +13,25 @@
 
 - **University of Giessen**. Copyright holder.
 
-- **European Union**. Funder.
+- **European Union**. Funder.  
+  Horizon Europe Research and Innovation Programme, grant 101059592
 
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/b-cubed-eu/b3gbi/blob/main/DESCRIPTION)
+[`inst/CITATION`](https://github.com/b-cubed-eu/b3gbi/blob/main/inst/CITATION)
 
-Dove S (2026). *b3gbi: General Biodiversity Indicators for Biodiversity
-Data Cubes*. R package version 1.0.1,
-<https://github.com/b-cubed-eu/b3gbi>.
+Dove, S. (2026). b3gbi: Standardized Biodiversity Indicators from
+Spatiotemporal Occurrence Cubes. Journal of Open Source Software,
+11(125), 10963. https://doi.org/10.21105/joss.10963
 
-    @Manual{,
-      title = {b3gbi: General Biodiversity Indicators for Biodiversity Data Cubes},
+    @Article{,
+      title = {{b3gbi}: Standardized Biodiversity Indicators from Spatiotemporal Occurrence Cubes},
       author = {Shawn Dove},
+      journal = {Journal of Open Source Software},
       year = {2026},
-      note = {R package version 1.0.1},
-      url = {https://github.com/b-cubed-eu/b3gbi},
+      volume = {11},
+      number = {125},
+      pages = {10963},
+      doi = {10.21105/joss.10963},
     }

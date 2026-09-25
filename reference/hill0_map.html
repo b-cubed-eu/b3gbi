@@ -31,7 +31,7 @@ hill2_ts()
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -268,17 +268,26 @@ metadata.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p></p><h3 id="details-1">Hill diversity<a class="anchor" aria-label="anchor" href="#details-1"></a></h3>
 
-<p>Hill (1973) introduced the concept of Hill diversity, which assumes that the number and relative abundance of species are inseparable components of diversity. Hill diversity uses a single equation to calculate multiple measures of diversity by varying a single parameter ℓ, which changes the emphasis on rare vs common species (Roswell et al., 2019). It represents the mean rarity of sampled species, and is calculated as: $$  D = \left( \sum_{i=1}^{S} p_i^\ell \right)^{1/(1-\ell)}  $$where D is diversity, S is the number of species, pi is the proportion of individuals belonging to species i, ri is the rarity of species i, and ℓ determines the rarity scale for the mean. While ℓ can theoretically take almost any value, three common measures of diversity are special cases: species richness, and modified versions of the Shannon and Simpson diversity indices (Roswell et al., 2019). These three measures occur when ℓ takes the value of 1, 0 (or near-zero, as ℓ cannot actually take the value of 0), or -1, respectively.</p><ul><li><p><strong>Species Richness (ℓ = 1):</strong>  $$    D = S  $$</p></li>
-<li><p><strong>Hill-Shannon Diversity (ℓ ≈ 0):</strong>  $$    D = e^{-\sum_{i=1}^{S} p_i \ln(p_i)}  $$</p></li>
-<li><p><strong>Hill-Simpson Diversity (ℓ = -1):</strong>  $$    D = \frac{1}{\sum_{i=1}^{S} p_i^2}  $$</p></li>
-</ul><p>Richness uses an arithmetic scale (the arithmetic mean), thus giving rare species a lot of leverage. By contrast, Hill-Shannon diversity uses a logarithmic scale (the geometric mean), treating common and rare species equally, and Hill-Simpson diversity uses a reciprocal scale (the harmonic mean), giving common species higher leverage.
-</p><h3 id="details-2">Coverage-based estimation<a class="anchor" aria-label="anchor" href="#details-2"></a></h3>
+<div class="section">
+<h3 id="hill-diversity">Hill diversity<a class="anchor" aria-label="anchor" href="#hill-diversity"></a></h3>
+
+
+<p>Hill (1973) introduced the concept of Hill diversity, which assumes that the number and relative abundance of species are inseparable components of diversity. Hill diversity uses a single equation to calculate multiple measures of diversity by varying a single parameter \(\ell\), which changes the emphasis on rare vs common species (Roswell et al., 2019). It represents the mean rarity of sampled species, and is calculated as: $$  D = \left( \sum_{i=1}^{S} p_i^\ell \right)^{1/(1-\ell)}  $$where D is diversity, S is the number of species, pi is the proportion of individuals belonging to species i, ri is the rarity of species i, and \(\ell\) determines the rarity scale for the mean. While \(\ell\) can theoretically take almost any value, three common measures of diversity are special cases: species richness, and modified versions of the Shannon and Simpson diversity indices (Roswell et al., 2019). These three measures occur when \(\ell\) takes the value of 1, 0 (or near-zero, as \(\ell\) cannot actually take the value of 0), or -1, respectively.</p><ul><li><p><strong>Species Richness (\(\ell\) = 1):</strong>  $$    D = S  $$</p></li>
+<li><p><strong>Hill-Shannon Diversity (\(\ell\) \(\approx\) 0):</strong>  $$    D = e^{-\sum_{i=1}^{S} p_i \ln(p_i)}  $$</p></li>
+<li><p><strong>Hill-Simpson Diversity (\(\ell\) = -1):</strong>  $$    D = \frac{1}{\sum_{i=1}^{S} p_i^2}  $$</p></li>
+</ul><p>Richness uses an arithmetic scale (the arithmetic mean), thus giving rare species a lot of leverage. By contrast, Hill-Shannon diversity uses a logarithmic scale (the geometric mean), treating common and rare species equally, and Hill-Simpson diversity uses a reciprocal scale (the harmonic mean), giving common species higher leverage.</p>
+</div>
+
+<div class="section">
+<h3 id="coverage-based-estimation">Coverage-based estimation<a class="anchor" aria-label="anchor" href="#coverage-based-estimation"></a></h3>
+
 
 <p>Hill diversity values can be estimated through different standardisation procedures as a way to mitigate the effects of sample size and sampling biases. One way to do this is by equalising sample size by calculating a species accumulation curve (a plot of cumulative species richness as a function of sample size) for each year or grid cell. The smallest sample size from among all the grid cells or years in the dataset is used as a reference to select richness values from each curve. This is called rarefaction. It is also possible to use a larger sample size as a reference, but this requires extrapolation of smaller samples, which is more prone to error than rarefaction.</p>
 <p>However, results from sample-size based estimation can be problematic as they depend on both richness and evenness. A sample from a community with a more even distribution of individuals across species is likely to show higher richness than a sample of the same size from a community where many species are rare, as the rare species are less likely to appear in the sample. Similarly, a community containing a lot of species will appear less rich than it actually is if the sample size used for comparison is too small. Detectability also plays an important part; hard to detect species are less likely to appear in the sample, so communities in which rare species are more easily detectable are likely to yield richer samples.</p>
 <p>Another way to estimate species richness is to standardise by coverage. The iNEXT package (Chao et al., 2014; Hsieh et al., 2016) for R is used to estimate species richness at an equal level of coverage (e.g. 0.95) for each cell or year in a biodiversity data cube. Coverage is the proportion of individuals in the community belonging to species in the sample. So, at a coverage of 0.95, 95% of individuals in the community belong to species detected in the sample while 5% belong to species that are not detected in the sample. Coverage is estimated based on the frequencies of species already in the sample. It can be illustrated using a species accumulation curve, the slope of which represents the probability of detecting a new species with the next individual you sample from a community. At a sample size of zero, the slope would be one, meaning the next individual sampled has a 100% probability of being a species not already in the sample. Therefore, a coverage value of one corresponds to the asymptote of a species accumulation curve (slope of zero), meaning no new species would be uncovered through further sampling.</p>
+</div>
+
     </div>
     <div class="section level2">
     <h2 id="functions">Functions<a class="anchor" aria-label="anchor" href="#functions"></a></h2>
@@ -312,30 +321,111 @@ rarefaction and extrapolation of species diversity (Hill numbers).
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="va">h0_map</span> <span class="op">&lt;-</span> <span class="fu">hill0_map</span><span class="op">(</span><span class="va">example_cube_1</span>, level <span class="op">=</span> <span class="st">"country"</span>, region <span class="op">=</span> <span class="st">"Denmark"</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">h0_map</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-plt img"><img src="hill0_map-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
+<span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="va">h0_ts</span> <span class="op">&lt;-</span> <span class="fu">hill0_ts</span><span class="op">(</span><span class="va">example_cube_1</span>, first_year <span class="op">=</span> <span class="fl">1985</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> although coordinates are longitude/latitude, st_intersection assumes that they</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> are planar</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">h0_ts</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-plt img"><img src="hill0_map-2.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
+<span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="va">h1_map</span> <span class="op">&lt;-</span> <span class="fu">hill1_map</span><span class="op">(</span><span class="va">example_cube_1</span>, level <span class="op">=</span> <span class="st">"country"</span>, region <span class="op">=</span> <span class="st">"Denmark"</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">h1_map</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-plt img"><img src="hill0_map-3.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
+<span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="va">h1_ts</span> <span class="op">&lt;-</span> <span class="fu">hill1_ts</span><span class="op">(</span><span class="va">example_cube_1</span>, first_year <span class="op">=</span> <span class="fl">1985</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> although coordinates are longitude/latitude, st_intersection assumes that they</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> are planar</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">h1_ts</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-plt img"><img src="hill0_map-4.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
+<span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="va">h2_map</span> <span class="op">&lt;-</span> <span class="fu">hill2_map</span><span class="op">(</span><span class="va">example_cube_1</span>, level <span class="op">=</span> <span class="st">"country"</span>, region <span class="op">=</span> <span class="st">"Denmark"</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">h2_map</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
+<span class="r-plt img"><img src="hill0_map-5.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
+<span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="va">h2_ts</span> <span class="op">&lt;-</span> <span class="fu">hill2_ts</span><span class="op">(</span><span class="va">example_cube_1</span>, first_year <span class="op">=</span> <span class="fl">1985</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> although coordinates are longitude/latitude, st_intersection assumes that they</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> are planar</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">h2_ts</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+<span class="r-plt img"><img src="hill0_map-6.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

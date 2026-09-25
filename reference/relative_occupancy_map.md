@@ -192,8 +192,8 @@ species has at least one recorded occurrence. The denominator depends on
 |----|----|----|
 | `occ_type` | Name | Denominator |
 | `0` | Total-area | All grid cells in region (constant) |
-| `1` | Ever-occupied | Cells with ≥ 1 occurrence, any species, full window |
-| `2` | Annual (TS) / Temporal mean (map) | Cells with ≥ 1 occ in *that year* |
+| `1` | Ever-occupied | Cells with at least 1 occurrence, any species, full window |
+| `2` | Annual (TS) / Temporal mean (map) | Cells with at least 1 occurrence in *that year* |
 
 **Type 0** is the most conservative and comparable across different data
 cubes because the denominator is fixed by the grid definition. A low
@@ -255,12 +255,13 @@ compute_indicator_workflow
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 # Type 0: proportion of all grid cells
 ro_map <- relative_occupancy_map(example_cube_1,
   level = "country", region = "Denmark", occ_type = 0
 )
 plot(ro_map, c(2440728, 4265185))
+
 
 # Type 1: proportion of ever-occupied cells
 ro_map_1 <- relative_occupancy_map(example_cube_1,
@@ -271,16 +272,23 @@ ro_map_1 <- relative_occupancy_map(example_cube_1,
 ro_map_2 <- relative_occupancy_map(example_cube_1,
   level = "country", region = "Denmark", occ_type = 2
 )
-} # }
-if (FALSE) { # \dontrun{
+# }
+# \donttest{
 # Type 0: proportion of all grid cells (default)
 ro_ts <- relative_occupancy_ts(example_cube_1, occ_type = 0)
+#> although coordinates are longitude/latitude, st_intersection assumes that they
+#> are planar
 plot(ro_ts, c(2440728, 4265185))
+
 
 # Type 1: proportion of ever-occupied cells (constant denominator)
 ro_ts_1 <- relative_occupancy_ts(example_cube_1, occ_type = 1)
+#> although coordinates are longitude/latitude, st_intersection assumes that they
+#> are planar
 
 # Type 2: proportion of cells active that year (varying denominator)
 ro_ts_2 <- relative_occupancy_ts(example_cube_1, occ_type = 2)
-} # }
+#> although coordinates are longitude/latitude, st_intersection assumes that they
+#> are planar
+# }
 ```

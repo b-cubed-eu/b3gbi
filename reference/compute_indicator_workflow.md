@@ -217,6 +217,7 @@ An S3 object containing the calculated indicator values and metadata.
 ## Examples
 
 ``` r
+# \donttest{
 diversity_map <- compute_indicator_workflow(example_cube_1,
   type = "obs_richness",
   dim_type = "map",
@@ -265,4 +266,5 @@ diversity_map
 #>  9 E008N55BD     61   436.            27
 #> 10 E008N55CA    127   324.             2
 #> # ℹ 190 more rows
+# }
 ```

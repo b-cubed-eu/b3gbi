@@ -118,9 +118,8 @@ calc_ts(x, ...)
 
 - set_rows:
 
-  Automatically select which taxonomic information to keep when there
-  are multiple options. Default value of 1 keeps the first option, which
-  is usually the best.
+  Deprecated and ignored. Taxa are now looked up by their GBIF taxon
+  key, so there is no ambiguity to resolve.
 
 ## Value
 

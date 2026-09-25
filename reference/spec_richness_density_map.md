@@ -173,15 +173,17 @@ compute_indicator_workflow
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 srd_map <- spec_richness_density_map(example_cube_1,
   level = "country",
   region = "Denmark"
 )
 plot(srd_map)
-} # }
-if (FALSE) { # \dontrun{
+
+# }
+# \donttest{
 srd_ts <- spec_richness_density_ts(example_cube_1, first_year = 1985)
 plot(srd_ts)
-} # }
+
+# }
 ```

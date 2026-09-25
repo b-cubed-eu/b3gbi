@@ -33,7 +33,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -88,6 +88,16 @@ assessments. The <strong>b3gbi</strong> package provides a flexible and
 powerful way to calculate confidence intervals (CIs) for biodiversity
 indicators using bootstrapping methods, leveraging the <a href="https://github.com/b-cubed-eu/dubicube" class="external-link"><strong>dubicube</strong></a>
 package for robust cube-level resampling.</p>
+<p><strong>dubicube</strong> is developed alongside
+<strong>b3gbi</strong> within the B-Cubed project and is installed from
+R-universe:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"dubicube"</span>,</span>
+<span>                 repos <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"https://b-cubed-eu.r-universe.dev"</span>,</span>
+<span>                           <span class="st">"https://cloud.r-project.org"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p>If <strong>dubicube</strong> is not installed, <code><a href="../reference/add_ci.html">add_ci()</a></code>
+falls back to indicator-level bootstrapping (see below) and tells you
+so.</p>
 <p>To maintain a clean and efficient workflow, uncertainty calculation
 is decoupled from the initial indicator calculation. This “two-step”
 process allows users to first explore their data and indicators quickly,
@@ -114,7 +124,7 @@ indicator object to the <code><a href="../reference/add_ci.html">add_ci()</a></c
 <p>In this example, we calculate total occurrences for mammals in
 Denmark and then add 95% confidence intervals using cube-level
 bootstrapping.</p>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/b-cubed-eu/b3gbi" class="external-link">b3gbi</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># 1. Process the cube</span></span>
@@ -127,7 +137,7 @@ bootstrapping.</p>
 <span><span class="va">occ_ts</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/total_occ_map.html">total_occ_ts</a></span><span class="op">(</span><span class="va">denmark_cube</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># 3. Add confidence intervals using add_ci()</span></span>
-<span><span class="co"># This step uses the dubicube package for robust bootstrapping</span></span>
+<span><span class="co"># With dubicube installed, this uses cube-level bootstrapping by default</span></span>
 <span><span class="va">occ_ts_with_ci</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_ci.html">add_ci</a></span><span class="op">(</span><span class="va">occ_ts</span>, num_bootstrap <span class="op">=</span> <span class="fl">100</span><span class="op">)</span> <span class="co"># Using 100 for speed in this example</span></span>
 <span></span>
 <span><span class="co"># 4. Plot the result</span></span>
@@ -138,17 +148,22 @@ bootstrapping.</p>
 <h2 id="bootstrapping-levels">Bootstrapping Levels<a class="anchor" aria-label="anchor" href="#bootstrapping-levels"></a>
 </h2>
 <p>The <code><a href="../reference/add_ci.html">add_ci()</a></code> function supports two levels of
-bootstrapping, selectable via the <code>bootstrap_level</code>
-argument:</p>
+bootstrapping, selectable via the <code>bootstrap_level</code> argument.
+The default, <code>bootstrap_level = "auto"</code>, uses cube-level
+bootstrapping when <strong>dubicube</strong> is installed and
+indicator-level bootstrapping otherwise. The level that was used is
+stored in the <code>ci_method</code> element of the result and shown
+when it is printed.</p>
 <div class="section level3">
 <h3 id="cube-level-bootstrapping-bootstrap_level-cube">1. Cube-Level Bootstrapping
 (<code>bootstrap_level = "cube"</code>)<a class="anchor" aria-label="anchor" href="#cube-level-bootstrapping-bootstrap_level-cube"></a>
 </h3>
-<p>This is the <strong>default and recommended method</strong>. It
-resamples the raw occurrence records within the data cube. The function
-automatically determines whether to use group-specific resampling (for
-species-level indicators) or whole-cube resampling (for aggregate
-indicators) based on the indicator type.</p>
+<p>This is the <strong>recommended method</strong> (and the default when
+<strong>dubicube</strong> is installed). It resamples the raw occurrence
+records within the data cube. The function automatically determines
+whether to use group-specific resampling (for species-level indicators)
+or whole-cube resampling (for aggregate indicators) based on the
+indicator type.</p>
 <ul>
 <li>
 <strong>Pros</strong>: Mathematically more robust; captures the
@@ -290,7 +305,7 @@ estimate.</li>
 <p>If you need to pass specific parameters to the underlying
 <code>dubicube</code> functions (e.g., setting a specific seed), you can
 use the <code>boot_args</code> and <code>ci_args</code> parameters:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">occ_ts_custom</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_ci.html">add_ci</a></span><span class="op">(</span><span class="va">occ_ts</span>, </span>
 <span>                        num_bootstrap <span class="op">=</span> <span class="fl">500</span>,</span>
 <span>                        boot_args <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>seed <span class="op">=</span> <span class="fl">42</span><span class="op">)</span>,</span>
@@ -303,7 +318,7 @@ use the <code>boot_args</code> and <code>ci_args</code> parameters:</p>
 settings, you can override these defaults using <code>boot_args</code>
 and <code>ci_args</code>. This is useful when you need specialized
 behavior:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Example: Calculate CIs for evenness on raw scale (no logit transformation)</span></span>
 <span><span class="va">evenness_raw</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/add_ci.html">add_ci</a></span><span class="op">(</span><span class="va">my_evenness_indicator</span>,</span>
 <span>                       num_bootstrap <span class="op">=</span> <span class="fl">1000</span>,</span>

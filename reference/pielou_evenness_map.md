@@ -176,8 +176,10 @@ Pielou's evenness (1966) is a well-known and commonly used evenness
 measure. It is calculated as:
 
 \$\$ E = \frac{-\sum\_{i=1}^{S} p_i \ln(p_i)}{\ln(S)} \$\$ where S is
-the number of species and pi is the proportion of occurrences
-represented by species i.
+the number of species observed in the grid cell (maps) or year (time
+series) and pi is the proportion of occurrences represented by species
+i. Species that are absent from a cell or year do not count towards S.
+Evenness is undefined (NA) when fewer than two species are present.
 
 ### Williams' evenness
 
@@ -198,8 +200,8 @@ Williams' evenness is calculated as:
 
 \$\$ 1 - \sqrt{\frac{S\sum\_{i=1}^{S} p_i^2 - 1}{S - 1}} \$\$
 
-where S is the number of species and pi is the proportion of occurrences
-represented by species i.
+where S is the number of species observed in the grid cell or year and
+pi is the proportion of occurrences represented by species i.
 
 ## Functions
 
@@ -227,26 +229,30 @@ of properties. *SpringerPlus*, *4*, 1-12.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 pe_map <- pielou_evenness_map(example_cube_1,
   level = "country",
   region = "Denmark"
 )
 plot(pe_map)
-} # }
-if (FALSE) { # \dontrun{
+
+# }
+# \donttest{
 pe_ts <- pielou_evenness_ts(example_cube_1, first_year = 1985)
 plot(pe_ts)
-} # }
-if (FALSE) { # \dontrun{
+
+# }
+# \donttest{
 we_map <- williams_evenness_map(example_cube_1,
   level = "country",
   region = "Denmark"
 )
 plot(we_map)
-} # }
-if (FALSE) { # \dontrun{
+
+# }
+# \donttest{
 we_ts <- williams_evenness_ts(example_cube_1, first_year = 1985)
 plot(we_ts)
-} # }
+
+# }
 ```

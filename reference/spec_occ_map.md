@@ -175,13 +175,14 @@ biodiversity although not an indicator when calculated in isolation.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 so_map <- spec_occ_map(example_cube_1,
   level = "country",
   region = "Denmark", include_ocean = FALSE
 )
 plot(so_map, c(2440728, 4265185))
-} # }
+
+# }
 so_ts <- spec_occ_ts(example_cube_1, first_year = 1985)
 plot(so_ts, c(2435767, 2434793))
 

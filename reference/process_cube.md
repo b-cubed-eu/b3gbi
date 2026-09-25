@@ -190,10 +190,46 @@ A tibble containing the processed GBIF occurrence data.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 cube_name <- system.file("extdata", "denmark_mammals_cube_eqdgc.csv",
                          package = "b3gbi")
 denmark_example_cube <- process_cube(cube_name)
 denmark_example_cube
-} # }
+#> 
+#> Processed data cube for calculating biodiversity indicators
+#> 
+#> Date Range: 1901 - 2024 
+#> Single-resolution cube with cell size 0.25degrees 
+#> Number of cells: 186 
+#> Grid reference system: eqdgc 
+#> Coordinate range:
+#>  xmin  xmax  ymin  ymax 
+#>  3.75 15.25 54.50 58.25 
+#> 
+#> Total number of observations: 6099 
+#> Number of species represented: 54 
+#> Number of families represented: 19 
+#> 
+#> Kingdoms represented: Animalia 
+#> 
+#> First 10 rows of data (use n = to show more):
+#> 
+#> # A tibble: 989 × 15
+#>     year cellCode  kingdomKey kingdom  familyKey family  taxonKey scientificName
+#>    <dbl> <chr>     <chr>      <chr>    <chr>     <chr>   <chr>    <chr>         
+#>  1  1901 E010N55CD 1          Animalia 9456      Sciuri… 8211070  Sciurus vulga…
+#>  2  1930 E014N55DD 1          Animalia 9456      Sciuri… 8211070  Sciurus vulga…
+#>  3  1940 E012N55BA 1          Animalia 9614      Bovidae 2441022  Bos taurus    
+#>  4  1943 E011N54BA 1          Animalia 5510      Muridae 2437756  Apodemus flav…
+#>  5  1946 E008N56BB 1          Animalia 5510      Muridae 5219833  Micromys minu…
+#>  6  1952 E010N57CB 1          Animalia 5510      Muridae 2439261  Rattus norveg…
+#>  7  1960 E014N55DD 1          Animalia 5534      Sorici… 8316400  Sorex araneus 
+#>  8  1963 E008N57DC 1          Animalia 5534      Sorici… 7571319  Sorex minutus 
+#>  9  1968 E014N55DB 1          Animalia 5510      Muridae 2437756  Apodemus flav…
+#> 10  1969 E012N55BA 1          Animalia 9701      Canidae 5219243  Vulpes vulpes 
+#> # ℹ 979 more rows
+#> # ℹ 7 more variables: obs <dbl>, minCoordinateUncertaintyInMeters <dbl>,
+#> #   minTemporalUncertainty <dbl>, familyCount <dbl>, xcoord <dbl>,
+#> #   ycoord <dbl>, resolution <chr>
+# }
 ```

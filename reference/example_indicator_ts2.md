@@ -25,4 +25,4 @@ variables, as well as metadata
 
 ## Source
 
-<https://doi.org/10.15468/dl.yfzgja>
+[doi:10.15468/dl.yfzgja](https://doi.org/10.15468/dl.yfzgja)

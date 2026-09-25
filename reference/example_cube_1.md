@@ -73,19 +73,17 @@ variables, as well as metadata
 
 ## Source
 
-<https://doi.org/10.15468/dl.5mb887>
+[doi:10.15468/dl.5mb887](https://doi.org/10.15468/dl.5mb887)
 
 ## Examples
 
 ``` r
-{
-  if (FALSE) { # \dontrun{
-    # Basic example of how to use the dataset
-    denmark_mammals_or_map <- obs_richness_map(example_cube_1,
-                                               level = "country",
-                                               region = "Denmark")
-    plot(denmark_mammals_or_map,
-         title = "Mammals in Denmark (1862-2024): Observed Species Richness")
-  } # }
-}
+# \donttest{
+denmark_mammals_or_map <- obs_richness_map(example_cube_1,
+                                           level = "country",
+                                           region = "Denmark")
+plot(denmark_mammals_or_map,
+     title = "Mammals in Denmark (1862-2024): Observed Species Richness")
+
+# }
 ```

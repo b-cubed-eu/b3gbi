@@ -25,12 +25,12 @@ in a single projected CRS (e.g., Albers).
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 df <- data.frame(
   cellCode = c("32UUC", "32UUD"),
   xcoord = c(500000, 501000),
   ycoord = c(5600000, 5601000)
 )
 bbox <- mgrs_to_latlong_bbox(df)
-} # }
+# }
 ```

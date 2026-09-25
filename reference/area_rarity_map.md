@@ -177,7 +177,11 @@ species present there). It is calculated as:
 \$\$ \sum\_{i=1}^{S} \frac{1}{p_i} \$\$
 
 where S is the number of species and pi is the proportion of occurrences
-represented by species i.
+represented by species i. For maps, pi is calculated within each grid
+cell (over the whole time period). For time series, pi is calculated
+separately for each year (species i's occurrences that year divided by
+all occurrences that year), and each species present in a year
+contributes once.
 
 ### Area-Based Rarity
 
@@ -190,6 +194,11 @@ species present there). It is calculated as:
 
 where S is the number of species, N is the total number of occupied grid
 cells, and ni is the number of grid cells occupied by species i.
+
+For maps, N and ni are calculated over the whole time period, and the
+summed rarity is reported for each grid cell. For time series, N and ni
+are calculated separately for each year; rarity is summed within each
+occupied grid cell and the yearly value is the mean of these cell sums.
 
 ## Functions
 
@@ -217,26 +226,32 @@ rare \* *plant conservation*.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 arr_map <- area_rarity_map(example_cube_1,
   level = "country",
   region = "Denmark"
 )
 plot(arr_map)
-} # }
-if (FALSE) { # \dontrun{
+
+# }
+# \donttest{
 arr_ts <- area_rarity_ts(example_cube_1, first_year = 1985)
+#> although coordinates are longitude/latitude, st_intersection assumes that they
+#> are planar
 plot(arr_ts)
-} # }
-if (FALSE) { # \dontrun{
+
+# }
+# \donttest{
 abr_map <- ab_rarity_map(example_cube_1,
   level = "country",
   region = "Denmark"
 )
 plot(abr_map)
-} # }
-if (FALSE) { # \dontrun{
+
+# }
+# \donttest{
 abr_ts <- ab_rarity_ts(example_cube_1, first_year = 1985)
 plot(abr_ts)
-} # }
+
+# }
 ```

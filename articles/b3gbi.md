@@ -24,7 +24,7 @@ workflow:
     function.
 
 The package is publicly available at
-<https://www.github.com/b-cubed-eu/b3gbi>.
+<https://github.com/b-cubed-eu/b3gbi>.
 
 ## Package Installation
 
@@ -375,7 +375,10 @@ Now let’s add confidence intervals using the
 function. To speed things up we will reduce the number of bootstrap
 samples from the default of 1000 to 100. By default, the package uses
 **percentile** intervals (`"perc"`), which are robust for biodiversity
-indicators.
+indicators. If the **dubicube** package is installed,
+[`add_ci()`](https://b-cubed-eu.github.io/b3gbi/reference/add_ci.md)
+resamples the occurrence records in the cube (cube-level bootstrapping);
+otherwise it falls back to faster indicator-level bootstrapping.
 
 ``` r
 

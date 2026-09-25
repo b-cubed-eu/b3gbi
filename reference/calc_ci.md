@@ -123,9 +123,20 @@ and upper (`ul`) confidence bounds.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
-# Note: calc_ci is an internal function called automatically during indicator calculation
-cube_path <- system.file("extdata", "denmark_mammals_cube_eea.csv", package = "b3gbi")
-cube <- process_cube(cube_path)
-} # }
+# \donttest{
+# calc_ci() is called automatically when confidence intervals are requested
+# during indicator calculation (or by add_ci(bootstrap_level = "indicator"))
+occ_ts <- total_occ_ts(example_cube_1, first_year = 2000,
+                       ci_type = "perc", num_bootstrap = 100)
+head(occ_ts$data)
+#> # A tibble: 6 × 9
+#>    year diversity_val int_type    ll    ul est_boot se_boot bias_boot conf_level
+#>   <dbl>         <dbl> <chr>    <dbl> <dbl>    <dbl>   <dbl>     <dbl>      <dbl>
+#> 1  2000          2166 percent  1866. 2632.    2189.    186.     23.3        0.95
+#> 2  2001          2831 percent  2579. 3098.    2820.    137.    -10.9        0.95
+#> 3  2002          3366 percent  2988. 3880.    3364.    225.     -2.31       0.95
+#> 4  2003          3114 percent  2629. 3722.    3120.    258.      6.15       0.95
+#> 5  2004          2934 percent  2534. 3487.    2997.    227.     63.0        0.95
+#> 6  2005          4733 percent  3994. 5378.    4770.    329.     36.6        0.95
+# }
 ```

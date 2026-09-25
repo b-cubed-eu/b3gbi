@@ -9,6 +9,21 @@ bootstrapping methods, leveraging the
 [**dubicube**](https://github.com/b-cubed-eu/dubicube) package for
 robust cube-level resampling.
 
+**dubicube** is developed alongside **b3gbi** within the B-Cubed project
+and is installed from R-universe:
+
+``` r
+
+install.packages("dubicube",
+                 repos = c("https://b-cubed-eu.r-universe.dev",
+                           "https://cloud.r-project.org"))
+```
+
+If **dubicube** is not installed,
+[`add_ci()`](https://b-cubed-eu.github.io/b3gbi/reference/add_ci.md)
+falls back to indicator-level bootstrapping (see below) and tells you
+so.
+
 To maintain a clean and efficient workflow, uncertainty calculation is
 decoupled from the initial indicator calculation. This “two-step”
 process allows users to first explore their data and indicators quickly,
@@ -48,7 +63,7 @@ denmark_cube <- process_cube(system.file("extdata",
 occ_ts <- total_occ_ts(denmark_cube)
 
 # 3. Add confidence intervals using add_ci()
-# This step uses the dubicube package for robust bootstrapping
+# With dubicube installed, this uses cube-level bootstrapping by default
 occ_ts_with_ci <- add_ci(occ_ts, num_bootstrap = 100) # Using 100 for speed in this example
 
 # 4. Plot the result
@@ -59,15 +74,19 @@ plot(occ_ts_with_ci, title = "Total Occurrences with 95% CI")
 
 The [`add_ci()`](https://b-cubed-eu.github.io/b3gbi/reference/add_ci.md)
 function supports two levels of bootstrapping, selectable via the
-`bootstrap_level` argument:
+`bootstrap_level` argument. The default, `bootstrap_level = "auto"`,
+uses cube-level bootstrapping when **dubicube** is installed and
+indicator-level bootstrapping otherwise. The level that was used is
+stored in the `ci_method` element of the result and shown when it is
+printed.
 
 ### 1. Cube-Level Bootstrapping (`bootstrap_level = "cube"`)
 
-This is the **default and recommended method**. It resamples the raw
-occurrence records within the data cube. The function automatically
-determines whether to use group-specific resampling (for species-level
-indicators) or whole-cube resampling (for aggregate indicators) based on
-the indicator type.
+This is the **recommended method** (and the default when **dubicube** is
+installed). It resamples the raw occurrence records within the data
+cube. The function automatically determines whether to use
+group-specific resampling (for species-level indicators) or whole-cube
+resampling (for aggregate indicators) based on the indicator type.
 
 - **Pros**: Mathematically more robust; captures the underlying sampling
   uncertainty of the original data.

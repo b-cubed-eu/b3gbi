@@ -232,26 +232,27 @@ and metadata.
 Hill (1973) introduced the concept of Hill diversity, which assumes that
 the number and relative abundance of species are inseparable components
 of diversity. Hill diversity uses a single equation to calculate
-multiple measures of diversity by varying a single parameter ℓ, which
-changes the emphasis on rare vs common species (Roswell et al., 2019).
-It represents the mean rarity of sampled species, and is calculated as:
-\$\$ D = \left( \sum\_{i=1}^{S} p_i^\ell \right)^{1/(1-\ell)} \$\$where
-D is diversity, S is the number of species, pi is the proportion of
-individuals belonging to species i, ri is the rarity of species i, and ℓ
-determines the rarity scale for the mean. While ℓ can theoretically take
-almost any value, three common measures of diversity are special cases:
-species richness, and modified versions of the Shannon and Simpson
-diversity indices (Roswell et al., 2019). These three measures occur
-when ℓ takes the value of 1, 0 (or near-zero, as ℓ cannot actually take
-the value of 0), or -1, respectively.
+multiple measures of diversity by varying a single parameter \\\ell\\,
+which changes the emphasis on rare vs common species (Roswell et al.,
+2019). It represents the mean rarity of sampled species, and is
+calculated as: \$\$ D = \left( \sum\_{i=1}^{S} p_i^\ell
+\right)^{1/(1-\ell)} \$\$where D is diversity, S is the number of
+species, pi is the proportion of individuals belonging to species i, ri
+is the rarity of species i, and \\\ell\\ determines the rarity scale for
+the mean. While \\\ell\\ can theoretically take almost any value, three
+common measures of diversity are special cases: species richness, and
+modified versions of the Shannon and Simpson diversity indices (Roswell
+et al., 2019). These three measures occur when \\\ell\\ takes the value
+of 1, 0 (or near-zero, as \\\ell\\ cannot actually take the value of 0),
+or -1, respectively.
 
-- **Species Richness (ℓ = 1):** \$\$ D = S \$\$
+- **Species Richness (\\\ell\\ = 1):** \$\$ D = S \$\$
 
-- **Hill-Shannon Diversity (ℓ ≈ 0):** \$\$ D = e^{-\sum\_{i=1}^{S} p_i
-  \ln(p_i)} \$\$
+- **Hill-Shannon Diversity (\\\ell\\ \\\approx\\ 0):** \$\$ D =
+  e^{-\sum\_{i=1}^{S} p_i \ln(p_i)} \$\$
 
-- **Hill-Simpson Diversity (ℓ = -1):** \$\$ D = \frac{1}{\sum\_{i=1}^{S}
-  p_i^2} \$\$
+- **Hill-Simpson Diversity (\\\ell\\ = -1):** \$\$ D =
+  \frac{1}{\sum\_{i=1}^{S} p_i^2} \$\$
 
 Richness uses an arithmetic scale (the arithmetic mean), thus giving
 rare species a lot of leverage. By contrast, Hill-Shannon diversity uses
@@ -342,28 +343,109 @@ rarefaction and extrapolation of species diversity (Hill numbers).
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 h0_map <- hill0_map(example_cube_1, level = "country", region = "Denmark")
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
 plot(h0_map)
-} # }
-if (FALSE) { # \dontrun{
+
+# }
+# \donttest{
 h0_ts <- hill0_ts(example_cube_1, first_year = 1985)
+#> although coordinates are longitude/latitude, st_intersection assumes that they
+#> are planar
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
 plot(h0_ts)
-} # }
-if (FALSE) { # \dontrun{
+
+# }
+# \donttest{
 h1_map <- hill1_map(example_cube_1, level = "country", region = "Denmark")
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
 plot(h1_map)
-} # }
-if (FALSE) { # \dontrun{
+
+# }
+# \donttest{
 h1_ts <- hill1_ts(example_cube_1, first_year = 1985)
+#> although coordinates are longitude/latitude, st_intersection assumes that they
+#> are planar
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
 plot(h1_ts)
-} # }
-if (FALSE) { # \dontrun{
+
+# }
+# \donttest{
 h2_map <- hill2_map(example_cube_1, level = "country", region = "Denmark")
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
 plot(h2_map)
-} # }
-if (FALSE) { # \dontrun{
+
+# }
+# \donttest{
 h2_ts <- hill2_ts(example_cube_1, first_year = 1985)
+#> although coordinates are longitude/latitude, st_intersection assumes that they
+#> are planar
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
+#> Warning: The maximum size of the extrapolation exceeds double reference sample size, the results for q = 0 may be subject to large prediction bias.
 plot(h2_ts)
-} # }
+
+# }
 ```

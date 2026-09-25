@@ -121,8 +121,10 @@ indicator values and metadata.
 ## Examples
 
 ``` r
+# \donttest{
 observed_richness_map <- obs_richness_map(example_cube_1, level = "country",
                                           region = "Denmark")
 plot(observed_richness_map)
 
+# }
 ```

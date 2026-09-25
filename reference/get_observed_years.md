@@ -28,6 +28,7 @@ A data frame with two columns:
 ## Examples
 
 ``` r
+# \donttest{
 total_occ_mammals_denmark <- total_occ_map(example_cube_1, level = "country",
                                            region = "Denmark")
 get_observed_years(total_occ_mammals_denmark)
@@ -195,4 +196,5 @@ get_observed_years(total_occ_mammals_denmark)
 #> 161  2022        TRUE
 #> 162  2023        TRUE
 #> 163  2024        TRUE
+# }
 ```

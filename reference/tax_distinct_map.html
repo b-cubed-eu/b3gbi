@@ -15,7 +15,7 @@ over a gridded map or as a time series (see 'Details' for more information)."><m
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -67,9 +67,8 @@ over a gridded map or as a time series (see 'Details' for more information).</p>
 
 
 <dt id="arg-rows">rows<a class="anchor" aria-label="anchor" href="#arg-rows"></a></dt>
-<dd><p>(Optional) Choose which row to select if there are multiple
-matches when retrieving taxonomic information from GBIF. (Default is 1.
-Use NA for interactive mode.)</p></dd>
+<dd><p>Deprecated and ignored. Taxa are now looked up by their GBIF
+taxon key, so there is no ambiguity to resolve.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -187,19 +186,26 @@ forced on by indicators that require it. (Default: FALSE)</p></dd>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Taxonomic distinctness is an essential biodiversity variable (EBV)
 that measures the taxonomic relatedness between species, providing a measure
-of biodiversity that accounts for evolutionary relationships. A distance
-matrix based on pairwise taxonomic relationships is calculated for each cell
-using the taxize package (Chamberlain &amp; Szöcs, 2013; Chamberlain et al.,
-2020), then taxonomic distinctness is calculated as the Taxonomic
-Distinctness Index (TDI; Clarke &amp; Warwick, 1999):
+of biodiversity that accounts for evolutionary relationships. It is
+calculated as the Taxonomic Distinctness Index (TDI; Clarke &amp; Warwick, 1999;
+presence-absence form):
 $$
- \frac{\sum\sum_{i&lt;j} \frac{|R_i - R_j|}{L}}{\frac{S(S-1)}{2}}
+ \frac{\sum\sum_{i&lt;j} \frac{\omega_{ij}}{L}}{\frac{S(S-1)}{2}}
 $$
-where S is the number of species, Ri and Rj are the taxonomic ranks
-of species i and j (from the GBIF Taxonomic Backbone), and L is the
-maximum number of taxonomic ranks.
-The TDI ranges from 0 to 1, with higher values indicating greater
-taxonomic distinctness.</p>
+where S is the number of species, \(\omega_{ij}\) is the taxonomic
+distance between species i and j (the number of taxonomic levels below the
+lowest rank they share: 1 for species in the same genus, 2 for the same
+family, and so on up to 7 for species in different kingdoms), and L = 7 is
+the number of taxonomic levels used (kingdom, phylum, class, order, family,
+genus, species). The TDI ranges from 0 to 1, with higher values indicating
+greater taxonomic distinctness. It is calculated for grid cells or years
+with at least three classified species.</p>
+<p>The classification of each taxon is retrieved from GBIF with the rgbif
+package (Chamberlain et al.) using the taxon keys in the cube: the GBIF
+Backbone Taxonomy for numeric keys, and the Catalogue of Life eXtended
+Release (COL XR) for alphanumeric keys. All taxa are looked up in a single
+batched request, and the results are cached for the rest of the R session.
+This requires the rgbif package and an internet connection.</p>
     </div>
     <div class="section level2">
     <h2 id="functions">Functions<a class="anchor" aria-label="anchor" href="#functions"></a></h2>
@@ -209,13 +215,9 @@ taxonomic distinctness.</p>
 </ul></div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
-    <p>Chamberlain, S. A., &amp; Szöcs, E. (2013). taxize: taxonomic search and
-retrieval in R. <em>F1000Research</em>, 2.</p>
-<p>Chamberlain, S., Szoecs, E., Foster, Z., Boettiger, C., Ram, K., Bartomeus,
-I., Baumgartner, J., O'Donnell, J., Oksanen, J., Tzovaras, B. G., Marchand,
-P., Tran, V., Salmon, M., Li, G., &amp; Grenié, M. (2020). taxize:
-Taxonomic Information from Around the Web. R package version 0.9.98.
-https://github.com/ropensci/taxize.</p>
+    <p>Chamberlain, S., Barve, V., Mcglinn, D., Oldoni, D., Desmet, P., Geffert, L.,
+&amp; Ram, K. rgbif: Interface to the Global Biodiversity Information Facility
+API. R package. https://CRAN.R-project.org/package=rgbif</p>
 <p>Clarke, K. R., &amp; Warwick, R. M. (1999). The taxonomic distinctness measure
 of biodiversity: weighting of step lengths between hierarchical levels.
 Marine Ecology Progress Series, 184, 21-29.</p>

@@ -19,7 +19,7 @@ treated as zero for mapping or analysis purposes."><meta property="og:image" con
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -79,10 +79,14 @@ replaced by zero.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="co"># Assuming 'result' is an indicator_map or indicator_ts object</span></span></span>
-<span class="r-in"><span><span class="va">result_filled</span> <span class="op">&lt;-</span> <span class="fu">replace_na</span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="co"># Evenness is NA in cells with fewer than two species</span></span></span>
+<span class="r-in"><span><span class="va">pe_map</span> <span class="op">&lt;-</span> <span class="fu"><a href="pielou_evenness_map.html">pielou_evenness_map</a></span><span class="op">(</span><span class="va">example_cube_1</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> although coordinates are longitude/latitude, st_intersection assumes that they</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> are planar</span>
+<span class="r-in"><span><span class="va">pe_map_filled</span> <span class="op">&lt;-</span> <span class="fu">replace_na</span><span class="op">(</span><span class="va">pe_map</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Replaced 90 NA values with zeroes.</span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

@@ -92,11 +92,15 @@ No computation is performed; the function only returns parameter lists.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
+ind <- total_occ_ts(example_cube_1, first_year = 2000)
 params <- prepare_indicator_bootstrap(
-  indicator = indicator,
-  num_bootstrap = 1000,
-  ci_type = "bca"
+  indicator = ind,
+  num_bootstrap = 100,
+  ci_type = "perc"
 )
-} # }
+names(params$bootstrap_params)
+#> [1] "data_cube"      "fun"            "grouping_var"   "samples"       
+#> [5] "processed_cube" "method"         "seed"           "expected_years"
+# }
 ```

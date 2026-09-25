@@ -224,6 +224,7 @@ customized using ggplot2 functions.
 ## Examples
 
 ``` r
+# \donttest{
 evenness_map <- pielou_evenness_map(example_cube_1,
   level = "country",
   region = "Denmark"
@@ -234,4 +235,5 @@ plot_map(
   legend_title = "Evenness"
 )
 
+# }
 ```

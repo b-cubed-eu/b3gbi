@@ -170,15 +170,17 @@ information to total occurrences, but is adjusted for cell area.
 ## Examples
 
 ``` r
-if (FALSE) { # \dontrun{
+# \donttest{
 od_map <- occ_density_map(example_cube_1,
   level = "country",
   region = "Denmark"
 )
 plot(od_map)
-} # }
-if (FALSE) { # \dontrun{
+
+# }
+# \donttest{
 od_ts <- occ_density_ts(example_cube_1, first_year = 1985)
 plot(od_ts)
-} # }
+
+# }
 ```
