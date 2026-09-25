@@ -150,13 +150,9 @@ test_that("plot.occ_turnover warns that auccolour is unsupported", {
 test_that("plot_mv passes ... to mapview::mapview()", {
   skip_if_not_installed("mapview")
   skip_if_not_installed("RColorBrewer")
-  captured <- NULL
-  local_mocked_bindings(
-    call_mapview = function(...) {
-      captured <<- list(...)
-      invisible(NULL)
-    }
-  )
-  plot_mv(example_indicator_map1, legend = FALSE)
+  skip_if_not_installed("mockery")
+  # Same mocking approach as test-plot_mv.R
+  mockery::stub(plot_mv, "mapview::mapview", function(x, ...) list(...))
+  captured <- plot_mv(example_indicator_map1, legend = FALSE)
   expect_false(captured$legend)
 })

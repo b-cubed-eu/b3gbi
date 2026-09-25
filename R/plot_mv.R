@@ -102,7 +102,7 @@ plot_mv <- function(x,
   yellow_to_red_pal <- colorRampPalette(RColorBrewer::brewer.pal(9, "YlOrRd"))
 
   # Launch mapview
-  call_mapview(
+  mapview::mapview(
     indicator_sf,
     zcol = "indicator_value",
     layer.name = legend_title,
@@ -114,9 +114,3 @@ plot_mv <- function(x,
 
 }
 
-
-#' Wrapper of mapview::mapview() (so that it can be mocked in tests)
-#' @noRd
-call_mapview <- function(...) {
-  mapview::mapview(...)
-}
