@@ -27,7 +27,7 @@ Other contributors:
   \item Ward Langeraert (\href{https://orcid.org/0000-0002-5900-8109}{ORCID}) [contributor]
   \item Peter Desmet (\href{https://orcid.org/0000-0002-8442-8025}{ORCID}) [contributor]
   \item University of Giessen [copyright holder]
-  \item European Union [funder]
+  \item European Union (Horizon Europe Research and Innovation Programme, grant 101059592) [funder]
 }
 
 }
