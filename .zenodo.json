@@ -1,0 +1,50 @@
+{
+  "title": "b3gbi: General Biodiversity Indicators for Biodiversity Data Cubes",
+  "upload_type": "software",
+  "description": "<p>Calculate general biodiversity indicators from species occurrence cubes, such as those produced by the GBIF (Global Biodiversity Information Facility) occurrence cube service. Indicators include observed and coverage-based rarefied species richness and Hill numbers (via iNEXT), evenness, rarity, taxonomic distinctness, occupancy, turnover and sample completeness, and can be calculated over time (time series) or space (maps), with bootstrap confidence intervals. Cubes using the EEA reference grid, MGRS, the extended quarter-degree grid (EQDGC) or ISEA3H grids are supported.</p>",
+  "creators": [
+    {
+      "name": "Dove, Shawn",
+      "affiliation": "University of Giessen",
+      "orcid": "0000-0001-9465-5638"
+    }
+  ],
+  "contributors": [
+    {
+      "name": "Langeraert, Ward",
+      "affiliation": "Research Institute for Nature and Forest (INBO)",
+      "orcid": "0000-0002-5900-8109",
+      "type": "Other"
+    },
+    {
+      "name": "Desmet, Peter",
+      "affiliation": "Research Institute for Nature and Forest (INBO)",
+      "orcid": "0000-0002-8442-8025",
+      "type": "Other"
+    }
+  ],
+  "license": "MIT",
+  "keywords": [
+    "biodiversity-indicators",
+    "data-cubes",
+    "GBIF",
+    "R"
+  ],
+  "grants": [
+    {
+      "id": "10.13039/501100000780::101059592"
+    }
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "10.21105/joss.10963",
+      "relation": "isDocumentedBy",
+      "resource_type": "publication-article"
+    },
+    {
+      "identifier": "https://github.com/b-cubed-eu/b3gbi",
+      "relation": "isSupplementTo",
+      "resource_type": "software"
+    }
+  ]
+}
