@@ -7,7 +7,9 @@
 #'
 #' @param x An indicator_ts object.
 #' @param n (Optional) Integer specifying the number of rows of data to display.
-#' @param ... Additional arguments.
+#' @param ... Additional arguments passed to print().
+#'
+#' @return Invisibly returns the input object `x`.
 #'
 #' @examples
 #' print(example_indicator_ts1)
@@ -51,9 +53,13 @@ print.indicator_ts <- function(x, n = 10, ...) {
 #' @param n Integer specifying the number of rows of data to display.
 #' @param include_na Logical. If TRUE, includes rows with NA diversity values
 #'  in the printed output. Default is FALSE.
-#' @param ... Additional arguments.
+#' @param ... Additional arguments passed to print().
 #'
 #' @return Invisibly returns the input object `x`.
+#'
+#' @examples
+#' print(example_indicator_map1)
+#'
 #' @export
 print.indicator_map <- function(x, n = 10, include_na = FALSE, ...) {
 
@@ -104,7 +110,9 @@ print.indicator_map <- function(x, n = 10, include_na = FALSE, ...) {
 #' @param x A processed_cube object.
 #' @param n (Optional) Integer specifying the number of rows of cube data to
 #'  display.
-#' @param ... Additional arguments.
+#' @param ... Additional arguments passed to print().
+#'
+#' @return Invisibly returns the input object `x`.
 #'
 #' @examples
 #' print(example_cube_1)
@@ -136,7 +144,7 @@ print.processed_cube <- function(x, n = 10, ...) {
   invisible(x)
 }
 
-#' @title Print a Processed Data Cube Object
+#' @title Print a Processed Data Cube Object with Dataset Information
 #'
 #' @description Provides a summary representation of a processed_cube_dsinfo
 #'  object, designed for user-friendly display in the console.
@@ -145,7 +153,7 @@ print.processed_cube <- function(x, n = 10, ...) {
 #'
 #' @param x A processed_cube_dsinfo object.
 #' @param n (Optional) Integer specifying the number of rows of data to display.
-#' @param ... Additional arguments.
+#' @param ... Additional arguments passed to print().
 #'
 #' @return Invisibly returns the input object `x`.
 #' @export
@@ -181,7 +189,7 @@ print.processed_cube_dsinfo <- function(x, n = 10, ...) {
 #' @param x A sim_cube object.
 #' @param n (Optional) Integer specifying the number of rows of cube data to
 #'  display.
-#' @param ... Additional arguments.
+#' @param ... Additional arguments passed to print().
 #'
 #' @return Invisibly returns the input object `x`.
 #' @export
@@ -211,8 +219,8 @@ print.sim_cube <- function(x, n = 10, ...) {
 #' @method print available_indicators
 #'
 #' @param x Object of class available_indicators
-#' @param n (Optional) Integer specifying the number of rows of data to display.
-#' @param ... Additional arguments.
+#' @param n (Optional) Number of indicators to print (default 30).
+#' @param ... Currently unused.
 #'
 #' @return Invisibly returns the input object `x`.
 #' @export

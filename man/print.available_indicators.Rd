@@ -9,9 +9,9 @@
 \arguments{
 \item{x}{Object of class available_indicators}
 
-\item{n}{(Optional) Integer specifying the number of rows of data to display.}
+\item{n}{(Optional) Number of indicators to print (default 30).}
 
-\item{...}{Additional arguments.}
+\item{...}{Currently unused.}
 }
 \value{
 Invisibly returns the input object \code{x}.

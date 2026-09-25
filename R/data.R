@@ -3,8 +3,8 @@
 #' Small example cube containing the mammal occurrences in Denmark available on
 #' GBIF as of 16.03.2024.
 #'
-#' @format A 'processed_cube' object containing a tibble with 31,632 rows and
-#'  15 variables, as well as metadata
+#' @format A 'processed_cube' object: a list of metadata plus, in its `data`
+#'  element, a tibble with 31,632 rows and 15 variables
 #' \describe{
 #'   \item{year}{year occurrence was recorded}
 #'   \item{cellCode}{code containing the cell resolution and coordinates
@@ -15,13 +15,15 @@
 #'   \item{family}{family name}
 #'   \item{taxonKey}{taxonomic key associated with the species on GBIF}
 #'   \item{scientificName}{scientific species name}
-#'   \item{obs}{number of individuals observed}
+#'   \item{obs}{number of occurrences (records)}
 #'   \item{minCoordinateUncertaintyInMeters}{minimum coordinate uncertainty in
 #'    meters}
 #'   \item{minTemporalUncertainty}{minimum temporal uncertainty in seconds}
-#'   \item{xcoord}{East-West coordinate on the eqdgc grid}
-#'   \item{ycoord}{North-South coordinate on the eqdgc grid}
-#'   \item{resolution}{grid cell size}
+#'   \item{familyCount}{number of occurrences of the family the species
+#'    belongs to}
+#'   \item{xcoord}{longitude of the cell centre (degrees)}
+#'   \item{ycoord}{latitude of the cell centre (degrees)}
+#'   \item{resolution}{grid cell size (e.g. "0.25degrees")}
 #' }
 #' @examples
 #' \donttest{
@@ -40,8 +42,8 @@
 #' Example indicator containing a time series of observed species richness for
 #' mammal occurrences in Denmark, 1970-2024 (occurrences from GBIF: 16.03.2024).
 #'
-#' @format An 'indicator_ts' object containing a tibble with 55 rows and 2
-#'  variables, as well as metadata
+#' @format An 'indicator_ts' object: a list of metadata plus, in its `data`
+#'  element, a tibble with 55 rows and 2 variables
 #' \describe{
 #'   \item{year}{a year the indicator was calculated for}
 #'   \item{diversity_val}{calculated richness value for the year}
@@ -55,11 +57,12 @@
 #' bryophyte occurrences in South Africa, 1875-2024 (occurrences from GBIF:
 #' 16.03.2024).
 #'
-#' @format An 'indicator_ts' object containing a tibble with 110 rows and 2
-#'  variables, as well as metadata
+#' @format An 'indicator_ts' object: a list of metadata plus, in its `data`
+#'  element, a tibble with 110 rows and 2 variables
 #' \describe{
 #'   \item{year}{a year the indicator was calculated for}
-#'   \item{diversity_val}{calculated richness value for the year}
+#'   \item{diversity_val}{cumulative species richness up to and including the
+#'    year}
 #' }
 #' @source \doi{10.15468/dl.yfzgja}
 "example_indicator_ts2"
@@ -69,8 +72,8 @@
 #' Example indicator containing a map of observed species richness for mammal
 #' occurrences in Denmark (occurrences from GBIF: 16.03.2024).
 #'
-#' @format An 'indicator_map' object containing a tibble with 800 rows and 5
-#'  variables, as well as metadata
+#' @format An 'indicator_map' object: a list of metadata plus, in its `data`
+#'  element, an sf data frame with 800 rows and 5 variables
 #' \describe{
 #'  \item{cellid}{id of a map cell the indicator was calculated for}
 #'  \item{area}{area of the map cell in square kilometers}
@@ -86,10 +89,10 @@
 #'
 #' A list of all biodiversity indicators available within the package, along
 #' with the dimensions they can be calculated across, the functions to access
-#' them, and any special arguments
+#' them, and any special arguments.
 #'
-#' @format A special object of class 'available_indicators' containing a list
-#'  of indicators and six fields with information about them
+#' @format A special object of class 'available_indicators': a named list of
+#'  19 indicators, each a list of nine fields with information about it
 #' \describe{
 #'   \item{indicator_class}{class of the indicator}
 #'   \item{indicator_name}{name of the indicator}

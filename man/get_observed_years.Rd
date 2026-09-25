@@ -2,13 +2,12 @@
 % Please edit documentation in R/get_observed_years.R
 \name{get_observed_years}
 \alias{get_observed_years}
-\title{Extract Years With Observations from an Indicator Map}
+\title{Extract Years With Observations}
 \usage{
 get_observed_years(x)
 }
 \arguments{
-\item{x}{An "indicator_map" object containing calculated indicator values
-associated with grid cells.}
+\item{x}{An "indicator_map", "indicator_ts" or "processed_cube" object.}
 }
 \value{
 A data frame with two columns:
@@ -19,7 +18,7 @@ for each year (\code{TRUE} if present, \code{FALSE} if absent).
 }
 }
 \description{
-Takes an "indicator_map",  "indicator_ts", or "processed_cube" object and
+Takes an "indicator_map", "indicator_ts", or "processed_cube" object and
 determines the years for which observation data exists.
 }
 \examples{

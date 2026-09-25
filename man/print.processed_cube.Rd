@@ -12,7 +12,10 @@
 \item{n}{(Optional) Integer specifying the number of rows of cube data to
 display.}
 
-\item{...}{Additional arguments.}
+\item{...}{Additional arguments passed to print().}
+}
+\value{
+Invisibly returns the input object \code{x}.
 }
 \description{
 Provides a summary representation of a processed_cube object,

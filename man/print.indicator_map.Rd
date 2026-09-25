@@ -14,7 +14,7 @@
 \item{include_na}{Logical. If TRUE, includes rows with NA diversity values
 in the printed output. Default is FALSE.}
 
-\item{...}{Additional arguments.}
+\item{...}{Additional arguments passed to print().}
 }
 \value{
 Invisibly returns the input object \code{x}.
@@ -22,4 +22,8 @@ Invisibly returns the input object \code{x}.
 \description{
 Provides a summary representation of an indicator_map object,
 designed for user-friendly display in the console.
+}
+\examples{
+print(example_indicator_map1)
+
 }

@@ -29,7 +29,8 @@ compute_indicator_workflow(
 )
 }
 \arguments{
-\item{data}{A data cube object (class 'processed_cube').}
+\item{data}{A data cube object (class 'processed_cube',
+'processed_cube_dsinfo' or 'sim_cube').}
 
 \item{type}{The indicator to calculate. Supported options include:
 \itemize{
@@ -59,24 +60,32 @@ rarefaction).
 or space: 'map'. (Default: 'map')}
 
 \item{cell_size}{(Optional) Length of grid cell sides, in km or degrees.
-If set to "grid" (default), this will use the existing grid size of your
-cube. If set to "auto", this will be automatically determined according to
-the geographical level selected. This is 100 km or 1 degree for 'continent'
-or 'world', 10 km or (for a degree-based CRS) the native resolution of the
-cube for 'country', 'sovereignty' or 'geounit'. If level is set to 'cube',
-cell size will be the native resolution of the cube for a degree-based CRS,
-or for a km-based CRS, the cell size will be determined by the area of the
-cube: 100 km for cubes larger than 1 million sq km, 10 km for cubes between
-10 thousand and 1 million sq km, 1 km for cubes between 100 and 10 thousand
-sq km, and 0.1 km for cubes smaller than 100 sq km. Alternatively, the user
-can manually select the grid cell size (in km or degrees). Note that the
-cell size must be a whole number multiple of the cube's resolution.}
+Only used for maps and for time series that require a grid.
+\itemize{
+\item \code{"grid"} (default): use the native resolution of the cube. If this would
+produce more than about 1 million grid cells over the study area (for
+degree-based cubes: if the resolution is finer than 1 degree for 'world'
+or 'continent', or finer than 0.1 degrees otherwise), you are asked to
+confirm in an interactive session, and the function stops with an error
+in a non-interactive session.
+\item \code{"auto"}: determined automatically. For km-based grids it depends on the
+area of the study region: 100 km for areas of at least 1 million sq km,
+10 km for at least 10,000 sq km, 1 km for at least 100 sq km, and
+0.1 km for smaller areas. For degree-based grids it is 1 degree for
+'world' or 'continent' and 0.1 degrees otherwise. The automatic size is
+never smaller than the cube's resolution.
+\item A number (in the units of the cube's resolution, i.e. km or degrees), or
+for km-based grids a string such as \code{"10km"} or \code{"500m"}.
+}
+
+A manually selected cell size must be a whole number multiple of the
+cube's resolution.}
 
 \item{level}{(Optional) Spatial level: 'cube', 'continent', 'country',
 'world', 'sovereignty', or 'geounit'. (Default: 'cube')}
 
-\item{region}{(Optional) The region of interest (e.g., "Europe"). This
-parameter is ignored if level is set to 'cube' or 'world'. (Default: NULL)}
+\item{region}{(Optional) The region of interest (e.g., "Denmark"). Ignored
+if level is 'cube' or 'world'. (Default: "Europe")}
 
 \item{ne_type}{(Optional) The type of Natural Earth data to download:
 'countries', 'map_units', 'sovereignty', or 'tiny_countries'. This parameter
@@ -104,7 +113,7 @@ after creating the grid. Increases processing time but may help if you are
 getting polygon errors. (Default is FALSE).}
 
 \item{shapefile_path}{(optional) Path of an external shapefile to merge into
-the workflow. For example, if you want to calculate your indicator
+the workflow. For example, if you want to calculate your indicator for
 particular features such as protected areas or wetlands.}
 
 \item{shapefile_crs}{(Optional) CRS of a .wkt shapefile. If your shapefile
@@ -118,7 +127,7 @@ an indicator over all non protected areas within your cube). Default is
 FALSE.}
 
 \item{include_land}{(Optional) Include occurrences which fall within the
-land area. Default is TRUE. *Note that this purely a geographic filter, and
+land area. Default is TRUE. Note that this is purely a geographic filter, and
 does not filter based on whether the occurrence is actually terrestrial.
 Grid cells which fall partially on land and partially on ocean will be
 included even if include_land is FALSE. To exclude terrestrial and/or
@@ -127,7 +136,7 @@ your indicator.}
 
 \item{include_ocean}{(Optional) Include occurrences which fall outside the
 land area. Default is TRUE. Set as "buffered_coast" to include a set buffer
-size around the land area rather than the entire ocean area. *Note that this
+size around the land area rather than the entire ocean area. Note that this
 is purely a geographic filter, and does not filter based on whether the
 occurrence is actually marine. Grid cells which fall partially on land and
 partially on ocean will be included even if include_ocean is FALSE. To
@@ -138,15 +147,24 @@ calculating your indicator.}
 include_ocean is set to "buffered_coast". Default is 50 km.}
 
 \item{force_grid}{(Optional) Forces the calculation of a grid even if this
-would not normally be part of the pipeline, e.g. for time series. This
-setting is required for the calculation of rarity or Hill diversity, and is
-forced on by indicators that require it. (Default: FALSE)}
+would not normally be part of the pipeline, i.e. for time series. A grid is
+needed for time series of area-based rarity, Hill diversity and relative
+occupancy (and for completeness with \code{gridded_average = TRUE}). This is
+switched on automatically for these indicators: the wrappers
+\code{\link[=area_rarity_ts]{area_rarity_ts()}}, \code{\link[=hill0_ts]{hill0_ts()}}, \code{\link[=hill1_ts]{hill1_ts()}} and \code{\link[=hill2_ts]{hill2_ts()}} already set
+\code{force_grid = TRUE}, so do not pass it to them. (Default: FALSE)}
 
 \item{...}{Additional arguments passed to specific indicator calculation
-functions.}
+functions. For time series, \code{ci_type} (default \code{"none"}) and
+\code{num_bootstrap} (default 0) can be used to request bootstrapped confidence
+intervals directly (alternatively, use \code{\link[=add_ci]{add_ci()}} afterwards). Other
+examples are \code{newness_min_year} for \code{\link[=newness_map]{newness_map()}} and \code{occ_type} for
+\code{\link[=relative_occupancy_map]{relative_occupancy_map()}} and \code{\link[=relative_occupancy_ts]{relative_occupancy_ts()}}.}
 }
 \value{
-An S3 object containing the calculated indicator values and metadata.
+An object of class "indicator_map" (dim_type = "map") or
+"indicator_ts" (dim_type = "ts") containing the calculated indicator values
+and metadata.
 }
 \description{
 This function provides a flexible framework for calculating

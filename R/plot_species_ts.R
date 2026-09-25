@@ -3,7 +3,9 @@
 #' @description  Creates time series plots of species occurrences or species
 #'  range sizes, with an optional smoothed trendline, and visualizes
 #'  uncertainty. Requires an indicator_ts object created using the
-#'  \code{spec_occ_ts()} or \code{spec_range_ts()} functions as input. To plot
+#'  \code{spec_occ_ts()} or \code{spec_range_ts()} functions as input. It is
+#'  also the function called by \code{plot()} for species-level time series,
+#'  including those created with \code{relative_occupancy_ts()}. To plot
 #'  multi-species indicators (e.g., species richness or evenness), use the
 #'  \code{plot_ts()} function instead.
 #'
@@ -11,34 +13,39 @@
 #'
 #' @param x An 'indicator_ts' object containing time series of indicator values
 #'  matched to species names and/or taxon keys, created using the
-#'  \code{spec_occ_ts()} or \code{spec_range_ts()} functions. This is a required
-#'  parameter with no default.
-#' @param species Species you want to map occurrences for. Can be either
-#'  numerical taxonKeys or species names. Partial species names can be used
-#'  (the function will try to match them). This is a required parameter with
-#'  no default.
-#' @param single_plot (Optional) By default all species occurrence time series
+#'  \code{spec_occ_ts()}, \code{spec_range_ts()} or
+#'  \code{relative_occupancy_ts()} functions. This is a required parameter
+#'  with no default.
+#' @param species Species you want to plot. Can be either numerical taxonKeys
+#'  or species names. Partial species names can be given as the beginning of
+#'  a name (prefix match). This is a required parameter with no default.
+#' @param single_plot (Optional) If TRUE (default), all species time series
 #'  will be combined into a single multi-panel plot. Set this to FALSE to plot
 #'  each species separately.
 #' @param spec_name_wrap_length (Optional) Maximum species name length before
-#'  wrapping to a new line.
+#'  wrapping to a new line. Default is 40.
 #'
-#' @return A ggplot object representing species range or occurrence time series
-#'  plot(s). Can be customized using ggplot2 functions.
+#' @return If single_plot = TRUE (default), a patchwork object combining one
+#'  ggplot per species. If single_plot = FALSE, a named list of ggplot objects
+#'  (one per species); if only one species is plotted, a patchwork object is
+#'  returned regardless. These can be customized using ggplot2 and patchwork
+#'  functions. Requires the 'patchwork' package.
 #'
 #' @examples
 #' \donttest{
-#' spec_occ_ts_mammals_denmark <- spec_occ_ts(example_cube_1,
-#'                                         level = "country",
-#'                                         region = "Denmark")
-#' # default colours:
-#' plot_species_ts(spec_occ_ts_mammals_denmark, c(2440728, 4265185))
+#' if (requireNamespace("patchwork", quietly = TRUE)) {
+#'   spec_occ_ts_mammals_denmark <- spec_occ_ts(example_cube_1,
+#'                                              level = "country",
+#'                                              region = "Denmark")
+#'   # default colours:
+#'   plot_species_ts(spec_occ_ts_mammals_denmark, c(2440728, 4265185))
 #'
-#' # custom colours:
-#' plot_species_ts(spec_occ_ts_mammals_denmark, c(2440728, 4265185),
-#'         linecolour = "thistle",
-#'         trendlinecolour = "forestgreen",
-#'         envelopecolour = "lightgreen")
+#'   # custom colours:
+#'   plot_species_ts(spec_occ_ts_mammals_denmark, c(2440728, 4265185),
+#'           linecolour = "thistle",
+#'           trendlinecolour = "forestgreen",
+#'           envelopecolour = "lightgreen")
+#' }
 #' }
 #' @export
 plot_species_ts <- function(x,

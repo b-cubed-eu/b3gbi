@@ -18,34 +18,48 @@ completeness_ts(data, cutoff_length = 5, gridded_average = FALSE, ...)
 \arguments{
 \item{data}{A data cube object (class 'processed_cube').}
 
-\item{cutoff_length}{(Optional) The minimum number of species or observations
-required for a grid cell or time point to be included. Default is 5.}
+\item{cutoff_length}{(Optional) Minimum amount of data required for a grid
+cell or year to be included. For maps, grid cells with fewer than
+\code{cutoff_length} species are removed. For time series, years whose
+species-by-cell incidence matrix has \code{cutoff_length} entries or fewer are
+removed (with \code{gridded_average = TRUE}: coarse grid cells containing
+\code{cutoff_length} or fewer native cells with records that year). Default
+is 5.}
 
-\item{data_type}{The type of data: "incidence" or "abundance". Default is "incidence".}
+\item{data_type}{(Optional, maps only) The type of data: "incidence" or
+"abundance". Default is "incidence".}
 
-\item{assume_freq}{(Optional) Whether to assume frequency data if using
-incidence. Default is FALSE.}
+\item{assume_freq}{(Optional, maps only) Whether to assume frequency data if
+using incidence. Default is FALSE.}
 
 \item{...}{
   Arguments passed on to \code{\link[=compute_indicator_workflow]{compute_indicator_workflow}}
   \describe{
     \item{\code{cell_size}}{(Optional) Length of grid cell sides, in km or degrees.
-If set to "grid" (default), this will use the existing grid size of your
-cube. If set to "auto", this will be automatically determined according to
-the geographical level selected. This is 100 km or 1 degree for 'continent'
-or 'world', 10 km or (for a degree-based CRS) the native resolution of the
-cube for 'country', 'sovereignty' or 'geounit'. If level is set to 'cube',
-cell size will be the native resolution of the cube for a degree-based CRS,
-or for a km-based CRS, the cell size will be determined by the area of the
-cube: 100 km for cubes larger than 1 million sq km, 10 km for cubes between
-10 thousand and 1 million sq km, 1 km for cubes between 100 and 10 thousand
-sq km, and 0.1 km for cubes smaller than 100 sq km. Alternatively, the user
-can manually select the grid cell size (in km or degrees). Note that the
-cell size must be a whole number multiple of the cube's resolution.}
+Only used for maps and for time series that require a grid.
+\itemize{
+\item \code{"grid"} (default): use the native resolution of the cube. If this would
+produce more than about 1 million grid cells over the study area (for
+degree-based cubes: if the resolution is finer than 1 degree for 'world'
+or 'continent', or finer than 0.1 degrees otherwise), you are asked to
+confirm in an interactive session, and the function stops with an error
+in a non-interactive session.
+\item \code{"auto"}: determined automatically. For km-based grids it depends on the
+area of the study region: 100 km for areas of at least 1 million sq km,
+10 km for at least 10,000 sq km, 1 km for at least 100 sq km, and
+0.1 km for smaller areas. For degree-based grids it is 1 degree for
+'world' or 'continent' and 0.1 degrees otherwise. The automatic size is
+never smaller than the cube's resolution.
+\item A number (in the units of the cube's resolution, i.e. km or degrees), or
+for km-based grids a string such as \code{"10km"} or \code{"500m"}.
+}
+
+A manually selected cell size must be a whole number multiple of the
+cube's resolution.}
     \item{\code{level}}{(Optional) Spatial level: 'cube', 'continent', 'country',
 'world', 'sovereignty', or 'geounit'. (Default: 'cube')}
-    \item{\code{region}}{(Optional) The region of interest (e.g., "Europe"). This
-parameter is ignored if level is set to 'cube' or 'world'. (Default: NULL)}
+    \item{\code{region}}{(Optional) The region of interest (e.g., "Denmark"). Ignored
+if level is 'cube' or 'world'. (Default: "Europe")}
     \item{\code{ne_type}}{(Optional) The type of Natural Earth data to download:
 'countries', 'map_units', 'sovereignty', or 'tiny_countries'. This parameter
 is ignored if level is set to 'cube' or 'world'. (Default: "countries")}
@@ -65,7 +79,7 @@ solve specific issues. (Default is TRUE).}
 after creating the grid. Increases processing time but may help if you are
 getting polygon errors. (Default is FALSE).}
     \item{\code{shapefile_path}}{(optional) Path of an external shapefile to merge into
-the workflow. For example, if you want to calculate your indicator
+the workflow. For example, if you want to calculate your indicator for
 particular features such as protected areas or wetlands.}
     \item{\code{shapefile_crs}}{(Optional) CRS of a .wkt shapefile. If your shapefile
 is .wkt and you do NOT use this parameter, the CRS will be assumed to be
@@ -76,7 +90,7 @@ shapefile (e.g. if you have a protected areas shapefile this would calculate
 an indicator over all non protected areas within your cube). Default is
 FALSE.}
     \item{\code{include_land}}{(Optional) Include occurrences which fall within the
-land area. Default is TRUE. *Note that this purely a geographic filter, and
+land area. Default is TRUE. Note that this is purely a geographic filter, and
 does not filter based on whether the occurrence is actually terrestrial.
 Grid cells which fall partially on land and partially on ocean will be
 included even if include_land is FALSE. To exclude terrestrial and/or
@@ -84,7 +98,7 @@ freshwater taxa, you must manually filter your data cube before calculating
 your indicator.}
     \item{\code{include_ocean}}{(Optional) Include occurrences which fall outside the
 land area. Default is TRUE. Set as "buffered_coast" to include a set buffer
-size around the land area rather than the entire ocean area. *Note that this
+size around the land area rather than the entire ocean area. Note that this
 is purely a geographic filter, and does not filter based on whether the
 occurrence is actually marine. Grid cells which fall partially on land and
 partially on ocean will be included even if include_ocean is FALSE. To
@@ -93,14 +107,21 @@ calculating your indicator.}
     \item{\code{buffer_dist_km}}{(Optional) The distance to buffer around the land if
 include_ocean is set to "buffered_coast". Default is 50 km.}
     \item{\code{force_grid}}{(Optional) Forces the calculation of a grid even if this
-would not normally be part of the pipeline, e.g. for time series. This
-setting is required for the calculation of rarity or Hill diversity, and is
-forced on by indicators that require it. (Default: FALSE)}
+would not normally be part of the pipeline, i.e. for time series. A grid is
+needed for time series of area-based rarity, Hill diversity and relative
+occupancy (and for completeness with \code{gridded_average = TRUE}). This is
+switched on automatically for these indicators: the wrappers
+\code{\link[=area_rarity_ts]{area_rarity_ts()}}, \code{\link[=hill0_ts]{hill0_ts()}}, \code{\link[=hill1_ts]{hill1_ts()}} and \code{\link[=hill2_ts]{hill2_ts()}} already set
+\code{force_grid = TRUE}, so do not pass it to them. (Default: FALSE)}
   }}
 
-\item{gridded_average}{(Optional) For time series, calculate completeness
-for each grid cell and average the results, rather than calculating for
-the entire area at once. Default is FALSE.}
+\item{gridded_average}{(Optional, time series only) If TRUE, completeness is
+calculated separately for each cell of a grid coarser than the cube
+(using the native cube cells within it as sampling units), and the yearly
+value is the mean over these grid cells, rather than calculating it for
+the entire area at once. If \code{cell_size} is left at its default ("grid"),
+a grid 4 times coarser than the cube's resolution is used; otherwise
+\code{cell_size} must be coarser than the cube's resolution. Default is FALSE.}
 }
 \value{
 An S3 object with the classes 'indicator_map' or 'indicator_ts' and
@@ -114,13 +135,13 @@ from the iNEXT package.
 \details{
 \subsection{Completeness (Sample Coverage)}{
 
-Completeness is measured as \strong{Sample Coverage}, a concept developed by Turing and Good (1953) and further popularized in ecology by Chao and Jost (2012). Sample coverage estimates the proportion of the total individuals in an ecological community that belong to the species detected in a sample.
+Completeness is measured as \strong{Sample Coverage}, a concept developed by Good (1953), crediting Turing, and further popularized in ecology by Chao and Jost (2012). Sample coverage estimates the proportion of the total individuals in an ecological community that belong to the species detected in a sample.
 
 A coverage value of 1.0 indicates that no new species are expected to be uncovered through further sampling, meaning the sample is perfectly complete. A value of 0.8, for example, suggests that 20\% of the individuals in the community belong to species that have not yet been detected in the sample.
 
 Calculating sample coverage is a prerequisite for reliable comparisons of biodiversity across different areas or time periods, as it provides a standardized measure of sample completeness that is independent of sample size alone (Chao et al., 2014).
 
-In this package, completeness is calculated using the 'iNEXT' package based on the observed data in each grid cell or time point.
+In this package, completeness is calculated using the 'iNEXT' package based on the observed data in each grid cell or time point. For time series, occurrences are converted to incidence data with the native grid cells of the cube as sampling units. For maps, see \code{data_type} and \code{assume_freq} (by default, years are the sampling units).
 }
 }
 \section{Functions}{
@@ -139,4 +160,20 @@ plot(comp_map)
 comp_ts <- completeness_ts(example_cube_1, first_year = 1985)
 plot(comp_ts)
 }
+}
+\references{
+Good, I. J. (1953). The population frequencies of species and the
+estimation of population parameters. \emph{Biometrika}, \emph{40}(3-4), 237-264.
+
+Chao, A., & Jost, L. (2012). Coverage-based rarefaction and extrapolation:
+standardizing samples by completeness rather than size. \emph{Ecology},
+\emph{93}(12), 2533-2547.
+
+Chao, A., Gotelli, N. J., Hsieh, T. C., Sander, E. L., Ma, K. H.,
+Colwell, R. K., & Ellison, A. M. (2014). Rarefaction and extrapolation with
+Hill numbers: a framework for sampling and estimation in species diversity
+studies. \emph{Ecological monographs}, \emph{84}(1), 45-67.
+}
+\seealso{
+\code{\link[=compute_indicator_workflow]{compute_indicator_workflow()}}
 }

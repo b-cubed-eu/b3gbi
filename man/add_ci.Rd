@@ -34,9 +34,11 @@ installed, and otherwise falls back to \code{indicator} (with a message).
 the cube, using the \pkg{dubicube} package. This is statistically more
 robust as it captures the underlying sampling uncertainty. Requires
 \pkg{dubicube}.
-\item \code{indicator}: Bootstrapping is done by resampling indicator
-values. This is faster for large cubes but less robust, and does not
-require \pkg{dubicube}.
+\item \code{indicator}: Within each year, the component values of the indicator
+(occurrence records, species, or grid-cell values) are resampled with
+\pkg{boot}, without recalculating the indicator from a resampled cube.
+This is faster for large cubes but less robust, and does not require
+\pkg{dubicube}.
 }
 
 The level that was used is stored in the \code{ci_method} element of the
@@ -49,19 +51,26 @@ calculate. (Default: \code{"perc"}). Supported options are:
 \item \code{bca}: Bias-corrected and accelerated intervals.
 \item \code{norm}: Normal approximation intervals.
 \item \code{basic}: Basic bootstrap intervals.
-\item \code{none}: No confidence intervals calculated.
+\item \code{none}: No confidence intervals calculated; the indicator is returned
+unchanged (with a message).
 }}
 
 \item{trans}{(Optional) A function for transforming the indicator values
-before calculating confidence intervals (e.g., \code{log}).
+before calculating confidence intervals (e.g., \code{log}). At indicator
+level it is passed to \code{boot::boot.ci()} as \code{h} (not used for Hill
+numbers). The \code{trans}/\code{inv_trans} arguments are ignored for evenness
+indicators at cube level, which always use the logit transformation
+unless overridden via \code{boot_args} or \code{ci_args}.
 (Default: identity function)}
 
 \item{inv_trans}{(Optional) The inverse of the transformation function
 \code{trans} (e.g., \code{exp}). Used to back-transform the intervals
-to the original scale. (Default: identity function)}
+to the original scale. At indicator level it is passed to
+\code{boot::boot.ci()} as \code{hinv}. (Default: identity function)}
 
 \item{confidence_level}{(Optional) The confidence level for the calculated
-intervals (e.g., 0.95 for 95\% CIs). (Default: 0.95)}
+intervals (e.g., 0.95 for 95\% CIs). Used at both bootstrap levels.
+(Default: 0.95)}
 
 \item{overwrite}{(Optional) Logical. If the indicator already contains
 confidence intervals (\code{ll} and \code{ul} columns), should they
@@ -74,29 +83,46 @@ be replaced? (Default: TRUE)}
 \code{dubicube::calculate_bootstrap_ci()} (cube level only).
 (Default: \code{list()})}
 
-\item{seed}{(Optional) Integer. Random seed for bootstrapping. (Default: 123)}
+\item{seed}{(Optional) Integer. Random seed for bootstrapping, used at both
+bootstrap levels. The random number generator state of the session is
+restored afterwards. Use \code{NA} to not set a seed. (Default: 123)}
 
-\item{...}{(Optional) Additional arguments passed to calc_ci().}
+\item{...}{(Optional) Additional arguments passed to \code{calc_ci()}
+(indicator level only).}
 }
 \value{
-An updated object of class \code{indicator_ts} containing the
-original data with the following additional columns:
+The input \code{indicator_ts} object, with the bootstrap level used
+stored in its \code{ci_method} element (\code{"cube"} or \code{"indicator"}) and the
+following columns added to its \code{data}:
 \itemize{
-\item \code{ll}: Lower limit of the confidence interval.
+\item \code{ll}: Lower limit of the confidence interval (negative lower limits
+are set to 0).
 \item \code{ul}: Upper limit of the confidence interval.
+}
+
+Except for Hill numbers (whose intervals come from \pkg{iNEXT}), the
+following columns are also added:
+\itemize{
+\item \code{int_type}: The type of interval calculated (e.g., \code{"perc"}).
+\item \code{conf}: The confidence level used.
 \item \code{est_boot}: The bootstrap estimate of the indicator value.
 \item \code{se_boot}: The bootstrap standard error.
 \item \code{bias_boot}: The bootstrap estimate of bias.
-\item \code{int_type}: The type of interval calculated (e.g., 'perc').
-\item \code{conf}: The confidence level used.
 }
+
+At cube level, \code{est_boot}, \code{se_boot} and \code{bias_boot} are only returned
+for some indicators (e.g., \code{total_occ}, \code{spec_occ} and \code{spec_range}),
+depending on the bootstrap method and bias correction used.
+
+If \code{ci_type = "none"}, or if confidence intervals cannot be calculated
+for the indicator, the input object is returned unchanged.
 }
 \description{
 This function calculates bootstrap confidence intervals for an existing
 \code{indicator_ts} object. It supports both cube-level bootstrapping (resampling
-occurrence records) and indicator-level bootstrapping (resampling
-calculated values), allowing for advanced transformations during the
-CI calculation process.
+occurrence records) and indicator-level bootstrapping (resampling the
+per-year components of the indicator), allowing for advanced
+transformations during the CI calculation process.
 }
 \details{
 For cube-level bootstrapping, the function acts as a bridge to the
@@ -122,7 +148,8 @@ The following defaults are used unless explicitly overridden via
 }
 \item \strong{\code{spec_occ}, \code{spec_range}}
 \itemize{
-\item Group-specific bootstrapping: \strong{yes}
+\item Group-specific bootstrapping: \strong{no} (whole-cube resampling, with
+intervals per year and species)
 \item Transformation: \strong{none (identity)}
 \item Bias correction: enabled
 }
@@ -142,13 +169,19 @@ The following defaults are used unless explicitly overridden via
 }
 
 Group-specific bootstrapping means that resampling is performed within each
-group (e.g., species or year), which is required for indicators that are
-inherently group-based. This in contrast to whole-cube bootstrapping
-where resampling is performed across the whole dataset; applicable for
-indicators that combine information across groups
+group (e.g., year), which is required for indicators that are
+inherently group-based. This is in contrast to whole-cube bootstrapping,
+where resampling is performed across the whole dataset; this is applicable
+to indicators that combine information across groups.
 
 Transformations are applied prior to confidence interval calculation and
 inverted afterwards to return intervals on the original scale.
+
+These defaults (grouping, the logit transformation for evenness and the
+disabled bias correction for \code{total_occ}) apply to cube-level
+bootstrapping. At indicator level, \code{trans} and \code{inv_trans} are passed to
+\code{boot::boot.ci()} for all indicators (including evenness) except Hill
+numbers.
 }
 
 \subsection{Indicators outside scope of this function}{

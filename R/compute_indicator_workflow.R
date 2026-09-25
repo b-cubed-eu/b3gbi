@@ -5,7 +5,8 @@
 #'  prepares the data, creates a grid, calculates indicators, and formats the
 #'  output into an appropriate S3 object ('indicator_map' or 'indicator_ts').
 #'
-#' @param data A data cube object (class 'processed_cube').
+#' @param data A data cube object (class 'processed_cube',
+#'  'processed_cube_dsinfo' or 'sim_cube').
 #' @param type The indicator to calculate. Supported options include:
 #'   * 'obs_richness': Observed species richness.
 #'   * 'total_occ': Total number of occurrences.
@@ -30,22 +31,28 @@
 #' @param dim_type (Optional) Dimension to calculate indicator over time: 'ts',
 #'  or space: 'map'. (Default: 'map')
 #' @param cell_size (Optional) Length of grid cell sides, in km or degrees.
-#'  If set to "grid" (default), this will use the existing grid size of your
-#'  cube. If set to "auto", this will be automatically determined according to
-#'  the geographical level selected. This is 100 km or 1 degree for 'continent'
-#'  or 'world', 10 km or (for a degree-based CRS) the native resolution of the
-#'  cube for 'country', 'sovereignty' or 'geounit'. If level is set to 'cube',
-#'  cell size will be the native resolution of the cube for a degree-based CRS,
-#'  or for a km-based CRS, the cell size will be determined by the area of the
-#'  cube: 100 km for cubes larger than 1 million sq km, 10 km for cubes between
-#'  10 thousand and 1 million sq km, 1 km for cubes between 100 and 10 thousand
-#'  sq km, and 0.1 km for cubes smaller than 100 sq km. Alternatively, the user
-#'  can manually select the grid cell size (in km or degrees). Note that the
-#'  cell size must be a whole number multiple of the cube's resolution.
+#'  Only used for maps and for time series that require a grid.
+#'  * `"grid"` (default): use the native resolution of the cube. If this would
+#'    produce more than about 1 million grid cells over the study area (for
+#'    degree-based cubes: if the resolution is finer than 1 degree for 'world'
+#'    or 'continent', or finer than 0.1 degrees otherwise), you are asked to
+#'    confirm in an interactive session, and the function stops with an error
+#'    in a non-interactive session.
+#'  * `"auto"`: determined automatically. For km-based grids it depends on the
+#'    area of the study region: 100 km for areas of at least 1 million sq km,
+#'    10 km for at least 10,000 sq km, 1 km for at least 100 sq km, and
+#'    0.1 km for smaller areas. For degree-based grids it is 1 degree for
+#'    'world' or 'continent' and 0.1 degrees otherwise. The automatic size is
+#'    never smaller than the cube's resolution.
+#'  * A number (in the units of the cube's resolution, i.e. km or degrees), or
+#'    for km-based grids a string such as `"10km"` or `"500m"`.
+#'
+#'  A manually selected cell size must be a whole number multiple of the
+#'  cube's resolution.
 #' @param level (Optional) Spatial level: 'cube', 'continent', 'country',
 #'  'world', 'sovereignty', or 'geounit'. (Default: 'cube')
-#' @param region (Optional) The region of interest (e.g., "Europe"). This
-#'  parameter is ignored if level is set to 'cube' or 'world'. (Default: NULL)
+#' @param region (Optional) The region of interest (e.g., "Denmark"). Ignored
+#'  if level is 'cube' or 'world'. (Default: "Europe")
 #' @param ne_type (Optional) The type of Natural Earth data to download:
 #'  'countries', 'map_units', 'sovereignty', or 'tiny_countries'. This parameter
 #'  is ignored if level is set to 'cube' or 'world'. (Default: "countries")
@@ -65,7 +72,7 @@
 #'  after creating the grid. Increases processing time but may help if you are
 #'  getting polygon errors. (Default is FALSE).
 #' @param shapefile_path (optional) Path of an external shapefile to merge into
-#'  the workflow. For example, if you want to calculate your indicator
+#'  the workflow. For example, if you want to calculate your indicator for
 #'  particular features such as protected areas or wetlands.
 #' @param shapefile_crs (Optional) CRS of a .wkt shapefile. If your shapefile
 #'  is .wkt and you do NOT use this parameter, the CRS will be assumed to be
@@ -76,7 +83,7 @@
 #'  an indicator over all non protected areas within your cube). Default is
 #'  FALSE.
 #' @param include_land (Optional) Include occurrences which fall within the
-#'  land area. Default is TRUE. *Note that this purely a geographic filter, and
+#'  land area. Default is TRUE. Note that this is purely a geographic filter, and
 #'  does not filter based on whether the occurrence is actually terrestrial.
 #'  Grid cells which fall partially on land and partially on ocean will be
 #'  included even if include_land is FALSE. To exclude terrestrial and/or
@@ -84,7 +91,7 @@
 #'  your indicator.
 #' @param include_ocean (Optional) Include occurrences which fall outside the
 #'  land area. Default is TRUE. Set as "buffered_coast" to include a set buffer
-#'  size around the land area rather than the entire ocean area. *Note that this
+#'  size around the land area rather than the entire ocean area. Note that this
 #'  is purely a geographic filter, and does not filter based on whether the
 #'  occurrence is actually marine. Grid cells which fall partially on land and
 #'  partially on ocean will be included even if include_ocean is FALSE. To
@@ -93,13 +100,22 @@
 #' @param buffer_dist_km (Optional) The distance to buffer around the land if
 #'  include_ocean is set to "buffered_coast". Default is 50 km.
 #' @param force_grid (Optional) Forces the calculation of a grid even if this
-#'  would not normally be part of the pipeline, e.g. for time series. This
-#'  setting is required for the calculation of rarity or Hill diversity, and is
-#'  forced on by indicators that require it. (Default: FALSE)
+#'  would not normally be part of the pipeline, i.e. for time series. A grid is
+#'  needed for time series of area-based rarity, Hill diversity and relative
+#'  occupancy (and for completeness with `gridded_average = TRUE`). This is
+#'  switched on automatically for these indicators: the wrappers
+#'  [area_rarity_ts()], [hill0_ts()], [hill1_ts()] and [hill2_ts()] already set
+#'  `force_grid = TRUE`, so do not pass it to them. (Default: FALSE)
 #' @param ... Additional arguments passed to specific indicator calculation
-#'  functions.
+#'  functions. For time series, `ci_type` (default `"none"`) and
+#'  `num_bootstrap` (default 0) can be used to request bootstrapped confidence
+#'  intervals directly (alternatively, use [add_ci()] afterwards). Other
+#'  examples are `newness_min_year` for [newness_map()] and `occ_type` for
+#'  [relative_occupancy_map()] and [relative_occupancy_ts()].
 #'
-#' @return An S3 object containing the calculated indicator values and metadata.
+#' @return An object of class "indicator_map" (dim_type = "map") or
+#'  "indicator_ts" (dim_type = "ts") containing the calculated indicator values
+#'  and metadata.
 #'
 #' @examples
 #' \donttest{
@@ -172,16 +188,25 @@ compute_indicator_workflow <- function(data,
 
   # For gridded average completeness, we MUST have a grid coarser than the native
   # cube resolution to ensure multiple native cells (samples) per grid cell.
-  if (type == "completeness" && gridded_average == TRUE && is.null(cell_size)) {
-    native_res_str <- if ("resolution" %in% names(data$data)) data$data$resolution[1] else NULL
-    if (!is.null(native_res_str)) {
-      res_val <- as.numeric(gsub("[a-zA-Z]", "", native_res_str))
-      res_unit <- gsub("[0-9.]", "", native_res_str)
+  # If the user did not choose a cell size (default "grid" = native resolution),
+  # use a grid 4x coarser than the native resolution.
+  if (type == "completeness" && isTRUE(gridded_average) &&
+      (is.null(cell_size) || identical(cell_size, "grid")) &&
+      isTRUE(data$grid_type %in% c("eea", "mgrs", "eqdgc"))) {
+    native_res_str <- data$resolutions[1] %||%
+      (if ("resolution" %in% names(data$data)) data$data$resolution[1] else NULL)
+    if (!is.null(native_res_str) && !is.na(native_res_str)) {
+      res_val <- as.numeric(gsub("[^0-9.]", "", native_res_str))
+      res_unit <- gsub("[0-9. ]", "", native_res_str)
 
-      # Force a 4x coarser grid (16 native cells per grid cell)
-      coarser_res <- res_val * 4
-      cell_size <- paste0(coarser_res, res_unit)
-      message("Forcing coarser grid resolution for completeness: ", cell_size)
+      if (!is.na(res_val)) {
+        # Force a 4x coarser grid (16 native cells per grid cell). A numeric
+        # cell_size is interpreted in the units of the cube's resolution.
+        cell_size <- res_val * 4
+        original_cell_size <- cell_size
+        message("Forcing coarser grid resolution for completeness: ",
+                cell_size, " ", res_unit)
+      }
     }
   }
 
@@ -1000,6 +1025,12 @@ compute_indicator_workflow <- function(data,
     attr(data_final_nogeom, "total_num_cells") <- nrow(clipped_grid)
   }
 
+  # Keep these attributes on the copy used for bootstrapping as well
+  # (e.g. occurrence density needs the total area)
+  for (a in c("total_area_sqkm", "total_num_cells")) {
+    attr(raw_data_for_bootstrap, a) <- attr(data_final_nogeom, a)
+  }
+
   # print(sum(data_final_nogeom$obs))
 
   if (dim_type == "map") {
@@ -1023,7 +1054,12 @@ compute_indicator_workflow <- function(data,
     }
   } else {
     # Calculate indicator
-    indicator <- do.call(calc_ts, c(list(x = data_final_nogeom), dots_filtered))
+    ts_args <- dots_filtered
+    if (type == "completeness") {
+      # gridded_average was removed from the dots above; pass it on explicitly
+      ts_args$gridded_average <- gridded_average
+    }
+    indicator <- do.call(calc_ts, c(list(x = data_final_nogeom), ts_args))
 
     # Calculate confidence intervals
     if (ci_type != "none") {

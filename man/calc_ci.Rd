@@ -55,22 +55,23 @@ calc_ci(x, indicator, ...)
 frame. *Note: this should NOT be an 'indicator_ts' object as it is meant to
 be called by the 'compute_indicator_workflow' function.}
 
-\item{...}{Additional arguments passed to specific calc_ci functions.}
+\item{...}{Additional arguments passed to specific calc_ci functions and
+on to \code{boot::boot.ci()} (e.g., \code{conf}, \code{h}, \code{hinv}), or to the
+\pkg{iNEXT}-based calculation for Hill numbers (e.g., \code{conf}).}
 
 \item{num_bootstrap}{(Optional) Set the number of bootstraps to calculate for
 generating confidence intervals. (Default: 1000)}
 
-\item{ci_type}{(Optional) Type of bootstrap confidence intervals to
-calculate. (Default: "perc". Select "none" to avoid calculating bootstrap
-CIs.)}
+\item{ci_type}{(Optional) Type of bootstrap interval passed to
+\code{boot::boot.ci()}. (Default: "perc")}
 }
 \value{
 A data frame containing indicator values with calculated lower (\code{ll}) and upper (\code{ul}) confidence bounds.
 }
 \description{
-This function calculates bootstrap confidence intervals for a
-biodiversity indicator. It is called automatically when calculating a
-biodiversity indicator over time unless you choose 'none' for ci_type.
+Calculates indicator-level bootstrap confidence intervals. It
+is called internally by \code{add_ci()} (indicator level) or when \code{ci_type} is
+supplied to a \verb{*_ts()} function; it is not meant to be called directly.
 }
 \section{Methods (by class)}{
 \itemize{

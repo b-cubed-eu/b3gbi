@@ -3,9 +3,9 @@
 #' @description
 #' This function calculates bootstrap confidence intervals for an existing
 #' `indicator_ts` object. It supports both cube-level bootstrapping (resampling
-#' occurrence records) and indicator-level bootstrapping (resampling
-#' calculated values), allowing for advanced transformations during the
-#' CI calculation process.
+#' occurrence records) and indicator-level bootstrapping (resampling the
+#' per-year components of the indicator), allowing for advanced
+#' transformations during the CI calculation process.
 #'
 #' @param indicator An object of class `indicator_ts` to which confidence
 #'   intervals should be added.
@@ -18,9 +18,11 @@
 #'     the cube, using the \pkg{dubicube} package. This is statistically more
 #'     robust as it captures the underlying sampling uncertainty. Requires
 #'     \pkg{dubicube}.
-#'   * `indicator`: Bootstrapping is done by resampling indicator
-#'     values. This is faster for large cubes but less robust, and does not
-#'     require \pkg{dubicube}.
+#'   * `indicator`: Within each year, the component values of the indicator
+#'     (occurrence records, species, or grid-cell values) are resampled with
+#'     \pkg{boot}, without recalculating the indicator from a resampled cube.
+#'     This is faster for large cubes but less robust, and does not require
+#'     \pkg{dubicube}.
 #'
 #'   The level that was used is stored in the `ci_method` element of the
 #'   returned object and shown when it is printed.
@@ -30,25 +32,35 @@
 #'   * `bca`: Bias-corrected and accelerated intervals.
 #'   * `norm`: Normal approximation intervals.
 #'   * `basic`: Basic bootstrap intervals.
-#'   * `none`: No confidence intervals calculated.
+#'   * `none`: No confidence intervals calculated; the indicator is returned
+#'     unchanged (with a message).
 #' @param trans (Optional) A function for transforming the indicator values
-#'   before calculating confidence intervals (e.g., `log`).
+#'   before calculating confidence intervals (e.g., `log`). At indicator
+#'   level it is passed to `boot::boot.ci()` as `h` (not used for Hill
+#'   numbers). The `trans`/`inv_trans` arguments are ignored for evenness
+#'   indicators at cube level, which always use the logit transformation
+#'   unless overridden via `boot_args` or `ci_args`.
 #'   (Default: identity function)
 #' @param inv_trans (Optional) The inverse of the transformation function
 #'   `trans` (e.g., `exp`). Used to back-transform the intervals
-#'   to the original scale. (Default: identity function)
+#'   to the original scale. At indicator level it is passed to
+#'   `boot::boot.ci()` as `hinv`. (Default: identity function)
 #' @param confidence_level (Optional) The confidence level for the calculated
-#'   intervals (e.g., 0.95 for 95% CIs). (Default: 0.95)
+#'   intervals (e.g., 0.95 for 95% CIs). Used at both bootstrap levels.
+#'   (Default: 0.95)
 #' @param overwrite (Optional) Logical. If the indicator already contains
 #'   confidence intervals (`ll` and `ul` columns), should they
 #'   be replaced? (Default: TRUE)
-#' @param seed (Optional) Integer. Random seed for bootstrapping. (Default: 123)
+#' @param seed (Optional) Integer. Random seed for bootstrapping, used at both
+#'   bootstrap levels. The random number generator state of the session is
+#'   restored afterwards. Use `NA` to not set a seed. (Default: 123)
 #' @param boot_args (Optional) Named list of additional arguments passed to
 #'   `dubicube::bootstrap_cube()` (cube level only). (Default: `list()`)
 #' @param ci_args (Optional) Named list of additional arguments passed to
 #'   `dubicube::calculate_bootstrap_ci()` (cube level only).
 #'   (Default: `list()`)
-#' @param ... (Optional) Additional arguments passed to calc_ci().
+#' @param ... (Optional) Additional arguments passed to `calc_ci()`
+#'   (indicator level only).
 #'
 #' @details
 #' For cube-level bootstrapping, the function acts as a bridge to the
@@ -73,7 +85,8 @@
 #'   - Bias correction: **disabled** (`no_bias = TRUE`)
 #'
 #' - **`spec_occ`, `spec_range`**
-#'   - Group-specific bootstrapping: **yes**
+#'   - Group-specific bootstrapping: **no** (whole-cube resampling, with
+#'     intervals per year and species)
 #'   - Transformation: **none (identity)**
 #'   - Bias correction: enabled
 #'
@@ -89,13 +102,19 @@
 #'   - Bias correction: enabled
 #'
 #' Group-specific bootstrapping means that resampling is performed within each
-#' group (e.g., species or year), which is required for indicators that are
-#' inherently group-based. This in contrast to whole-cube bootstrapping
-#' where resampling is performed across the whole dataset; applicable for
-#' indicators that combine information across groups
+#' group (e.g., year), which is required for indicators that are
+#' inherently group-based. This is in contrast to whole-cube bootstrapping,
+#' where resampling is performed across the whole dataset; this is applicable
+#' to indicators that combine information across groups.
 #'
 #' Transformations are applied prior to confidence interval calculation and
 #' inverted afterwards to return intervals on the original scale.
+#'
+#' These defaults (grouping, the logit transformation for evenness and the
+#' disabled bias correction for `total_occ`) apply to cube-level
+#' bootstrapping. At indicator level, `trans` and `inv_trans` are passed to
+#' `boot::boot.ci()` for all indicators (including evenness) except Hill
+#' numbers.
 #'
 #' ## Indicators outside scope of this function
 #'
@@ -146,15 +165,27 @@
 #' switch to indicator-level bootstrapping and calculate confidence intervals 
 #' internally using the `iNEXT` package.
 #'
-#' @return An updated object of class `indicator_ts` containing the
-#'   original data with the following additional columns:
-#'   * `ll`: Lower limit of the confidence interval.
+#' @return The input `indicator_ts` object, with the bootstrap level used
+#'   stored in its `ci_method` element (`"cube"` or `"indicator"`) and the
+#'   following columns added to its `data`:
+#'   * `ll`: Lower limit of the confidence interval (negative lower limits
+#'     are set to 0).
 #'   * `ul`: Upper limit of the confidence interval.
+#'
+#'   Except for Hill numbers (whose intervals come from \pkg{iNEXT}), the
+#'   following columns are also added:
+#'   * `int_type`: The type of interval calculated (e.g., `"perc"`).
+#'   * `conf`: The confidence level used.
 #'   * `est_boot`: The bootstrap estimate of the indicator value.
 #'   * `se_boot`: The bootstrap standard error.
 #'   * `bias_boot`: The bootstrap estimate of bias.
-#'   * `int_type`: The type of interval calculated (e.g., 'perc').
-#'   * `conf`: The confidence level used.
+#'
+#'   At cube level, `est_boot`, `se_boot` and `bias_boot` are only returned
+#'   for some indicators (e.g., `total_occ`, `spec_occ` and `spec_range`),
+#'   depending on the bootstrap method and bias correction used.
+#'
+#'   If `ci_type = "none"`, or if confidence intervals cannot be calculated
+#'   for the indicator, the input object is returned unchanged.
 #'
 #' @seealso `dubicube::bootstrap_cube()`, `dubicube::calculate_bootstrap_ci()`
 #'
@@ -212,6 +243,14 @@ add_ci <- function(indicator,
   # Match ci_type argument
   ci_type <- match.arg(ci_type)
   bootstrap_level <- match.arg(bootstrap_level)
+
+  # Nothing to calculate if no confidence intervals are requested
+  if (ci_type == "none") {
+    rlang::inform(
+      "`ci_type = \"none\"`: returning indicator without confidence intervals."
+    )
+    return(indicator)
+  }
 
   # If indicator is in noci_list, return indicator without calculating CIs
   if (indicator$div_type %in% noci_list) {
@@ -275,8 +314,9 @@ add_ci <- function(indicator,
   if (any(c("ll", "ul") %in% names(x)) & !overwrite) {
     warning(
       paste0(
-        "Indicator already contains confidence intervals. Returning indicator
-        without adding CIs. Use 'replace = TRUE' argument to recalculate CIs."
+        "Indicator already contains confidence intervals. Returning ",
+        "indicator without adding CIs. Use 'overwrite = TRUE' to recalculate ",
+        "CIs."
       )
     )
     return(indicator)
@@ -292,12 +332,20 @@ add_ci <- function(indicator,
   # Calculate confidence intervals
   if (bootstrap_level == "indicator") {
 
-    # Send data to calc_ci for indicator level bootstrapping
-    indicator$data <- calc_ci(raw_data,
-                              indicator = x,
-                              num_bootstrap = num_bootstrap,
-                              ci_type = ci_type,
-                              ...)
+    # Send data to calc_ci for indicator level bootstrapping. The confidence
+    # level and transformations are passed on to boot::boot.ci() (as `conf`,
+    # `h` and `hinv`); arguments supplied via `...` take precedence.
+    calc_ci_args <- utils::modifyList(
+      list(x = raw_data,
+           indicator = x,
+           num_bootstrap = num_bootstrap,
+           ci_type = ci_type,
+           conf = confidence_level,
+           h = trans,
+           hinv = inv_trans),
+      list(...)
+    )
+    indicator$data <- with_rng_seed(seed, do.call(calc_ci, calc_ci_args))
     indicator$ci_method <- "indicator"
     return(indicator)
 
@@ -400,6 +448,29 @@ add_ci <- function(indicator,
   } else {
     stop("Invalid bootstrap_level. Choose 'cube' or 'indicator'.")
   }
+}
+
+#' Evaluate code with a given random seed, restoring the RNG state afterwards
+#'
+#' The user's random number generator state is left unchanged. If `seed` is
+#' `NULL` or `NA`, `code` is evaluated without setting a seed.
+#'
+#' @param seed Integer random seed, `NULL` or `NA`.
+#' @param code Code to evaluate.
+#' @noRd
+with_rng_seed <- function(seed, code) {
+  if (is.null(seed) || is.na(seed)) {
+    return(code)
+  }
+  genv <- globalenv()
+  if (exists(".Random.seed", envir = genv, inherits = FALSE)) {
+    old_seed <- get(".Random.seed", envir = genv, inherits = FALSE)
+    on.exit(assign(".Random.seed", old_seed, envir = genv), add = TRUE)
+  } else {
+    on.exit(rm(".Random.seed", envir = genv), add = TRUE)
+  }
+  set.seed(seed)
+  code
 }
 
 #' Stop with installation instructions if dubicube is not installed

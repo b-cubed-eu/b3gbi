@@ -14,35 +14,44 @@ relative_occupancy_ts(data, occ_type = 0, ...)
 
 \item{occ_type}{Integer controlling the occupancy denominator. One of:
 \itemize{
-\item \code{0} (default) — Total-area occupancy: denominator is all grid cells
+\item \code{0} (default) - Total-area occupancy: denominator is all grid cells
 in the study region (including those with no records).
-\item \code{1} — Ever-occupied occupancy: denominator is the number of cells with
+\item \code{1} - Ever-occupied occupancy: denominator is the number of cells with
 at least one occurrence (any species) anywhere in the time window.
-\item \code{2} — Annual occupancy: for time series, the denominator is the number
+\item \code{2} - Annual occupancy: for time series, the denominator is the number
 of cells with at least one occurrence (any species) \emph{in that year}; for
-maps, the per-year proportion is computed and then averaged across years.
+maps, the per-year proportion is computed and then averaged across the
+years in which the species was recorded.
 }}
 
 \item{...}{
   Arguments passed on to \code{\link[=compute_indicator_workflow]{compute_indicator_workflow}}
   \describe{
     \item{\code{cell_size}}{(Optional) Length of grid cell sides, in km or degrees.
-If set to "grid" (default), this will use the existing grid size of your
-cube. If set to "auto", this will be automatically determined according to
-the geographical level selected. This is 100 km or 1 degree for 'continent'
-or 'world', 10 km or (for a degree-based CRS) the native resolution of the
-cube for 'country', 'sovereignty' or 'geounit'. If level is set to 'cube',
-cell size will be the native resolution of the cube for a degree-based CRS,
-or for a km-based CRS, the cell size will be determined by the area of the
-cube: 100 km for cubes larger than 1 million sq km, 10 km for cubes between
-10 thousand and 1 million sq km, 1 km for cubes between 100 and 10 thousand
-sq km, and 0.1 km for cubes smaller than 100 sq km. Alternatively, the user
-can manually select the grid cell size (in km or degrees). Note that the
-cell size must be a whole number multiple of the cube's resolution.}
+Only used for maps and for time series that require a grid.
+\itemize{
+\item \code{"grid"} (default): use the native resolution of the cube. If this would
+produce more than about 1 million grid cells over the study area (for
+degree-based cubes: if the resolution is finer than 1 degree for 'world'
+or 'continent', or finer than 0.1 degrees otherwise), you are asked to
+confirm in an interactive session, and the function stops with an error
+in a non-interactive session.
+\item \code{"auto"}: determined automatically. For km-based grids it depends on the
+area of the study region: 100 km for areas of at least 1 million sq km,
+10 km for at least 10,000 sq km, 1 km for at least 100 sq km, and
+0.1 km for smaller areas. For degree-based grids it is 1 degree for
+'world' or 'continent' and 0.1 degrees otherwise. The automatic size is
+never smaller than the cube's resolution.
+\item A number (in the units of the cube's resolution, i.e. km or degrees), or
+for km-based grids a string such as \code{"10km"} or \code{"500m"}.
+}
+
+A manually selected cell size must be a whole number multiple of the
+cube's resolution.}
     \item{\code{level}}{(Optional) Spatial level: 'cube', 'continent', 'country',
 'world', 'sovereignty', or 'geounit'. (Default: 'cube')}
-    \item{\code{region}}{(Optional) The region of interest (e.g., "Europe"). This
-parameter is ignored if level is set to 'cube' or 'world'. (Default: NULL)}
+    \item{\code{region}}{(Optional) The region of interest (e.g., "Denmark"). Ignored
+if level is 'cube' or 'world'. (Default: "Europe")}
     \item{\code{ne_type}}{(Optional) The type of Natural Earth data to download:
 'countries', 'map_units', 'sovereignty', or 'tiny_countries'. This parameter
 is ignored if level is set to 'cube' or 'world'. (Default: "countries")}
@@ -62,7 +71,7 @@ solve specific issues. (Default is TRUE).}
 after creating the grid. Increases processing time but may help if you are
 getting polygon errors. (Default is FALSE).}
     \item{\code{shapefile_path}}{(optional) Path of an external shapefile to merge into
-the workflow. For example, if you want to calculate your indicator
+the workflow. For example, if you want to calculate your indicator for
 particular features such as protected areas or wetlands.}
     \item{\code{shapefile_crs}}{(Optional) CRS of a .wkt shapefile. If your shapefile
 is .wkt and you do NOT use this parameter, the CRS will be assumed to be
@@ -73,7 +82,7 @@ shapefile (e.g. if you have a protected areas shapefile this would calculate
 an indicator over all non protected areas within your cube). Default is
 FALSE.}
     \item{\code{include_land}}{(Optional) Include occurrences which fall within the
-land area. Default is TRUE. *Note that this purely a geographic filter, and
+land area. Default is TRUE. Note that this is purely a geographic filter, and
 does not filter based on whether the occurrence is actually terrestrial.
 Grid cells which fall partially on land and partially on ocean will be
 included even if include_land is FALSE. To exclude terrestrial and/or
@@ -81,7 +90,7 @@ freshwater taxa, you must manually filter your data cube before calculating
 your indicator.}
     \item{\code{include_ocean}}{(Optional) Include occurrences which fall outside the
 land area. Default is TRUE. Set as "buffered_coast" to include a set buffer
-size around the land area rather than the entire ocean area. *Note that this
+size around the land area rather than the entire ocean area. Note that this
 is purely a geographic filter, and does not filter based on whether the
 occurrence is actually marine. Grid cells which fall partially on land and
 partially on ocean will be included even if include_ocean is FALSE. To
@@ -90,9 +99,12 @@ calculating your indicator.}
     \item{\code{buffer_dist_km}}{(Optional) The distance to buffer around the land if
 include_ocean is set to "buffered_coast". Default is 50 km.}
     \item{\code{force_grid}}{(Optional) Forces the calculation of a grid even if this
-would not normally be part of the pipeline, e.g. for time series. This
-setting is required for the calculation of rarity or Hill diversity, and is
-forced on by indicators that require it. (Default: FALSE)}
+would not normally be part of the pipeline, i.e. for time series. A grid is
+needed for time series of area-based rarity, Hill diversity and relative
+occupancy (and for completeness with \code{gridded_average = TRUE}). This is
+switched on automatically for these indicators: the wrappers
+\code{\link[=area_rarity_ts]{area_rarity_ts()}}, \code{\link[=hill0_ts]{hill0_ts()}}, \code{\link[=hill1_ts]{hill1_ts()}} and \code{\link[=hill2_ts]{hill2_ts()}} already set
+\code{force_grid = TRUE}, so do not pass it to them. (Default: FALSE)}
   }}
 }
 \value{
@@ -107,8 +119,8 @@ An S3 object with the classes 'indicator_map' or 'indicator_ts' and
 }
 }
 \description{
-Calculate the relative occupancy of each species — the
-proportion of grid cells in which it has been recorded — either as a
+Calculate the relative occupancy of each species - the
+proportion of grid cells in which it has been recorded - either as a
 gridded map or as a time series. Three denominator definitions are
 available via the \code{occ_type} parameter (see 'Details').
 }
@@ -116,7 +128,7 @@ available via the \code{occ_type} parameter (see 'Details').
 \subsection{Relative occupancy}{
 
 Relative occupancy quantifies how widely distributed a species is within
-a study region, expressed as a proportion (0–1). The numerator is always
+a study region, expressed as a proportion (0-1). The numerator is always
 the number of post-aggregation grid cells (\code{cellid}) in which the species
 has at least one recorded occurrence. The denominator depends on
 \code{occ_type}:\tabular{cll}{
@@ -130,19 +142,20 @@ has at least one recorded occurrence. The denominator depends on
 \strong{Type 0} is the most conservative and comparable across different data
 cubes because the denominator is fixed by the grid definition. A low value
 means the species occupies few cells relative to the entire region;
-however, empty cells cannot be assumed truly unoccupied — they may be
+however, empty cells cannot be assumed truly unoccupied - they may be
 under-sampled or simply not yet visited.
 
 \strong{Type 1} restricts the denominator to cells where \emph{any} occurrence was
 recorded across the full time window, conditioning on cells with
-documented sampling effort. Values will always be \eqn{\geq} the
+documented sampling effort. Values will always be \eqn{\geq}{>=} the
 corresponding Type 0 value (since the denominator is smaller). Useful
 when you wish to compare species occupancy within the subset of cells
 that have been at least partially surveyed.
 
 \strong{Type 2} further restricts the denominator \emph{within each year} (for time
 series) to cells active in that year. For maps, the annual proportion is
-computed first and then averaged across years (temporal mean). This is the
+computed first and then averaged across the years in which the species was
+recorded (temporal mean). This is the
 most dynamic measure, as both numerator and denominator can vary per year,
 reflecting inter-annual changes in sampling footprint.
 }
@@ -150,7 +163,7 @@ reflecting inter-annual changes in sampling footprint.
 \subsection{Presence-only data caveat}{
 
 These cubes contain presence-only data. An empty cell does \strong{not} imply
-that a species was absent — it may simply reflect lack of sampling in that
+that a species was absent - it may simply reflect lack of sampling in that
 cell. Types 1 and 2 partially address this by conditioning on cells where
 at least one occurrence was recorded, but those cells still only document
 where observers were active, not where species were definitively absent.
@@ -210,9 +223,13 @@ ro_ts_2 <- relative_occupancy_ts(example_cube_1, occ_type = 2)
 \references{
 Sax, D. F., & Gaines, S. D. (2003). Species diversity: from global
 decreases to local increases. \emph{Trends in Ecology & Evolution}, 18(11),
-561–566.
+561-566.
 }
 \seealso{
-compute_indicator_workflow
+\code{\link[=compute_indicator_workflow]{compute_indicator_workflow()}}
+
+Other species-based indicators: 
+\code{\link{spec_occ_map}()},
+\code{\link{spec_range_map}()}
 }
 \concept{species-based indicators}

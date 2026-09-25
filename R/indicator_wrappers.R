@@ -19,7 +19,7 @@
 #' conceptually simple, it can be measured in different ways.
 #'
 #' ## Observed richness
-#' Observed richness is calculated by summing the number of unique species
+#' Observed richness is calculated by counting the number of unique species
 #' observed for each year or each cell. Observed richness is highly dependent
 #' on the comprehensiveness of the dataset it is being applied to. If some
 #' regions are more intensively, carefully or systematically sampled than
@@ -30,6 +30,9 @@
 #' detectability of each species.
 #'
 #' @references
+#' Magurran, A. E. (1988). *Ecological Diversity and Its Measurement*.
+#' Princeton University Press.
+#'
 #' Hillebrand, H., Blasius, B., Borer, E. T., Chase, J. M., Downing, J. A.,
 #' Eriksson, B. K., Filstrup, C. T., Harpole, W. S., Hodapp, D., Larsen, S.,
 #' Lewandowska, A. M., Seabloom, E. W., Van de Waal, D. B., & Ryabov, A. B.
@@ -86,7 +89,7 @@ obs_richness_ts <- function(data, ...) {
 #' @title Calculate Total Occurrences Over Space or Time
 #'
 #' @description This function calculates the total number of species occurrence
-#'  records over a gridded map or as a time series (see 'Details' for more '
+#'  records over a gridded map or as a time series (see 'Details' for more
 #'  information).
 #'
 #' @details
@@ -174,8 +177,8 @@ total_occ_ts <- function(data, ...) {
 #' }
 #' where S is the number of species observed in the grid cell (maps) or year
 #' (time series) and pi is the proportion of occurrences represented by
-#' species i. Species that are absent from a cell or year do not count towards
-#' S. Evenness is undefined (NA) when fewer than two species are present.
+#' species i. Species absent from a cell or year do not count towards S, and
+#' evenness is NA when fewer than two species are present.
 #'
 #' ## Williams' evenness
 #'
@@ -202,8 +205,10 @@ total_occ_ts <- function(data, ...) {
 #'   1 - sqrt((S * Sum from i=1 to S of pi^2 - 1) / (S - 1))
 #' }
 #'
-#' where S is the number of species observed in the grid cell or year and pi
-#' is the proportion of occurrences represented by species i.
+#' where S is the number of species observed in the grid cell (maps) or year
+#' (time series) and pi is the proportion of occurrences represented by
+#' species i. Species absent from a cell or year do not count towards S, and
+#' evenness is NA when fewer than two species are present.
 #'
 #' @references
 #' Pielou, E. C. (1966). The measurement of diversity in
@@ -331,8 +336,8 @@ williams_evenness_ts <- function(data, ...) {
 #' that year), and each species present in a year contributes once.
 #'
 #' ## Area-Based Rarity
-#' Area-based rarity is the inverse of occupancy frequency (proportion of grid
-#' cells occupied) for a particular species. The total summed rarity for each
+#' Area-based rarity is the inverse of occupancy frequency (the proportion of
+#' occupied grid cells in which the species occurs) for a particular species. The total summed rarity for each
 #' grid cell or year is calculated (sum the rarity values of each species
 #' present there). It is calculated as:
 #'
@@ -448,35 +453,37 @@ hill_diversity_details <- paste0(
   "that the number and relative abundance of species are inseparable ",
   "components of diversity. Hill diversity uses a single equation to ",
   "calculate multiple measures of diversity by varying a single ",
-  "parameter \\eqn{\\ell}{l}, which changes the emphasis on rare vs common species ",
-  "(Roswell et al., 2019). It represents the mean rarity of sampled ",
-  "species, and is calculated as: ",
+  "parameter, the order q, which changes the emphasis on rare vs common ",
+  "species (Roswell et al., 2021). It can be interpreted as the mean rarity ",
+  "of sampled species (the rarity of species i being 1/pi), and is ",
+  "calculated as: ",
   "\\deqn{",
-  "  D = \\left( \\sum_{i=1}^{S} p_i^\\ell \\right)^{1/(1-\\ell)}",
+  "  D = \\left( \\sum_{i=1}^{S} p_i^q \\right)^{1/(1-q)}",
   "  }{",
-  "  D = (Sum from i=1 to S of pi^l) ^ (1 / (1 - l))",
+  "  D = (Sum from i=1 to S of pi^q) ^ (1 / (1 - q))",
   "  }",
   "where D is diversity, S is the number of species, pi is the proportion ",
-  "of individuals belonging to species i, ri is the rarity of species i, ",
-  "and \\eqn{\\ell}{l} determines the rarity scale for the mean. While \\eqn{\\ell}{l} can ",
-  "theoretically take almost any value, three common measures of diversity ",
-  "are special cases: species richness, and modified versions of the ",
-  "Shannon and Simpson diversity indices (Roswell et al., 2019). These ",
-  "three measures occur when \\eqn{\\ell}{l} takes the value of 1, 0 (or near-zero, ",
-  "as \\eqn{\\ell}{l} cannot actually take the value of 0), or -1, respectively. \n",
-  "\n* **Species Richness (\\eqn{\\ell}{l} = 1):**",
+  "of individuals belonging to species i, and q determines the rarity scale ",
+  "for the mean. While q can theoretically take almost any value, three ",
+  "common measures of diversity are special cases: species richness, and ",
+  "modified versions of the Shannon and Simpson diversity indices (Roswell ",
+  "et al., 2021). These three measures occur when q takes the value of 0, ",
+  "1 (as the limit \\eqn{q \\to 1}{q -> 1}, since the formula is undefined at ",
+  "exactly q = 1), or 2, respectively. (Roswell et al. (2021) use ",
+  "\\eqn{\\ell = 1 - q}{l = 1 - q}.) \n",
+  "\n* **Species Richness (q = 0, `hill0`):**",
   "  \\deqn{",
   "    D = S",
   "  }{",
   "    D = S",
   "  }",
-  "\n* **Hill-Shannon Diversity (\\eqn{\\ell}{l} \\eqn{\\approx}{~} 0):**",
+  "\n* **Hill-Shannon Diversity (q = 1, `hill1`):**",
   "  \\deqn{",
   "    D = e^{-\\sum_{i=1}^{S} p_i \\ln(p_i)}",
   "  }{",
   "    D = e ^ (-Sum from i=1 to S of pi * ln(pi))",
   "  }",
-  "\n* **Hill-Simpson Diversity (\\eqn{\\ell}{l} = -1):**",
+  "\n* **Hill-Simpson Diversity (q = 2, `hill2`):**",
   "  \\deqn{",
   "    D = \\frac{1}{\\sum_{i=1}^{S} p_i^2}",
   "  }{",
@@ -530,8 +537,8 @@ hill_diversity_details <- paste0(
 completeness_details <- paste0(
   "\n\n## Completeness (Sample Coverage)\n\n",
   "Completeness is measured as **Sample Coverage**, a concept developed by ",
-  "Turing and Good (1953) and further popularized in ecology by Chao and Jost ",
-  "(2012). Sample coverage estimates the proportion of the total individuals ",
+  "Good (1953), crediting Turing, and further popularized in ecology by Chao ",
+  "and Jost (2012). Sample coverage estimates the proportion of the total individuals ",
   "in an ecological community that belong to the species detected in a sample. ",
   "\n\nA coverage value of 1.0 indicates that no new species are expected to be ",
   "uncovered through further sampling, meaning the sample is perfectly complete. ",
@@ -542,7 +549,10 @@ completeness_details <- paste0(
   "standardized measure of sample completeness that is independent of sample size ",
   "alone (Chao et al., 2014).",
   "\n\nIn this package, completeness is calculated using the 'iNEXT' ",
-  "package based on the observed data in each grid cell or time point."
+  "package based on the observed data in each grid cell or time point. ",
+  "For time series, occurrences are converted to incidence data with the ",
+  "native grid cells of the cube as sampling units. For maps, see ",
+  "`data_type` and `assume_freq` (by default, years are the sampling units)."
 )
 
 #' @title Calculate Completeness (Sample Coverage) Over Space or Time
@@ -553,17 +563,42 @@ completeness_details <- paste0(
 #'
 #' @details `r completeness_details`
 #'
+#' @references
+#' Good, I. J. (1953). The population frequencies of species and the
+#' estimation of population parameters. *Biometrika*, *40*(3-4), 237-264.
+#'
+#' Chao, A., & Jost, L. (2012). Coverage-based rarefaction and extrapolation:
+#' standardizing samples by completeness rather than size. *Ecology*,
+#' *93*(12), 2533-2547.
+#'
+#' Chao, A., Gotelli, N. J., Hsieh, T. C., Sander, E. L., Ma, K. H.,
+#' Colwell, R. K., & Ellison, A. M. (2014). Rarefaction and extrapolation with
+#' Hill numbers: a framework for sampling and estimation in species diversity
+#' studies. *Ecological monographs*, *84*(1), 45-67.
+#'
 #' @param data A data cube object (class 'processed_cube').
-#' @param cutoff_length (Optional) The minimum number of species or observations
-#'  required for a grid cell or time point to be included. Default is 5.
-#' @param data_type The type of data: "incidence" or "abundance". Default is "incidence".
-#' @param assume_freq (Optional) Whether to assume frequency data if using
-#'  incidence. Default is FALSE.
-#' @param gridded_average (Optional) For time series, calculate completeness
-#'  for each grid cell and average the results, rather than calculating for
-#'  the entire area at once. Default is FALSE.
+#' @param cutoff_length (Optional) Minimum amount of data required for a grid
+#'  cell or year to be included. For maps, grid cells with fewer than
+#'  `cutoff_length` species are removed. For time series, years whose
+#'  species-by-cell incidence matrix has `cutoff_length` entries or fewer are
+#'  removed (with `gridded_average = TRUE`: coarse grid cells containing
+#'  `cutoff_length` or fewer native cells with records that year). Default
+#'  is 5.
+#' @param data_type (Optional, maps only) The type of data: "incidence" or
+#'  "abundance". Default is "incidence".
+#' @param assume_freq (Optional, maps only) Whether to assume frequency data if
+#'  using incidence. Default is FALSE.
+#' @param gridded_average (Optional, time series only) If TRUE, completeness is
+#'  calculated separately for each cell of a grid coarser than the cube
+#'  (using the native cube cells within it as sampling units), and the yearly
+#'  value is the mean over these grid cells, rather than calculating it for
+#'  the entire area at once. If `cell_size` is left at its default ("grid"),
+#'  a grid 4 times coarser than the cube's resolution is used; otherwise
+#'  `cell_size` must be coarser than the cube's resolution. Default is FALSE.
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
+#'
+#' @seealso [compute_indicator_workflow()]
 #'
 #' @return An S3 object with the classes 'indicator_map' or 'indicator_ts' and
 #'  'completeness' containing the calculated indicator values and metadata.
@@ -640,9 +675,8 @@ completeness_ts <- function(data,
 #' Hill, M. O. (1973). Diversity and evenness: a unifying notation and its
 #' consequences. *Ecology*, *54*(2), 427-432.
 #'
-#' Roswell, M., Shipley, J., & Ewers, R. M. (2019). A conceptual guide to
-#' measuring and interpreting functional diversity.
-#' *Journal of Applied Ecology*, *56*(12), 2533-2543.
+#' Roswell, M., Dushoff, J., & Winfree, R. (2021). A conceptual guide to
+#' measuring species diversity. *Oikos*, *130*(3), 321-338.
 #'
 #' Chao, A., Gotelli, N. J., Hsieh, T. C., Sander, E. L., Ma, K. H.,
 #' Colwell, R. K., & Ellison, A. M. (2014). Rarefaction and extrapolation with
@@ -656,19 +690,22 @@ completeness_ts <- function(data,
 #' @param data A data cube object (class 'processed_cube').
 #' @param coverage (Optional) The sample coverage value for the estimator.
 #'  Default is 0.95.
-#' @param cutoff_length (Optional) The minimum number of data points for each
-#'  grid cell. Grid cells with fewer data points will be removed before
-#'  calculations to avoid errors. Default is 5.
-#' @param conf_level (Optional) Confidence level for bootstrap confidence
-#' intervals. Only applies to temporal indicators. Default is 0.95.
-#' @param data_type (Optional) If set to "incidence", occurrences are converted
+#' @param cutoff_length (Optional) Minimum amount of data required, to avoid
+#'  errors in the estimation. For maps, grid cells with fewer than
+#'  `cutoff_length` species are removed. For time series, years whose
+#'  species-by-cell incidence matrix has `cutoff_length` entries or fewer are
+#'  removed. Default is 5.
+#' @param conf_level (Optional, time series only) Confidence level for
+#'  bootstrap confidence intervals. Only used when `num_bootstrap` > 0 and
+#'  `ci_type` is not "none" (passed via `...`). Default is 0.95.
+#' @param data_type (Optional, maps only) If set to "incidence", occurrences are converted
 #'  to incidence data. Observations are treated as presence/absence and years
 #'  are used as sampling units. The number of years in which a species was
 #'  observed within a grid cell are then summarized. If set to "abundance",
 #'  occurrences are summed across years for each species as a proxy for
 #'  abundance. Default is "incidence".
-#' @param assume_freq (Optional) If TRUE, the sum of observations for a
-#'  species within a grid cell is assumed to be a sum of sampling sites in
+#' @param assume_freq (Optional, maps only) If TRUE, the sum of observations
+#'  for a species within a grid cell is assumed to be a sum of sampling sites in
 #'  which that species was observed. The maximum number of observations for
 #'  any species within a grid cell is then taken as a proxy for the total number
 #'  of sampling sites for that cell. This parameter is ignored if data_type is
@@ -906,10 +943,13 @@ hill2_ts <- function(data,
 #' each year to a cumulative sum. This indicator provides an estimation of
 #' whether and how many new species are still being discovered in a region.
 #' While an influx of alien species could cause an increase in cumulative
-#' richness, a fast-rising trend as shown in Fig. 2 is likely an indication
-#' that the dataset is not comprehensive and therefore observed richness will
-#' provide an underestimate of species richness.
+#' richness, a fast-rising trend is likely an indication that the dataset is
+#' not comprehensive and therefore observed richness will provide an
+#' underestimate of species richness.
 #'
+#' @references
+#' Magurran, A. E. (1988). *Ecological Diversity and Its Measurement*.
+#' Princeton University Press.
 #'
 #' @param data A data cube object (class 'processed_cube').
 #'
@@ -949,6 +989,17 @@ cum_richness_ts <- function(data, ...) {
 #'  reflect an older mean year of occurrence, while others may show
 #'  a recent mean year due to e.g., the sudden availability of large
 #'  amounts of citizen science data.
+#'
+#'  For time series, the value for each year is the cumulative mean year of all
+#'  records up to and including that year. Means are taken over cube records
+#'  (one per taxon, cell and year), not weighted by occurrence counts. Values
+#'  are rounded to the nearest year.
+#'
+#'  For maps, the optional argument `newness_min_year` (passed via `...`;
+#'  default NULL) sets cells whose mean year is not above this value (e.g.
+#'  1970) to NA. This can be useful if outlier cells with very old data
+#'  stretch the legend gradient so that other cell values are difficult to
+#'  discern.
 #'
 #' @param data A data cube object (class 'processed_cube').
 #'
@@ -999,9 +1050,10 @@ newness_ts <- function(data, ...) {
 #'  map or as a time series (see 'Details' for more information).
 #'
 #' @details
-#' Density is calculated by summing the total number of occurrences per square
-#' kilometre for each cell or year. This provides similar information to total
-#' occurrences, but is adjusted for cell area.
+#' Density is the number of occurrences divided by area (km^2): the area of
+#' each grid cell for maps, and the total study-region area for time series.
+#' This provides similar information to total occurrences, but is adjusted for
+#' area.
 #'
 #' @param data A data cube object (class 'processed_cube').
 #'
@@ -1055,9 +1107,10 @@ occ_density_ts <- function(data, ...) {
 #'  gridded map or as a time series (see 'Details' for more information).
 #'
 #' @details
-#' Density is calculated by dividing the total number of unique species per
-#' square kilometre for each cell or year. This provides similar information to
-#' observed species richness, but is adjusted for cell area. Like observed
+#' Density is the number of unique species divided by area (km^2): the area of
+#' each grid cell for maps, and the total study-region area for time series.
+#' This provides similar information to observed species richness, but is
+#' adjusted for area. Like observed
 #' richness, bootstrapped confidence intervals are not calculated for this
 #' indicator because they are statistically inappropriate at the indicator
 #' level.
@@ -1066,7 +1119,7 @@ occ_density_ts <- function(data, ...) {
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
-#' @seealso compute_indicator_workflow
+#' @seealso [compute_indicator_workflow()], [add_ci()]
 #'
 #' @return An S3 object with the classes 'indicator_map' or 'indicator_ts' and
 #'  'spec_richness_density' containing the calculated indicator values and
@@ -1132,6 +1185,8 @@ spec_richness_density_ts <- function(data, ...) {
 #' @return An S3 object with the classes 'indicator_map' or 'indicator_ts' and
 #'  'spec_occ' containing the calculated indicator values and metadata.
 #'
+#' @family species-based indicators
+#'
 #' @describeIn spec_occ_map
 #'
 #' @examples
@@ -1154,9 +1209,10 @@ spec_occ_map <- function(data, ...) {
 #' @describeIn spec_occ_map
 #'
 #' @examples
+#' \donttest{
 #' so_ts <- spec_occ_ts(example_cube_1, first_year = 1985)
 #' plot(so_ts, c(2435767, 2434793))
-#'
+#' }
 #' @export
 spec_occ_ts <- function(data, ...) {
   compute_indicator_workflow(data,
@@ -1166,11 +1222,14 @@ spec_occ_ts <- function(data, ...) {
   )
 }
 
-#' @title Plot Species Ranges Over Space or Time
+#' @title Calculate Species Ranges Over Space or Time
 #'
-#' @description Plot the cells occupied for individual species over a gridded
-#'  map or calculate the change in the number of cells occupied as a time
+#' @description Calculate the cells occupied by individual species over a
+#'  gridded map or the change in the number of cells occupied as a time
 #'  series.
+#'
+#' @details Maps show presence (1) in each occupied cell; time series give the
+#'  number of occupied cells per species per year.
 #'
 #' @param data A data cube object (class 'processed_cube').
 #'
@@ -1180,6 +1239,8 @@ spec_occ_ts <- function(data, ...) {
 #'
 #' @return An S3 object with the classes 'indicator_map' or 'indicator_ts' and
 #'  'spec_range' containing the calculated indicator values and metadata.
+#'
+#' @family species-based indicators
 #'
 #' @describeIn spec_range_map
 #'
@@ -1221,15 +1282,15 @@ spec_range_ts <- function(data, ...) {
 
 #' @title Calculate Species Relative Occupancy Over Space or Time
 #'
-#' @description Calculate the relative occupancy of each species — the
-#'  proportion of grid cells in which it has been recorded — either as a
+#' @description Calculate the relative occupancy of each species - the
+#'  proportion of grid cells in which it has been recorded - either as a
 #'  gridded map or as a time series. Three denominator definitions are
 #'  available via the `occ_type` parameter (see 'Details').
 #'
 #' @details
 #' ## Relative occupancy
 #' Relative occupancy quantifies how widely distributed a species is within
-#' a study region, expressed as a proportion (0–1). The numerator is always
+#' a study region, expressed as a proportion (0-1). The numerator is always
 #' the number of post-aggregation grid cells (`cellid`) in which the species
 #' has at least one recorded occurrence. The denominator depends on
 #' `occ_type`:
@@ -1243,25 +1304,26 @@ spec_range_ts <- function(data, ...) {
 #' **Type 0** is the most conservative and comparable across different data
 #' cubes because the denominator is fixed by the grid definition. A low value
 #' means the species occupies few cells relative to the entire region;
-#' however, empty cells cannot be assumed truly unoccupied — they may be
+#' however, empty cells cannot be assumed truly unoccupied - they may be
 #' under-sampled or simply not yet visited.
 #'
 #' **Type 1** restricts the denominator to cells where *any* occurrence was
 #' recorded across the full time window, conditioning on cells with
-#' documented sampling effort. Values will always be \eqn{\geq} the
+#' documented sampling effort. Values will always be \eqn{\geq}{>=} the
 #' corresponding Type 0 value (since the denominator is smaller). Useful
 #' when you wish to compare species occupancy within the subset of cells
 #' that have been at least partially surveyed.
 #'
 #' **Type 2** further restricts the denominator *within each year* (for time
 #' series) to cells active in that year. For maps, the annual proportion is
-#' computed first and then averaged across years (temporal mean). This is the
+#' computed first and then averaged across the years in which the species was
+#' recorded (temporal mean). This is the
 #' most dynamic measure, as both numerator and denominator can vary per year,
 #' reflecting inter-annual changes in sampling footprint.
 #'
 #' ## Presence-only data caveat
 #' These cubes contain presence-only data. An empty cell does **not** imply
-#' that a species was absent — it may simply reflect lack of sampling in that
+#' that a species was absent - it may simply reflect lack of sampling in that
 #' cell. Types 1 and 2 partially address this by conditioning on cells where
 #' at least one occurrence was recorded, but those cells still only document
 #' where observers were active, not where species were definitively absent.
@@ -1278,17 +1340,18 @@ spec_range_ts <- function(data, ...) {
 #'
 #' @param data A data cube object (class 'processed_cube').
 #' @param occ_type Integer controlling the occupancy denominator. One of:
-#'   * `0` (default) — Total-area occupancy: denominator is all grid cells
+#'   * `0` (default) - Total-area occupancy: denominator is all grid cells
 #'     in the study region (including those with no records).
-#'   * `1` — Ever-occupied occupancy: denominator is the number of cells with
+#'   * `1` - Ever-occupied occupancy: denominator is the number of cells with
 #'     at least one occurrence (any species) anywhere in the time window.
-#'   * `2` — Annual occupancy: for time series, the denominator is the number
+#'   * `2` - Annual occupancy: for time series, the denominator is the number
 #'     of cells with at least one occurrence (any species) *in that year*; for
-#'     maps, the per-year proportion is computed and then averaged across years.
+#'     maps, the per-year proportion is computed and then averaged across the
+#'     years in which the species was recorded.
 #'
 #' @inheritDotParams compute_indicator_workflow -type -dim_type -data
 #'
-#' @seealso compute_indicator_workflow
+#' @seealso [compute_indicator_workflow()]
 #'
 #' @return An S3 object with the classes 'indicator_map' or 'indicator_ts' and
 #'  'relative_occupancy' containing:
@@ -1301,7 +1364,7 @@ spec_range_ts <- function(data, ...) {
 #' @references
 #' Sax, D. F., & Gaines, S. D. (2003). Species diversity: from global
 #' decreases to local increases. *Trends in Ecology & Evolution*, 18(11),
-#' 561–566.
+#' 561-566.
 #'
 #' @family species-based indicators
 #' @describeIn relative_occupancy_map Calculate relative occupancy as a
@@ -1383,7 +1446,7 @@ relative_occupancy_ts <- function(data, occ_type = 0, ...) {
 #' \deqn{
 #'  \frac{\sum\sum_{i<j} \frac{\omega_{ij}}{L}}{\frac{S(S-1)}{2}}
 #' }{
-#'  (&sum;&sum; from i<j of (w_ij / L) / (S * (S - 1) / 2)
+#'  (Sum over i<j of w_ij / L) / (S * (S - 1) / 2)
 #' }
 #' where S is the number of species, \eqn{\omega_{ij}}{w_ij} is the taxonomic
 #' distance between species i and j (the number of taxonomic levels below the
@@ -1397,9 +1460,11 @@ relative_occupancy_ts <- function(data, occ_type = 0, ...) {
 #' The classification of each taxon is retrieved from GBIF with the rgbif
 #' package (Chamberlain et al.) using the taxon keys in the cube: the GBIF
 #' Backbone Taxonomy for numeric keys, and the Catalogue of Life eXtended
-#' Release (COL XR) for alphanumeric keys. All taxa are looked up in a single
-#' batched request, and the results are cached for the rest of the R session.
-#' This requires the rgbif package and an internet connection.
+#' Release (COL XR) for alphanumeric keys. Taxa are looked up by key in one
+#' batched request per checklist; taxa not found by key are retried by
+#' scientific name, and taxa still unclassified are excluded (with a warning).
+#' Results are cached for the rest of the R session. Requires rgbif
+#' (>= 3.7.0; >= 3.8.4 for COL XR keys) and an internet connection.
 #'
 #' @references
 #' Chamberlain, S., Barve, V., Mcglinn, D., Oldoni, D., Desmet, P., Geffert, L.,
@@ -1424,12 +1489,14 @@ relative_occupancy_ts <- function(data, occ_type = 0, ...) {
 #' @describeIn tax_distinct_map
 #'
 #' @examples
-#' \dontrun{
-#' td_map <- tax_distinct_map(example_cube_1,
-#'   level = "country",
-#'   region = "Denmark"
-#' )
-#' plot(td_map)
+#' \donttest{
+#' if (requireNamespace("rgbif", quietly = TRUE)) {
+#'   td_map <- tax_distinct_map(example_cube_1,
+#'     level = "country",
+#'     region = "Denmark"
+#'   )
+#'   plot(td_map)
+#' }
 #' }
 #'
 #' @export
@@ -1451,12 +1518,14 @@ tax_distinct_map <- function(data, rows = 1, ...) {
 #' @describeIn tax_distinct_map
 #'
 #' @examples
-#' \dontrun{
-#' td_ts <- tax_distinct_ts(example_cube_1,
-#'   level = "country",
-#'   region = "Denmark"
-#' )
-#' plot(td_ts)
+#' \donttest{
+#' if (requireNamespace("rgbif", quietly = TRUE)) {
+#'   td_ts <- tax_distinct_ts(example_cube_1,
+#'     level = "country",
+#'     region = "Denmark"
+#'   )
+#'   plot(td_ts)
+#' }
 #' }
 #' @export
 tax_distinct_ts <- function(data, rows = 1, ...) {
@@ -1491,8 +1560,9 @@ tax_distinct_ts <- function(data, rows = 1, ...) {
 #' and assessing the effectiveness of management strategies.
 #'
 #' Occupancy turnover can be calculated in different ways, but here we use the
-#' Jaccard dissimilarity index (Jaccard, 1901) to measure the similarity between
-#' two sets of species occurrences. The Jaccard index is calculated as:
+#' Jaccard dissimilarity index (Jaccard, 1901) to measure the dissimilarity
+#' between the species sets of consecutive years (the first year is NA). The
+#' Jaccard dissimilarity is calculated as:
 #'
 #' \deqn{
 #'   J = (b + c) / (a + b + c)
@@ -1508,7 +1578,7 @@ tax_distinct_ts <- function(data, rows = 1, ...) {
 #' @references
 #' Jaccard, P. (1901). &Eacute;tude de la distribution florale dans une portion
 #' des Alpes et du Jura. *Bulletin de la Soci&eacute;t&eacute; Vaudoise des*
-#' *Science Naturelles*, *37*(142), 547-579.
+#' *Sciences Naturelles*, *37*(142), 547-579.
 #'
 #' @param data A data cube object (class 'processed_cube').
 #'
@@ -1520,9 +1590,10 @@ tax_distinct_ts <- function(data, rows = 1, ...) {
 #'  containing the calculated indicator values and metadata.
 #'
 #' @examples
+#' \donttest{
 #' ot_ts <- occ_turnover_ts(example_cube_1, first_year = 1985)
 #' plot(ot_ts)
-#'
+#' }
 #' @export
 occ_turnover_ts <- function(data, ...) {
   compute_indicator_workflow(data,

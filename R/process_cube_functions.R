@@ -1,35 +1,29 @@
 #' @title Process GBIF Data Cubes
 #'
-#' @description Processes a GBIF data cube and (if applicable) an associated
-#'  taxonomic information file. If your cube includes a taxonomic info file it
-#'  is likely a previous generation cube and should be processed using
-#'  'process_cube_old'. The taxonomic info file must reside in the same
-#'  directory as your cube and share a base file name (e.g.,
-#'  'cubes/my_mammals_cube.csv', 'cubes/my_mammals_info.csv'). If your cube does
-#'  NOT include a taxonomic info file then it is likely a current generation
-#'  cube and should be processed using the standard process_cube function. The
-#'  API used to generate the current generation cubes is very flexible and
-#'  allows user-specified column names. Therefore, please check that the column
-#'  names of your cube match the Darwin Core standard expected by the
-#'  process_cube function. If they do not, you may need to enter them manually.
-#'  The function will return an error if it cannot find all required columns.
+#' @description Processes a GBIF occurrence cube (a CSV file or a data frame)
+#'  into a `processed_cube` object. Cubes produced by the GBIF cube API can
+#'  have user-specified column names, so check that your column names match
+#'  the Darwin Core names expected by this function; if not, supply them with
+#'  the `cols_*` arguments. The function stops with an error if it cannot find
+#'  all required columns.
 #'
-#' @param cube_name The location and name of a data cube file
-#'   (e.g., 'inst/extdata/europe_species_cube.csv').
-#' @param grid_type (Optional) Specify which grid reference system your cube
-#'  uses. By default the function will attempt to determine this automatically
-#'  and return an error if it fails. If you want to perform analysis on a cube
-#'  with custom grid codes (e.g. output from the gcube package) or a cube
-#'  without grid codes, select 'custom' or 'none', respectively.
+#' @param cube_name Either the path to a data cube CSV file (e.g.
+#'   `system.file("extdata", "denmark_mammals_cube_eqdgc.csv", package =
+#'   "b3gbi")`) or a data frame containing the cube.
+#' @param grid_type (Optional) The grid reference system your cube uses. One of
+#'  `"automatic"` (default), `"eea"`, `"mgrs"`, `"eqdgc"`, `"isea3h"`,
+#'  `"custom"` or `"none"`. With `"automatic"` the function attempts to detect
+#'  the grid from the cell codes and returns an error if it fails. If you want
+#'  to perform analysis on a cube with custom grid codes (e.g. output from the
+#'  gcube package) or a cube without grid codes, select `"custom"` or `"none"`,
+#'  respectively.
 #' @param first_year (Optional) The first year of occurrences to include. If not
-#'   specified, uses a default of 1600 to prevent false records (e.g. with
-#'   year = 0).
+#'   specified, uses the earliest year present in the cube.
 #' @param last_year (Optional) The final year of occurrences to include. If not
 #'   specified, uses the latest year present in the cube.
-#' @param force_gridcode (Optional) Force the function to assume a specific
-#'  grid reference system. This may cause unexpected downstream issues, so it is
-#'  not recommended. If you are getting errors related to grid cell codes,
-#'  check to make sure they are valid.
+#' @param force_gridcode (Optional) Logical. If `TRUE`, skips the check that
+#'  cell codes match the expected format of `grid_type`. Not recommended;
+#'  invalid codes may cause downstream errors. Default `FALSE`.
 #' @param cols_year (Optional) The name of the column containing the year of
 #' occurrence (if something other than 'year'). This column is required unless
 #' you have a yearMonth column.
@@ -45,14 +39,14 @@
 #' @param cols_cellCode (Optional) The name of the column containing the grid
 #' reference codes (if other than 'cellCode'). This column is required.
 #' @param cols_occurrences (Optional) The name of the column containing the
-#' number of occurrence (if other than 'occurrences'). This column is required.
+#' number of occurrences (if other than 'occurrences'). This column is required.
 #' @param cols_scientificName (Optional) The name of the column containing the
 #'  scientific name of the species (if other than 'scientificName'). Note that
 #'  it is not necessary to have both a species column and a scientificName
 #'  column. One or the other is sufficient.
 #' @param cols_minCoordinateUncertaintyInMeters (Optional) The name of the
 #' column containing the minimum coordinate uncertainty of the occurrences (if
-#' other than 'minCoordinateUncertaintyinMeters').
+#' other than 'minCoordinateUncertaintyInMeters').
 #' @param cols_minTemporalUncertainty (Optional) The name of the column
 #'  containing the minimum temporal uncertainty of the occurrences (if other
 #'  than 'minTemporalUncertainty').
@@ -67,7 +61,7 @@
 #' @param cols_kingdomKey (Optional) The name of the column containing the
 #'  kingdom key of the occurring species (if other than 'kingdomKey').
 #' @param cols_familyKey (Optional) The name of the column containing the family
-#'  key of the  occurring species (if other than 'familykey').
+#'  key of the occurring species (if other than 'familyKey').
 #' @param cols_speciesKey (Optional) The name of the column containing the
 #'  species key of the occurring species (if other than 'speciesKey'). The
 #'  column is required, but note that if you have a 'taxonKey' column you can
@@ -82,7 +76,10 @@
 #'  This should be automatically recognized, so only specify this if you are
 #'  having trouble.
 #'
-#' @return A tibble containing the processed GBIF occurrence data.
+#' @return An object of class `processed_cube` (or `sim_cube` when
+#'  `grid_type` is `"custom"` or `"none"`): a list of metadata (years, number
+#'  of species, grid type, resolution, ...) plus the processed occurrences in
+#'  the `data` element.
 #'
 #' @examples
 #' \donttest{
@@ -125,7 +122,7 @@ process_cube <- function(cube_name,
   yearMonth <- species <- occurrences <- speciesKey <- cellCode <- NULL
   year <- yearMonthDay <- . <- max_year <- NULL
 
-  if (is.character(cube_name) && length(cube_name == 1)) {
+  if (is.character(cube_name) && length(cube_name) == 1) {
     if (is.null(separator)) {
       # Read in data cube
       # We first read a sample to detect the column name, or just read all as character
@@ -326,29 +323,31 @@ process_cube <- function(cube_name,
     }
 
     if (force_gridcode == FALSE && grid_type != "none") {
+      # Test the first non-missing cell code (missing codes are removed later)
+      first_code <- stats::na.omit(occurrence_data[[cols_cellCode]])[1]
 
       grid_type_test <- ifelse(
         grid_type == "eea",
         stringr::str_detect(
-          occurrence_data[[cols_cellCode]],
+          first_code,
           "^[0-9]{1,3}[km]{1,2}[EW]{1}[0-9]{2,7}[NS]{1}[0-9]{2,7}$"
         ),
         ifelse(
           grid_type == "mgrs",
           stringr::str_detect(
-            occurrence_data[[cols_cellCode]],
+            first_code,
             "^[0-9]{2}[A-Z]{3}[0-9]{0,10}$"
           ),
           ifelse(
             grid_type == "eqdgc",
             stringr::str_detect(
-              occurrence_data[[cols_cellCode]],
+              first_code,
               "^[EW]{1}[0-9]{3}[NS]{1}[0-9]{2}[A-D]{0,6}$"
             ),
             ifelse(
               grid_type == "isea3h",
               stringr::str_detect(
-                occurrence_data[[cols_cellCode]],
+                first_code,
                 "^-?[0-9]{15,}$"
               ),
               NA
@@ -357,13 +356,13 @@ process_cube <- function(cube_name,
         )
       )
 
-      if (!grid_type_test==TRUE) {
+      if (isFALSE(grid_type_test)) {
 
         stop(paste0(
           "Cell codes do not match the expected format. Are you sure you have ",
           "specified the correct grid system? It is recommended to leave ",
           "grid_type on 'automatic'. If you are certain, you can use ",
-          "'force_gridecode = TRUE' to attempt to translate them anyway, but ",
+          "'force_gridcode = TRUE' to attempt to translate them anyway, but ",
           "this could lead to unexpected downstream errors."
         ))
 
@@ -545,7 +544,7 @@ process_cube <- function(cube_name,
       dplyr::filter(!is.na(cellCode))
     # Check and report filtered out rows
     if (nrow(occurrence_data_filtered) != nrow(occurrence_data)) {
-      n_filtered_rows <- nrow(occurrence_data_filtered) - nrow(occurrence_data)
+      n_filtered_rows <- nrow(occurrence_data) - nrow(occurrence_data_filtered)
       message("Removed ", n_filtered_rows, " rows with missing cell codes")
     }
     occurrence_data <- occurrence_data_filtered
@@ -565,7 +564,7 @@ process_cube <- function(cube_name,
           "Cell codes do not match the expected format. Are you sure you have ",
           "specified the correct grid system? It is recommended to leave ",
           "grid_type on 'automatic'. If you are certain, you can use ",
-          "'force_gridecode = TRUE' to attempt to translate them anyway, but ",
+          "'force_gridcode = TRUE' to attempt to translate them anyway, but ",
           "this could lead to unexpected downstream errors."
         ))
       }
@@ -596,7 +595,7 @@ process_cube <- function(cube_name,
           "Cell codes do not match the expected format. Are you sure you have ",
           "specified the correct grid system? It is recommended to leave ",
           "grid_type on 'automatic'. If you are certain, you can use ",
-          "'force_gridecode = TRUE' to attempt to translate them anyway, but ",
+          "'force_gridcode = TRUE' to attempt to translate them anyway, but ",
           "this could lead to unexpected downstream errors."
         ))
       }
@@ -630,7 +629,7 @@ process_cube <- function(cube_name,
           "Cell codes do not match the expected format. Are you sure you have ",
           "specified the correct grid system? It is recommended to leave ",
           "grid_type on 'automatic'. If you are certain, you can use ",
-          "'force_gridecode = TRUE' to attempt to translate them anyway, but ",
+          "'force_gridcode = TRUE' to attempt to translate them anyway, but ",
           "this could lead to unexpected downstream errors."
         ))
       }

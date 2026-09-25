@@ -18,13 +18,16 @@ function.}
 }
 \value{
 The returned value is a dataframe containing the time point,
-the type of interval (\code{int_type}), the lower limit of the confidence
-interval (\code{ll}), the upper limit of the confidence interval (\code{ul}), the
-bootstrap estimate (\code{est_boot}), the bootstrap standard error (\code{se_boot}),
-the bootstrap bias (\code{bias_boot}), and the confidence level of the
-intervals (\code{conf_level}).
+the type of interval (\code{int_type}; one of \code{"perc"}, \code{"bca"}, \code{"norm"} or
+\code{"basic"}, as in \code{boot::boot.ci()}'s \code{type} argument), the lower limit of
+the confidence interval (\code{ll}), the upper limit of the confidence interval
+(\code{ul}), the bootstrap estimate (\code{est_boot}), the bootstrap standard error
+(\code{se_boot}), the bootstrap bias (\code{bias_boot}), and the confidence level of
+the intervals (\code{conf}).
 }
 \description{
 This function calculates confidence intervals for a list of objects of class
 \code{"boot"} per year into a dataframe containing all required summaries.
+It is used internally for indicator-level bootstrapping.
 }
+\keyword{internal}

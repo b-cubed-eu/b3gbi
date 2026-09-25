@@ -2,7 +2,7 @@
 % Please edit documentation in R/print_methods.R
 \name{print.processed_cube_dsinfo}
 \alias{print.processed_cube_dsinfo}
-\title{Print a Processed Data Cube Object}
+\title{Print a Processed Data Cube Object with Dataset Information}
 \usage{
 \method{print}{processed_cube_dsinfo}(x, n = 10, ...)
 }
@@ -11,7 +11,7 @@
 
 \item{n}{(Optional) Integer specifying the number of rows of data to display.}
 
-\item{...}{Additional arguments.}
+\item{...}{Additional arguments passed to print().}
 }
 \value{
 Invisibly returns the input object \code{x}.

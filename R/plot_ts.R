@@ -16,9 +16,10 @@
 #'  an appropriate S3 method (if calling the function manually, leave as NULL).
 #' @param y_label_default (Optional) Default label for the y-axis, provided by
 #'  an appropriate S3 method (if calling the function manually, leave as NULL).
-#' @param suppress_y (Optional) If TRUE, suppresses y-axis labels.
+#' @param suppress_y (Optional) If TRUE, suppresses y-axis tick labels.
+#'  Default is FALSE.
 #' @param smoothed_trend (Optional) If TRUE, plot a smoothed trendline over time
-#' (`stats::loess()`).
+#' (`stats::loess()`). Default is TRUE.
 #' @param linecolour (Optional) Colour for the indicator line or points.
 #'   Default is darkorange.
 #' @param linealpha (Optional) Transparency for indicator line or points.
@@ -29,13 +30,13 @@
 #' @param ribbonalpha (Optional) Transparency for indicator confidence interval
 #'  ribbon (if ci_type = "ribbon"). Default is 0.2.
 #' @param error_alpha (Optional) Transparency for indicator error bars (if
-#'  ci_type = "error_bar"). Default is 1.
+#'  ci_type = "error_bars"). Default is 1.
 #' @param trendlinecolour (Optional) Colour for the smoothed trendline.
 #'   Default is blue.
 #' @param trendlinealpha (Optional) Transparency for the smoothed trendline.
 #'  Default is 0.5.
 #' @param envelopecolour (Optional) Colour for the uncertainty envelope.
-#'   Default is lightsteelblue.
+#'   Default is "lightsteelblue1".
 #' @param envelopealpha (Optional) Transparency for the smoothed trendline
 #'  envelope. Default is 0.2.
 #' @param smooth_cialpha (Optional) Transparency for the smoothed lines forming
@@ -57,7 +58,8 @@
 #' @param error_thickness (Optional) Thickness of error bars if
 #'  ci_type = "error_bars". Default is 1.
 #' @param smooth_linetype (Optional) Type of line to plot for smoothed
-#'  trendline. Default is "solid".
+#'  trendline. Options are "solid", "dashed", "dotted", "dotdash", "longdash"
+#'  or "twodash". Default is "solid".
 #' @param smooth_linewidth (Optional) Line width for smoothed trendline.
 #'  Default is 1.
 #' @param smooth_cilinewidth (Optional) Line width for smoothed trendline
@@ -67,14 +69,14 @@
 #' @param y_label (Optional) Label for the y-axis.
 #' @param x_expand (Optional)  Expansion factor to expand the x-axis beyond the
 #'  data. Left and right values are required in the form of c(0.1, 0.2) or
-#'  simply 0.1 to apply the same value to each side. Default is 0.05.
+#'  simply 0.1 to apply the same value to each side. Default is 0.1.
 #' @param y_expand (Optional)  Expansion factor to expand the y-axis beyond the
 #'  data. Lower and upper values are required in the form of c(0.1, 0.2) or
-#'  simply 0.1 to apply the same value to the top and bottom. Default is 0.05.
+#'  simply 0.1 to apply the same value to the top and bottom. Default is 0.1.
 #' @param x_breaks (Optional) Integer giving desired number of breaks for x
-#'  axis. (May not return exactly the number requested.)
+#'  axis. (May not return exactly the number requested.) Default is 10.
 #' @param y_breaks (Optional) Integer giving desired number of breaks for y
-#'  axis. (May not return exactly the number requested.)
+#'  axis. (May not return exactly the number requested.) Default is 6.
 #' @param title_wrap_length (Optional) Maximum title length before wrapping to
 #'  a new line.
 #'

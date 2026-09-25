@@ -5,11 +5,12 @@
 \alias{example_indicator_ts2}
 \title{Time Series of Cumulative Species Richness for Bryophytes in South Africa}
 \format{
-An 'indicator_ts' object containing a tibble with 110 rows and 2
-variables, as well as metadata
+An 'indicator_ts' object: a list of metadata plus, in its \code{data}
+element, a tibble with 110 rows and 2 variables
 \describe{
 \item{year}{a year the indicator was calculated for}
-\item{diversity_val}{calculated richness value for the year}
+\item{diversity_val}{cumulative species richness up to and including the
+year}
 }
 }
 \source{

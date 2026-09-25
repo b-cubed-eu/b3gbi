@@ -2,6 +2,7 @@
 #'
 #' This function calculates confidence intervals for a list of objects of class
 #' `"boot"` per year into a dataframe containing all required summaries.
+#' It is used internally for indicator-level bootstrapping.
 #'
 #' @param bootstrap_list A list of objects of class `"boot"` per year.
 #' @param temporal_list_name (Optional) The temporal list names of
@@ -11,11 +12,14 @@
 #' function.
 #'
 #' @return The returned value is a dataframe containing the time point,
-#' the type of interval (`int_type`), the lower limit of the confidence
-#' interval (`ll`), the upper limit of the confidence interval (`ul`), the
-#' bootstrap estimate (`est_boot`), the bootstrap standard error (`se_boot`), 
-#' the bootstrap bias (`bias_boot`), and the confidence level of the 
-#' intervals (`conf_level`).
+#' the type of interval (`int_type`; one of `"perc"`, `"bca"`, `"norm"` or
+#' `"basic"`, as in `boot::boot.ci()`'s `type` argument), the lower limit of
+#' the confidence interval (`ll`), the upper limit of the confidence interval
+#' (`ul`), the bootstrap estimate (`est_boot`), the bootstrap standard error
+#' (`se_boot`), the bootstrap bias (`bias_boot`), and the confidence level of
+#' the intervals (`conf`).
+#'
+#' @keywords internal
 get_bootstrap_ci <- function(bootstrap_list,
                              temporal_list_name = "year",
                              ...) {
@@ -46,6 +50,10 @@ get_bootstrap_ci <- function(bootstrap_list,
   # Get confidence level
   conf_level <- conf_ints[[1]][[interval_types[1]]][1]
 
+  # Names of the interval types as used in boot::boot.ci(type = ...)
+  type_names <- c(normal = "norm", basic = "basic", student = "stud",
+                  percent = "perc", bca = "bca")
+
   # Summarise for each confidence interval upper and lower limits in dataframes
   out_list <- vector(mode = "list", length = length(interval_types))
   for (i in seq_along(interval_types)) {
@@ -73,7 +81,7 @@ get_bootstrap_ci <- function(bootstrap_list,
 
     out_list[[i]] <- data.frame(
       time_point = as.numeric(names(conf_ints)),
-      int_type = type,
+      int_type = if (type %in% names(type_names)) type_names[[type]] else type,
       ll = ll,
       ul = ul,
       est_boot = est_boot,
@@ -88,7 +96,7 @@ get_bootstrap_ci <- function(bootstrap_list,
       .data$int_type
     ) %>%
     dplyr::arrange(.data$time_point, .data$int_type) %>%
-    dplyr::mutate(conf_level = conf_level) %>%
+    dplyr::mutate(conf = conf_level) %>%
     dplyr::rename({{ temporal_list_name }} := "time_point")
   rownames(conf_df_out) <- NULL
 

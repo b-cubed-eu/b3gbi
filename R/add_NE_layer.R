@@ -59,9 +59,12 @@ add_ne_layer <- function(layer_name, scale, extent_projected) {
                              type = layer_name,
                              category = category)
     }, error = function(e) {
-      if (grepl("the file .* seems not to exist", e, ignore.case = TRUE) ||
-          grepl("Failed to download", e, ignore.case = TRUE) ||
-          grepl("HTTP status was 404", e, ignore.case = TRUE)) {
+      # Use the condition message and allow for line breaks, as rnaturalearth
+      # wraps its error messages over several lines
+      err_msg <- conditionMessage(e)
+      if (grepl("seems\\s+not\\s+to\\s+exist", err_msg, ignore.case = TRUE) ||
+          grepl("Failed\\s+to\\s+download", err_msg, ignore.case = TRUE) ||
+          grepl("HTTP\\s+status\\s+was\\s+404", err_msg, ignore.case = TRUE)) {
         message(paste0("Attempting to download '", layer_name, "' data."))
         rnaturalearth::ne_download(scale = scale,
                                    returnclass = "sf",

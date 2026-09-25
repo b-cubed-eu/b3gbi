@@ -254,10 +254,17 @@ prepare_indicator_bootstrap <- function(
   ## calc_ts.spec_range returns year/taxonKey/scientificName/diversity_val,
   ## we must create the composite group_key and strip extra columns.
   div_type_captured <- indicator$div_type
+  # Density indicators need the study area, which is stored as an attribute
+  # that is lost when the data are resampled
+  total_area_captured <- attr(indicator$raw_data, "total_area_sqkm")
   
   calc_ts_safe <- function(data, ...) {
     if (!inherits(data, div_type_captured)) {
       class(data) <- c(div_type_captured, class(data))
+    }
+    if (!is.null(total_area_captured) &&
+        is.null(attr(data, "total_area_sqkm"))) {
+      attr(data, "total_area_sqkm") <- total_area_captured
     }
     result <- calc_ts(data, ...)
     

@@ -2,21 +2,21 @@
 % Please edit documentation in R/mgrs_to_latlong_bbox.R
 \name{mgrs_to_latlong_bbox}
 \alias{mgrs_to_latlong_bbox}
-\title{Create a Single Bounding Box from MGRS Data in a Projected CRS}
+\title{Create a Longitude/Latitude Bounding Box from MGRS Data}
 \usage{
 mgrs_to_latlong_bbox(df)
 }
 \arguments{
-\item{df}{A data frame with at least three columns: \code{cellCode} (containing
-MGRS strings), and \code{xcoord} and \code{ycoord} for easting and northing.}
+\item{df}{A data frame with at least three columns: \code{cellCode} (MGRS codes;
+the first three characters give the UTM zone and latitude band), and
+\code{xcoord}/\code{ycoord} (UTM easting and northing).}
 }
 \value{
-An sf bounding box (\code{sf::st_bbox}) in a single projected CRS (e.g.,
-Albers).
+An \code{sf::st_bbox()} object in EPSG:4326 (longitude/latitude).
 }
 \description{
-Converts MGRS coordinates to a single sf bounding box in a
-suitable projected CRS, handling data that spans multiple UTM zones.
+Converts UTM coordinates of MGRS cells, which may span several
+UTM zones, to WGS 84 and returns their combined bounding box.
 }
 \examples{
 \donttest{

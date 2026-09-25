@@ -37,7 +37,7 @@ call_plot <- function(x, ...) {
     return(do.call(target_fun, plot.args))
 
   } else if (inherits(x, "indicator_map")) {
-    if (is.null(plot.args$leg_label)) plot.args$leg_label_default <- leg_label_default
+    if (is.null(plot.args$legend_title)) plot.args$leg_label_default <- leg_label_default
     if (is.null(plot.args$title))     plot.args$auto_title <- auto_title_map
 
     target_fun <- if (inherits(x, c("spec_occ", "spec_range", "relative_occupancy"))) plot_species_map else plot_map

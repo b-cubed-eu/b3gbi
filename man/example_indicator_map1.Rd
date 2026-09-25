@@ -5,8 +5,8 @@
 \alias{example_indicator_map1}
 \title{Map of Observed Species Richness for Mammals in Denmark}
 \format{
-An 'indicator_map' object containing a tibble with 800 rows and 5
-variables, as well as metadata
+An 'indicator_map' object: a list of metadata plus, in its \code{data}
+element, an sf data frame with 800 rows and 5 variables
 \describe{
 \item{cellid}{id of a map cell the indicator was calculated for}
 \item{area}{area of the map cell in square kilometers}
