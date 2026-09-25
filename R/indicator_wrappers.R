@@ -449,7 +449,7 @@ hill_diversity_details <- paste0(
   "that the number and relative abundance of species are inseparable ",
   "components of diversity. Hill diversity uses a single equation to ",
   "calculate multiple measures of diversity by varying a single ",
-  "parameter \u2113, which changes the emphasis on rare vs common species ",
+  "parameter \\eqn{\\ell}{l}, which changes the emphasis on rare vs common species ",
   "(Roswell et al., 2019). It represents the mean rarity of sampled ",
   "species, and is calculated as: ",
   "\\deqn{",
@@ -459,25 +459,25 @@ hill_diversity_details <- paste0(
   "  }",
   "where D is diversity, S is the number of species, pi is the proportion ",
   "of individuals belonging to species i, ri is the rarity of species i, ",
-  "and \u2113 determines the rarity scale for the mean. While \u2113 can ",
+  "and \\eqn{\\ell}{l} determines the rarity scale for the mean. While \\eqn{\\ell}{l} can ",
   "theoretically take almost any value, three common measures of diversity ",
   "are special cases: species richness, and modified versions of the ",
   "Shannon and Simpson diversity indices (Roswell et al., 2019). These ",
-  "three measures occur when \u2113 takes the value of 1, 0 (or near-zero, ",
-  "as \u2113 cannot actually take the value of 0), or -1, respectively. \n",
-  "\n* **Species Richness (\u2113 = 1):**",
+  "three measures occur when \\eqn{\\ell}{l} takes the value of 1, 0 (or near-zero, ",
+  "as \\eqn{\\ell}{l} cannot actually take the value of 0), or -1, respectively. \n",
+  "\n* **Species Richness (\\eqn{\\ell}{l} = 1):**",
   "  \\deqn{",
   "    D = S",
   "  }{",
   "    D = S",
   "  }",
-  "\n* **Hill-Shannon Diversity (\u2113 \u2248 0):**",
+  "\n* **Hill-Shannon Diversity (\\eqn{\\ell}{l} \\eqn{\\approx}{~} 0):**",
   "  \\deqn{",
   "    D = e^{-\\sum_{i=1}^{S} p_i \\ln(p_i)}",
   "  }{",
   "    D = e ^ (-Sum from i=1 to S of pi * ln(pi))",
   "  }",
-  "\n* **Hill-Simpson Diversity (\u2113 = -1):**",
+  "\n* **Hill-Simpson Diversity (\\eqn{\\ell}{l} = -1):**",
   "  \\deqn{",
   "    D = \\frac{1}{\\sum_{i=1}^{S} p_i^2}",
   "  }{",
@@ -1240,8 +1240,8 @@ spec_range_ts <- function(data, ...) {
 #' | `occ_type` | Name | Denominator |
 #' |:---:|---|---|
 #' | `0` | Total-area | All grid cells in region (constant) |
-#' | `1` | Ever-occupied | Cells with ≥ 1 occurrence, any species, full window |
-#' | `2` | Annual (TS) / Temporal mean (map) | Cells with ≥ 1 occ in *that year* |
+#' | `1` | Ever-occupied | Cells with at least 1 occurrence, any species, full window |
+#' | `2` | Annual (TS) / Temporal mean (map) | Cells with at least 1 occurrence in *that year* |
 #'
 #' **Type 0** is the most conservative and comparable across different data
 #' cubes because the denominator is fixed by the grid definition. A low value
