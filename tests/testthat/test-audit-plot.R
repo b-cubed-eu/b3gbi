@@ -153,6 +153,7 @@ test_that("plot_mv passes ... to mapview::mapview()", {
   skip_if_not_installed("mockery")
   # Same mocking approach as test-plot_mv.R
   mockery::stub(plot_mv, "mapview::mapview", function(x, ...) list(...))
-  captured <- plot_mv(example_indicator_map1, legend = FALSE)
-  expect_false(captured$legend)
+  # (not `legend`: it would partially match plot_mv()'s `legend_title`)
+  captured <- plot_mv(example_indicator_map1, homebutton = FALSE)
+  expect_false(captured$homebutton)
 })
