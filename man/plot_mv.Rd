@@ -35,7 +35,8 @@ as options to select from. The first one in the list will be shown when the
 map loads. Default is c("OpenStreetMap", "OpenTopoMap", "CartoDB.Positron",
 "Esri.WorldImagery").}
 
-\item{...}{(Optional) Pass additional parameters to the mapview package.}
+\item{...}{(Optional) Additional arguments passed to
+\code{mapview::mapview()}.}
 }
 \value{
 An interactive mapview plot.

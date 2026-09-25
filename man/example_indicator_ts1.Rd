@@ -5,8 +5,8 @@
 \alias{example_indicator_ts1}
 \title{Time Series of Observed Species Richness for Mammals in Denmark}
 \format{
-An 'indicator_ts' object containing a tibble with 55 rows and 2
-variables, as well as metadata
+An 'indicator_ts' object: a list of metadata plus, in its \code{data}
+element, a tibble with 55 rows and 2 variables
 \describe{
 \item{year}{a year the indicator was calculated for}
 \item{diversity_val}{calculated richness value for the year}

@@ -5,8 +5,8 @@
 \alias{available_indicators}
 \title{Indicators Available for Use in the Package}
 \format{
-A special object of class 'available_indicators' containing a list
-of indicators and six fields with information about them
+A special object of class 'available_indicators': a named list of
+19 indicators, each a list of nine fields with information about it
 \describe{
 \item{indicator_class}{class of the indicator}
 \item{indicator_name}{name of the indicator}
@@ -35,6 +35,6 @@ available_indicators
 \description{
 A list of all biodiversity indicators available within the package, along
 with the dimensions they can be calculated across, the functions to access
-them, and any special arguments
+them, and any special arguments.
 }
 \keyword{datasets}

@@ -5,8 +5,8 @@
 \alias{example_cube_1}
 \title{Cube of GBIF Mammal Occurrences in Denmark}
 \format{
-A 'processed_cube' object containing a tibble with 31,632 rows and
-15 variables, as well as metadata
+A 'processed_cube' object: a list of metadata plus, in its \code{data}
+element, a tibble with 31,632 rows and 15 variables
 \describe{
 \item{year}{year occurrence was recorded}
 \item{cellCode}{code containing the cell resolution and coordinates
@@ -17,13 +17,15 @@ on the Extended Quarter Degree (eqdgc) grid}
 \item{family}{family name}
 \item{taxonKey}{taxonomic key associated with the species on GBIF}
 \item{scientificName}{scientific species name}
-\item{obs}{number of individuals observed}
+\item{obs}{number of occurrences (records)}
 \item{minCoordinateUncertaintyInMeters}{minimum coordinate uncertainty in
 meters}
 \item{minTemporalUncertainty}{minimum temporal uncertainty in seconds}
-\item{xcoord}{East-West coordinate on the eqdgc grid}
-\item{ycoord}{North-South coordinate on the eqdgc grid}
-\item{resolution}{grid cell size}
+\item{familyCount}{number of occurrences of the family the species
+belongs to}
+\item{xcoord}{longitude of the cell centre (degrees)}
+\item{ycoord}{latitude of the cell centre (degrees)}
+\item{resolution}{grid cell size (e.g. "0.25degrees")}
 }
 }
 \source{

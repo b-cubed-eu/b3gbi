@@ -11,7 +11,7 @@
 
 \item{n}{(Optional) Integer specifying the number of rows of data to display.}
 
-\item{...}{Additional arguments.}
+\item{...}{Additional arguments passed to print().}
 }
 \value{
 Invisibly returns the input object \code{x}.

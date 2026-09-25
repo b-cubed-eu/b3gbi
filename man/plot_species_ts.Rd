@@ -48,15 +48,15 @@ plot_species_ts(
 \arguments{
 \item{x}{An 'indicator_ts' object containing time series of indicator values
 matched to species names and/or taxon keys, created using the
-\code{spec_occ_ts()} or \code{spec_range_ts()} functions. This is a required
-parameter with no default.}
+\code{spec_occ_ts()}, \code{spec_range_ts()} or
+\code{relative_occupancy_ts()} functions. This is a required parameter
+with no default.}
 
-\item{species}{Species you want to map occurrences for. Can be either
-numerical taxonKeys or species names. Partial species names can be used
-(the function will try to match them). This is a required parameter with
-no default.}
+\item{species}{Species you want to plot. Can be either numerical taxonKeys
+or species names. Partial species names can be given as the beginning of
+a name (prefix match). This is a required parameter with no default.}
 
-\item{single_plot}{(Optional) By default all species occurrence time series
+\item{single_plot}{(Optional) If TRUE (default), all species time series
 will be combined into a single multi-panel plot. Set this to FALSE to plot
 each species separately.}
 
@@ -73,10 +73,11 @@ an appropriate S3 method (if calling the function manually, leave as NULL).}
 \item{y_label_default}{(Optional) Default label for the y-axis, provided by
 an appropriate S3 method (if calling the function manually, leave as NULL).}
 
-\item{suppress_y}{(Optional) If TRUE, suppresses y-axis labels.}
+\item{suppress_y}{(Optional) If TRUE, suppresses y-axis tick labels.
+Default is FALSE.}
 
 \item{smoothed_trend}{(Optional) If TRUE, plot a smoothed trendline over time
-(\code{stats::loess()}).}
+(\code{stats::loess()}). Default is TRUE.}
 
 \item{linecolour}{(Optional) Colour for the indicator line or points.
 Default is darkorange.}
@@ -92,7 +93,7 @@ CIs.}
 ribbon (if ci_type = "ribbon"). Default is 0.2.}
 
 \item{error_alpha}{(Optional) Transparency for indicator error bars (if
-ci_type = "error_bar"). Default is 1.}
+ci_type = "error_bars"). Default is 1.}
 
 \item{trendlinecolour}{(Optional) Colour for the smoothed trendline.
 Default is blue.}
@@ -101,7 +102,7 @@ Default is blue.}
 Default is 0.5.}
 
 \item{envelopecolour}{(Optional) Colour for the uncertainty envelope.
-Default is lightsteelblue.}
+Default is "lightsteelblue1".}
 
 \item{envelopealpha}{(Optional) Transparency for the smoothed trendline
 envelope. Default is 0.2.}
@@ -132,7 +133,8 @@ change 'min_year' and 'max_year'.}
 ci_type = "error_bars". Default is 1.}
 
 \item{smooth_linetype}{(Optional) Type of line to plot for smoothed
-trendline. Default is "solid".}
+trendline. Options are "solid", "dashed", "dotted", "dotdash", "longdash"
+or "twodash". Default is "solid".}
 
 \item{smooth_linewidth}{(Optional) Line width for smoothed trendline.
 Default is 1.}
@@ -148,48 +150,55 @@ confidence intervals. Default is 1.}
 
 \item{x_expand}{(Optional)  Expansion factor to expand the x-axis beyond the
 data. Left and right values are required in the form of c(0.1, 0.2) or
-simply 0.1 to apply the same value to each side. Default is 0.05.}
+simply 0.1 to apply the same value to each side. Default is 0.1.}
 
 \item{y_expand}{(Optional)  Expansion factor to expand the y-axis beyond the
 data. Lower and upper values are required in the form of c(0.1, 0.2) or
-simply 0.1 to apply the same value to the top and bottom. Default is 0.05.}
+simply 0.1 to apply the same value to the top and bottom. Default is 0.1.}
 
 \item{x_breaks}{(Optional) Integer giving desired number of breaks for x
-axis. (May not return exactly the number requested.)}
+axis. (May not return exactly the number requested.) Default is 10.}
 
 \item{y_breaks}{(Optional) Integer giving desired number of breaks for y
-axis. (May not return exactly the number requested.)}
+axis. (May not return exactly the number requested.) Default is 6.}
 
 \item{title_wrap_length}{(Optional) Maximum title length before wrapping to
 a new line.}
 
 \item{spec_name_wrap_length}{(Optional) Maximum species name length before
-wrapping to a new line.}
+wrapping to a new line. Default is 40.}
 }
 \value{
-A ggplot object representing species range or occurrence time series
-plot(s). Can be customized using ggplot2 functions.
+If single_plot = TRUE (default), a patchwork object combining one
+ggplot per species. If single_plot = FALSE, a named list of ggplot objects
+(one per species); if only one species is plotted, a patchwork object is
+returned regardless. These can be customized using ggplot2 and patchwork
+functions. Requires the 'patchwork' package.
 }
 \description{
 Creates time series plots of species occurrences or species
 range sizes, with an optional smoothed trendline, and visualizes
 uncertainty. Requires an indicator_ts object created using the
-\code{spec_occ_ts()} or \code{spec_range_ts()} functions as input. To plot
+\code{spec_occ_ts()} or \code{spec_range_ts()} functions as input. It is
+also the function called by \code{plot()} for species-level time series,
+including those created with \code{relative_occupancy_ts()}. To plot
 multi-species indicators (e.g., species richness or evenness), use the
 \code{plot_ts()} function instead.
 }
 \examples{
 \donttest{
-spec_occ_ts_mammals_denmark <- spec_occ_ts(example_cube_1,
-                                        level = "country",
-                                        region = "Denmark")
-# default colours:
-plot_species_ts(spec_occ_ts_mammals_denmark, c(2440728, 4265185))
+if (requireNamespace("patchwork", quietly = TRUE)) {
+  spec_occ_ts_mammals_denmark <- spec_occ_ts(example_cube_1,
+                                             level = "country",
+                                             region = "Denmark")
+  # default colours:
+  plot_species_ts(spec_occ_ts_mammals_denmark, c(2440728, 4265185))
 
-# custom colours:
-plot_species_ts(spec_occ_ts_mammals_denmark, c(2440728, 4265185),
-        linecolour = "thistle",
-        trendlinecolour = "forestgreen",
-        envelopecolour = "lightgreen")
+  # custom colours:
+  plot_species_ts(spec_occ_ts_mammals_denmark, c(2440728, 4265185),
+          linecolour = "thistle",
+          trendlinecolour = "forestgreen",
+          envelopecolour = "lightgreen")
+}
 }
 }

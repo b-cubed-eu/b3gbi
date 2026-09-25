@@ -46,17 +46,17 @@ plot_species_map(
 \arguments{
 \item{x}{An 'indicator_map' object containing indicator values for individual
 species associated with map grid cells. This object is typically created
-using the \code{spec_occ_map()} or \code{spec_range_map()} functions.
-This is a required parameter with no default.}
+using the \code{spec_occ_map()}, \code{spec_range_map()} or
+\code{relative_occupancy_map()} functions. This is a required parameter
+with no default.}
 
-\item{species}{Species you want to map occurrences for. Can be either
-numerical taxonKeys or species names. Partial species names can be used
-(the function will try to match them). This is a required parameter with
-no default.}
+\item{species}{Species you want to map. Can be either numerical taxonKeys
+or species names. Partial species names can be given as the beginning of
+a name (prefix match). This is a required parameter with no default.}
 
-\item{single_plot}{(Optional) If TRUE, all species occurrence time series
-will be combined into a single multi-panel plot. Set this to FALSE to plot
-each species separately. Default is TRUE.}
+\item{single_plot}{(Optional) If TRUE, all species maps will be combined
+into a single multi-panel plot. Set this to FALSE to plot each species
+separately. Default is TRUE.}
 
 \item{title}{(Optional) Plot title. Replace "auto" with your own title if you
 want a custom title or if calling the function manually.}
@@ -71,15 +71,27 @@ an appropriate S3 method (if calling the function manually, leave as NULL).}
 but will be forcibly set to TRUE when plotting species ranges, as all cell
 values are 1.}
 
-\item{xlims}{(Optional) Custom x-axis limits.}
+\item{xlims}{(Optional) Custom longitude limits in decimal degrees (WGS84),
+as c(min, max). Should be supplied together with ylims. If only xlims is
+supplied, the values are instead interpreted in the units of the
+indicator_map's coordinate reference system and combined with the map's
+own y limits.}
 
-\item{ylims}{(Optional) Custom y-axis limits.}
+\item{ylims}{(Optional) Custom latitude limits in decimal degrees (WGS84),
+as c(min, max). Should be supplied together with xlims. If only ylims is
+supplied, the values are instead interpreted in the units of the
+indicator_map's coordinate reference system and combined with the map's
+own x limits.}
 
-\item{trans}{(Optional) Scale transformation for the fill gradient
-(e.g., 'log').}
+\item{trans}{(Optional) Scale transformation for the fill gradient. Can be
+any transformation accepted by \code{ggplot2::scale_fill_gradient()} (e.g.,
+'log', 'log10' or 'sqrt'), or one of the special values 'boxcox',
+'modulus' or 'yj' (Yeo-Johnson), which use the power parameter given in
+bcpower.}
 
 \item{bcpower}{(Optional) Power parameter for the Box-Cox, modulus, or
-Yeo-Johnson transformations.}
+Yeo-Johnson transformations (used only when trans is 'boxcox', 'modulus'
+or 'yj').}
 
 \item{breaks}{(Optional) Break points for the legend scale.}
 
@@ -93,13 +105,15 @@ NULL (default), the original CRS of the indicator_map object will be used.}
 the map. If FALSE, a buffer will be added around the grid. If NULL
 (default), will be set to TRUE if map_level is "cube", otherwise FALSE.}
 
-\item{crop_by_region}{(Optional) If TRUE, the map will be cropped to the
-specified region when calculating the indicator_map. Default is FALSE.
-Note: this requires that a region was specified when calculating the
-indicator_map.}
+\item{crop_by_region}{(Optional) If TRUE, the map extent is set to the
+bounding box of the region that was specified when calculating the
+indicator_map (e.g. the country or continent), instead of the extent of
+the grid. This requires that a region was specified, i.e. that the
+indicator_map was not calculated with level = "cube" or level = "world".
+Default is FALSE.}
 
-\item{ocean_fill_colour}{(Optional) Colour for the ocean area outside of the
-grid. Default is "lightblue".}
+\item{ocean_fill_colour}{(Optional) Colour for the ocean (plot background)
+outside of the grid. Default is "#92c5f0" (light blue).}
 
 \item{land_fill_colour}{(Optional) Colour for the land area outside of the
 grid. Default is "grey85".}
@@ -112,12 +126,14 @@ grid cells will be coloured according to their indicator value). Default is
 "black". If visible_gridlines is set to FALSE, this setting will have no
 effect.}
 
-\item{grid_line_width}{(Optional) Width of the grid lines. Default is 0.1.}
+\item{grid_line_width}{(Optional) Width of the grid lines. If NULL
+(default), 0.5 for ISEA3H grids and 0.1 otherwise.}
 
 \item{grid_fill_transparency}{(Optional) Transparency of the grid fill colour
 for empty grid cells (0 = fully transparent, 1 = fully opaque). If
 visible_gridlines is set to TRUE, default is 0.2. Otherwise, default is 0.
-*Note that this setting does NOT apply to grid cells with indicator values!}
+Note that this setting does NOT apply to grid cells with indicator values,
+and has no visible effect while grid_fill_colour is "transparent".}
 
 \item{grid_line_transparency}{(Optional) Transparency of the grid line colour
 (0 = fully transparent, 1 = fully opaque). Default is 0.5. If
@@ -148,18 +164,21 @@ beyond the grid limits. This does NOT expand the boundaries of the plot, it
 only affects where the crop is applied. If this value is too small, some
 land may be visibly cut off due to map distortion caused by projections. A
 larger value will extend the bounding box for cropping to prevent this.
-Must be a positive number. (Default is 0.5). This should be enough for most
-projections, but you can increase this value if you are using an extreme
-projection and find that some land is visibly cut off.}
+Must be a positive number. Default is 0.5. You can increase this value if
+you are using an extreme projection and find that some land is visibly cut
+off.}
 
 \item{layers}{(Optional) Additional rnaturalearth layers to plot, e.g.
 c("reefs", "playas").}
 
-\item{layer_colours}{(Optional) Colours for the outlines of additional
-layers. Must be the same length as 'layers'.}
+\item{layer_colours}{(Optional) Outline colours for the additional layers,
+given in the same order as 'layers' (one colour per layer; must be the
+same length as 'layers'). If NULL (default), all layer outlines are black.}
 
-\item{layer_fill_colours}{(Optional) Fill colours for the additional layers.
-Must be the same length as 'layers'.}
+\item{layer_fill_colours}{(Optional) Fill colours for the additional layers,
+given in the same order as 'layers' (must be the same length as 'layers').
+If NULL (default), layers are unfilled, except "ocean" and "lakes", which
+are filled light blue.}
 
 \item{scale}{(Optional) Scale of Natural Earth data ("small", "medium", or
 "large"). Default is 'medium'.}
@@ -171,23 +190,29 @@ for discrete global grids like ISEA3H where stray data points from coordinate
 errors can force the map bounds to expand globally. Default is FALSE.}
 }
 \value{
-A ggplot object representing the map of species range or occurrences.
-Can be customized using ggplot2 functions.
+If single_plot = TRUE (default), a patchwork object combining one
+ggplot per species. If single_plot = FALSE, a named list of ggplot objects
+(one per species). These can be customized using ggplot2 and patchwork
+functions. Requires the 'patchwork' package.
 }
 \description{
 Creates map visualizations of species ranges or species
 occurrences. Requires an indicator_map object created using the
-\code{spec_occ_map()} or \code{spec_range_map()} functions as input. To plot
-multi-species indicators (e.g., species richness or evenness), use the
-\code{plot_map()} function instead.
+\code{spec_occ_map()} or \code{spec_range_map()} functions as input. It is
+also the function called by \code{plot()} for species-level maps, including
+those created with \code{relative_occupancy_map()}. To plot multi-species
+indicators (e.g., species richness or evenness), use the \code{plot_map()}
+function instead.
 }
 \examples{
 \donttest{
-spec_occ_mammals_denmark <- spec_occ_map(example_cube_1,
-  level = "country",
-  region = "Denmark"
-)
-plot_species_map(x = spec_occ_mammals_denmark, c(2440728, 4265185))
+if (requireNamespace("patchwork", quietly = TRUE)) {
+  spec_occ_mammals_denmark <- spec_occ_map(example_cube_1,
+    level = "country",
+    region = "Denmark"
+  )
+  plot_species_map(x = spec_occ_mammals_denmark, c(2440728, 4265185))
+}
 }
 
 }

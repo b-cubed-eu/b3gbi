@@ -7,13 +7,16 @@
 create_sf_from_utm(df, output_crs = NULL)
 }
 \arguments{
-\item{df}{A data frame with columns: xcoord, ycoord, and utmzone.}
+\item{df}{A data frame with numeric columns \code{xcoord} (easting), \code{ycoord}
+(northing) and \code{utmzone}, and a character column \code{hemisphere} (\code{"S"} for
+the southern hemisphere; any other value is treated as northern).}
 
 \item{output_crs}{(Optional) The EPSG code or CRS string for the desired
 output CRS. If NULL, the CRS of the first UTM zone will be used.}
 }
 \value{
-An sf object with the geometry correctly defined for each UTM zone.
+A single sf object, with the points of each zone transformed to
+\code{output_crs}.
 }
 \description{
 This function takes a data frame with UTM coordinates (xcoord, ycoord) and a

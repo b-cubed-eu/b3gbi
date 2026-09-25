@@ -12,19 +12,19 @@ replace_na(x)
 }
 \value{
 The input indicator object with NA values in \code{diversity_val}
-replaced by zero.
+replaced by zero. Stops with an error if there are no NA values.
 }
 \description{
 This function takes an \code{indicator_map} or \code{indicator_ts} object and
 replaces all NA values in the \code{diversity_val} column with zeros. This is
 useful when NA values represent areas or years with no data that should be
-treated as zero for mapping or analysis purposes.
+treated as zero for mapping or analysis purposes. Only use it when zero is
+a meaningful value for the indicator: for indicators such as evenness, NA
+means the value is undefined (e.g. fewer than two species), not zero.
 }
 \examples{
-\donttest{
-# Evenness is NA in cells with fewer than two species
-pe_map <- pielou_evenness_map(example_cube_1)
-pe_map_filled <- replace_na(pe_map)
-}
+# Observed richness is NA in cells without occurrences, where zero species
+# were observed
+or_map_filled <- replace_na(example_indicator_map1)
 
 }

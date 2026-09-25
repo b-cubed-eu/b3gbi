@@ -31,26 +31,26 @@ process_cube(
 )
 }
 \arguments{
-\item{cube_name}{The location and name of a data cube file
-(e.g., 'inst/extdata/europe_species_cube.csv').}
+\item{cube_name}{Either the path to a data cube CSV file (e.g.
+\code{system.file("extdata", "denmark_mammals_cube_eqdgc.csv", package = "b3gbi")}) or a data frame containing the cube.}
 
-\item{grid_type}{(Optional) Specify which grid reference system your cube
-uses. By default the function will attempt to determine this automatically
-and return an error if it fails. If you want to perform analysis on a cube
-with custom grid codes (e.g. output from the gcube package) or a cube
-without grid codes, select 'custom' or 'none', respectively.}
+\item{grid_type}{(Optional) The grid reference system your cube uses. One of
+\code{"automatic"} (default), \code{"eea"}, \code{"mgrs"}, \code{"eqdgc"}, \code{"isea3h"},
+\code{"custom"} or \code{"none"}. With \code{"automatic"} the function attempts to detect
+the grid from the cell codes and returns an error if it fails. If you want
+to perform analysis on a cube with custom grid codes (e.g. output from the
+gcube package) or a cube without grid codes, select \code{"custom"} or \code{"none"},
+respectively.}
 
 \item{first_year}{(Optional) The first year of occurrences to include. If not
-specified, uses a default of 1600 to prevent false records (e.g. with
-year = 0).}
+specified, uses the earliest year present in the cube.}
 
 \item{last_year}{(Optional) The final year of occurrences to include. If not
 specified, uses the latest year present in the cube.}
 
-\item{force_gridcode}{(Optional) Force the function to assume a specific
-grid reference system. This may cause unexpected downstream issues, so it is
-not recommended. If you are getting errors related to grid cell codes,
-check to make sure they are valid.}
+\item{force_gridcode}{(Optional) Logical. If \code{TRUE}, skips the check that
+cell codes match the expected format of \code{grid_type}. Not recommended;
+invalid codes may cause downstream errors. Default \code{FALSE}.}
 
 \item{cols_year}{(Optional) The name of the column containing the year of
 occurrence (if something other than 'year'). This column is required unless
@@ -71,7 +71,7 @@ convert your yearMonthDay column to a year column.}
 reference codes (if other than 'cellCode'). This column is required.}
 
 \item{cols_occurrences}{(Optional) The name of the column containing the
-number of occurrence (if other than 'occurrences'). This column is required.}
+number of occurrences (if other than 'occurrences'). This column is required.}
 
 \item{cols_scientificName}{(Optional) The name of the column containing the
 scientific name of the species (if other than 'scientificName'). Note that
@@ -80,7 +80,7 @@ column. One or the other is sufficient.}
 
 \item{cols_minCoordinateUncertaintyInMeters}{(Optional) The name of the
 column containing the minimum coordinate uncertainty of the occurrences (if
-other than 'minCoordinateUncertaintyinMeters').}
+other than 'minCoordinateUncertaintyInMeters').}
 
 \item{cols_minTemporalUncertainty}{(Optional) The name of the column
 containing the minimum temporal uncertainty of the occurrences (if other
@@ -101,7 +101,7 @@ the other is sufficient.}
 kingdom key of the occurring species (if other than 'kingdomKey').}
 
 \item{cols_familyKey}{(Optional) The name of the column containing the family
-key of the  occurring species (if other than 'familykey').}
+key of the occurring species (if other than 'familyKey').}
 
 \item{cols_speciesKey}{(Optional) The name of the column containing the
 species key of the occurring species (if other than 'speciesKey'). The
@@ -122,22 +122,18 @@ This should be automatically recognized, so only specify this if you are
 having trouble.}
 }
 \value{
-A tibble containing the processed GBIF occurrence data.
+An object of class \code{processed_cube} (or \code{sim_cube} when
+\code{grid_type} is \code{"custom"} or \code{"none"}): a list of metadata (years, number
+of species, grid type, resolution, ...) plus the processed occurrences in
+the \code{data} element.
 }
 \description{
-Processes a GBIF data cube and (if applicable) an associated
-taxonomic information file. If your cube includes a taxonomic info file it
-is likely a previous generation cube and should be processed using
-'process_cube_old'. The taxonomic info file must reside in the same
-directory as your cube and share a base file name (e.g.,
-'cubes/my_mammals_cube.csv', 'cubes/my_mammals_info.csv'). If your cube does
-NOT include a taxonomic info file then it is likely a current generation
-cube and should be processed using the standard process_cube function. The
-API used to generate the current generation cubes is very flexible and
-allows user-specified column names. Therefore, please check that the column
-names of your cube match the Darwin Core standard expected by the
-process_cube function. If they do not, you may need to enter them manually.
-The function will return an error if it cannot find all required columns.
+Processes a GBIF occurrence cube (a CSV file or a data frame)
+into a \code{processed_cube} object. Cubes produced by the GBIF cube API can
+have user-specified column names, so check that your column names match
+the Darwin Core names expected by this function; if not, supply them with
+the \verb{cols_*} arguments. The function stops with an error if it cannot find
+all required columns.
 }
 \examples{
 \donttest{
