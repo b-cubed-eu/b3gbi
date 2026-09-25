@@ -35,6 +35,7 @@
 **Indicator corrections. Values of the affected indicators will change.**
 
 * **Evenness (`pielou_evenness_*`, `williams_evenness_*`)**: The evenness calculations now use the number of species actually observed in each grid cell or year. Previously, species absent from a cell or year were counted towards the total number of species. This biased evenness downwards, most strongly in species-poor cells and years. Evenness is now `NA` when fewer than two species are present, since it is undefined there.
+* **Williams' evenness for perfectly even communities**: floating-point rounding could make Williams' evenness `NA` (or very slightly below 1) when all species were equally common, depending on the number of species. It is now exactly 1 in that case.
 * **Abundance-based rarity time series (`ab_rarity_ts`)**: relative abundance is now calculated separately for each year, and each species contributes once per year. Previously, proportions were pooled over all years and each species' rarity was added once for every grid cell it occupied, which inflated the values of widespread species.
 * **Area-based rarity time series (`area_rarity_ts`)**: occupancy (the proportion of occupied grid cells) is now calculated separately for each year. Previously it was pooled over all years. The yearly value is still the mean over grid cells of the summed species rarity.
 * Indicator-level confidence intervals for both rarity indicators (`calc_ci.ab_rarity`, `calc_ci.area_rarity`) use the same corrected definitions.

@@ -388,3 +388,14 @@ test_that("total_occ_map with isea3h cube works", {
   expect_s3_class(result, "indicator_map")
   expect_true("diversity_val" %in% names(result$data))
 })
+
+test_that("proj_supports_isea_roundtrip reports whether PROJ can invert a CRS", {
+  # Result depends on the PROJ version (inverse +proj=isea needs PROJ >= 9.5)
+  res <- proj_supports_isea_roundtrip()
+  expect_type(res, "logical")
+  expect_length(res, 1)
+  # A CRS that can always be inverted
+  expect_true(proj_supports_isea_roundtrip("EPSG:3035"))
+  # An invalid CRS gives FALSE instead of an error
+  expect_false(suppressWarnings(proj_supports_isea_roundtrip("+proj=notaprojection")))
+})

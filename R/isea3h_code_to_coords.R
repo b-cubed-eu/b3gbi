@@ -180,20 +180,7 @@ create_isea3h_grid <- function(df, projection) {
 
     # Identify working projection system
     isea_crs <- "+proj=isea"
-    has_isea <- tryCatch(
-      {
-        # Test that the transform works in both directions: the hexagons are
-        # built in ISEA and transformed back, and older PROJ versions (< 9.5)
-        # have no inverse for +proj=isea
-        test_pt <- sf::st_sfc(sf::st_point(c(10, 50)), crs = 4326)
-        fwd <- sf::st_transform(test_pt, crs = isea_crs)
-        back <- suppressWarnings(sf::st_transform(fwd, crs = 4326))
-        xy <- sf::st_coordinates(back)
-        all(is.finite(xy)) && abs(xy[1, 1] - 10) < 1e-6 &&
-          abs(xy[1, 2] - 50) < 1e-6
-      },
-      error = function(e) FALSE
-    )
+    has_isea <- proj_supports_isea_roundtrip(isea_crs)
 
     if (!has_isea) {
       # Fallback to LAEA centered on data if ISEA is missing (common on Windows PROJ)
@@ -319,4 +306,28 @@ create_isea3h_grid <- function(df, projection) {
     units::set_units("km^2")
 
   return(grid)
+}
+
+#' Does the system PROJ convert to and from a given CRS?
+#'
+#' The native ISEA3H fallback builds hexagons in \code{+proj=isea} and
+#' transforms them back, so it needs both directions. Older PROJ versions
+#' (< 9.5) have no inverse for \code{+proj=isea}.
+#'
+#' @param crs CRS to test (default \code{"+proj=isea"}).
+#' @return \code{TRUE} if a test point survives the round trip, otherwise
+#'   \code{FALSE}.
+#' @noRd
+proj_supports_isea_roundtrip <- function(crs = "+proj=isea") {
+  tryCatch(
+    {
+      test_pt <- sf::st_sfc(sf::st_point(c(10, 50)), crs = 4326)
+      fwd <- sf::st_transform(test_pt, crs = crs)
+      back <- suppressWarnings(sf::st_transform(fwd, crs = 4326))
+      xy <- sf::st_coordinates(back)
+      all(is.finite(xy)) && abs(xy[1, 1] - 10) < 1e-6 &&
+        abs(xy[1, 2] - 50) < 1e-6
+    },
+    error = function(e) FALSE
+  )
 }

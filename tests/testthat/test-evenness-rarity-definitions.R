@@ -127,3 +127,11 @@ test_that("drop_degenerate_bootstraps removes undefined groups", {
   res_df <- drop_degenerate_bootstraps(df, "year")
   expect_equal(unique(res_df$year), 2000)
 })
+
+test_that("Williams' evenness is exactly 1 for perfectly even communities", {
+  # Many equal abundances can give a tiny negative value from rounding
+  for (k in 2:50) {
+    expect_identical(compute_evenness_formula(rep(7, k), "williams_evenness"), 1)
+    expect_equal(compute_evenness_formula(rep(7, k), "pielou_evenness"), 1)
+  }
+})
