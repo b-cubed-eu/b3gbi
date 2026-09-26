@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,9 +40,19 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v1.1.0/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.1.1" id="b3gbi-111">b3gbi 1.1.1<a class="anchor" aria-label="anchor" href="#b3gbi-111"></a></h2>
+<div class="section level3">
+<h3 id="housekeeping-1-1-1">Housekeeping<a class="anchor" aria-label="anchor" href="#housekeeping-1-1-1"></a></h3>
+<ul><li>Removed functions that had been copied from other packages (‘boot’, ‘scales’, ‘cli’, ‘rlang’, ‘grid’, ‘patchwork’, ‘vegan’, ‘occUncertain’). Most were unused; <code><a href="../reference/plot_ts.html">plot_ts()</a></code> and the species plots now call <code><a href="https://scales.r-lib.org/reference/breaks_pretty.html" class="external-link">scales::breaks_pretty()</a></code> and <code><a href="https://patchwork.data-imaginist.com/reference/plot_annotation.html" class="external-link">patchwork::plot_annotation()</a></code> directly, and an internal helper is rewritten. ‘labeling’ and ‘permute’ are no longer imported.</li>
+<li>The taxonomic distinctness examples print a message instead of failing when GBIF cannot be reached.</li>
+<li>
+<code>check_crs_units()</code> is now fully internal (no help page).</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.1.0" id="b3gbi-110">b3gbi 1.1.0<a class="anchor" aria-label="anchor" href="#b3gbi-110"></a></h2>
 <div class="section level3">

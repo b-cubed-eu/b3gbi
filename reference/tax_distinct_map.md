@@ -224,12 +224,19 @@ levels. Marine Ecology Progress Series, 184, 21-29.
 
 ``` r
 # \donttest{
+# Requires the rgbif package and an internet connection (GBIF API)
 if (requireNamespace("rgbif", quietly = TRUE)) {
-  td_map <- tax_distinct_map(example_cube_1,
-    level = "country",
-    region = "Denmark"
+  td_map <- tryCatch(
+    tax_distinct_map(example_cube_1,
+      level = "country",
+      region = "Denmark"
+    ),
+    error = function(e) {
+      message("GBIF could not be reached: ", conditionMessage(e))
+      NULL
+    }
   )
-  plot(td_map)
+  if (!is.null(td_map)) plot(td_map)
 }
 #> Retrieving the taxonomic classification of 104 taxa from GBIF (results are cached for the rest of this session).
 #> Assuming first column is 'scientificName' column.
@@ -237,12 +244,19 @@ if (requireNamespace("rgbif", quietly = TRUE)) {
 # }
 
 # \donttest{
+# Requires the rgbif package and an internet connection (GBIF API)
 if (requireNamespace("rgbif", quietly = TRUE)) {
-  td_ts <- tax_distinct_ts(example_cube_1,
-    level = "country",
-    region = "Denmark"
+  td_ts <- tryCatch(
+    tax_distinct_ts(example_cube_1,
+      level = "country",
+      region = "Denmark"
+    ),
+    error = function(e) {
+      message("GBIF could not be reached: ", conditionMessage(e))
+      NULL
+    }
   )
-  plot(td_ts)
+  if (!is.null(td_ts)) plot(td_ts)
 }
 
 # }
