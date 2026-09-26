@@ -1490,12 +1490,19 @@ relative_occupancy_ts <- function(data, occ_type = 0, ...) {
 #'
 #' @examples
 #' \donttest{
+#' # Requires the rgbif package and an internet connection (GBIF API)
 #' if (requireNamespace("rgbif", quietly = TRUE)) {
-#'   td_map <- tax_distinct_map(example_cube_1,
-#'     level = "country",
-#'     region = "Denmark"
+#'   td_map <- tryCatch(
+#'     tax_distinct_map(example_cube_1,
+#'       level = "country",
+#'       region = "Denmark"
+#'     ),
+#'     error = function(e) {
+#'       message("GBIF could not be reached: ", conditionMessage(e))
+#'       NULL
+#'     }
 #'   )
-#'   plot(td_map)
+#'   if (!is.null(td_map)) plot(td_map)
 #' }
 #' }
 #'
@@ -1519,12 +1526,19 @@ tax_distinct_map <- function(data, rows = 1, ...) {
 #'
 #' @examples
 #' \donttest{
+#' # Requires the rgbif package and an internet connection (GBIF API)
 #' if (requireNamespace("rgbif", quietly = TRUE)) {
-#'   td_ts <- tax_distinct_ts(example_cube_1,
-#'     level = "country",
-#'     region = "Denmark"
+#'   td_ts <- tryCatch(
+#'     tax_distinct_ts(example_cube_1,
+#'       level = "country",
+#'       region = "Denmark"
+#'     ),
+#'     error = function(e) {
+#'       message("GBIF could not be reached: ", conditionMessage(e))
+#'       NULL
+#'     }
 #'   )
-#'   plot(td_ts)
+#'   if (!is.null(td_ts)) plot(td_ts)
 #' }
 #' }
 #' @export

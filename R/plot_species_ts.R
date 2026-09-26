@@ -204,7 +204,7 @@ plot_species_ts <- function(x,
   # Combine plots using wrap_plots function from patchwork
   if ((length(plot) > 0 && single_plot == TRUE) || length(plot) == 1) {
     plot <- patchwork::wrap_plots(plot) +
-      plot_annotation_int(title = wrapper(title, title_wrap_length),
+      patchwork::plot_annotation(title = wrapper(title, title_wrap_length),
                           theme = theme(plot.title = element_text(size = 20)))
     # Or create each plot separately if single_plot is FALSE
   } else if (length(plot) > 1 && single_plot == FALSE) {

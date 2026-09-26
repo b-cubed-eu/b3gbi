@@ -8,7 +8,7 @@
   "codeRepository": "https://github.com/b-cubed-eu/b3gbi",
   "issueTracker": "https://github.com/b-cubed-eu/b3gbi/issues",
   "license": "https://spdx.org/licenses/MIT",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "programmingLanguage": {
     "@type": "ComputerLanguage",
     "name": "R",
@@ -286,18 +286,6 @@
     },
     "6": {
       "@type": "SoftwareApplication",
-      "identifier": "labeling",
-      "name": "labeling",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=labeling"
-    },
-    "7": {
-      "@type": "SoftwareApplication",
       "identifier": "magrittr",
       "name": "magrittr",
       "provider": {
@@ -308,19 +296,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=magrittr"
     },
-    "8": {
-      "@type": "SoftwareApplication",
-      "identifier": "permute",
-      "name": "permute",
-      "provider": {
-        "@id": "https://cran.r-project.org",
-        "@type": "Organization",
-        "name": "Comprehensive R Archive Network (CRAN)",
-        "url": "https://cran.r-project.org"
-      },
-      "sameAs": "https://CRAN.R-project.org/package=permute"
-    },
-    "9": {
+    "7": {
       "@type": "SoftwareApplication",
       "identifier": "purrr",
       "name": "purrr",
@@ -332,7 +308,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=purrr"
     },
-    "10": {
+    "8": {
       "@type": "SoftwareApplication",
       "identifier": "readr",
       "name": "readr",
@@ -344,7 +320,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=readr"
     },
-    "11": {
+    "9": {
       "@type": "SoftwareApplication",
       "identifier": "rlang",
       "name": "rlang",
@@ -356,7 +332,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=rlang"
     },
-    "12": {
+    "10": {
       "@type": "SoftwareApplication",
       "identifier": "rnaturalearth",
       "name": "rnaturalearth",
@@ -368,7 +344,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=rnaturalearth"
     },
-    "13": {
+    "11": {
       "@type": "SoftwareApplication",
       "identifier": "scales",
       "name": "scales",
@@ -380,7 +356,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=scales"
     },
-    "14": {
+    "12": {
       "@type": "SoftwareApplication",
       "identifier": "sf",
       "name": "sf",
@@ -392,7 +368,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=sf"
     },
-    "15": {
+    "13": {
       "@type": "SoftwareApplication",
       "identifier": "stringr",
       "name": "stringr",
@@ -404,7 +380,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=stringr"
     },
-    "16": {
+    "14": {
       "@type": "SoftwareApplication",
       "identifier": "tibble",
       "name": "tibble",
@@ -416,7 +392,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=tibble"
     },
-    "17": {
+    "15": {
       "@type": "SoftwareApplication",
       "identifier": "tidyr",
       "name": "tidyr",
@@ -428,7 +404,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=tidyr"
     },
-    "18": {
+    "16": {
       "@type": "SoftwareApplication",
       "identifier": "tidyselect",
       "name": "tidyselect",
@@ -440,7 +416,7 @@
       },
       "sameAs": "https://CRAN.R-project.org/package=tidyselect"
     },
-    "19": {
+    "17": {
       "@type": "SoftwareApplication",
       "identifier": "units",
       "name": "units",
@@ -454,7 +430,7 @@
     },
     "SystemRequirements": null
   },
-  "fileSize": "1951.059KB",
+  "fileSize": "1967.142KB",
   "citation": [
     {
       "@type": "ScholarlyArticle",

@@ -252,7 +252,7 @@ plot_species_map <- function(x,
   # Combine plots using wrap_plots function from patchwork
   if ((length(plot) > 0 && single_plot == TRUE) || length(plot) == 0) {
     plot <- patchwork::wrap_plots(plot) +
-      plot_annotation_int(
+      patchwork::plot_annotation(
         title = wrapper(title, title_wrap_length),
         theme = theme(plot.title = element_text(size = 20))
       )

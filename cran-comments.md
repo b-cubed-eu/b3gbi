@@ -26,15 +26,18 @@ the Journal of Open Source Software (JOSS).
   maps give an informative error. Tests, examples and vignettes run without
   them.
 
-* **Examples in `\dontrun{}`.** Only the two taxonomic distinctness examples
-  (`tax_distinct_map()`, `tax_distinct_ts()`) use `\dontrun{}`, because they
-  query the GBIF web API. All other examples run; examples that take more than
-  a few seconds (map calculations that clip to country borders) are in
-  `\donttest{}`.
+* **Examples.** No examples use `\dontrun{}`. Examples that take more than a
+  few seconds (map calculations that clip to country borders) are in
+  `\donttest{}`. The two taxonomic distinctness examples
+  (`tax_distinct_map()`, `tax_distinct_ts()`) query the GBIF web API; they are
+  in `\donttest{}`, run only if `rgbif` is installed, and print a message
+  instead of failing if GBIF cannot be reached.
 
 * **Internet access.** Only taxonomic distinctness (via the Suggested package
   `rgbif`) and optional Natural Earth downloads use the internet. Tests that
-  need the internet are skipped on CRAN and when offline.
+  need the internet are skipped on CRAN and when offline. Functions that use
+  internet resources stop with an informative message if the resource is
+  unavailable.
 
 ## Test environments
 

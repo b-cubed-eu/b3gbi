@@ -1,3 +1,11 @@
+# b3gbi 1.1.1
+
+## Housekeeping
+
+* Removed functions that had been copied from other packages ('boot', 'scales', 'cli', 'rlang', 'grid', 'patchwork', 'vegan', 'occUncertain'). Most were unused; `plot_ts()` and the species plots now call `scales::breaks_pretty()` and `patchwork::plot_annotation()` directly, and an internal helper is rewritten. 'labeling' and 'permute' are no longer imported.
+* The taxonomic distinctness examples print a message instead of failing when GBIF cannot be reached.
+* `check_crs_units()` is now fully internal (no help page).
+
 # b3gbi 1.1.0
 
 ## Housekeeping and bug fixes
