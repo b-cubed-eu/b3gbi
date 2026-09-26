@@ -19,7 +19,7 @@
 ## Citation
 
 Source:
-[`inst/CITATION`](https://github.com/b-cubed-eu/b3gbi/blob/main/inst/CITATION)
+[`inst/CITATION`](https://github.com/b-cubed-eu/b3gbi/blob/v1.1.1/inst/CITATION)
 
 Dove, S. (2026). b3gbi: Standardized Biodiversity Indicators from
 Spatiotemporal Occurrence Cubes. Journal of Open Source Software,
