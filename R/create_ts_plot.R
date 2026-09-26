@@ -120,9 +120,9 @@ create_ts_plot <- function(data,
 
 
   plot <- plot +
-    scale_x_continuous(breaks = breaks_pretty_int(n = x_breaks),
+    scale_x_continuous(breaks = scales::breaks_pretty(n = x_breaks),
                        expand = expansion(mult = x_expand)) +
-    scale_y_continuous(breaks = breaks_pretty_int(n = y_breaks),
+    scale_y_continuous(breaks = scales::breaks_pretty(n = y_breaks),
                        expand = expansion(mult = y_expand)) +
     labs(x = x_label, y = y_label) +
     theme_minimal() +

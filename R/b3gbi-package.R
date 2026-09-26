@@ -23,6 +23,5 @@
 #' @importFrom stats approx cor loess median predict quantile sd
 #' @importFrom utils data find modifyList
 #' @importFrom rlang := %||% caller_env
-#' @importFrom labeling extended
 ## usethis namespace: end
 NULL
