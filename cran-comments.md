@@ -1,3 +1,15 @@
+## Resubmission
+
+This is a resubmission. In this version I have:
+
+* Removed the internal (unexported, unused) functions that wrote to the
+  installed package directory to edit the indicator registry. They are now
+  developer scripts in `data-raw/`, which is excluded from the package build.
+  No function, example, vignette or test writes to the user's home filespace,
+  the package directory or the working directory; tests write only to
+  `tempfile()`/`tempdir()`, and Natural Earth downloads use
+  `rnaturalearth`'s default `destdir = tempdir()`.
+
 ## Submission
 
 This is the first CRAN submission of b3gbi. The package has been published in

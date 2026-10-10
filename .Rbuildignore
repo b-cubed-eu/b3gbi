@@ -48,3 +48,4 @@
 ^inst/doc/(?!(b3gbi|uncertainty)\.(html|Rmd|R)$)
 ^\.zenodo\.json$
 ^Claude outputs$
+^data-raw$
