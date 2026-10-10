@@ -13,7 +13,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">b3gbi</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,9 +40,16 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/v1.1.1/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/b-cubed-eu/b3gbi/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.1.2" id="b3gbi-112">b3gbi 1.1.2<a class="anchor" aria-label="anchor" href="#b3gbi-112"></a></h2>
+<div class="section level3">
+<h3 id="housekeeping-1-1-2">Housekeeping<a class="anchor" aria-label="anchor" href="#housekeeping-1-1-2"></a></h3>
+<ul><li>The developer-only functions that edited the indicator registry inside the installed package directory were removed from the package (they are kept in <code>data-raw/</code> for maintainers). The package no longer contains any code that writes to the package directory, the working directory or the user’s home filespace (CRAN policy).</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.1.1" id="b3gbi-111">b3gbi 1.1.1<a class="anchor" aria-label="anchor" href="#b3gbi-111"></a></h2>
 <div class="section level3">
@@ -90,7 +97,7 @@
 <div class="section level3">
 <h3 id="mgrs-conversion-without-the-mgrs-package-1-1-0">MGRS conversion without the mgrs package<a class="anchor" aria-label="anchor" href="#mgrs-conversion-without-the-mgrs-package-1-1-0"></a></h3>
 <ul><li>
-<strong>Removed the dependency on the non-CRAN package <code>mgrs</code>.</strong> MGRS grid codes are now converted to UTM coordinates by an internal pure-R function (<code>mgrs_to_utm()</code>), written from the MGRS specification. It gives identical results to <code><a href="https://rdrr.io/pkg/mgrs/man/mgrs_to_utm.html" class="external-link">mgrs::mgrs_to_utm()</a></code> for over 100,000 test codes worldwide at all precisions (100 km to 1 m), including the Norway and Svalbard special zones. Invalid codes and polar (UPS) codes return <code>NA</code> with a single summary warning.</li>
+<strong>Removed the dependency on the non-CRAN package <code>mgrs</code>.</strong> MGRS grid codes are now converted to UTM coordinates by an internal pure-R function (<code>mgrs_to_utm()</code>), written from the MGRS specification. It gives identical results to <code>mgrs::mgrs_to_utm()</code> for over 100,000 test codes worldwide at all precisions (100 km to 1 m), including the Norway and Svalbard special zones. Invalid codes and polar (UPS) codes return <code>NA</code> with a single summary warning.</li>
 <li>The resolution of MGRS cubes is now worked out from the number of digits in the codes, so it is also correct for single-digit UTM zones.</li>
 </ul></div>
 <div class="section level3">

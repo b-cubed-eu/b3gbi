@@ -1,5 +1,15 @@
 # Changelog
 
+## b3gbi 1.1.2
+
+### Housekeeping
+
+- The developer-only functions that edited the indicator registry inside
+  the installed package directory were removed from the package (they
+  are kept in `data-raw/` for maintainers). The package no longer
+  contains any code that writes to the package directory, the working
+  directory or the user’s home filespace (CRAN policy).
+
 ## b3gbi 1.1.1
 
 ### Housekeeping
@@ -101,11 +111,10 @@
 - **Removed the dependency on the non-CRAN package `mgrs`.** MGRS grid
   codes are now converted to UTM coordinates by an internal pure-R
   function (`mgrs_to_utm()`), written from the MGRS specification. It
-  gives identical results to
-  [`mgrs::mgrs_to_utm()`](https://rdrr.io/pkg/mgrs/man/mgrs_to_utm.html)
-  for over 100,000 test codes worldwide at all precisions (100 km to 1
-  m), including the Norway and Svalbard special zones. Invalid codes and
-  polar (UPS) codes return `NA` with a single summary warning.
+  gives identical results to `mgrs::mgrs_to_utm()` for over 100,000 test
+  codes worldwide at all precisions (100 km to 1 m), including the
+  Norway and Svalbard special zones. Invalid codes and polar (UPS) codes
+  return `NA` with a single summary warning.
 - The resolution of MGRS cubes is now worked out from the number of
   digits in the codes, so it is also correct for single-digit UTM zones.
 
