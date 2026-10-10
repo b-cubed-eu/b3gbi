@@ -1,3 +1,9 @@
+# b3gbi 1.1.2
+
+## Housekeeping
+
+* The developer-only functions that edited the indicator registry inside the installed package directory were removed from the package (they are kept in `data-raw/` for maintainers). The package no longer contains any code that writes to the package directory, the working directory or the user's home filespace (CRAN policy).
+
 # b3gbi 1.1.1
 
 ## Housekeeping

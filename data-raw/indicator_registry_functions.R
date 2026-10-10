@@ -1,3 +1,11 @@
+# Developer tools for maintaining the indicator registry
+# (data/available_indicators.rda).
+#
+# These functions are NOT part of the b3gbi package (this folder is excluded
+# from the package build). They modify the registry .rda file, so they must
+# only be run by package developers from a source checkout of the package,
+# never on an installed package. After running them, rebuild the package.
+
 # Function to load the .rda file into R
 #' @noRd
 load_registered_indicators <- function() {
