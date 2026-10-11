@@ -1,3 +1,7 @@
+# b3gbi 1.1.3
+
+* Tests: a platform-dependent ISEA3H (hexagonal grid) integration test is no longer run on CRAN.
+
 # b3gbi 1.1.2
 
 ## Housekeeping
