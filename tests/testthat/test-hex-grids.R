@@ -262,6 +262,9 @@ test_that("create_isea3h_grid native fallback handles projection transform", {
 })
 
 test_that("obs_richness_map with isea3h uses native R fallback correctly", {
+  # Depends on how the system PROJ/GEOS handle cells on different icosahedron
+  # faces; the result differs between platforms, so it is not run on CRAN.
+  skip_on_cran()
   skip_on_ci()
   withr::local_options(b3gbi.use_dggridR = FALSE)
 

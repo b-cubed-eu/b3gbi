@@ -1,13 +1,18 @@
 ## Resubmission
 
-This is a resubmission. In this version I have:
+This is a resubmission (1.1.3). Changes since the previous submission:
 
-* Removed the internal (unexported, unused) functions that wrote to the
-  installed package directory to edit the indicator registry. They are now
-  developer scripts in `data-raw/`, which is excluded from the package build.
-  No function, example, vignette or test writes to the user's home filespace,
-  the package directory or the working directory; tests write only to
-  `tempfile()`/`tempdir()`, and Natural Earth downloads use
+* 1.1.3: The 1.1.2 upload failed the incoming check on Debian in one test
+  (`test-hex-grids.R`, an ISEA3H hexagonal-grid integration test whose result
+  depends on the system PROJ/GEOS). It passed on Windows and on the first
+  submission, and the code it tests was unchanged. The test is now skipped on
+  CRAN.
+* 1.1.2: Removed the internal (unexported, unused) functions that wrote to the
+  installed package directory to edit the indicator registry, as requested.
+  They are now developer scripts in `data-raw/`, which is excluded from the
+  package build. No function, example, vignette or test writes to the user's
+  home filespace, the package directory or the working directory; tests write
+  only to `tempfile()`/`tempdir()`, and Natural Earth downloads use
   `rnaturalearth`'s default `destdir = tempdir()`.
 
 ## Submission
