@@ -1052,6 +1052,11 @@ newness_ts <- function(data, ...) {
 #' @details
 #' Density is the number of occurrences divided by area (km^2): the area of
 #' each grid cell for maps, and the total study-region area for time series.
+#' For time series, the study region is the region given by `level` and
+#' `region`, or the shapefile given by `shapefile_path`. If neither is given
+#' (`level = "cube"`), the area of the cube's rectangular extent (bounding
+#' box) is used, which can be much larger than the area actually covered by
+#' the cube; supply a region or shapefile for meaningful densities.
 #' This provides similar information to total occurrences, but is adjusted for
 #' area.
 #'
@@ -1109,6 +1114,11 @@ occ_density_ts <- function(data, ...) {
 #' @details
 #' Density is the number of unique species divided by area (km^2): the area of
 #' each grid cell for maps, and the total study-region area for time series.
+#' For time series, the study region is the region given by `level` and
+#' `region`, or the shapefile given by `shapefile_path`. If neither is given
+#' (`level = "cube"`), the area of the cube's rectangular extent (bounding
+#' box) is used, which can be much larger than the area actually covered by
+#' the cube; supply a region or shapefile for meaningful densities.
 #' This provides similar information to observed species richness, but is
 #' adjusted for area. Like observed
 #' richness, bootstrapped confidence intervals are not calculated for this
