@@ -1053,10 +1053,12 @@ newness_ts <- function(data, ...) {
 #' Density is the number of occurrences divided by area (km^2): the area of
 #' each grid cell for maps, and the total study-region area for time series.
 #' For time series, the study region is the region given by `level` and
-#' `region`, or the shapefile given by `shapefile_path`. If neither is given
+#' `region` (including sea within the region's extent unless
+#' `include_ocean = FALSE`), or the shapefile given by `shapefile_path`. If neither is given
 #' (`level = "cube"`), the area of the cube's rectangular extent (bounding
 #' box) is used, which can be much larger than the area actually covered by
-#' the cube; supply a region or shapefile for meaningful densities.
+#' the cube, and a warning is given; supply a region or shapefile for
+#' meaningful densities.
 #' This provides similar information to total occurrences, but is adjusted for
 #' area.
 #'
@@ -1093,7 +1095,10 @@ occ_density_map <- function(data, ...) {
 #'
 #' @examples
 #' \donttest{
-#' od_ts <- occ_density_ts(example_cube_1, first_year = 1985)
+#' # Give the study area (here: the land area of Denmark) so that density is
+#' # per km^2 of it
+#' od_ts <- occ_density_ts(example_cube_1, first_year = 1985,
+#'   level = "country", region = "Denmark", include_ocean = FALSE)
 #' plot(od_ts)
 #' }
 #' @export
@@ -1115,10 +1120,12 @@ occ_density_ts <- function(data, ...) {
 #' Density is the number of unique species divided by area (km^2): the area of
 #' each grid cell for maps, and the total study-region area for time series.
 #' For time series, the study region is the region given by `level` and
-#' `region`, or the shapefile given by `shapefile_path`. If neither is given
+#' `region` (including sea within the region's extent unless
+#' `include_ocean = FALSE`), or the shapefile given by `shapefile_path`. If neither is given
 #' (`level = "cube"`), the area of the cube's rectangular extent (bounding
 #' box) is used, which can be much larger than the area actually covered by
-#' the cube; supply a region or shapefile for meaningful densities.
+#' the cube, and a warning is given; supply a region or shapefile for
+#' meaningful densities.
 #' This provides similar information to observed species richness, but is
 #' adjusted for area. Like observed
 #' richness, bootstrapped confidence intervals are not calculated for this
@@ -1159,7 +1166,10 @@ spec_richness_density_map <- function(data, ...) {
 #'
 #' @examples
 #' \donttest{
-#' srd_ts <- spec_richness_density_ts(example_cube_1, first_year = 1985)
+#' # Give the study area (here: the land area of Denmark) so that density is
+#' # per km^2 of it
+#' srd_ts <- spec_richness_density_ts(example_cube_1, first_year = 1985,
+#'   level = "country", region = "Denmark", include_ocean = FALSE)
 #' plot(srd_ts)
 #' }
 #' @export

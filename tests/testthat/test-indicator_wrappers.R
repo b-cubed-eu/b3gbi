@@ -1110,7 +1110,10 @@ test_that("spec_richness_density_ts cube", {
   skip_on_cran()
   data(example_cube_1, package = "b3gbi")
   # Use ci_type = "none" to avoid warning
-  res <- spec_richness_density_ts(example_cube_1, ci_type = "none")
+  expect_warning(
+    res <- spec_richness_density_ts(example_cube_1, ci_type = "none"),
+    "No study area was given"
+  )
   expect_s3_class(res, "indicator_ts")
   expect_false("ll" %in% names(res$data))
 })

@@ -53,3 +53,24 @@ test_that("shapefile already in the working projection is accepted", {
   expect_equal(attr(res$raw_data, "total_area_sqkm"), poly_area_km2(poly),
                tolerance = 0.01)
 })
+
+test_that("density time series warn when no study area is given", {
+  skip_on_cran()
+  expect_warning(
+    suppressMessages(spec_richness_density_ts(example_cube_1, first_year = 2015)),
+    "No study area was given"
+  )
+  expect_warning(
+    suppressMessages(occ_density_ts(example_cube_1, first_year = 2015)),
+    "No study area was given"
+  )
+
+  poly <- make_test_polygon()
+  f <- tempfile(fileext = ".gpkg")
+  sf::st_write(poly, f, quiet = TRUE)
+  expect_no_warning(
+    suppressMessages(spec_richness_density_ts(example_cube_1, first_year = 2015,
+                                              shapefile_path = f)),
+    message = "No study area was given"
+  )
+})

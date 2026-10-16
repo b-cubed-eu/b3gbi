@@ -783,6 +783,20 @@ compute_indicator_workflow <- function(data,
         sf::st_transform(crs = "ESRI:54012") %>% # Mollweide equal-area projection
         sf::st_area() %>%
         units::set_units("km^2")
+
+      # Density time series divide by this area, which is only a rough proxy
+      # for the study area
+      if (type %in% c("occ_density", "spec_richness_density")) {
+        warning(
+          "No study area was given (level = 'cube' and no shapefile), so ",
+          "density is calculated over the area of the cube's rectangular ",
+          "extent (bounding box, ", round(as.numeric(final_area_sqkm)),
+          " km^2). This can be much larger than the area the cube covers. ",
+          "For meaningful densities, provide the study area with ",
+          "'shapefile_path', or with 'level' and 'region'.",
+          call. = FALSE
+        )
+      }
     } else {
       final_area_sqkm <- NA
     }
