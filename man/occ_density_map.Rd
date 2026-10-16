@@ -116,10 +116,12 @@ map or as a time series (see 'Details' for more information).
 Density is the number of occurrences divided by area (km^2): the area of
 each grid cell for maps, and the total study-region area for time series.
 For time series, the study region is the region given by \code{level} and
-\code{region}, or the shapefile given by \code{shapefile_path}. If neither is given
+\code{region} (including sea within the region's extent unless
+\code{include_ocean = FALSE}), or the shapefile given by \code{shapefile_path}. If neither is given
 (\code{level = "cube"}), the area of the cube's rectangular extent (bounding
 box) is used, which can be much larger than the area actually covered by
-the cube; supply a region or shapefile for meaningful densities.
+the cube, and a warning is given; supply a region or shapefile for
+meaningful densities.
 This provides similar information to total occurrences, but is adjusted for
 area.
 }
@@ -139,7 +141,10 @@ od_map <- occ_density_map(example_cube_1,
 plot(od_map)
 }
 \donttest{
-od_ts <- occ_density_ts(example_cube_1, first_year = 1985)
+# Give the study area (here: the land area of Denmark) so that density is
+# per km^2 of it
+od_ts <- occ_density_ts(example_cube_1, first_year = 1985,
+  level = "country", region = "Denmark", include_ocean = FALSE)
 plot(od_ts)
 }
 }
