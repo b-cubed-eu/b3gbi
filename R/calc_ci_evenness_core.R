@@ -28,7 +28,7 @@ calc_ci_evenness_core <- function(x,
   )
 
   type <- match.arg(type,
-                    names(available_indicators))
+                    names(b3gbi::available_indicators))
 
   # Calculate number of records for each species by grid cell
   x <- x %>%

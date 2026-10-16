@@ -10,7 +10,7 @@ calc_map_evenness_core <- function(x,
 
   num_occ <- obs <- cellid <- taxonKey <- cellCode <- diversity_val <- . <- NULL
 
-  type <- match.arg(type, names(available_indicators))
+  type <- match.arg(type, names(b3gbi::available_indicators))
 
   if (nrow(x) == 0) {
     return(tibble::tibble(

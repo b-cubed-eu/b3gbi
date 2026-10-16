@@ -4,6 +4,7 @@
 
 * **`shapefile_path` did not restrict time series to the shapefile.** The shapefile was combined with the cube's extent by union instead of intersection, so time series used all occurrences in the cube and, for the density indicators (`occ_density_ts()`, `spec_richness_density_ts()`), divided by the area of the cube's bounding box instead of the shapefile's area. Data are now filtered to the shapefile and its area (within the cube's extent) is used (reported in #99). Maps were largely unaffected, as their grid was already clipped to the shapefile.
 * A shapefile already in the working projection no longer causes an error.
+* Functions called with `b3gbi::` without attaching the package (no `library(b3gbi)`) failed with "object 'available_indicators' not found". The package now refers to its indicator registry as `b3gbi::available_indicators` internally.
 * Documentation: explains which area density time series use (region, shapefile, or the cube's bounding box at `level = "cube"`), and that `invert = TRUE` is relative to the cube's bounding box.
 
 # b3gbi 1.1.3

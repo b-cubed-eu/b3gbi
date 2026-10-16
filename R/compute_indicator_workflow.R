@@ -269,7 +269,7 @@ compute_indicator_workflow <- function(data,
     "relative_occupancy"
   )
 
-  type <- match.arg(type, names(available_indicators))
+  type <- match.arg(type, names(b3gbi::available_indicators))
   dim_type <- match.arg(dim_type)
   ne_type <- match.arg(ne_type)
   ne_scale <- match.arg(ne_scale)
