@@ -1,7 +1,7 @@
 #' @noRd
 compute_evenness_formula <- function(x, type) {
 
-  type <- match.arg(type, names(available_indicators))
+  type <- match.arg(type, names(b3gbi::available_indicators))
 
   # Only species actually observed in this cell/year count towards S.
   # (Absent species are passed in as zeros and must not inflate S.)
