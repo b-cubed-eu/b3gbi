@@ -1,8 +1,13 @@
 # b3gbi (development version)
 
+Changes since the CRAN release; install with
+`pak::pak("b-cubed-eu/b3gbi")`. The latest stable release is on CRAN.
+
 # b3gbi 1.1.3
 
-* Tests: a platform-dependent ISEA3H (hexagonal grid) integration test is no longer run on CRAN.
+* First release on CRAN.
+
+* Tests: a platform-dependent ISEA3H (hexagonal grid) integration test is not run on CRAN.
 
 # b3gbi 1.1.2
 
