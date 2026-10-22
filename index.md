@@ -32,11 +32,21 @@ b3gbi empowers biodiversity analysis with:
 
 ## Installation
 
-Install **b3gbi** in R:
+Install the stable release from CRAN:
+
+``` r
+
+install.packages("b3gbi")
+```
+
+Or the development version, with the latest fixes and features, from
+r-universe or GitHub:
 
 ``` r
 
 install.packages("b3gbi", repos = c("https://b-cubed-eu.r-universe.dev", "https://cloud.r-project.org"))
+# or
+pak::pak("b-cubed-eu/b3gbi")
 ```
 
 ## Example: Three-Step Workflow
