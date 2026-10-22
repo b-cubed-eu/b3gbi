@@ -16,7 +16,8 @@ badge](https://b-cubed-eu.r-universe.dev/b3gbi/badges/version)](https://b-cubed-
 badge](https://b-cubed-eu.r-universe.dev/badges/:name?color=6CDDB4)](https://b-cubed-eu.r-universe.dev/)
 [![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.20763709-blue.svg)](https://doi.org/10.5281/zenodo.20763709)
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.10963/status.svg)](https://doi.org/10.21105/joss.10963)
-
+[![CRAN
+status](https://www.r-pkg.org/badges/version/b3gbi)](https://CRAN.R-project.org/package=b3gbi)
 <!-- badges: end -->
 
 Analyze biodiversity trends and spatial patterns from GBIF data cubes,
@@ -51,10 +52,19 @@ b3gbi empowers biodiversity analysis with:
 
 ## Installation
 
-Install **b3gbi** in R:
+Install the stable release from CRAN:
+
+``` r
+install.packages("b3gbi")
+```
+
+Or the development version, with the latest fixes and features, from
+r-universe or GitHub:
 
 ``` r
 install.packages("b3gbi", repos = c("https://b-cubed-eu.r-universe.dev", "https://cloud.r-project.org"))
+# or
+pak::pak("b-cubed-eu/b3gbi")
 ```
 
 ## Example: Three-Step Workflow
