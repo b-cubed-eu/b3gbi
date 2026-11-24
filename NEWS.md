@@ -3,6 +3,12 @@
 Changes since the CRAN release; install with
 `pak::pak("b-cubed-eu/b3gbi")`. The latest stable release is on CRAN.
 
+## New features
+
+* **Cubes with their own grid geometries.** `process_cube()` gains `grid`, `grid_id` and `grid_crs` arguments for cubes whose grid cells are identified by an arbitrary ID and whose cell polygons come in a separate file (such as the "dimension table" produced by the B-Cubed BMD cubing engine). `grid` can be an sf object, a data frame or CSV file with WKT geometries, or a GeoParquet, GeoPackage, GeoJSON or shapefile. The cube is processed with `grid_type = "custom"` and all indicators (maps and time series, `cell_size` aggregation, regions, shapefiles, confidence intervals) work as for the built-in grids. Projected grids are used in their own CRS; longitude/latitude grids are projected to Mollweide.
+* `process_cube()` can read cubes stored as Parquet files directly (requires the arrow package, now in Suggests; jsonlite is also needed for GeoParquet grids).
+* `process_cube()` takes the year from a `datetime`, `date` or `eventDate` column when the cube has no `year`, `yearMonth` or `yearMonthDay` column.
+
 ## Bug fixes
 
 * **`shapefile_path` did not restrict time series to the shapefile.** The shapefile was combined with the cube's extent by union instead of intersection, so time series used all occurrences in the cube and, for the density indicators (`occ_density_ts()`, `spec_richness_density_ts()`), divided by the area of the cube's bounding box instead of the shapefile's area. Data are now filtered to the shapefile and its area (within the cube's extent) is used (reported in #99). Maps were largely unaffected, as their grid was already clipped to the shapefile.

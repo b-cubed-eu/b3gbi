@@ -1,22 +1,25 @@
 #' @title Process GBIF Data Cubes
 #'
-#' @description Processes a GBIF occurrence cube (a CSV file or a data frame)
-#'  into a `processed_cube` object. Cubes produced by the GBIF cube API can
+#' @description Processes a GBIF occurrence cube (a CSV or parquet file, or a
+#'  data frame) into a `processed_cube` object. Cubes produced by the GBIF cube API can
 #'  have user-specified column names, so check that your column names match
 #'  the Darwin Core names expected by this function; if not, supply them with
 #'  the `cols_*` arguments. The function stops with an error if it cannot find
 #'  all required columns.
 #'
-#' @param cube_name Either the path to a data cube CSV file (e.g.
+#' @param cube_name Either the path to a data cube CSV or parquet file (e.g.
 #'   `system.file("extdata", "denmark_mammals_cube_eqdgc.csv", package =
-#'   "b3gbi")`) or a data frame containing the cube.
+#'   "b3gbi")`) or a data frame containing the cube. Reading parquet files
+#'   requires the \pkg{arrow} package.
 #' @param grid_type (Optional) The grid reference system your cube uses. One of
 #'  `"automatic"` (default), `"eea"`, `"mgrs"`, `"eqdgc"`, `"isea3h"`,
 #'  `"custom"` or `"none"`. With `"automatic"` the function attempts to detect
 #'  the grid from the cell codes and returns an error if it fails. If you want
 #'  to perform analysis on a cube with custom grid codes (e.g. output from the
 #'  gcube package) or a cube without grid codes, select `"custom"` or `"none"`,
-#'  respectively.
+#'  respectively. Cubes with custom grid codes can only be used for time
+#'  series, unless the cell geometries are given with `grid`; supplying `grid`
+#'  sets the grid type to `"custom"`.
 #' @param first_year (Optional) The first year of occurrences to include. If not
 #'   specified, uses the earliest year present in the cube.
 #' @param last_year (Optional) The final year of occurrences to include. If not
@@ -75,11 +78,27 @@
 #' @param separator (Optional) The column-separating character in your csv file.
 #'  This should be automatically recognized, so only specify this if you are
 #'  having trouble.
+#' @param grid (Optional) The geometries of the grid cells, for cubes that use
+#'  a grid other than the supported ones (e.g. cubes from the BMD cubing
+#'  engine, whose cells are identified by an ID and described in a separate
+#'  dimension table). Either the path to a file (GeoParquet, GeoPackage,
+#'  shapefile, GeoJSON, or a CSV with a WKT geometry column), an sf object, or
+#'  a data frame with a WKT geometry column. Each grid cell must be a polygon
+#'  with a unique ID, which is matched to the cube's grid cell column. With a
+#'  grid, all indicators (maps and time series) can be calculated. Reading
+#'  parquet files requires the \pkg{arrow} and \pkg{jsonlite} packages.
+#' @param grid_id (Optional) The name of the ID column in `grid`. If not given,
+#'  the column with the same name as `cols_cellCode` is used, or else the one
+#'  column name shared by the cube and the grid (e.g. `grid_idx`).
+#' @param grid_crs (Optional) The coordinate reference system of `grid` (e.g.
+#'  `"EPSG:3035"`), needed only if the grid file does not contain one (e.g. a
+#'  CSV with WKT geometries).
 #'
 #' @return An object of class `processed_cube` (or `sim_cube` when
-#'  `grid_type` is `"custom"` or `"none"`): a list of metadata (years, number
-#'  of species, grid type, resolution, ...) plus the processed occurrences in
-#'  the `data` element.
+#'  `grid_type` is `"none"`, or `"custom"` without `grid`): a list of metadata
+#'  (years, number of species, grid type, resolution, ...) plus the processed
+#'  occurrences in the `data` element. With a custom `grid`, the grid cells are
+#'  stored in the `grid` element.
 #'
 #' @examples
 #' \donttest{
@@ -88,6 +107,10 @@
 #' denmark_example_cube <- process_cube(cube_name)
 #' denmark_example_cube
 #' }
+#'
+#' # A cube whose grid cells are defined in a separate file (e.g. a cube and
+#' # dimension table from the BMD cubing engine):
+#' # cube <- process_cube("cube.parquet", grid = "grid_cells.parquet")
 #' @export
 process_cube <- function(cube_name,
                          grid_type = c("automatic",
@@ -117,12 +140,19 @@ process_cube <- function(cube_name,
                          cols_familyCount = NULL,
                          cols_sex = NULL,
                          cols_lifeStage = NULL,
-                         separator = NULL) {
+                         separator = NULL,
+                         grid = NULL,
+                         grid_id = NULL,
+                         grid_crs = NULL) {
 
   yearMonth <- species <- occurrences <- speciesKey <- cellCode <- NULL
   year <- yearMonthDay <- . <- max_year <- NULL
 
-  if (is.character(cube_name) && length(cube_name) == 1) {
+  if (is_parquet_path(cube_name)) {
+
+    occurrence_data <- read_parquet_cube(cube_name)
+
+  } else if (is.character(cube_name) && length(cube_name) == 1) {
     if (is.null(separator)) {
       # Read in data cube
       # We first read a sample to detect the column name, or just read all as character
@@ -162,6 +192,21 @@ process_cube <- function(cube_name,
 
     stop("The data cube is empty. Please check the file.")
 
+  }
+
+  # A user-supplied grid (cell geometries) makes this a custom-grid cube
+  custom_grid <- NULL
+  if (!is.null(grid)) {
+    if (!grid_type %in% c("automatic", "custom")) {
+      stop("`grid` can only be used with grid_type = 'custom' (or ",
+           "'automatic').", call. = FALSE)
+    }
+    grid_type <- "custom"
+    grid_sf <- read_custom_grid(grid, grid_crs)
+    id_cols <- find_grid_id_columns(occurrence_data, grid_sf, cols_cellCode,
+                                    grid_id)
+    cols_cellCode <- id_cols$cube
+    custom_grid <- prepare_custom_grid(grid_sf, id_cols$grid)
   }
 
   # check that user-provided column names are valid
@@ -464,8 +509,17 @@ process_cube <- function(cube_name,
           yearMonthDay, "(\\d{4})"))
         )
     } else {
-      stop("No year, yearMonth, or yearMonthDay column found in cube. Please ",
-           "specify column name manually.")
+      # Otherwise look for a date column (e.g. 'datetime', 'date', 'eventDate')
+      date_col <- names(occurrence_data)[
+        tolower(names(occurrence_data)) %in% c("datetime", "date", "eventdate")
+      ]
+      if (length(date_col) >= 1) {
+        occurrence_data$year <- as.numeric(stringr::str_extract(
+          as.character(occurrence_data[[date_col[1]]]), "(\\d{4})"))
+      } else {
+        stop("No year, yearMonth, yearMonthDay or date column found in cube. ",
+             "Please specify column name manually.")
+      }
     }
   }
 
@@ -548,6 +602,34 @@ process_cube <- function(cube_name,
       message("Removed ", n_filtered_rows, " rows with missing cell codes")
     }
     occurrence_data <- occurrence_data_filtered
+  }
+
+  if (!is.null(custom_grid)) {
+    # Attach cell centroids and the typical cell size from the custom grid
+    occurrence_data$cellCode <- as.character(occurrence_data$cellCode)
+    matched <- occurrence_data$cellCode %in% custom_grid$cellCode
+    if (!all(matched)) {
+      unmatched <- unique(occurrence_data$cellCode[!matched])
+      warning(sprintf(
+        paste0("%d rows (%d grid cells, e.g. '%s') have no matching cell in ",
+               "`grid` and were removed."),
+        sum(!matched), length(unmatched), unmatched[1]
+      ), call. = FALSE)
+      occurrence_data <- occurrence_data[matched, ]
+      if (nrow(occurrence_data) == 0) {
+        stop("None of the cube's grid cells were found in `grid`. Please ",
+             "check `grid_id` and `cols_cellCode`.", call. = FALSE)
+      }
+    }
+    centroids <- sf::st_drop_geometry(custom_grid)[, c("cellCode", "xcoord",
+                                                       "ycoord")]
+    occurrence_data <- occurrence_data[, setdiff(names(occurrence_data),
+                                                 c("xcoord", "ycoord"))]
+    occurrence_data <- dplyr::left_join(occurrence_data, centroids,
+                                        by = "cellCode")
+    custom_grid <- custom_grid[custom_grid$cellCode %in%
+                                 unique(occurrence_data$cellCode), ]
+    occurrence_data$resolution <- custom_grid_resolution(custom_grid)
   }
 
   if (grid_type == "eea") {
@@ -710,7 +792,17 @@ process_cube <- function(cube_name,
     dplyr::distinct() %>%
     dplyr::arrange(year)
 
-  if (grid_type == "none" || grid_type == "custom") {
+  if (!is.null(custom_grid)) {
+    cube <- new_processed_cube(occurrence_data, grid_type)
+    custom_grid <- custom_grid[custom_grid$cellCode %in%
+                                 unique(occurrence_data$cellCode), ]
+    bb <- sf::st_bbox(custom_grid)
+    cube$coord_range <- list(xmin = unname(bb["xmin"]),
+                             xmax = unname(bb["xmax"]),
+                             ymin = unname(bb["ymin"]),
+                             ymax = unname(bb["ymax"]))
+    cube$grid <- custom_grid
+  } else if (grid_type == "none" || grid_type == "custom") {
     cube <- new_sim_cube(occurrence_data, grid_type)
   } else {
     cube <- new_processed_cube(occurrence_data, grid_type)

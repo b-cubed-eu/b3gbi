@@ -201,7 +201,8 @@ compute_indicator_workflow <- function(data,
   # use a grid 4x coarser than the native resolution.
   if (type == "completeness" && isTRUE(gridded_average) &&
       (is.null(cell_size) || identical(cell_size, "grid")) &&
-      isTRUE(data$grid_type %in% c("eea", "mgrs", "eqdgc"))) {
+      (isTRUE(data$grid_type %in% c("eea", "mgrs", "eqdgc")) ||
+       has_custom_grid(data))) {
     native_res_str <- data$resolutions[1] %||%
       (if ("resolution" %in% names(data$data)) data$data$resolution[1] else NULL)
     if (!is.null(native_res_str) && !is.na(native_res_str)) {
@@ -277,13 +278,15 @@ compute_indicator_workflow <- function(data,
 
   # Check that user is not trying to calculate an indicator that requires grid
   # cell assignment with a cube that lacks a supported grid system.
-  if (!data$grid_type %in% c("eea", "mgrs", "eqdgc", "isea3h")) {
+  if (!data$grid_type %in% c("eea", "mgrs", "eqdgc", "isea3h") &&
+      !has_custom_grid(data)) {
     if (dim_type == "map") {
       stop(
         paste0(
           "Grid system is either unsupported or missing. Spatial ",
           "indicators require a supported grid system. Currently ",
-          "supported grid systems are: EEA, MGRS, EQDGC, ISEA3H"
+          "supported grid systems are: EEA, MGRS, EQDGC, ISEA3H, or a ",
+          "custom grid supplied with process_cube(grid = ...)."
         )
       )
     } else if (type %in% ind_req_grid_list) {
@@ -412,6 +415,8 @@ compute_indicator_workflow <- function(data,
       cube_crs <- guess_utm_epsg(data)
     } else if (data$grid_type == "isea3h") {
       cube_crs <- "EPSG:4326"
+    } else if (has_custom_grid(data)) {
+      cube_crs <- sf::st_crs(data$grid)
     } else {
       stop("Grid reference system not found.")
     }
@@ -443,6 +448,8 @@ compute_indicator_workflow <- function(data,
       projected_crs <- guess_utm_epsg(cube_bbox_latlong)
     } else if (data$grid_type == "isea3h") {
       projected_crs <- "ESRI:54012"
+    } else if (has_custom_grid(data)) {
+      projected_crs <- custom_grid_projected_crs(data$grid)
     } else {
       stop("Grid reference system not found.")
     }
@@ -472,6 +479,10 @@ compute_indicator_workflow <- function(data,
         output_crs <- "EPSG:4326"
       } else if (data$grid_type == "isea3h") {
         output_crs <- "EPSG:4326"
+      } else if (has_custom_grid(data)) {
+        # Projected custom grids are shown in their own CRS; longitude/latitude
+        # grids in the equal-area projection used for the calculations
+        output_crs <- projected_crs
       } else {
         stop("Grid reference system not found.")
       }
@@ -758,6 +769,8 @@ compute_indicator_workflow <- function(data,
         "EPSG:3035"
       } else if (data$grid_type == "mgrs") {
         guess_utm_epsg(data)
+      } else if (has_custom_grid(data)) {
+        sf::st_crs(data$grid)
       } else {
         "EPSG:4326"
       }
@@ -804,7 +817,10 @@ compute_indicator_workflow <- function(data,
 
   if (dim_type == "map" || force_grid == TRUE) {
     # Create grid
-    if (data$grid_type == "isea3h") {
+    if (has_custom_grid(data)) {
+      # Use the cell geometries supplied with the cube
+      grid <- create_custom_grid(data$grid, df, projected_crs)
+    } else if (data$grid_type == "isea3h") {
       # Use pre-existing centroids to build hexagonal polygons
       grid <- create_isea3h_grid(df, projected_crs)
     } else if (data$grid_type %in% c("mgrs", "eea", "eqdgc")) {
@@ -942,7 +958,8 @@ compute_indicator_workflow <- function(data,
     }
 
     # Assign data to grid
-    if (data$grid_type %in% c("isea3h", "mgrs", "eea", "eqdgc") &&
+    if ((data$grid_type %in% c("isea3h", "mgrs", "eea", "eqdgc") ||
+         has_custom_grid(data)) &&
       "cellCode" %in% colnames(clipped_grid) &&
       gridded_average == FALSE) {
       # These grids have a native cellCode mapping.
@@ -1002,7 +1019,8 @@ compute_indicator_workflow <- function(data,
     # If user specified a coarser cell_size, aggregate data to coarser grid
     # BEFORE indicator calculation so indicators are calculated correctly
     if (original_cell_size != "grid" &&
-        data$grid_type %in% c("eea", "mgrs", "eqdgc")) {
+        (data$grid_type %in% c("eea", "mgrs", "eqdgc") ||
+         has_custom_grid(data))) {
       is_gridded_comp <- (type == "completeness" && gridded_average == TRUE)
       agg_result <- aggregate_data_to_coarser_grid(
         data_final, clipped_grid, cell_size,
