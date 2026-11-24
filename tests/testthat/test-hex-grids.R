@@ -402,3 +402,51 @@ test_that("proj_supports_isea_roundtrip reports whether PROJ can invert a CRS", 
   # An invalid CRS gives FALSE instead of an error
   expect_false(suppressWarnings(proj_supports_isea_roundtrip("+proj=notaprojection")))
 })
+
+test_that("native ISEA3H cells have the expected size, incl. pentagons", {
+  skip_if_not_installed("bit64")
+  withr::local_options(b3gbi.use_dggridR = FALSE)
+  # Pentagon at an icosahedron vertex plus two hexagons (resolution 4)
+  df <- data.frame(
+    cellCode = c("-458282525011250000", "452583359004665569",
+                 "4859758557001684287"),
+    xcoord = c(11.25, 4.67, -1.68),
+    ycoord = c(58.28, 52.58, 59.76)
+  )
+  expected_km2 <- 3 * sqrt(3) / 2 * isea3h_hex_side(4)^2 / 1e6
+  expect_equal(expected_km2, 4 * pi * 6371.007181^2 / (10 * 3^4 + 2),
+               tolerance = 1e-6)
+
+  check_grid <- function(grid) {
+    expect_equal(nrow(grid), 3)
+    expect_true(all(sf::st_is_valid(grid)))
+    area <- as.numeric(grid$area)
+    hex <- !startsWith(grid$cellCode, "-")
+    expect_true(all(abs(area[hex] / expected_km2 - 1) < 0.02))
+    expect_true(abs(area[!hex] / expected_km2 - 0.9) < 0.05)
+    # Every cell contains its centre
+    pts <- sf::st_transform(
+      sf::st_as_sf(df, coords = c("xcoord", "ycoord"), crs = 4326),
+      sf::st_crs(grid)
+    )
+    inside <- sf::st_intersects(pts, grid, sparse = FALSE)
+    expect_true(all(diag(inside[, match(df$cellCode, grid$cellCode)])))
+  }
+
+  # With PROJ's +proj=isea (if available) ...
+  check_grid(suppressMessages(create_isea3h_grid(df, "ESRI:54012")))
+  # ... and without it
+  local_mocked_bindings(proj_supports_isea_roundtrip = function(...) FALSE)
+  check_grid(suppressMessages(create_isea3h_grid(df, "ESRI:54012")))
+})
+
+test_that("native ISEA3H cells crossing the antimeridian are split", {
+  df <- data.frame(cellCode = c("a", "b"), xcoord = c(179.9, 170),
+                   ycoord = c(-10, -10))
+  grid <- suppressMessages(build_native_isea3h_cells(df, "EPSG:4326"))
+  expect_equal(nrow(grid), 2)
+  bb <- sf::st_bbox(grid[1, ])
+  expect_true(bb[["xmin"]] >= -180 && bb[["xmax"]] <= 180)
+  expect_true(inherits(sf::st_geometry(grid)[[1]], "MULTIPOLYGON"))
+  expect_true(all(sf::st_is_valid(grid)))
+})

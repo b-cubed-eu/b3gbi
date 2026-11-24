@@ -738,7 +738,7 @@ compute_indicator_workflow <- function(data,
       intersection_target %>%
         sf::st_make_valid() %>%
         sf::st_union() %>% # Union handles multi-polygons (e.g., countries)
-        sf::st_transform(crs = "ESRI:54012") %>% # Mollweide equal-area projection
+        sf::st_transform(crs = "ESRI:54012") %>% # Eckert IV equal-area projection
         sf::st_area() %>%
         units::set_units("km^2")
     } else {
@@ -793,7 +793,7 @@ compute_indicator_workflow <- function(data,
 
       final_area_sqkm <-
         sf::st_as_sfc(cube_bbox) %>%
-        sf::st_transform(crs = "ESRI:54012") %>% # Mollweide equal-area projection
+        sf::st_transform(crs = "ESRI:54012") %>% # Eckert IV equal-area projection
         sf::st_area() %>%
         units::set_units("km^2")
 

@@ -178,126 +178,13 @@ create_isea3h_grid <- function(df, projection) {
       message("Package 'dggridR' not available. Falling back to native R geometry generation. Install 'dggridR' for topologically correct polygons.")
     }
 
-    # Identify working projection system
-    isea_crs <- "+proj=isea"
-    has_isea <- proj_supports_isea_roundtrip(isea_crs)
-
-    if (!has_isea) {
-      # Fallback to LAEA centered on data if ISEA is missing (common on Windows PROJ)
-      clon <- mean(df_unique$xcoord, na.rm = TRUE)
-      clat <- mean(df_unique$ycoord, na.rm = TRUE)
-      isea_crs <- paste0(
-        "+proj=laea +lat_0=", round(clat, 2),
-        " +lon_0=", round(clon, 2),
-        " +datum=WGS84 +units=m"
-      )
-      message("System PROJ cannot convert to and from '+proj=isea'. Using local LAEA fallback.")
-    }
-
-    centroids_sf <- sf::st_as_sf(df_unique,
-      coords = c("xcoord", "ycoord"),
-      crs = 4326
-    )
-    centroids_isea <- sf::st_transform(centroids_sf, crs = isea_crs)
-    coords_isea <- sf::st_coordinates(centroids_isea)
-
-    # Check for empty geometries from transform (indicates projection failure)
-    if (nrow(coords_isea) == 0 || all(is.na(coords_isea[, 1]))) {
-      stop("Failed to project ISEA3H centroids. Check if your PROJ installation supports '+proj=isea' or provide a different coordinate system.")
-    }
-
-    # --- Filter spatial outliers ---
-    # Points near icosahedral face boundaries can project to distant faces.
-    qx <- stats::quantile(coords_isea[, 1], probs = c(0.25, 0.75), na.rm = TRUE)
-    qy <- stats::quantile(coords_isea[, 2], probs = c(0.25, 0.75), na.rm = TRUE)
-    iqr_x <- qx[2] - qx[1]
-    iqr_y <- qy[2] - qy[1]
-    keep <- coords_isea[, 1] >= (qx[1] - 5 * iqr_x) &
-      coords_isea[, 1] <= (qx[2] + 5 * iqr_x) &
-      coords_isea[, 2] >= (qy[1] - 5 * iqr_y) &
-      coords_isea[, 2] <= (qy[2] + 5 * iqr_y)
-    keep[is.na(keep)] <- FALSE
-    coords_main <- coords_isea[keep, , drop = FALSE]
-
-    # --- Compute hex side from median NN distance ---
-    if (nrow(coords_main) < 2) {
-      # Single point case: estimate side from resolution code if possible,
-      # but usually we have multiple. Fallback to a default if really solitary.
-      side_m <- 1000 # 1km default
-    } else {
-      n_pts <- nrow(coords_main)
-      n_sample <- min(n_pts, 500)
-      sample_idx <- if (n_pts > 500) sample(n_pts, 500) else seq_len(n_pts)
-      nn_dists <- numeric(n_sample)
-      for (i in seq_len(n_sample)) {
-        si <- sample_idx[i]
-        dists <- sqrt(
-          (coords_main[, 1] - coords_main[si, 1])^2 +
-            (coords_main[, 2] - coords_main[si, 2])^2
-        )
-        dists[si] <- Inf
-        nn_dists[i] <- min(dists)
-      }
-      side_m <- (stats::median(nn_dists) / sqrt(3)) * 1.05 # tight fit
-    }
-
-    # --- Create hexagonal polygons ---
-    # Safety: ensure side_m is not zero or too tiny, avoiding degenerate geometries
-    if (!is.finite(side_m) || side_m < 10) {
-      side_m <- 10 # 10m minimum
-    }
-
-    make_hex <- function(x, y) {
-      if (is.na(x) || is.na(y)) {
-        return(sf::st_polygon())
-      }
-      # Create 6 vertices
-      angles <- seq(0, 2 * pi, length.out = 7)
-      px <- x + side_m * cos(angles)
-      py <- y + side_m * sin(angles)
-      # Explicitly close the polygon to avoid precision issues
-      px[7] <- px[1]
-      py[7] <- py[1]
-      pts <- matrix(c(px, py), ncol = 2)
-      sf::st_polygon(list(pts))
-    }
-
-    hex_list <- lapply(seq_len(nrow(coords_isea)), function(i) {
-      make_hex(coords_isea[i, 1], coords_isea[i, 2])
-    })
-
+    grid <- build_native_isea3h_cells(df_unique, projection)
     grid <- sf::st_sf(
-      cellid = seq_len(nrow(df_unique)),
-      cellCode = df_unique$cellCode,
-      geometry = sf::st_sfc(hex_list, crs = isea_crs),
+      cellid = seq_len(nrow(grid)),
+      cellCode = grid$cellCode,
+      geometry = sf::st_geometry(grid),
       stringsAsFactors = FALSE
     )
-
-    # Transform to requested projection — tryCatch prevents PROJ crashes
-    # (some PROJ installations segfault on certain LAEA pipelines)
-    grid <- tryCatch(
-      {
-        grid %>%
-          sf::st_transform(crs = projection) %>%
-          sf::st_make_valid() %>%
-          sf::st_cast("POLYGON", warn = FALSE)
-      },
-      error = function(e) {
-        warning("PROJ transform failed for ISEA3H grid: ", e$message)
-        # Return empty sf with correct schema
-        sf::st_sf(
-          cellid = integer(0),
-          cellCode = character(0),
-          geometry = sf::st_sfc(crs = projection),
-          stringsAsFactors = FALSE
-        )
-      }
-    )
-
-    # Ensure it's not empty after transform
-    if (nrow(grid) > 0 && any(sf::st_is_empty(grid))) {
-      grid <- grid[!sf::st_is_empty(grid), ]
-    }
   }
 
   # Add area column (matches create_grid output)
@@ -330,4 +217,171 @@ proj_supports_isea_roundtrip <- function(crs = "+proj=isea") {
     },
     error = function(e) FALSE
   )
+}
+
+#' Expected side length (m) of an ISEA3H hexagon at a given resolution
+#'
+#' An aperture-3 ISEA grid at resolution r has 10 * 3^r + 2 cells of (nearly)
+#' equal area on the authalic sphere.
+#' @noRd
+isea3h_hex_side <- function(resolution) {
+  r_authalic <- 6371007.181
+  n_cells <- 10 * 3^resolution + 2
+  cell_area <- 4 * pi * r_authalic^2 / n_cells
+  sqrt(2 * cell_area / (3 * sqrt(3)))
+}
+
+#' Vertices of a regular polygon, densified along its edges
+#'
+#' @return A matrix of x, y coordinates (closed ring).
+#' @noRd
+regular_polygon_ring <- function(x, y, radius, n_sides = 6,
+                                 points_per_edge = 8) {
+  angles <- seq(0, 2 * pi, length.out = n_sides + 1)
+  vx <- x + radius * cos(angles)
+  vy <- y + radius * sin(angles)
+  t <- seq(0, 1, length.out = points_per_edge + 1)[-(points_per_edge + 1)]
+  rx <- unlist(lapply(seq_len(n_sides), function(i) {
+    vx[i] + t * (vx[i + 1] - vx[i])
+  }))
+  ry <- unlist(lapply(seq_len(n_sides), function(i) {
+    vy[i] + t * (vy[i + 1] - vy[i])
+  }))
+  cbind(c(rx, rx[1]), c(ry, ry[1]))
+}
+
+#' Turn a longitude/latitude ring into a polygon, handling the antimeridian
+#'
+#' Longitudes are unwrapped relative to the cell centre so that a cell
+#' crossing the antimeridian does not span the globe.
+#' @noRd
+lonlat_ring_to_polygon <- function(ring, centre_lon) {
+  d <- ring[, 1] - centre_lon
+  ring[, 1] <- ring[, 1] - 360 * round(d / 360)
+  sf::st_polygon(list(ring))
+}
+
+#' Build ISEA3H cell polygons without dggridR
+#'
+#' Hexagons are built in the ISEA projection (where the ISEA3H cell centres
+#' form a regular lattice on each icosahedron face) when the system PROJ can
+#' convert to and from it. Cells that cannot be built there, such as cells
+#' straddling the edges between icosahedron faces, and the twelve pentagons
+#' (centred on the icosahedron's vertices) are built as regular polygons in a
+#' Lambert azimuthal equal-area projection centred on the cell. The cell size
+#' follows from the grid resolution encoded in the cell codes.
+#'
+#' Cell shapes are approximations; install dggridR for exact cell geometries.
+#'
+#' @param df Data frame with `cellCode`, `xcoord` and `ycoord` (one row per
+#'   cell).
+#' @param projection CRS of the output.
+#' @return An sf object with column `cellCode`, in `projection`.
+#' @noRd
+build_native_isea3h_cells <- function(df, projection) {
+  n <- nrow(df)
+  lon <- df$xcoord
+  lat <- df$ycoord
+  codes <- as.character(df$cellCode)
+  is_pentagon <- startsWith(codes, "-")
+
+  # Cell size from the resolution encoded in the codes; fall back to the
+  # spacing of the cell centres when it cannot be decoded
+  res <- tryCatch(
+    suppressWarnings(as.numeric(isea3h_code_to_coords(codes)$resolution)),
+    error = function(e) rep(NA_real_, n)
+  )
+  side <- isea3h_hex_side(res)
+  if (any(is.na(side))) {
+    side[is.na(side)] <- isea3h_side_from_spacing(lon, lat)
+  }
+  hex_area <- 3 * sqrt(3) / 2 * side^2
+
+  polys <- vector("list", n)
+  ok <- rep(FALSE, n)
+
+  # Cell areas are checked on the sphere (s2)
+  old_s2 <- suppressMessages(sf::sf_use_s2(TRUE))
+  on.exit(suppressMessages(sf::sf_use_s2(old_s2)), add = TRUE)
+
+  isea_crs <- "+proj=isea"
+  if (proj_supports_isea_roundtrip(isea_crs)) {
+    xy <- sf::sf_project("EPSG:4326", isea_crs, cbind(lon, lat), keep = TRUE,
+                         warn = FALSE)
+    for (i in which(!is_pentagon & is.finite(xy[, 1]) & is.finite(xy[, 2]))) {
+      ring <- regular_polygon_ring(xy[i, 1], xy[i, 2], side[i], 6)
+      ll <- sf::sf_project(isea_crs, "EPSG:4326", ring, keep = TRUE,
+                           warn = FALSE)
+      if (all(is.finite(ll))) {
+        polys[[i]] <- lonlat_ring_to_polygon(ll, lon[i])
+        ok[i] <- TRUE
+      }
+    }
+    # Reject cells distorted by crossing an icosahedron edge
+    if (any(ok)) {
+      areas <- rep(NA_real_, n)
+      areas[ok] <- suppressMessages(as.numeric(sf::st_area(
+        sf::st_sfc(polys[ok], crs = 4326)
+      )))
+      ok <- ok & is.finite(areas) & abs(areas / hex_area - 1) < 0.05
+    }
+  } else {
+    message("System PROJ cannot convert to and from '+proj=isea'. ",
+            "Building cells in local equal-area projections.")
+  }
+
+  # Remaining cells (and pentagons): local LAEA centred on each cell
+  for (i in which(!ok)) {
+    laea <- sprintf("+proj=laea +lat_0=%.8f +lon_0=%.8f +datum=WGS84 +units=m",
+                    lat[i], lon[i])
+    n_sides <- if (is_pentagon[i]) 5 else 6
+    ring <- regular_polygon_ring(0, 0, side[i], n_sides)
+    ll <- sf::sf_project(laea, "EPSG:4326", ring, keep = TRUE, warn = FALSE)
+    if (all(is.finite(ll))) {
+      polys[[i]] <- lonlat_ring_to_polygon(ll, lon[i])
+    } else {
+      polys[[i]] <- sf::st_polygon()
+    }
+  }
+
+  grid <- sf::st_sf(
+    cellCode = df$cellCode,
+    geometry = sf::st_sfc(polys, crs = 4326),
+    stringsAsFactors = FALSE
+  )
+  grid <- grid[!sf::st_is_empty(grid), ]
+
+  # Split cells that cross the antimeridian
+  crosses <- vapply(sf::st_geometry(grid), function(g) {
+    any(abs(sf::st_coordinates(g)[, 1]) > 180)
+  }, logical(1))
+  if (any(crosses)) {
+    sf::st_geometry(grid)[crosses] <- sf::st_wrap_dateline(
+      sf::st_geometry(grid)[crosses],
+      options = c("WRAPDATELINE=YES", "DATELINEOFFSET=180")
+    )
+  }
+
+  if (sf::st_crs(projection) != sf::st_crs(4326)) {
+    grid <- sf::st_transform(grid, crs = projection)
+  }
+  suppressMessages(sf::sf_use_s2(FALSE))
+  grid <- sf::st_make_valid(grid)
+  if (any(!sf::st_geometry_type(grid) %in% c("POLYGON", "MULTIPOLYGON"))) {
+    grid <- sf::st_collection_extract(grid, "POLYGON", warn = FALSE)
+  }
+  grid
+}
+
+#' Hexagon side length (m) estimated from the spacing of cell centres
+#' @noRd
+isea3h_side_from_spacing <- function(lon, lat) {
+  if (length(lon) < 2) return(1000)
+  pts <- sf::st_sfc(lapply(seq_along(lon), function(i) {
+    sf::st_point(c(lon[i], lat[i]))
+  }), crs = 4326)
+  d <- suppressMessages(as.numeric(sf::st_distance(pts)))
+  d <- matrix(d, length(lon))
+  diag(d) <- Inf
+  max(stats::median(apply(d, 1, min)) / sqrt(3), 10)
 }

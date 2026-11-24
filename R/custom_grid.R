@@ -254,7 +254,7 @@ create_custom_grid <- function(grid, df, projection) {
 #' CRS used for calculations with a custom grid
 #'
 #' Projected grids are used in their own CRS; for longitude/latitude grids the
-#' Mollweide equal-area projection is used.
+#' Eckert IV equal-area projection (ESRI:54012) is used.
 #' @noRd
 custom_grid_projected_crs <- function(grid) {
   crs <- sf::st_crs(grid)
