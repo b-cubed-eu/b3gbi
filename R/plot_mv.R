@@ -96,7 +96,7 @@ plot_mv <- function(x,
 
   # Custom legend title if provided
   legend_title <- legend_title %||%
-    available_indicators[[x$div_type]]$legend_label
+    b3gbi::available_indicators[[x$div_type]]$legend_label
 
   # Define the Yellow-to-Red color ramp function
   yellow_to_red_pal <- colorRampPalette(RColorBrewer::brewer.pal(9, "YlOrRd"))

@@ -112,9 +112,15 @@ solve specific issues. (Default is TRUE).}
 after creating the grid. Increases processing time but may help if you are
 getting polygon errors. (Default is FALSE).}
 
-\item{shapefile_path}{(optional) Path of an external shapefile to merge into
-the workflow. For example, if you want to calculate your indicator for
-particular features such as protected areas or wetlands.}
+\item{shapefile_path}{(optional) Path of an external shapefile (any format
+readable by \code{\link[sf:st_read]{sf::read_sf()}}, or a .wkt file) defining the study area, e.g.
+protected areas or wetlands. Only occurrences in grid cells that fall within
+the shapefile are used, and for the density indicators the area of the
+shapefile (within the cube's extent) is used as the total area of time
+series. To compare an area with the rest of a region (e.g. protected vs.
+unprotected parts of a country), calculate the indicator once with a
+shapefile of the areas and once with a shapefile of the region minus those
+areas (e.g. \code{sf::st_difference(region, sf::st_union(areas))}).}
 
 \item{shapefile_crs}{(Optional) CRS of a .wkt shapefile. If your shapefile
 is .wkt and you do NOT use this parameter, the CRS will be assumed to be
@@ -123,7 +129,10 @@ NOT a .wkt the CRS will be determined automatically.}
 
 \item{invert}{(optional) Calculate an indicator over the inverse of the
 shapefile (e.g. if you have a protected areas shapefile this would calculate
-an indicator over all non protected areas within your cube). Default is
+an indicator over all non protected areas within your cube). Note that the
+inverse is taken relative to the rectangular extent (bounding box) of the
+cube, not to the region the cube was downloaded for, so for density
+indicators the area may include land or sea outside your region. Default is
 FALSE.}
 
 \item{include_land}{(Optional) Include occurrences which fall within the

@@ -71,16 +71,25 @@
 #' @param make_valid (Optional) Calls st_make_valid() from the sf package
 #'  after creating the grid. Increases processing time but may help if you are
 #'  getting polygon errors. (Default is FALSE).
-#' @param shapefile_path (optional) Path of an external shapefile to merge into
-#'  the workflow. For example, if you want to calculate your indicator for
-#'  particular features such as protected areas or wetlands.
+#' @param shapefile_path (optional) Path of an external shapefile (any format
+#'  readable by [sf::read_sf()], or a .wkt file) defining the study area, e.g.
+#'  protected areas or wetlands. Only occurrences in grid cells that fall within
+#'  the shapefile are used, and for the density indicators the area of the
+#'  shapefile (within the cube's extent) is used as the total area of time
+#'  series. To compare an area with the rest of a region (e.g. protected vs.
+#'  unprotected parts of a country), calculate the indicator once with a
+#'  shapefile of the areas and once with a shapefile of the region minus those
+#'  areas (e.g. `sf::st_difference(region, sf::st_union(areas))`).
 #' @param shapefile_crs (Optional) CRS of a .wkt shapefile. If your shapefile
 #'  is .wkt and you do NOT use this parameter, the CRS will be assumed to be
 #'  EPSG:4326 and the coordinates will be read in as lat/long. If your shape is
 #'  NOT a .wkt the CRS will be determined automatically.
 #' @param invert (optional) Calculate an indicator over the inverse of the
 #'  shapefile (e.g. if you have a protected areas shapefile this would calculate
-#'  an indicator over all non protected areas within your cube). Default is
+#'  an indicator over all non protected areas within your cube). Note that the
+#'  inverse is taken relative to the rectangular extent (bounding box) of the
+#'  cube, not to the region the cube was downloaded for, so for density
+#'  indicators the area may include land or sea outside your region. Default is
 #'  FALSE.
 #' @param include_land (Optional) Include occurrences which fall within the
 #'  land area. Default is TRUE. Note that this is purely a geographic filter, and
@@ -260,7 +269,7 @@ compute_indicator_workflow <- function(data,
     "relative_occupancy"
   )
 
-  type <- match.arg(type, names(available_indicators))
+  type <- match.arg(type, names(b3gbi::available_indicators))
   dim_type <- match.arg(dim_type)
   ne_type <- match.arg(ne_type)
   ne_scale <- match.arg(ne_scale)
@@ -527,8 +536,10 @@ compute_indicator_workflow <- function(data,
       # If there is an intersection of the latlong bounding boxes, we can
       # proceed with full intersection of the shapefile and the cube. But first
       # we match projections.
-      if (sf::st_crs(shapefile) != projected_crs) {
-        shapefile_projected <- sf::st_transform(shapefile, crs = projected_crs)
+      shapefile_projected <- if (sf::st_crs(shapefile) != sf::st_crs(projected_crs)) {
+        sf::st_transform(shapefile, crs = projected_crs)
+      } else {
+        shapefile
       }
       if (invert) {
         shapefile_merge <- sf::st_difference(
@@ -536,9 +547,12 @@ compute_indicator_workflow <- function(data,
           sf::st_union(shapefile_projected)
         )
       } else {
-        shapefile_merge <- sf::st_union(
+        # Keep only the part of the shapefile that lies within the cube's
+        # extent: this is the study area used for filtering the data and for
+        # the area of density indicators
+        shapefile_merge <- sf::st_intersection(
           cube_polygon_projected,
-          shapefile_projected
+          sf::st_union(shapefile_projected)
         )
       }
 
@@ -769,6 +783,20 @@ compute_indicator_workflow <- function(data,
         sf::st_transform(crs = "ESRI:54012") %>% # Mollweide equal-area projection
         sf::st_area() %>%
         units::set_units("km^2")
+
+      # Density time series divide by this area, which is only a rough proxy
+      # for the study area
+      if (type %in% c("occ_density", "spec_richness_density")) {
+        warning(
+          "No study area was given (level = 'cube' and no shapefile), so ",
+          "density is calculated over the area of the cube's rectangular ",
+          "extent (bounding box, ", round(as.numeric(final_area_sqkm)),
+          " km^2). This can be much larger than the area the cube covers. ",
+          "For meaningful densities, provide the study area with ",
+          "'shapefile_path', or with 'level' and 'region'.",
+          call. = FALSE
+        )
+      }
     } else {
       final_area_sqkm <- NA
     }
