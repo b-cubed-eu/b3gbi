@@ -306,13 +306,15 @@ build_native_isea3h_cells <- function(df, projection) {
 
   isea_crs <- "+proj=isea"
   if (proj_supports_isea_roundtrip(isea_crs)) {
-    xy <- sf::sf_project("EPSG:4326", isea_crs, cbind(lon, lat), keep = TRUE,
-                         warn = FALSE)
+    xy <- tryCatch(
+      sf::sf_project("EPSG:4326", isea_crs, cbind(lon, lat), keep = TRUE,
+                     warn = FALSE),
+      error = function(e) matrix(NA_real_, n, 2)
+    )
     for (i in which(!is_pentagon & is.finite(xy[, 1]) & is.finite(xy[, 2]))) {
       ring <- regular_polygon_ring(xy[i, 1], xy[i, 2], side[i], 6)
-      ll <- sf::sf_project(isea_crs, "EPSG:4326", ring, keep = TRUE,
-                           warn = FALSE)
-      if (all(is.finite(ll))) {
+      ll <- project_ring_lonlat(isea_crs, ring)
+      if (!is.null(ll)) {
         polys[[i]] <- lonlat_ring_to_polygon(ll, lon[i])
         ok[i] <- TRUE
       }
@@ -332,12 +334,16 @@ build_native_isea3h_cells <- function(df, projection) {
 
   # Remaining cells (and pentagons): local LAEA centred on each cell
   for (i in which(!ok)) {
+    if (!is.finite(lon[i]) || !is.finite(lat[i])) {
+      polys[[i]] <- sf::st_polygon()
+      next
+    }
     laea <- sprintf("+proj=laea +lat_0=%.8f +lon_0=%.8f +datum=WGS84 +units=m",
                     lat[i], lon[i])
     n_sides <- if (is_pentagon[i]) 5 else 6
     ring <- regular_polygon_ring(0, 0, side[i], n_sides)
-    ll <- sf::sf_project(laea, "EPSG:4326", ring, keep = TRUE, warn = FALSE)
-    if (all(is.finite(ll))) {
+    ll <- project_ring_lonlat(laea, ring)
+    if (!is.null(ll)) {
       polys[[i]] <- lonlat_ring_to_polygon(ll, lon[i])
     } else {
       polys[[i]] <- sf::st_polygon()
@@ -368,7 +374,7 @@ build_native_isea3h_cells <- function(df, projection) {
   suppressMessages(sf::sf_use_s2(FALSE))
   grid <- sf::st_make_valid(grid)
   if (any(!sf::st_geometry_type(grid) %in% c("POLYGON", "MULTIPOLYGON"))) {
-    grid <- sf::st_collection_extract(grid, "POLYGON", warn = FALSE)
+    grid <- sf::st_collection_extract(grid, "POLYGON", warn = FALSE) # nocov
   }
   grid
 }
@@ -376,6 +382,9 @@ build_native_isea3h_cells <- function(df, projection) {
 #' Hexagon side length (m) estimated from the spacing of cell centres
 #' @noRd
 isea3h_side_from_spacing <- function(lon, lat) {
+  keep <- is.finite(lon) & is.finite(lat)
+  lon <- lon[keep]
+  lat <- lat[keep]
   if (length(lon) < 2) return(1000)
   pts <- sf::st_sfc(lapply(seq_along(lon), function(i) {
     sf::st_point(c(lon[i], lat[i]))
@@ -384,4 +393,17 @@ isea3h_side_from_spacing <- function(lon, lat) {
   d <- matrix(d, length(lon))
   diag(d) <- Inf
   max(stats::median(apply(d, 1, min)) / sqrt(3), 10)
+}
+
+#' Project a ring of coordinates to longitude/latitude
+#'
+#' @return The projected coordinates, or `NULL` if the projection fails or
+#'   gives non-finite coordinates.
+#' @noRd
+project_ring_lonlat <- function(from, ring) {
+  ll <- tryCatch(
+    sf::sf_project(from, "EPSG:4326", ring, keep = TRUE, warn = FALSE),
+    error = function(e) NULL
+  )
+  if (is.null(ll) || !all(is.finite(ll))) NULL else ll
 }
