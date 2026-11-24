@@ -204,3 +204,23 @@ test_that("longitude/latitude custom grids use an equal-area projection", {
   expect_false(sf::st_is_longlat(map$data))
   expect_equal(sum(as.numeric(map$data$area)), 16, tolerance = 0.01)
 })
+
+test_that("years from Parquet timestamps do not depend on the time zone", {
+  skip_if_not_installed("arrow")
+  grid <- make_test_grid()
+  cube_df <- make_test_cube(grid)
+  # Time-zone-naive timestamps at midnight on 1 January, as written by the
+  # BMD cubing engine
+  tbl <- arrow::arrow_table(cube_df)
+  tbl$datetime <- arrow::Array$create(cube_df$datetime)$cast(
+    arrow::timestamp("us")
+  )
+  cube_file <- tempfile(fileext = ".parquet")
+  arrow::write_parquet(tbl, cube_file)
+
+  for (tz in c("America/Los_Angeles", "Asia/Tokyo")) {
+    withr::local_timezone(tz)
+    cube <- process_cube(cube_file, grid = grid)
+    expect_setequal(unique(cube$data$year), 2001:2010)
+  }
+})

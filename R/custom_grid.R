@@ -33,7 +33,13 @@ read_parquet_cube <- function(path) {
   x <- as.data.frame(x)
   for (nm in names(x)) {
     col <- x[[nm]]
-    if (inherits(col, c("POSIXt", "Date"))) {
+    if (inherits(col, "POSIXt")) {
+      # Parquet timestamps without a time zone are read as UTC instants;
+      # formatting them in the local time zone could shift dates (and years)
+      tz <- attr(col, "tzone")
+      if (is.null(tz) || identical(tz, "")) tz <- "UTC"
+      x[[nm]] <- format(col, "%Y-%m-%d", tz = tz)
+    } else if (inherits(col, "Date")) {
       x[[nm]] <- format(col, "%Y-%m-%d")
     } else if (is.list(col)) {
       # Binary or nested columns are not used by b3gbi
