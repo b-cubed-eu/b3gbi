@@ -169,6 +169,12 @@ denmark_example_cube
 }
 
 # A cube whose grid cells are defined in a separate file (e.g. a cube and
-# dimension table from the BMD cubing engine):
-# cube <- process_cube("cube.parquet", grid = "grid_cells.parquet")
+# dimension table from the BMD cubing engine)
+montenegro_cube <- process_cube(
+  system.file("extdata", "montenegro_bryophytes_cube_custom.csv",
+              package = "b3gbi"),
+  grid = system.file("extdata", "montenegro_bryophytes_grid.gpkg",
+                     package = "b3gbi")
+)
+montenegro_cube
 }
