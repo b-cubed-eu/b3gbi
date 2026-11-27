@@ -44,7 +44,7 @@
 ^[^/]*\.R$
 ^[^/]*\.Rmd$
 ^[^/]*\.(csv|tsv|png|html|pdf)$
-^inst/extdata/(?!(README\.md|denmark_mammals_cube_eea\.csv|denmark_mammals_cube_eqdgc\.csv|denmark_mammals_cube_mgrs\.csv|montenegro_bryophytes_cube_eea\.csv)$)
+^inst/extdata/(?!(README\.md|denmark_mammals_cube_eea\.csv|denmark_mammals_cube_eqdgc\.csv|denmark_mammals_cube_mgrs\.csv|montenegro_bryophytes_cube_eea\.csv|montenegro_bryophytes_cube_custom\.csv|montenegro_bryophytes_grid\.gpkg)$)
 ^inst/doc/(?!(b3gbi|uncertainty)\.(html|Rmd|R)$)
 ^\.zenodo\.json$
 ^Claude outputs$

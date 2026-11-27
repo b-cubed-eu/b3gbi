@@ -11,7 +11,7 @@
 #' @noRd
 get_indicator_name <- function(x) {
 
-  iname <- as.character(available_indicators[[x]]$indicator_name)
+  iname <- as.character(b3gbi::available_indicators[[x]]$indicator_name)
 
   if (!length(iname) > 0) {
 

@@ -8,7 +8,7 @@ calc_ts_evenness_core <- function(x, type, ...) {
 
   num_occ <- obs <- year <- taxonKey <- cellCode <- NULL
 
-  type <- match.arg(type, names(available_indicators))
+  type <- match.arg(type, names(b3gbi::available_indicators))
 
   # Check if the data is empty
   if (nrow(x) == 0) {

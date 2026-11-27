@@ -120,7 +120,7 @@ create_ts_plot <- function(data,
 
 
   plot <- plot +
-    scale_x_continuous(breaks = scales::breaks_pretty(n = x_breaks),
+    scale_x_continuous(breaks = integer_breaks(n = x_breaks),
                        expand = expansion(mult = x_expand)) +
     scale_y_continuous(breaks = scales::breaks_pretty(n = y_breaks),
                        expand = expansion(mult = y_expand)) +
@@ -153,4 +153,17 @@ create_ts_plot <- function(data,
   # Exit function
   return(plot)
 
+}
+
+#' Axis breaks at whole numbers only (e.g. years)
+#'
+#' Like `scales::breaks_pretty()`, but drops breaks that are not whole numbers,
+#' so that short time series are not labelled with fractional years.
+#' @noRd
+integer_breaks <- function(n = 10) {
+  function(limits) {
+    breaks <- scales::breaks_pretty(n = n)(limits)
+    whole <- breaks[abs(breaks - round(breaks)) < 1e-8]
+    if (length(whole) == 0) unique(round(limits)) else whole
+  }
 }

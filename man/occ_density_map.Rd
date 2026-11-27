@@ -58,16 +58,25 @@ solve specific issues. (Default is TRUE).}
     \item{\code{make_valid}}{(Optional) Calls st_make_valid() from the sf package
 after creating the grid. Increases processing time but may help if you are
 getting polygon errors. (Default is FALSE).}
-    \item{\code{shapefile_path}}{(optional) Path of an external shapefile to merge into
-the workflow. For example, if you want to calculate your indicator for
-particular features such as protected areas or wetlands.}
+    \item{\code{shapefile_path}}{(optional) Path of an external shapefile (any format
+readable by \code{\link[sf:st_read]{sf::read_sf()}}, or a .wkt file) defining the study area, e.g.
+protected areas or wetlands. Only occurrences in grid cells that fall within
+the shapefile are used, and for the density indicators the area of the
+shapefile (within the cube's extent) is used as the total area of time
+series. To compare an area with the rest of a region (e.g. protected vs.
+unprotected parts of a country), calculate the indicator once with a
+shapefile of the areas and once with a shapefile of the region minus those
+areas (e.g. \code{sf::st_difference(region, sf::st_union(areas))}).}
     \item{\code{shapefile_crs}}{(Optional) CRS of a .wkt shapefile. If your shapefile
 is .wkt and you do NOT use this parameter, the CRS will be assumed to be
 EPSG:4326 and the coordinates will be read in as lat/long. If your shape is
 NOT a .wkt the CRS will be determined automatically.}
     \item{\code{invert}}{(optional) Calculate an indicator over the inverse of the
 shapefile (e.g. if you have a protected areas shapefile this would calculate
-an indicator over all non protected areas within your cube). Default is
+an indicator over all non protected areas within your cube). Note that the
+inverse is taken relative to the rectangular extent (bounding box) of the
+cube, not to the region the cube was downloaded for, so for density
+indicators the area may include land or sea outside your region. Default is
 FALSE.}
     \item{\code{include_land}}{(Optional) Include occurrences which fall within the
 land area. Default is TRUE. Note that this is purely a geographic filter, and
@@ -106,6 +115,13 @@ map or as a time series (see 'Details' for more information).
 \details{
 Density is the number of occurrences divided by area (km^2): the area of
 each grid cell for maps, and the total study-region area for time series.
+For time series, the study region is the region given by \code{level} and
+\code{region} (including sea within the region's extent unless
+\code{include_ocean = FALSE}), or the shapefile given by \code{shapefile_path}. If neither is given
+(\code{level = "cube"}), the area of the cube's rectangular extent (bounding
+box) is used, which can be much larger than the area actually covered by
+the cube, and a warning is given; supply a region or shapefile for
+meaningful densities.
 This provides similar information to total occurrences, but is adjusted for
 area.
 }
@@ -125,7 +141,10 @@ od_map <- occ_density_map(example_cube_1,
 plot(od_map)
 }
 \donttest{
-od_ts <- occ_density_ts(example_cube_1, first_year = 1985)
+# Give the study area (here: the land area of Denmark) so that density is
+# per km^2 of it
+od_ts <- occ_density_ts(example_cube_1, first_year = 1985,
+  level = "country", region = "Denmark", include_ocean = FALSE)
 plot(od_ts)
 }
 }

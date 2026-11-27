@@ -27,12 +27,16 @@ process_cube(
   cols_familyCount = NULL,
   cols_sex = NULL,
   cols_lifeStage = NULL,
-  separator = NULL
+  separator = NULL,
+  grid = NULL,
+  grid_id = NULL,
+  grid_crs = NULL
 )
 }
 \arguments{
-\item{cube_name}{Either the path to a data cube CSV file (e.g.
-\code{system.file("extdata", "denmark_mammals_cube_eqdgc.csv", package = "b3gbi")}) or a data frame containing the cube.}
+\item{cube_name}{Either the path to a data cube CSV or parquet file (e.g.
+\code{system.file("extdata", "denmark_mammals_cube_eqdgc.csv", package = "b3gbi")}) or a data frame containing the cube. Reading parquet files
+requires the \pkg{arrow} package.}
 
 \item{grid_type}{(Optional) The grid reference system your cube uses. One of
 \code{"automatic"} (default), \code{"eea"}, \code{"mgrs"}, \code{"eqdgc"}, \code{"isea3h"},
@@ -40,7 +44,9 @@ process_cube(
 the grid from the cell codes and returns an error if it fails. If you want
 to perform analysis on a cube with custom grid codes (e.g. output from the
 gcube package) or a cube without grid codes, select \code{"custom"} or \code{"none"},
-respectively.}
+respectively. Cubes with custom grid codes can only be used for time
+series, unless the cell geometries are given with \code{grid}; supplying \code{grid}
+sets the grid type to \code{"custom"}.}
 
 \item{first_year}{(Optional) The first year of occurrences to include. If not
 specified, uses the earliest year present in the cube.}
@@ -120,16 +126,35 @@ stage of the observed individuals.}
 \item{separator}{(Optional) The column-separating character in your csv file.
 This should be automatically recognized, so only specify this if you are
 having trouble.}
+
+\item{grid}{(Optional) The geometries of the grid cells, for cubes that use
+a grid other than the supported ones (e.g. cubes from the BMD cubing
+engine, whose cells are identified by an ID and described in a separate
+dimension table). Either the path to a file (GeoParquet, GeoPackage,
+shapefile, GeoJSON, or a CSV with a WKT geometry column), an sf object, or
+a data frame with a WKT geometry column. Each grid cell must be a polygon
+with a unique ID, which is matched to the cube's grid cell column. With a
+grid, all indicators (maps and time series) can be calculated. Reading
+parquet files requires the \pkg{arrow} and \pkg{jsonlite} packages.}
+
+\item{grid_id}{(Optional) The name of the ID column in \code{grid}. If not given,
+the column with the same name as \code{cols_cellCode} is used, or else the one
+column name shared by the cube and the grid (e.g. \code{grid_idx}).}
+
+\item{grid_crs}{(Optional) The coordinate reference system of \code{grid} (e.g.
+\code{"EPSG:3035"}), needed only if the grid file does not contain one (e.g. a
+CSV with WKT geometries).}
 }
 \value{
 An object of class \code{processed_cube} (or \code{sim_cube} when
-\code{grid_type} is \code{"custom"} or \code{"none"}): a list of metadata (years, number
-of species, grid type, resolution, ...) plus the processed occurrences in
-the \code{data} element.
+\code{grid_type} is \code{"none"}, or \code{"custom"} without \code{grid}): a list of metadata
+(years, number of species, grid type, resolution, ...) plus the processed
+occurrences in the \code{data} element. With a custom \code{grid}, the grid cells are
+stored in the \code{grid} element.
 }
 \description{
-Processes a GBIF occurrence cube (a CSV file or a data frame)
-into a \code{processed_cube} object. Cubes produced by the GBIF cube API can
+Processes a GBIF occurrence cube (a CSV or parquet file, or a
+data frame) into a \code{processed_cube} object. Cubes produced by the GBIF cube API can
 have user-specified column names, so check that your column names match
 the Darwin Core names expected by this function; if not, supply them with
 the \verb{cols_*} arguments. The function stops with an error if it cannot find
@@ -142,4 +167,14 @@ cube_name <- system.file("extdata", "denmark_mammals_cube_eqdgc.csv",
 denmark_example_cube <- process_cube(cube_name)
 denmark_example_cube
 }
+
+# A cube whose grid cells are defined in a separate file (e.g. a cube and
+# dimension table from the BMD cubing engine)
+montenegro_cube <- process_cube(
+  system.file("extdata", "montenegro_bryophytes_cube_custom.csv",
+              package = "b3gbi"),
+  grid = system.file("extdata", "montenegro_bryophytes_grid.gpkg",
+                     package = "b3gbi")
+)
+montenegro_cube
 }

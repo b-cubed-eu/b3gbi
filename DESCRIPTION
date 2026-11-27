@@ -45,9 +45,11 @@ Imports:
     tidyselect,
     units
 Suggests: 
+    arrow,
     bit64,
     dggridR,
     dubicube,
+    jsonlite,
     knitr,
     mapview,
     mockery,

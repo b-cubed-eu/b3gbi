@@ -71,6 +71,25 @@ test_that("calc_ts.cum_richness calculates cumulative richness correctly", {
   expect_equal(result, expected_result)
 })
 
+test_that("calc_ts.cum_richness keeps years without new species", {
+  # Rows not in year order; no new species in 2003 and 2005
+  x <- structure(
+    data.frame(year = c(2004, 2001, 2002, 2003, 2005, 2001, 2004),
+               taxonKey = c(101, 101, 102, 101, 102, 103, 104)),
+    class = c("cum_richness", "data.frame")
+  )
+  result <- calc_ts.cum_richness(x)
+  expect_equal(result$year, 2001:2005)
+  expect_equal(result$diversity_val, c(2, 3, 3, 4, 4))
+})
+
+test_that("integer_breaks gives whole-number year breaks", {
+  br <- integer_breaks(10)(c(2001, 2003))
+  expect_equal(br, c(2001, 2002, 2003))
+  expect_true(all(integer_breaks(10)(c(1990, 2025)) %% 1 == 0))
+  expect_equal(integer_breaks(10)(c(2001.2, 2001.4)), 2001)
+})
+
 test_that("calc_ts.cum_richness throws error on wrong class", {
   mock_invalid_input <- data.frame(
     year = c(2001, 2002, 2003),
