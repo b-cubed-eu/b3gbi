@@ -1,11 +1,11 @@
 # Process GBIF Data Cubes
 
-Processes a GBIF occurrence cube (a CSV file or a data frame) into a
-`processed_cube` object. Cubes produced by the GBIF cube API can have
-user-specified column names, so check that your column names match the
-Darwin Core names expected by this function; if not, supply them with
-the `cols_*` arguments. The function stops with an error if it cannot
-find all required columns.
+Processes a GBIF occurrence cube (a CSV or parquet file, or a data
+frame) into a `processed_cube` object. Cubes produced by the GBIF cube
+API can have user-specified column names, so check that your column
+names match the Darwin Core names expected by this function; if not,
+supply them with the `cols_*` arguments. The function stops with an
+error if it cannot find all required columns.
 
 ## Usage
 
@@ -33,7 +33,10 @@ process_cube(
   cols_familyCount = NULL,
   cols_sex = NULL,
   cols_lifeStage = NULL,
-  separator = NULL
+  separator = NULL,
+  grid = NULL,
+  grid_id = NULL,
+  grid_crs = NULL
 )
 ```
 
@@ -41,9 +44,10 @@ process_cube(
 
 - cube_name:
 
-  Either the path to a data cube CSV file (e.g.
+  Either the path to a data cube CSV or parquet file (e.g.
   `system.file("extdata", "denmark_mammals_cube_eqdgc.csv", package = "b3gbi")`)
-  or a data frame containing the cube.
+  or a data frame containing the cube. Reading parquet files requires
+  the arrow package.
 
 - grid_type:
 
@@ -53,7 +57,9 @@ process_cube(
   detect the grid from the cell codes and returns an error if it fails.
   If you want to perform analysis on a cube with custom grid codes (e.g.
   output from the gcube package) or a cube without grid codes, select
-  `"custom"` or `"none"`, respectively.
+  `"custom"` or `"none"`, respectively. Cubes with custom grid codes can
+  only be used for time series, unless the cell geometries are given
+  with `grid`; supplying `grid` sets the grid type to `"custom"`.
 
 - first_year:
 
@@ -177,12 +183,38 @@ process_cube(
   should be automatically recognized, so only specify this if you are
   having trouble.
 
+- grid:
+
+  (Optional) The geometries of the grid cells, for cubes that use a grid
+  other than the supported ones (e.g. cubes from the BMD cubing engine,
+  whose cells are identified by an ID and described in a separate
+  dimension table). Either the path to a file (GeoParquet, GeoPackage,
+  shapefile, GeoJSON, or a CSV with a WKT geometry column), an sf
+  object, or a data frame with a WKT geometry column. Each grid cell
+  must be a polygon with a unique ID, which is matched to the cube's
+  grid cell column. With a grid, all indicators (maps and time series)
+  can be calculated. Reading parquet files requires the arrow and
+  jsonlite packages.
+
+- grid_id:
+
+  (Optional) The name of the ID column in `grid`. If not given, the
+  column with the same name as `cols_cellCode` is used, or else the one
+  column name shared by the cube and the grid (e.g. `grid_idx`).
+
+- grid_crs:
+
+  (Optional) The coordinate reference system of `grid` (e.g.
+  `"EPSG:3035"`), needed only if the grid file does not contain one
+  (e.g. a CSV with WKT geometries).
+
 ## Value
 
 An object of class `processed_cube` (or `sim_cube` when `grid_type` is
-`"custom"` or `"none"`): a list of metadata (years, number of species,
-grid type, resolution, ...) plus the processed occurrences in the `data`
-element.
+`"none"`, or `"custom"` without `grid`): a list of metadata (years,
+number of species, grid type, resolution, ...) plus the processed
+occurrences in the `data` element. With a custom `grid`, the grid cells
+are stored in the `grid` element.
 
 ## Examples
 
@@ -229,4 +261,53 @@ denmark_example_cube
 #> #   minTemporalUncertainty <dbl>, familyCount <dbl>, xcoord <dbl>,
 #> #   ycoord <dbl>, resolution <chr>
 # }
+
+# A cube whose grid cells are defined in a separate file (e.g. a cube and
+# dimension table from the BMD cubing engine)
+montenegro_cube <- process_cube(
+  system.file("extdata", "montenegro_bryophytes_cube_custom.csv",
+              package = "b3gbi"),
+  grid = system.file("extdata", "montenegro_bryophytes_grid.gpkg",
+                     package = "b3gbi")
+)
+montenegro_cube
+#> 
+#> Processed data cube for calculating biodiversity indicators
+#> 
+#> Date Range: 2003 - 2025 
+#> Single-resolution cube with cell size 1km ^2 
+#> Number of cells: 124 
+#> Grid reference system: custom 
+#> Coordinate range:
+#>    xmin    xmax    ymin    ymax 
+#> 5018000 5149000 2135000 2274000 
+#> 
+#> Total number of observations: 244 
+#> Number of species represented: 91 
+#> Number of families represented: 34 
+#> 
+#> Kingdoms represented: Plantae 
+#> 
+#> First 10 rows of data (use n = to show more):
+#> 
+#> # A tibble: 225 × 28
+#>    cellCode kingdom kingdomKey phylum    phylumkey class classkey order orderkey
+#>    <chr>    <chr>   <chr>      <chr>     <chr>     <chr> <chr>    <chr> <chr>   
+#>  1 1009     Plantae 6          Bryophyta 35        Bryo… 327      Timm… 12191514
+#>  2 1020     Plantae 6          Bryophyta 35        Bryo… 327      Orth… 1341    
+#>  3 1021     Plantae 6          Bryophyta 35        Spha… 190      Spha… 623     
+#>  4 1014     Plantae 6          Bryophyta 35        Bryo… 327      Timm… 12191514
+#>  5 1020     Plantae 6          Bryophyta 35        Bryo… 327      Timm… 12191514
+#>  6 1021     Plantae 6          Bryophyta 35        Bryo… 327      Hypn… 617     
+#>  7 1001     Plantae 6          Bryophyta 35        Bryo… 327      Orth… 1341    
+#>  8 1088     Plantae 6          Bryophyta 35        Bryo… 327      Hypn… 617     
+#>  9 1091     Plantae 6          Bryophyta 35        Bryo… 327      Hypn… 617     
+#> 10 1090     Plantae 6          Bryophyta 35        Bryo… 327      Hypn… 617     
+#> # ℹ 215 more rows
+#> # ℹ 19 more variables: family <chr>, familyKey <chr>, genus <chr>,
+#> #   genuskey <chr>, scientificName <chr>, taxonKey <chr>, year <dbl>,
+#> #   kingdomcount <chr>, phylumcount <chr>, classcount <chr>, ordercount <chr>,
+#> #   familyCount <dbl>, genuscount <chr>, obs <dbl>,
+#> #   minTemporalUncertainty <dbl>, minCoordinateUncertaintyInMeters <dbl>,
+#> #   xcoord <dbl>, ycoord <dbl>, resolution <chr>
 ```

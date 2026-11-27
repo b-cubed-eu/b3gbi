@@ -102,9 +102,17 @@ spec_richness_density_ts(data, ...)
 
   `shapefile_path`
 
-  :   (optional) Path of an external shapefile to merge into the
-      workflow. For example, if you want to calculate your indicator for
-      particular features such as protected areas or wetlands.
+  :   (optional) Path of an external shapefile (any format readable by
+      [`sf::read_sf()`](https://r-spatial.github.io/sf/reference/st_read.html),
+      or a .wkt file) defining the study area, e.g. protected areas or
+      wetlands. Only occurrences in grid cells that fall within the
+      shapefile are used, and for the density indicators the area of the
+      shapefile (within the cube's extent) is used as the total area of
+      time series. To compare an area with the rest of a region (e.g.
+      protected vs. unprotected parts of a country), calculate the
+      indicator once with a shapefile of the areas and once with a
+      shapefile of the region minus those areas (e.g.
+      `sf::st_difference(region, sf::st_union(areas))`).
 
   `shapefile_crs`
 
@@ -118,7 +126,10 @@ spec_richness_density_ts(data, ...)
   :   (optional) Calculate an indicator over the inverse of the
       shapefile (e.g. if you have a protected areas shapefile this would
       calculate an indicator over all non protected areas within your
-      cube). Default is FALSE.
+      cube). Note that the inverse is taken relative to the rectangular
+      extent (bounding box) of the cube, not to the region the cube was
+      downloaded for, so for density indicators the area may include
+      land or sea outside your region. Default is FALSE.
 
   `include_land`
 
@@ -172,10 +183,17 @@ metadata.
 
 Density is the number of unique species divided by area (km^2): the area
 of each grid cell for maps, and the total study-region area for time
-series. This provides similar information to observed species richness,
-but is adjusted for area. Like observed richness, bootstrapped
-confidence intervals are not calculated for this indicator because they
-are statistically inappropriate at the indicator level.
+series. For time series, the study region is the region given by `level`
+and `region` (including sea within the region's extent unless
+`include_ocean = FALSE`), or the shapefile given by `shapefile_path`. If
+neither is given (`level = "cube"`), the area of the cube's rectangular
+extent (bounding box) is used, which can be much larger than the area
+actually covered by the cube, and a warning is given; supply a region or
+shapefile for meaningful densities. This provides similar information to
+observed species richness, but is adjusted for area. Like observed
+richness, bootstrapped confidence intervals are not calculated for this
+indicator because they are statistically inappropriate at the indicator
+level.
 
 ## Functions
 
@@ -200,7 +218,10 @@ plot(srd_map)
 
 # }
 # \donttest{
-srd_ts <- spec_richness_density_ts(example_cube_1, first_year = 1985)
+# Give the study area (here: the land area of Denmark) so that density is
+# per km^2 of it
+srd_ts <- spec_richness_density_ts(example_cube_1, first_year = 1985,
+  level = "country", region = "Denmark", include_ocean = FALSE)
 plot(srd_ts)
 
 # }

@@ -28,11 +28,14 @@ The package is publicly available at
 
 ## Package Installation
 
-The package is available on the dedicated B-Cubed R-universe repository.
+The package is available on CRAN.
 
 ``` r
 
-# Install the package from the dedicated R-universe
+# Install the package from CRAN
+install.packages("b3gbi")
+
+# Or install the development version from the B-Cubed R-universe
 install.packages("b3gbi", repos = "https://b-cubed-eu.r-universe.dev")
 
 # Load the package
@@ -41,10 +44,10 @@ library(b3gbi)
 
 ## Step 1: Data Ingestion with `process_cube()`
 
-The first step is importing your GBIF occurrence cube (a .csv file) and
-converting it into a structured `processed_cube` object. This function
-automatically validates the input and attempts to autodetect column
-names and grid types.
+The first step is importing your GBIF occurrence cube (a .csv or
+.parquet file) and converting it into a structured `processed_cube`
+object. This function automatically validates the input and attempts to
+autodetect column names and grid types.
 
 To learn how to generate and download a compatible GBIF data cube, see
 the [B-Cubed tutorial on downloading a cube from
@@ -54,8 +57,9 @@ GBIF](https://docs.b-cubed.eu/tutorials/download-a-cube-from-gbif/).
 
 | Argument | Description | Default/Details |
 |----|----|----|
-| `cube_name` | Path to the .csv file containing the GBIF cube, or a data frame. Required. |  |
-| `grid_type` | The grid system used: ‘automatic’, ‘eea’, ‘mgrs’, ‘eqdgc’, ‘isea3h’, ‘custom’ or ‘none’. | ‘automatic’ (default) autodetects the grid from the cell codes. Use ‘custom’ for custom grid codes or ‘none’ for a cube without grid codes. |
+| `cube_name` | Path to the .csv or .parquet file containing the cube, or a data frame. Required. | Reading parquet files requires the arrow package. |
+| `grid_type` | The grid system used: ‘automatic’, ‘eea’, ‘mgrs’, ‘eqdgc’, ‘isea3h’, ‘custom’ or ‘none’. | ‘automatic’ (default) autodetects the grid from the cell codes. Use ‘none’ for a cube without grid cells. ‘custom’ without `grid` allows only time series that do not need cell geometries. |
+| `grid` | The cell polygons, for cubes with their own grid (see below). | NULL (default). When given, `grid_type` becomes ‘custom’ and all indicators are available. |
 | `first_year` | Filters the cube to start at this year. | NULL (default) uses the earliest year in the data. |
 | `last_year` | Filters the cube to end at this year. | NULL (default) uses the latest year in the data. |
 
@@ -159,6 +163,100 @@ str(denmark_cube)
 #>   ..$ resolution                      : chr [1:969] "0.25degrees" "0.25degrees" "0.25degrees" "0.25degrees" ...
 #>  - attr(*, "class")= chr "processed_cube"
 ```
+
+### Cubes with Their Own Grid Geometries
+
+Some tools that produce data cubes, such as the B-Cubed BMD cubing
+engine, identify grid cells by an arbitrary ID and deliver the cell
+polygons separately, in a “dimension table”. Such cubes can be used with
+any grid, for example an equal-area grid of your choice. Give the cell
+polygons to
+[`process_cube()`](https://b-cubed-eu.github.io/b3gbi/reference/process_cube.md)
+with the `grid` argument, and b3gbi links them to the cube through the
+ID column the two have in common (or the one you name with `grid_id`).
+
+The package includes a small example: bryophyte occurrences in
+Montenegro, with cells identified by `grid_idx` and their polygons in a
+GeoPackage.
+
+``` r
+
+cube_file <- system.file("extdata", "montenegro_bryophytes_cube_custom.csv",
+                         package = "b3gbi")
+grid_file <- system.file("extdata", "montenegro_bryophytes_grid.gpkg",
+                         package = "b3gbi")
+
+montenegro_cube <- process_cube(cube_file, grid = grid_file)
+montenegro_cube
+#> 
+#> Processed data cube for calculating biodiversity indicators
+#> 
+#> Date Range: 2003 - 2025 
+#> Single-resolution cube with cell size 1km ^2 
+#> Number of cells: 124 
+#> Grid reference system: custom 
+#> Coordinate range:
+#>    xmin    xmax    ymin    ymax 
+#> 5018000 5149000 2135000 2274000 
+#> 
+#> Total number of observations: 244 
+#> Number of species represented: 91 
+#> Number of families represented: 34 
+#> 
+#> Kingdoms represented: Plantae 
+#> 
+#> First 10 rows of data (use n = to show more):
+#> 
+#> # A tibble: 225 × 28
+#>    cellCode kingdom kingdomKey phylum    phylumkey class classkey order orderkey
+#>    <chr>    <chr>   <chr>      <chr>     <chr>     <chr> <chr>    <chr> <chr>   
+#>  1 1009     Plantae 6          Bryophyta 35        Bryo… 327      Timm… 12191514
+#>  2 1020     Plantae 6          Bryophyta 35        Bryo… 327      Orth… 1341    
+#>  3 1021     Plantae 6          Bryophyta 35        Spha… 190      Spha… 623     
+#>  4 1014     Plantae 6          Bryophyta 35        Bryo… 327      Timm… 12191514
+#>  5 1020     Plantae 6          Bryophyta 35        Bryo… 327      Timm… 12191514
+#>  6 1021     Plantae 6          Bryophyta 35        Bryo… 327      Hypn… 617     
+#>  7 1001     Plantae 6          Bryophyta 35        Bryo… 327      Orth… 1341    
+#>  8 1088     Plantae 6          Bryophyta 35        Bryo… 327      Hypn… 617     
+#>  9 1091     Plantae 6          Bryophyta 35        Bryo… 327      Hypn… 617     
+#> 10 1090     Plantae 6          Bryophyta 35        Bryo… 327      Hypn… 617     
+#> # ℹ 215 more rows
+#> # ℹ 19 more variables: family <chr>, familyKey <chr>, genus <chr>,
+#> #   genuskey <chr>, scientificName <chr>, taxonKey <chr>, year <dbl>,
+#> #   kingdomcount <chr>, phylumcount <chr>, classcount <chr>, ordercount <chr>,
+#> #   familyCount <dbl>, genuscount <chr>, obs <dbl>,
+#> #   minTemporalUncertainty <dbl>, minCoordinateUncertaintyInMeters <dbl>,
+#> #   xcoord <dbl>, ycoord <dbl>, resolution <chr>
+```
+
+`grid` can be a GeoParquet, GeoPackage, GeoJSON or shapefile, an sf
+object, or a CSV file or data frame with polygons as WKT text. The
+coordinate reference system is read from the file; for WKT, give it with
+`grid_crs` (e.g. `grid_crs = "EPSG:3035"`). Cubes and dimension tables
+in parquet format can be read directly (this requires the arrow
+package):
+
+``` r
+
+cube <- process_cube("gbif_aggregated.parquet",
+                     grid = "gbif_EEA_1km_dimension_table.parquet")
+```
+
+All indicators can then be calculated as usual. Projected grids are used
+in their own coordinate reference system; grids in longitude and
+latitude are projected to an equal-area projection. Cells can also be
+aggregated to larger cells with `cell_size` (here 10 km instead of the
+original 1 km cells):
+
+``` r
+
+montenegro_richness <- obs_richness_map(montenegro_cube, cell_size = 10)
+#> although coordinates are longitude/latitude, st_intersection assumes that they
+#> are planar
+plot(montenegro_richness, title = "Observed Species Richness: Bryophytes in Montenegro")
+```
+
+![](b3gbi_files/figure-html/custom-grid-map-1.png)
 
 ## Step 2: Indicator Calculation
 

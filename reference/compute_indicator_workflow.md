@@ -164,9 +164,16 @@ compute_indicator_workflow(
 
 - shapefile_path:
 
-  (optional) Path of an external shapefile to merge into the workflow.
-  For example, if you want to calculate your indicator for particular
-  features such as protected areas or wetlands.
+  (optional) Path of an external shapefile (any format readable by
+  [`sf::read_sf()`](https://r-spatial.github.io/sf/reference/st_read.html),
+  or a .wkt file) defining the study area, e.g. protected areas or
+  wetlands. Only occurrences in grid cells that fall within the
+  shapefile are used, and for the density indicators the area of the
+  shapefile (within the cube's extent) is used as the total area of time
+  series. To compare an area with the rest of a region (e.g. protected
+  vs. unprotected parts of a country), calculate the indicator once with
+  a shapefile of the areas and once with a shapefile of the region minus
+  those areas (e.g. `sf::st_difference(region, sf::st_union(areas))`).
 
 - shapefile_crs:
 
@@ -179,8 +186,11 @@ compute_indicator_workflow(
 
   (optional) Calculate an indicator over the inverse of the shapefile
   (e.g. if you have a protected areas shapefile this would calculate an
-  indicator over all non protected areas within your cube). Default is
-  FALSE.
+  indicator over all non protected areas within your cube). Note that
+  the inverse is taken relative to the rectangular extent (bounding box)
+  of the cube, not to the region the cube was downloaded for, so for
+  density indicators the area may include land or sea outside your
+  region. Default is FALSE.
 
 - include_land:
 
