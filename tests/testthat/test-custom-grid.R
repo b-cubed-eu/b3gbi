@@ -224,3 +224,24 @@ test_that("years from Parquet timestamps do not depend on the time zone", {
     expect_setequal(unique(cube$data$year), 2001:2010)
   }
 })
+
+test_that("the packaged custom-grid example works end to end", {
+  cube <- process_cube(
+    system.file("extdata", "montenegro_bryophytes_cube_custom.csv",
+                package = "b3gbi"),
+    grid = system.file("extdata", "montenegro_bryophytes_grid.gpkg",
+                       package = "b3gbi")
+  )
+  # GeoPackage CRS names are replaced by a parseable EPSG code
+  expect_equal(sf::st_crs(cube$grid)$input, "EPSG:3035")
+  map <- suppressMessages(suppressWarnings(obs_richness_map(cube)))
+  expect_equal(map$projection, "EPSG:3035")
+  expect_s3_class(suppressWarnings(plot(map)), "ggplot")
+
+  # Same result as the original EEA cube it was derived from
+  eea <- process_cube(system.file("extdata",
+                                  "montenegro_bryophytes_cube_eea.csv",
+                                  package = "b3gbi"))
+  map_eea <- suppressMessages(suppressWarnings(obs_richness_map(eea)))
+  expect_equal(sort(map$data$diversity_val), sort(map_eea$data$diversity_val))
+})

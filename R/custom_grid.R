@@ -144,6 +144,13 @@ read_custom_grid <- function(grid, grid_crs = NULL) {
     stop("The grid has no coordinate reference system. Please specify it ",
          "with `grid_crs` (e.g. grid_crs = \"EPSG:3035\").", call. = FALSE)
   }
+  # Use a compact "EPSG:xxxx" definition when possible (some formats, such as
+  # GeoPackage, give only the CRS name as input, which cannot be parsed again)
+  epsg <- sf::st_crs(out)$epsg
+  if (!is.na(epsg)) {
+    out <- sf::st_set_crs(out, NA)
+    out <- sf::st_set_crs(out, paste0("EPSG:", epsg))
+  }
   types <- unique(as.character(sf::st_geometry_type(out)))
   if (!all(types %in% c("POLYGON", "MULTIPOLYGON"))) {
     stop("The grid must consist of polygons (found: ",
