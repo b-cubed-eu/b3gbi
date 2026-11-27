@@ -8,7 +8,8 @@
 # @param x The first sf or sfc object.
 # @param y The second sf or sfc object.
 #
-# @return An sf object representing the union of the two inputs. If both
+# @return An sf object with a single feature: the union of all geometries of
+#         both inputs. If both
 #         inputs are empty, it returns an empty sf object with the CRS
 #         of the first input (or NULL if both are empty).
 #
@@ -32,8 +33,10 @@ union_helper <- function(x, y) {
   y_empty <- is_sf_empty(y)
 
   if (!x_empty && !y_empty) {
-    # Case 1: Both objects are non-empty
-    result <- sf::st_union(x, y) %>%
+    # Case 1: Both objects are non-empty. Dissolve all geometries of both
+    # into one. (sf::st_union(x, y) would instead return the union of every
+    # pair of features, i.e. nrow(x) * nrow(y) overlapping features.)
+    result <- sf::st_union(c(sf::st_geometry(x), sf::st_geometry(y))) %>%
       sf::st_as_sf()
   } else if (!x_empty) {
     # Case 2: y is empty, return x
