@@ -91,18 +91,21 @@ calc_ts.cum_richness <- function(x, ...) {
   stopifnot_error("Wrong data class. This is an internal function and is not
                   meant to be called directly.", inherits(x, "cum_richness"))
 
-  year <- taxonKey <- unique_by_year <- NULL
+  # Cumulative number of species observed up to and including each year.
+  # Every year with data is included, also years in which no new species
+  # were recorded, and each species counts from the first year it was seen
+  # (whatever the row order of the data).
+  years <- sort(unique(x$year[!is.na(x$year)]))
+  keep <- !is.na(x$year) & !is.na(x$taxonKey)
+  first_seen <- tapply(x$year[keep], x$taxonKey[keep], min)
+  new_species <- as.integer(table(factor(first_seen, levels = years)))
 
-    # Calculate the cumulative number of unique species observed
-    indicator <- x %>%
-      dplyr::select(year, taxonKey) %>%
-      dplyr::distinct(taxonKey, .keep_all = TRUE) %>%
-      dplyr::summarize(unique_by_year = dplyr::n_distinct(taxonKey),
-                       .by = year) %>%
-      dplyr::arrange(year) %>%
-      dplyr::reframe(year = year, diversity_val = cumsum(unique_by_year))
+  indicator <- data.frame(
+    year = years,
+    diversity_val = cumsum(new_species)
+  )
 
-    return(indicator)
+  return(indicator)
 
 }
 

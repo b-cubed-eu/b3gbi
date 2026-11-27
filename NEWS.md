@@ -12,6 +12,8 @@ Changes since the CRAN release; install with
 
 ## Bug fixes
 
+* **`cum_richness_ts()` dropped years without new species.** The series stopped at the last year in which a new species was recorded (and skipped earlier years without new species), and depended on the row order of the cube. Every year with data is now included, and species count from the first year they were recorded.
+* Time series plots label the x axis with whole years only (short series showed fractional years).
 * Vignette: installation instructions now point to CRAN.
 * **Maps at `level = "cube"` could be extremely slow** (minutes to hours for cubes with a large extent, e.g. ISEA3H maps). Land and ocean layers were combined with a pairwise union, which created one overlapping feature for every land polygon and ocean piece (over 100,000 features for a cube spanning Europe and North Africa). They are now dissolved into a single geometry; the ISEA3H Denmark example map now takes seconds.
 * **ISEA3H maps failed with newer PROJ versions** ("No spatial intersection between map data and grid") when dggridR was not installed. Since PROJ 9.5 can invert `+proj=isea`, cells were built in the ISEA projection, where cells at the corners of the icosahedron (the twelve pentagons) or across its edges cannot be built; one bad cell made the whole grid empty. Such cells are now built in an equal-area projection centred on the cell, pentagons are drawn as pentagons, the cell size is taken from the grid resolution instead of the spacing of occupied cells, and cells crossing the antimeridian are split. The cells are approximations; install dggridR for exact geometries. This was also the cause of the failed CRAN check on Debian (1.1.2).
